@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { 
   LayoutDashboard, CheckSquare, BookOpen, Youtube, 
   FileText, Lightbulb, Target, Radar, Wallet, 
-  FolderKanban, GraduationCap, Moon, Clock, MessageCircle
+  FolderKanban, GraduationCap, Moon, Clock, MessageCircle,
+  Zap
 } from 'lucide-react'
-import clsx from 'clsx'
 
 const navItems = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -25,6 +25,7 @@ const navItems = [
   { name: 'Sleep', href: '/sleep', icon: Moon },
   { name: 'Time', href: '/time', icon: Clock },
   { name: 'Chat', href: '/chat', icon: MessageCircle },
+  { name: 'Automation', href: '/automation', icon: Zap },
 ]
 
 export default function Sidebar() {

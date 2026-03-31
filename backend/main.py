@@ -13,6 +13,7 @@ from app.api import (
     habits,
     sleep,
     time,
+    automation,
 )
 
 app = FastAPI(
@@ -43,6 +44,7 @@ app.include_router(income.router, prefix="/api/income", tags=["income"])
 app.include_router(habits.router, prefix="/api/habits", tags=["habits"])
 app.include_router(sleep.router, prefix="/api/sleep", tags=["sleep"])
 app.include_router(time.router, prefix="/api/time", tags=["time"])
+app.include_router(automation.router, prefix="/api/automation", tags=["automation"])
 
 
 @app.get("/")
