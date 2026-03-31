@@ -1,6 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import tasks, courses, goals, ideas, chat
+from app.api import (
+    tasks,
+    courses,
+    goals,
+    ideas,
+    chat,
+    projects,
+    resources,
+    opportunities,
+    income,
+    habits,
+    sleep,
+    time,
+)
 
 app = FastAPI(
     title="Second Brain OS API",
@@ -21,6 +34,15 @@ app.include_router(courses.router, prefix="/api/courses", tags=["courses"])
 app.include_router(goals.router, prefix="/api/goals", tags=["goals"])
 app.include_router(ideas.router, prefix="/api/ideas", tags=["ideas"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+app.include_router(projects.router, prefix="/api/projects", tags=["projects"])
+app.include_router(resources.router, prefix="/api/resources", tags=["resources"])
+app.include_router(
+    opportunities.router, prefix="/api/opportunities", tags=["opportunities"]
+)
+app.include_router(income.router, prefix="/api/income", tags=["income"])
+app.include_router(habits.router, prefix="/api/habits", tags=["habits"])
+app.include_router(sleep.router, prefix="/api/sleep", tags=["sleep"])
+app.include_router(time.router, prefix="/api/time", tags=["time"])
 
 
 @app.get("/")
