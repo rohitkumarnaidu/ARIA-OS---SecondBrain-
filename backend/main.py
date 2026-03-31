@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import tasks, chat
+from app.api import tasks, courses, goals, ideas, chat
 
 app = FastAPI(
     title="Second Brain OS API",
@@ -17,6 +17,9 @@ app.add_middleware(
 )
 
 app.include_router(tasks.router, prefix="/api/tasks", tags=["tasks"])
+app.include_router(courses.router, prefix="/api/courses", tags=["courses"])
+app.include_router(goals.router, prefix="/api/goals", tags=["goals"])
+app.include_router(ideas.router, prefix="/api/ideas", tags=["ideas"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 
 
