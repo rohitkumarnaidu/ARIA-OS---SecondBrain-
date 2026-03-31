@@ -15,6 +15,7 @@ interface Project {
   live_url?: string
   next_action?: string
   blocker?: string
+  income_source_id?: string
   created_at: string
 }
 
@@ -61,6 +62,16 @@ export default function ProjectsPage() {
     setProjects(projects.map(p => p.id === id ? { ...p, phase } : p))
   }
 
+  const handleAddBlocker = async (id: string, blocker: string) => {
+    await supabase.from('projects').update({ blocker }).eq('id', id)
+    setProjects(projects.map(p => p.id === id ? { ...p, blocker } : p))
+  }
+
+  const handleResolveBlocker = async (id: string) => {
+    await supabase.from('projects').update({ blocker: null }).eq('id', id)
+    setProjects(projects.map(p => p.id === id ? { ...p, blocker: undefined } : p))
+  }
+
   const phaseCounts = phases.reduce((acc, p) => ({ ...acc, [p]: projects.filter(pr => pr.phase === p).length }), {} as Record<string, number>)
 
   if (!mounted || authLoading || loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full" /></div>
@@ -99,6 +110,28 @@ export default function ProjectsPage() {
               {project.live_url && <a href={project.live_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-text-muted hover:text-accent-primary"><ExternalLink size={14} /> Live</a>}
             </div>
             {project.next_action && <div className="mt-2 p-2 bg-background-elevated rounded text-xs text-text-muted">Next: {project.next_action}</div>}
+            
+            {/* Blocker Section */}
+            {project.blocker ? (
+              <div className="mt-2 p-2 bg-accent-error/10 border border-accent-error rounded text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-accent-error">🚫 Blocked: {project.blocker}</span>
+                  <button onClick={() => handleResolveBlocker(project.id)} className="text-accent-secondary text-xs">Resolve</button>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <button 
+                  onClick={() => {
+                    const blocker = prompt('What is blocking this project?')
+                    if (blocker) handleAddBlocker(project.id, blocker)
+                  }}
+                  className="text-xs text-text-muted hover:text-accent-warning"
+                >
+                  + Add Blocker
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -79,8 +79,43 @@ export default function AcademicsPage() {
 
   const calculateCGPA = () => {
     if (subjects.length === 0) return 0
-    const totalCredits = subjects.reduce((sum, s) => sum + (s.credits || 3), 0)
+    let totalPoints = 0
+    let totalCredits = 0
+    for (const subject of subjects) {
+      const avg = getSubjectAverage(subject.id)
+      const credits = subject.credits || 3
+      const gradePoint = getGradePoint(avg)
+      totalPoints += gradePoint * credits
+      totalCredits += credits
+    }
+    return totalCredits > 0 ? totalPoints / totalCredits : 0
+  }
+
+  const calculateProjectedCGPA = () => {
+    const current = calculateCGPA()
+    const atRisk = subjects.filter(s => getSubjectAverage(s.id) < 40).length
+    if (atRisk > 0) return current - 0.2
+    return current + 0.1
+  }
+
+  const getGradePoint = (percentage: number) => {
+    if (percentage >= 90) return 10
+    if (percentage >= 80) return 9
+    if (percentage >= 70) return 8
+    if (percentage >= 60) return 7
+    if (percentage >= 50) return 6
+    if (percentage >= 40) return 5
     return 0
+  }
+
+  const getAtRiskSubjects = () => subjects.filter(s => getSubjectAverage(s.id) < 40)
+
+  const getExamCountdown = () => {
+    const upcoming = subjects.filter(s => s.exam_date).map(s => ({
+      name: s.name,
+      days: Math.ceil((new Date(s.exam_date!).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    })).filter(s => s.days > 0).sort((a, b) => a.days - b.days)
+    return upcoming.slice(0, 3)
   }
 
   const getSubjectMarks = (subjectId: string) => marks.filter(m => m.subject_id === subjectId)
@@ -109,8 +144,39 @@ export default function AcademicsPage() {
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-background-card border border-border rounded-xl p-4"><div className="text-2xl font-bold text-text-primary">{subjects.length}</div><div className="text-text-secondary text-sm">Subjects</div></div>
         <div className="bg-background-card border border-border rounded-xl p-4"><div className="text-2xl font-bold text-text-primary">{marks.length}</div><div className="text-text-secondary text-sm">Marks Logged</div></div>
-        <div className="bg-background-card border border-border rounded-xl p-4"><div className="text-2xl font-bold text-accent-primary">{calculateCGPA().toFixed(2)}</div><div className="text-text-secondary text-sm">Current CGPA</div></div>
+        <div className="bg-background-card border border-border rounded-xl p-4"><div className="text-2xl font-bold text-accent-primary">{calculateCGPA().toFixed(2)}</div><div className="text-text-secondary text-sm">Current CGPA • Projected: {calculateProjectedCGPA().toFixed(2)}</div></div>
       </div>
+
+      {/* At Risk Alert */}
+      {getAtRiskSubjects().length > 0 && (
+        <div className="bg-accent-error/10 border border-accent-error rounded-xl p-4">
+          <h3 className="text-accent-error font-semibold mb-2">⚠️ At-Risk Subjects</h3>
+          <div className="flex gap-2 flex-wrap">
+            {getAtRiskSubjects().map(s => (
+              <span key={s.id} className="bg-accent-error/20 text-accent-error px-3 py-1 rounded-full text-sm">
+                {s.name} ({getSubjectAverage(s.id)}%)
+              </span>
+            ))}
+          </div>
+          <p className="text-text-muted text-sm mt-2">Add extra study tasks to improve these subjects.</p>
+        </div>
+      )}
+
+      {/* Exam Countdown */}
+      {getExamCountdown().length > 0 && (
+        <div className="bg-background-card border border-border rounded-xl p-4">
+          <h3 className="text-text-primary font-semibold mb-3">📅 Upcoming Exams</h3>
+          <div className="grid grid-cols-3 gap-4">
+            {getExamCountdown().map((exam, i) => (
+              <div key={i} className="bg-background-elevated rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold text-accent-primary">{exam.days}</div>
+                <div className="text-text-muted text-xs">days until</div>
+                <div className="text-text-primary text-sm font-medium">{exam.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {subjects.map(subject => {

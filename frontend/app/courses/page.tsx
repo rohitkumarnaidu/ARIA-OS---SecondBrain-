@@ -113,8 +113,24 @@ export default function CoursesPage() {
     return Math.round((course.completed_videos / course.total_videos) * 100)
   }
 
+  const calculateDailyMinutes = (course: Course) => {
+    if (!course.deadline || course.completed_videos >= (course.total_videos || 0)) return 0
+    const daysLeft = Math.max(1, Math.ceil((new Date(course.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    const remaining = (course.total_videos || 0) - course.completed_videos
+    return Math.ceil((remaining * 15) / daysLeft)
+  }
+
+  const getBehindScheduleCourses = () => {
+    return activeCourses.filter(c => {
+      if (!c.deadline) return false
+      const dailyNeeded = calculateDailyMinutes(c)
+      return dailyNeeded > 60
+    })
+  }
+
   const activeCourses = courses.filter(c => c.status !== 'completed' && c.status !== 'abandoned')
   const completedCourses = courses.filter(c => c.status === 'completed')
+  const totalDailyMinutes = activeCourses.reduce((sum, c) => sum + calculateDailyMinutes(c), 0)
 
   if (!mounted || authLoading || loading) {
     return (
@@ -142,7 +158,7 @@ export default function CoursesPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         <div className="bg-background-card border border-border rounded-xl p-4">
           <div className="text-2xl font-bold text-text-primary">{activeCourses.length}</div>
           <div className="text-text-secondary text-sm">Active</div>
@@ -152,12 +168,31 @@ export default function CoursesPage() {
           <div className="text-text-secondary text-sm">Completed</div>
         </div>
         <div className="bg-background-card border border-border rounded-xl p-4">
+          <div className="text-2xl font-bold text-accent-primary">{totalDailyMinutes}</div>
+          <div className="text-text-secondary text-sm">Min/Day Needed</div>
+        </div>
+        <div className="bg-background-card border border-border rounded-xl p-4">
           <div className="text-2xl font-bold text-text-primary">
             {courses.reduce((acc, c) => acc + (c.completed_videos || 0), 0)}
           </div>
           <div className="text-text-secondary text-sm">Videos Watched</div>
         </div>
       </div>
+
+      {/* Behind Schedule Alert */}
+      {getBehindScheduleCourses().length > 0 && (
+        <div className="bg-accent-warning/10 border border-accent-warning rounded-xl p-4">
+          <h3 className="text-accent-warning font-semibold mb-2">⚠️ Behind Schedule</h3>
+          <div className="flex gap-2 flex-wrap">
+            {getBehindScheduleCourses().map(c => (
+              <span key={c.id} className="bg-accent-warning/20 text-accent-warning px-3 py-1 rounded-full text-sm">
+                {c.title} - {calculateDailyMinutes(c)} min/day needed
+              </span>
+            ))}
+          </div>
+          <p className="text-text-muted text-sm mt-2">Consider extending deadline or increasing daily study time.</p>
+        </div>
+      )}
 
       {/* Course List */}
       <div className="space-y-4">
@@ -211,6 +246,9 @@ export default function CoursesPage() {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-text-muted">
                   {course.completed_videos} / {course.total_videos || '?'} videos
+                  {course.deadline && calculateDailyMinutes(course) > 0 && (
+                    <span className="ml-2 text-accent-warning">• {calculateDailyMinutes(course)} min/day</span>
+                  )}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
