@@ -29,6 +29,9 @@ export default function TasksPage() {
     category: 'personal' as typeof categories[number],
     estimated_minutes: 30,
     due_date: '',
+    dependency_id: '',
+    is_recurring: false,
+    recurring_frequency: 'daily',
   })
 
   useEffect(() => {
@@ -50,6 +53,9 @@ export default function TasksPage() {
     await addTask({
       ...newTask,
       due_date: newTask.due_date || undefined,
+      dependency_id: newTask.dependency_id || undefined,
+      is_recurring: newTask.is_recurring,
+      recurring_frequency: newTask.is_recurring ? newTask.recurring_frequency : undefined,
       status: 'pending',
     })
     
@@ -60,6 +66,9 @@ export default function TasksPage() {
       category: 'personal',
       estimated_minutes: 30,
       due_date: '',
+      dependency_id: '',
+      is_recurring: false,
+      recurring_frequency: 'daily',
     })
     setShowAddModal(false)
   }
@@ -340,6 +349,28 @@ export default function TasksPage() {
                     className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary"
                   />
                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="is_recurring"
+                  checked={newTask.is_recurring}
+                  onChange={e => setNewTask({ ...newTask, is_recurring: e.target.checked })}
+                  className="rounded border-border"
+                />
+                <label htmlFor="is_recurring" className="text-text-secondary text-sm">Recurring Task</label>
+                {newTask.is_recurring && (
+                  <select
+                    value={newTask.recurring_frequency}
+                    onChange={e => setNewTask({ ...newTask, recurring_frequency: e.target.value })}
+                    className="ml-2 bg-background-dark border border-border rounded-lg px-3 py-1 text-text-primary text-sm"
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                )}
               </div>
 
               <button

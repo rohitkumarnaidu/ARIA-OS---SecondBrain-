@@ -15,6 +15,9 @@ export interface Task {
   project_id?: string
   completed_at?: string
   missed_count: number
+  dependency_id?: string
+  is_recurring: boolean
+  recurring_frequency?: string
   created_at: string
   updated_at: string
 }

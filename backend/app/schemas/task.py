@@ -35,6 +35,9 @@ class TaskBase(BaseModel):
     due_date: Optional[datetime] = None
     goal_id: Optional[str] = None
     project_id: Optional[str] = None
+    dependency_id: Optional[str] = None
+    is_recurring: bool = False
+    recurring_frequency: Optional[str] = None
 
 
 class TaskCreate(TaskBase):
@@ -52,6 +55,9 @@ class TaskUpdate(BaseModel):
     goal_id: Optional[str] = None
     project_id: Optional[str] = None
     completed_at: Optional[datetime] = None
+    dependency_id: Optional[str] = None
+    is_recurring: Optional[bool] = None
+    recurring_frequency: Optional[str] = None
 
 
 class TaskResponse(TaskBase):
