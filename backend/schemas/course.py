@@ -1,0 +1,1 @@
+# Course Pydantic schemas

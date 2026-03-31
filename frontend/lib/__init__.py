@@ -1,0 +1,1 @@
+# Library configurations (supabase, etc)
