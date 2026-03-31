@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { Plus, Target, Trash2, X, Calendar, TrendingUp } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const RoadmapEditor = dynamic(() => import('@/components/RoadmapEditor'), { ssr: false })
 
 interface Goal {
   id: string
@@ -32,6 +35,7 @@ export default function GoalsPage() {
   const [goals, setGoals] = useState<Goal[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
   const [newGoal, setNewGoal] = useState({
@@ -222,11 +226,12 @@ export default function GoalsPage() {
                   +
                 </button>
               </div>
-              {goal.target_date && (
-                <span className="text-xs text-text-muted">
-                  Due: {new Date(goal.target_date).toLocaleDateString()}
-                </span>
-              )}
+              <button
+                onClick={() => setSelectedGoal(goal.id)}
+                className="text-xs text-accent-primary hover:underline"
+              >
+                Open Roadmap →
+              </button>
             </div>
           </div>
         ))}
@@ -330,6 +335,30 @@ export default function GoalsPage() {
                 Create Goal
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Roadmap Editor Modal */}
+      {selectedGoal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background-card border border-border rounded-xl p-4 w-full max-w-5xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-text-primary">Visual Roadmap</h2>
+              <button onClick={() => setSelectedGoal(null)} className="text-text-muted hover:text-text-primary">
+                <X size={24} />
+              </button>
+            </div>
+            <RoadmapEditor 
+              goalId={selectedGoal}
+              onSave={(nodes, edges) => {
+                console.log('Saving roadmap:', nodes, edges)
+                supabase.from('goals').update({ nodes: nodes.map(n => n.data) }).eq('id', selectedGoal).then(() => {
+                  setSelectedGoal(null)
+                  fetchGoals()
+                })
+              }}
+            />
           </div>
         </div>
       )}
