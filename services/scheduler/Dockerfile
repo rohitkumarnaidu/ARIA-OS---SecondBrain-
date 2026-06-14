@@ -4,7 +4,7 @@
 # =============================================================================
 
 # ---- Stage 1: Dependencies ----
-FROM python:3.10-slim AS deps
+FROM python:3.14-slim AS deps
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -15,7 +15,7 @@ COPY services/scheduler/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---- Stage 2: Builder ----
-FROM python:3.10-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /app
 
 COPY --from=deps /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
@@ -24,7 +24,7 @@ COPY . .
 RUN python -m compileall services/scheduler/ packages/
 
 # ---- Stage 3: Production ----
-FROM python:3.10-slim AS production
+FROM python:3.14-slim AS production
 WORKDIR /app
 
 RUN addgroup --system --gid 1001 scheduler && \
@@ -42,7 +42,7 @@ USER scheduler
 CMD ["python", "services/scheduler/main.py"]
 
 # ---- Stage 4: Development ----
-FROM python:3.10-slim AS development
+FROM python:3.14-slim AS development
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
