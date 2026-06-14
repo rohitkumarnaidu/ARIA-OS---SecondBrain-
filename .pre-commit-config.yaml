@@ -1,0 +1,103 @@
+# =============================================================================
+# Second Brain OS — Pre-Commit Hooks Configuration
+# =============================================================================
+# Install with: pip install pre-commit && pre-commit install
+# Run manually:  pre-commit run --all-files
+# =============================================================================
+
+repos:
+  # ── General ────────────────────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # ── Python ─────────────────────────────────────────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.0
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        args: [--line-length=100]
+        language_version: python3.10
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports, --python-version=3.10]
+        additional_dependencies: [types-PyYAML, types-requests]
+        exclude: ^(tests/|scripts/)
+
+  # ── Security ───────────────────────────────────────────────────────────────
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: [--exclude-files, '\.env\.*', --exclude-files, 'package-lock\.json']
+        name: Detect secrets in code
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.9
+    hooks:
+      - id: bandit
+        args: [--skip, B101, --recursive, packages/]
+        name: Bandit security lint (Python)
+        types: [python]
+
+  # ── Prompt Validation ──────────────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: validate-prompts
+        name: Validate prompt YAML frontmatter
+        entry: python scripts/validate_prompts.py
+        language: system
+        files: ^prompts/.*\.md$
+        pass_filenames: false
+
+      - id: pytest-prompts
+        name: Run prompt loader tests
+        entry: python -m pytest tests/test_prompt_loader.py -x -q
+        language: system
+        files: ^(prompts/|packages/ai/prompt_loader.py)
+        pass_filenames: false
+
+  # ── JavaScript / TypeScript ────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.7.0
+    hooks:
+      - id: eslint
+        args: [--fix]
+        types: [javascript, jsx, ts, tsx]
+        additional_dependencies:
+          - eslint
+          - '@typescript-eslint/eslint-plugin'
+          - '@typescript-eslint/parser'
+        exclude: ^apps/web/\.next/
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types: [javascript, jsx, ts, tsx, json, css, scss, markdown, yaml]
+        args: [--print-width=100, --single-quote, --trailing-comma=all]
