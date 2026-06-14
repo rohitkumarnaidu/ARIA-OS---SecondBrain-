@@ -73,3 +73,9 @@ pids
 
 # Large docs
 *.docx
+
+# Graphify - knowledge graph output & temp files
+graphify-out/
+.graphify_python
+.graphify_*.json
+.graphify_*.py
