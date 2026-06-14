@@ -1,1 +1,0 @@
-# Habit API routes

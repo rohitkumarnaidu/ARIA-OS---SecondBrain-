@@ -1,1 +1,0 @@
-# Opportunity Pydantic schemas

@@ -1,1 +1,0 @@
-# Idea API routes

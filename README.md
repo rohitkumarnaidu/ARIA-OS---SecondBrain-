@@ -46,11 +46,11 @@ A personal AI productivity system for BTech CSE students that acts as your memor
 - Supabase Account
 - Claude API Key (optional, for advanced AI)
 
-### Backend Setup
+### Backend Setup (Agent Orchestrator)
 
 1. Navigate to the backend directory:
 ```bash
-cd backend
+cd services/agent-orchestrator
 ```
 
 2. Create a virtual environment:
@@ -68,7 +68,7 @@ pip install -r requirements.txt
 ```
 
 5. Set up environment variables:
-Create a `.env` file in the backend directory:
+Create a `.env` file in `services/agent-orchestrator/`:
 ```env
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_anon_key
@@ -80,7 +80,7 @@ JWT_SECRET=your_jwt_secret
 
 6. Run the backend server:
 ```bash
-uvicorn app.main:app --reload
+uvicorn main:app --reload
 ```
 
 The backend API will be available at `http://localhost:8000`
@@ -89,7 +89,7 @@ The backend API will be available at `http://localhost:8000`
 
 1. Navigate to the frontend directory:
 ```bash
-cd frontend
+cd apps/web
 ```
 
 2. Install dependencies:
@@ -98,7 +98,7 @@ npm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file in the frontend directory:
+Create a `.env.local` file in `apps/web/`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
@@ -114,45 +114,40 @@ The frontend will be available at `http://localhost:3000`
 ## Project Structure
 
 ```
-second-brain-os/
-├── backend/
-│   ├── app/
-│   │   ├── api/          # API routes/endpoints
-│   │   ├── core/         # Core configurations
-│   │   ├── models/       # Database models
-│   │   ├── schemas/      # Pydantic schemas
-│   │   ├── services/     # Business logic
-│   │   ├── crons/        # Scheduled tasks
-│   │   ├── agents/       # AI agents
-│   │   └── utils/        # Utility functions
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/
-│   ├── app/              # Next.js app router
-│   │   ├── components/   # Reusable components
-│   │   ├── lib/         # Library configurations
-│   │   ├── hooks/       # Custom React hooks
-│   │   ├── styles/      # Global styles
-│   │   └── types/       # TypeScript types
-│   ├── public/          # Static assets
-│   └── package.json
-├── docs/                # Documentation
-├── README.md
-├── .gitignore
-└── package.json
+ARIA OS - SecondBrain/
+├── apps/
+│   └── web/             Next.js 14 frontend
+├── packages/
+│   ├── ai/agents/       AI agent modules
+│   ├── config/core/     FastAPI config, auth, supabase
+│   ├── database/schemas/ Pydantic models
+│   └── shared/utils/    Logging, cache, rate limiter, etc.
+├── services/
+│   ├── agent-orchestrator/ FastAPI backend (app/api/)
+│   └── scheduler/       APScheduler + crons
+├── docs/
+│   ├── product/         PRD, Features, Roadmap
+│   ├── design/          UIUX
+│   ├── engineering/     Architecture, API, Database
+│   ├── ai/              Agents, AI_Instructions
+│   ├── security/
+│   ├── devops/          Deployment
+│   └── operations/      Implementation Status, TechStack
+├── infrastructure/      Docker, Terraform, K8s (WIP)
+├── tests/
+└── scripts/
 ```
 
 ## Documentation
 
 See the `docs/` folder for detailed documentation:
-- PRD.md - Product Requirements Document
-- Features.md - Feature specifications
-- TechStack.md - Technology stack details
-- Database.md - Database schema
-- API.md - API documentation
-- Architecture.md - System architecture
-- Security.md - Security considerations
-- Deployment.md - Deployment guide
+- Product: PRD, Features, Roadmap
+- Design: UIUX
+- Engineering: Architecture, API, Database
+- AI: Agents, AI Instructions
+- Security
+- DevOps: Deployment
+- Operations: Implementation Status, TechStack
 
 ## License
 

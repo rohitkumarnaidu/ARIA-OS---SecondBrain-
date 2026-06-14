@@ -1,0 +1,348 @@
+'use client'
+
+import { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
+import { supabase } from '@/lib/supabase'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Play, Square, Clock, Trash2, Zap, Coffee, Timer, Target, Eye } from 'lucide-react'
+
+interface TimeEntry {
+  id: string
+  task_id?: string
+  description?: string
+  start_time: string
+  end_time?: string
+  duration_minutes?: number
+  is_deep_work: boolean
+  category: string
+}
+
+export default function TimePage() {
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
+  const [entries, setEntries] = useState<TimeEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [activeTimer, setActiveTimer] = useState<TimeEntry | null>(null)
+  const [elapsed, setElapsed] = useState(0)
+  const [mounted, setMounted] = useState(false)
+  const [pomodoroMode, setPomodoroMode] = useState(false)
+  const [pomodoroPhase, setPomodoroPhase] = useState<'work' | 'break'>('work')
+  const [pomodoroTimeLeft, setPomodoroTimeLeft] = useState(25 * 60)
+  const [showIdleWarning, setShowIdleWarning] = useState(false)
+  const [lastActivity, setLastActivity] = useState(Date.now())
+  const [focusHours, setFocusHours] = useState<{hour: number, count: number}[]>([])
+  const idleCheckRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    if (!authLoading && !user) router.push('/login')
+    if (user) fetchEntries()
+  }, [user, authLoading, router])
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (activeTimer) {
+      interval = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - new Date(activeTimer.start_time).getTime()) / 1000))
+        const now = Date.now()
+        if (now - lastActivity > 15 * 60 * 1000) {
+          setShowIdleWarning(true)
+        }
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [activeTimer, lastActivity])
+
+  useEffect(() => {
+    if (pomodoroMode) {
+      const timer = setInterval(() => {
+        setPomodoroTimeLeft(prev => {
+          if (prev <= 1) {
+            if (pomodoroPhase === 'work') {
+              setPomodoroPhase('break')
+              return 5 * 60
+            } else {
+              setPomodoroPhase('work')
+              return 25 * 60
+            }
+          }
+          return prev - 1
+        })
+      }, 1000)
+      return () => clearInterval(timer)
+    }
+  }, [pomodoroMode, pomodoroPhase])
+
+  useEffect(() => {
+    const hourCounts: Record<number, number> = {}
+    entries.forEach(e => {
+      if (e.duration_minutes && e.is_deep_work) {
+        const hour = new Date(e.start_time).getHours()
+        hourCounts[hour] = (hourCounts[hour] || 0) + e.duration_minutes
+      }
+    })
+    const hours = Object.entries(hourCounts).map(([h, c]) => ({ hour: parseInt(h), count: c }))
+    setFocusHours(hours.sort((a, b) => b.count - a.count).slice(0, 5))
+  }, [entries])
+
+  const fetchEntries = async () => {
+    setLoading(true)
+    const { data } = await supabase.from('time_entries').select('*').order('start_time', { ascending: false }).limit(50)
+    if (data) {
+      setEntries(data)
+      const active = data.find(e => !e.end_time)
+      if (active) setActiveTimer(active)
+    }
+    setLoading(false)
+  }
+
+  const formatTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+  }
+
+  const startTimer = async (description: string) => {
+    const { data } = await supabase.from('time_entries').insert({
+      description: description || 'Working...',
+      start_time: new Date().toISOString(),
+      is_deep_work: false,
+    }).select().single()
+    
+    if (data) {
+      setActiveTimer(data)
+      setElapsed(0)
+    }
+  }
+
+  const stopTimer = async () => {
+    if (!activeTimer) return
+    
+    const endTime = new Date().toISOString()
+    const duration = Math.round((new Date(endTime).getTime() - new Date(activeTimer.start_time).getTime()) / 60000)
+    const isDeepWork = duration >= 90
+    
+    await supabase.from('time_entries').update({
+      end_time: endTime,
+      duration_minutes: duration,
+      is_deep_work: isDeepWork,
+    }).eq('id', activeTimer.id)
+    
+    setActiveTimer(null)
+    setElapsed(0)
+    fetchEntries()
+  }
+
+  const totalToday = entries
+    .filter(e => e.start_time.startsWith(new Date().toISOString().split('T')[0]) && e.duration_minutes)
+    .reduce((sum, e) => sum + (e.duration_minutes || 0), 0)
+  
+  const deepWorkToday = entries
+    .filter(e => e.start_time.startsWith(new Date().toISOString().split('T')[0]) && e.is_deep_work && e.duration_minutes)
+    .reduce((sum, e) => sum + (e.duration_minutes || 0), 0)
+
+  const recentEntries = entries.filter(e => e.duration_minutes).slice(0, 10)
+
+  if (!mounted || authLoading || loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="relative">
+        <div className="w-12 h-12 rounded-xl border-2 border-accent-primary/30 animate-pulse-glow" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="space-y-6">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
+        <div>
+          <h1 className="text-2xl font-bold text-gradient bg-gradient-to-r from-accent-primary to-accent-secondary">Time Tracker</h1>
+          <p className="text-text-secondary">Track your work sessions</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => { setPomodoroMode(!pomodoroMode); setPomodoroPhase('work'); setPomodoroTimeLeft(25 * 60) }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg btn ${pomodoroMode ? 'bg-accent-primary text-white' : 'bg-background-elevated text-text-secondary'}`}
+          >
+            <Timer size={18} /> Pomodoro {pomodoroMode ? 'ON' : 'OFF'}
+          </motion.button>
+        </div>
+      </motion.div>
+
+      {/* Pomodoro Display */}
+      <AnimatePresence>
+        {pomodoroMode && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-gradient-to-r from-accent-primary/20 to-accent-secondary/20 border border-border rounded-xl p-6 text-center"
+          >
+            <div className="text-sm text-text-secondary mb-2">{pomodoroPhase === 'work' ? '🍅 Focus Time' : '☕ Break Time'}</div>
+            <div className={`text-5xl font-bold font-mono mb-2 ${pomodoroPhase === 'work' ? 'text-accent-primary' : 'text-accent-secondary'}`}>
+              {formatTime(pomodoroTimeLeft)}
+            </div>
+            <div className="text-text-muted text-sm">Session {pomodoroPhase === 'work' ? '25 min' : '5 min'}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Idle Warning */}
+      <AnimatePresence>
+        {showIdleWarning && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="bg-accent-warning/20 border border-accent-warning rounded-xl p-4 flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <Eye className="text-accent-warning" size={20} />
+              <span className="text-text-primary">No activity detected for 15+ minutes</span>
+            </div>
+            <button onClick={() => { setShowIdleWarning(false); setLastActivity(Date.now()) }} className="text-accent-primary text-sm btn">I'm still working</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Timer */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-background-card border border-border rounded-xl p-8 text-center"
+      >
+        <motion.div 
+          key={elapsed}
+          initial={{ scale: 1.02 }}
+          animate={{ scale: 1 }}
+          className="text-6xl font-bold text-text-primary mb-4 font-mono"
+        >
+          {formatTime(elapsed)}
+        </motion.div>
+        
+        {activeTimer ? (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={stopTimer}
+            className="flex items-center gap-2 mx-auto bg-accent-error text-white px-8 py-3 rounded-xl hover:bg-accent-error/90 btn"
+          >
+            <Square size={24} /> Stop
+          </motion.button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => startTimer('')}
+            className="flex items-center gap-2 mx-auto bg-accent-secondary text-white px-8 py-3 rounded-xl hover:bg-accent-secondary/90 btn"
+          >
+            <Play size={24} /> Start Timer
+          </motion.button>
+        )}
+      </motion.div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="card bg-background-card border border-border rounded-xl p-4"
+        >
+          <div className="text-2xl font-bold text-text-primary">{Math.round(totalToday / 60)}h {totalToday % 60}m</div>
+          <div className="text-text-secondary text-sm">Today Total</div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="card bg-background-card border border-border rounded-xl p-4"
+        >
+          <div className="text-2xl font-bold text-accent-primary">{Math.round(deepWorkToday / 60)}h {deepWorkToday % 60}m</div>
+          <div className="text-text-secondary text-sm">Deep Work</div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="card bg-background-card border border-border rounded-xl p-4"
+        >
+          <div className="text-2xl font-bold text-text-primary">{recentEntries.length}</div>
+          <div className="text-text-secondary text-sm">Sessions</div>
+        </motion.div>
+      </div>
+
+      {/* Focus Hours */}
+      <AnimatePresence>
+        {focusHours.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-background-card border border-border rounded-xl p-4"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Target size={18} className="text-accent-primary" />
+              <h2 className="text-lg font-semibold text-text-primary">Your Peak Focus Hours</h2>
+            </div>
+            <div className="flex gap-3 overflow-x-auto">
+              {focusHours.map(f => (
+                <motion.div
+                  key={f.hour}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex-shrink-0 bg-background-elevated rounded-lg p-3 text-center min-w-[80px]"
+                >
+                  <div className="text-lg font-bold text-accent-primary">{f.hour}:00</div>
+                  <div className="text-text-muted text-sm">{Math.round(f.count / 60)}h deep work</div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-background-card border border-border rounded-xl p-4"
+      >
+        <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Sessions</h2>
+        <div className="space-y-3">
+          <AnimatePresence mode="popLayout">
+            {recentEntries.map((entry, index) => (
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ delay: index * 0.05 }}
+                className="flex items-center justify-between p-3 bg-background-elevated rounded-lg"
+              >
+                <div>
+                  <div className="text-text-primary font-medium">{entry.description || 'Untitled'}</div>
+                  <div className="text-text-muted text-sm">
+                    {new Date(entry.start_time).toLocaleTimeString()} • {entry.duration_minutes} min
+                    {entry.is_deep_work && <span className="ml-2 text-accent-primary">Deep Work 🔥</span>}
+                  </div>
+                </div>
+                {entry.is_deep_work ? <Zap size={20} className="text-accent-warning" /> : <Coffee size={20} className="text-text-muted" />}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {recentEntries.length === 0 && <p className="text-text-muted text-center py-4">No sessions yet</p>}
+        </div>
+      </motion.div>
+    </div>
+  )
+}

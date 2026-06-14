@@ -1,1 +1,0 @@
-# Chat (ARIA) API routes

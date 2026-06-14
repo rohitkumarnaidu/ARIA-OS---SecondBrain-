@@ -1,1 +1,0 @@
-# Project Pydantic schemas

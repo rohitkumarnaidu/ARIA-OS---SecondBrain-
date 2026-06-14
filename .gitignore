@@ -7,7 +7,8 @@ node_modules/
 /coverage
 
 # Next.js
-/.next/
+.next/
+**/.next/
 /out/
 
 # Production
@@ -69,3 +70,6 @@ pids
 # Temporary files
 *.tmp
 *.temp
+
+# Large docs
+*.docx
