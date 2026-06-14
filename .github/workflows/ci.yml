@@ -234,7 +234,7 @@ jobs:
       - name: OSSF Scorecard
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         continue-on-error: true
-        uses: ossf/scorecard-action@v2.4.0
+        uses: ossf/scorecard-action@v2.4.3
         with:
           results_file: results.sarif
           results_format: sarif
