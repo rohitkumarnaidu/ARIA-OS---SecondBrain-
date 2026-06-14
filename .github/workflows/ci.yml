@@ -168,7 +168,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build backend image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: apps/api
           target: production
@@ -176,7 +176,7 @@ jobs:
           tags: secondbrain-api:ci
 
       - name: Build scheduler image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: services/scheduler
           target: production
@@ -184,7 +184,7 @@ jobs:
           tags: secondbrain-scheduler:ci
 
       - name: Build frontend image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: apps/web
           target: production
