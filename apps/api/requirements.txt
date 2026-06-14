@@ -13,7 +13,7 @@ supabase==2.3.4
 anthropic==0.18.0
 requests==2.31.0
 beautifulsoup4==4.15.0
-youtube-transcript-api==0.6.2
+youtube-transcript-api==1.2.4
 schedule==1.2.1
 pytz==2024.1
 redis==5.0.1
