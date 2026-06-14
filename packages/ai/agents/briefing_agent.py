@@ -1,13 +1,14 @@
-from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from datetime import datetime
+from typing import Dict, Any
 from config.core.supabase import get_supabase_client
+from ai.client import llm
+from ai.prompt_loader import prompts
 
 
 async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
     supabase = get_supabase_client()
 
     today = datetime.now().date().isoformat()
-    tomorrow = (datetime.now() + timedelta(days=1)).date().isoformat()
 
     tasks_resp = supabase.from_("tasks").select("*").eq("user_id", user_id).execute()
     goals_resp = (
@@ -21,7 +22,7 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
         supabase.from_("courses").select("*").eq("user_id", user_id).execute()
     )
     sleep_resp = (
-        supabase.from_("sleep_entries")
+        supabase.from_("sleep_logs")
         .select("*")
         .eq("user_id", user_id)
         .gte("date", today)
@@ -46,87 +47,50 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
 
     sleep_score = 70
     if sleeps:
-        avg_quality = sum(s.get("quality", 70) for s in sleeps) / len(sleeps)
+        avg_quality = sum(t.get("quality", 70) for t in sleeps) / len(sleeps)
         sleep_score = int(avg_quality)
 
-    course_target = 0
-    if courses:
-        for course in courses:
-            if course.get("status") == "in_progress" and course.get("target_date"):
-                days_left = (
-                    datetime.fromisoformat(course["target_date"]) - datetime.now()
-                ).days
-                if days_left > 0:
-                    remaining = course.get("progress", 0)
-                    course_target += max(0, remaining / days_left)
-        course_target = int(course_target)
+    completed = len([t for t in tasks if t.get("status") == "completed"])
+    total_tasks = len(tasks)
+    productivity_score = int((completed / total_tasks * 50 if total_tasks else 0) + (sleep_score / 100 * 30))
 
-    productivity_score = calculate_productivity_score(tasks, sleep_score)
+    briefing_prompt = prompts.get_agent("briefing_agent")
+    if briefing_prompt:
+        system_prompt = briefing_prompt.system_prompt
+        user_prompt = (
+            f"Generate a daily briefing with this context:\n"
+            f"- {len(pending_tasks)} pending tasks, {len(goals)} active goals\n"
+            f"- Sleep score: {sleep_score}/100\n"
+            f"- {len(courses)} courses\n"
+            f"- Top tasks: {[t['title'] for t in top_3_tasks[:3]]}\n"
+            f"- Goals: {[g['title'] for g in goals[:3]]}\n"
+            f"Return JSON with: greeting, focus_today, task_reminder, tone, timestamp."
+        )
+    else:
+        system_prompt = "You are ARIA, a personal AI productivity assistant. Be concise and motivating."
+        user_prompt = (
+            f"User has {len(pending_tasks)} pending tasks, {len(goals)} active goals, "
+            f"sleep score {sleep_score}/100, {len(courses)} courses. "
+            f"Top tasks: {[t['title'] for t in top_3_tasks[:3]]}. "
+            f"Generate a brief JSON response with: aria_pick (title and reason), "
+            f"productivity_tip, and focus_area."
+        )
+
+    ai_response = await llm.generate_json(user_prompt, system=system_prompt)
 
     brief = {
         "generated_at": datetime.now().isoformat(),
         "top_3_tasks": [
-            {
-                "title": t.get("title"),
-                "priority": t.get("priority"),
-                "estimated_minutes": t.get("estimated_minutes"),
-            }
+            {"title": t.get("title"), "priority": t.get("priority"), "estimated_minutes": t.get("estimated_minutes")}
             for t in top_3_tasks
         ],
         "sleep_score": sleep_score,
         "productivity_score": productivity_score,
-        "course_target_minutes": course_target,
-        "active_goals": [
-            {"title": g.get("title"), "progress": g.get("progress", 0)}
-            for g in goals[:3]
-        ],
-        "aria_pick": generate_aria_pick(top_3_tasks, goals, courses, sleep_score),
+        "active_goals": [{"title": g.get("title"), "progress": g.get("progress", 0)} for g in goals[:3]],
+        "aria_pick": ai_response.get("aria_pick", {"title": top_3_tasks[0]["title"] if top_3_tasks else "Start your day", "reason": "Focus on what matters most"}),
+        "productivity_tip": ai_response.get("productivity_tip", "Break big tasks into smaller chunks"),
+        "focus_area": ai_response.get("focus_area", "Clear your pending tasks first"),
     }
 
-    supabase.from_("daily_briefings").insert(
-        {
-            "user_id": user_id,
-            "date": today,
-            "data": brief,
-        }
-    ).execute()
-
+    supabase.from_("daily_briefings").insert({"user_id": user_id, "date": today, "data": brief}).execute()
     return brief
-
-
-def calculate_productivity_score(tasks: List[Dict], sleep_score: int) -> int:
-    if not tasks:
-        return 50
-
-    completed = len([t for t in tasks if t.get("status") == "completed"])
-    total = len(tasks)
-    task_score = (completed / total) * 50 if total > 0 else 0
-
-    sleep_factor = (sleep_score / 100) * 30
-
-    pending = len([t for t in tasks if t.get("status") == "pending"])
-    streak_factor = max(0, 20 - (pending * 2))
-
-    score = int(task_score + sleep_factor + streak_factor)
-    return min(100, max(0, score))
-
-
-def generate_aria_pick(
-    tasks: List[Dict], goals: List[Dict], courses: List[Dict], sleep_score: int
-) -> Dict[str, str]:
-    if not tasks:
-        return {
-            "title": "Add your first task",
-            "reason": "Start building your productivity system",
-        }
-
-    top_task = tasks[0]
-
-    if sleep_score < 60:
-        reason = "Your sleep score is low. Focus on lighter tasks today."
-    elif top_task.get("priority") == "urgent":
-        reason = "This is urgent and needs your immediate attention."
-    else:
-        reason = f"Completing this will move you closer to your goals."
-
-    return {"title": top_task.get("title"), "reason": reason}

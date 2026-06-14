@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from config.core.supabase import get_supabase_client
+from ai.client import llm
+from ai.prompt_loader import prompts
 
 
 CATEGORIES = {
@@ -15,124 +17,58 @@ CATEGORIES = {
 
 async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
     supabase = get_supabase_client()
-
-    user_resp = (
-        supabase.from_("users").select("skills, interests").eq("id", user_id).execute()
-    )
+    user_resp = supabase.from_("users").select("skills, interests").eq("id", user_id).execute()
     user_data = user_resp.data[0] if user_resp.data else {}
     user_skills = user_data.get("skills", [])
     user_interests = user_data.get("interests", [])
 
-    opportunities = scan_all_categories(user_skills, user_interests)
+    opp_prompt = prompts.get_agent("opportunity_radar_agent")
+    if opp_prompt:
+        system_prompt = opp_prompt.system_prompt
+        user_prompt = (
+            f"Scan for opportunities matching:\n"
+            f"Skills: {user_skills}\n"
+            f"Interests: {user_interests}\n"
+            f"Return JSON array of objects with: title, category, url, deadline (ISO date), "
+            f"description, skills_needed (array), match_score (0-100)."
+        )
+    else:
+        system_prompt = "You are a career opportunity scout for CS students. Return only valid JSON."
+        user_prompt = (
+            f"Student skills: {user_skills}, interests: {user_interests}. "
+            f"Suggest 5 relevant opportunities (internships, hackathons, open source programs). "
+            f"Return JSON array of objects with: title, category, url, deadline (ISO date 30-90 days from now), "
+            f"description, skills_needed (array), match_score (0-100)."
+        )
 
-    scored_opportunities = []
-    for opp in opportunities:
-        score = calculate_match_score(opp, user_skills, user_interests)
-        opp["match_score"] = score
-        if score >= 40:
-            scored_opportunities.append(opp)
+    opportunities = await llm.generate_json(user_prompt, system=system_prompt)
 
-    scored_opportunities.sort(
-        key=lambda x: (x.get("match_score", 0), x.get("deadline_priority", 0)),
-        reverse=True,
-    )
+    opp_list = opportunities if isinstance(opportunities, list) else opportunities.get("opportunities", [])
+    if not opp_list:
+        opp_list = scan_default_opportunities(user_skills)
 
-    for opp in scored_opportunities[:20]:
+    for opp in opp_list:
         opp["user_id"] = user_id
         opp["discovered_at"] = datetime.now().isoformat()
         supabase.from_("opportunities").insert(opp).execute()
 
-    return scored_opportunities[:10]
+    return opp_list[:10]
 
 
-def scan_all_categories(
-    skills: List[str], interests: List[str]
-) -> List[Dict[str, Any]]:
-    opportunities = []
+def scan_default_opportunities(skills: List[str]) -> List[Dict[str, Any]]:
     now = datetime.now()
-
-    mock_opportunities = [
-        {
-            "title": "Google Summer of Code 2026",
-            "category": "open_source",
-            "url": "https://summerofcode.withgoogle.com/",
-            "deadline": (now + timedelta(days=60)).isoformat(),
-            "description": "Get paid to contribute to open source",
-            "skills_needed": ["Python", "Java", "Go"],
-        },
-        {
-            "title": "MLH Fellowship",
-            "category": "open_source",
-            "url": "https://mlh.io",
-            "deadline": (now + timedelta(days=30)).isoformat(),
-            "description": "Remote fellowship for developers",
-            "skills_needed": ["JavaScript", "Python", "React"],
-        },
-        {
-            "title": "Startup India Fellowship",
-            "category": "startup_competitions",
-            "url": "https://startupindia.gov.in",
-            "deadline": (now + timedelta(days=45)).isoformat(),
-            "description": "Fellowship for student entrepreneurs",
-            "skills_needed": ["Business", "Tech"],
-        },
-        {
-            "title": "Microsoft Explore Internship",
-            "category": "internships",
-            "url": "https://careers.microsoft.com",
-            "deadline": (now + timedelta(days=20)).isoformat(),
-            "description": "Summer internship for students",
-            "skills_needed": ["C++", "Python", "Problem Solving"],
-        },
-        {
-            "title": "Devfolio Hackathon Season",
-            "category": "hackathons",
-            "url": "https://devfolio.co",
-            "deadline": (now + timedelta(days=15)).isoformat(),
-            "description": "Monthly hackathons with prizes",
-            "skills_needed": ["Any"],
-        },
+    return [
+        {"title": "Google Summer of Code 2026", "category": "open_source", "url": "https://summerofcode.withgoogle.com/",
+         "deadline": (now + timedelta(days=60)).isoformat(), "description": "Get paid to contribute to open source",
+         "skills_needed": ["Python", "Java", "Go"], "match_score": 80},
+        {"title": "MLH Fellowship", "category": "open_source", "url": "https://mlh.io",
+         "deadline": (now + timedelta(days=30)).isoformat(), "description": "Remote fellowship for developers",
+         "skills_needed": ["JavaScript", "Python", "React"], "match_score": 75},
+        {"title": "Microsoft Explore Internship", "category": "internships", "url": "https://careers.microsoft.com",
+         "deadline": (now + timedelta(days=20)).isoformat(), "description": "Summer internship for students",
+         "skills_needed": ["C++", "Python", "Problem Solving"], "match_score": 85},
     ]
 
-    for opp in mock_opportunities:
-        if (
-            any(
-                skill.lower() in [s.lower() for s in opp["skills_needed"]]
-                for skill in skills
-            )
-            or not skills
-        ):
-            opportunities.append(opp)
-        elif any(
-            interest.lower() in opp["description"].lower() for interest in interests
-        ):
-            opportunities.append(opp)
 
-    return opportunities
-
-
-def calculate_match_score(
-    opp: Dict[str, Any], user_skills: List[str], user_interests: List[str]
-) -> float:
-    score = 50
-
-    required_skills = [s.lower() for s in opp.get("skills_needed", [])]
-    if required_skills and required_skills != ["any"]:
-        matched = sum(1 for skill in user_skills if skill.lower() in required_skills)
-        skill_match = (matched / len(required_skills)) * 40 if required_skills else 0
-        score = min(100, score + skill_match)
-
-    deadline = (
-        datetime.fromisoformat(opp.get("deadline", ""))
-        if opp.get("deadline")
-        else datetime.now() + timedelta(days=30)
-    )
-    days_until = (deadline - datetime.now()).days
-    if days_until < 2:
-        score += 30
-    elif days_until < 7:
-        score += 20
-    elif days_until < 14:
-        score += 10
-
-    return min(100, score)
+def calculate_match_score(opp: Dict[str, Any], user_skills: List[str], user_interests: List[str]) -> float:
+    return opp.get("match_score", 50)
