@@ -1,6 +1,7 @@
 import '@/app/globals.css'
 import type { Metadata } from 'next'
 import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 const syne = Syne({
   subsets: ['latin'],
@@ -35,6 +36,19 @@ export default function RootLayout({
     <html lang="en" className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}>
       <body className="font-body antialiased">
         {children}
+        <Toaster
+          position="bottom-right"
+          duration={4000}
+          toastOptions={{
+            style: {
+              background: '#13151A',
+              color: '#F0F2F5',
+              border: '1px solid #2A2E3F',
+              borderRadius: '12px',
+              fontSize: '14px',
+            },
+          }}
+        />
       </body>
     </html>
   )

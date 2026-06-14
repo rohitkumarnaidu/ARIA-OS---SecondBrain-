@@ -159,6 +159,9 @@ module.exports = {
         'popover': '1040',
         'tooltip': '1050',
       },
+      height: {
+        'input': '44px',
+      },
       transitionDuration: {
         'fast': '150ms',
         'DEFAULT': '200ms',
