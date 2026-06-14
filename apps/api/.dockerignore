@@ -1,0 +1,45 @@
+# =============================================================================
+# Second Brain OS — Backend .dockerignore
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile
+.dockerignore
