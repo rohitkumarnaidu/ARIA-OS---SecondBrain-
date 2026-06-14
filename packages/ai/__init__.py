@@ -1,1 +1,1 @@
-from . import agents
+from . import agents as agents
