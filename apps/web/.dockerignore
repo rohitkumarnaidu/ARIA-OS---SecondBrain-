@@ -1,0 +1,52 @@
+# =============================================================================
+# Second Brain OS — Frontend .dockerignore
+# =============================================================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Testing
+coverage/
+.nyc_output/
+__tests__/
+e2e/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Static analysis
+.eslintcache
+tsconfig.tsbuildinfo
+
+# Playwright
+playwright-report/
+test-results/
