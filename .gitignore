@@ -74,6 +74,12 @@ pids
 # Large docs
 *.docx
 
+# Tool config
+.opencode/
+
+# Coverage output
+.coverage
+
 # Graphify - knowledge graph output & temp files
 graphify-out/
 .graphify_python
