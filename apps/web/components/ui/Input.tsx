@@ -1,18 +1,30 @@
 'use client'
 
-import { InputHTMLAttributes, forwardRef, useId } from 'react'
+import { InputHTMLAttributes, forwardRef, useId, useState, useEffect } from 'react'
 import { clsx } from 'clsx'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
   helperText?: string
+  debounceMs?: number
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, id, required, ...props }, ref) => {
+  ({ className, label, error, helperText, id, required, debounceMs, onChange, ...props }, ref) => {
     const genId = useId()
     const inputId = id || genId
+    const [pendingValue, setPendingValue] = useState('')
+
+    useEffect(() => {
+      if (debounceMs === undefined || !onChange) return
+      const timer = setTimeout(() => {
+        onChange({
+          target: { value: pendingValue },
+        } as React.ChangeEvent<HTMLInputElement>)
+      }, debounceMs)
+      return () => clearTimeout(timer)
+    }, [pendingValue, debounceMs, onChange])
 
     return (
       <div className="space-y-1.5">
@@ -36,6 +48,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             error ? 'border-accent-error focus:ring-accent-error' : 'border-border hover:border-border-light',
             className,
           )}
+          onChange={(e) => {
+            setPendingValue(e.target.value)
+            if (debounceMs === undefined) {
+              onChange?.(e)
+            }
+          }}
           {...props}
         />
         {error && (
