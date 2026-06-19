@@ -65,6 +65,57 @@
 
 ---
 
+## Frontend Security Layers
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+flowchart LR
+    L1["TLS / HTTPS"] --> L2["Content Security Policy"]
+    L2 --> L3["Input Sanitization"]
+    L3 --> L4["Authentication (JWT)"]
+    L4 --> L5["CSRF Protection"]
+    L5 --> L6["RLS Policies"]
+    L6 --> L7["Audit Logging"]
+
+    L1 -.->|"Layer 1: Transport"| T1["Encrypt all traffic<br/>HSTS headers"]
+    L2 -.->|"Layer 2: Browser"| T2["Restrict script sources<br/>Block inline eval"]
+    L3 -.->|"Layer 3: Input"| T3["React auto-escaping<br/>Sanitize rich text"]
+    L4 -.->|"Layer 4: Identity"| T4["Short-lived tokens<br/>HttpOnly cookies"]
+    L5 -.->|"Layer 5: Request"| T5["SameSite cookies<br/>Anti-forgery tokens"]
+    L6 -.->|"Layer 6: Data"| T6["Supabase RLS<br/>user_id filtering"]
+    L7 -.->|"Layer 7: Audit"| T7["Request logging<br/>Anomaly detection"]
+
+    style L1 fill:#6366F1,color:#F1F5F9
+    style L2 fill:#818CF8,color:#F1F5F9
+    style L3 fill:#6366F1,color:#F1F5F9
+    style L4 fill:#818CF8,color:#F1F5F9
+    style L5 fill:#6366F1,color:#F1F5F9
+    style L6 fill:#818CF8,color:#F1F5F9
+    style L7 fill:#00FFA3,color:#0A0B0F
+    style T1 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T2 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T3 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T4 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T5 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T6 fill:#13151A,color:#94A3B8,stroke:#334155
+    style T7 fill:#13151A,color:#94A3B8,stroke:#334155
+```
+
 ## 2. Content Security Policy
 
 ### 2.1 Current CSP Directives

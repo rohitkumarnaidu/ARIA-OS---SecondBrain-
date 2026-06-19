@@ -10,6 +10,47 @@ Accepted
 The system has multiple AI agents: Briefing Agent (generates daily briefings), Radar Agent (scans for opportunities), Memory Agent (summarizes and embeds), Tutor Agent (explains concepts), and Habit Coach Agent. The options were to deploy each as a separate microservice (containerized, independently scaled) or run them as in-process async functions within the FastAPI application.
 
 ## Decision
+
+```mermaid
+graph TD
+    subgraph INPROC["In-Process Agents (Chosen)"]
+        API[FastAPI Route Handlers]
+        A1[Briefing Agent]
+        A2[Radar Agent]
+        A3[Memory Agent]
+        A4[Tutor Agent]
+        A5[Habit Coach]
+
+        API -->|Direct async call| A1
+        API -->|Direct async call| A2
+        API -->|Direct async call| A3
+        API -->|Direct async call| A4
+        API -->|Direct async call| A5
+
+        DB[(Supabase)]
+        A1 --> DB
+        A2 --> DB
+        A3 --> DB
+        A4 --> DB
+        A5 --> DB
+    end
+
+    subgraph MICRO["Microservices (Rejected)"]
+        GW[API Gateway]
+        M1[Briefing<br/>Container]
+        M2[Radar<br/>Container]
+        MQ[Message Queue<br/>Redis / RabbitMQ]
+
+        GW -->|HTTP/gRPC| M1
+        GW -->|HTTP/gRPC| M2
+        M1 <--> MQ
+        M2 <--> MQ
+    end
+
+    style INPROC fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style MICRO fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
+```
+
 All agents are implemented as standalone Python async functions in `packages/ai/agents/` and called directly from the FastAPI route handlers in `apps/api/app/api/`. Each agent receives a typed `AgentContext` (user_id, user preferences, tool references) and returns a typed response model. No inter-service communication or message queue is involved.
 
 ## Consequences

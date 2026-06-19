@@ -25,6 +25,47 @@
 
 ---
 
+## Data Fetching Strategy Flow
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+flowchart LR
+    A["Cache Check"] -->|"HIT"| B["Return Cached Data"]
+    A -->|"MISS"| C["SWR Fetch"]
+    C --> D["API / Supabase Request"]
+    D --> E["Validate Response"]
+    E --> F["Update Local Cache"]
+    F --> G["Re-render UI"]
+    E -->|"Error"| H["Show Stale Data / Toast"]
+    D -->|"Realtime"| I["WebSocket Update"]
+    I --> F
+
+    style A fill:#6366F1,color:#F1F5F9,stroke:#818CF8
+    style B fill:#00FFA3,color:#0A0B0F
+    style C fill:#818CF8,color:#F1F5F9
+    style D fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style E fill:#13151A,color:#F1F5F9,stroke:#00FFA3
+    style F fill:#6366F1,color:#F1F5F9
+    style G fill:#00FFA3,color:#0A0B0F
+    style H fill:#EF4444,color:#F1F5F9
+    style I fill:#818CF8,color:#F1F5F9
+```
+
 ## 1. Data Sources Overview
 
 ### 1.1 Source Matrix

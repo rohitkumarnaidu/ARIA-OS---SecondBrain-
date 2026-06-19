@@ -14,6 +14,44 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+flowchart LR
+    subgraph Phase_0["Phase 0: Foundation"]
+        P0["System Pages<br/>Login + Loading"]
+    end
+    subgraph Phase_1["Phase 1: Core Modules"]
+        P1A["Dashboard"]
+        P1B["Tasks"]
+        P1C["Courses"]
+        P1D["Habits"]
+        P1E["Goals"]
+    end
+    subgraph Phase_2["Phase 2: Productivity"]
+        P2A["Sleep"]
+        P2B["Income"]
+        P2C["Projects"]
+        P2D["Ideas"]
+        P2E["Resources"]
+    end
+    subgraph Phase_3["Phase 3: Intelligence"]
+        P3A["Opportunities"]
+        P3B["Time Tracking"]
+        P3C["Chat / AI"]
+        P3D["Automation"]
+    end
+    P0 --> P1A & P1B & P1C & P1D & P1E
+    P1A & P1B & P1C & P1D & P1E --> P2A & P2B & P2C & P2D & P2E
+    P2A & P2B & P2C & P2D & P2E --> P3A & P3B & P3C & P3D
+    style P0 fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style Phase_1 fill:#13151A,stroke:#1E293B,color:#F1F5F9
+    style Phase_2 fill:#13151A,stroke:#1E293B,color:#F1F5F9
+    style Phase_3 fill:#13151A,stroke:#1E293B,color:#F1F5F9
+    style P3D fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Executive Summary
 
 ARIA OS ships **18 client-rendered pages** across three categories: **System** (2), **Dashboard** (1), and **Module** (15). Every page follows a consistent template: `'use client'` directive, `useAuth()` hook for session validation, `useState` for local state (or Zustand for tasks), direct Supabase queries (or `fetch` for automation/chat), Framer Motion animations, and design-system component classes. This document specifies the implementation of every page: its components, data flow, state matrix, loading/empty/error/happy paths, and edge cases.

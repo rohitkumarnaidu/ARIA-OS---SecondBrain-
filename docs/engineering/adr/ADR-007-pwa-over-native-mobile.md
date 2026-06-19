@@ -10,6 +10,34 @@ Proposed
 Future mobile access is planned so users can interact with their Second Brain on the go — check tasks, log habits, view briefings, and capture ideas. Options considered: Progressive Web App (PWA), React Native, and Flutter. The primary constraint is that the project is a solo development effort with TypeScript/React on the frontend already.
 
 ## Decision
+
+```mermaid
+graph TD
+    subgraph PWA["PWA (Chosen) - Single Codebase"]
+        FE[next-pwa<br/>Next.js + Service Worker]
+        SW[Service Worker<br/>Offline Cache + Background Sync]
+        WEB[Desktop Web]
+        TAB[Tablet]
+        MOB[Mobile Browser]
+        FE --> SW
+        FE --> WEB
+        FE --> TAB
+        FE --> MOB
+        SW -->|Workbox| CACHE[(IndexedDB<br/>Offline Data)]
+    end
+
+    subgraph NATIVE["React Native / Flutter (Deferred)"]
+        RN[Separate App Repo]
+        APK[Play Store APK]
+        IPA[App Store IPA]
+        PUSH[Push Notifications]
+        NATIVE_API[Native APIs<br/>Camera, GPS, Biometrics]
+    end
+
+    style PWA fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style NATIVE fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
+```
+
 Implement the existing Next.js application as a Progressive Web App using `next-pwa` or the built-in PWA capabilities of Next.js. The web app already uses responsive Tailwind layouts, so mobile viewport support is already partially in place. A service worker will be added for offline caching of static assets and API responses. Native apps (React Native or Flutter) are deferred until post-MVP validation.
 
 ## Consequences

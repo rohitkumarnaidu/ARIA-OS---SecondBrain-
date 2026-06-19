@@ -14,6 +14,52 @@
 
 ---
 
+### Architecture Diagram — Notification Delivery Flow
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+sequenceDiagram
+    participant S as Source<br/>(Cron / AI / Route)
+    participant Q as Notification Queue<br/>(In-Memory / Celery)
+    participant NE as Notification Engine
+    participant DB as Supabase PostgreSQL
+    participant Push as Push Service<br/>(FCM / APNs)
+    participant Email as Email Service<br/>(Resend)
+    participant InApp as In-App Center
+    S->>Q: Enqueue(notif_payload)
+    Q->>NE: Dequeue Batch
+    NE->>DB: Store Notification
+    NE->>Push: Send Push (P0/P1)
+    NE->>Email: Send Email (P2 Digests)
+    NE->>InApp: Deliver In-App Toast + Bell
+    Push-->>NE: Delivery Receipt
+    Email-->>NE: Delivery Receipt
+    InApp-->>NE: Read Receipt
+    NE->>DB: Update Status<br/>(delivered / read / dismissed)
+    Note over NE: Respect quiet hours<br/>Rate limit per priority<br/>Retry on failure (3x backoff)
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose

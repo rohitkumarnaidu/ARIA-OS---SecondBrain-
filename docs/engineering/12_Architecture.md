@@ -2,72 +2,48 @@
 
 ## System Overview
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Frontend (Next.js)                       │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐            │
-│  │Dashboard│  │ Tasks   │  │ Courses │  │  Chat   │            │
-│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘            │
-│       │            │            │            │                  │
-│  ┌────┴────────────┴────────────┴────────────┴────┐            │
-│  │              State (Zustand + React Query)    │            │
-│  └─────────────────────┬────────────────────────┘            │
-└────────────────────────┼───────────────────────────────────────┘
-                         │ API Calls
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     Backend (FastAPI)                           │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    API Layer                             │   │
-│  │   /tasks, /courses, /goals, /projects, /chat, etc.      │   │
-│  └─────────────────────────┬───────────────────────────────┘   │
-│                            │                                    │
-│  ┌─────────────────────────┴───────────────────────────────┐   │
-│  │                 Service Layer                            │   │
-│  │   TaskService, CourseService, GoalService, etc.         │   │
-│  └─────────────────────────┬───────────────────────────────┘   │
-│                            │                                    │
-│  ┌─────────────────────────┴───────────────────────────────┐   │
-│  │                 Database Layer (Supabase)                │   │
-│  │   PostgreSQL + RLS + Realtime + Edge Functions          │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    AI Layer (Dual Mode)                        │
-│                                                                 │
-│   ┌──────────────────┐        ┌──────────────────┐            │
-│   │    Ollama        │        │  Claude API      │            │
-│   │  (Local LLM)     │───────▶│  (Cloud Fallback)│            │
-│   │  Llama 3.1      │        │                  │            │
-│   └──────────────────┘        └──────────────────┘            │
-│                                                                 │
-│   Used for: Chat, Summaries, Weekly Reviews, Opportunity      │
-│   parsing, Roadmap generation                                   │
-└─────────────────────────────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                Scheduled Agents (Edge Functions)              │
-│                                                                 │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│   │ Daily        │  │ Missed Task  │  │ Opportunity  │        │
-│   │ Briefing    │  │ Checker      │  │ Radar        │        │
-│   │ 7 AM        │  │ Every 15 min │  │ 6 AM         │        │
-│   └──────────────┘  └──────────────┘  └──────────────┘        │
-│                                                                 │
-│   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│   │ Roadmap      │  │ Weekly       │  │ Sleep        │        │
-│   │ Update      │  │ Review       │  │ Reminder     │        │
-│   │ Sunday 9 AM │  │ Sunday 8 PM  │  │ 9:30 PM      │        │
-│   └──────────────┘  └──────────────┘  └──────────────┘        │
-│                                                                 │
-│   ┌──────────────┐  ┌──────────────┐                           │
-│   │ Habit Miss   │  │ Course Nudge │                           │
-│   │ Midnight     │  │ 6 PM         │                           │
-│   └──────────────┘  └──────────────┘                           │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Frontend["Frontend (Next.js)"]
+        direction LR
+        D1[Dashboard] --> State[Zustand + React Query]
+        T1[Tasks] --> State
+        C1[Courses] --> State
+        CH[Chat] --> State
+    end
+
+    State -->|API Calls| API
+
+    subgraph Backend["Backend (FastAPI)"]
+        API[API Layer<br/>/tasks, /courses, /goals, /chat]
+        API --> SVC[Service Layer<br/>TaskService, CourseService, GoalService]
+        SVC --> DB[Database Layer<br/>Supabase: PostgreSQL + RLS + Realtime]
+    end
+
+    DB --> AI
+
+    subgraph AI["AI Layer (Dual Mode)"]
+        O[Ollama<br/>(Local LLM - Llama 3.1)] -->|Fallback| C[Claude API<br/>(Cloud)]
+    end
+
+    AI --> SA
+
+    subgraph SA["Scheduled Agents (Edge Functions)"]
+        direction LR
+        SB[Daily Briefing<br/>7 AM]
+        MT[Missed Task Checker<br/>Every 15 min]
+        OR[Opportunity Radar<br/>6 AM]
+        RU[Roadmap Update<br/>Sunday 9 AM]
+        WR[Weekly Review<br/>Sunday 8 PM]
+        SR[Sleep Reminder<br/>9:30 PM]
+        HM[Habit Miss Checker<br/>Midnight]
+        CN[Course Nudge<br/>6 PM]
+    end
+
+    style Frontend fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style Backend fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
+    style AI fill:#1a1a2e,stroke:#818CF8,color:#F1F5F9
+    style SA fill:#1a1a2e,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ---
@@ -159,94 +135,164 @@
 
 ### User Creates Task
 
-```
-1. User fills form in frontend
-2. POST /api/tasks
-3. TaskService validates + creates in Supabase
-4. Realtime pushes to all connected clients
-5. Task appears in all lists instantly
-6. If due_date <= 2h away → push notification
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant API as FastAPI
+    participant SVC as TaskService
+    participant DB as Supabase
+    participant RT as Realtime
+
+    U->>FE: Fill task form
+    FE->>API: POST /api/tasks
+    API->>SVC: Validate + Create
+    SVC->>DB: INSERT tasks
+    DB-->>RT: Broadcast change
+    RT-->>FE: Live update
+    FE-->>U: Task appears in lists
+    alt due_date <= 2h
+        DB-->>U: Push notification
+    end
 ```
 
 ### User Chats with ARIA
 
-```
-1. User types message in chat
-2. POST /api/chat
-3. Context Builder serializes: profile, tasks, goals, courses, sleep, memory
-4. Routes to Ollama (primary) or Claude API (fallback)
-5. AI returns response + optional action JSON blocks
-6. Action executor processes: add_task, update_course, save_idea, etc.
-7. Memory writer extracts facts/preferences from conversation
-8. Response sent to user, message saved to chat_messages
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant API as Next.js API Route
+    participant CB as Context Builder
+    participant OLL as Ollama (Primary)
+    participant CLA as Claude API (Fallback)
+    participant AE as Action Executor
+    participant MW as Memory Writer
+    participant DB as Supabase
+
+    U->>FE: Type message in chat
+    FE->>API: POST /api/chat {message}
+    API->>CB: Serialize user context
+    CB->>DB: Fetch profile, tasks, goals, courses, sleep, memory
+    DB-->>CB: User data
+    CB-->>API: Context assembled
+
+    alt Ollama available
+        API->>OLL: Generate response
+        OLL-->>API: Response + action JSON
+    else Fallback
+        API->>CLA: Generate response
+        CLA-->>API: Response + action JSON
+    end
+
+    API->>AE: Parse action blocks
+    AE->>DB: add_task / update_course / save_idea
+    API->>MW: Extract facts & preferences
+    MW->>DB: Upsert to aria_memory
+    API->>DB: Save to chat_messages
+    API-->>FE: {response, action_taken}
+    FE-->>U: Display response
 ```
 
 ### Morning Briefing Generation
 
-```
-1. pg_cron triggers daily-briefing Edge Function at 01:30 UTC (7 AM IST)
-2. Loads: tasks due today, overdue tasks, active courses, goals, sleep, opportunities
-3. Calls Claude API with Daily Briefing system prompt
-4. Generates 6-section briefing: Focus, Opportunities, Course Target, Roadmap, Top Pick, Skip
-5. Saves to daily_briefings table
-6. Sends push notification + in-app banner
-7. (Optional) Sends email via Resend
+```mermaid
+sequenceDiagram
+    participant PG as pg_cron
+    participant EF as Edge Function
+    participant DB as Supabase
+    participant CLA as Claude API
+    participant NOT as Notification System
+    participant RES as Resend (Optional)
+
+    PG->>EF: Trigger 01:30 UTC (7 AM IST)
+    EF->>DB: Load tasks, courses, goals, sleep, opportunities
+    DB-->>EF: User data
+    EF->>CLA: Daily Briefing system prompt + context
+    CLA-->>EF: 6-section briefing JSON
+    EF->>DB: Save to daily_briefings
+    EF->>NOT: Send push + in-app banner
+    alt Email enabled
+        EF->>RES: Send email digest
+    end
 ```
 
 ### Opportunity Radar Scan
 
-```
-1. pg_cron triggers opp-radar Edge Function at 00:30 UTC (6 AM IST)
-2. Fetches all user profiles with skills and preferences
-3. Calls Query Generator (Claude) → produces 8 search queries
-4. For each query: calls Brave Search API
-5. For each result: calls Opportunity Parser (Claude) → extracts structured data
-6. Filters: only saves if match_score >= 50
-7. Inserts to opportunities table
-8. If deadline < 48h away → immediate push notification
+```mermaid
+sequenceDiagram
+    participant PG as pg_cron
+    participant EF as Edge Function
+    participant DB as Supabase
+    participant CLA as Claude API
+    participant BRAVE as Brave Search
+    participant NOT as Push Notification
+
+    PG->>EF: Trigger 00:30 UTC (6 AM IST)
+    EF->>DB: Fetch user profiles + skills + preferences
+    DB-->>EF: User profiles
+    EF->>CLA: Generate 8 search queries
+    CLA-->>EF: Query list
+
+    loop For each query
+        EF->>BRAVE: Execute search
+        BRAVE-->>EF: Search results
+        EF->>CLA: Parse opportunity data
+        CLA-->>EF: Structured opportunity
+        alt match_score >= 50
+            EF->>DB: INSERT opportunity
+            alt deadline < 48h
+                EF->>NOT: Immediate push
+            end
+        end
+    end
 ```
 
 ### Missed Task Auto-Reschedule
 
-```
-1. pg_cron triggers task-checker every 15 minutes
-2. Finds: due_date < now() AND status NOT IN ('done','archived')
-3. For each missed task:
-   a. Increment missed_count
-   b. Set status='missed', rescheduled_from=original_due_date
-   c. Set scheduled_start = now() + 2 hours
-   d. Send push notification
-   e. If missed_count >= 2 → send email via Resend
-   f. If missed_count >= 3 AND priority='high' → send SMS via Twilio
+```mermaid
+flowchart TD
+    PG[pg_cron triggers every 15 min] --> CHECK{Find tasks where<br/>due_date < now()<br/>AND status NOT IN<br/>done, archived}
+
+    CHECK -->|Missed task found| PROC[For each missed task]
+    PROC --> INC[Increment missed_count]
+    INC --> STATUS[Set status = missed<br/>Set rescheduled_from = original_due_date]
+    STATUS --> RESCHED[Set scheduled_start = now + 2h]
+    RESCHED --> NOTIFY[Send Push Notification]
+
+    NOTIFY --> LEVEL2{missed_count >= 2?}
+    LEVEL2 -->|Yes| EMAIL[Send Email via Resend]
+    LEVEL2 -->|No| DONE
+
+    EMAIL --> LEVEL3{missed_count >= 3<br/>AND priority = high?}
+    LEVEL3 -->|Yes| SMS[Send SMS via Twilio]
+    LEVEL3 -->|No| DONE
+
+    DONE([End])
 ```
 
 ---
 
 ## Deployment Architecture
 
-```
-                          ┌─────────────────┐
-                          │   GitHub Repo   │
-                          │  (Source of     │
-                          │   Truth)        │
-                          └────────┬────────┘
-                                   │ git push
-                                   ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   User Browser  │────▶│     Vercel      │◀────│   Supabase      │
-│   (PWA + HTTPS) │◀────│  (Next.js App)  │────▶│  (DB + Auth +   │
-│   Desktop/Mobile│     │  CDN + SSR +    │     │   Edge Fn)      │
-└─────────────────┘     │  Serverless     │     └────────┬────────┘
-                        └─────────────────┘              │
-                               │                         │
-                               ▼                         ▼
-                        ┌─────────────────┐     ┌─────────────────┐
-                        │    Ollama       │     │  External APIs  │
-                        │  (Local LLM)    │     │  Brave Search   │
-                        │  Dev machine    │     │  Google APIs    │
-                        └─────────────────┘     │  Resend         │
-                                                 │  Twilio         │
-                                                 └─────────────────┘
+```mermaid
+graph LR
+    GH[GitHub Repo<br/>Source of Truth] -->|git push| V[Vercel<br/>Next.js App<br/>CDN + SSR + Serverless]
+
+    UB[User Browser<br/>PWA + HTTPS<br/>Desktop / Mobile] <--> V
+    V <--> S[Supabase<br/>DB + Auth + Edge Fn]
+
+    V -->|AI Requests| O[Ollama<br/>Local LLM<br/>Dev Machine]
+    V --> EA[External APIs<br/>Brave Search<br/>Google APIs<br/>Resend<br/>Twilio]
+
+    S --> EA
+
+    style GH fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style UB fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style V fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style S fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style O fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style EA fill:#13151A,stroke:#94A3B8,color:#F1F5F9
 ```
 
 **Hosting Strategy:**
@@ -369,63 +415,73 @@ CREATE POLICY "users_own_data" ON table_name
 
 ## Component Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         Second Brain OS                             │
-│                                                                     │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                     Presentation Layer                       │   │
-│  │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌─────────┐ │   │
-│  │  │Pages │ │Compts│ │Layout│ │Nav   │ │Modals│ │Providers│ │   │
-│  │  │15    │ │Cards │ │Shell │ │Bar   │ │      │ │Theme    │ │   │
-│  │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └─────────┘ │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                     State Layer                              │   │
-│  │  ┌───────────────────────────────────────────────────────┐  │   │
-│  │  │   Zustand Stores (global UI state)                    │  │   │
-│  │  │   React Query Cache (server state)                    │  │   │
-│  │  │   IndexedDB (offline persistence)                     │  │   │
-│  │  └───────────────────────────────────────────────────────┘  │   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                     API Layer                                │   │
-│  │  ┌───────────┐ ┌──────────┐ ┌─────────┐ ┌────────────────┐ │   │
-│  │  │REST Routes│ │WebSocket │ │Auth     │ │Realtime Subs  │ │   │
-│  │  │/api/*     │ │/ws/aria  │ │Middleware│ │supabase-realtime│ │   │
-│  │  └───────────┘ └──────────┘ └─────────┘ └────────────────┘ │   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                   Service Layer                              │   │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │   │
-│  │  │TaskSvc   │ │CourseSvc │ │GoalSvc   │ │MemorySvc │      │   │
-│  │  │ProjectSvc│ │IdeaSvc   │ │SleepSvc  │ │ChatSvc   │      │   │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                   AI Layer                                   │   │
-│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐│   │
-│  │  │Context       │ │Ollama Client │ │Claude Client         ││   │
-│  │  │Builder       │ │(primary)     │ │(fallback)            ││   │
-│  │  └──────────────┘ └──────────────┘ └──────────────────────┘│   │
-│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐│   │
-│  │  │Action        │ │Memory Writer │ │LangChain Orchestrator││   │
-│  │  │Executor      │ │              │ │(8 agents)            ││   │
-│  │  └──────────────┘ └──────────────┘ └──────────────────────┘│   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                   Data Layer                                 │   │
-│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐│   │
-│  │  │Supabase DB   │ │Supabase Auth │ │Edge Functions (8)    ││   │
-│  │  │21 tables, RLS│ │Google OAuth  │ │Cron-based agents     ││   │
-│  │  │PostgreSQL    │ │JWT sessions  │ │Deno runtime          ││   │
-│  │  └──────────────┘ └──────────────┘ └──────────────────────┘│   │
-│  └──────────────────────────────────────────────────────────────┘   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph SBO["Second Brain OS"]
+        subgraph PL["Presentation Layer"]
+            P[Pages - 15 Modules]
+            C[Components - Cards]
+            L[Layout - Shell]
+            N[NavBar]
+            M[Modals]
+            PR[Providers - Theme]
+        end
+
+        PL --> SL
+
+        subgraph SL["State Layer"]
+            Z[Zustand Stores<br/>Global UI State]
+            RQ[React Query Cache<br/>Server State]
+            IDB[IndexedDB<br/>Offline Persistence]
+        end
+
+        SL --> AL
+
+        subgraph AL["API Layer"]
+            REST[REST Routes - /api/*]
+            WS[WebSocket - /ws/aria]
+            AM[Auth Middleware]
+            RS[Realtime Subs<br/>supabase-realtime]
+        end
+
+        AL --> SVL
+
+        subgraph SVL["Service Layer"]
+            TSK[TaskSvc]
+            CRS[CourseSvc]
+            GLS[GoalSvc]
+            MMS[MemorySvc]
+            PJS[ProjectSvc]
+            IDS[IdeaSvc]
+            SPS[SleepSvc]
+            CTS[ChatSvc]
+        end
+
+        SVL --> AIL
+
+        subgraph AIL["AI Layer"]
+            CB[Context Builder]
+            OC[Ollama Client<br/>Primary]
+            CC[Claude Client<br/>Fallback]
+            AE[Action Executor]
+            MW[Memory Writer]
+            LO[LangChain Orchestrator<br/>8 Agents]
+        end
+
+        AIL --> DL
+
+        subgraph DL["Data Layer"]
+            SDB[Supabase DB<br/>21 Tables - RLS - PostgreSQL]
+            SA[Supabase Auth<br/>Google OAuth - JWT]
+            EF[Edge Functions<br/>8 Cron Agents - Deno]
+        end
+    end
+
+    style SBO fill:#0A0B0F,stroke:#334155,color:#F1F5F9
+    style PL fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style SL fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style AL fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style SVL fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style AIL fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style DL fill:#13151A,stroke:#94A3B8,color:#F1F5F9
 ```

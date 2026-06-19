@@ -14,6 +14,40 @@
 
 ---
 
+### Architecture Diagram — Data Governance Lifecycle
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+flowchart LR
+    Classify["Data Classification<br/>T1–T4"] --> Secure["Security Controls<br/>RLS · Encryption · Auth"]
+    Secure --> Store["Storage & Retention<br/>21 Tables · 18 Categories"]
+    Store --> Quality["Quality Management<br/>Accuracy · Completeness · Freshness"]
+    Quality --> Audit["Audit & Lineage<br/>Immutable Log · Change Tracking"]
+    Audit --> Retire["Retire & Purge<br/>Defensible Deletion · GDPR Compliance"]
+    Retire -.->|Continuous Feedback| Classify
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS processes **18+ categories of personal data** across a monorepo architecture. This document defines the comprehensive data governance framework covering classification, lifecycle management, quality standards, retention policies, privacy controls, access controls, audit trails, backup/recovery, migration, lineage tracking, and stewardship.

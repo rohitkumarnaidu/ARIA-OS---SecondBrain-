@@ -31,23 +31,36 @@
 
 Second Brain OS manages four distinct categories of state, each with its own tool and persistence strategy:
 
+```mermaid
+graph TD
+    subgraph APP["APPLICATION STATE"]
+        subgraph CLIENT["CLIENT STATE (Zustand + useState)"]
+            TS[Task list cache]
+            US[User profile cache]
+            UI[UI preferences]
+            FORM[Form input values]
+        end
+
+        subgraph SERVER["SERVER STATE (Supabase — Source of Truth)"]
+            DATA[All user data permanently stored]
+            RLS[RLS-enforced per user]
+            RT[Real-time via Supabase Realtime]
+        end
+
+        subgraph URL["URL STATE (useSearchParams)"]
+            PARAMS[URL Parameters & Query Strings]
+        end
+
+        CLIENT --- SYNC[Sync Layer]
+        SERVER --- SYNC
+        SYNC --- URL
+    end
+
+    style APP fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style CLIENT fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style SERVER fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style URL fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         APPLICATION STATE                                │
-│                                                                          │
-│  ┌─────────────────────────┐  ┌──────────────────────────────────────┐  │
-│  │    CLIENT STATE         │  │    SERVER STATE                     │  │
-│  │    (Zustand + useState) │  │    (Supabase — source of truth)     │  │
-│  │                         │  │                                      │  │
-│  │  • Task list cache      │  │  • All user data permanently stored │  │
-│  │  • User profile cache   │  │  • Zustand stores refresh from here │  │
-│  │  • UI preferences       │  │  • RLS-enforced per user            │  │
-│  │  • Form input values    │  │  • Real-time via Supabase Realtime  │  │
-│  └──────────┬──────────────┘  └──────────────────┬───────────────────┘  │
-│             │                                     │                      │
-│  ┌──────────┴──────────────────────────────────────┴──────────────────┐ │
-│  │                    URL STATE (useSearchParams)                      │ │
-│  │                                                                     │ │
 │  │  • Filter selections (/?status=pending&priority=high)               │ │
 │  │  • Pagination (/?page=2&limit=20)                                   │ │
 │  │  • Sort order (/?sort=due_date&order=asc)                           │ │
@@ -1664,130 +1677,123 @@ NEXT_PUBLIC_DEVTOOLS=true npm run dev
 
 ### 13.1 Full State Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         STATE ARCHITECTURE                                  │
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐│
-│  │                        USER INTERACTION                                 ││
-│  │  Click "Complete Task" → Dispatch to store → Optimistic UI update       ││
-│  └────────────────────────────────┬────────────────────────────────────────┘│
-│                                   │                                          │
-│                                   ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐│
-│  │                    STATE MANAGEMENT LAYER                                ││
-│  │                                                                          ││
-│  │  ┌────────────────────┐  ┌────────────────┐  ┌──────────────────────┐  ││
-│  │  │   Zustand Stores   │  │  Local State    │  │  URL State           │  ││
-│  │  │                    │  │                 │  │                      │  ││
-│  │  │  • taskStore       │  │  • Form inputs  │  │  • Filter params     │  ││
-│  │  │  • userStore       │  │  • Modal open   │  │  • Pagination        │  ││
-│  │  │  • preferencesStore│  │  • Tab active   │  │  • Sort order        │  ││
-│  │  │  • toastStore(fut) │  │  • Dropdown open│  │  • Search query      │  ││
-│  │  └────────┬───────────┘  └───────┬────────┘  └──────────┬───────────┘  ││
-│  │           │                      │                      │               ││
-│  └───────────┼──────────────────────┼──────────────────────┼───────────────┘│
-│              │                      │                      │                │
-│              ▼                      ▼                      ▼                │
-│  ┌─────────────────────────────────────────────────────────────────────────┐│
-│  │                     NOTIFICATION LAYER                                  ││
-│  │                                                                          ││
-│  │  Loading === true → Skeleton / Spinner                                   ││
-│  │  Error !== null → Error state with retry                                 ││
-│  │  Data.length === 0 → EmptyState with CTA                                ││
-│  │  Mutation success → Toast notification                                   ││
-│  └─────────────────────────────────────────────────────────────────────────┘│
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐│
-│  │                     PERSISTENCE LAYER                                    ││
-│  │                                                                          ││
-│  │  ┌──────────────────────────┐  ┌──────────────────────────────────────┐ ││
-│  │  │  Supabase PostgreSQL      │  │  localStorage                        │ ││
-│  │  │  (server state, all user  │  │  (preferences, UI settings)          │ ││
-│  │  │   data, AI responses)     │  │                                      │ ││
-│  │  └──────────────────────────┘  └──────────────────────────────────────┘ ││
-│  └─────────────────────────────────────────────────────────────────────────┘│
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐│
-│  │                     DEV TOOLS (development only)                         ││
-│  │  Redux DevTools ← Zustand devtools middleware                           ││
-│  │  React Query DevTools ← TanStack Query (future)                         ││
-│  │  React DevTools ← Browser extension                                     ││
-│  └─────────────────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    UI[USER INTERACTION<br/>Click → Dispatch → Optimistic Update]
+
+    subgraph SML["STATE MANAGEMENT LAYER"]
+        ZS[Zustand Stores<br/>taskStore / userStore<br/>preferencesStore / toastStore]
+        LS[Local State<br/>Form inputs / Modal open<br/>Tab active / Dropdown open]
+        URL[URL State<br/>Filter params / Pagination<br/>Sort order / Search query]
+    end
+
+    subgraph NL["NOTIFICATION LAYER"]
+        SK[Skeleton / Spinner<br/>Loading === true]
+        ER[Error state + retry<br/>Error !== null]
+        ES[EmptyState + CTA<br/>Data.length === 0]
+        TN[Toast notification<br/>Mutation success]
+    end
+
+    subgraph PL["PERSISTENCE LAYER"]
+        PG[Supabase PostgreSQL<br/>Server state, user data, AI responses]
+        LS2[localStorage<br/>Preferences, UI settings]
+    end
+
+    subgraph DT["DEV TOOLS (dev only)"]
+        RD[Redux DevTools - Zustand middleware]
+        RQD[React Query DevTools - TanStack Query]
+        RDT[React DevTools - Browser extension]
+    end
+
+    UI --> SML
+    SML --> NL
+    NL --> PL
+
+    style UI fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style SML fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style NL fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PL fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style DT fill:#13151A,stroke:#EF4444,color:#F1F5F9
 ```
 
 ### 13.2 Data Flow Diagram
 
-```
-┌──────────┐    ┌──────────────────┐    ┌─────────────┐    ┌──────────────┐
-│  User    │    │  Component       │    │  Zustand    │    │  Supabase    │
-│  Click   │    │  (e.g. TaskCard) │    │  Store      │    │  (Backend)   │
-└────┬─────┘    └──────┬───────────┘    └──────┬──────┘    └──────┬───────┘
-     │                 │                        │                  │
-     │ 1. Complete btn │                        │                  │
-     │────────────────▶│                        │                  │
-     │                 │ 2. completeTask(id)    │                  │
-     │                 │───────────────────────▶│                  │
-     │                 │                        │ 3. Optimistic    │
-     │                 │                        │ update (future)  │
-     │                 │     Loading spinner    │                  │
-     │                 │◀───────────────────────│                  │
-     │                 │                        │ 4. supabase.     │
-     │                 │                        │    update()      │
-     │                 │                        │─────────────────▶│
-     │                 │                        │                  │
-     │                 │                        │    5. Response   │
-     │                 │                        │◀─────────────────│
-     │                 │                        │                  │
-     │                 │ 6. Updated task data   │                  │
-     │                 │◀───────────────────────│                  │
-     │                 │                        │                  │
-     │ 7. Checkmark    │                        │                  │
-     │ visible         │                        │                  │
-     │◀────────────────│                        │                  │
-     │                 │                        │                  │
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant C as Component (TaskCard)
+    participant Z as Zustand Store
+    participant DB as Supabase (Backend)
+
+    U->>C: 1. Click Complete button
+    C->>Z: 2. completeTask(id)
+    Z->>Z: 3. Optimistic update
+    Z-->>C: Loading spinner
+    Z->>DB: 4. supabase.update()
+    DB-->>Z: 5. Response
+    Z-->>C: 6. Updated task data
+    C-->>U: 7. Checkmark visible
 ```
 
 ### 13.3 Zustand Store Lifecycle
 
-```
-App Mount
-    │
-    ▼
-Initialize Stores ──────────────────────────────────┐
-    │               ↓              ↓                  │
-    ▼               ▼              ▼                  ▼
-userStore      taskStore      preferencesStore    (future stores)
-    │               │              │
-    ▼               ▼              ▼
-fetchUser()    fetchTasks()   Read localStorage
-    │               │              │
-    ▼               ▼              ▼
-User loaded     Tasks loaded   Theme applied
-    │               │              │
-    ▼               ▼              ▼
-Auth state     Realtime sub    Sidebar state
-listener       (useRealtime)   applied
-    │               │
-    ▼               ▼
-auto-refresh    Live updates
-token           from Supabase
+```mermaid
+graph TD
+    APP[App Mount] --> INIT[Initialize Stores]
+
+    INIT --> US[userStore]
+    INIT --> TS[taskStore]
+    INIT --> PS[preferencesStore]
+    INIT --> FS[future stores]
+
+    US --> FU[fetchUser]
+    TS --> FT[fetchTasks]
+    PS --> RL[Read localStorage]
+
+    FU --> UL[User loaded]
+    FT --> TL[Tasks loaded]
+    RL --> TA[Theme applied]
+
+    UL --> AS[Auth state listener]
+    TL --> RS[Realtime sub - useRealtime]
+    TA --> SS[Sidebar state applied]
+
+    AS --> AT[auto-refresh token]
+    RS --> LU[Live updates from Supabase]
 ```
 
 ### 13.4 State Interaction Matrix
 
-```
-                 tasks   user    prefs   chat   URL
-─────────────────────────────────────────────────────
-Tasks Page        ✅     ✅      ✅             ✅
-Courses Page      ✅     ✅      ✅
-Dashboard         ✅     ✅      ✅
-Chat Page                        ✅      ✅
-Settings          ✅     ✅      ✅
-Login                     ✅
-Sidebar                          ✅
-Navbar                    ✅      ✅
+```mermaid
+graph LR
+    subgraph MATRIX["State Interaction Matrix"]
+        TP[Tasks Page] -->|reads| TS[tasks]
+        TP -->|reads| US[user]
+        TP -->|reads| PS[prefs]
+        TP -->|reads| URL[URL]
+
+        CP[Courses Page] -->|reads| TS
+        CP -->|reads| US
+        CP -->|reads| PS
+
+        DP[Dashboard] -->|reads| TS
+        DP -->|reads| US
+        DP -->|reads| PS
+
+        CH[Chat Page] -->|reads| PS
+        CH -->|reads| CHS[chat]
+
+        ST[Settings] -->|reads| TS
+        ST -->|reads| US
+        ST -->|reads| PS
+
+        LI[Login] -->|reads| US
+
+        SB[Sidebar] -->|reads| PS
+
+        NV[Navbar] -->|reads| US
+        NV -->|reads| PS
+    end
 ```
 
 ---

@@ -26,6 +26,67 @@
 
 ---
 
+### Architecture Diagram — Form State Machine & Validation Pipeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph TD
+    subgraph States["Form States"]
+        IDLE["IDLE<br/>Initial / Reset"]
+        FOCUS["FOCUSED<br/>Field Active"]
+        DIRTY["DIRTY<br/>Value Changed"]
+        VALIDATING["VALIDATING<br/>Zod Schema Check"]
+        INVALID["INVALID<br/>Validation Errors"]
+        VALID["VALID<br/>Ready to Submit"]
+        SUBMITTING["SUBMITTING<br/>API Call in Flight"]
+        SUCCESS["SUCCESS<br/>Submission Complete"]
+        ERROR["ERROR<br/>API / Network Failure"]
+    end
+    subgraph Transitions["Transition Triggers"]
+        UserInput["User Input"]
+        Blur["Field Blur"]
+        Debounce["Debounce 300ms"]
+        Submit["Submit Click"]
+        APISuccess["API 2xx"]
+        APIFail["API 4xx/5xx"]
+    end
+    IDLE --> FOCUS: Focus
+    FOCUS --> DIRTY: UserInput
+    DIRTY --> VALIDATING: Debounce
+    VALIDATING --> VALID: No Errors
+    VALIDATING --> INVALID: Errors Found
+    INVALID --> DIRTY: UserInput
+    FOCUS --> IDLE: Blur + Empty
+    VALID --> SUBMITTING: Submit
+    INVALID --> SUBMITTING: Submit (force)
+    SUBMITTING --> SUCCESS: APISuccess
+    SUBMITTING --> ERROR: APIFail
+    ERROR --> DIRTY: UserInput
+    ERROR --> IDLE: Reset
+    SUCCESS --> IDLE: Reset
+```
+
+---
+
 ## 1. Stack Overview
 
 ### 1.1 Technology Decisions

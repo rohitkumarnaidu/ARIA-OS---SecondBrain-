@@ -8,39 +8,123 @@
 
 ## Entity-Relationship Diagram
 
-```
-users_profile (1) ──── (many) tasks
-users_profile (1) ──── (many) courses
-users_profile (1) ──── (many) youtube_saves
-users_profile (1) ──── (many) resources
-users_profile (1) ──── (many) ideas
-users_profile (1) ──── (many) goals
-users_profile (1) ──── (many) opportunities
-users_profile (1) ──── (many) income_sources
-users_profile (1) ──── (many) income_logs
-users_profile (1) ──── (many) projects
-users_profile (1) ──── (many) habits
-users_profile (1) ──── (many) sleep_logs
-users_profile (1) ──── (many) time_logs
-users_profile (1) ──── (many) academic_subjects
-users_profile (1) ──── (many) aria_memory
-users_profile (1) ──── (many) daily_briefings
-users_profile (1) ──── (many) weekly_reviews
-users_profile (1) ──── (many) study_sessions
-users_profile (1) ──── (many) daily_logs
+```mermaid
+erDiagram
+    users_profile ||--o{ tasks : "has"
+    users_profile ||--o{ courses : "has"
+    users_profile ||--o{ youtube_saves : "has"
+    users_profile ||--o{ resources : "has"
+    users_profile ||--o{ ideas : "has"
+    users_profile ||--o{ goals : "has"
+    users_profile ||--o{ opportunities : "has"
+    users_profile ||--o{ income_sources : "has"
+    users_profile ||--o{ income_logs : "has"
+    users_profile ||--o{ projects : "has"
+    users_profile ||--o{ habits : "has"
+    users_profile ||--o{ sleep_logs : "has"
+    users_profile ||--o{ time_logs : "has"
+    users_profile ||--o{ academic_subjects : "has"
+    users_profile ||--o{ aria_memory : "has"
+    users_profile ||--o{ daily_briefings : "has"
+    users_profile ||--o{ weekly_reviews : "has"
+    users_profile ||--o{ study_sessions : "has"
+    users_profile ||--o{ daily_logs : "has"
 
-tasks (1) ──── (many) subtasks
-tasks (1) ──── (many) task_dependencies
-tasks (1) ──── (many) time_logs
-tasks (many) ──── (1) goals (goal_id FK)
-tasks (many) ──── (1) projects (project_id FK)
-courses (many) ──── (1) goals (related_goal_id FK)
-goals (1) ──── (many) roadmaps (linked_roadmap_id)
-roadmaps (1) ──── (many) roadmap_updates
-income_sources (1) ──── (many) income_logs
-income_sources (1) ──── (many) projects (related_income_source_id FK)
-habits (1) ──── (1) goals (linked_goal_id FK)
-academic_subjects (1) ──── (many) marks
+    tasks ||--o{ subtasks : "contains"
+    tasks ||--o{ task_dependencies : "depends_on"
+    tasks ||--o{ time_logs : "tracks"
+    tasks }o--|| goals : "belongs_to"
+    tasks }o--|| projects : "belongs_to"
+    courses }o--|| goals : "maps_to"
+    goals ||--o{ roadmaps : "builds"
+    roadmaps ||--o{ roadmap_updates : "logs"
+    income_sources ||--o{ income_logs : "generates"
+    income_sources ||--o{ projects : "funds"
+    habits |o--|| goals : "linked_to"
+    academic_subjects ||--o{ marks : "records"
+
+    users_profile {
+        uuid id PK
+        uuid user_id FK "references auth.users"
+        text name
+        text email
+        text college
+        int year
+        text branch
+        jsonb skills
+        jsonb opportunity_preferences
+        jsonb daily_routine
+        text github_username
+        text linkedin_url
+        boolean onboarding_completed
+        time bedtime
+        time wake_time
+        jsonb push_subscription
+        jsonb google_calendar_token
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    tasks {
+        uuid id PK
+        uuid user_id FK
+        text title
+        text description
+        text status "pending | in_progress | done | missed | archived"
+        text priority "low | medium | high | urgent"
+        text category
+        date due_date
+        uuid goal_id FK
+        uuid project_id FK
+        int missed_count
+        timestamptz created_at
+    }
+
+    goals {
+        uuid id PK
+        uuid user_id FK
+        text title
+        text description
+        text status
+        int progress_percent
+        date target_date
+        jsonb milestones
+        uuid linked_roadmap_id FK
+        timestamptz created_at
+    }
+
+    courses {
+        uuid id PK
+        uuid user_id FK
+        text name
+        text platform
+        text status
+        int progress_percent
+        int daily_target_minutes
+        date target_date
+        uuid related_goal_id FK
+        timestamptz created_at
+    }
+
+    habits {
+        uuid id PK
+        uuid user_id FK
+        text name
+        text frequency "daily | weekly"
+        int streak
+        uuid linked_goal_id FK
+        timestamptz created_at
+    }
+
+    projects {
+        uuid id PK
+        uuid user_id FK
+        text name
+        text status
+        jsonb phases
+        uuid related_income_source_id FK
+        timestamptz created_at
+    }
 ```
 
 ---

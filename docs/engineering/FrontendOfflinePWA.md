@@ -66,6 +66,60 @@ Browser
 
 ---
 
+## Service Worker & Offline Cache Architecture
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    Browser["Browser"] --> SW["Service Worker<br/>Workbox"]
+
+    subgraph SW_Core["Service Worker"]
+        direction LR
+        Precache["Precache<br/>JS / CSS / Fonts"] --> Runtime["Runtime Cache<br/>API Responses"]
+        Runtime --> BGSync["Background Sync<br/>Mutation Queue"]
+    end
+
+    SW --> |Online| Network["Network<br/>Supabase / API"]
+    SW --> |Offline| IDB["IndexedDB<br/>Offline Store"]
+
+    subgraph IDB_Core["IndexedDB"]
+        direction TB
+        Tasks["tasks<br/>store"]
+        Courses["courses<br/>store"]
+        Habits["habits<br/>store"]
+        Goals["goals<br/>store"]
+        Sleep["sleep_logs<br/>store"]
+        Queue["mutationQueue<br/>pending writes"]
+    end
+
+    IDB --> UI["React UI<br/>Zustand Stores"]
+
+    subgraph Manifest["Web App Manifest"]
+        Icon["icons / theme_color<br/>display: standalone"]
+    end
+
+    Browser -->|Install Prompt| Manifest
+
+    style Browser fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style SW_Core fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style Precache fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Runtime fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style BGSync fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style Network fill:#1E293B,stroke:#00FFA3,color:#00FFA3
+    style IDB_Core fill:#1E293B,stroke:#F59E0B,color:#F1F5F9
+    style Tasks fill:#1E293B,stroke:#94A3B8,color:#F1F5F9
+    style Courses fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Habits fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Goals fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Sleep fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Queue fill:#1E293B,stroke:#EF4444,color:#F1F5F9
+    style UI fill:#00FFA3,stroke:#00CC82,color:#0A0B0F
+    style Manifest fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Icon fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+```
+
+---
+
 ## 3. Service Worker Implementation
 
 ### 3.1 next-pwa Configuration

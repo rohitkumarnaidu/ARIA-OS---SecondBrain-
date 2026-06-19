@@ -10,6 +10,39 @@ Accepted
 Various system events need handling: a task is completed (check habit streaks, update goal progress, log to history), a habit is missed (send encouragement, adjust streak counter), a briefing is generated (notify the user), a new idea is captured (trigger opportunity radar scan). The options were to deploy an event bus (RabbitMQ, Redis Pub/Sub, or Supabase Realtime channels) or to handle events through direct function calls and polling.
 
 ## Decision
+
+```mermaid
+graph TD
+    subgraph CURRENT["Current Approach (Alpha) - No Event Bus"]
+        API_HANDLER[Task Completed Handler]
+        API_HANDLER -->|1. Sync call| HABIT[update_habit_streaks()]
+        API_HANDLER -->|2. Sync call| GOAL[recalculate_goal_progress()]
+        API_HANDLER -->|3. Sync call| LOG[log_event()]
+
+        DB[(Supabase)]
+        API_HANDLER -->|INSERT| DB
+        DB -->|4. Realtime| FE[Frontend Live Update]
+
+        CRON[APScheduler - 15 min] -->|5. Poll| DB
+        CRON -->|6. Check conditions| ACT[Handle Missed Habits /<br/>Overdue Tasks]
+    end
+
+    subgraph FUTURE["Future State - Event Bus"]
+        PRODUCER[Event Producers]
+        BUS[Event Bus<br/>RabbitMQ / Supabase Channels]
+        CONSUMER1[Habit Consumer]
+        CONSUMER2[Goal Consumer]
+        CONSUMER3[Log Consumer]
+        PRODUCER -->|publish| BUS
+        BUS -->|subscribe| CONSUMER1
+        BUS -->|subscribe| CONSUMER2
+        BUS -->|subscribe| CONSUMER3
+    end
+
+    style CURRENT fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style FUTURE fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
+```
+
 For the alpha phase, events are handled through three mechanisms:
 1. **Synchronous function calls** — completing a task in the API handler directly calls `update_habit_streaks()`, `recalculate_goal_progress()`, and `log_event()` in sequence
 2. **Supabase Realtime** — Postgres changes (INSERT, UPDATE, DELETE) are subscribed to by the frontend for live UI updates

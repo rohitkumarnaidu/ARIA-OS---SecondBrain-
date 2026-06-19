@@ -12,6 +12,72 @@
 
 ---
 
+## Offline-First Sync Architecture
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph TD
+    UI["User Interface"] --> LS["Local State (Zustand)"]
+    LS --> IDB["IndexedDB Cache<br/><i>Read cache + pending writes</i>"]
+    IDB --> QUEUE["Sync Queue<br/><i>Serialized mutations</i>"]
+
+    QUEUE --> SYNC["Sync Engine<br/><i>Process on reconnect</i>"]
+    SYNC --> CONFLICT["Conflict Resolver<br/><i>Last-write-wins v1</i>"]
+    CONFLICT --> SERVER["Supabase Server<br/><i>Authoritative source</i>"]
+
+    SERVER --> SW["Service Worker<br/><i>Background sync</i>"]
+    SW --> IDB
+
+    SYNC -->|"Online"| REALTIME["Realtime Subscriptions<br/><i>Supabase WebSocket</i>"]
+    REALTIME --> IDB
+
+    subgraph Browser["Browser (PWA)"]
+        UI
+        LS
+        IDB
+        QUEUE
+        SW
+    end
+
+    subgraph Network["Network"]
+        SYNC
+        CONFLICT
+        REALTIME
+    end
+
+    subgraph Server["Server"]
+        SERVER
+    end
+
+    style UI fill:#6366F1,color:#F1F5F9
+    style LS fill:#818CF8,color:#F1F5F9
+    style IDB fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style QUEUE fill:#6366F1,color:#F1F5F9
+    style SYNC fill:#818CF8,color:#F1F5F9
+    style CONFLICT fill:#00FFA3,color:#0A0B0F
+    style SERVER fill:#6366F1,color:#F1F5F9
+    style SW fill:#13151A,color:#F1F5F9,stroke:#818CF8
+    style REALTIME fill:#818CF8,color:#F1F5F9
+    style Browser fill:#13151A,color:#6366F1,stroke:#334155
+    style Network fill:#13151A,color:#818CF8,stroke:#334155
+    style Server fill:#13151A,color:#00FFA3,stroke:#334155
+```
+
 ## 1. Executive Summary
 
 Second Brain OS currently requires a persistent internet connection. Users on campus WiFi, commuting, or in low-connectivity zones lose access to their tasks, habits, notes, and goals. This document specifies a **Progressive Web App (PWA)** architecture that enables full offline CRUD, a background sync engine, and conflict resolution — all within the existing Next.js 14 + Supabase stack. Target: 100% read availability offline, < 500 ms sync latency on reconnect, zero data loss.

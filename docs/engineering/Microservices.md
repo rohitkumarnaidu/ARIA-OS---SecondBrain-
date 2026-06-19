@@ -14,6 +14,105 @@
 
 ---
 
+### Architecture Diagram — Module Dependency & Communication Topology
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph LR
+    subgraph Gateway["API Gateway"]
+        GW["FastAPI Middleware"]
+    end
+    subgraph Core["Core Services"]
+        Tasks["Task Service"]
+        Courses["Course Service"]
+        Goals["Goal Service"]
+        Habits["Habit Service"]
+    end
+    subgraph AI["AI Services"]
+        Aria["ARIA Orchestrator"]
+        Briefing["Briefing Agent"]
+        Memory["Memory Agent"]
+        Radar["Opportunity Radar"]
+    end
+    subgraph Data["Data Services"]
+        Search["Search Service"]
+        Vector["Vector DB Service"]
+        Notif["Notification Service"]
+    end
+    GW --> Core
+    GW --> AI
+    GW --> Data
+    Tasks --> Memory
+    Courses --> Briefing
+    Goals --> Radar
+    Memory --> Vector
+    Radar --> Notif
+    Briefing --> Notif
+```
+
+### Architecture Diagram — Inter-Service Communication Flow
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+sequenceDiagram
+    participant C as Client
+    participant GW as API Gateway
+    participant AS as Auth Service
+    participant TS as Task Service
+    participant MS as Memory Agent
+    participant VS as Vector DB
+    C->>GW: Request
+    GW->>AS: Validate Token
+    AS-->>GW: User Context
+    GW->>TS: Forward Request
+    TS->>MS: Enrich with Memories
+    MS->>VS: Semantic Search
+    VS-->>MS: Relevant Memories
+    MS-->>TS: Context
+    TS-->>GW: Response
+    GW-->>C: Response
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose

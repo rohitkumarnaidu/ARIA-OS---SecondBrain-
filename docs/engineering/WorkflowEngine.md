@@ -295,36 +295,38 @@ The Workflow Engine reads a workflow definition, interprets the steps, executes 
 
 ### Architecture Diagram
 
-```
-                    Workflow Definition (YAML/JSON)
-                               |
-                               v
-+------------------------------------------------------------+
-|                    Workflow Engine                           |
-|                                                             |
-|  +--------------+    +--------------+    +--------------+   |
-|  |  Loader      |--->|  Interpreter |--->|  Executor    |   |
-|  |  (parse YAML,|    |  (resolve    |    |  (run steps, |   |
-|  |  validate    |    |  variables,  |    |  handle      |   |
-|  |  schema)     |    |  plan path)  |    |  errors)     |   |
-|  +--------------+    +--------------+    +------+-------+   |
-|                                                  |          |
-|  +--------------+    +--------------+            |          |
-|  |  State Store |    |  Step Runner |<-----------+          |
-|  |  (Supabase)  |    |  (dispatches |                       |
-|  |              |    |   to agents, |                       |
-|  |              |    |   APIs, etc.)|                       |
-|  +--------------+    +--------------+                       |
-+------------------------------------------------------------+
-                               |
-                               v
-                    +---------------------+
-                    |  Step Implementations |
-                    |  (Agent, AI, API,    |
-                    |   Condition, Delay,  |
-                    |   Notification,      |
-                    |   Transform, Email)  |
-                    +---------------------+
+```mermaid
+graph TD
+    WD["Workflow Definition<br/>(YAML/JSON)"] --> Engine
+
+    subgraph Engine["Workflow Engine"]
+        direction LR
+        A["Loader<br/>(Parse YAML,<br/>Validate Schema)"]
+        B["Interpreter<br/>(Resolve Variables,<br/>Plan Path)"]
+        C["Executor<br/>(Run Steps,<br/>Handle Errors)"]
+        D["State Store<br/>(Supabase)"]
+        E["Step Runner<br/>(Dispatches to<br/>Agents, APIs, etc.)"]
+
+        A --> B --> C
+        C <--> E
+        D <--> C
+    end
+
+    Engine --> Steps
+
+    subgraph Steps["Step Implementations"]
+        F["Agent<br/>AI<br/>API<br/>Condition<br/>Delay<br/>Notification<br/>Transform<br/>Email"]
+    end
+
+    style WD fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style Engine fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style A fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style Steps fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### Engine Components
@@ -687,31 +689,30 @@ CREATE INDEX idx_workflow_step_logs_instance ON workflow_step_logs (instance_id)
 
 ### State Transitions
 
-```
-                    +----------+
-                    |  pending |
-                    +----+-----+
-                         | started
-                         v
-                    +----------+
-              +-----|  running |
-              |     +-----+----+
-              |           |
-              |     +-----v------+
-              |     |  per-step  |
-              |     |  execution |
-              |     +-----+------+
-              |           |
-         +----+----+  +--+------+  +--------+
-         | paused  |  |complete |  | failed |
-         | (manual |  | (all OK)|  | (error)|
-         | interv) |  +--+------+  +---+----+
-         +----+----+     |             |
-              | resume   v             v
-              |     +----------+  +----------+
-              +---->| running  |  | failed/  |
-                    +----------+  | aborted  |
-                                  +----------+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING
+    PENDING --> RUNNING: started
+    
+    state RUNNING {
+        [*] --> PER_STEP_EXECUTION
+        PER_STEP_EXECUTION --> [*]
+    }
+    
+    RUNNING --> COMPLETED: all steps OK
+    RUNNING --> FAILED: error
+    RUNNING --> PAUSED: manual intervention
+    
+    PAUSED --> RUNNING: resume
+    FAILED --> ABORTED
+    FAILED --> RUNNING: retry
+
+    COMPLETED --> [*]
+    ABORTED --> [*]
+
+    note right of PENDING: Initial State
+    note right of COMPLETED: Terminal State - Success
+    note right of ABORTED: Terminal State - Failure
 ```
 
 ### State Store Implementation
@@ -1155,25 +1156,41 @@ A drag-and-drop visual workflow builder built with **React Flow** (`reactflow`) 
 
 ### 11.2 Architecture
 
-```
-Frontend (apps/web)
-+-----------------------------------------------+
-|  Workflow Builder (React Flow)                |
-|  - Drag step nodes from palette               |
-|  - Connect nodes with edges (transitions)     |
-|  - Configure step properties in side panel    |
-|  - Export to YAML / save to Supabase          |
-+---------------------+-------------------------+
-                      |
-                      | POST /api/workflows
-                      v
-Backend (apps/api)
-+---------------------+-------------------------+
-|  Workflow API                                  |
-|  - Validate definition                         |
-|  - Store in workflow_definitions table          |
-|  - Return workflow_id                          |
-+-----------------------------------------------+
+```mermaid
+graph TD
+    subgraph Frontend["Frontend (apps/web)"]
+        A["Workflow Builder<br/>(React Flow)"]
+        B["Drag step nodes<br/>from palette"]
+        C["Connect nodes<br/>with edges"]
+        D["Configure step<br/>properties in panel"]
+        E["Export to YAML /<br/>Save to Supabase"]
+        A --> B
+        A --> C
+        A --> D
+        A --> E
+    end
+
+    Frontend -->|POST /api/workflows| Backend
+
+    subgraph Backend["Backend (apps/api)"]
+        F["Workflow API"]
+        G["Validate<br/>definition"]
+        H["Store in<br/>workflow_definitions"]
+        I["Return<br/>workflow_id"]
+        F --> G --> H --> I
+    end
+
+    style Frontend fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style C fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style D fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style E fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style Backend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style H fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style I fill:#1A1D24,stroke:#334155,color:#94A3B8
 ```
 
 ### 11.3 UI Components

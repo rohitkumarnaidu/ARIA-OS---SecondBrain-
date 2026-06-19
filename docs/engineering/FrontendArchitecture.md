@@ -76,57 +76,55 @@ The frontend currently runs **Next.js 14.2.0 / React 18.2.0 / Tailwind v3.4.1**.
 
 ### 1.3 Architecture at a Glance
 
-```
-+------------------------------------------------------------------------------+
-|                           CLIENT (Browser)                                    |
-|                                                                               |
-|  +----------------------------------------------------------------------+    |
-|  |                       Next.js 15 App Router                           |    |
-|  |                                                                       |    |
-|  |  +----------+ +------------------+ +--------------+ +--------------+ |    |
-|  |  | Root     | | Dashboard        | | Route Groups | | Parallel     | |    |
-|  |  | Layout   | | Layout           | | (public)/    | | Routes       | |    |
-|  |  | (fonts,  | | (Sidebar+Navbar) | | (auth)/      | | @modal/@feed | |    |
-|  |  | metadata)| |                  | | (dashboard)  | |              | |    |
-|  |  +----------+ +------------------+ +--------------+ +--------------+ |    |
-|  |                                                                       |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  |  |                     Module Pages (16)                           |  |    |
-|  |  |  Tasks Courses Goals Habits Sleep Income Projects Ideas         |  |    |
-|  |  |  Resources Opps Academics YouTube Time Chat Automation          |  |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  |                                                                       |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  |  |                     State Layer (6 parts)                       |  |    |
-|  |  |  +--------------+ +---------+ +-----------+ +----------------+ |  |    |
-|  |  |  | TanStack     | | Zustand | | Supabase  | | IndexedDB      | |  |    |
-|  |  |  | Query        | | Client  | | Realtime  | | Offline Queue  | |  |    |
-|  |  |  | (Server)     | | (Global)| | (Live)    | | (Sync)         | |  |    |
-|  |  |  +--------------+ +---------+ +-----------+ +----------------+ |  |    |
-|  |  |  +--------------+ +----------------------------------------+   |  |    |
-|  |  |  | AI Streaming | | Search State                            |   |  |    |
-|  |  |  | (State      | | (Command palette, full-text index)      |   |  |    |
-|  |  |  |  Machine)   | |                                         |   |  |    |
-|  |  |  +--------------+ +----------------------------------------+   |  |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  |                                                                       |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  |  |              Shared Component Library (shadcn/ui + custom)      |  |    |
-|  |  |  ui/button ui/input ui/card ui/dialog ui/select ui/table       |  |    |
-|  |  |  ui/toast ui/tabs ui/badge ui/avatar ui/dropdown-menu          |  |    |
-|  |  |  Sidebar Navbar OfflineBanner ThreeBackground DataTable         |  |    |
-|  |  +----------------------------------------------------------------+  |    |
-|  +----------------------------------------------------------------------+    |
-|                                                                               |
-|  +----------------------------------------------------------------------+    |
-|  |                     External Connections                              |    |
-|  |  +--------------+ +------------+ +----------+ +----------+ +-------+ |    |
-|  |  | Supabase SDK | | FastAPI    | | Ollama   | | Claude   | |Three.js| |    |
-|  |  | (Auth+DB+    | | Backend    | | (Local   | | (Cloud   | | (WebGL)| |    |
-|  |  |  Realtime)   | | (REST)     | |  AI)     | |  AI)     | |        | |    |
-|  |  +--------------+ +------------+ +----------+ +----------+ +-------+ |    |
-|  +----------------------------------------------------------------------+    |
-+------------------------------------------------------------------------------+
+```mermaid
+graph TD
+    subgraph CLIENT["CLIENT (Browser)"]
+        subgraph ROUTER["Next.js 15 App Router"]
+            RL[Root Layout<br/>Fonts, Metadata]
+            DL[Dashboard Layout<br/>Sidebar + Navbar]
+            RG[Route Groups<br/>(public)/(auth)/(dashboard)]
+            PR[Parallel Routes<br/>@modal / @feed]
+        end
+
+        subgraph PAGES["Module Pages (16)"]
+            MP[Tasks Courses Goals Habits<br/>Sleep Income Projects Ideas<br/>Resources Opps Academics<br/>YouTube Time Chat Automation]
+        end
+
+        subgraph STATE["State Layer (6 parts)"]
+            TQ[TanStack Query<br/>Server State]
+            ZS[Zustand<br/>Client Global]
+            SR[Supabase Realtime<br/>Live Updates]
+            IDB[IndexedDB<br/>Offline Sync]
+            AI_ST[A.I. Streaming<br/>State Machine]
+            SRCH[Search State<br/>Command Palette]
+        end
+
+        subgraph COMP["Shared Component Library"]
+            shadcn[shadcn/ui: button, input, card, dialog]
+            custom[Custom: Sidebar, Navbar, DataTable]
+        end
+
+        ROUTER --> PAGES
+        PAGES --> STATE
+        STATE --> COMP
+    end
+
+    subgraph EXT["External Connections"]
+        SUP[Supabase SDK<br/>Auth + DB + Realtime]
+        FAPI[FastAPI Backend<br/>REST]
+        OLL[Ollama<br/>Local AI]
+        CLA[Claude<br/>Cloud AI]
+        TJ[Three.js<br/>WebGL]
+    end
+
+    CLIENT --> EXT
+
+    style CLIENT fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style EXT fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style ROUTER fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PAGES fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style STATE fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style COMP fill:#13151A,stroke:#94A3B8,color:#F1F5F9
 ```
 
 ### 1.4 Key Metrics & SLAs

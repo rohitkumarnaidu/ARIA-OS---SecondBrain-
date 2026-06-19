@@ -89,47 +89,44 @@ Covers all realtime data channels, connection lifecycle, security, fallback stra
 
 ### 4.1 Data Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          Client (Browser)                           │
-│                                                                     │
-│  ┌─────────────┐  ┌────────────────────┐  ┌─────────────────────┐  │
-│  │ React State  │  │   Zustand Store   │  │  Supabase Client    │  │
-│  │ (UI update)  │◀─│ (data cache)      │◀─│  (Realtime Sub)     │  │
-│  └─────────────┘  └────────────────────┘  └─────────┬───────────┘  │
-│                                                      │              │
-└──────────────────────────────────────────────────────┼──────────────┘
-                                                        │ WebSocket
-                                                        │ (WSS)
-                                                        ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                   Supabase Realtime Server                           │
-│                                                                     │
-│  ┌─────────────────────┐    ┌──────────────────────────────────┐   │
-│  │  WebSocket Server   │    │  Realtime Engine                 │   │
-│  │  (Connection Mgr)   │◀──▶│  (Channel Auth, Subscriptions)  │   │
-│  └─────────────────────┘    └──────────────┬───────────────────┘   │
-│                                             │                       │
-│                                    ┌────────▼────────┐             │
-│                                    │  LISTEN/NOTIFY   │             │
-│                                    │  Channel Bridge   │             │
-│                                    └────────┬────────┘             │
-│                                             │                       │
-└─────────────────────────────────────────────┼───────────────────────┘
-                                               │
-                                               ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                      PostgreSQL (Supabase)                          │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  Change Data Capture (CDC) via triggers → NOTIFY channel    │  │
-│  │                                                               │  │
-│  │  TRIGGER task_changes → NOTIFY "realtime:tasks",             │  │
-│  │    payload = '{"type":"INSERT","table":"tasks",              │  │
-│  │               "record": {...}}'                               │  │
-│  │                                                               │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Client["Client (Browser)"]
+        A["React State<br/>(UI Update)"]
+        B["Zustand Store<br/>(Data Cache)"]
+        C["Supabase Client<br/>(Realtime Subscription)"]
+        A -->|UI Update| B
+        B -->|Data Cache| C
+    end
+
+    C -- "WebSocket (WSS)" --> D["Supabase Realtime Server"]
+    
+    subgraph Realtime["Supabase Realtime Server"]
+        E["WebSocket Server<br/>(Connection Manager)"]
+        F["Realtime Engine<br/>(Channel Auth, Subscriptions)"]
+        G["LISTEN/NOTIFY<br/>Channel Bridge"]
+        E <--> F
+        F --> G
+    end
+
+    subgraph Postgres["PostgreSQL (Supabase)"]
+        H["Change Data Capture (CDC)<br/>via Triggers → NOTIFY Channel"]
+    end
+
+    G --> Postgres
+    H -->|"TRIGGER → NOTIFY channel"| G
+
+    linkStyle default stroke:#6366F1,stroke-width:2px
+    style Client fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style Realtime fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style Postgres fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 4.2 PostgreSQL LISTEN/NOTIFY Implementation
@@ -233,19 +230,29 @@ export function subscribeToTable<T>(
 
 ### 5.1 Connection States
 
-```
-DISCONNECTED
-     │
-     ▼
-CONNECTING ──► AUTHENTICATED ──► SUBSCRIBED ──► ACTIVE
-     │               │                │
-     ▼               ▼                ▼
-  RETRY          REAUTH          RECONNECT
-     │               │                │
-     └───────────────┴────────────────┘
-                     │
-                     ▼
-               DISCONNECTED
+```mermaid
+stateDiagram-v2
+    [*] --> DISCONNECTED
+    DISCONNECTED --> CONNECTING: Page Load
+    CONNECTING --> AUTHENTICATED: Connection Established
+    AUTHENTICATED --> SUBSCRIBED: Auth Confirmed
+    SUBSCRIBED --> ACTIVE: Subscription Confirmed
+
+    CONNECTING --> RETRY: Connection Failed
+    AUTHENTICATED --> REAUTH: Token Expired
+    SUBSCRIBED --> RECONNECT: Subscription Lost
+
+    RETRY --> CONNECTING: Retry
+    REAUTH --> AUTHENTICATED: New Token
+    RECONNECT --> SUBSCRIBED: Re-subscribe
+
+    RETRY --> DISCONNECTED: Max Retries
+    REAUTH --> DISCONNECTED: Auth Failure
+    RECONNECT --> DISCONNECTED: Max Attempts
+
+    ACTIVE --> DISCONNECTED: Tab Close / Logout
+
+    note right of DISCONNECTED: Initial State / Terminal State
 ```
 
 ### 5.2 Lifecycle Events
@@ -472,16 +479,26 @@ function createPollingFallback<T>(
 
 ### 8.2 Fallback Hierarchy
 
-```
-WebSocket Available?
-    ├── YES → Supabase Realtime (primary)
-    │
-    └── NO  → Polling Fallback
-        ├── Dashboard:     10s interval
-        ├── Notifications:  5s interval
-        ├── Tasks:         10s interval
-        ├── Habits:        15s interval
-        └── Other tables:  30s interval
+```mermaid
+graph TD
+    A{"WebSocket Available?"}
+    A -->|YES| B["Supabase Realtime<br/>(Primary)"]
+    A -->|NO| C["Polling Fallback"]
+
+    C --> D["Dashboard: 10s interval"]
+    C --> E["Notifications: 5s interval"]
+    C --> F["Tasks: 10s interval"]
+    C --> G["Habits: 15s interval"]
+    C --> H["Other tables: 30s interval"]
+
+    style A fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style B fill:#00FFA3,stroke:#00E090,color:#0A0B0F
+    style C fill:#F59E0B,stroke:#FBBF24,color:#0A0B0F
+    style D fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#334155,color:#F1F5F9
 ```
 
 ### 8.3 Detection & Recovery

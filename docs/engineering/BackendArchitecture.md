@@ -65,87 +65,38 @@ Second Brain OS chose **FastAPI** over alternatives for the following reasons:
 
 ## 2. Directory Structure
 
-```
-apps/api/
-├── main.py                              # App entry, middleware, router registration
-├── requirements.txt                     # Python dependencies
-├── Dockerfile                           # Multi-stage production build
-├── runtime.txt                          # Python version pinning
-├── __init__.py
-│
-└── app/
-    ├── __init__.py
-    │
-    ├── api/                             # Route handlers (13 modules)
-    │   ├── __init__.py                  # Exports all routers
-    │   ├── tasks.py                     # /api/tasks/ — 6 endpoints
-    │   ├── courses.py                   # /api/courses/ — 5 endpoints
-    │   ├── goals.py                     # /api/goals/ — 5 endpoints
-    │   ├── habits.py                    # /api/habits/ — 4 endpoints
-    │   ├── sleep.py                     # /api/sleep/ — 3 endpoints
-    │   ├── income.py                    # /api/income/ — 4 endpoints
-    │   ├── projects.py                  # /api/projects/ — 4 endpoints
-    │   ├── ideas.py                     # /api/ideas/ — 4 endpoints
-    │   ├── resources.py                 # /api/resources/ — 4 endpoints
-    │   ├── opportunities.py             # /api/opportunities/ — 4 endpoints
-    │   ├── time.py                      # /api/time/ — 6 endpoints
-    │   ├── chat.py                      # /api/chat/ — 1 endpoint
-    │   └── automation.py                # /api/automation/ — 3 endpoints
-    │
-    ├── services/                        # Business logic layer (future)
-    │   └── __init__.py
-    │
-    ├── middleware/                      # Custom middleware (future)
-    │   └── __init__.py
-    │
-    └── exceptions/                     # Custom exception classes (future)
-        └── __init__.py
+```mermaid
+graph TD
+    subgraph API["apps/api/ — FastAPI Backend"]
+        ENTRY["main.py<br/>App Entry + Middleware + Routers"]
+        REQ["requirements.txt"]
+        DOCKER["Dockerfile"]
 
-packages/
-├── config/
-│   └── core/
-│       ├── config.py                   # Pydantic Settings (env vars)
-│       ├── supabase.py                 # Supabase client singleton
-│       └── auth.py                     # JWT creation + validation
-│
-├── database/
-│   └── schemas/
-│       ├── __init__.py
-│       ├── task.py                     # TaskCreate, TaskUpdate, TaskResponse
-│       ├── course.py                   # CourseCreate, CourseUpdate, CourseResponse
-│       ├── goal.py                     # GoalCreate, GoalUpdate, GoalResponse
-│       ├── habit.py                    # HabitCreate, HabitUpdate, HabitResponse
-│       ├── sleep.py                    # SleepCreate, SleepResponse
-│       ├── income.py                   # IncomeCreate, IncomeUpdate, IncomeResponse
-│       ├── project.py                  # ProjectCreate, ProjectUpdate, ProjectResponse
-│       ├── idea.py                     # IdeaCreate, IdeaUpdate, IdeaResponse
-│       ├── resource.py                 # ResourceCreate, ResourceUpdate, ResourceResponse
-│       ├── opportunity.py             # OpportunityCreate, OpportunityUpdate, OpportunityResponse
-│       └── time.py                     # TimeEntryCreate, TimeEntryUpdate, TimeEntryResponse
-│
-├── shared/
-│   └── utils/
-│       ├── __init__.py
-│       ├── logger.py                   # Structured JSON logger
-│       ├── rate_limiter.py             # Rate limiting middleware
-│       ├── cache.py                    # In-memory TTL cache
-│       ├── security.py                 # Token generation, sanitization
-│       └── retry.py                    # Exponential backoff decorator
-│
-└── ai/
-    ├── __init__.py                     # Exports agents module
-    ├── client.py                       # LLM client (Ollama + Claude fallback)
-    ├── prompt_loader.py                # PromptLoader singleton
-    └── agents/
-        ├── __init__.py                 # Exports all 8 agent modules
-        ├── briefing_agent.py           # A09 — Daily briefing generator
-        ├── memory_agent.py             # A02 — Memory consolidation
-        ├── learning_agent.py           # A03 — Pattern detection
-        ├── opportunity_agent.py        # A06 — Opportunity matching
-        ├── task_agent.py               # A01 — Task breakdown & analysis
-        ├── weekly_review_agent.py      # A10 — Weekly review generator
-        ├── sleep_agent.py              # A13 — Sleep analysis & wind-down
-        └── nudge_agent.py              # A14 — Course/habit nudges
+        subgraph APP["app/"]
+            ROUTES["api/<br/>13 Route Handlers"]
+            SVC["services/<br/>Business Logic"]
+            MID["middleware/<br/>Custom Middleware"]
+            EXC["exceptions/<br/>Custom Exceptions"]
+        end
+    end
+
+    ENTRY --> APP
+    APP --> ROUTES
+    APP --> SVC
+    APP --> MID
+    APP --> EXC
+
+    subgraph PKG["packages/ — Shared Libraries"]
+        CFG["config/<br/>Pydantic Settings + Supabase + Auth"]
+        DB["database/schemas/<br/>Pydantic Models (13 tables)"]
+        UTIL["shared/utils/<br/>Logger + Cache + Rate Limiter + Security"]
+        AI["ai/<br/>LLM Client + PromptLoader + 8 Agents"]
+    end
+
+    PKG --> CFG
+    PKG --> DB
+    PKG --> UTIL
+    PKG --> AI
 ```
 
 ---
@@ -367,23 +318,24 @@ def get_supabase_client():
 
 ### 4.4 Dependency Injection Flow
 
-```
-Request ──▶ Router Endpoint
-                │
-                ├── Depends(get_current_user) ──▶ JWT Validation
-                │     ├── Extract Bearer token from Authorization header
-                │     ├── Decode JWT (jose library)
-                │     ├── Fetch user from Supabase
-                │     └── Return user object or raise 401
-                │
-                ├── Depends(get_supabase_client) ──▶ Database Client
-                │     └── Return cached supabase client
-                │
-                ├── Body / Query / Path validation (Pydantic)
-                │     └── Automatic 422 response on validation failure
-                │
-                └── Handler Function
-                      └── Business logic with user context + DB client
+```mermaid
+flowchart TD
+    REQ["HTTP Request"] --> EP["Router Endpoint"]
+
+    EP --> AUTH["Depends(get_current_user)<br/>JWT Validation"]
+    AUTH --> A1["Extract Bearer token from Authorization header"]
+    A1 --> A2["Decode JWT (jose library)"]
+    A2 --> A3["Fetch user from Supabase"]
+    A3 --> A4["Return user object<br/>or raise 401"]
+
+    EP --> DB["Depends(get_supabase_client)<br/>Database Client"]
+    DB --> DB1["Return cached supabase client"]
+
+    EP --> VAL["Body / Query / Path validation<br/>Pydantic"]
+    VAL --> VAL1["Automatic 422 response<br/>on validation failure"]
+
+    EP --> FN["Handler Function"]
+    FN --> FN1["Business logic with<br/>user context + DB client"]
 ```
 
 ---
@@ -392,20 +344,14 @@ Request ──▶ Router Endpoint
 
 ### 5.1 Middleware Order
 
-```
-Request
-  │
-  1. RateLimiter (per-IP, 100 req/min)
-  │
-  2. CORSMiddleware (allow frontend origins)
-  │
-  3. Request Logging (structured JSON)
-  │
-  4. Global Exception Handler (catch-all)
-  │
-  5. Route Handler
-  │
-  └── Response
+```mermaid
+flowchart TD
+    REQ["Request"] --> RL["1. RateLimiter<br/>per-IP, 100 req/min"]
+    RL --> CORS["2. CORSMiddleware<br/>allow frontend origins"]
+    CORS --> LOG["3. Request Logging<br/>structured JSON"]
+    LOG --> GEH["4. Global Exception Handler<br/>catch-all"]
+    GEH --> RH["5. Route Handler"]
+    RH --> RES["Response"]
 ```
 
 ### 5.2 Rate Limiter
@@ -487,44 +433,24 @@ app.add_middleware(
 
 ### 6.1 Architecture
 
-```
-┌──────────┐    ┌──────────────┐    ┌──────────────┐    ┌────────────┐
-│  Browser  │    │  Next.js FE  │    │  FastAPI BE   │    │  Supabase  │
-└────┬─────┘    └──────┬───────┘    └──────┬───────┘    └─────┬──────┘
-     │                 │                    │                  │
-     │  1. Click       │                    │                  │
-     │  "Sign In"      │                    │                  │
-     │────────────────▶│                    │                  │
-     │                 │  2. Redirect to    │                  │
-     │                 │  Supabase Auth UI  │                  │
-     │                 │───────────────────▶│─────────────────▶│
-     │                 │                    │                  │
-     │  3. Google      │                    │                  │
-     │  OAuth Consent  │                    │                  │
-     │◀────────────────┴────────────────────┴─────────────────│
-     │                 │                    │                  │
-     │  4. Auth code   │                    │                  │
-     │  callback       │                    │                  │
-     │────────────────▶│                    │                  │
-     │                 │  5. Exchange       │                  │
-     │                 │  code for session  │                  │
-     │                 │───────────────────▶│─────────────────▶│
-     │                 │                    │                  │
-     │  6. JWT +       │                    │                  │
-     │  session cookie │                    │                  │
-     │◀────────────────┴────────────────────┴─────────────────│
-     │                 │                    │                  │
-     │  7. API call    │                    │                  │
-     │  with Bearer    │                    │                  │
-     │  token          │                    │                  │
-     │─────────────────────────────────────▶│                  │
-     │                 │                    │  8. Validate     │
-     │                 │                    │  JWT + user_id  │
-     │                 │                    │─────────────────▶│
-     │                 │                    │                  │
-     │  9. Response    │                    │  10. Return      │
-     │◀─────────────────────────────────────│  filtered data   │
-     │                 │                    │                  │
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant FE as Next.js FE
+    participant BE as FastAPI BE
+    participant SB as Supabase
+
+    B->>FE: 1. Click "Sign In"
+    FE->>BE: 2. Redirect to Supabase Auth UI
+    BE->>SB: 2a. Forward to OAuth
+    SB-->>B: 3. Google OAuth Consent
+    B->>FE: 4. Auth code callback
+    FE->>BE: 5. Exchange code for session
+    BE->>SB: 5a. Token exchange
+    SB-->>B: 6. JWT + session cookie
+    B->>BE: 7. API call with Bearer token
+    BE->>SB: 8. Validate JWT + user_id
+    BE-->>B: 9. Response with filtered data
 ```
 
 ### 6.2 Frontend Login
@@ -638,15 +564,11 @@ ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
 ### 8.1 Error Handling Layers
 
-```
-Layer 1: Pydantic Validation (automatic)
-  └─ Invalid request body → 422 Validation Error
-
-Layer 2: HTTPException (explicit)
-  └─ Business logic errors → 400, 401, 404, 429
-
-Layer 3: Global Exception Handler (catch-all)
-  └─ Unhandled exceptions → 500 Internal Server Error (logged)
+```mermaid
+flowchart LR
+    L1["Layer 1: Pydantic Validation<br/>(automatic)"] --> L1E["Invalid request body<br/>→ 422 Validation Error"]
+    L2["Layer 2: HTTPException<br/>(explicit)"] --> L2E["Business logic errors<br/>→ 400, 401, 404, 429"]
+    L3["Layer 3: Global Exception Handler<br/>(catch-all)"] --> L3E["Unhandled exceptions<br/>→ 500 Internal Server Error (logged)"]
 ```
 
 ### 8.2 HTTPException Usage
@@ -1339,126 +1261,93 @@ if __name__ == "__main__":
 
 ### 18.1 Full System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         CLIENT (Next.js 14)                              │
-│  ┌───────────────────────────────────────────────────────────────────┐  │
-│  │  Browser → Edge Middleware (auth check) → App Router → Module    │  │
-│  │  Pages → Zustand Stores → Supabase SDK / fetch()                 │  │
-│  └──────────────────────────┬────────────────────────────────────────┘  │
-│                             │ HTTP / WebSocket                           │
-└─────────────────────────────┼───────────────────────────────────────────┘
-                              │
-┌─────────────────────────────┼───────────────────────────────────────────┐
-│                    BACKEND (FastAPI)                                    │
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                     API Layer (13 routers)                       │  │
-│  │  ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐  │  │
-│  │  │ Tasks │ │Courses│ │ Goals  │ │Habits │ │ Sleep │ │Income │  │  │
-│  │  │ 6 eps │ │ 5 eps │ │ 5 eps  │ │ 4 eps │ │ 3 eps │ │ 4 eps │  │  │
-│  │  └───────┘ └───────┘ └───────┘ └───────┘ └───────┘ └───────┘  │  │
-│  │  ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐  │  │
-│  │  │Proj   │ │ Ideas │ │Resrce │ │Opportun│ │ Time  │ │ Chat  │  │  │
-│  │  │ 4 eps │ │ 4 eps │ │ 4 eps │ │ 4 eps  │ │ 6 eps │ │ 1 ep  │  │  │
-│  │  └───────┘ └───────┘ └───────┘ └───────┘ └───────┘ └───────┘  │  │
-│  │  ┌──────────────────────────────────────────────────────────────┐ │  │
-│  │  │ Automation: 3 eps (trigger briefing, radar, review)          │ │  │
-│  │  └──────────────────────────────────────────────────────────────┘ │  │
-│  └──────────────────────────┬───────────────────────────────────────┘  │
-│                             │                                          │
-│  ┌──────────────────────────┴───────────────────────────────────────┐  │
-│  │                   Middleware Stack                                │  │
-│  │  RateLimiter → CORS → Request Logging → Global Exception Handler │  │
-│  └──────────────────────────┬───────────────────────────────────────┘  │
-│                             │                                          │
-│  ┌──────────────────────────┴───────────────────────────────────────┐  │
-│  │                  Dependency Injection Layer                       │  │
-│  │  ┌────────────────┐  ┌────────────────┐  ┌───────────────────┐  │  │
-│  │  │ get_current_user│  │ get_supabase  │  │ Pydantic Models   │  │  │
-│  │  │ (JWT validation)│  │ _client       │  │ (request/response)│  │  │
-│  │  └────────────────┘  └────────────────┘  └───────────────────┘  │  │
-│  └──────────────────────────┬───────────────────────────────────────┘  │
-│                             │                                          │
-│  ┌──────────────────────────┴───────────────────────────────────────┐  │
-│  │                   Database Layer (Supabase SDK)                   │  │
-│  │  PostgreSQL 15 + RLS + Realtime Subscriptions                    │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    AI Layer                                       │  │
-│  │  ┌─────────────────────┐      ┌─────────────────────┐           │  │
-│  │  │  Ollama (Local)     │      │  Claude API (Cloud) │           │  │
-│  │  │  Mistral 7B /       │──────│  Sonnet 4           │           │  │
-│  │  │  Llama 3.1          │      │  (fallback)         │           │  │
-│  │  └─────────┬───────────┘      └─────────────────────┘           │  │
-│  │            │                                                     │  │
-│  │  ┌─────────┴──────────────────────────────────────────────────┐ │  │
-│  │  │  PromptLoader → prompts/ directory (YAML frontmatter)     │ │  │
-│  │  └────────────────────────────────────────────────────────────┘ │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────┼───────────────────────────────────────────┐
-│                  SCHEDULER (APScheduler - separate service)             │
-│                                                                         │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐  │
-│  │ Daily        │ │ Opportunity  │ │ Weekly       │ │ Habit        │  │
-│  │ Briefing     │ │ Radar        │ │ Review       │ │ Checker      │  │
-│  │ 7 AM         │ │ 6 AM         │ │ Sun 8 PM     │ │ 8 PM         │  │
-│  └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘  │
-│  ┌──────────────┐ ┌──────────────┐                                     │
-│  │ Missed Task  │ │ Sleep        │                                     │
-│  │ Checker      │ │ Reminder     │                                     │
-│  │ Midnight     │ │ 10:30 PM     │                                     │
-│  └──────────────┘ └──────────────┘                                     │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+```mermaid
+graph TB
+    subgraph CLIENT["CLIENT (Next.js 14)"]
+        BR["Browser → Edge Middleware<br/>(auth check) → App Router<br/>→ Module Pages → Zustand<br/>Stores → Supabase SDK / fetch()"]
+    end
+
+    subgraph BACKEND["BACKEND (FastAPI)"]
+        subgraph API["API Layer (13 routers)"]
+            TASKS["Tasks<br/>6 eps"]
+            COURSES["Courses<br/>5 eps"]
+            GOALS["Goals<br/>5 eps"]
+            HABITS["Habits<br/>4 eps"]
+            SLEEP["Sleep<br/>3 eps"]
+            INCOME["Income<br/>4 eps"]
+            PROJ["Projects<br/>4 eps"]
+            IDEAS["Ideas<br/>4 eps"]
+            RES["Resources<br/>4 eps"]
+            OPP["Opportunities<br/>4 eps"]
+            TIME["Time<br/>6 eps"]
+            CHAT["Chat<br/>1 ep"]
+            AUTO["Automation<br/>3 eps"]
+        end
+
+        subgraph MIDDLEWARE["Middleware Stack"]
+            RL["RateLimiter → CORS →<br/>Request Logging →<br/>Global Exception Handler"]
+        end
+
+        subgraph DI["Dependency Injection Layer"]
+            AUTH["get_current_user<br/>JWT validation"]
+            SVC["get_supabase_client<br/>Cached client"]
+            PYD["Pydantic Models<br/>Request / Response"]
+        end
+
+        subgraph DB_LAYER["Database Layer"]
+            DB["PostgreSQL 15<br/>+ RLS + Realtime Subscriptions"]
+        end
+
+        subgraph AI_LAYER["AI Layer"]
+            OLLAMA["Ollama (Local)<br/>Mistral 7B / Llama 3.1"]
+            CLAUDE["Claude API (Cloud)<br/>Sonnet 4 (fallback)"]
+            PROMPTS["PromptLoader →<br/>prompts/ directory<br/>YAML frontmatter"]
+            OLLAMA --> PROMPTS
+            CLAUDE --> PROMPTS
+        end
+    end
+
+    subgraph SCHEDULER["SCHEDULER (APScheduler — separate service)"]
+        S1["Daily Briefing<br/>7 AM"]
+        S2["Opportunity Radar<br/>6 AM"]
+        S3["Weekly Review<br/>Sun 8 PM"]
+        S4["Habit Checker<br/>8 PM"]
+        S5["Missed Task Checker<br/>Midnight"]
+        S6["Sleep Reminder<br/>10:30 PM"]
+    end
+
+    CLIENT -->|HTTP / WebSocket| BACKEND
+    API --> MIDDLEWARE
+    MIDDLEWARE --> DI
+    DI --> DB_LAYER
+    DI --> AI_LAYER
+    SCHEDULER -->|triggers| API
+    SCHEDULER -->|reads/writes| DB_LAYER
 
 ### 18.2 Request Lifecycle
 
-```
-Request
-  │
-  ▼
-Edge Middleware (Next.js)
-  │ Auth check → redirect if unauthorized
-  │ Security headers
-  ▼
-FastAPI Route Match
-  │ /api/tasks → tasks.router
-  │
-  ▼
-Rate Limiter Middleware
-  │ Per-IP sliding window check
-  │ 429 if exceeded
-  ▼
-CORS Middleware
-  │ Origin whitelist check
-  │
-  ▼
-Request Logging
-  │ Structured JSON log
-  │
-  ▼
-Dependency Injection
-  │ Depends(get_current_user) → JWT decode → Supabase auth check
-  │ Depends(get_supabase_client) → Cached client
-  │ Body validation → Pydantic model parse
-  │
-  ▼
-Endpoint Handler
-  │ Business logic → Supabase query → Transform → Return
-  │
-  ▼
-Response
-  │ Pydantic serialization (response_model)
-  │ Security headers
-  │ Correlation ID
-  │
-  ▼
-Client
+```mermaid
+flowchart TD
+    REQ["Request"] --> EM["Edge Middleware (Next.js)"]
+    EM --> EM1["Auth check → redirect if unauthorized"]
+    EM1 --> EM2["Security headers"]
+    EM2 --> FM["FastAPI Route Match"]
+    FM --> FM1["/api/tasks → tasks.router"]
+    FM1 --> RLM["Rate Limiter Middleware"]
+    RLM --> RLM1["Per-IP sliding window check<br/>429 if exceeded"]
+    RLM1 --> CORS["CORS Middleware"]
+    CORS --> CORS1["Origin whitelist check"]
+    CORS1 --> LOG["Request Logging"]
+    LOG --> LOG1["Structured JSON log"]
+    LOG1 --> DI["Dependency Injection"]
+    DI --> DIA["Depends(get_current_user)<br/>→ JWT decode → Supabase auth check"]
+    DIA --> DIB["Depends(get_supabase_client)<br/>→ Cached client"]
+    DIB --> DIC["Body validation<br/>→ Pydantic model parse"]
+    DIC --> EH["Endpoint Handler"]
+    EH --> EH1["Business logic → Supabase query<br/>→ Transform → Return"]
+    EH1 --> RES["Response"]
+    RES --> RES1["Pydantic serialization (response_model)<br/>Security headers<br/>Correlation ID"]
+    RES1 --> CLI["Client"]
 ```
 
 ---

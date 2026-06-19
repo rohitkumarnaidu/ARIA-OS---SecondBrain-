@@ -8,46 +8,37 @@ Second Brain OS integrates with 9 external services to provide AI processing, we
 
 ## Integration Map
 
-```
-                         ┌─────────────────────────────────────┐
-                         │         Second Brain OS             │
-                         │                                     │
-                         │  ┌─────────────────────────────┐   │
-                         │  │     Next.js Server Routes   │   │
-                         │  │  /api/chat → Ollama/Claude  │   │
-                         │  │  /api/ai/video→Claude       │   │
-                         │  │  /api/calendar → Google     │   │
-                         │  │  /api/github → GitHub       │   │
-                         │  └──────────┬──────────────────┘   │
-                         │             │                        │
-                         │  ┌──────────┴──────────────────┐   │
-                         │  │  Supabase Edge Functions    │   │
-                         │  │  (Deno runtime)             │   │
-                         │  │  Brave Search, Resend,     │   │
-                         │  │  Twilio, Claude API        │   │
-                         │  └──────────┬──────────────────┘   │
-                         │             │                        │
-                         │  ┌──────────┴──────────────────┐   │
-                         │  │  FastAPI Backend            │   │
-                         │  │  Google Fit, GitHub,       │   │
-                         │  │  Calendar OAuth             │   │
-                         │  └─────────────────────────────┘   │
-                         └──────┬──────┬──────┬──────┬───────┘
-                                │      │      │      │
-              ┌─────────────────┘      │      │      └──────────────┐
-              ▼                        ▼      ▼                     ▼
-     ┌──────────────┐        ┌──────────────┐        ┌──────────────┐
-     │  Ollama      │        │  Claude API  │        │Brave Search  │
-     │  Local LLM   │        │  Anthropic   │        │  API         │
-     └──────────────┘        └──────────────┘        └──────────────┘
-     ┌──────────────┐        ┌──────────────┐        ┌──────────────┐
-     │  Google Fit  │        │  Google      │        │  GitHub API  │
-     │  Fitness API │        │  Calendar    │        │              │
-     └──────────────┘        └──────────────┘        └──────────────┘
-     ┌──────────────┐        ┌──────────────┐        ┌──────────────┐
-     │  Resend      │        │  Twilio      │        │  YouTube     │
-     │  Email API   │        │  SMS API     │        │  oEmbed      │
-     └──────────────┘        └──────────────┘        └──────────────┘
+```mermaid
+graph TD
+    subgraph OS["Second Brain OS"]
+        A["Next.js Server Routes<br/>/api/chat → Ollama/Claude<br/>/api/ai/video → Claude<br/>/api/calendar → Google<br/>/api/github → GitHub"]
+        B["Supabase Edge Functions<br/>(Deno Runtime)<br/>Brave Search, Resend,<br/>Twilio, Claude API"]
+        C["FastAPI Backend<br/>Google Fit, GitHub,<br/>Calendar OAuth"]
+    end
+
+    OS --> D["Ollama<br/>Local LLM"]
+    OS --> E["Claude API<br/>Anthropic"]
+    OS --> F["Brave Search API"]
+    OS --> G["Google Fit<br/>Fitness API"]
+    OS --> H["Google Calendar"]
+    OS --> I["GitHub API"]
+    OS --> J["Resend<br/>Email API"]
+    OS --> K["Twilio<br/>SMS API"]
+    OS --> L["YouTube<br/>oEmbed"]
+
+    style OS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style I fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style J fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style K fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style L fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
 ```
 
 ---
@@ -132,17 +123,27 @@ const { data, error } = await supabase
 
 ### AI Router Logic
 
-```typescript
-function callAI(prompt: string, systemPrompt: string): Promise<string> {
-  if (process.env.USE_LOCAL_AI === 'true') {
-    return callOllama(prompt, systemPrompt);  // Free, local, private
-  }
-  return callClaude(prompt, systemPrompt);    // $5 credit fallback
-}
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant Router as AI Router
+    participant Ollama as Ollama (Local)
+    participant Claude as Claude API (Cloud)
 
-// Usage strategy:
-// Ollama: Chat, summaries, tagging, simple suggestions, habit reports
-// Claude: Daily Briefing, Weekly Review, Opportunity parsing, Roadmap analysis
+    App->>Router: callAI(prompt, systemPrompt)
+    Router->>Router: Check USE_LOCAL_AI flag
+
+    alt USE_LOCAL_AI == true
+        Router->>Ollama: POST /api/generate
+        Ollama-->>Router: Response (Free, Local, Private)
+        Note over Ollama: Chat, Summaries,<br/>Tagging, Suggestions,<br/>Habit Reports
+    else Fallback to Cloud
+        Router->>Claude: POST /v1/messages
+        Claude-->>Router: Response ($5 Credit)
+        Note over Claude: Daily Briefing,<br/>Weekly Review,<br/>Opportunity Parsing,<br/>Roadmap Analysis
+    end
+
+    Router-->>App: AI Response
 ```
 
 ---
