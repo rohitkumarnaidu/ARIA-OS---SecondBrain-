@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
 import { createLogger } from '@/lib/utils/logger'
 
 const log = createLogger('route-error')
@@ -41,12 +42,14 @@ export function ModuleError({ error, reset, name = 'page' }: ModuleErrorProps) {
           <p className="text-xs text-text-tertiary font-mono">Error ID: {error.digest}</p>
         )}
         <div className="flex items-center justify-center gap-3">
-          <button onClick={reset} className="btn btn-primary gap-2">
+          <Button onClick={reset} variant="primary">
             <RefreshCw size={16} /> Try again
-          </button>
-          <Link href="/dashboard" className="btn btn-secondary gap-2">
-            <Home size={16} /> Dashboard
-          </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard">
+              <Home size={16} /> Dashboard
+            </Link>
+          </Button>
         </div>
       </motion.div>
     </div>
