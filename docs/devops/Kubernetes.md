@@ -36,35 +36,46 @@
 
 ### 1.1 Migration Context
 
-```
-Current State (Docker Compose + Railway):
-  ┌───────────────────────────────────────────────────┐
-  │  Developer Machine         Railway Cloud          │
-  │  ┌────────────┐           ┌──────────────────┐   │
-  │  │ Docker CE  │           │ Railway Platform  │   │
-  │  │ Compose    │           │ (managed Docker)   │   │
-  │  │ 4 services │           │ 2 containers       │   │
-  │  └────────────┘           └──────────────────┘   │
-  └───────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Current["Current State (Docker Compose + Railway)"]
+        DevMachine["Developer Machine<br/>Docker CE Compose<br/>4 services"]
+        Railway["Railway Cloud<br/>Railway Platform<br/>(managed Docker) 2 containers"]
+    end
 
-Future State (Kubernetes):
-  ┌───────────────────────────────────────────────────────┐
-  │  Kubernetes Cluster (GKE / EKS / kubeadm)            │
-  │                                                       │
-  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────┐ │
-  │  │ Frontend │  │ Backend  │  │Scheduler │  │Ollama│ │
-  │  │ Deploy   │  │ Deploy   │  │ Deploy   │  │State-│ │
-  │  │ HPA      │  │ HPA      │  │          │  │fulSet│ │
-  │  └──────────┘  └──────────┘  └──────────┘  └──────┘ │
-  │                                                       │
-  │  ┌──────────────────────────────────────────────┐    │
-  │  │  Ingress (NGINX) → TLS → Path-based routing  │    │
-  │  └──────────────────────────────────────────────┘    │
-  │                                                       │
-  │  ┌──────────────────┐  ┌──────────────────────────┐ │
-  │  │ Prometheus + Graf│  │ EFK Stack (Logging)      │ │
-  │  └──────────────────┘  └──────────────────────────┘ │
-  └───────────────────────────────────────────────────────┘
+    subgraph Future["Future State (Kubernetes)"]
+        K8sCluster["Kubernetes Cluster (GKE / EKS / kubeadm)"]
+        FrontendK8s["Frontend<br/>Deploy + HPA"]
+        BackendK8s["Backend<br/>Deploy + HPA"]
+        SchedulerK8s["Scheduler<br/>Deploy"]
+        OllamaK8s["Ollama<br/>StatefulSet"]
+        Ingress["Ingress (NGINX)<br/>TLS → Path-based routing"]
+        Monitoring["Prometheus + Grafana"]
+        Logging["EFK Stack (Logging)"]
+
+        K8sCluster --- FrontendK8s
+        K8sCluster --- BackendK8s
+        K8sCluster --- SchedulerK8s
+        K8sCluster --- OllamaK8s
+        K8sCluster --- Ingress
+        K8sCluster --- Monitoring
+        K8sCluster --- Logging
+    end
+
+    Current --> Future
+
+    style Current fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style DevMachine fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Railway fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Future fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style K8sCluster fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style FrontendK8s fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style BackendK8s fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SchedulerK8s fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style OllamaK8s fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Ingress fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Monitoring fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Logging fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 1.2 Migration Triggers
@@ -78,60 +89,55 @@ Future State (Kubernetes):
 
 ### 1.3 Architecture Diagram
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                    KUBERNETES CLUSTER                              │
-│                                                                    │
-│  ┌───────── Namespace: sbos ──────────────────────────────────┐   │
-│  │                                                             │   │
-│  │  ┌──────────────────────┐  ┌──────────────────────────┐    │   │
-│  │  │  Pod: frontend       │  │  Pod: backend            │    │   │
-│  │  │  ┌────────────────┐  │  │  ┌────────────────────┐  │    │   │
-│  │  │  │ Container:     │  │  │  │ Container:         │  │    │   │
-│  │  │  │ nextjs:latest  │  │  │  │ fastapi:latest     │  │    │   │
-│  │  │  │ Port: 3000     │  │  │  │ Port: 8000         │  │    │   │
-│  │  │  │ Readiness: /   │  │  │  │ Readiness: /health │  │    │   │
-│  │  │  └────────────────┘  │  │  └────────────────────┘  │    │   │
-│  │  └──────────────────────┘  └──────────────────────────┘    │   │
-│  │                                                             │   │
-│  │  ┌──────────────────────┐  ┌──────────────────────────┐    │   │
-│  │  │  Pod: scheduler      │  │  Pod: ollama             │    │   │
-│  │  │  ┌────────────────┐  │  │  ┌────────────────────┐  │    │   │
-│  │  │  │ Container:     │  │  │  │ Container:         │  │    │   │
-│  │  │  │ scheduler:lat. │  │  │  │ ollama:latest      │  │    │   │
-│  │  │  │ Port: 8001     │  │  │  │ Port: 11434         │  │    │   │
-│  │  │  └────────────────┘  │  │  │ Volume: model-storage│  │    │   │
-│  │  └──────────────────────┘  │  └────────────────────┘  │    │   │
-│  │                             └──────────────────────────┘    │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-│                                                                    │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                     SERVICES                                 │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐    │  │
-│  │  │ frontend-svc │  │ backend-svc  │  │ scheduler-svc  │    │  │
-│  │  │ ClusterIP    │  │ ClusterIP    │  │ ClusterIP      │    │  │
-│  │  │ Port: 3000   │  │ Port: 8000   │  │ Port: 8001     │    │  │
-│  │  └──────┬───────┘  └──────┬───────┘  └────────────────┘    │  │
-│  │         │                 │                                 │  │
-│  └─────────┼─────────────────┼────────────────────────────────-┘  │
-│            │                 │                                     │
-│  ┌─────────┴─────────────────┴────────────────────────────────┐   │
-│  │                     INGRESS                                 │   │
-│  │  ┌───────────────────────────────────────────────────────┐  │   │
-│  │  │  Host: secondbrain-os.com → frontend-svc:3000        │  │   │
-│  │  │  Host: api.secondbrain-os.com → backend-svc:8000     │  │   │
-│  │  │  TLS: letsencrypt-prod                               │  │   │
-│  │  └───────────────────────────────────────────────────────┘  │   │
-│  └────────────────────────────────────────────────────────────-┘   │
-│                                                                    │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │              MONITORING STACK                                │  │
-│  │  ┌────────────────┐  ┌────────────────┐  ┌──────────────┐  │  │
-│  │  │ Prometheus      │  │ Grafana        │  │ Alertmanager │  │  │
-│  │  │ (metrics)       │  │ (dashboards)   │  │ (alerts)     │  │  │
-│  │  └────────────────┘  └────────────────┘  └──────────────┘  │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph K8sCluster["KUBERNETES CLUSTER"]
+        subgraph NamespaceSBOS["Namespace: sbos"]
+            PodFrontend["Pod: frontend<br/>Container: nextjs:latest<br/>Port: 3000 | Readiness: /"]
+            PodBackend["Pod: backend<br/>Container: fastapi:latest<br/>Port: 8000 | Readiness: /health"]
+            PodScheduler["Pod: scheduler<br/>Container: scheduler:latest<br/>Port: 8001"]
+            PodOllama["Pod: ollama<br/>Container: ollama:latest<br/>Port: 11434<br/>Volume: model-storage"]
+        end
+
+        subgraph Services["SERVICES"]
+            SvcFrontend["frontend-svc<br/>ClusterIP | Port: 3000"]
+            SvcBackend["backend-svc<br/>ClusterIP | Port: 8000"]
+            SvcScheduler["scheduler-svc<br/>ClusterIP | Port: 8001"]
+        end
+
+        subgraph IngressSection["INGRESS"]
+            Ingress["Host: secondbrain-os.com → frontend-svc:3000<br/>Host: api.secondbrain-os.com → backend-svc:8000<br/>TLS: letsencrypt-prod"]
+        end
+
+        subgraph Monitoring["MONITORING STACK"]
+            Prometheus["Prometheus<br/>(metrics)"]
+            Grafana["Grafana<br/>(dashboards)"]
+            Alertmanager["Alertmanager<br/>(alerts)"]
+        end
+    end
+
+    Ingress --> SvcFrontend
+    Ingress --> SvcBackend
+    SvcFrontend --> PodFrontend
+    SvcBackend --> PodBackend
+    SvcScheduler --> PodScheduler
+
+    style K8sCluster fill:#0A0B0F,stroke:#334155,color:#F1F5F9
+    style NamespaceSBOS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PodFrontend fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PodBackend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style PodScheduler fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PodOllama fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Services fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style SvcFrontend fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SvcBackend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style SvcScheduler fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style IngressSection fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style Ingress fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Monitoring fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style Prometheus fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Grafana fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Alertmanager fill:#13151A,stroke:#EF4444,color:#F1F5F9
 ```
 
 ---
@@ -704,10 +710,18 @@ spec:
 
 ### 5.3 Path-Based Routing Rules
 
-```
-secondbrain-os.com ──▶ frontend-svc:3000 (main app)
-api.secondbrain-os.com ──▶ backend-svc:8000 (REST API)
-api.secondbrain-os.com/health ──▶ scheduler-svc:8001 (health check)
+```mermaid
+flowchart LR
+    Sub1["secondbrain-os.com"] --> F["frontend-svc:3000<br/>(main app)"]
+    Sub2["api.secondbrain-os.com"] --> B["backend-svc:8000<br/>(REST API)"]
+    Sub3["api.secondbrain-os.com/health"] --> S["scheduler-svc:8001<br/>(health check)"]
+
+    style Sub1 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Sub2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Sub3 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style F fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style B fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style S fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 5.4 Load Balancer (For Direct Access, Optional)
@@ -1295,10 +1309,18 @@ groups:
 
 ### 12.1 EFK Stack Architecture
 
-```
-Pod (stdout) → Fluentd (DaemonSet) → Elasticsearch → Kibana
-                    │
-                    └──→ Cloud Logging (backup)
+```mermaid
+flowchart LR
+    Pod["Pod (stdout)"] --> Fluentd["Fluentd (DaemonSet)"]
+    Fluentd --> ES["Elasticsearch"]
+    ES --> Kibana["Kibana"]
+    Fluentd -.-> Cloud["Cloud Logging (backup)"]
+
+    style Pod fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Fluentd fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ES fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Kibana fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Cloud fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 12.2 Fluentd DaemonSet Config
@@ -1650,22 +1672,25 @@ securityContext:
 
 ### 16.1 Cluster Topology (Future State)
 
-```
-                         Global Load Balancer (GCLB / Cloudflare)
-                                    │
-                    ┌───────────────┴───────────────┐
-                    │                               │
-            ┌───────▼────────┐             ┌───────▼────────┐
-            │  Cluster: US   │             │  Cluster: EU   │
-            │  us-central1   │             │  europe-west1  │
-            │  Primary       │             │  Failover      │
-            │  Read/Write    │             │  Read-Only     │
-            └───────┬────────┘             └───────┬────────┘
-                    │                               │
-            ┌───────▼────────┐             ┌───────▼────────┐
-            │  Supabase US   │             │  Supabase EU   │
-            │  (Primary)     │────Sync────▶│ (Read Replica) │
-            └────────────────┘             └────────────────┘
+```mermaid
+graph TD
+    GLB["Global Load Balancer (GCLB / Cloudflare)"]
+    ClusterUS["Cluster: US<br/>us-central1<br/>Primary<br/>Read/Write"]
+    ClusterEU["Cluster: EU<br/>europe-west1<br/>Failover<br/>Read-Only"]
+    SupabaseUS["Supabase US<br/>(Primary)"]
+    SupabaseEU["Supabase EU<br/>(Read Replica)"]
+
+    GLB --> ClusterUS
+    GLB --> ClusterEU
+    ClusterUS --> SupabaseUS
+    ClusterEU --> SupabaseEU
+    SupabaseUS -- Sync --> SupabaseEU
+
+    style GLB fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style ClusterUS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style ClusterEU fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SupabaseUS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style SupabaseEU fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 16.2 Multi-Cluster Implementation Phases

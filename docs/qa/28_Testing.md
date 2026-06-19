@@ -40,16 +40,13 @@
 
 Second Brain OS adopts the **Testing Trophy Model** (coined by Kent C. Dodds), which prioritises integration tests over unit tests while maintaining a healthy pyramid across all layers. Unlike the traditional testing pyramid (which emphasises numerous unit tests), the trophy model recognises that modern web applications derive the most value from integration tests that exercise real user workflows.
 
-```
-        ╱  ╲
-       ╱ E2E ╲           ─── Critical user journeys (10%)
-      ╱────────╲
-     ╱ Integration ╲      ─── Cross-module, API + DB flows (25%)
-    ╱────────────────╲
-   ╱     Unit Tests     ╲  ─── Isolated logic, pure functions (60%)
-  ╱────────────────────────╲
- ╱   Static Analysis + Lint  ╲ ─── TypeScript, Ruff, ESLint (5% manual review)
-╱──────────────────────────────╲
+```mermaid
+graph TD
+    subgraph Testing_Trophy[Testing Trophy Model]
+        S[Static Analysis + Lint<br>5% manual review] --> U[Unit Tests<br>60% Isolated logic pure functions]
+        U --> I[Integration<br>25% Cross-module API + DB flows]
+        I --> E[E2E<br>10% Critical user journeys]
+    end
 ```
 
 ### 1.2 Distribution Targets
@@ -1653,14 +1650,14 @@ python -m pytest tests/ -x --cov=packages && \
 | **Shim** | Replace a module entirely | `vi.mock('@/lib/supabase')` in Vitest |
 
 **Decision tree for choosing test doubles:**
-```
-Is the dependency slow or non-deterministic?
-+-- Yes -> Is the behaviour simple (fixed response)?
-|   +-- Yes -> Use a Stub
-|   +-- No -> Use a Mock
-+-- No -> Is the dependency a side-effect (logging, analytics)?
-    +-- Yes -> Use a Spy
-    +-- No -> Use the Real Implementation (preferred)
+```mermaid
+flowchart TD
+    Q1{Is the dependency slow or non-deterministic} -->|Yes| Q2{Is the behaviour simple fixed response}
+    Q2 -->|Yes| Stub[Use a Stub]
+    Q2 -->|No| Mock[Use a Mock]
+    Q1 -->|No| Q3{Is the dependency a side-effect logging analytics}
+    Q3 -->|Yes| Spy[Use a Spy]
+    Q3 -->|No| Real[Use the Real Implementation preferred]
 ```
 
 ---
@@ -1669,49 +1666,40 @@ Is the dependency slow or non-deterministic?
 
 ### 6.1 CI Pipeline Architecture
 
-```
-                    +-------------+
-                    |  PR Opened  |
-                    |  or Pushed  |
-                    +------+------+
-                           |
-                    +------v------+
-                    |  Concurrency|
-                    |  Check      |
-                    |  (cancel    |
-                    |  in-progress)|
-                    +------+------+
-                           |
-              +------------+------------+
-              |            |            |
-              v            v            v
-       +----------+ +----------+ +----------+
-       | Frontend | | Backend  | | Security |
-       |   Job    | |   Job    | |   Job    |
-       +----+-----+ +----+-----+ +----+-----+
-            |            |            |
-            v            v            v
-       +----------+ +----------+ +----------+
-       | Lint     | | Ruff     | | npm audit|
-       | TypeCheck| | PyCompile| | Scorecard|
-       | Build    | |          | |          |
-       | Test     | | Test     | |          |
-       | Coverage | | Coverage | |          |
-       +----+-----+ +----+-----+ +----+-----+
-            |            |            |
-            +------------+------------+
-                         |
-                         v
-                  +--------------+
-                  | All Checks   |
-                  |   Passed?    |
-                  +------+-------+
-                         | Yes
-                         v
-                  +--------------+
-                  |    Merge     |
-                  |   Allowed    |
-                  +--------------+
+```mermaid
+flowchart LR
+    PR[PR Opened or Pushed] --> CC[Concurrency Check<br>cancel in-progress]
+    CC --> FE[Frontend Job]
+    CC --> BE[Backend Job]
+    CC --> SE[Security Job]
+
+    FE --> F1[Lint]
+    FE --> F2[TypeCheck]
+    FE --> F3[Build]
+    FE --> F4[Test]
+    FE --> F5[Coverage]
+
+    BE --> B1[Ruff]
+    BE --> B2[PyCompile]
+    BE --> B3[Test]
+    BE --> B4[Coverage]
+
+    SE --> S1[npm audit]
+    SE --> S2[Scorecard]
+
+    F1 --> AC{All Checks Passed}
+    F2 --> AC
+    F3 --> AC
+    F4 --> AC
+    F5 --> AC
+    B1 --> AC
+    B2 --> AC
+    B3 --> AC
+    B4 --> AC
+    S1 --> AC
+    S2 --> AC
+
+    AC -->|Yes| Merge[Merge Allowed]
 ```
 
 ### 6.2 Full CI Workflow
@@ -2055,42 +2043,16 @@ A test is considered **flaky** if it passes and fails on the same code at least 
 
 #### 9.1.2 Flaky Test Lifecycle
 
-```
-                    +--------------+
-                    | Test Created |
-                    +------+-------+
-                           |
-                    +------v-------+
-                    |   Normal     |
-                    |  Execution   |
-                    +------+-------+
-                           |
-                    +------v-------+
-              +-----| Flaky? (>=3  |
-              |     | failures in  |
-              |     | 7 days)      |
-              |     +------+-------+
-              |            | Yes
-              |     +------v-------+
-              |     | Quarantine   |
-              |     | (Tag flaky)  |
-              |     | Create Jira  |
-              |     | ticket       |
-              |     +------+-------+
-              |            |
-              |     +------v-------+
-              |     | Investigation|
-              |     | (24h SLA)    |
-              |     +------+-------+
-              |            |
-              |     +------v-------+
-              |     | Fix Applied? |
-              |     +------+-------+
-              |            | Yes
-              |     +------v-------+
-              |     | Return       |
-              |     | to Normal    |
-              |     +--------------+
+```mermaid
+stateDiagram-v2
+    [*] --> Created: Test Created
+    Created --> Normal: Normal Execution
+    Normal --> Flaky: >= 3 failures in 7 days
+    Flaky --> Quarantine: Tag flaky / Create Jira ticket
+    Quarantine --> Investigation: 24h SLA
+    Investigation --> FixCheck: Fix Applied
+    FixCheck --> Normal: Yes
+    FixCheck --> Investigation: No
 ```
 
 #### 9.1.3 Flaky Test Quarantine Process
@@ -2574,36 +2536,15 @@ Test Design:
 
 Second Brain OS uses a **modified TDD approach**: tests are written alongside code (not strictly before), but the test-first mindset is encouraged for bug fixes and new features.
 
-```
-RED   -> Write a failing test that describes the desired behaviour
-  |        |
-  |        v
-  |    +--------------------------+
-  |    | Test should fail         |
-  |    | (Feature not             |
-  |    | implemented yet)         |
-  |    +--------------------------+
-  |        |
-  |        v
-GREEN -> Write the minimum code to make the test pass
-  |        |
-  |        v
-  |    +--------------------------+
-  |    | Code should be           |
-  |    | minimal, not perfect     |
-  |    +--------------------------+
-  |        |
-  |        v
-REFACTOR -> Improve the code while keeping tests green
-            |
-            v
-        +--------------------------+
-        | Clean up, optimise,      |
-        | follow conventions       |
-        +--------------------------+
-            |
-            v
-        Repeat for next behaviour
+```mermaid
+stateDiagram-v2
+    [*] --> RED: Write a failing test
+    RED --> TestFails: Test should fail<br>Feature not implemented yet
+    TestFails --> GREEN: Write minimum code to pass
+    GREEN --> CodeMinimal: Code should be minimal not perfect
+    CodeMinimal --> REFACTOR: Improve code while keeping tests green
+    REFACTOR --> CleanUp: Clean up optimise follow conventions
+    CleanUp --> RED: Repeat for next behaviour
 ```
 
 ### 14.2 When to Use TDD

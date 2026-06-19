@@ -39,38 +39,28 @@
 
 ### 1.1 Architecture Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Second Brain OS Auth Flow                      │
-│                                                                       │
-│  Browser                          Backend (FastAPI)    Supabase Auth  │
-│    │                                    │                    │        │
-│    │ 1. Click "Sign in with Google"     │                    │        │
-│    │───────────────────────────────────────────────────────→│        │
-│    │                                    │                    │        │
-│    │ 2. Redirect to Google OAuth        │                    │        │
-│    │←───────────────────────────────────────────────────────│        │
-│    │                                    │                    │        │
-│    │ 3. Google consent screen           │                    │        │
-│    │──→                                 │                    │        │
-│    │    │                                │                    │        │
-│    │ 4. Auth code callback (PKCE)       │                    │        │
-│    │───────────────────────────────────────────────────────→│        │
-│    │                                    │                    │        │
-│    │ 5. Exchange code for tokens        │                    │        │
-│    │                                    │                    │──→     │
-│    │ 6. JWT issued                      │                    │←──     │
-│    │←───────────────────────────────────────────────────────│        │
-│    │                                    │                    │        │
-│    │ 7. API request with JWT            │                    │        │
-│    │───────────────────────────────────→│                    │        │
-│    │                                    │                    │        │
-│    │ 8. Validate JWT                    │                    │        │
-│    │                                    │───────────────────→│        │
-│    │ 9. Return user data                │                    │        │
-│    │←───────────────────────────────────│                    │        │
-│    │                                    │                    │        │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    actor U as User (Browser)
+    participant FE as Frontend
+    participant SUP as Supabase Auth
+    participant GOOG as Google OAuth
+    participant BE as Backend (FastAPI)
+
+    U->>FE: 1. Click "Sign in with Google"
+    FE->>SUP: supabase.auth.signInWithOAuth({provider:'google'})
+    SUP->>GOOG: 2. Redirect to Google OAuth consent
+    GOOG-->>U: 3. Display consent screen
+    U->>GOOG: Grant permissions
+    GOOG-->>SUP: 4. Auth code callback (PKCE)
+
+    SUP->>SUP: 5. Exchange code for tokens
+    SUP-->>FE: 6. JWT issued
+
+    FE->>BE: 7. API request with JWT<br/>Authorization: Bearer <jwt>
+    BE->>SUP: 8. Validate JWT
+    SUP-->>BE: User data
+    BE-->>FE: 9. Return response
 ```
 
 ### 1.2 Design Decisions
@@ -92,55 +82,30 @@
 
 ### 2.1 Step-by-Step Sequence
 
-```
-Step 1: User clicks "Sign In with Google"
-──────────────────────────────────────────
-Frontend calls:
-  supabase.auth.signInWithOAuth({ provider: 'google' })
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant SA as Supabase Auth
+    participant GOOG as Google OAuth
+    participant BE as Backend
 
-Step 2: Redirect to Google OAuth consent
-──────────────────────────────────────────
-Supabase Auth constructs OAuth URL with:
-  - client_id: Supabase OAuth app ID
-  - redirect_uri: {supabase_url}/auth/v1/callback
-  - response_type: code
-  - scope: openid email profile
-  - state: random anti-CSRF token
-  - code_challenge: SHA-256 hash of code_verifier (PKCE)
+    U->>FE: 1. Click "Sign In with Google"
+    FE->>SA: supabase.auth.signInWithOAuth({provider:'google'})
+    SA->>SA: 2. Construct OAuth URL<br/>client_id + redirect_uri + scope<br/>state (anti-CSRF) + code_challenge (PKCE)
+    SA->>GOOG: Redirect to Google consent
+    GOOG-->>U: 3. Display consent screen<br/>(email, profile, name)
+    U->>GOOG: Grant permissions
+    GOOG-->>SA: 4. Auth code callback<br/>{supabase_url}/auth/v1/callback?code=...
 
-Step 3: User consents on Google
-──────────────────────────────────────────
-User grants: email address, display name, profile photo.
-Google generates authorization code.
+    SA->>SA: 5. Exchange code for session<br/>→ access_token (JWT, 1h)<br/>→ refresh_token (long-lived)<br/>→ provider_token
 
-Step 4: Authorization code callback
-──────────────────────────────────────────
-Google redirects to:
-  {supabase_url}/auth/v1/callback?code=AUTH_CODE&state=STATE_TOKEN
+    SA-->>FE: 6. JWT issued via redirect<br/>#access_token=...&refresh_token=...<br/>Session stored in HTTP-only cookie
 
-Step 5: Exchange code for session
-──────────────────────────────────────────
-Supabase Auth exchanges authorization code for:
-  - access_token (JWT): Short-lived (1 hour default)
-  - refresh_token: Long-lived (for token rotation)
-  - provider_token: Google OAuth access token
-
-Step 6: JWT issued to client
-──────────────────────────────────────────
-Supabase returns JWT via redirect with:
-  - Fragment parameters (#access_token=...&refresh_token=...)
-  - URL is cleared of fragments immediately via postMessage
-  - Session stored in HTTP-only cookie
-  - Client now has authenticated session
-
-Step 7: API calls use JWT
-──────────────────────────────────────────
-Frontend includes JWT in Authorization:
-  Authorization: Bearer <jwt>
-
-Backend validates JWT via Supabase Auth:
-  GET {supabase_url}/auth/v1/user
-  Headers: Authorization: Bearer <jwt>
+    FE->>BE: 7. API request with JWT<br/>Authorization: Bearer &lt;jwt&gt;
+    BE->>SA: 8. Validate JWT<br/>GET /auth/v1/user
+    SA-->>BE: User identity
+    BE-->>FE: 9. Return response + user data
 ```
 
 ### 2.2 Frontend Implementation

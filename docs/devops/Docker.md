@@ -31,40 +31,33 @@
 
 ### 1.1 Container Topology
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        DOCKER ARCHITECTURE                               │
-│                                                                          │
-│  ┌───────────────────────────────────────────────────────────────┐      │
-│  │                    DOCKER NETWORK                                │      │
-│  │                    app-network (172.20.0.0/16)                  │      │
-│  │                                                                 │      │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐       │      │
-│  │  │  Frontend     │  │  Backend      │  │  Scheduler     │       │      │
-│  │  │  sbos-frontend│  │  sbos-api     │  │  sbos-worker   │       │      │
-│  │  │  :3000        │  │  :8000        │  │  :8001         │       │      │
-│  │  │  Node 18      │  │  Python 3.10  │  │  Python 3.10  │       │      │
-│  │  │  Alpine       │  │  Slim         │  │  Slim          │       │      │
-│  │  │  120MB (prod) │  │  180MB (prod) │  │  150MB (prod)  │       │      │
-│  │  └──────────────┘  └──────────────┘  └────────────────┘       │      │
-│  │                                                                 │      │
-│  │  ┌──────────────┐  ┌──────────────────┐                         │      │
-│  │  │  Ollama       │  │  PostgreSQL      │                         │      │
-│  │  │  sbos-ollama  │  │  (via Supabase)  │                         │      │
-│  │  │  :11434       │  │  :5432           │                         │      │
-│  │  │  Ubuntu       │  │  Cloud-managed   │                         │      │
-│  │  │  ~4GB         │  │                  │                         │      │
-│  │  └──────────────┘  └──────────────────┘                         │      │
-│  └───────────────────────────────────────────────────────────────┘      │
-│                                                                          │
-│  ┌────────────────────────────────────┐                                 │
-│  │          DOCKER VOLUMES             │                                 │
-│  │  ┌────────────────┐  ┌──────────┐  │                                 │
-│  │  │ ollama_models  │  │ api_cache│  │                                 │
-│  │  │ (persistent)   │  │ (cache)  │  │                                 │
-│  │  └────────────────┘  └──────────┘  │                                 │
-│  └────────────────────────────────────┘                                 │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph DOCKER_ARCH["DOCKER ARCHITECTURE"]
+        subgraph Network["DOCKER NETWORK app-network (172.20.0.0/16)"]
+            Frontend["Frontend<br/>sbos-frontend:3000<br/>Node 18 Alpine<br/>120MB (prod)"]
+            Backend["Backend<br/>sbos-api:8000<br/>Python 3.10 Slim<br/>180MB (prod)"]
+            Scheduler["Scheduler<br/>sbos-worker:8001<br/>Python 3.10 Slim<br/>150MB (prod)"]
+            Ollama["Ollama<br/>sbos-ollama:11434<br/>Ubuntu<br/>~4GB"]
+            PG["PostgreSQL<br/>(via Supabase)<br/>:5432<br/>Cloud-managed"]
+        end
+
+        subgraph Volumes["DOCKER VOLUMES"]
+            VolModels["ollama_models<br/>(persistent)"]
+            VolCache["api_cache<br/>(cache)"]
+        end
+    end
+
+    style DOCKER_ARCH fill:#0A0B0F,stroke:#334155,color:#F1F5F9
+    style Network fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Frontend fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Backend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Scheduler fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Ollama fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style PG fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Volumes fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style VolModels fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style VolCache fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 1.2 Container Design Principles
@@ -380,10 +373,16 @@ networks:
 
 ### 3.2 Service Dependency Graph
 
-```
-frontend ──depends_on──▶ backend (healthy) ──depends_on──▶ ollama (started)
-                                │
-                                └──depends_on──▶ scheduler (healthy)
+```mermaid
+flowchart LR
+    Frontend["Frontend"] -->|depends_on (healthy)| Backend["Backend"]
+    Backend -->|depends_on| Ollama["Ollama (started)"]
+    Backend -->|depends_on| Scheduler["Scheduler (healthy)"]
+
+    style Frontend fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Backend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Ollama fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Scheduler fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---
@@ -479,29 +478,34 @@ htmlcov
 
 ### 5.1 Network Topology
 
-```
-                    app-network (172.20.0.0/16)
-┌──────────────────────────────────────────────────────────────────┐
-│                                                                  │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────────┐  │
-│  │  frontend     │     │  backend      │     │  scheduler       │  │
-│  │  172.20.0.10  │     │  172.20.0.11  │     │  172.20.0.12    │  │
-│  │  :3000        │     │  :8000        │     │  :8001          │  │
-│  └──────┬───────┘     └──────┬───────┘     └──────────────────┘  │
-│         │                    │                                    │
-│         │         ┌──────────┘                                    │
-│         │         │                                                │
-│         ▼         ▼                                                │
-│  ┌─────────────────────────────────┐                              │
-│  │          ollama                  │                              │
-│  │          172.20.0.13            │                              │
-│  │          :11434                 │                              │
-│  └─────────────────────────────────┘                              │
-│                                                                   │
-│  Host Port Mappings:                                              │
-│  :3000 → frontend:3000    :8000 → backend:8000                   │
-│  :8001 → scheduler:8001   :11434 → ollama:11434                  │
-└──────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph AppNetwork["app-network (172.20.0.0/16)"]
+        Frontend["frontend<br/>172.20.0.10:3000"]
+        Backend["backend<br/>172.20.0.11:8000"]
+        Scheduler["scheduler<br/>172.20.0.12:8001"]
+        OllamaNW["ollama<br/>172.20.0.13:11434"]
+        Frontend --> OllamaNW
+        Backend --> OllamaNW
+    end
+
+    subgraph PortMappings["Host Port Mappings"]
+        P1[":3000 → frontend:3000"]
+        P2[":8000 → backend:8000"]
+        P3[":8001 → scheduler:8001"]
+        P4[":11434 → ollama:11434"]
+    end
+
+    style AppNetwork fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Frontend fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Backend fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Scheduler fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style OllamaNW fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style PortMappings fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style P1 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style P2 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style P3 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style P4 fill:#1A1D24,stroke:#334155,color:#94A3B8
 ```
 
 ### 5.2 Internal DNS Resolution

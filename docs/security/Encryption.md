@@ -33,6 +33,64 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+sequenceDiagram
+    participant User as 👤 User
+    participant Browser as 🌐 Browser
+    participant API as 🖥️ FastAPI
+    participant DB as 🗄️ Supabase
+    participant Claude as 🤖 Claude API
+
+    Note over User,Claude: Data in Transit (TLS 1.3)
+    
+    User->>Browser: Enter sensitive data
+    Browser->>API: POST /api/v1/resource<br/>(TLS 1.3 — ECDHE + AES-256-GCM)
+    API->>API: Decrypt TLS payload
+    API->>API: Apply app-level encryption<br/>(AES-256-GCM with DEK)
+    API->>DB: Store encrypted payload<br/>(TLS 1.3 — AES-256 at rest)
+    DB-->>API: Confirm stored
+    API-->>Browser: 201 Created (TLS)
+    Browser-->>User: Success confirmation
+
+    Note over User,Claude: Data at Rest (AES-256)
+    
+    User->>Browser: Request data
+    Browser->>API: GET /api/v1/resource (TLS)
+    API->>DB: Query Supabase (TLS)
+    DB-->>API: Return encrypted row
+    API->>API: Decrypt app-level encryption
+    API-->>Browser: Return plaintext (TLS)
+    Browser-->>User: Display data
+
+    Note over User,Claude: AI Data Handling
+    User->>API: Chat with ARIA
+    API->>API: Sanitize PII from prompt
+    API->>Claude: Send anonymized prompt (TLS)
+    Claude-->>API: Return AI response
+    API->>DB: Store encrypted chat log
+```
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph LR
+    subgraph Key Hierarchy
+        MK["🔑 Master Key (HS256)<br/>Environment Variable<br/>JWT_SECRET"] --> KEK["🔐 Key Encryption Key (KEK)<br/>AES-256<br/>Stored in Vault"]
+        KEK --> DEK1["📜 Data Encryption Key 1<br/>AES-256-GCM<br/>User PII & Preferences"]
+        KEK --> DEK2["📜 Data Encryption Key 2<br/>AES-256-GCM<br/>Chat History & AI Data"]
+        KEK --> DEK3["📜 Data Encryption Key 3<br/>AES-256-GCM<br/>Audit Logs & Events"]
+        DEK1 --> Data1["📦 Encrypted: users.*"]
+        DEK2 --> Data2["📦 Encrypted: chat_messages.*"]
+        DEK3 --> Data3["📦 Encrypted: audit_logs.*"]
+    end
+
+    subgraph Rotation Policy
+        MK --> RotateMK["🔄 Master Key: Every 90 days"]
+        KEK --> RotateKEK["🔄 KEK: Every 180 days"]
+        DEK1 --> RotateDEK["🔄 DEK: Every 365 days"]
+    end
+```
+
 ## 1. Encryption Overview
 
 ### 1.1 Encryption Scope

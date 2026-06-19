@@ -27,6 +27,47 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph LR
+    subgraph Local["💻 Local Development"]
+        L_Next["Next.js :3000"] --- L_API["FastAPI :8000"]
+        L_API --- L_Ollama["Ollama :11434"]
+        L_API --- L_Supabase["Supabase Local CLI"]
+    end
+
+    subgraph Preview["🔀 Preview (PR)"]
+        P_Vercel["Vercel Preview URL"]
+        P_Railway["Railway Dev Branch"]
+        P_Supabase["Supabase Preview DB"]
+    end
+
+    subgraph Staging["🧪 Staging"]
+        S_Vercel["Vercel Staging"]
+        S_Railway["Railway Staging"]
+        S_Supabase["Supabase Staging Project"]
+    end
+
+    subgraph Production["🚀 Production"]
+        Prod_Vercel["Vercel Production<br/>(secondbrain-os.vercel.app)"]
+        Prod_Railway["Railway Production<br/>(api.secondbrain-os.com)"]
+        Prod_Supabase["Supabase Production<br/>(PostgreSQL)"]
+        Prod_Ollama["Ollama Local / Claude API"]
+        Prod_Resend["Resend (Email)"]
+    end
+
+    subgraph DR["🔄 Disaster Recovery"]
+        DR_Backup["Supabase Daily Backup"]
+        DR_Env["Backup .env & Config"]
+        DR_Docs["Git-based Documentation"]
+    end
+
+    Local --> Preview
+    Preview --> Staging
+    Staging --> Production
+    Production --> DR
+```
+
 ## 1. Environment Architecture Overview
 
 ### 1.1 Environment Topology
