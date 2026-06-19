@@ -39,6 +39,34 @@
 
 ---
 
+## Knowledge Graph Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    NODES["Skill Nodes"] --> REL["Relationships"]
+    REL --> TRAV["Graph Traversal"]
+    TRAV --> QUERY["Query Engine"]
+    QUERY --> ANALYTICS["Graph Analytics"]
+    ANALYTICS --> REC["Recommendations"]
+    ANALYTICS --> PATH["Pathfinding"]
+    ANALYTICS --> CLUSTER["Community Detection"]
+```
+
+## Graph Storage Layers
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph LR
+    PG[("PostgreSQL<br/>Transactional")] ---> SYNC["Sync Layer"]
+    N4J[("Neo4j<br/>Graph Queries")] ---> SYNC
+    RED[("Redis<br/>Cache Layer")] ---> SYNC
+    SYNC --> API["Graph API"]
+    API --> APP["Application"]
+```
+
+---
+
 ## 1. Vision
 
 ### 1.1 Why a Graph?

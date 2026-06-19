@@ -134,26 +134,41 @@ async def version() -> dict:
 
 ### Agent Dependency Graph
 
-```
-ARIA (A00) ─┬─ Service Agents ──────────────────── Cron Agents
-             │    ├── Planner (A01)           
-             │    ├── Memory (A02)            ← triggered on every chat
-             │    ├── Learning (A03)          ← depends on Planner for scheduling
-             │    ├── Career (A05)            ← depends on Learning (skills data)
-             │    ├── Analytics (A07)         ← depends on all agents for metrics
-             │    └── Roadmap (A08)           ← depends on Planner (time availability)
-             │
-             ├── Cron Agents ──────────────────────
-             │    ├── Reminder (A04)          ← no dependencies
-             │    ├── Opportunity (A06)       ← reads from resources table
-             │    ├── Daily Briefing (A09)    ← reads from all agents' outputs
-             │    ├── Weekly Review (A10)     ← reads from all agents' history
-             │    ├── Missed Task (A11)       ← depends on tasks table
-             │    ├── Habit Miss (A12)        ← depends on habits table
-             │    ├── Sleep & Bedtime (A13)   ← depends on sleep_logs table
-             │    └── Course Nudge (A14)      ← depends on courses table
-             │
-             └──→ Data flows through Supabase tables (agents never call each other directly)
+```mermaid
+graph TD
+    ARIA[ARIA A00<br/>Orchestrator]
+
+    subgraph Service["Service Agents"]
+        P[Planner A01]
+        M[Memory A02<br/>Triggered on every chat]
+        L[Learning A03<br/>Depends on Planner]
+        C[Career A05<br/>Depends on Learning]
+        A[Analytics A07<br/>Depends on all agents]
+        R[Roadmap A08<br/>Depends on Planner]
+    end
+
+    subgraph Cron["Cron Agents"]
+        REM[Reminder A04<br/>No dependencies]
+        OPP[Opportunity A06<br/>Reads resources table]
+        DB[Daily Briefing A09<br/>Reads all agent outputs]
+        WR[Weekly Review A10<br/>Reads all agent history]
+        MTC[Missed Task Checker A11]
+        HMC[Habit Miss Checker A12]
+        SLEEP[Sleep & Bedtime A13]
+        NUDGE[Course Progress Nudge A14]
+    end
+
+    ARIA --> Service
+    ARIA --> Cron
+
+    P -.->|depends on| L
+    L -.->|depends on| C
+    P -.->|depends on| R
+    Service -.->|metrics to| A
+
+    style ARIA fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9,stroke-width:3px
+    style Service fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Cron fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### Dependency Rules
@@ -4603,55 +4618,71 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 
 #### Pattern 1: Parallel Fan-Out (Independent Queries)
 
-```
-User: "How's my week looking?"
-  │
-  ▼
-ARIA ─────────────────────────────────────────────────────
-  │                                                       │
-  ├──► Planner Agent ─────► tasks + goals + sleep ────────┤
-  ├──► Learning Agent ────► courses + study data ─────────┤  ← ALL PARALLEL
-  ├──► Analytics Agent ───► productivity trends ──────────┤
-  └──► Career Agent ──────► income + skills ──────────────┘
-  │                                                       │
-  ▼                                                       ▼
-ARIA merges all 4 outputs ───► Synthesized response to user
+```mermaid
+sequenceDiagram
+    participant User
+    participant ARIA as ARIA (A00)
+    participant Planner as Planner Agent
+    participant Learning as Learning Agent
+    participant Analytics as Analytics Agent
+    participant Career as Career Agent
+
+    User->>ARIA: "How's my week looking?"
+    ARIA->>Planner: dispatch parallel
+    ARIA->>Learning: dispatch parallel
+    ARIA->>Analytics: dispatch parallel
+    ARIA->>Career: dispatch parallel
+    Planner-->>ARIA: tasks + goals + sleep
+    Learning-->>ARIA: courses + study data
+    Analytics-->>ARIA: productivity trends
+    Career-->>ARIA: income + skills
+    ARIA->>User: Synthesized response
 ```
 
 #### Pattern 2: Sequential Pipeline (Dependent Data Flow)
 
-```
-User: "Add 'Build portfolio site' to my career roadmap"
-  │
-  ▼
-ARIA ──► 1. Roadmap Agent ───► add milestone ────┐
-                 │                                │
-                 ▼                                │
-ARIA ──► 2. Planner Agent ◄─── reschedule tasks ──┤  ← SEQUENTIAL
-                 │                                │
-                 ▼                                │
-ARIA ──► 3. Career Agent ◄──── update skill map ──┘
-                 │
-                 ▼
-ARIA ──► Response: "Added milestone. Tasks adjusted."
+```mermaid
+sequenceDiagram
+    participant User
+    participant ARIA as ARIA (A00)
+    participant Roadmap as Roadmap Agent (A08)
+    participant Planner as Planner Agent (A01)
+    participant Career as Career Agent (A05)
+
+    User->>ARIA: "Add 'Build portfolio site' to my career roadmap"
+    ARIA->>Roadmap: 1. add milestone
+    Roadmap-->>ARIA: milestone created
+    ARIA->>Planner: 2. reschedule tasks
+    Planner-->>ARIA: tasks adjusted
+    ARIA->>Career: 3. update skill map
+    Career-->>ARIA: skill map updated
+    ARIA->>User: "Added milestone. Tasks adjusted."
 ```
 
 #### Pattern 3: Cron Event (Scheduled, No User)
 
-```
-[System Clock] ──────► Scheduler
-  │
-  ├── 6:00 AM ──► Opportunity Agent ──► scans APIs ──► writes to opportunities table
-  │
-  ├── 7:00 AM ──► Daily Briefing Agent ──► reads tasks/ sleep/ opps
-  │                                   ──► generates briefing
-  │                                   ──► pushes notification to user
-  │
-  ├── 9:30 PM ──► Sleep & Bedtime Agent ──► sends wind-down reminder
-  │
-  └── Midnight ─► Habit Miss Checker Agent ──► checks completions
-                                     ──► updates streaks
-                                     ──► sends streak-at-risk alerts
+```mermaid
+graph LR
+    CLOCK[System Clock] --> SCHED[Scheduler]
+
+    SCHED -- 6:00 AM --> OPP[Opportunity Agent A06]
+    OPP -->|scans APIs| OPP_WRITE[opportunities table]
+
+    SCHED -- 7:00 AM --> DB[Daily Briefing Agent A09]
+    DB -->|reads| DB_READ[tasks / sleep / opps]
+    DB -->|generates| BRIEFING[Briefing]
+    DB -->|pushes| NOTIF[Notification to user]
+
+    SCHED -- 9:30 PM --> SLEEP[Sleep & Bedtime Agent A13]
+    SLEEP -->|sends| WIND_DOWN[Wind-down reminder]
+
+    SCHED -- Midnight --> HABIT[Habit Miss Checker A12]
+    HABIT -->|checks| COMPLETIONS[Completions]
+    COMPLETIONS -->|updates| STREAKS[Streaks]
+    COMPLETIONS -->|sends| ALERT[Streak-at-risk alert]
+
+    style CLOCK fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style SCHED fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### Context Sharing Protocol
@@ -4900,27 +4931,48 @@ The following panels must be configured in the Agent Monitoring Dashboard:
 
 Every agent call is instrumented with OpenTelemetry spans:
 
-```
-Root Span: handle_user_message (trace_id)
-  ├── Span: intent_classification
-  │   ├── Event: intent_detected { intent: "schedule_query" }
-  │   └── Attribute: confidence = 0.92
-  ├── Span: dispatch_agents (parallel)
-  │   ├── Span: planner_agent_call
-  │   │   ├── Event: agent_started
-  │   │   ├── Event: agent_completed { duration_ms: 1200 }
-  │   │   └── Attribute: success = true
-  │   ├── Span: analytics_agent_call
-  │   │   ├── Event: agent_started
-  │   │   ├── Event: agent_completed { duration_ms: 800 }
-  │   │   └── Attribute: success = true
-  │   └── Span: learning_agent_call
-  │       ├── Event: agent_started
-  │       ├── Event: agent_failed { error: "TIMEOUT" }
-  │       └── Attribute: success = false
-  └── Span: response_synthesis
-      ├── Event: synthesis_started
-      └── Event: response_sent { token_count: 250 }
+```mermaid
+graph TD
+    ROOT[Root Span: handle_user_message]
+    
+    subgraph Intent["Intent Classification"]
+        IC[intent_classification]
+        IC -->|Event| ID[intent_detected<br/>schedule_query]
+        IC -->|Attribute| CONF[confidence = 0.92]
+    end
+
+    subgraph Dispatch["Dispatch Agents (Parallel)"]
+        PL[planner_agent_call]
+        PL -->|Event| PLS[agent_started]
+        PL -->|Event| PLC[agent_completed<br/>1200ms]
+        PL -->|Attribute| PLSU[success = true]
+
+        AN[analytics_agent_call]
+        AN -->|Event| ANS[agent_started]
+        AN -->|Event| ANC[agent_completed<br/>800ms]
+        AN -->|Attribute| ANSU[success = true]
+
+        LE[learning_agent_call]
+        LE -->|Event| LES[agent_started]
+        LE -->|Event| LEF[agent_failed<br/>TIMEOUT]
+        LE -->|Attribute| LESU[success = false]
+    end
+
+    subgraph Synthesis["Response Synthesis"]
+        RS[response_synthesis]
+        RS -->|Event| SS[synthesis_started]
+        RS -->|Event| SR[response_sent<br/>250 tokens]
+    end
+
+    ROOT --> IC
+    ROOT --> Dispatch
+    ROOT --> Synthesis
+    
+    style ROOT fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style IC fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Dispatch fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Synthesis fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style LEF fill:#3b1a1a,stroke:#EF4444,color:#F1F5F9
 ```
 
 Trace data exported to: Jaeger / Grafana Tempo (configurable).
@@ -4951,44 +5003,23 @@ Note: Costs based on Ollama running locally ($0 per token, only compute cost) an
 
 ## Enhanced Agent Improvement Lifecycle
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        1. OBSERVE                                           │
-│   Collect KPIs, errors, user feedback, latency, cost from all agents        │
-│   Sources: Grafana dashboards, structured logs, user feedback surveys        │
-└─────────────────────────────────┬───────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        2. ANALYZE                                           │
-│   Find underperforming agents, common failure patterns, cost anomalies      │
-│   Tools: A/B test results, latency heatmaps, error pattern clustering       │
-│   Gate: "Do we have statistical significance? (n > 100, p < 0.05)"          │
-└─────────────────────────────────┬───────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        3. ITERATE                                           │
-│   Update prompts, thresholds, guardrails, or logic                          │
-│   Prompt changes via A/B testing (see below)                                 │
-│   Code changes via feature branch + PR review                               │
-└─────────────────────────────────┬───────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        4. VALIDATE                                          │
-│   Staging deployment → E2E tests → Performance benchmark                     │
-│   Regression check: all KPIs must not degrade > 5%                          │
-└─────────────────────────────────┬───────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        5. DEPLOY                                            │
-│   Canary → 10% → 50% → 100% rollout with automatic rollback                │
-│   Monitoring period: 24h per stage                                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    O[<b>1. OBSERVE</b><br/>Collect KPIs, errors, feedback, latency, cost<br/>Sources: Grafana, structured logs, surveys]
+    A[<b>2. ANALYZE</b><br/>Find underperformers, failure patterns, cost anomalies<br/>Tools: A/B results, latency heatmaps, clustering<br/>Gate: statistical significance n&gt;100 p&lt;0.05]
+    I[<b>3. ITERATE</b><br/>Update prompts, thresholds, guardrails, logic<br/>Prompt changes via A/B testing<br/>Code changes via feature branch + PR]
+    V[<b>4. VALIDATE</b><br/>Staging deployment → E2E → Performance benchmark<br/>Regression: KPIs must not degrade &gt;5%]
+    D[<b>5. DEPLOY</b><br/>Canary → 10% → 50% → 100% rollout<br/>Auto-rollback, 24h monitoring per stage]
 
-Cycle duration: 2 weeks (aligned with sprint cadence)
+    O --> A --> I --> V --> D
+
+    D -.->|cycle repeats every 2 weeks| O
+
+    style O fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style A fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style I fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style V fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style D fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### Prompt A/B Testing Framework
@@ -5048,67 +5079,93 @@ Cycle duration: 2 weeks (aligned with sprint cadence)
 
 ## Appendix
 
-### Agent Dependency Graph (ASCII)
+### Agent Dependency Graph
 
-```
-                               ┌──────────────────────────┐
-                               │      ARIA (A00)          │
-                               │    Orchestrator          │
-                               └──┬───┬───┬───┬───┬───┬──┘
-                                  │   │   │   │   │   │
-            ┌─────────────────────┘   │   │   │   │   └──────────────────┐
-            ▼                         ▼   ▼   ▼   ▼                      ▼
-    ┌───────────────┐       ┌────────────────────────────────┐  ┌──────────────┐
-    │  Service      │       │         Cron Agents             │  │  Scheduler   │
-    │  Agents       │       │  (triggered by time, not user)   │  │  (Cron Job)  │
-    ├───────────────┤       ├────────────────────────────────┤  └──────────────┘
-    │ Planner (A01) │◄──────┤ Reminder (A04)                  │
-    │ Memory  (A02) │       │ Opportunity (A06)               │
-    │ Learning(A03) │◄──────┤ Daily Briefing (A09)           │◄────── 7 AM
-    │ Career  (A05) │◄──────┤ Weekly Review (A10)            │◄────── Sun 8PM
-    │ Analytics(A07)│◄──────┤ Missed Task Checker (A11)       │◄────── :00,:15,:30,:45
-    │ Roadmap (A08) │       │ Habit Miss Checker (A12)        │◄────── Midnight
-    └───────────────┘       │ Sleep & Bedtime (A13)           │◄────── 9:30 PM
-                            │ Course Progress Nudge (A14)     │◄────── 6 PM
-                            └────────────────────────────────┘
+```mermaid
+graph TB
+    ARIA[ARIA A00<br/>Orchestrator]
+    S[Scheduler<br/>Cron Job]
 
-Arrows indicate: ────→ "depends on" / reads from
-                  ────→ Data flows through Supabase tables (agents never call each other directly)
+    subgraph Service["Service Agents"]
+        P[Planner A01]
+        M[Memory A02]
+        L[Learning A03]
+        CAR[Career A05]
+        AN[Analytics A07]
+        R[Roadmap A08]
+    end
+
+    subgraph Cron["Cron Agents<br/>(triggered by time, not user)"]
+        REM[Reminder A04]
+        OPP[Opportunity A06]
+        DB[Daily Briefing A09<br/>7 AM]
+        WR[Weekly Review A10<br/>Sun 8PM]
+        MTC[Missed Task Checker A11<br/>:00,:15,:30,:45]
+        HMC[Habit Miss Checker A12<br/>Midnight]
+        SLEEP[Sleep & Bedtime A13<br/>9:30 PM]
+        NUDGE[Course Progress Nudge A14<br/>6 PM]
+    end
+
+    S --> DB
+    S --> WR
+    S --> MTC
+    S --> HMC
+    S --> SLEEP
+    S --> NUDGE
+
+    REM -.->|reads| P
+    DB -.->|reads| P
+    WR -.->|reads| P
+    L -.->|reads| P
+    CAR -.->|reads| L
+    AN -.->|reads| Service
+
+    ARIA --> Service
+    ARIA --> Cron
+    ARIA --> S
+
+    style ARIA fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9,stroke-width:3px
+    style Service fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Cron fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style S fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### Data Flow Diagram
 
-```
-                          ┌─────────────────────────────────────────────────────┐
-                          │                    SUPABASE DB                       │
-                          │                                                      │
-  tasks ◄────────────────┤  tasks        ◄── Planner (A01), ARIA (A00)          │
-  goals ◄────────────────┤  goals        ◄── Roadmap (A08), ARIA (A00)          │
-  courses ◄──────────────┤  courses      ◄── Learning (A03), Course Nudge (A14) │
-  habit_logs ◄───────────┤  habit_logs   ◄── Habit Miss Checker (A12)          │
-  sleep_logs ◄───────────┤  sleep_logs   ◄── Sleep & Bedtime (A13)             │
-  income_entries ◄───────┤  income_entries                                    │
-  projects ◄─────────────┤  projects                                            │
-  resources ◄────────────┤  resources    ◄── Opportunity (A06)                  │
-  opportunities ◄────────┤  opportunities◄── Opportunity (A06)                  │
-  chat_messages ◄────────┤  chat_messages◄── ARIA (A00)                         │
-  aria_memory ◄──────────┤  aria_memory  ◄── Memory Agent (A02)                │
-  users_profile ◄────────┤  users_profile│                                      │
-  daily_briefings ◄──────┤  daily_briefings◄── Daily Briefing (A09), Planner    │
-  weekly_reviews ◄───────┤  weekly_reviews◄── Weekly Review (A10)              │
-  notification_log ◄─────┤  notification_log◄── All notification agents        │
-  time_entries ◄─────────┤  time_entries                                        │
-  ideas ◄────────────────┤  ideas                                                │
-                          │                                                      │
-                          └─────────────────────────────────────────────────────┘
-                                      ▲          ▲           ▲
-                                      │          │           │
-                          ┌───────────┘          │           └───────────┐
-                          ▼                      ▼                       ▼
-                  ┌──────────────┐      ┌──────────────┐       ┌──────────────┐
-                  │   LLM APIs   │      │ External APIs│       │ Notification │
-                  │Ollama/Claude │      │Brave/GitHub  │       │  Push/Email  │
-                  └──────────────┘      └──────────────┘       └──────────────┘
+```mermaid
+graph TB
+    subgraph DB["SUPABASE DB"]
+        T[fa:fa-database tasks<br/>Planner A01, ARIA A00]
+        G[fa:fa-database goals<br/>Roadmap A08, ARIA A00]
+        C[fa:fa-database courses<br/>Learning A03, Course Nudge A14]
+        HL[fa:fa-database habit_logs<br/>Habit Miss Checker A12]
+        SL[fa:fa-database sleep_logs<br/>Sleep & Bedtime A13]
+        IE[fa:fa-database income_entries]
+        P[fa:fa-database projects]
+        RES[fa:fa-database resources<br/>Opportunity A06]
+        O[fa:fa-database opportunities<br/>Opportunity A06]
+        CM[fa:fa-database chat_messages<br/>ARIA A00]
+        AM[fa:fa-database aria_memory<br/>Memory Agent A02]
+        UP[fa:fa-database users_profile]
+        DBF[fa:fa-database daily_briefings<br/>Daily Briefing A09, Planner]
+        WR[fa:fa-database weekly_reviews<br/>Weekly Review A10]
+        NL[fa:fa-database notification_log<br/>All notification agents]
+        TE[fa:fa-database time_entries]
+        ID[fa:fa-database ideas]
+    end
+
+    subgraph Sources["External Sources"]
+        LLM[fa:fa-brain LLM APIs<br/>Ollama / Claude]
+        EXT[fa:fa-globe External APIs<br/>Brave / GitHub]
+        NOTIF[fa:fa-bell Notification<br/>Push / Email]
+    end
+
+    LLM --> DB
+    EXT --> DB
+    DB --> NOTIF
+
+    style DB fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Sources fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### Data Access Matrix

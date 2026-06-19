@@ -46,6 +46,26 @@
 
 ---
 
+## Multi-Database Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    APP["Application Layer"] --> PG[("PostgreSQL<br/>Relational Store")]
+    APP --> NEO[("Neo4j<br/>Graph Store")]
+    APP --> RED[("Redis<br/>Cache Layer")]
+    PG --> SYNC["Data Sync"]
+    NEO --> SYNC
+    SYNC --> CONS["Consistency Check"]
+    PG --> AUDIT["Audit Tables"]
+    PG --> HIST["History Tables"]
+    NEO --> TRAV["Graph Traversal"]
+    RED --> SESH["Session State"]
+    RED --> RATE["Rate Limiting"]
+```
+
+---
+
 ## 1. Database Overview
 
 ### 1.1 Architecture Principles

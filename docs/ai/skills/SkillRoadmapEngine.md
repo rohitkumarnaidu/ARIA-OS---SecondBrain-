@@ -117,6 +117,44 @@ The relationship between the six companion documents:
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
+### 1.2b Roadmap Generation Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart TD
+    PROFILE["User Profile"] --> ANALYZE["Skill Analysis"]
+    ANALYZE --> GAP["Gap Detection"]
+    GAP --> RECOMMEND["Path Recommendation"]
+    RECOMMEND --> SCHED["Schedule Milestones"]
+    SCHED --> TRACK["Progress Tracking"]
+    TRACK -.->|Reassess| ANALYZE
+```
+
+### 1.2c Learning Path Optimization
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph LR
+    subgraph INPUT["Input Factors"]
+        I1["Current Level"]
+        I2["Target Level"]
+        I3["Available Time"]
+        I4["Learning Speed"]
+    end
+    subgraph OPT["Path Optimizer"]
+        O1["DAG Solver"]
+        O2["Cost Function"]
+        O3["Constraint Check"]
+    end
+    subgraph OUTPUT["Optimized Path"]
+        O4["Skill Sequence"]
+        O5["Milestones"]
+        O6["Resources"]
+    end
+    INPUT --> OPT
+    OPT --> OUTPUT
+```
+
 ### 1.3 Core Design Principles
 
 | Principle | Rationale | Implementation |

@@ -8,31 +8,27 @@ The knowledge graph connects all user data — tasks, goals, courses, skills, op
 
 ## Architecture
 
-```
-User Data (Supabase tables)
-    │
-    ▼
-┌─────────────────────┐
-│ Entity Extraction   │ ← NLP-based entity recognition
-│ Layer               │
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Relationship Mapper │ ← Co-occurrence + explicit links
-│ Layer               │
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Graph Database      │ ← In-memory NetworkX graph
-│ (Neo4j-compatible)  │    persisted as JSON
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Query & Insight     │ ← Path queries, community detection,
-│ Layer               │    centrality scoring
-└──────────┬──────────┘
-           ▼
-    ARIA Insights
+```mermaid
+graph TD
+    UserData["User Data (Supabase Tables)"]
+    EntityExt["Entity Extraction Layer<br/>NLP-based entity recognition"]
+    RelMap["Relationship Mapper Layer<br/>Co-occurrence + explicit links"]
+    GraphDB["Graph Database<br/>In-memory NetworkX graph<br/>persisted as JSON"]
+    QueryLayer["Query & Insight Layer<br/>Path queries, community detection<br/>centrality scoring"]
+    Insights["ARIA Insights"]
+
+    UserData --> EntityExt
+    EntityExt --> RelMap
+    RelMap --> GraphDB
+    GraphDB --> QueryLayer
+    QueryLayer --> Insights
+
+    style UserData fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style EntityExt fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style RelMap fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style GraphDB fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style QueryLayer fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Insights fill:#6366F1,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---

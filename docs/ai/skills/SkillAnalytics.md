@@ -101,6 +101,42 @@
 
 ---
 
+## Analytics Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    DATA["Raw Data"] --> AGG["Aggregation Engine"]
+    AGG --> ANALYZE["Analysis Layer"]
+    ANALYZE --> VIZ["Visualization"]
+    VIZ --> REPORT["Reporting"]
+    REPORT --> INSIGHT["Actionable Insights"]
+```
+
+## Metrics Taxonomy
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    MET["Metrics Framework"] --> GRW["Growth Metrics"]
+    MET --> LRN["Learning Metrics"]
+    MET --> OPP["Opportunity Metrics"]
+    MET --> INC["Income Metrics"]
+    MET --> CAR["Career Metrics"]
+    GRW --> SAR["Skill Acquisition Rate"]
+    GRW --> LDS["Level Distribution"]
+    LRN --> VEL["Learning Velocity"]
+    LRN --> TTT["Time-to-Target"]
+    OPP --> CON["Conversion Rate"]
+    OPP --> WIN["Win Rate"]
+    INC --> ROI["ROI per Hour"]
+    INC --> DIV["Diversification Score"]
+    CAR --> CR["Career Readiness"]
+    CAR --> GCV["Gap Closure Velocity"]
+```
+
+---
+
 ## 0. Enterprise Analytics Overview
 
 ### 0.1 Purpose

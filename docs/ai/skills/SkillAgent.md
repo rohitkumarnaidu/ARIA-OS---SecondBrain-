@@ -64,6 +64,49 @@
 
 ---
 
+## Agent Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    SA["SkillAgent Core"] --> AA["Assessment Agent"]
+    SA --> RA["Recommendation Agent"]
+    SA --> IA["Intelligence Agent"]
+    SA --> RMA["Roadmap Agent"]
+    SA --> EA["Evidence Agent"]
+    SA --> CA["Career Agent"]
+    SA --> OA["Opportunity Agent"]
+    SA --> MA["Market Agent"]
+    SA --> GA["Graph Agent"]
+    AA --> TOOLS["Tools Layer"]
+    RA --> TOOLS
+    IA --> TOOLS
+    TOOLS --> MEM[("Memory Store")]
+    TOOLS --> KB[("Knowledge Base")]
+```
+
+## Skill Query Flow
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+sequenceDiagram
+    participant U as User
+    participant A as SkillAgent
+    participant KB as Knowledge Base
+    participant E as Engine Layer
+    
+    U->>A: Skill Query
+    A->>A: Intent Classification
+    A->>KB: Fetch Context
+    KB-->>A: Skill Context
+    A->>E: Execute Query
+    E-->>A: Results
+    A->>A: Synthesize Response
+    A-->>U: Formatted Answer
+```
+
+---
+
 ## 0. SkillAgent Overview
 
 ### 0.1 Purpose

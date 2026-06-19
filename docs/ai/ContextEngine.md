@@ -84,6 +84,31 @@ The Context Engine solves three fundamental problems:
 
 ---
 
+## Context Assembly Pipeline
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+flowchart LR
+    Agent["Agent Trigger"] --> Fetch["1. Fetch<br/>Supabase Queries<br/>18+ Tables"]
+    Fetch --> Filter["2. Filter<br/>Agent-specific<br/>Remove Irrelevant"]
+    Filter --> Rank["3. Rank<br/>Recency × Urgency<br/>× Relevance Score"]
+    Rank --> Budget["4. Token Budget<br/>Fit in 4096 ctx<br/>Truncate Excess"]
+    Budget --> Assemble["5. Assemble<br/>Structured Text +<br/>JSON Blocks"]
+    Assemble --> Cache["6. Cache<br/>TTL: 30s-5min"]
+    Cache --> Inject["7. Inject → Prompt<br/>LLM Ready Context"]
+
+    style Agent fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style Fetch fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Filter fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Rank fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style Budget fill:#1E293B,stroke:#F59E0B,color:#F1F5F9
+    style Assemble fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Cache fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Inject fill:#00FFA3,stroke:#00CC82,color:#0A0B0F
+```
+
+---
+
 ## Context Sources
 
 ### Source Registry

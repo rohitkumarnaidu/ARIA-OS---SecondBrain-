@@ -44,6 +44,36 @@
 
 ---
 
+## Matching Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    PROF["User Profile"] --> SKILLS["Skill Extraction"]
+    SKILLS --> OPP["Opportunity Sources"]
+    OPP --> SCORE["Score Calculation"]
+    SCORE --> RANK["Ranking Engine"]
+    RANK --> REC["Recommendations"]
+```
+
+## Scoring Engine Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    SA["Skill Alignment"] --> COMP["Composite Score"]
+    LM["Level Match"] --> COMP
+    GP["Growth Potential"] --> COMP
+    IA["Interest Alignment"] --> COMP
+    DU["Deadline Urgency"] --> COMP
+    IP["Income Potential"] --> COMP
+    COMP --> PROB["Success Probability"]
+    PROB --> WEIGHTED["Weighted Final Score"]
+    WEIGHTED --> RANKED["Ranked Opportunities"]
+```
+
+---
+
 ## 2. Opportunity Scoring
 
 ### 2.1 Core Scoring Formula

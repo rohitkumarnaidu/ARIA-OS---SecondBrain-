@@ -103,6 +103,37 @@ The relationship between the four documents:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
+### 1.2b Evidence Collection Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    CAP["Capture Evidence"] --> VRF["Verify Authenticity"]
+    VRF --> STO["Store in Graph"]
+    STO --> TRU["Calculate Trust Score"]
+    TRU --> PRE["Present Evidence"]
+    PRE --> FDB["Feedback Loop"]
+    FDB -.->|Re-verify| VRF
+```
+
+### 1.2c Evidence Trust Model
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    TRU["Trust Score"] --> AUTO["Auto-Verified"]
+    TRU --> AI["AI-Verified"]
+    TRU --> HUMAN["Human-Verified"]
+    AUTO --> SRC["Source Reputation"]
+    AUTO --> CON["Consistency Check"]
+    AI --> LLM["LLM Analysis"]
+    HUMAN --> REV["Manual Review"]
+    SRC --> WGT["Weighted Confidence"]
+    CON --> WGT
+    LLM --> WGT
+    REV --> WGT
+```
+
 ### 1.3 Core Design Principles
 
 | Principle | Rationale | Implementation |

@@ -17,6 +17,98 @@
 
 ---
 
+## Model Selection & Request Routing
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+flowchart LR
+    Req["Agent Request"] --> Check{USE_LOCAL_AI?}
+    Check -->|true| Ollama["Ollama<br/>Mistral 7B<br/>Free / Local"]
+    Check -->|false| Claude["Claude Sonnet 4<br/>Cloud / API<br/>~$0.003-0.015/req"]
+
+    Ollama -->|Success| Resp["Response"]
+    Ollama -->|Circuit Open| Claude
+    Claude -->|Success| Resp
+    Claude -->|Failed| Algo["Algorithmic Fallback<br/>Zero Downtime"]
+    Algo --> Resp
+
+    Req -->|Complex Task| DirectClaude["Route Directly<br/>High Complexity"]
+    DirectClaude --> Claude
+
+    style Req fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style Check fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style Ollama fill:#00FFA3,stroke:#00CC82,color:#0A0B0F
+    style Claude fill:#818CF8,stroke:#6366F1,color:#0A0B0F
+    style Resp fill:#1E293B,stroke:#00FFA3,color:#00FFA3
+    style Algo fill:#1E293B,stroke:#F59E0B,color:#F1F5F9
+    style DirectClaude fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+sequenceDiagram
+    participant App as Application
+    participant Router as Model Router
+    participant Ollama as Ollama (Mistral 7B)
+    participant Claude as Claude Sonnet 4
+    participant Fallback as Algorithmic Fallback
+
+    App->>Router: POST /api/v1/chat
+    activate Router
+
+    Router->>Router: Check USE_LOCAL_AI flag
+    Router->>Router: Check circuit breaker state
+
+    alt Local AI enabled & circuit closed
+        Router->>Ollama: POST /v1/chat/completions
+        activate Ollama
+
+        alt Success
+            Ollama-->>Router: Response JSON
+            Router-->>App: 200 OK
+        else Timeout / Error
+            Ollama-->>Router: 503 Service Unavailable
+            deactivate Ollama
+            Router->>Router: Increment failure counter
+            Router->>Claude: POST /v1/messages (fallback)
+            activate Claude
+
+            alt Success
+                Claude-->>Router: Response JSON
+                Router-->>App: 200 OK
+            else Failed
+                Claude-->>Router: Error
+                deactivate Claude
+                Router->>Fallback: Execute algorithmic response
+                activate Fallback
+                Fallback-->>Router: Fallback result
+                deactivate Fallback
+                Router-->>App: 200 OK (degraded)
+            end
+        end
+    else Cloud-only or circuit open
+        Router->>Claude: POST /v1/messages
+        activate Claude
+
+        alt Success
+            Claude-->>Router: Response JSON
+            Router-->>App: 200 OK
+        else Failed
+            Claude-->>Router: Error
+            deactivate Claude
+            Router->>Fallback: Execute algorithmic response
+            activate Fallback
+            Fallback-->>Router: Fallback result
+            deactivate Fallback
+            Router-->>App: 200 OK (degraded)
+        end
+    end
+
+    deactivate Router
+```
+
+---
+
 ## Executive Summary
 
 ### Why Model Selection Matters

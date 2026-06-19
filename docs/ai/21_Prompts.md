@@ -6,6 +6,30 @@
 
 ---
 
+## Prompt Lifecycle
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph LR
+    D["📝 Draft<br/>Write & Iterate"] --> T["🧪 Test<br/>CI Validation"]
+    T --> R["👁️ Review<br/>Peer Review"]
+    R --> V["🏷️ Versioned<br/>Semver Tag"]
+    V --> DEP["🚀 Deployed<br/>Prompt Registry"]
+    DEP --> OBS["📊 Observe<br/>Monitor Quality"]
+    OBS -->|Degradation| D
+    DEP -->|Superseded| RET["🗄️ Retired<br/>Deprecated"]
+
+    style D fill:#1E293B,stroke:#F59E0B,color:#F1F5F9
+    style T fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style R fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style V fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style DEP fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style OBS fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style RET fill:#1E293B,stroke:#EF4444,color:#F1F5F9
+```
+
+---
+
 ## Section 1: Daily ARIA Prompts
 
 ### Daily Planning

@@ -106,6 +106,62 @@ The guardrail system addresses five threat categories:
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
+### 4-Layer Guardrail Defense Pipeline
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    Input["User Input / Prompt"] --> L1
+
+    subgraph L1["Layer 1: Prompt-Level Guardrails"]
+        direction LR
+        IV["Input Validation<br/>Length / Format"] --> PID["Prompt Injection<br/>Regex Detection"]
+        PID --> JD["Jailbreak Detection<br/>Pattern Matching"]
+    end
+
+    L1 -->|Blocked| Block1["⛔ Return 400 + Log"]
+    L1 -->|Pass| LLM["LLM Inference"]
+
+    LLM --> L2
+
+    subgraph L2["Layer 2: Model-Level Guardrails"]
+        direction LR
+        SP["System Prompt<br/>Constraints"] --> TC["Temperature &<br/>Top-p Clamping"]
+        TC --> OS["Output Schema<br/>Enforcement"]
+    end
+
+    L2 --> L3
+
+    subgraph L3["Layer 3: Output-Level Guardrails"]
+        direction LR
+        CM["Content<br/>Moderation"] --> PII["PII Redaction<br/>Regex + NER"]
+        PII --> HD["Hallucination<br/>Detection"]
+    end
+
+    L3 -->|Blocked| Block2["⛔ Return 451 + Log"]
+    L3 -->|Pass| L4
+
+    subgraph L4["Layer 4: Application-Level Guardrails"]
+        direction LR
+        RL["Rate Limiting<br/>Token Bucket"] --> AD["Abuse Detection<br/>Anomaly Scoring"]
+        AD --> AL["Audit Logging +<br/>Alerting"]
+    end
+
+    L4 --> Safe["✅ Safe Response to User"]
+
+    style Input fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style L1 fill:#0A0B0F,stroke:#EF4444,color:#EF4444
+    style L2 fill:#0A0B0F,stroke:#F59E0B,color:#F59E0B
+    style L3 fill:#0A0B0F,stroke:#6366F1,color:#6366F1
+    style L4 fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    style LLM fill:#1E293B,stroke:#818CF8,color:#F1F5F9
+    style Block1 fill:#1E293B,stroke:#EF4444,color:#EF4444
+    style Block2 fill:#1E293B,stroke:#EF4444,color:#EF4444
+    style Safe fill:#1E293B,stroke:#00FFA3,color:#00FFA3
+```
+
+---
+
 ### Guardrail Response Codes
 
 | Code | HTTP Status | Meaning | User-Facing Message |
