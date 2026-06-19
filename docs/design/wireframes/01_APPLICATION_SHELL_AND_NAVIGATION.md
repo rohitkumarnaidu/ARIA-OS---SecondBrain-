@@ -8,6 +8,38 @@
 
 ---
 
+## Responsive Shell Breakpoint Architecture
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph LR
+    Desktop["Desktop<br/>1440px+"]:::desktop
+    Tablet["Tablet<br/>768-1023px"]:::tablet
+    Mobile["Mobile<br/>320-767px"]:::mobile
+
+    Desktop --> DSb["Sidebar: 240px Expanded"]:::spec
+    Desktop --> DTb["TopBar: 64px, Full Width"]:::spec
+    Desktop --> DCt["Content: Flexible + 24px pad"]:::spec
+    Desktop --> DCp["Context Panel: 320px Inline"]:::spec
+
+    Tablet --> TSb["Sidebar: 64px Collapsed (Icons)"]:::spec
+    Tablet --> TTb["TopBar: 64px + Hamburger Toggle"]:::spec
+    Tablet --> TCt["Content: Full - 64px + 16px pad"]:::spec
+    Tablet --> TCp["Context Panel: Slide-Over Overlay"]:::spec
+
+    Mobile --> MTb["TopBar: 48px + Back Button"]:::spec
+    Mobile --> MCt["Content: Full Width + 12px pad"]:::spec
+    Mobile --> MBt["BottomTab: 5 Items"]:::spec
+    Mobile --> MDr["Drawer: Full-Screen Menu"]:::spec
+
+    classDef desktop fill:#6366F1,stroke:#818CF8,color:#F1F5F9,font-weight:700
+    classDef tablet fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef mobile fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef spec fill:#13151A,stroke:#334155,color:#94A3B8
+```
+
+---
+
 ## 1. APPLICATION SHELL
 
 ### 1.1 Desktop Shell (1440px+)

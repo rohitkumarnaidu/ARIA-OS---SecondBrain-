@@ -8,6 +8,61 @@
 
 ---
 
+## Analytics Dashboard — Screen Architecture
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph TD
+    subgraph AnalyticsArch["Analytics Dashboard — 5 Screen Groups"]
+        style AnalyticsArch fill:#13151A,stroke:#334155,color:#F1F5F9
+    end
+
+    A["ANALYTICS OVERVIEW"]:::aMain
+    B["ARIA AI CHAT<br/>Messaging Interface"]:::aChat
+    C["SLEEP TRACKER<br/>Patterns + Factors + Logs"]:::aSleep
+    D["HABIT BUILDER<br/>Heatmap + Streaks + Analytics"]:::aHabit
+    E["SETTINGS<br/>7 Sections: Profile to About"]:::aSet
+
+    A --> A1["Time Period Switcher<br/>Day / Week / Month / Quarter / Year"]:::ctrl
+    A --> A2["KPI Row<br/>Productivity / Completion / Focus / Streak / Sleep"]:::metric
+    A --> A3["Productivity Trend<br/>30-Day Sparkline"]:::chart
+    A --> A4["Time Distribution<br/>Donut: Deep Work / Learning / Tasks / Admin"]:::chart
+    A --> A5["Category Performance<br/>Bars + Grades"]:::chart
+    A --> A6["Goal Progress<br/>Per-Goal % + Status"]:::metric
+    A --> A7["Weekly Comparison<br/>WoW Delta Table"]:::metric
+    A --> A_W["Weekly Review<br/>AI Summary + Daily Metrics"]:::review
+
+    B --> B1["Chat Thread<br/>Messages + Streaming"]:::chat_c
+    B --> B2["Context Panel<br/>Module Status Summary"]:::chat_c
+    B --> B3["Suggested Prompts<br/>Quick Action Buttons"]:::chat_c
+
+    C --> C1["Sleep KPI Row<br/>Avg / Score / Debt / Bedtime"]:::metric
+    C --> C2["Sleep Pattern<br/>7-Day Timeline"]:::chart
+    C --> C3["Sleep Factors<br/>Caffeine / Screen / Exercise"]:::metric
+    C --> C4["AI Insights<br/>Correlation + Wind-Down"]:::ai_c
+
+    D --> D1["Today's Checklist<br/>Toggle + Progress"]:::metric
+    D --> D2["Monthly Heatmap<br/>Color Grid"]:::chart
+    D --> D3["Habit Analytics<br/>30-Day Adherence + Streaks"]:::chart
+
+    E --> E1["Profile / Appearance / Notifications<br/>AI / Integrations / Data / About"]:::set_c
+
+    classDef aMain fill:#6366F1,stroke:#818CF8,color:#F1F5F9,font-weight:700
+    classDef aChat fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    classDef aSleep fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    classDef aHabit fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    classDef aSet fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef metric fill:#13151A,stroke:#334155,color:#94A3B8
+    classDef chart fill:#13151A,stroke:#334155,color:#94A3B8
+    classDef ctrl fill:#0A0B0F,stroke:#6366F1,color:#6366F1
+    classDef chat_c fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef ai_c fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef review fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef set_c fill:#0A0B0F,stroke:#334155,color:#94A3B8
+```
+
+---
+
 ## SECTION A: ANALYTICS DASHBOARD
 
 ### 1. ANALYTICS — OVERVIEW

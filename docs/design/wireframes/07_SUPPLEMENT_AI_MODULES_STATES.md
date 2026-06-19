@@ -8,6 +8,126 @@
 
 ---
 
+## App-Level UI States — State Machine
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+stateDiagram-v2
+    direction TB
+
+    state Loading {
+        [*] --> SkeletonLoad: Enter Module
+        SkeletonLoad --> SpinnerLoad: >2s Delay
+        SpinnerLoad --> SkeletonLoad: Retry
+        SkeletonLoad --> Populated: Data Loaded
+        SkeletonLoad --> Empty: No Data
+        SkeletonLoad --> Error: Load Failed
+        SpinnerLoad --> Error: Timeout
+    }
+
+    state Empty {
+        [*] --> FirstTimeUI: New User
+        [*] --> NoData: User Has Data But Module Empty
+        FirstTimeUI --> OnboardingGuide: Show Walkthrough
+        NoData --> CreateCTA: Show Action Button
+        CreateCTA --> Populated: User Creates Item
+        OnboardingGuide --> Populated: User Takes Action
+    }
+
+    state Error {
+        state Offline {
+            [*] --> RetryAuto: Auto Retry (3x)
+            RetryAuto --> Populated: Success
+            RetryAuto --> OfflineFallback: Still Failing
+        }
+        ErrorGeneric --> RetryManual: Show Retry Button
+        RetryManual --> Populated: Success
+        RetryManual --> ErrorGeneric: Still Failing
+        OfflineFallback --> FallbackUI: Show Cached Data
+        ErrorGeneric --> Offline: Network Lost
+        Offline --> Populated: Back Online
+    }
+
+    state Populated {
+        [*] --> NormalRender: All Data Available
+        NormalRender --> Loading: Refresh / Paginate
+        NormalRender --> Empty: All Items Deleted
+        NormalRender --> Error: Live Update Fails
+        NormalRender --> SkeletonLoad: Background Refresh
+    }
+
+    note right of Loading
+        13 module-specific empty states
+        6 offline variants defined
+        Every module handles all 4 categories
+    end note
+```
+
+## Supplement Module — Screen Flow Map
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph LR
+    subgraph Supp["6 Supplement Modules + AI Components"]
+        style Supp fill:#13151A,stroke:#334155,color:#F1F5F9
+    end
+
+    Time["TIME TRACKING"]:::tMod
+    Aca["ACADEMICS"]:::aMod
+    YT["YOUTUBE VAULT"]:::yMod
+    Auto["AUTOMATION"]:::uMod
+    Learn["LEARNING"]:::lMod
+    Mem["MEMORY"]:::mMod
+    AI["AI COMPONENT PATTERNS<br/>6 Patterns"]:::aiMod
+
+    Time --> Timer["Pomodoro Timer<br/>25min Focus Cycle"]:::tView
+    Time --> Entries["Entries Log<br/>Filterable Table"]:::tView
+    Time --> Stats["Statistics<br/>Focus Score + Trend"]:::tView
+
+    Aca --> Sem["Semester View<br/>GPA + Subject Cards"]:::aView
+    Aca --> Subj["Subject Detail<br/>Topics + Progress"]:::aView
+
+    YT --> Lib["Video Library<br/>Grid + Categories"]:::yView
+    YT --> VDet["Video Detail<br/>Notes + AI Summary"]:::yView
+    YT --> Playlists["Playlists<br/>Curated Collections"]:::yView
+
+    Auto --> Rules["Rules Dashboard<br/>Active Rules + Log"]:::uView
+    Auto --> RDet["Rule Detail<br/>Conditions + Actions"]:::uView
+    Auto --> ALog["Automation Log<br/>Execution History"]:::uView
+
+    Learn --> LDash["Learning Dashboard<br/>Hours + Skills"]:::lView
+    Learn --> Skill["Skill Map / Radar<br/>6-Dimension Chart"]:::lView
+    Learn --> Paths["Learning Paths<br/>Sequenced Modules"]:::lView
+
+    Mem --> Viewer["Memory Viewer<br/>Full List + Search"]:::mView
+    Mem --> Grouped["What ARIA Knows<br/>Grouped by Domain"]:::mView
+    Mem --> MSettings["Memory Settings<br/>Privacy + Auto-Learn"]:::mView
+
+    AI --> Ghost["Ghost Hint<br/>4 States: Hidden → Visible → Filled → Dismissed"]:::aiView
+    AI --> Stream["Streaming Text<br/>3 States: Generating → Complete → Error"]:::aiView
+    AI --> Think["Thinking Indicator<br/>4 States: Idle → Thinking → Complete → Cancelled"]:::aiView
+    AI --> Badge["Confidence Badge<br/>4 Levels: High / Med / Low / Unknown"]:::aiView
+    AI --> Chip["Suggestion Chip<br/>3 States: Default → Hover → Selected"]:::aiView
+    AI --> Undo["AI Action Undo<br/>4 States: Action → Toast → Undo → Confirmed"]:::aiView
+
+    classDef tMod fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    classDef aMod fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    classDef yMod fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    classDef uMod fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    classDef lMod fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef mMod fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
+    classDef aiMod fill:#13151A,stroke:#00FFA3,color:#00FFA3
+    classDef tView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef aView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef yView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef uView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef lView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef mView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef aiView fill:#0A0B0F,stroke:#334155,color:#94A3B8
+```
+
+---
+
 ## SECTION A: TIME TRACKING MODULE
 
 ### 1. POMODORO TIMER

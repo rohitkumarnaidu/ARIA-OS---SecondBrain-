@@ -8,6 +8,51 @@
 
 ---
 
+## Idea Pipeline — Screen Flow
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph LR
+    subgraph Knowledge["KNOWLEDGE VAULT (Resources)"]
+        K1["Grid / List View<br/>Card Display"]:::kView
+        K2["Search Results<br/>Semantic + Filters"]:::kView
+        K3["Knowledge Graph<br/>Visual Connection Map"]:::kView
+    end
+
+    subgraph Ideas["IDEA VAULT (Ideas)"]
+        I1["Capture View<br/>Quick + Full Form"]:::iView
+        I2["Pipeline Board<br/>Kanban Columns"]:::iView
+        I3["Analysis View<br/>AI Feasibility Score"]:::iView
+    end
+
+    subgraph Roadmap["ROADMAP ENGINE (Goals)"]
+        R1["Canvas View<br/>Node Graph Editor"]:::rView
+        R2["Timeline View<br/>Gantt Chart"]:::rView
+        R3["Milestones View<br/>Checklist"]:::rView
+        R4["Goal Detail<br/>5 Tabs: Overview / Tasks / Milestones / Dependencies / Analytics"]:::rView
+    end
+
+    K1 -->|Search| K2
+    K2 -->|Select| K1
+    K1 -->|Graph Toggle| K3
+    K1 -.->|Linked Resource| I3
+
+    I1 -->|Save Idea| I2
+    I2 -->|Analyze| I3
+    I3 -->|Validate| I2
+    I3 -->|Link Skill| R1
+
+    R1 -->|Detail| R4
+    R1 -->|Toggle| R2
+    R1 -->|Toggle| R3
+
+    classDef kView fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    classDef iView fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    classDef rView fill:#0A0B0F,stroke:#6366F1,color:#94A3B8
+```
+
+---
+
 ## SECTION A: KNOWLEDGE VAULT (Resources Module)
 
 ### 1. RESOURCES — MAIN VIEW

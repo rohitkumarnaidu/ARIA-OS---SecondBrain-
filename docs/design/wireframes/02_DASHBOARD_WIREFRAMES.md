@@ -8,6 +8,45 @@
 
 ---
 
+## Dashboard Widget Grid Layout
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph TD
+    subgraph Dashboard["Dashboard — Bento Grid (7 Sections)"]
+        style Dashboard fill:#13151A,stroke:#334155,color:#F1F5F9
+    end
+
+    Hero["MORNING BRIEFING<br/>Hero Card — Full Width Row"]:::hero
+
+    Hero --> Prod["PRODUCTIVITY<br/>2x2 Grid: Summary + Time + Habits + Actions"]:::section
+
+    Prod --> TSum["Task Summary<br/>Due / Overdue / Completed Today"]:::widget
+    Prod --> TTime["Time Tracking<br/>Today's Focus Hours"]:::widget
+    Prod --> Habit["Habit Tracker<br/>Streak + Today's Progress"]:::widget
+    Prod --> Action["Quick Actions<br/>New Task / Log Time / Capture Idea"]:::widget
+
+    Hero --> AI["AI INSIGHTS<br/>2-Column Row"]:::section
+    AI --> AI1["Primary Insight<br/>ARIA Suggestion Card"]:::widget
+    AI --> AI2["Pattern Detection<br/>Behavior Trend Alerts"]:::widget
+    AI --> AI3["Risk Alert<br/>Deadline Warnings"]:::widget
+    AI --> AI4["Learning Suggestion<br/>Course Recommendations"]:::widget
+
+    Hero --> Learn["LEARNING<br/>Progress + Study Time"]:::section
+    Learn --> Course["Course Progress<br/>Per-Course Completion Bars"]:::widget
+    Learn --> Study["Study Time<br/>Weekly Distribution"]:::widget
+
+    Hero --> Opps["OPPORTUNITIES<br/>Top 3 Matches Preview"]:::section
+    Hero --> Proj["PROJECTS<br/>Active + Milestone Timeline"]:::section
+    Hero --> An["ANALYTICS<br/>Trend Sparklines"]:::section
+
+    classDef hero fill:#6366F1,stroke:#818CF8,color:#F1F5F9,font-weight:700
+    classDef section fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef widget fill:#0A0B0F,stroke:#334155,color:#94A3B8
+```
+
+---
+
 ## 1. MORNING BRIEFING WIDGET (Hero Card)
 
 ### Desktop (1440px)
