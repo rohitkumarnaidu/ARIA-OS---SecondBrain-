@@ -59,6 +59,46 @@ This wireframe system is organized into 8 documents (this index + 7 parts):
 
 ---
 
+## Wireframe Document System — Module Coverage Map
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+graph TD
+    Index["00 — SYSTEM INDEX<br/>Doc Map + Hierarchy + Flows"]:::index
+
+    Index --> Shell["01 — App Shell & Nav<br/>7 Components, 3 Breakpoints"]:::doc
+    Index --> Dash["02 — Dashboard<br/>Bento Grid, 7 Widget Sections"]:::doc
+    Index --> Tasks["03 — Tasks & Courses<br/>List / Board / Calendar / Detail"]:::doc
+    Index --> Knowledge["04 — Knowledge & Ideas<br/>Vault / Pipeline / Canvas"]:::doc
+    Index --> Opps["05 — Opportunities<br/>Discovery / Board / Income"]:::doc
+    Index --> Analytics["06 — Analytics & AI<br/>Reports / Chat / Settings / Sleep / Habits"]:::doc
+    Index --> Supp["07 — Supplement<br/>Time / Academics / YT / Auto / Learn / Mem / AI"]:::doc
+
+    Shell --> Desktop["Desktop 1440px+"]:::bp
+    Shell --> Tablet["Tablet 768-1023px"]:::bp
+    Shell --> Mobile["Mobile 320-767px"]:::bp
+
+    Tasks --> List["List View"]:::view
+    Tasks --> Board["Board Kanban"]:::view
+    Tasks --> Calendar["Calendar View"]:::view
+    Tasks --> Detail["Detail View"]:::view
+
+    Knowledge --> Resources["Resources Vault"]:::view
+    Knowledge --> Ideas["Ideas Pipeline"]:::view
+    Knowledge --> Roadmap["Roadmap Canvas"]:::view
+
+    Analytics --> AOverview["Analytics Overview"]:::view
+    Analytics --> Chat["ARIA Chat"]:::view
+    Analytics --> Settings["Settings"]:::view
+
+    classDef index fill:#6366F1,stroke:#818CF8,color:#F1F5F9,font-weight:700
+    classDef doc fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef bp fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef view fill:#13151A,stroke:#334155,color:#94A3B8
+```
+
+---
+
 ## Complete Page Hierarchy
 
 ```

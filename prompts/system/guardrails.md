@@ -3,6 +3,7 @@ version: 2.0.0
 status: active
 codename: "ARIA Safety & Compliance Layer"
 description: "Enterprise-grade guardrail system for all AI interactions. Safety categories, detection patterns, response templates, escalation, and audit requirements."
+tags: [guardrails, safety, security]
 model: all
 max_tokens: 512
 temperature: 0.0

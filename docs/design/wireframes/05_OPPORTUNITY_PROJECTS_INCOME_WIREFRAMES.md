@@ -8,6 +8,62 @@
 
 ---
 
+## Opportunity Discovery — Screen Flow
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+flowchart LR
+    Start(["Enter Opportunity Radar"]):::start
+
+    subgraph Discovery
+        Disc["Discovery View<br/>Grid / List Cards"]:::disc
+        Filter["Filter Panel<br/>Type / Location / Skills / Score / Deadline / Compensation"]:::filter
+        AI_Rec["AI Recommendations<br/>Match Breakdown + Skill Gaps"]:::ai_rec
+    end
+
+    subgraph Detail["Opportunity Detail"]
+        Detail_View["Detail View<br/>Match Score + Pipeline Status"]:::detail
+        Apply["Application Flow<br/>Not Applied → Applied → Interview → Offered → Accepted"]:::apply
+        Prep["Prep Plan<br/>AI-Generated Task Timeline"]:::prep
+    end
+
+    subgraph Projects["PROJECTS MODULE"]
+        PBoard["Board View (Kanban)"]:::pView
+        PTimeline["Timeline View (Gantt)"]:::pView
+        PDetail["Project Detail (Tabs)"]:::pView
+    end
+
+    subgraph Income["INCOME DASHBOARD"]
+        IOverview["Overview<br/>Stats + Charts"]:::iView
+        ISources["Sources<br/>Per-Source Detail"]:::iView
+        IAnalytics["Analytics<br/>Trends + Forecast"]:::iView
+    end
+
+    Start --> Disc
+    Disc --> Filter
+    Filter -->|Apply / Clear| Disc
+    Disc --> AI_Rec
+    AI_Rec -->|View Match| Detail_View
+    Disc --> Detail_View
+    Detail_View --> Apply
+    Detail_View --> Prep
+    Prep -.->|Creates Tasks| PBoard
+    Detail_View -->|Linked Project| PBoard
+    Detail_View -->|Income Potential| IOverview
+
+    classDef start fill:#6366F1,stroke:#818CF8,color:#F1F5F9,font-weight:700
+    classDef disc fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef filter fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    classDef ai_rec fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef detail fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    classDef apply fill:#0A0B0F,stroke:#F59E0B,color:#F59E0B
+    classDef prep fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    classDef pView fill:#0A0B0F,stroke:#6366F1,color:#94A3B8
+    classDef iView fill:#0A0B0F,stroke:#00FFA3,color:#94A3B8
+```
+
+---
+
 ## SECTION A: OPPORTUNITY RADAR
 
 ### 1. OPPORTUNITY — DISCOVERY VIEW

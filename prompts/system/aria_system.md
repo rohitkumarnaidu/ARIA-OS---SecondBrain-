@@ -3,6 +3,7 @@ version: 3.0.0
 status: active
 codename: "ARIA Main Orchestrator"
 description: "System prompt for ARIA — core AI orchestration agent of Second Brain OS. Enterprise-grade persona, capability, and response specification."
+tags: [orchestrator, system, core]
 model: ollama/mistral:7b
 max_tokens: 2048
 temperature: 0.7

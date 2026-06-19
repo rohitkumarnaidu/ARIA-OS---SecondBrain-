@@ -8,6 +8,60 @@
 
 ---
 
+## Task View Screen State Transitions
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
+stateDiagram-v2
+    direction LR
+
+    state "LIST VIEW" as LV {
+        [*] --> GroupedList: Load Tasks
+        GroupedList --> FilteredView: Apply Filter
+        FilteredView --> GroupedList: Clear Filter
+        GroupedList --> BulkAction: Select Items
+        BulkAction --> GroupedList: Complete / Delete
+    }
+
+    state "BOARD VIEW" as BV {
+        [*] --> KanbanColumns: Load Board
+        KanbanColumns --> ExpandedCard: Click Card
+        ExpandedCard --> KanbanColumns: Close Detail
+        KanbanColumns --> DragMove: Drag Card
+        DragMove --> KanbanColumns: Drop in Column
+    }
+
+    state "CALENDAR VIEW" as CV {
+        [*] --> MonthGrid: Load Calendar
+        MonthGrid --> WeekRow: Toggle Week View
+        WeekRow --> DayDetail: Click Day Cell
+        DayDetail --> WeekRow: Close Day
+        MonthGrid --> DayDetail: Click Task Dot
+    }
+
+    state "DETAIL VIEW" as DV {
+        [*] --> TaskOverview: Open Task
+        TaskOverview --> EditMode: Click Edit
+        EditMode --> TaskOverview: Save / Cancel
+        TaskOverview --> SubtaskToggle: Expand Subtasks
+        SubtaskToggle --> TaskOverview: Collapse
+        TaskOverview --> DeleteConfirm: Delete
+        DeleteConfirm --> [*]: Confirm / Cancel
+    }
+
+    LV --> BV: Switch Tab (⌘2)
+    BV --> CV: Switch Tab (⌘3)
+    CV --> LV: Switch Tab (⌘1)
+    LV --> DV: Click Row
+    BV --> DV: Click Card
+    CV --> DV: Click Task
+    DV --> LV: Back to List
+    DV --> BV: Back to Board
+    DV --> CV: Back to Calendar
+```
+
+---
+
 ## SECTION A: TASKS MODULE
 
 ### 1. TASKS — LIST VIEW
