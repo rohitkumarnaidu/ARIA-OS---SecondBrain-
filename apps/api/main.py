@@ -1,10 +1,16 @@
 import sys
 import uuid
-import time
+import logging
+import time as _time
 from pathlib import Path
 from contextlib import asynccontextmanager
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "packages"))
+
+import sentry_sdk
+from sentry_sdk.integrations.fastapi import FastApiIntegration
+from sentry_sdk.integrations.httpx import HttpxIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +32,15 @@ from app.api import (
     sleep,
     time,
     automation,
+    briefings,
+    reviews,
+    memory,
+    roadmap,
+    academics,
+    videos,
+    analytics,
+    predictions,
+    notifications,
 )
 
 
@@ -37,6 +52,21 @@ async def lifespan(application: FastAPI):
         environment=settings.environment,
         debug=settings.debug,
     )
+
+    if settings.sentry_dsn:
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.environment,
+            integrations=[
+                FastApiIntegration(),
+                HttpxIntegration(),
+                LoggingIntegration(level=logging.INFO, event_level=logging.ERROR),
+            ],
+            traces_sample_rate=0.25,
+            send_default_pii=False,
+        )
+        logger.info("Sentry initialized for backend")
+
     yield
     logger.info("Second Brain OS API shutting down")
     await cache.clear()
@@ -87,7 +117,7 @@ app.add_middleware(
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
     request.state.request_id = request_id
-    request.state.start_time = time.time()
+    request.state.start_time = _time.time()
 
     log_request(
         endpoint=str(request.url.path),
@@ -95,10 +125,32 @@ async def request_id_middleware(request: Request, call_next):
         request_id=request_id,
     )
 
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        duration_ms = (_time.time() - request.state.start_time) * 1000
+        logger.error(
+            "Unhandled request exception",
+            path=str(request.url.path),
+            method=request.method,
+            duration_ms=duration_ms,
+            request_id=request_id,
+            error=str(exc),
+        )
+        from fastapi.responses import JSONResponse
+        return JSONResponse(
+            status_code=500,
+            content={
+                "detail": "Internal server error",
+                "request_id": request_id,
+                "error_code": "INTERNAL_ERROR",
+            },
+            headers={"X-Request-ID": request_id},
+        )
+
     response.headers["X-Request-ID"] = request_id
 
-    duration_ms = (time.time() - request.state.start_time) * 1000
+    duration_ms = (_time.time() - request.state.start_time) * 1000
     log_response(
         endpoint=str(request.url.path),
         method=request.method,
@@ -106,6 +158,27 @@ async def request_id_middleware(request: Request, call_next):
         duration_ms=duration_ms,
         request_id=request_id,
     )
+
+    return response
+
+
+@app.middleware("http")
+async def cache_control_middleware(request: Request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+
+    if path.startswith("/static/") or path.startswith("/assets/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path.startswith("/health"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    elif request.method == "GET":
+        response.headers["Cache-Control"] = "private, max-age=60, stale-while-revalidate=300"
+    else:
+        response.headers["Cache-Control"] = "no-store, must-revalidate"
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
 
     return response
 
@@ -123,6 +196,37 @@ app.include_router(habits.router, prefix="/api/v1/habits", tags=["habits"])
 app.include_router(sleep.router, prefix="/api/v1/sleep", tags=["sleep"])
 app.include_router(time.router, prefix="/api/v1/time", tags=["time"])
 app.include_router(automation.router, prefix="/api/v1/automation", tags=["automation"])
+app.include_router(briefings.router, prefix="/api/v1/briefings", tags=["briefings"])
+app.include_router(reviews.router, prefix="/api/v1/reviews", tags=["reviews"])
+app.include_router(memory.router, prefix="/api/v1/memory", tags=["memory"])
+app.include_router(roadmap.router, prefix="/api/v1/roadmap", tags=["roadmap"])
+app.include_router(academics.router, prefix="/api/v1/academics", tags=["academics"])
+app.include_router(videos.router, prefix="/api/v1/videos", tags=["videos"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
+app.include_router(predictions.router, prefix="/api/v1/predictions", tags=["predictions"])
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    logger.error(
+        "Global unhandled exception",
+        path=str(request.url.path),
+        error=str(exc),
+        error_type=type(exc).__name__,
+        request_id=request_id,
+    )
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "An unexpected error occurred",
+            "error_code": "INTERNAL_ERROR",
+            "request_id": request_id,
+        },
+        headers={"X-Request-ID": request_id},
+    )
 
 
 @app.get("/", tags=["system"])
@@ -140,7 +244,7 @@ async def health_check():
     return {
         "status": "healthy",
         "version": settings.app_version,
-        "timestamp": time.time(),
+        "timestamp": _time.time(),
     }
 
 
@@ -151,6 +255,7 @@ async def readiness_check():
     }
     try:
         from config.core.supabase import get_supabase_client
+
         supabase = get_supabase_client()
         supabase.from_("users").select("count", count="exact").limit(1).execute()
         deps["supabase"] = {"status": "ok"}
@@ -160,7 +265,7 @@ async def readiness_check():
     if settings.use_local_ai:
         try:
             import httpx
-            import asyncio
+
             async with httpx.AsyncClient(timeout=5) as client:
                 resp = await client.get(f"{settings.ollama_base_url}/api/tags")
                 if resp.status_code == 200:
@@ -172,9 +277,7 @@ async def readiness_check():
     else:
         deps["claude_api"] = {"status": "configured" if settings.claude_api_key else "not_configured"}
 
-    all_ok = all(
-        d.get("status") in ("ok", "configured", "not_configured") for d in deps.values()
-    )
+    all_ok = all(d.get("status") in ("ok", "configured", "not_configured") for d in deps.values())
     overall = "healthy" if all_ok else "degraded"
 
     return {
