@@ -1,6 +1,6 @@
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 import sys
 
@@ -21,12 +21,13 @@ class Logger:
 
     def _log(self, level: str, message: str, **kwargs: Any):
         entry = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": level,
             "message": message,
             **kwargs,
         }
-        self.logger.info(json.dumps(entry))
+        level_map = {"DEBUG": logging.DEBUG, "INFO": logging.INFO, "WARN": logging.WARN, "ERROR": logging.ERROR}
+        self.logger.log(level_map.get(level, logging.INFO), json.dumps(entry))
 
     def info(self, message: str, **kwargs: Any):
         self._log("INFO", message, **kwargs)
@@ -35,9 +36,7 @@ class Logger:
         self._log("WARN", message, **kwargs)
 
     def error(self, message: str, error: Optional[Exception] = None, **kwargs: Any):
-        self._log(
-            "ERROR", message, error_message=str(error) if error else None, **kwargs
-        )
+        self._log("ERROR", message, error_message=str(error) if error else None, **kwargs)
 
     def debug(self, message: str, **kwargs: Any):
         self._log("DEBUG", message, **kwargs)
@@ -46,18 +45,12 @@ class Logger:
 logger = Logger()
 
 
-def log_request(
-    endpoint: str, method: str, user_id: Optional[str] = None, **kwargs: Any
-):
+def log_request(endpoint: str, method: str, user_id: Optional[str] = None, **kwargs: Any):
     """Log incoming API request"""
-    logger.info(
-        "API Request", endpoint=endpoint, method=method, user_id=user_id, **kwargs
-    )
+    logger.info("API Request", endpoint=endpoint, method=method, user_id=user_id, **kwargs)
 
 
-def log_response(
-    endpoint: str, method: str, status_code: int, duration_ms: float, **kwargs: Any
-):
+def log_response(endpoint: str, method: str, status_code: int, duration_ms: float, **kwargs: Any):
     """Log API response"""
     logger.info(
         "API Response",

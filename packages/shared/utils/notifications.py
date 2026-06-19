@@ -2,9 +2,7 @@ import os
 from typing import Optional
 
 
-def send_push_notification(
-    user_id: str, title: str, body: str, data: Optional[dict] = None
-) -> bool:
+def send_push_notification(user_id: str, title: str, body: str, data: Optional[dict] = None) -> bool:
     print(f"[PUSH] To user {user_id}: {title} - {body}")
     return True
 

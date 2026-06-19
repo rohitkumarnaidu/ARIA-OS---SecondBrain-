@@ -1,6 +1,6 @@
 from fastapi import Request, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List
 import asyncio
 
@@ -19,15 +19,13 @@ class RateLimiter(BaseHTTPMiddleware):
         client_ip = request.client.host if request.client else "unknown"
 
         async with self._lock:
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             window_start = now - timedelta(seconds=self.window_seconds)
 
             # Clean old requests
             if client_ip in self.requests:
                 self.requests[client_ip] = [
-                    req_time
-                    for req_time in self.requests[client_ip]
-                    if req_time > window_start
+                    req_time for req_time in self.requests[client_ip] if req_time > window_start
                 ]
             else:
                 self.requests[client_ip] = []
@@ -58,9 +56,12 @@ class EndpointRateLimiter:
         }
         self.requests: Dict[str, Dict[str, List[datetime]]] = {}
 
+    def _now_utc(self) -> datetime:
+        return datetime.now(timezone.utc)
+
     def check(self, client_ip: str, endpoint: str) -> bool:
         """Check if request is allowed. Returns True if allowed, False if rate limited."""
-        now = datetime.utcnow()
+        now = self._now_utc()
         window = self.limits.get(endpoint, self.limits["default"])
         window_start = now - timedelta(seconds=window["window"])
 
@@ -72,9 +73,7 @@ class EndpointRateLimiter:
 
         # Clean old requests
         self.requests[endpoint][client_ip] = [
-            req_time
-            for req_time in self.requests[endpoint][client_ip]
-            if req_time > window_start
+            req_time for req_time in self.requests[endpoint][client_ip] if req_time > window_start
         ]
 
         # Check limit

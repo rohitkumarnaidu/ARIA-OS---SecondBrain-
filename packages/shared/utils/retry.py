@@ -3,7 +3,14 @@
 import asyncio
 import functools
 import logging
+import time
 from typing import Callable, Type, Tuple, Optional
+
+
+class CircuitBreakerOpenError(Exception):
+    """Raised when circuit breaker is open and request is rejected"""
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +57,7 @@ async def retry_with_backoff(
 
             delay = min(base_delay * (exponential_base**attempt), max_delay)
             logger.warning(
-                f"Retry {attempt + 1}/{max_retries} for {func.__name__} "
-                f"after {delay:.2f}s delay",
+                f"Retry {attempt + 1}/{max_retries} for {func.__name__} " f"after {delay:.2f}s delay",
                 extra={"error": str(e)},
             )
             await asyncio.sleep(delay)
@@ -93,11 +99,7 @@ def retry_sync_with_backoff(
                         raise
 
                     delay = base_delay * (exponential_base**attempt)
-                    logger.warning(
-                        f"Retry {attempt + 1}/{max_retries} for {func.__name__}"
-                    )
-                    import time
-
+                    logger.warning(f"Retry {attempt + 1}/{max_retries} for {func.__name__}")
                     time.sleep(delay)
 
             raise last_exception
@@ -115,7 +117,7 @@ class CircuitBreaker:
         self,
         failure_threshold: int = 5,
         recovery_timeout: float = 60.0,
-        expected_exception: Type[Exception] = Exception,
+        expected_exception: Tuple[Type[Exception], ...] = Exception,
     ):
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
@@ -128,12 +130,10 @@ class CircuitBreaker:
         """Execute function with circuit breaker protection"""
         if self.state == "open":
             # Check if we should try half-open
-            import time
-
             if time.time() - self.last_failure_time >= self.recovery_timeout:
                 self.state = "half_open"
             else:
-                raise Exception("Circuit breaker is OPEN")
+                raise CircuitBreakerOpenError("Circuit breaker is OPEN")
 
         try:
             result = await func(*args, **kwargs)
@@ -144,16 +144,12 @@ class CircuitBreaker:
 
             return result
 
-        except self.expected_exception as e:
+        except self.expected_exception:
             self.failure_count += 1
-            import time
-
             self.last_failure_time = time.time()
 
             if self.failure_count >= self.failure_threshold:
                 self.state = "open"
-                logger.error(
-                    f"Circuit breaker OPENED after {self.failure_count} failures"
-                )
+                logger.error(f"Circuit breaker OPENED after {self.failure_count} failures")
 
             raise

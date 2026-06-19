@@ -1,8 +1,7 @@
 from typing import Any, Optional, Dict, Callable
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import asyncio
 import hashlib
-import json
 
 
 class SimpleCache:
@@ -23,7 +22,7 @@ class SimpleCache:
         async with self._lock:
             if key in self.cache:
                 entry = self.cache[key]
-                if datetime.utcnow() < entry["expires"]:
+                if datetime.now(timezone.utc) < entry["expires"]:
                     return entry["value"]
                 else:
                     del self.cache[key]
@@ -35,7 +34,7 @@ class SimpleCache:
             ttl = ttl or self.default_ttl
             self.cache[key] = {
                 "value": value,
-                "expires": datetime.utcnow() + timedelta(seconds=ttl),
+                "expires": datetime.now(timezone.utc) + timedelta(seconds=ttl),
             }
 
     async def delete(self, key: str):
@@ -49,9 +48,7 @@ class SimpleCache:
         async with self._lock:
             self.cache.clear()
 
-    async def get_or_set(
-        self, key: str, fn: Callable, ttl: Optional[int] = None
-    ) -> Any:
+    async def get_or_set(self, key: str, fn: Callable, ttl: Optional[int] = None) -> Any:
         """Get from cache or execute fn and cache result"""
         value = await self.get(key)
         if value is not None:
