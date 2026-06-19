@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, Any, Optional
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -9,13 +9,7 @@ async def analyze_sleep(user_id: str, date: Optional[str] = None) -> Dict[str, A
     supabase = get_supabase_client()
     target_date = date or datetime.now().date().isoformat()
 
-    resp = (
-        supabase.from_("sleep_logs")
-        .select("*")
-        .eq("user_id", user_id)
-        .eq("date", target_date)
-        .execute()
-    )
+    resp = supabase.from_("sleep_logs").select("*").eq("user_id", user_id).eq("date", target_date).execute()
     logs = resp.data or []
     latest = logs[0] if logs else None
 
@@ -36,9 +30,7 @@ async def analyze_sleep(user_id: str, date: Optional[str] = None) -> Dict[str, A
             "message": "No sleep data for this date.",
         }
 
-    avg_quality = (
-        sum(log.get("quality", 0) for log in week_logs) / len(week_logs) if week_logs else 0
-    )
+    avg_quality = sum(log.get("quality", 0) for log in week_logs) / len(week_logs) if week_logs else 0
 
     sleep_prompt = prompts.get_agent("sleep_agent")
     if sleep_prompt:
@@ -61,7 +53,10 @@ async def analyze_sleep(user_id: str, date: Optional[str] = None) -> Dict[str, A
             f"Return JSON with wind_down_routine and recommendations."
         )
 
-    ai_response = await llm.generate_json(user, system=system)
+    try:
+        ai_response = await llm.generate_json(user, system=system)
+    except LLMProviderUnavailableError:
+        ai_response = {}
 
     return {
         "date": target_date,
@@ -70,14 +65,20 @@ async def analyze_sleep(user_id: str, date: Optional[str] = None) -> Dict[str, A
         "duration_hours": latest.get("duration_hours"),
         "sleep_debt_hours": latest.get("sleep_debt_hours", 0),
         "seven_day_avg_quality": round(avg_quality, 1),
-        "wind_down_routine": ai_response.get("wind_down_routine", [
-            "Dim lights 30 min before bed",
-            "Put away phone 20 min before bed",
-        ]),
+        "wind_down_routine": ai_response.get(
+            "wind_down_routine",
+            [
+                "Dim lights 30 min before bed",
+                "Put away phone 20 min before bed",
+            ],
+        ),
         "sleep_analysis": ai_response.get("sleep_analysis", "No analysis available"),
-        "recommendations": ai_response.get("recommendations", [
-            "Maintain consistent sleep schedule",
-        ]),
+        "recommendations": ai_response.get(
+            "recommendations",
+            [
+                "Maintain consistent sleep schedule",
+            ],
+        ),
     }
 
 

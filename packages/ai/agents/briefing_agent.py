@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, Any
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -11,23 +11,9 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
     today = datetime.now().date().isoformat()
 
     tasks_resp = supabase.from_("tasks").select("*").eq("user_id", user_id).execute()
-    goals_resp = (
-        supabase.from_("goals")
-        .select("*")
-        .eq("user_id", user_id)
-        .eq("status", "active")
-        .execute()
-    )
-    courses_resp = (
-        supabase.from_("courses").select("*").eq("user_id", user_id).execute()
-    )
-    sleep_resp = (
-        supabase.from_("sleep_logs")
-        .select("*")
-        .eq("user_id", user_id)
-        .gte("date", today)
-        .execute()
-    )
+    goals_resp = supabase.from_("goals").select("*").eq("user_id", user_id).eq("status", "active").execute()
+    courses_resp = supabase.from_("courses").select("*").eq("user_id", user_id).execute()
+    sleep_resp = supabase.from_("sleep_logs").select("*").eq("user_id", user_id).gte("date", today).execute()
 
     tasks = tasks_resp.data or []
     goals = goals_resp.data or []
@@ -37,9 +23,7 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
     pending_tasks = [t for t in tasks if t.get("status") == "pending"]
     pending_tasks.sort(
         key=lambda t: (
-            {"urgent": 0, "high": 1, "medium": 2, "low": 3}.get(
-                t.get("priority", "medium"), 2
-            ),
+            {"urgent": 0, "high": 1, "medium": 2, "low": 3}.get(t.get("priority", "medium"), 2),
             t.get("due_date", ""),
         )
     )
@@ -76,7 +60,10 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
             f"productivity_tip, and focus_area."
         )
 
-    ai_response = await llm.generate_json(user_prompt, system=system_prompt)
+    try:
+        ai_response = await llm.generate_json(user_prompt, system=system_prompt)
+    except LLMProviderUnavailableError:
+        ai_response = {}
 
     brief = {
         "generated_at": datetime.now().isoformat(),
@@ -87,7 +74,13 @@ async def generate_daily_briefing(user_id: str) -> Dict[str, Any]:
         "sleep_score": sleep_score,
         "productivity_score": productivity_score,
         "active_goals": [{"title": g.get("title"), "progress": g.get("progress", 0)} for g in goals[:3]],
-        "aria_pick": ai_response.get("aria_pick", {"title": top_3_tasks[0]["title"] if top_3_tasks else "Start your day", "reason": "Focus on what matters most"}),
+        "aria_pick": ai_response.get(
+            "aria_pick",
+            {
+                "title": top_3_tasks[0]["title"] if top_3_tasks else "Start your day",
+                "reason": "Focus on what matters most",
+            },
+        ),
         "productivity_tip": ai_response.get("productivity_tip", "Break big tasks into smaller chunks"),
         "focus_area": ai_response.get("focus_area", "Clear your pending tasks first"),
     }

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, Any
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -52,7 +52,10 @@ async def generate_weekly_review(user_id: str) -> Dict[str, Any]:
             f"Return JSON with summary, achievements, challenges, next_week_intention."
         )
 
-    ai_response = await llm.generate_json(user, system=system)
+    try:
+        ai_response = await llm.generate_json(user, system=system)
+    except LLMProviderUnavailableError:
+        ai_response = {}
 
     review = {
         "user_id": user_id,

@@ -1,10 +1,12 @@
 import json
 import asyncio
+import hashlib
 from typing import Optional, Dict, Any, List, Tuple, Callable
 import httpx
 from config.core.config import settings
 from shared.utils.logger import logger
-from shared.utils.retry import CircuitBreaker
+from shared.utils.retry import CircuitBreaker, CircuitBreakerOpenError
+from shared.utils.cache import cache
 
 
 class LLMError(Exception):
@@ -67,6 +69,14 @@ class LLMClient:
         max_tokens: int = 1024,
         temperature: Optional[float] = None,
     ) -> str:
+        # Check semantic cache
+        raw_key = f"{prompt}||{system}||{max_tokens}||{temperature}"
+        cache_key = "llm:" + hashlib.sha256(raw_key.encode()).hexdigest()
+        cached_result = await cache.get(cache_key)
+        if cached_result is not None:
+            logger.info("LLM cache hit", length=len(cached_result))
+            return cached_result
+
         last_error = None
         providers = self._get_providers()
 
@@ -86,8 +96,9 @@ class LLMClient:
                         attempt=attempt,
                         tokens=len(result.split()),
                     )
+                    await cache.set(cache_key, result, ttl=300)
                     return result
-                except LLMProviderUnavailableError as e:
+                except (LLMProviderUnavailableError, CircuitBreakerOpenError) as e:
                     logger.warn(
                         "Provider unavailable",
                         provider=name,
@@ -126,9 +137,7 @@ class LLMClient:
                         await asyncio.sleep(self.base_delay)
 
         logger.error("All LLM providers exhausted", last_error=str(last_error))
-        raise LLMProviderUnavailableError(
-            f"All AI providers failed. Last error: {last_error}"
-        ) from last_error
+        raise LLMProviderUnavailableError(f"All AI providers failed. Last error: {last_error}") from last_error
 
     async def generate_json(
         self,
@@ -186,9 +195,7 @@ class LLMClient:
 
         async def do_call():
             async with httpx.AsyncClient(timeout=self.ollama_timeout) as client:
-                resp = await client.post(
-                    f"{self.ollama_base}/api/generate", json=payload
-                )
+                resp = await client.post(f"{self.ollama_base}/api/generate", json=payload)
                 resp.raise_for_status()
                 return resp.json().get("response", "")
 
@@ -225,9 +232,7 @@ class LLMClient:
                 )
                 if resp.status_code == 429:
                     retry_after = int(resp.headers.get("retry-after", 60))
-                    raise LLMRateLimitError(
-                        "Claude rate limited", retry_after=retry_after
-                    )
+                    raise LLMRateLimitError("Claude rate limited", retry_after=retry_after)
                 resp.raise_for_status()
                 return resp.json()["content"][0]["text"]
 
