@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 from datetime import datetime, timedelta
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -28,7 +28,9 @@ async def track_user_progress(user_id: str) -> Dict[str, Any]:
         "active_habits": len([h for h in habits if h.get("is_active")]),
     }
 
-    supabase.from_("learning_progress").insert({"user_id": user_id, "date": datetime.now().date().isoformat(), "data": learning_progress}).execute()
+    supabase.from_("learning_progress").insert(
+        {"user_id": user_id, "date": datetime.now().date().isoformat(), "data": learning_progress}
+    ).execute()
     return learning_progress
 
 
@@ -48,7 +50,10 @@ async def detect_learning_patterns(user_id: str) -> List[str]:
             f"Student learning data: {progress}. "
             f"Identify 1-3 learning patterns or insights. Return as a JSON array of strings."
         )
-    result = await llm.generate_json(prompt, system=system)
+    try:
+        result = await llm.generate_json(prompt, system=system)
+    except LLMProviderUnavailableError:
+        result = {}
     if isinstance(result, list):
         return result
     return result.get("patterns", ["Keep up the consistent work"])
@@ -59,5 +64,11 @@ async def suggest_learning_focus(user_id: str) -> Dict[str, Any]:
     learning_prompt = prompts.get_agent("learning_agent")
     system = learning_prompt.system_prompt if learning_prompt else "You are a learning coach."
     prompt = f"Based on these learning patterns: {patterns}, suggest 2 concrete recommendations. Return JSON with 'recommendations' array."
-    result = await llm.generate_json(prompt, system=system)
-    return {"patterns": patterns, "recommendations": result.get("recommendations", ["Stay consistent with your study routine"])}
+    try:
+        result = await llm.generate_json(prompt, system=system)
+    except LLMProviderUnavailableError:
+        result = {}
+    return {
+        "patterns": patterns,
+        "recommendations": result.get("recommendations", ["Stay consistent with your study routine"]),
+    }

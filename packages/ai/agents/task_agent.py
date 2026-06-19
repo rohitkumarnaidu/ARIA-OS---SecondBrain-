@@ -1,7 +1,7 @@
 from typing import List
 from datetime import datetime, timedelta
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -31,7 +31,10 @@ async def breakdown_task(user_id: str, task_id: str) -> List[dict]:
             f"Category: {task.get('category', 'personal')}\n"
             f"Return a JSON array of objects with 'title' and 'category' fields."
         )
-    subtasks = await llm.generate_json(user_prompt, system=system_prompt)
+    try:
+        subtasks = await llm.generate_json(user_prompt, system=system_prompt)
+    except LLMProviderUnavailableError:
+        subtasks = []
 
     subtask_list = subtasks if isinstance(subtasks, list) else subtasks.get("subtasks", [])
     if not subtask_list:
@@ -53,12 +56,7 @@ async def check_missed_tasks(user_id: str) -> List[dict]:
     supabase = get_supabase_client()
     now = datetime.now().isoformat()
     response = (
-        supabase.from_("tasks")
-        .select("*")
-        .eq("user_id", user_id)
-        .eq("status", "pending")
-        .lt("due_date", now)
-        .execute()
+        supabase.from_("tasks").select("*").eq("user_id", user_id).eq("status", "pending").lt("due_date", now).execute()
     )
     missed_tasks = response.data or []
     for task in missed_tasks:
@@ -69,13 +67,7 @@ async def check_missed_tasks(user_id: str) -> List[dict]:
 
 async def suggest_task_prioritization(user_id: str) -> List[dict]:
     supabase = get_supabase_client()
-    tasks_resp = (
-        supabase.from_("tasks")
-        .select("*")
-        .eq("user_id", user_id)
-        .eq("status", "pending")
-        .execute()
-    )
+    tasks_resp = supabase.from_("tasks").select("*").eq("user_id", user_id).eq("status", "pending").execute()
     tasks = tasks_resp.data or []
 
     sleep_resp = (

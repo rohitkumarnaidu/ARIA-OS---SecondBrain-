@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
+from datetime import datetime
+from typing import Dict, Any
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
 
@@ -31,7 +31,7 @@ async def optimize_roadmap(user_id: str) -> Dict[str, Any]:
             f"Active Courses: {len(courses)}\n"
             f"Active Goals: {len(goals)}\n"
             f"Tasks Completed: {completed_count}\n"
-            f"Return JSON with: milestones (array of {title, deadline_estimate, skills_gained, priority}), "
+            f"Return JSON with: milestones (array of {{title, deadline_estimate, skills_gained, priority}}), "
             f"recommended_path (ordered course/goal sequence), and estimated_completion."
         )
     else:
@@ -45,7 +45,10 @@ async def optimize_roadmap(user_id: str) -> Dict[str, Any]:
             f"Return JSON with: milestones array, recommended_path array, estimated_completion string."
         )
 
-    roadmap = await llm.generate_json(user_prompt, system=system_prompt)
+    try:
+        roadmap = await llm.generate_json(user_prompt, system=system_prompt)
+    except LLMProviderUnavailableError:
+        roadmap = {}
 
     result = {
         "generated_at": datetime.now().isoformat(),
@@ -57,10 +60,12 @@ async def optimize_roadmap(user_id: str) -> Dict[str, Any]:
         "active_goals": len(goals),
     }
 
-    supabase.from_("roadmaps").insert({
-        "user_id": user_id,
-        "data": result,
-        "generated_at": datetime.now().isoformat(),
-    }).execute()
+    supabase.from_("roadmaps").insert(
+        {
+            "user_id": user_id,
+            "data": result,
+            "generated_at": datetime.now().isoformat(),
+        }
+    ).execute()
 
     return result

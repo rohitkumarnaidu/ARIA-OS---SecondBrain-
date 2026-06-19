@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from config.core.supabase import get_supabase_client
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
-
 
 CATEGORIES = {
     "internships": ["LinkedIn", "Internshala", "AngelList", "HackerEarth"],
@@ -41,7 +40,10 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
             f"description, skills_needed (array), match_score (0-100)."
         )
 
-    opportunities = await llm.generate_json(user_prompt, system=system_prompt)
+    try:
+        opportunities = await llm.generate_json(user_prompt, system=system_prompt)
+    except LLMProviderUnavailableError:
+        opportunities = []
 
     opp_list = opportunities if isinstance(opportunities, list) else opportunities.get("opportunities", [])
     if not opp_list:
@@ -58,15 +60,33 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
 def scan_default_opportunities(skills: List[str]) -> List[Dict[str, Any]]:
     now = datetime.now()
     return [
-        {"title": "Google Summer of Code 2026", "category": "open_source", "url": "https://summerofcode.withgoogle.com/",
-         "deadline": (now + timedelta(days=60)).isoformat(), "description": "Get paid to contribute to open source",
-         "skills_needed": ["Python", "Java", "Go"], "match_score": 80},
-        {"title": "MLH Fellowship", "category": "open_source", "url": "https://mlh.io",
-         "deadline": (now + timedelta(days=30)).isoformat(), "description": "Remote fellowship for developers",
-         "skills_needed": ["JavaScript", "Python", "React"], "match_score": 75},
-        {"title": "Microsoft Explore Internship", "category": "internships", "url": "https://careers.microsoft.com",
-         "deadline": (now + timedelta(days=20)).isoformat(), "description": "Summer internship for students",
-         "skills_needed": ["C++", "Python", "Problem Solving"], "match_score": 85},
+        {
+            "title": "Google Summer of Code 2026",
+            "category": "open_source",
+            "url": "https://summerofcode.withgoogle.com/",
+            "deadline": (now + timedelta(days=60)).isoformat(),
+            "description": "Get paid to contribute to open source",
+            "skills_needed": ["Python", "Java", "Go"],
+            "match_score": 80,
+        },
+        {
+            "title": "MLH Fellowship",
+            "category": "open_source",
+            "url": "https://mlh.io",
+            "deadline": (now + timedelta(days=30)).isoformat(),
+            "description": "Remote fellowship for developers",
+            "skills_needed": ["JavaScript", "Python", "React"],
+            "match_score": 75,
+        },
+        {
+            "title": "Microsoft Explore Internship",
+            "category": "internships",
+            "url": "https://careers.microsoft.com",
+            "deadline": (now + timedelta(days=20)).isoformat(),
+            "description": "Summer internship for students",
+            "skills_needed": ["C++", "Python", "Problem Solving"],
+            "match_score": 85,
+        },
     ]
 
 

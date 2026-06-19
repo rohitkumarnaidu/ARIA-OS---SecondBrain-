@@ -47,9 +47,7 @@ class PromptLoaderError(Exception):
 
 class PromptLoader:
     def __init__(self, prompts_dir: Optional[Path] = None):
-        self.root = prompts_dir or (
-            Path(__file__).resolve().parent.parent.parent / "prompts"
-        )
+        self.root = prompts_dir or (Path(__file__).resolve().parent.parent.parent / "prompts")
         self._entries: Dict[str, PromptEntry] = {}
         self._load_all()
 
@@ -87,9 +85,7 @@ class PromptLoader:
     def get_required(self, name: str, category: Optional[str] = None) -> PromptEntry:
         entry = self.get(name, category)
         if not entry:
-            raise PromptLoaderError(
-                f"Prompt '{name}' not found in category '{category}'"
-            )
+            raise PromptLoaderError(f"Prompt '{name}' not found in category '{category}'")
         return entry
 
     def get_system(self, name: str) -> Optional[PromptEntry]:
@@ -103,9 +99,7 @@ class PromptLoader:
 
     def list_prompts(self, category: Optional[str] = None) -> List[str]:
         if category:
-            return sorted(
-                k.split("/", 1)[1] for k in self._entries if k.startswith(f"{category}/")
-            )
+            return sorted(k.split("/", 1)[1] for k in self._entries if k.startswith(f"{category}/"))
         return sorted(self._entries.keys())
 
     def list_categories(self) -> List[str]:
