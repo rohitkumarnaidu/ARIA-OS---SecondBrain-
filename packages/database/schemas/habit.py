@@ -1,27 +1,21 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 class HabitBase(BaseModel):
-    title: str
-    description: Optional[str] = None
+    name: str
     frequency: str = "daily"
-    target_streak: int = 30
-    current_streak: int = 0
-    best_streak: int = 0
 
 
 class HabitCreate(HabitBase):
-    pass
+    custom_days: Optional[List[int]] = None
+    time_target_minutes: Optional[int] = None
 
 
 class HabitUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    name: Optional[str] = None
     frequency: Optional[str] = None
-    target_streak: Optional[int] = None
-    current_streak: Optional[int] = None
-    best_streak: Optional[int] = None
+    time_target_minutes: Optional[int] = None
     is_active: Optional[bool] = None
 
 
@@ -29,8 +23,10 @@ class HabitResponse(HabitBase):
     id: str
     user_id: str
     is_active: bool
-    created_at: str
-    updated_at: str
+    time_target_minutes: Optional[int] = None
+    current_streak: int = 0
+    best_streak: int = 0
+    consistency_percentage: float = 0
 
     class Config:
         from_attributes = True

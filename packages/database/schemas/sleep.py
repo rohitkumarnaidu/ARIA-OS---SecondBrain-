@@ -1,13 +1,13 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from typing import Optional
 
 
 class SleepBase(BaseModel):
-    bedtime: Optional[str] = None
-    wake_time: Optional[str] = None
-    hours_slept: Optional[float] = None
-    quality: int = 50
-    notes: Optional[str] = None
+    bedtime: str
+    wake_time: str
+    quality_rating: int
 
 
 class SleepCreate(SleepBase):
@@ -17,17 +17,16 @@ class SleepCreate(SleepBase):
 class SleepUpdate(BaseModel):
     bedtime: Optional[str] = None
     wake_time: Optional[str] = None
-    hours_slept: Optional[float] = None
-    quality: Optional[int] = None
-    notes: Optional[str] = None
+    quality_rating: Optional[int] = None
 
 
 class SleepResponse(SleepBase):
     id: str
     user_id: str
-    date: str
-    created_at: str
-    updated_at: str
+    duration_hours: float = 0.0
+    sleep_score: int = 0
+    sleep_debt: float = 0.0
+    created_at: datetime
 
     class Config:
         from_attributes = True

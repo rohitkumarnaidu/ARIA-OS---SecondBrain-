@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from typing import Optional
 
@@ -10,6 +12,7 @@ class GoalBase(BaseModel):
     hours_per_day: float = 2.0
     days_per_week: float = 5.0
     intensity: str = "medium"
+    category: Optional[str] = None
 
 
 class GoalCreate(GoalBase):
@@ -26,6 +29,7 @@ class GoalUpdate(BaseModel):
     intensity: Optional[str] = None
     status: Optional[str] = None
     progress: Optional[int] = None
+    category: Optional[str] = None
 
 
 class GoalResponse(GoalBase):
@@ -33,8 +37,7 @@ class GoalResponse(GoalBase):
     user_id: str
     status: str
     progress: int
-    created_at: str
-    updated_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True
