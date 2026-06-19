@@ -3,76 +3,60 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
-import { Plus, Moon, Trash2, X, Flame, Target, Activity, Zap, Timer } from 'lucide-react'
+import { useHabitStore } from '@/lib/stores'
+import { usePredictions } from '@/hooks'
+import type { Habit, HabitCreate, StreakPrediction } from '@/lib/types'
+import { createLogger } from '@/lib/utils/logger'
+import { Button } from '@/components/ui/Button'
+import { Plus, Moon, Trash2, X, Flame, Target, Activity, Zap, Timer, Check, AlertTriangle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-interface Habit {
-  id: string
-  name: string
-  frequency: string
-  custom_days?: number[]
-  time_target_minutes?: number
-  goal_id?: string
-  is_active: boolean
-  current_streak: number
-  best_streak: number
-  consistency_percentage: number
-}
+const logger = createLogger('HabitsPage')
 
 export default function HabitsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [habits, setHabits] = useState<Habit[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: habits, loading, error, fetch: fetchHabits, create, update, remove, log: logHabit } = useHabitStore()
   const [showAddModal, setShowAddModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
-
   const [newHabit, setNewHabit] = useState({ name: '', frequency: 'daily', time_target_minutes: 30 })
+  const { habits: predHabits, loading: predLoading } = usePredictions()
 
-  useEffect(() => { setMounted(true) }, [])
   useEffect(() => {
     if (user) fetchHabits()
-  }, [user])
-
-  const fetchHabits = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('habits').select('*').order('created_at', { ascending: false })
-      if (data) setHabits(data)
-    } catch (err) {
-      console.error('Failed to fetch habits:', err)
-      showError('Failed to load habits. Please try again.')
-    }
-    setLoading(false)
-  }
+  }, [user, fetchHabits])
 
   const handleAdd = async () => {
     if (!newHabit.name.trim()) return
-    await supabase.from('habits').insert({ ...newHabit, is_active: true, current_streak: 0, best_streak: 0, consistency_percentage: 0 })
+    await create({ ...newHabit } as HabitCreate)
+    logger.info('Habit created', { name: newHabit.name.trim(), frequency: newHabit.frequency })
     setNewHabit({ name: '', frequency: 'daily', time_target_minutes: 30 })
     setShowAddModal(false)
-    fetchHabits()
   }
 
   const handleDelete = async (id: string) => {
-    await supabase.from('habits').delete().eq('id', id)
-    setHabits(habits.filter(h => h.id !== id))
+    await remove(id)
+    logger.info('Habit deleted', { habitId: id })
   }
 
   const handleToggleActive = async (id: string, isActive: boolean) => {
-    await supabase.from('habits').update({ is_active: !isActive }).eq('id', id)
-    setHabits(habits.map(h => h.id === id ? { ...h, is_active: !isActive } : h))
+    await update(id, { is_active: !isActive })
+    logger.info('Habit toggled', { habitId: id, active: !isActive })
   }
 
   const activeHabits = habits.filter(h => h.is_active)
-  const totalStreak = activeHabits.reduce((sum, h) => sum + h.current_streak, 0)
+  const maxStreak = Math.max(...activeHabits.map(h => h.current_streak), 0)
   const avgConsistency = activeHabits.length > 0 
     ? Math.round(activeHabits.reduce((sum, h) => sum + h.consistency_percentage, 0) / activeHabits.length)
     : 0
+  const today = new Date().toISOString().split('T')[0]
 
-  if (!mounted || authLoading || loading) {
+  const handleToggleLog = async (habitId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    await logHabit(habitId, { date: today, completed: true })
+    await fetchHabits()
+  }
+
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative">
@@ -87,6 +71,13 @@ export default function HabitsPage() {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
@@ -99,10 +90,10 @@ export default function HabitsPage() {
           </h1>
           <p className="text-text-secondary">Build consistent daily habits</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="btn btn-primary gap-2">
+        <Button onClick={() => setShowAddModal(true)} variant="primary" className="gap-2">
           <Plus size={20} />
           Add Habit
-        </button>
+        </Button>
       </motion.div>
 
       {/* Stats */}
@@ -114,7 +105,7 @@ export default function HabitsPage() {
       >
         {[
           { label: 'Active', value: activeHabits.length, icon: Activity, color: 'accent-primary' },
-          { label: 'Streak', value: totalStreak, icon: Flame, color: 'accent-warning' },
+          { label: 'Streak', value: maxStreak, icon: Flame, color: 'accent-warning' },
           { label: 'Consistency', value: `${avgConsistency}%`, icon: Target, color: 'accent-success' },
         ].map((stat, i) => (
           <motion.div
@@ -132,6 +123,29 @@ export default function HabitsPage() {
           </motion.div>
         ))}
       </motion.div>
+
+      {/* Risk Summary */}
+      {predHabits && !predLoading && predHabits.at_risk_count > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-3 p-4 rounded-xl border border-accent-warning/20 bg-accent-warning/5"
+        >
+          <AlertTriangle size={18} className="text-accent-warning shrink-0 mt-0.5" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-text-primary">
+              {predHabits.at_risk_count} habit{predHabits.at_risk_count !== 1 ? 's' : ''} need{predHabits.at_risk_count === 1 ? 's' : ''} attention
+            </p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {predHabits.predictions.filter(p => p.risk_level !== 'Low').slice(0, 5).map(p => (
+                <span key={p.habit_id} className="text-xs text-text-tertiary bg-background-elevated px-2 py-1 rounded-md">
+                  {p.habit_name} &middot; {p.recommendation}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Habits Grid */}
       <motion.div 
@@ -166,6 +180,25 @@ export default function HabitsPage() {
               <h3 className="text-lg font-semibold text-text-primary mb-2 group-hover:text-accent-primary transition-colors">
                 {habit.name}
               </h3>
+
+              <div className="flex items-center gap-2 mb-3">
+                {(() => {
+                  const isLoggedToday = (habit as { logs?: { date: string }[] }).logs?.some(l => l.date === today) ?? false
+                  return (
+                    <button
+                      onClick={(e) => handleToggleLog(habit.id, e)}
+                      className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                        isLoggedToday
+                          ? 'bg-accent-neon border-accent-neon text-background-dark'
+                          : 'border-border hover:border-accent-primary'
+                      }`}
+                    >
+                      {isLoggedToday && <Check size={14} />}
+                    </button>
+                  )
+                })()}
+                <span className="text-xs text-text-tertiary">Check-in today</span>
+              </div>
 
               <div className="flex items-center gap-3 text-sm text-text-tertiary mb-4">
                 <span className="flex items-center gap-1 capitalize">
@@ -212,10 +245,10 @@ export default function HabitsPage() {
               </div>
               <h3 className="text-lg font-display font-semibold text-text-primary mb-2">No habits yet</h3>
               <p className="text-text-tertiary mb-6">Build your first habit today</p>
-              <button onClick={() => setShowAddModal(true)} className="btn btn-primary mx-auto">
+              <Button onClick={() => setShowAddModal(true)} variant="primary" className="mx-auto">
                 <Plus size={20} />
                 Add Habit
-              </button>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -287,10 +320,10 @@ export default function HabitsPage() {
               </div>
 
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowAddModal(false)} className="btn btn-secondary flex-1">Cancel</button>
-                <button onClick={handleAdd} disabled={!newHabit.name.trim()} className="btn btn-primary flex-1">
+                <Button onClick={() => setShowAddModal(false)} variant="secondary" className="flex-1">Cancel</Button>
+                <Button onClick={handleAdd} disabled={!newHabit.name.trim()} variant="primary" className="flex-1">
                   Add Habit
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

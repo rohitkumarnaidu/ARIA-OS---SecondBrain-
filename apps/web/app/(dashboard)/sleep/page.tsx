@@ -3,48 +3,31 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
-import { Moon, Sun, Trash2, Clock, Battery, AlertCircle } from 'lucide-react'
+import { useSleepStore } from '@/lib/stores'
+import { usePredictions } from '@/hooks'
+import type { SleepLog } from '@/lib/types'
+import { Moon, Sun, Trash2, Clock, Battery, AlertCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface SleepLog {
-  id: string
-  bedtime: string
-  wake_time: string
-  quality_rating: number
-  duration_hours: number
-  sleep_score: number
-  sleep_debt: number
-  created_at: string
-}
+import { Button } from '@/components/ui/Button'
+import { createLogger } from '@/lib/utils/logger'
 
 export default function SleepPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [sleepLogs, setSleepLogs] = useState<SleepLog[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: sleepLogs, loading, error, fetch: fetchSleep, create, remove } = useSleepStore()
+  const { sleep: predSleep, loading: predLoading } = usePredictions()
+  const logger = createLogger('SleepPage')
   const [showLogModal, setShowLogModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   const [newSleep, setNewSleep] = useState({ bedtime: '23:00', wake_time: '07:00', quality_rating: 3 })
 
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => { setMounted(true) }, [])
+
   useEffect(() => {
     if (user) fetchSleep()
-  }, [user])
-
-  const fetchSleep = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('sleep_logs').select('*').order('created_at', { ascending: false }).limit(30)
-      if (data) setSleepLogs(data)
-    } catch (err) {
-      console.error('Failed to fetch sleep data:', err)
-      showError('Failed to load sleep data. Please try again.')
-    }
-    setLoading(false)
-  }
+  }, [user, fetchSleep])
 
   const calculateDuration = (bedtime: string, wake_time: string) => {
     const [bH, bM] = bedtime.split(':').map(Number)
@@ -60,33 +43,46 @@ export default function SleepPage() {
     return Math.round((durationScore + qualityScore) / 2)
   }
 
+  const handleDelete = async (id: string) => {
+    logger.info('Deleting sleep log', { id })
+    try {
+      await remove(id)
+      logger.info('Sleep log deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete sleep log', { error: err instanceof Error ? err.message : String(err) })
+    }
+  }
+
   const handleLog = async () => {
     const duration = calculateDuration(newSleep.bedtime, newSleep.wake_time)
-    const score = calculateScore(duration, newSleep.quality_rating)
+    logger.info('Logging sleep', { bedtime: newSleep.bedtime, wake_time: newSleep.wake_time, quality_rating: newSleep.quality_rating, duration })
     
     const now = new Date()
-    const bedtime = new Date(now.toISOString().split('T')[0] + 'T' + newSleep.bedtime + ':00')
+    const dateStr = now.toISOString().split('T')[0]
+    const bedtime = new Date(dateStr + 'T' + newSleep.bedtime + ':00')
     if (newSleep.bedtime > newSleep.wake_time) bedtime.setDate(bedtime.getDate() - 1)
     
-    const wake = new Date(now.toISOString().split('T')[0] + 'T' + newSleep.wake_time + ':00')
+    const wake = new Date(dateStr + 'T' + newSleep.wake_time + ':00')
 
-    await supabase.from('sleep_logs').insert({
-      bedtime: bedtime.toISOString(),
-      wake_time: wake.toISOString(),
-      quality_rating: newSleep.quality_rating,
-      duration_hours: Math.round(duration * 10) / 10,
-      sleep_score: score,
-      sleep_debt: Math.max(0, 8 - duration),
-    })
-    setShowLogModal(false)
-    fetchSleep()
+    try {
+      await create({
+        bedtime: bedtime.toISOString(),
+        wake_time: wake.toISOString(),
+        quality_rating: newSleep.quality_rating,
+      })
+      logger.info('Sleep log created successfully', { quality_rating: newSleep.quality_rating })
+      setShowLogModal(false)
+    } catch (err) {
+      logger.error('Failed to create sleep log', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const recentLogs = sleepLogs.slice(0, 7)
   const avgScore = sleepLogs.length > 0 ? Math.round(sleepLogs.reduce((sum, s) => sum + s.sleep_score, 0) / sleepLogs.length) : 0
   const avgDuration = sleepLogs.length > 0 ? Math.round(sleepLogs.reduce((sum, s) => sum + s.duration_hours, 0) / sleepLogs.length * 10) / 10 : 0
 
-  if (!mounted || authLoading || loading) return (
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="relative">
         <div className="w-12 h-12 rounded-xl border-2 border-accent-primary/30 animate-pulse-glow" />
@@ -108,15 +104,16 @@ export default function SleepPage() {
           <h1 className="text-2xl font-bold text-text-primary text-gradient">Sleep Monitor</h1>
           <p className="text-text-secondary">Track your sleep quality and patterns</p>
         </div>
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowLogModal(true)} 
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <Moon size={20} /> Log Sleep
-        </motion.button>
+        <Button variant="primary" icon={<Moon size={20} />} onClick={() => setShowLogModal(true)}>
+          Log Sleep
+        </Button>
       </motion.div>
+
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-4 gap-4">
         {[
@@ -137,6 +134,32 @@ export default function SleepPage() {
           </motion.div>
         ))}
       </div>
+
+      {/* AI Sleep Insight */}
+      {predSleep && !predLoading && predSleep.average_score > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="card"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            {predSleep.trend === 'improving' ? <TrendingUp size={16} className="text-[var(--accent-success)]" /> :
+             predSleep.trend === 'declining' ? <TrendingDown size={16} className="text-accent-error" /> :
+             <Minus size={16} className="text-text-tertiary" />}
+            <h2 className="text-lg font-semibold text-text-primary">Sleep Insight</h2>
+          </div>
+          <p className="text-sm text-text-secondary">{predSleep.recommendation}</p>
+          {predSleep.bedtime_prediction && (
+            <div className="flex flex-wrap gap-4 mt-3 text-xs text-text-tertiary">
+              <span>Optimal bedtime: <strong className="text-text-primary">{predSleep.bedtime_prediction.optimal_bedtime}</strong></span>
+              <span>Optimal wake: <strong className="text-text-primary">{predSleep.bedtime_prediction.optimal_wake}</strong></span>
+              <span>Expected score: <strong className="text-[var(--accent-success)]">{predSleep.bedtime_prediction.expected_score}</strong></span>
+              <span className="text-text-tertiary">Confidence: {predSleep.bedtime_prediction.confidence}</span>
+            </div>
+          )}
+        </motion.div>
+      )}
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -165,6 +188,9 @@ export default function SleepPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className={`text-lg font-bold ${log.sleep_score >= 70 ? 'text-accent-secondary' : log.sleep_score >= 40 ? 'text-accent-warning' : 'text-accent-error'}`}>{log.sleep_score}</div>
+                  <button onClick={() => handleDelete(log.id)} className="text-text-muted hover:text-accent-error transition-colors" aria-label="Delete sleep log">
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </motion.div>
             ))}
@@ -203,7 +229,7 @@ export default function SleepPage() {
                     {[1,2,3,4,5].map(n => (<button key={n} onClick={() => setNewSleep({ ...newSleep, quality_rating: n })} className={`flex-1 py-2 rounded-lg ${newSleep.quality_rating === n ? 'bg-accent-primary text-white' : 'bg-background-elevated text-text-secondary'}`}>{n}</button>))}
                   </div>
                 </div>
-                <button onClick={handleLog} className="btn btn-primary w-full">Log Sleep</button>
+                <Button variant="primary" className="w-full" onClick={handleLog}>Log Sleep</Button>
               </div>
             </motion.div>
           </motion.div>

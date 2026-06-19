@@ -3,42 +3,33 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
+import { useTimeStore } from '@/lib/stores'
+import type { TimeEntry } from '@/lib/types'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Square, Clock, Trash2, Zap, Coffee, Timer, Target, Eye } from 'lucide-react'
-
-interface TimeEntry {
-  id: string
-  task_id?: string
-  description?: string
-  start_time: string
-  end_time?: string
-  duration_minutes?: number
-  is_deep_work: boolean
-  category: string
-}
+import { createLogger } from '@/lib/utils/logger'
 
 export default function TimePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [entries, setEntries] = useState<TimeEntry[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: entries, loading, error, fetch: fetchEntries, create, update, remove, stop: stopEntry } = useTimeStore()
+  const logger = createLogger('TimePage')
   const [activeTimer, setActiveTimer] = useState<TimeEntry | null>(null)
   const [elapsed, setElapsed] = useState(0)
-  const [mounted, setMounted] = useState(false)
   const [pomodoroMode, setPomodoroMode] = useState(false)
   const [pomodoroPhase, setPomodoroPhase] = useState<'work' | 'break'>('work')
   const [pomodoroTimeLeft, setPomodoroTimeLeft] = useState(25 * 60)
   const [showIdleWarning, setShowIdleWarning] = useState(false)
   const [lastActivity, setLastActivity] = useState(Date.now())
   const [focusHours, setFocusHours] = useState<{hour: number, count: number}[]>([])
+  const [mounted, setMounted] = useState(false)
   const idleCheckRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => { setMounted(true) }, [])
+
   useEffect(() => {
     if (user) fetchEntries()
-  }, [user])
+  }, [user, fetchEntries])
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -86,21 +77,10 @@ export default function TimePage() {
     setFocusHours(hours.sort((a, b) => b.count - a.count).slice(0, 5))
   }, [entries])
 
-  const fetchEntries = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('time_entries').select('*').order('start_time', { ascending: false }).limit(50)
-      if (data) {
-        setEntries(data)
-        const active = data.find(e => !e.end_time)
-        if (active) setActiveTimer(active)
-      }
-    } catch (err) {
-      console.error('Failed to fetch time entries:', err)
-      showError('Failed to load time entries. Please try again.')
-    }
-    setLoading(false)
-  }
+  useEffect(() => {
+    const active = entries.find(e => !e.end_time)
+    if (active) setActiveTimer(active)
+  }, [entries])
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600)
@@ -110,43 +90,32 @@ export default function TimePage() {
   }
 
   const startTimer = async (description: string) => {
+    logger.info('Starting timer', { description: description || 'Working...' })
     try {
-      const { data } = await supabase.from('time_entries').insert({
+      await create({
         description: description || 'Working...',
         start_time: new Date().toISOString(),
-        is_deep_work: false,
-      }).select().single()
-      
-      if (data) {
-        setActiveTimer(data)
-        setElapsed(0)
-      }
+        category: 'work',
+        duration_minutes: 0,
+      })
+      logger.info('Timer started successfully')
+      setElapsed(0)
     } catch (err) {
-      console.error('Failed to start timer:', err)
-      showError('Failed to start timer. Please try again.')
+      logger.error('Failed to start timer', { error: err instanceof Error ? err.message : String(err) })
     }
   }
 
   const stopTimer = async () => {
     if (!activeTimer) return
-    
+    logger.info('Stopping timer', { id: activeTimer.id, elapsed })
     try {
-      const endTime = new Date().toISOString()
-      const duration = Math.round((new Date(endTime).getTime() - new Date(activeTimer.start_time).getTime()) / 60000)
-      const isDeepWork = duration >= 90
-      
-      await supabase.from('time_entries').update({
-        end_time: endTime,
-        duration_minutes: duration,
-        is_deep_work: isDeepWork,
-      }).eq('id', activeTimer.id)
-      
+      await stopEntry(activeTimer.id)
       setActiveTimer(null)
       setElapsed(0)
       fetchEntries()
+      logger.info('Timer stopped successfully')
     } catch (err) {
-      console.error('Failed to stop timer:', err)
-      showError('Failed to stop timer. Please try again.')
+      logger.error('Failed to stop timer', { error: err instanceof Error ? err.message : String(err) })
     }
   }
 
@@ -160,7 +129,8 @@ export default function TimePage() {
 
   const recentEntries = entries.filter(e => e.duration_minutes).slice(0, 10)
 
-  if (!mounted || authLoading || loading) return (
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="relative">
         <div className="w-12 h-12 rounded-xl border-2 border-accent-primary/30 animate-pulse-glow" />
@@ -173,6 +143,12 @@ export default function TimePage() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
+
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,28 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
+import { useYoutubeStore } from '@/lib/stores'
 import { showError } from '@/lib/toast'
 import { Plus, Youtube, Trash2, Play, X, ExternalLink } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Video {
-  id: string
-  url: string
-  title: string
-  thumbnail_url?: string
-  ai_summary?: string
-  status: string
-  created_at: string
-}
+import { Button } from '@/components/ui/Button'
+import { createLogger } from '@/lib/utils/logger'
 
 export default function YouTubePage() {
   const { user, loading: authLoading } = useAuth()
-  const router = useRouter()
-  const [videos, setVideos] = useState<Video[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: videos, loading, error, fetch, create, update, remove } = useYoutubeStore()
+  const logger = createLogger('YoutubePage')
   const [showAddModal, setShowAddModal] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -31,36 +21,32 @@ export default function YouTubePage() {
   useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
-    if (user) fetchVideos()
-  }, [user])
+    if (user) fetch()
+  }, [user, fetch])
 
-  const fetchVideos = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('videos').select('*').order('created_at', { ascending: false })
-      if (data) setVideos(data)
-    } catch (err) {
-      console.error('Failed to fetch videos:', err)
-      showError('Failed to load videos. Please try again.')
-    }
-    setLoading(false)
-  }
+  useEffect(() => {
+    if (error) showError(error)
+  }, [error])
 
   const handleAddVideo = async () => {
     if (!newVideo.url.trim()) return
     const videoId = extractVideoId(newVideo.url)
     const title = newVideo.title || `Video ${videos.length + 1}`
-    
-    await supabase.from('videos').insert({
-      url: newVideo.url,
-      title: title,
-      thumbnail_url: videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null,
-      status: 'pending',
-    })
-    
-    setNewVideo({ url: '', title: '' })
-    setShowAddModal(false)
-    fetchVideos()
+    logger.info('Adding video', { title, videoId })
+
+    try {
+      await create({
+        url: newVideo.url,
+        title: title,
+        thumbnail_url: videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : undefined,
+        status: 'pending',
+      })
+      logger.info('Video added successfully', { title })
+      setNewVideo({ url: '', title: '' })
+      setShowAddModal(false)
+    } catch (err) {
+      logger.error('Failed to add video', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const extractVideoId = (url: string) => {
@@ -69,19 +55,30 @@ export default function YouTubePage() {
   }
 
   const handleDelete = async (id: string) => {
-    await supabase.from('videos').delete().eq('id', id)
-    setVideos(videos.filter(v => v.id !== id))
+    logger.info('Deleting video', { id })
+    try {
+      await remove(id)
+      logger.info('Video deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete video', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const handleUpdateStatus = async (id: string, status: string) => {
-    await supabase.from('videos').update({ status }).eq('id', id)
-    setVideos(videos.map(v => v.id === id ? { ...v, status } : v))
+    logger.info('Updating video status', { id, status })
+    try {
+      await update(id, { status })
+      logger.info('Video status updated successfully', { id, status })
+    } catch (err) {
+      logger.error('Failed to update video status', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const pendingVideos = videos.filter(v => v.status === 'pending')
   const watchedVideos = videos.filter(v => v.status === 'watched')
 
-  if (!mounted || authLoading || loading) return (
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) return (
     <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
       <div className="animate-pulse-glow w-12 h-12 border-2 border-accent-primary border-t-transparent rounded-full" />
       <span className="sr-only">Loading...</span>
@@ -99,9 +96,9 @@ export default function YouTubePage() {
           <h1 className="text-2xl font-bold text-text-primary text-gradient">YouTube Vault</h1>
           <p className="text-text-secondary">Save and track your learning videos</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="btn btn-primary flex items-center gap-2">
+        <Button variant="primary" className="flex items-center gap-2" onClick={() => setShowAddModal(true)}>
           <Plus size={20} /> Add Video
-        </button>
+        </Button>
       </motion.div>
 
       <div className="grid grid-cols-3 gap-4">

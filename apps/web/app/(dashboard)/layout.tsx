@@ -1,4 +1,9 @@
-import { Sidebar, Navbar, OfflineBanner, SkipLink } from '@/components/layout'
+'use client'
+
+import { SkipLink } from '@/components/layout'
+import { ShellSelector } from '@/components/shell'
+import { OfflineBanner } from '@/components/layout'
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary'
 
 export default function DashboardLayout({
   children,
@@ -8,14 +13,12 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen">
       <SkipLink />
-      <Sidebar />
-      <div className="flex-1 ml-60">
-        <OfflineBanner />
-        <Navbar />
-        <main id="main-content" className="pt-20 px-6 pb-6" tabIndex={-1}>
+      <OfflineBanner />
+      <ErrorBoundary>
+        <ShellSelector>
           {children}
-        </main>
-      </div>
+        </ShellSelector>
+      </ErrorBoundary>
     </div>
   )
 }

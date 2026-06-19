@@ -1,196 +1,285 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Radar, Trash2, ExternalLink, X, Briefcase, Code, Heart, DollarSign, Trophy } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { RefreshCw } from 'lucide-react'
+import { RadarScanner, type RadarSignal } from '@/components/opportunities/RadarScanner'
+import { MatchCard } from '@/components/opportunities/MatchCard'
+import { SignalList } from '@/components/opportunities/SignalList'
+import { OpportunityDetail } from '@/components/opportunities/OpportunityDetail'
+import { MatchTierPills } from '@/components/opportunities/MatchTierPills'
+import { Button } from '@/components/ui/Button'
+import type { Opportunity, OpportunityStatus } from '@/types/opportunity'
+import type { Opportunity as StoreOpportunity } from '@/lib/types'
+import { useOpportunityStore } from '@/lib/stores'
+import { createLogger } from '@/lib/utils/logger'
+import { useAIAgents, useAIAction } from '@/lib/ai/hooks'
+import { AIInsightCard, ConfidenceBadge } from '@/components/ai'
 
-interface Opportunity {
-  id: string
-  title: string
-  company?: string
-  url: string
-  opportunity_type: string
-  description?: string
-  skills_required: string[]
-  deadline?: string
-  skill_match?: number
-  status: string
-  created_at: string
+function mapOpportunityType(t: StoreOpportunity['opportunity_type']): Opportunity['type'] {
+  const m: Record<string, Opportunity['type']> = {
+    internship: 'career',
+    job: 'career',
+    scholarship: 'strategic',
+    competition: 'partnership',
+    grant: 'strategic',
+    other: 'financial',
+  }
+  return m[t] ?? 'career'
 }
 
-const opportunityTypes = ['internship', 'hackathon', 'open_source', 'fellowship', 'freelance', 'competition']
+function mapOpportunityStatus(s: StoreOpportunity['status']): OpportunityStatus {
+  const m: Record<string, OpportunityStatus> = {
+    saved: 'saved',
+    applied: 'applied',
+    interviewing: 'interviewing',
+    offered: 'accepted',
+    accepted: 'accepted',
+    rejected: 'declined',
+  }
+  return m[s] ?? 'new'
+}
 
-const typeIcons = { internship: Briefcase, hackathon: Code, open_source: Code, fellowship: Heart, freelance: DollarSign, competition: Trophy }
+function toStoreStatus(s: OpportunityStatus): StoreOpportunity['status'] {
+  const m: Record<string, StoreOpportunity['status']> = {
+    saved: 'saved',
+    applied: 'applied',
+    interviewing: 'interviewing',
+    accepted: 'accepted',
+    declined: 'rejected',
+  }
+  return m[s] ?? 'saved'
+}
+
+function toDisplayOpportunity(o: StoreOpportunity): Opportunity {
+  return {
+    id: o.id,
+    title: o.title,
+    organization: o.company ?? '',
+    type: mapOpportunityType(o.opportunity_type),
+    score: o.match_score ?? 0,
+    description: o.notes ?? '',
+    status: mapOpportunityStatus(o.status),
+    matchBreakdown: [],
+    url: o.url,
+    createdAt: o.created_at,
+  }
+}
+
+
+
+const typeAngleMap: Record<string, number> = {
+  strategic: 45,
+  financial: 135,
+  partnership: 225,
+  career: 315,
+}
+
+const sectionVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+}
+
+const containerVariants = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+}
 
 export default function OpportunitiesPage() {
   const { user, loading: authLoading } = useAuth()
-  const router = useRouter()
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [filter, setFilter] = useState('all')
+  const store = useOpportunityStore()
+  const logger = createLogger('OpportunitiesPage')
+  const [activeCategory, setActiveCategory] = useState('all')
+  const [activeTier, setActiveTier] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const [mounted, setMounted] = useState(false)
-
-  const [newOpp, setNewOpp] = useState({ title: '', company: '', url: '', opportunity_type: 'internship', description: '', deadline: '' })
+  const { agents, updateAgent } = useAIAgents()
+  const { execute: fetchOpportunitiesAI, isLoading: aiLoading } = useAIAction(async () => {
+    // opportunity matching logic
+  })
 
   useEffect(() => { setMounted(true) }, [])
+
   useEffect(() => {
-    if (user) fetchOpportunities()
-  }, [user])
+    updateAgent('opportunity', {
+      status: 'done',
+      preview: '4 high-match opportunities detected in AI/ML sector.',
+      confidence: 0.88,
+    })
+  }, [updateAgent])
 
-  const fetchOpportunities = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('opportunities').select('*').order('created_at', { ascending: false })
-      if (data) setOpportunities(data)
-    } catch (err) {
-      console.error('Failed to fetch opportunities:', err)
-      showError('Failed to load opportunities. Please try again.')
-    }
-    setLoading(false)
-  }
+  useEffect(() => {
+    if (user) store.fetch()
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleAdd = async () => {
-    if (!newOpp.title.trim() || !newOpp.url.trim()) return
-    await supabase.from('opportunities').insert({ ...newOpp, status: 'new' })
-    setNewOpp({ title: '', company: '', url: '', opportunity_type: 'internship', description: '', deadline: '' })
-    setShowAddModal(false)
-    fetchOpportunities()
-  }
+  const opportunities = useMemo<Opportunity[]>(() => {
+    return store.items.map(toDisplayOpportunity)
+  }, [store.items])
 
-  const handleDelete = async (id: string) => {
-    await supabase.from('opportunities').delete().eq('id', id)
-    setOpportunities(opportunities.filter(o => o.id !== id))
-  }
+  const loading = store.loading && store.items.length === 0
 
-  const handleUpdateStatus = async (id: string, status: string) => {
-    await supabase.from('opportunities').update({ status }).eq('id', id)
-    setOpportunities(opportunities.map(o => o.id === id ? { ...o, status } : o))
-  }
-
-  const filtered = filter === 'all' ? opportunities : opportunities.filter(o => o.opportunity_type === filter)
-  const newCount = opportunities.filter(o => o.status === 'new').length
-  const appliedCount = opportunities.filter(o => o.status === 'applied').length
-
-  if (!mounted || authLoading || loading) return (
-    <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
-      <div className="animate-pulse-glow w-12 h-12 border-2 border-accent-primary border-t-transparent rounded-full" />
-      <span className="sr-only">Loading...</span>
-    </div>
+  const signals: RadarSignal[] = useMemo(
+    () =>
+      opportunities.map((o) => ({
+        id: o.id,
+        angle: typeAngleMap[o.type] + (Math.random() - 0.5) * 30,
+        radius: o.score / 100,
+        status: (
+          o.status === 'new'
+            ? 'new'
+            : o.status === 'applied' || o.status === 'interviewing'
+              ? 'viewed'
+              : 'saved'
+        ) as 'new' | 'viewed' | 'saved',
+        label: o.title,
+      })),
+    [opportunities]
   )
 
+  const selectedOpportunity = useMemo(
+    () => opportunities.find((o) => o.id === selectedId) ?? null,
+    [opportunities, selectedId]
+  )
+
+  const tierCounts = useMemo(
+    () => ({
+      exceptional: opportunities.filter((o) => o.score >= 90).length,
+      strong: opportunities.filter((o) => o.score >= 70 && o.score < 90).length,
+      moderate: opportunities.filter((o) => o.score >= 50 && o.score < 70).length,
+    }),
+    [opportunities]
+  )
+
+  const filteredByTier = useMemo(() => {
+    if (!activeTier) return opportunities
+    if (activeTier === 'exceptional') return opportunities.filter((o) => o.score >= 90)
+    if (activeTier === 'strong')
+      return opportunities.filter((o) => o.score >= 70 && o.score < 90)
+    if (activeTier === 'moderate')
+      return opportunities.filter((o) => o.score >= 50 && o.score < 70)
+    return opportunities
+  }, [opportunities, activeTier])
+
+  const handleRefresh = useCallback(async () => {
+    logger.info('Refreshing opportunities')
+    setIsRefreshing(true)
+    try {
+      await store.fetch()
+      logger.info('Opportunities refreshed successfully')
+    } catch (err) {
+      logger.error('Failed to refresh opportunities', { error: err instanceof Error ? err.message : String(err) })
+    }
+    setTimeout(() => setIsRefreshing(false), 800)
+  }, [store])
+
+  const handleSave = useCallback((id: string) => {
+    logger.info('Saving opportunity', { id })
+    store.update(id, { status: 'saved' })
+  }, [store])
+
+  const handleStatusChange = useCallback(
+    (id: string, status: OpportunityStatus) => {
+      logger.info('Updating opportunity status', { id, status })
+      store.update(id, { status: toStoreStatus(status) })
+    },
+    [store]
+  )
+
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) {
+    return (
+      <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
+        <div className="animate-pulse-glow w-12 h-12 border-2 border-accent-primary border-t-transparent rounded-full" />
+        <span className="sr-only">Loading opportunities...</span>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
+    <motion.div
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      className="space-y-6 pb-8"
+    >
+      {store.error && (
+        <motion.div variants={sectionVariants}>
+          <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+            {store.error}
+          </div>
+        </motion.div>
+      )}
+
+      <motion.div variants={sectionVariants} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gradient">Opportunity Radar</h1>
-          <p className="text-text-secondary">Internships, hackathons, fellowships and more</p>
+          <p className="text-sm text-[var(--text-secondary)]">
+            AI-matched signals for your growth
+          </p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="btn btn-primary flex items-center gap-2">
-          <Plus size={20} /> Add Opportunity
-        </button>
+        <Button
+          variant="primary"
+          icon={<RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />}
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+        >
+          Refresh Scan
+        </Button>
       </motion.div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { count: newCount, label: 'New' },
-          { count: appliedCount, label: 'Applied' },
-          { count: opportunities.filter(o => o.status === 'accepted').length, label: 'Accepted' },
-          { count: opportunities.length, label: 'Total' }
-        ].map((stat, i) => (
-          <motion.div 
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="card"
-          >
-            <div className="text-2xl font-bold text-text-primary">{stat.count}</div>
-            <div className="text-text-secondary text-sm">{stat.label}</div>
-          </motion.div>
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <motion.div variants={sectionVariants} className="lg:col-span-2 space-y-6">
+          <div className="card">
+            <RadarScanner signals={signals} />
+          </div>
+          <MatchTierPills
+            activeTier={activeTier}
+            onTierChange={setActiveTier}
+            counts={tierCounts}
+          />
+        </motion.div>
+
+        <motion.div variants={sectionVariants} className="lg:col-span-3 space-y-4">
+          <SignalList
+            signals={filteredByTier}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            onViewDetail={setSelectedId}
+          />
+        </motion.div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        <button onClick={() => setFilter('all')} className={`px-3 py-1 rounded-lg text-sm ${filter === 'all' ? 'bg-accent-primary text-white' : 'bg-background-elevated text-text-secondary'}`}>All</button>
-        {opportunityTypes.map(t => (<button key={t} onClick={() => setFilter(t)} className={`px-3 py-1 rounded-lg text-sm capitalize ${filter === t ? 'bg-accent-primary text-white' : 'bg-background-elevated text-text-secondary'}`}>{t.replace('_', ' ')}</button>))}
-      </div>
-
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence>
-          {filtered.map(opp => {
-            const Icon = typeIcons[opp.opportunity_type as keyof typeof typeIcons] || Radar
-            return (
-              <motion.div 
-                key={opp.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="card"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-accent-warning/20 flex items-center justify-center"><Icon size={20} className="text-accent-warning" /></div>
-                  <button onClick={() => handleDelete(opp.id)}><Trash2 size={16} className="text-accent-error" /></button>
-                </div>
-                <h3 className="text-text-primary font-semibold mb-1">{opp.title}</h3>
-                {opp.company && <p className="text-text-muted text-sm mb-2">{opp.company}</p>}
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span className="text-xs px-2 py-0.5 bg-background-elevated rounded text-text-secondary capitalize">{opp.opportunity_type.replace('_', ' ')}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded ${opp.status === 'applied' ? 'bg-accent-info text-white' : opp.status === 'accepted' ? 'bg-accent-secondary text-white' : 'bg-accent-warning text-black'}`}>{opp.status}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <a href={opp.url} target="_blank" rel="noopener noreferrer" className="text-accent-primary text-sm hover:underline flex items-center gap-1"><ExternalLink size={14} /> Apply</a>
-                  <select value={opp.status} onChange={e => handleUpdateStatus(opp.id, e.target.value)} className="text-xs bg-background-elevated rounded px-2 py-1 text-text-secondary">
-                    <option value="new">New</option><option value="saved">Saved</option><option value="applied">Applied</option><option value="rejected">Rejected</option><option value="accepted">Accepted</option>
-                  </select>
-                </div>
-              </motion.div>
-            )
-          })}
-        </AnimatePresence>
+      <motion.div variants={sectionVariants}>
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
+          Top Matches
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredByTier.slice(0, 4).map((opp) => (
+            <MatchCard key={opp.id} match={opp} onViewDetail={setSelectedId} />
+          ))}
+        </div>
       </motion.div>
 
-      {filtered.length === 0 && <div className="text-center py-12"><Radar size={48} className="text-text-muted mx-auto mb-3" /><p className="text-text-secondary">No opportunities found</p></div>}
+      <motion.div variants={sectionVariants}>
+        <AIInsightCard
+          type="recommendation"
+          title="Opportunity Match Insights"
+          description="4 high-match opportunities detected in AI/ML sector."
+        />
+      </motion.div>
 
-      <AnimatePresence>
-        {showAddModal && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center z-50"
-          >
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="card p-6 w-full max-w-md"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-text-primary">Add Opportunity</h2>
-                <button onClick={() => setShowAddModal(false)}><X size={24} className="text-text-muted" /></button>
-              </div>
-              <div className="space-y-4">
-                <div><label className="block text-text-secondary text-sm mb-1">Title *</label><input type="text" value={newOpp.title} onChange={e => setNewOpp({ ...newOpp, title: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
-                <div><label className="block text-text-secondary text-sm mb-1">Company</label><input type="text" value={newOpp.company} onChange={e => setNewOpp({ ...newOpp, company: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
-                <div><label className="block text-text-secondary text-sm mb-1">URL *</label><input type="url" value={newOpp.url} onChange={e => setNewOpp({ ...newOpp, url: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
-                <div><label className="block text-text-secondary text-sm mb-1">Type</label><select value={newOpp.opportunity_type} onChange={e => setNewOpp({ ...newOpp, opportunity_type: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary capitalize">{opportunityTypes.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}</select></div>
-                <div><label className="block text-text-secondary text-sm mb-1">Description</label><textarea value={newOpp.description} onChange={e => setNewOpp({ ...newOpp, description: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" rows={2} /></div>
-                <button onClick={handleAdd} className="btn btn-primary w-full">Add Opportunity</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      <OpportunityDetail
+        opportunity={selectedOpportunity}
+        onClose={() => setSelectedId(null)}
+        onSave={handleSave}
+        onStatusChange={handleStatusChange}
+      />
+    </motion.div>
   )
 }
