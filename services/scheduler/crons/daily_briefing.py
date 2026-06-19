@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
 from config.core.supabase import get_supabase_client
 from ai.agents.briefing_agent import generate_daily_briefing
+from shared.utils.logger import logger
+from shared.utils.security import sanitize_input
 
 
 async def run_daily_briefing():
@@ -9,12 +10,10 @@ async def run_daily_briefing():
 
     for user in users_resp.data or []:
         try:
-            briefing = await generate_daily_briefing(user["id"])
-            print(
-                f"Briefing generated for user {user['id']}: {briefing.get('productivity_score')}"
-            )
+            briefing = await generate_daily_briefing(sanitize_input(user["id"]))
+            logger.info("Briefing generated", user_id=user["id"], productivity_score=briefing.get("productivity_score"))
         except Exception as e:
-            print(f"Error generating briefing for {user['id']}: {e}")
+            logger.error("Error generating briefing", user_id=user["id"], error=str(e))
 
 
 if __name__ == "__main__":

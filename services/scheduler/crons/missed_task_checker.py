@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from config.core.supabase import get_supabase_client
+from shared.utils.logger import logger
 
 
 async def run_missed_task_checker():
@@ -20,17 +21,20 @@ async def run_missed_task_checker():
             overdue = overdue_resp.data or []
 
             for task in overdue:
-                supabase.from_("tasks").update({
-                    "status": "missed",
-                    "missed_count": (task.get("missed_count") or 0) + 1,
-                }).eq("id", task["id"]).execute()
+                supabase.from_("tasks").update(
+                    {
+                        "status": "missed",
+                        "missed_count": (task.get("missed_count") or 0) + 1,
+                    }
+                ).eq("id", task["id"]).execute()
 
             if overdue:
-                print(f"Marked {len(overdue)} missed tasks for user {user['id']}")
+                logger.info("Missed tasks marked", user_id=user["id"], count=len(overdue))
         except Exception as e:
-            print(f"Error checking missed tasks for {user['id']}: {e}")
+            logger.error("Error checking missed tasks", user_id=user["id"], error=str(e))
 
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(run_missed_task_checker())

@@ -1,6 +1,7 @@
-from datetime import datetime
 from config.core.supabase import get_supabase_client
 from ai.agents.opportunity_agent import run_opportunity_radar
+from shared.utils.logger import logger
+from shared.utils.security import sanitize_input
 
 
 async def run_radar():
@@ -9,10 +10,10 @@ async def run_radar():
 
     for user in users_resp.data or []:
         try:
-            opportunities = await run_opportunity_radar(user["id"])
-            print(f"Found {len(opportunities)} opportunities for user {user['id']}")
+            opportunities = await run_opportunity_radar(sanitize_input(user["id"]))
+            logger.info("Opportunities found", user_id=user["id"], count=len(opportunities))
         except Exception as e:
-            print(f"Error scanning opportunities for {user['id']}: {e}")
+            logger.error("Error scanning opportunities", user_id=user["id"], error=str(e))
 
 
 if __name__ == "__main__":
