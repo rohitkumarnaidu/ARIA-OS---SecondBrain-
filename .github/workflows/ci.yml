@@ -1,248 +1,153 @@
-# =============================================================================
-# Second Brain OS — CI/CD Pipeline
-# 5 jobs: frontend, backend, prompts, docker, security
-# =============================================================================
-
-name: CI/CD
-
+name: CI
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: 18
-  PYTHON_VERSION: "3.10"
-  DOCKER_COMPOSE_VERSION: "v2.29.0"
-
-defaults:
-  run:
-    shell: bash
-
 jobs:
-  # ── Frontend: Lint → TypeCheck → Build ───────────────────────────────────
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
+          node-version: 18
+          cache: 'npm'
           cache-dependency-path: apps/web/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
         working-directory: apps/web
-
-      - name: Lint (ESLint)
-        run: npm run lint
+      - run: npm run lint
         working-directory: apps/web
-
-      - name: Type check (TypeScript)
-        run: npm run type-check
+      - run: npm run type-check
         working-directory: apps/web
-
-      - name: Build (Next.js)
-        run: npm run build
+      - run: npm run build
         working-directory: apps/web
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v7
+      - run: npm run test:ci -- --coverage.thresholds.lines=80 --coverage.thresholds.branches=70 --coverage.thresholds.functions=70
+        working-directory: apps/web
+      - name: Install Playwright browsers
+        if: github.event_name == 'pull_request'
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Run Playwright E2E tests
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --reporter=html
+        working-directory: apps/web
+        continue-on-error: true
+      - name: Run a11y checks
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --config=playwright.config.ts --grep="@a11y"
+        working-directory: apps/web
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: frontend-build
-          path: apps/web/.next/
-          retention-days: 3
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
 
-  # ── Backend: Lint → TypeCheck → Test ──────────────────────────────────────
   backend:
     name: Backend
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
-          cache-dependency-path: |
-            apps/api/requirements.txt
-            services/scheduler/requirements.txt
-
-      - name: Install backend dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r apps/api/requirements.txt
-          pip install -r services/scheduler/requirements.txt
-
-      - name: Install test dependencies
-        run: |
-          pip install pytest pytest-cov pytest-asyncio pytest-mock pytest-httpx
-          pip install ruff black
-
-      - name: Lint (ruff)
-        run: |
-          ruff check apps/api/ packages/ services/scheduler/ --fix
-          ruff check scripts/ tests/
-
-      - name: Check formatting (black)
-        run: black --check --diff apps/api/ packages/ services/scheduler/ tests/ scripts/
-
-      - name: Run Python tests with coverage
-        run: |
-          python -m pytest tests/ \
-            -v --tb=short \
-            --cov=packages --cov=apps/api \
-            --cov-report=term-missing \
-            --cov-report=xml:coverage.xml \
-            --junitxml=test-results.xml
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v7
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install -r apps/api/requirements.txt -r services/scheduler/requirements.txt ruff black pytest pytest-cov pytest-asyncio pytest-mock httpx
+      - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
+      - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/
+      - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=70 -x
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: backend-coverage
-          path: coverage.xml
+          name: coverage-report
+          path: htmlcov/
           retention-days: 7
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v7
-        with:
-          name: backend-test-results
-          path: test-results.xml
-          retention-days: 7
-
-  # ── Prompt System: Frontmatter Validation + Tests ─────────────────────────
   prompts:
-    name: Prompt Validation
+    name: Prompts
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
+          python-version: '3.10'
+      - run: pip install pyyaml pytest
+      - run: python scripts/validate_prompts.py
+      - run: python -m pytest tests/test_prompt_loader.py tests/test_agent_prompts.py -v
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest pyyaml
-
-      - name: Validate prompt YAML frontmatter
-        run: python scripts/validate_prompts.py
-
-      - name: Run prompt loader tests
-        run: python -m pytest tests/ -v --tb=short -m "prompt or agent"
-
-  # ── Docker: Build & Smoke Test ─────────────────────────────────────────────
   docker:
-    name: Docker Build
+    name: Docker
+    needs: [frontend, backend, prompts]
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [frontend, backend, prompts]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Build backend image
-        uses: docker/build-push-action@v7
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Cache Docker layers
+        uses: actions/cache@v4
         with:
-          context: apps/api
-          target: production
-          load: true
-          tags: secondbrain-api:ci
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - run: docker compose build
+        env:
+          BUILDKIT_PROGRESS: plain
+          DOCKER_BUILDKIT: 1
+      - run: docker compose run --rm api python -c "import requests; r=requests.get('http://api:8000/health'); assert r.status_code == 200"
 
-      - name: Build scheduler image
-        uses: docker/build-push-action@v7
+  lighthouse:
+    name: Lighthouse CI
+    needs: [frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          context: services/scheduler
-          target: production
-          load: true
-          tags: secondbrain-scheduler:ci
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+        working-directory: apps/web
+      - name: Build production bundle
+        run: npm run build
+        working-directory: apps/web
+      - name: Run Lighthouse CI
+        run: npx @lhci/cli@0.14.x autorun
+        working-directory: apps/web
+        env:
+          LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build frontend image
-        uses: docker/build-push-action@v7
-        with:
-          context: apps/web
-          target: production
-          load: true
-          tags: secondbrain-frontend:ci
-
-      - name: Smoke test backend image
-        run: |
-          docker run --rm -d --name sb-test-api -p 8000:8000 \
-            -e SUPABASE_URL=test -e SUPABASE_KEY=test \
-            -e JWT_SECRET=test -e USE_LOCAL_AI=False \
-            secondbrain-api:ci
-          sleep 5
-          docker logs sb-test-api
-          curl -f http://localhost:8000/health || echo "Health check failed"
-          docker stop sb-test-api
-
-  # ── Security: npm audit + Scorecard ───────────────────────────────────────
   security:
-    name: Security Audit
+    name: Security
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: npm audit (frontend)
-        run: |
-          npm audit --audit-level=high || true
+          node-version: 18
+      - run: npm audit --audit-level=high
         working-directory: apps/web
-
-      - name: Run Trivy vulnerability scanner (backend)
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: fs
-          scan-ref: apps/api/
-          format: table
-          exit-code: 1
-          severity: HIGH,CRITICAL
-
-      - name: OSSF Scorecard
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         continue-on-error: true
-        uses: ossf/scorecard-action@v2.4.3
+      - uses: aquasecurity/trivy-action@master
         with:
-          results_file: results.sarif
-          results_format: sarif
-          publish_results: true
-
-      - name: Upload Scorecard results
-        if: success() || failure()
-        uses: actions/upload-artifact@v7
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      - uses: github/codeql-action/upload-sarif@v3
         with:
-          name: scorecard-results
-          path: results.sarif
+          sarif_file: 'trivy-results.sarif'

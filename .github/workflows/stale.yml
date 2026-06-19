@@ -1,0 +1,17 @@
+name: Stale
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-message: 'This issue has been inactive for 30 days. Please update or it will be closed.'
+          stale-pr-message: 'This PR has been inactive for 14 days. Please update or it will be closed.'
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: stale
+          stale-pr-label: stale
