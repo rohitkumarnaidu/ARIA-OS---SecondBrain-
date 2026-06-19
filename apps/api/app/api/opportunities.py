@@ -1,64 +1,43 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
-from pydantic import BaseModel
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
+from database.schemas.opportunity import OpportunityCreate, OpportunityUpdate, OpportunityResponse
 
 router = APIRouter()
 
 
-class OpportunityCreate(BaseModel):
-    title: str
-    company: Optional[str] = None
-    url: str
-    opportunity_type: str = "internship"
-    description: Optional[str] = None
-    skills_required: Optional[List[str]] = []
-    deadline: Optional[str] = None
-
-
-class OpportunityUpdate(BaseModel):
-    title: Optional[str] = None
-    company: Optional[str] = None
-    url: Optional[str] = None
-    opportunity_type: Optional[str] = None
-    description: Optional[str] = None
-    skills_required: Optional[List[str]] = None
-    deadline: Optional[str] = None
-    status: Optional[str] = None
-
-
-class OpportunityResponse(BaseModel):
-    id: str
-    user_id: str
-    title: str
-    company: Optional[str]
-    url: str
-    opportunity_type: str
-    description: Optional[str]
-    skills_required: List[str]
-    deadline: Optional[str]
-    status: str
-    created_at: str
-
-
 @router.get("/", response_model=List[OpportunityResponse])
-async def get_opportunities(current_user=Depends(get_current_user)):
+async def get_opportunities(
+    current_user=Depends(get_current_user),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
     supabase = get_supabase_client()
     response = (
         supabase.from_("opportunities")
         .select("*")
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
+        .range(offset, offset + limit - 1)
         .execute()
     )
     return response.data
 
 
-@router.post("/", response_model=OpportunityResponse)
-async def create_opportunity(
-    opportunity: OpportunityCreate, current_user=Depends(get_current_user)
-):
+@router.get("/{opportunity_id}", response_model=OpportunityResponse)
+async def get_opportunity(opportunity_id: str, current_user=Depends(get_current_user)):
+    supabase = get_supabase_client()
+    response = (
+        supabase.from_("opportunities").select("*").eq("id", opportunity_id).eq("user_id", current_user.user.id).execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    return response.data[0]
+
+
+@router.post("/", status_code=201, response_model=OpportunityResponse)
+async def create_opportunity(opportunity: OpportunityCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = opportunity.model_dump()
     data["user_id"] = current_user.user.id
@@ -76,9 +55,7 @@ async def update_opportunity(
     current_user=Depends(get_current_user),
 ):
     supabase = get_supabase_client()
-    update_data = {
-        k: v for k, v in opportunity_update.model_dump().items() if v is not None
-    }
+    update_data = {k: v for k, v in opportunity_update.model_dump().items() if v is not None}
     response = (
         supabase.from_("opportunities")
         .update(update_data)
@@ -93,16 +70,10 @@ async def update_opportunity(
     return response.data[0]
 
 
-@router.delete("/{opp_id}")
+@router.delete("/{opp_id}", status_code=204)
 async def delete_opportunity(opp_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = (
-        supabase.from_("opportunities")
-        .delete()
-        .eq("id", opp_id)
-        .eq("user_id", current_user.user.id)
-        .execute()
-    )
+    response = supabase.from_("opportunities").delete().eq("id", opp_id).eq("user_id", current_user.user.id).execute()
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
-    return {"message": "Opportunity deleted"}
+    return None
