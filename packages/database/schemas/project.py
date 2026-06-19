@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from typing import Optional
 
@@ -5,11 +7,11 @@ from typing import Optional
 class ProjectBase(BaseModel):
     title: str
     description: Optional[str] = None
-    status: str = "active"
-    progress: int = 0
-    deadline: Optional[str] = None
-    tech_stack: Optional[list] = []
-    repo_url: Optional[str] = None
+    phase: str = "planning"
+    github_url: Optional[str] = None
+    live_url: Optional[str] = None
+    next_action: Optional[str] = None
+    blocker: Optional[str] = None
 
 
 class ProjectCreate(ProjectBase):
@@ -19,18 +21,17 @@ class ProjectCreate(ProjectBase):
 class ProjectUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    status: Optional[str] = None
-    progress: Optional[int] = None
-    deadline: Optional[str] = None
-    tech_stack: Optional[list] = None
-    repo_url: Optional[str] = None
+    phase: Optional[str] = None
+    github_url: Optional[str] = None
+    live_url: Optional[str] = None
+    next_action: Optional[str] = None
+    blocker: Optional[str] = None
 
 
 class ProjectResponse(ProjectBase):
     id: str
     user_id: str
-    created_at: str
-    updated_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True

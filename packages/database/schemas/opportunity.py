@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from typing import Optional
 
@@ -31,8 +33,8 @@ class OpportunityResponse(OpportunityBase):
     id: str
     user_id: str
     status: str
-    created_at: str
-    updated_at: str
+    match_score: Optional[float] = None
+    created_at: datetime
 
     class Config:
         from_attributes = True

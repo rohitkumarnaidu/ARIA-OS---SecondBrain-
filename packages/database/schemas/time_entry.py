@@ -33,7 +33,7 @@ class TimeEntryResponse(BaseModel):
     duration_minutes: Optional[int]
     description: Optional[str]
     category: str
-    created_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True
