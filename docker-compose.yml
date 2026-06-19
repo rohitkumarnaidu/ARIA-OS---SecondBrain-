@@ -31,8 +31,8 @@ services:
   frontend:
     container_name: secondbrain-frontend
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/web/Dockerfile
       target: development
     ports:
       - "3000:3000"
@@ -54,6 +54,20 @@ services:
       backend:
         condition: service_started
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000',r=>{process.exit(r.statusCode===200?0:1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # ── Backend ────────────────────────────────────────────────────────────────
   # FastAPI application with auto-reload for development.
@@ -61,8 +75,8 @@ services:
   backend:
     container_name: secondbrain-backend
     build:
-      context: ./apps/api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: apps/api/Dockerfile
       target: development
     ports:
       - "8000:8000"
@@ -87,6 +101,20 @@ services:
     networks:
       - secondbrain-net
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; r=urllib.request.urlopen('http://localhost:8000/health'); assert r.status == 200"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # ── Scheduler ──────────────────────────────────────────────────────────────
   # APScheduler that runs cron jobs (daily briefing, habit checks, etc.).
@@ -94,8 +122,8 @@ services:
   scheduler:
     container_name: secondbrain-scheduler
     build:
-      context: ./services/scheduler
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/scheduler/Dockerfile
       target: development
     env_file:
       - .env
@@ -119,6 +147,20 @@ services:
       backend:
         condition: service_started
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; r=urllib.request.urlopen('http://localhost:8001/health'); assert r.status == 200"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
   # ── Ollama (Optional) ──────────────────────────────────────────────────────
   # Local AI inference server. Uncomment to run Mistral 7B locally.

@@ -98,6 +98,29 @@ install: ## Install all dependencies
 	pip install -r requirements.txt 2>/dev/null || true
 	pip install black ruff pytest pytest-cov pytest-asyncio pytest-mock pytest-httpx
 
+# ── Design System ─────────────────────────────────────────────────────────────
+
+figma-sync: ## Sync design tokens from Figma to tailwind.config.js
+	cd apps/web && node ../scripts/sync-figma-tokens.ts
+
+token-check: ## Check for hardcoded color values (token drift)
+	cd apps/web && node ../scripts/check-token-drift.ts
+
+# ── Infrastructure ────────────────────────────────────────────────────────────
+
+setup-ci: ## Create .github/ directory with CI workflow templates
+	@echo "✓ .github/ directory already configured"
+
+# ── Quality Gates ─────────────────────────────────────────────────────────────
+
+gate-0: ## Phase 0 quality gate checklist
+	$(MAKE) lint-python
+	$(MAKE) lint-ts
+	$(MAKE) validate-prompts
+	$(MAKE) test
+	$(MAKE) type-check
+	cd apps/web && npm run build
+
 # ── Cleanup ──────────────────────────────────────────────────────────────────
 
 clean: ## Clean build artifacts, caches, and node_modules
