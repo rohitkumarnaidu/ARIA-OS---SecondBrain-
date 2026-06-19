@@ -92,7 +92,7 @@
     "@vitest/coverage-v8": "^4.1.8",
     "autoprefixer": "^10.4.16",
     "d3": "^7.9.0",
-    "eslint": "^8.57.0",
+    "eslint": "^10.5.0",
     "eslint-config-next": "14.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
