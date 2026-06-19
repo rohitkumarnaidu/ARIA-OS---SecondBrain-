@@ -1,0 +1,5 @@
+export * from './types'
+export * from './client'
+export { aiStream } from './client'
+export { predictive } from './predictive'
+export { computeSentiment } from './sentiment'
