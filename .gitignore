@@ -80,6 +80,9 @@ pids
 # Coverage output
 .coverage
 
+# Tracked env files (explicitly removed from git)
+apps/web/.env.local
+
 # Graphify - knowledge graph output & temp files
 graphify-out/
 .graphify_python

@@ -1,0 +1,32 @@
+# =============================================================================
+# Second Brain OS — Docker Compose Production Override
+# Overrides docker-compose.yml for production deployment.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# =============================================================================
+
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      target: production
+    environment:
+      - NODE_ENV=production
+    volumes: []
+    restart: always
+
+  backend:
+    build:
+      target: production
+    environment:
+      - DEBUG=False
+    volumes: []
+    restart: always
+
+  scheduler:
+    build:
+      target: production
+    environment:
+      - DEBUG=False
+    volumes: []
+    restart: always
