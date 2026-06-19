@@ -1,0 +1,1357 @@
+"""Comprehensive tests for all 10 AI agent modules — fallback, happy, error, empty paths."""
+
+from unittest.mock import MagicMock, AsyncMock
+from datetime import datetime, timedelta
+import pytest
+
+from ai.client import llm as llm_client
+from ai.prompt_loader import prompts as prompt_loader
+from ai.agents import (
+    briefing_agent,
+    memory_agent,
+    learning_agent,
+    opportunity_agent,
+    opportunity_matching_agent,
+    task_agent,
+    weekly_review_agent,
+    sleep_agent,
+    nudge_agent,
+    roadmap_agent,
+)
+
+# ─── Helpers ─────────────────────────────────────────────────────────────────
+
+
+def _fresh_builder(data=None, ret_insert=None):
+    """Build a fresh chainable supabase query builder.
+
+    All chain methods (select, eq, order, …) return self.
+    .execute() returns a MagicMock with .data = data (or []) and .error = None.
+    .insert().execute() returns ret_insert (default: [{"id": "mock-id"}]).
+    .update() returns self for update().eq().execute() chaining.
+    """
+    b = MagicMock()
+    insert_val = ret_insert if ret_insert is not None else [{"id": "mock-id"}]
+    b.execute.return_value = MagicMock(data=data or [], error=None)
+    for m in ("select", "eq", "order", "limit", "gte", "lt", "range", "text_search"):
+        getattr(b, m).return_value = b
+    b.insert.return_value = MagicMock(execute=MagicMock(return_value=MagicMock(data=insert_val, error=None)))
+    b.update.return_value = b
+    return b
+
+
+_AGENT_MODULES = [
+    "ai.agents.briefing_agent",
+    "ai.agents.memory_agent",
+    "ai.agents.learning_agent",
+    "ai.agents.opportunity_agent",
+    "ai.agents.opportunity_matching_agent",
+    "ai.agents.task_agent",
+    "ai.agents.weekly_review_agent",
+    "ai.agents.sleep_agent",
+    "ai.agents.nudge_agent",
+    "ai.agents.roadmap_agent",
+]
+
+
+# ─── Fixtures ─────────────────────────────────────────────────────────────────
+
+
+@pytest.fixture(autouse=True)
+def mock_supabase(mocker):
+    """Patch get_supabase_client inside every agent module's namespace.
+
+    Each agent does 'from config.core.supabase import get_supabase_client',
+    creating a local reference — patching config.core.supabase is not enough;
+    we must patch each module individually.
+
+    The returned client exposes a ``_builders`` dict that tests can modify
+    to control per-table query results:
+
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "…"}]
+        )
+    """
+    client = MagicMock()
+
+    # Real dict with auto-creation — accessing _builders["tasks"]
+    # automatically creates a fresh builder for that table.
+    class _AutoBuilders(dict):
+        def __missing__(self, key):
+            val = MagicMock()
+            val.execute.return_value = MagicMock(data=[], error=None)
+            for m in ("select", "eq", "order", "limit", "gte", "lt", "range", "text_search"):
+                getattr(val, m).return_value = val
+            val.update.return_value = val
+
+            def _insert_side_effect(data):
+                result = {"id": "mock-id", **(data or {})}
+                return MagicMock(execute=MagicMock(return_value=MagicMock(data=[result], error=None)))
+
+            val.insert.side_effect = _insert_side_effect
+            self[key] = val
+            return val
+
+    builders = _AutoBuilders()
+
+    def from_side(table):
+        return builders[table]
+
+    client.from_.side_effect = from_side
+    client._builders = builders
+
+    for mod in _AGENT_MODULES:
+        mocker.patch(f"{mod}.get_supabase_client", return_value=client)
+    return client
+
+
+@pytest.fixture
+def mock_llm_json(mocker):
+    m = AsyncMock(return_value={})
+    mocker.patch.object(llm_client, "generate_json", m)
+    return m
+
+
+@pytest.fixture
+def mock_llm_generate(mocker):
+    m = AsyncMock(return_value="mock text response")
+    mocker.patch.object(llm_client, "generate", m)
+    return m
+
+
+@pytest.fixture
+def mock_get_agent(mocker):
+    entry = MagicMock()
+    entry.system_prompt = "You are a helpful AI assistant."
+    entry.body = entry.system_prompt
+    entry.agent_prompt = entry.system_prompt
+    entry.render.return_value = entry.system_prompt
+    mocker.patch.object(prompt_loader, "get_agent", return_value=entry)
+    return entry
+
+
+@pytest.fixture
+def mock_get_agent_none(mocker):
+    mocker.patch.object(prompt_loader, "get_agent", return_value=None)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 1. briefing_agent — generate_daily_briefing
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestBriefingAgent:
+    """Daily briefing generator — 4 paths."""
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Finish report",
+                    "status": "pending",
+                    "priority": "high",
+                    "due_date": "2026-06-20",
+                    "estimated_minutes": 45,
+                },
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Get A grade", "status": "active", "progress": 60},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
+        mock_llm_json.return_value = {
+            "aria_pick": {"title": "Finish report", "reason": "Deadline approaching"},
+            "productivity_tip": "Use Pomodoro technique",
+            "focus_area": "Clear high-priority tasks",
+        }
+
+        result = await briefing_agent.generate_daily_briefing("user-1")
+
+        assert result["top_3_tasks"][0]["title"] == "Finish report"
+        assert result["aria_pick"]["title"] == "Finish report"
+        assert result["productivity_tip"] == "Use Pomodoro technique"
+        assert result["focus_area"] == "Clear high-priority tasks"
+        assert "generated_at" in result
+        assert result["sleep_score"] == 70
+        assert result["active_goals"][0]["title"] == "Get A grade"
+
+    @pytest.mark.asyncio
+    async def test_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Urgent task",
+                    "status": "pending",
+                    "priority": "urgent",
+                    "due_date": "2026-06-17",
+                    "estimated_minutes": 30,
+                },
+                {
+                    "id": "t2",
+                    "title": "Low priority",
+                    "status": "pending",
+                    "priority": "low",
+                    "due_date": "2026-06-25",
+                    "estimated_minutes": 10,
+                },
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Goal 1", "status": "active", "progress": 40},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "CS 101", "status": "in_progress"},
+            ]
+        )
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": datetime.now().date().isoformat(), "quality": 85, "duration_hours": 7.5},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "aria_pick": {"title": "Urgent task", "reason": "Top priority"},
+            "productivity_tip": "Start early",
+            "focus_area": "Urgent items first",
+        }
+
+        result = await briefing_agent.generate_daily_briefing("user-1")
+
+        assert result["sleep_score"] == 85
+        assert result["top_3_tasks"][0]["title"] == "Urgent task"
+        assert isinstance(result["productivity_score"], int)
+        assert result["aria_pick"]["title"] == "Urgent task"
+        assert len(result["active_goals"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_error_when_llm_raises(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.side_effect = RuntimeError("LLM unavailable")
+        with pytest.raises(RuntimeError):
+            await briefing_agent.generate_daily_briefing("user-1")
+
+    @pytest.mark.asyncio
+    async def test_empty_data_returns_defaults(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {}
+        result = await briefing_agent.generate_daily_briefing("user-1")
+        assert result["top_3_tasks"] == []
+        assert result["sleep_score"] == 70
+        assert result["active_goals"] == []
+        assert result["aria_pick"]["title"] == "Start your day"
+        assert result["productivity_tip"] == "Break big tasks into smaller chunks"
+        assert result["focus_area"] == "Clear your pending tasks first"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 2. memory_agent — store, query, preferences, summary
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestMemoryAgent:
+    """Memory consolidation agent — 4 public functions tested."""
+
+    @pytest.mark.asyncio
+    async def test_store_interaction(self, mock_supabase):
+        result = await memory_agent.store_interaction("user-1", "query", "What is my schedule?", {"source": "chat"})
+        assert result["id"] == "mock-id"
+        inserted = mock_supabase._builders["memory"].insert.call_args[0][0]
+        assert inserted["user_id"] == "user-1"
+        assert inserted["interaction_type"] == "query"
+
+    @pytest.mark.asyncio
+    async def test_store_interaction_empty_result(self, mock_supabase):
+        mock_supabase._builders["memory"].insert.side_effect = lambda d: MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[], error=None))
+        )
+        result = await memory_agent.store_interaction("user-1", "note", "Just a note")
+        assert result is None
+
+    @pytest.mark.asyncio
+    async def test_get_recent_interactions(self, mock_supabase):
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "content": "Hello", "timestamp": "2026-06-17T10:00:00"},
+            ]
+        )
+        result = await memory_agent.get_recent_interactions("user-1", limit=5)
+        assert len(result) == 1
+        assert result[0]["content"] == "Hello"
+
+    @pytest.mark.asyncio
+    async def test_get_recent_interactions_empty(self, mock_supabase):
+        result = await memory_agent.get_recent_interactions("user-1")
+        assert result == []
+
+    @pytest.mark.asyncio
+    async def test_get_user_preferences_from_tasks(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"category": "study", "priority": "high"},
+                {"category": "study", "priority": "high"},
+                {"category": "personal", "priority": "medium"},
+            ]
+        )
+        result = await memory_agent.get_user_preferences("user-1")
+        assert result["preferred_category"] == "study"
+        assert result["preferred_priority"] == "high"
+        assert result["total_tasks"] == 3
+
+    @pytest.mark.asyncio
+    async def test_get_user_preferences_empty(self, mock_supabase):
+        result = await memory_agent.get_user_preferences("user-1")
+        assert result["preferred_category"] == "personal"
+        assert result["preferred_priority"] == "medium"
+        assert result["total_tasks"] == 0
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_fallback(self, mock_supabase, mock_get_agent_none, mock_llm_generate):
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "content": "Working on project", "timestamp": "2026-06-17T10:00:00"},
+            ]
+        )
+        result = await memory_agent.get_memory_summary("user-1")
+        assert result["recent_interactions"] == 1
+        assert result["preferences"]["preferred_category"] == "personal"
+        assert result["memory_type"] == "short_term"
+        mock_llm_generate.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_happy_path(self, mock_supabase, mock_get_agent, mock_llm_generate):
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "content": "Learning Python", "timestamp": "2026-06-17T10:00:00"},
+            ]
+        )
+        mock_llm_generate.return_value = "User is focused on Python learning."
+        result = await memory_agent.get_memory_summary("user-1")
+        assert result["summary"] == "User is focused on Python learning."
+        assert result["recent_interactions"] == 1
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_no_interactions(self, mock_supabase, mock_get_agent):
+        result = await memory_agent.get_memory_summary("user-1")
+        assert result["summary"] == "No recent interactions to summarize."
+        assert result["recent_interactions"] == 0
+        assert result["memory_type"] == "short_term"
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_long_term(self, mock_supabase, mock_get_agent, mock_llm_generate):
+        interactions = [
+            {"id": str(i), "content": f"Interaction {i}", "timestamp": "2026-06-17T10:00:00"} for i in range(55)
+        ]
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(data=interactions)
+        result = await memory_agent.get_memory_summary("user-1")
+        assert result["memory_type"] == "long_term"
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_llm_error(self, mock_supabase, mock_get_agent, mock_llm_generate):
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "content": "Hi", "timestamp": "2026-06-17T10:00:00"},
+            ]
+        )
+        mock_llm_generate.side_effect = RuntimeError("LLM error")
+        with pytest.raises(RuntimeError):
+            await memory_agent.get_memory_summary("user-1")
+
+    @pytest.mark.asyncio
+    async def test_update_memory_context_insert(self, mock_supabase):
+        await memory_agent.update_memory_context("user-1", {"mood": "focused"})
+        assert mock_supabase._builders["user_context"].insert.called
+
+    @pytest.mark.asyncio
+    async def test_update_memory_context_update(self, mock_supabase):
+        mock_supabase._builders["user_context"].execute.return_value = MagicMock(
+            data=[
+                {"id": "uc1", "user_id": "user-1"},
+            ]
+        )
+        await memory_agent.update_memory_context("user-1", {"mood": "tired"})
+        assert mock_supabase._builders["user_context"].update.called
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 3. learning_agent — track_progress, detect_patterns, suggest_focus
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestLearningAgent:
+    """Learning pattern detection — 3 public functions."""
+
+    @pytest.mark.asyncio
+    async def test_track_progress(self, mock_supabase):
+        recent = (datetime.now() - timedelta(days=1)).isoformat()
+        old = (datetime.now() - timedelta(days=30)).isoformat()
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "status": "completed", "created_at": recent, "completed_at": recent},
+                {"id": "t2", "status": "pending", "created_at": recent},
+                {"id": "t3", "status": "completed", "created_at": old, "completed_at": old},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "status": "in_progress"},
+                {"id": "c2", "status": "completed"},
+            ]
+        )
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {"id": "h1", "is_active": True},
+                {"id": "h2", "is_active": False},
+            ]
+        )
+        result = await learning_agent.track_user_progress("user-1")
+        assert result["tasks_created"] == 2
+        assert result["tasks_completed"] == 1
+        assert result["completion_rate"] == 50.0
+        assert result["courses_enrolled"] == 1
+        assert result["courses_completed"] == 1
+        assert result["active_habits"] == 1
+
+    @pytest.mark.asyncio
+    async def test_track_progress_empty(self, mock_supabase):
+        result = await learning_agent.track_user_progress("user-1")
+        assert result["tasks_created"] == 0
+        assert result["tasks_completed"] == 0
+        assert result["completion_rate"] == 0
+        assert result["active_habits"] == 0
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_fallback(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_llm_json.return_value = ["Student is consistent"]
+        result = await learning_agent.detect_learning_patterns("user-1")
+        assert result == ["Student is consistent"]
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {"patterns": ["Good progress", "Needs consistency"]}
+        result = await learning_agent.detect_learning_patterns("user-1")
+        assert result == ["Good progress", "Needs consistency"]
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_returns_list_directly(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = ["Direct list pattern"]
+        result = await learning_agent.detect_learning_patterns("user-1")
+        assert result == ["Direct list pattern"]
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_returns_default(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {"unexpected": "data"}
+        result = await learning_agent.detect_learning_patterns("user-1")
+        assert result == ["Keep up the consistent work"]
+
+    @pytest.mark.asyncio
+    async def test_suggest_learning_focus(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {"recommendations": ["Study daily", "Take breaks"]}
+        result = await learning_agent.suggest_learning_focus("user-1")
+        assert "patterns" in result
+        assert result["recommendations"] == ["Study daily", "Take breaks"]
+
+    @pytest.mark.asyncio
+    async def test_suggest_learning_focus_defaults(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {}
+        result = await learning_agent.suggest_learning_focus("user-1")
+        assert result["recommendations"] == ["Stay consistent with your study routine"]
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.side_effect = RuntimeError("LLM error")
+        with pytest.raises(RuntimeError):
+            await learning_agent.detect_learning_patterns("user-1")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 4. opportunity_agent — run_opportunity_radar
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestOpportunityAgent:
+    """Opportunity radar — fetches user skills, calls LLM, inserts results."""
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python", "React"], "interests": ["AI", "Web"]},
+            ]
+        )
+        mock_llm_json.return_value = {}
+        result = await opportunity_agent.run_opportunity_radar("user-1")
+        assert len(result) == 3
+        assert result[0]["title"] == "Google Summer of Code 2026"
+
+    @pytest.mark.asyncio
+    async def test_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": ["ML"]},
+            ]
+        )
+        mock_llm_json.return_value = [
+            {
+                "title": "AI Intern",
+                "category": "internships",
+                "url": "https://example.com",
+                "deadline": "2026-08-01",
+                "description": "ML internship",
+                "skills_needed": ["Python"],
+                "match_score": 90,
+            },
+        ]
+        result = await opportunity_agent.run_opportunity_radar("user-1")
+        assert len(result) == 1
+        assert result[0]["title"] == "AI Intern"
+
+    @pytest.mark.asyncio
+    async def test_llm_returns_dict_with_opportunities_key(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": []},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "opportunities": [
+                {
+                    "title": "GSoC",
+                    "category": "open_source",
+                    "url": "https://gsoc",
+                    "deadline": "2026-07-01",
+                    "description": "Open source",
+                    "skills_needed": ["Python"],
+                    "match_score": 85,
+                },
+            ],
+        }
+        result = await opportunity_agent.run_opportunity_radar("user-1")
+        assert len(result) == 1
+        assert result[0]["title"] == "GSoC"
+
+    @pytest.mark.asyncio
+    async def test_no_user_data_uses_default_scan(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[])
+        mock_llm_json.return_value = {}
+        result = await opportunity_agent.run_opportunity_radar("user-1")
+        assert len(result) == 3
+
+    @pytest.mark.asyncio
+    async def test_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": []},
+            ]
+        )
+        mock_llm_json.side_effect = RuntimeError("API down")
+        with pytest.raises(RuntimeError):
+            await opportunity_agent.run_opportunity_radar("user-1")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 5. opportunity_matching_agent — match_opportunities
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestOpportunityMatchingAgent:
+    """Opportunity scoring engine — ranks opportunities by match quality."""
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": ["Web"], "experience_level": "beginner"},
+            ]
+        )
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(
+            data=[
+                {"id": "o1", "title": "Intern", "match_score": 50},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "recommendations": [
+                {"opportunity_id": "o1", "match_score": 85, "reasoning": "Good fit", "action_tip": "Apply now"}
+            ],
+        }
+        result = await opportunity_matching_agent.match_opportunities("user-1")
+        assert len(result) == 1
+        assert result[0]["opportunity_id"] == "o1"
+        assert result[0]["match_score"] == 85
+
+    @pytest.mark.asyncio
+    async def test_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": ["ML"], "experience_level": "intermediate"},
+            ]
+        )
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(
+            data=[
+                {"id": "o1", "title": "ML Intern", "match_score": 40},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "recommendations": [
+                {"opportunity_id": "o1", "match_score": 92, "reasoning": "ML match", "action_tip": "Update resume"},
+            ],
+        }
+        result = await opportunity_matching_agent.match_opportunities("user-1")
+        assert result[0]["match_score"] == 92
+
+    @pytest.mark.asyncio
+    async def test_empty_opportunities(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": [], "experience_level": "beginner"},
+            ]
+        )
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        mock_llm_json.return_value = {"recommendations": []}
+        result = await opportunity_matching_agent.match_opportunities("user-1")
+        assert result == []
+
+    @pytest.mark.asyncio
+    async def test_no_user_data(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        mock_llm_json.return_value = {"recommendations": []}
+        result = await opportunity_matching_agent.match_opportunities("user-1")
+        assert result == []
+
+    @pytest.mark.asyncio
+    async def test_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": [], "interests": [], "experience_level": "beginner"},
+            ]
+        )
+        mock_llm_json.side_effect = RuntimeError("LLM failed")
+        with pytest.raises(RuntimeError):
+            await opportunity_matching_agent.match_opportunities("user-1")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 6. task_agent — breakdown, check_missed, prioritization, reschedule
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestTaskAgent:
+    """Task breakdown, missed-task detection, prioritization, reschedule."""
+
+    # -- breakdown_task --------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_breakdown_fallback(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Write essay",
+                    "description": "History paper",
+                    "category": "study",
+                    "priority": "high",
+                },
+            ]
+        )
+        mock_llm_json.return_value = [
+            {"title": "Research topic", "category": "study"},
+            {"title": "Write outline", "category": "study"},
+        ]
+        result = await task_agent.breakdown_task("user-1", "t1")
+        assert len(result) == 2
+        assert result[0]["title"] == "Research topic"
+        assert result[0]["parent_task_id"] == "t1"
+        assert result[0]["user_id"] == "user-1"
+
+    @pytest.mark.asyncio
+    async def test_breakdown_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Build app",
+                    "description": "React app",
+                    "category": "coding",
+                    "priority": "urgent",
+                },
+            ]
+        )
+        mock_llm_json.return_value = {
+            "subtasks": [
+                {"title": "Setup project", "category": "coding"},
+                {"title": "Build UI", "category": "coding"},
+            ],
+        }
+        result = await task_agent.breakdown_task("user-1", "t1")
+        assert len(result) == 2
+        assert result[0]["priority"] == "urgent"
+
+    @pytest.mark.asyncio
+    async def test_breakdown_ai_returns_empty(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "title": "Clean room", "description": "", "category": "personal", "priority": "low"},
+            ]
+        )
+        mock_llm_json.return_value = {}
+        result = await task_agent.breakdown_task("user-1", "t1")
+        assert len(result) == 1
+        assert "Start" in result[0]["title"]
+
+    @pytest.mark.asyncio
+    async def test_breakdown_task_not_found(self, mock_supabase, mock_get_agent):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+        result = await task_agent.breakdown_task("user-1", "nonexistent")
+        assert result == []
+
+    @pytest.mark.asyncio
+    async def test_breakdown_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "title": "Test", "description": "", "category": "personal"},
+            ]
+        )
+        mock_llm_json.side_effect = RuntimeError("LLM broken")
+        with pytest.raises(RuntimeError):
+            await task_agent.breakdown_task("user-1", "t1")
+
+    # -- check_missed_tasks ---------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_check_missed_tasks(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "status": "pending", "due_date": "2020-01-01", "missed_count": 0},
+                {"id": "t2", "status": "pending", "due_date": "2020-01-02", "missed_count": 2},
+            ]
+        )
+        result = await task_agent.check_missed_tasks("user-1")
+        assert len(result) == 2
+
+    @pytest.mark.asyncio
+    async def test_check_missed_tasks_none(self, mock_supabase):
+        result = await task_agent.check_missed_tasks("user-1")
+        assert result == []
+
+    # -- suggest_task_prioritization ------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_suggest_prioritization(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "priority": "high", "due_date": "2026-06-18", "status": "pending"},
+                {"id": "t2", "priority": "urgent", "due_date": "2026-06-17", "status": "pending"},
+                {"id": "t3", "priority": "low", "due_date": "2026-06-25", "status": "pending"},
+            ]
+        )
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"date": "2026-06-16", "quality": 80},
+            ]
+        )
+        result = await task_agent.suggest_task_prioritization("user-1")
+        assert len(result) == 3
+        assert result[0]["id"] == "t2"
+
+    @pytest.mark.asyncio
+    async def test_suggest_prioritization_filters_urgent_when_sleep_poor(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "priority": "urgent", "due_date": "2026-06-17", "status": "pending"},
+                {"id": "t2", "priority": "high", "due_date": "2026-06-18", "status": "pending"},
+            ]
+        )
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"date": "2026-06-16", "quality": 50},
+            ]
+        )
+        result = await task_agent.suggest_task_prioritization("user-1")
+        assert len(result) == 1
+        assert result[0]["id"] == "t2"
+
+    @pytest.mark.asyncio
+    async def test_suggest_prioritization_no_sleep_data(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "priority": "urgent", "due_date": "2026-06-17", "status": "pending"},
+            ]
+        )
+        result = await task_agent.suggest_task_prioritization("user-1")
+        assert len(result) == 1
+
+    # -- auto_reschedule_overdue ----------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_auto_reschedule(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "status": "pending", "due_date": "2020-01-01", "missed_count": 0},
+            ]
+        )
+        count = await task_agent.auto_reschedule_overdue("user-1")
+        assert count == 1
+
+    @pytest.mark.asyncio
+    async def test_auto_reschedule_none_missed(self, mock_supabase):
+        count = await task_agent.auto_reschedule_overdue("user-1")
+        assert count == 0
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 7. weekly_review_agent — generate_weekly_review
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestWeeklyReviewAgent:
+    """Weekly review generator — 4 paths."""
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        recent = (datetime.now() - timedelta(days=1)).isoformat()
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "status": "completed", "created_at": recent},
+                {"id": "t2", "status": "pending", "created_at": recent},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "status": "in_progress"},
+            ]
+        )
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {"id": "h1", "is_active": True},
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Learn Python", "status": "active"},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "week_summary": "Good week",
+            "achievements": ["Completed tasks"],
+            "challenges": ["Need focus"],
+            "next_week_intention": "Stay consistent",
+            "morale": "positive",
+        }
+        result = await weekly_review_agent.generate_weekly_review("user-1")
+        assert result["tasks_completed"] == 1
+        assert result["tasks_total"] == 2
+        assert result["completion_rate"] == 50.0
+        assert result["summary"] == "Good week"
+        assert result["achievements"] == ["Completed tasks"]
+        assert result["morale"] == "positive"
+
+    @pytest.mark.asyncio
+    async def test_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        recent = (datetime.now() - timedelta(days=1)).isoformat()
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "status": "completed", "created_at": recent},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "status": "completed"},
+            ]
+        )
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {"id": "h1", "is_active": True},
+                {"id": "h2", "is_active": True},
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Goal A", "status": "active"},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "week_summary": "Productive week!",
+            "achievements": ["1 task done", "Habit streak"],
+            "challenges": [],
+            "next_week_intention": "Do more",
+            "morale": "positive",
+        }
+        result = await weekly_review_agent.generate_weekly_review("user-1")
+        assert result["completion_rate"] == 100.0
+        assert result["active_habits"] == 2
+
+    @pytest.mark.asyncio
+    async def test_zero_tasks(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {}
+        result = await weekly_review_agent.generate_weekly_review("user-1")
+        assert result["completion_rate"] == 0
+        assert result["summary"] == "Completed 0/0 tasks"
+        assert result["achievements"] == []
+        assert result["next_week_intention"] == "Keep consistent"
+
+    @pytest.mark.asyncio
+    async def test_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.side_effect = RuntimeError("LLM error")
+        with pytest.raises(RuntimeError):
+            await weekly_review_agent.generate_weekly_review("user-1")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 8. sleep_agent — analyze_sleep, suggest_bedtime
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestSleepAgent:
+    """Sleep analysis and wind-down suggestions."""
+
+    @pytest.mark.asyncio
+    async def test_analyze_fallback(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        today = datetime.now().date().isoformat()
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": today, "quality": 78, "duration_hours": 7.0, "sleep_debt_hours": 1.0},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "sleep_analysis": "Good sleep, slight debt",
+            "wind_down_routine": ["Dim lights"],
+            "recommendations": ["Sleep earlier"],
+        }
+        result = await sleep_agent.analyze_sleep("user-1")
+        assert result["has_data"] is True
+        assert result["score"] == 78
+        assert result["duration_hours"] == 7.0
+        assert result["sleep_analysis"] == "Good sleep, slight debt"
+
+    @pytest.mark.asyncio
+    async def test_analyze_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        today = datetime.now().date().isoformat()
+        (datetime.now() - timedelta(days=1)).date().isoformat()
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": today, "quality": 85, "duration_hours": 8.0, "sleep_debt_hours": 0.0},
+            ]
+        )
+        # We need to set up two separate queries: one for the date lookup and one for the week
+        # Since both go through the same builder, set week data as well
+        result = await sleep_agent.analyze_sleep("user-1")
+        assert result["has_data"] is True
+        assert result["score"] == 85
+
+    @pytest.mark.asyncio
+    async def test_analyze_no_data(self, mock_supabase):
+        result = await sleep_agent.analyze_sleep("user-1")
+        assert result["has_data"] is False
+        assert result["message"] == "No sleep data for this date."
+
+    @pytest.mark.asyncio
+    async def test_analyze_specific_date(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": "2026-06-15", "quality": 90, "duration_hours": 8.0, "sleep_debt_hours": 0.0},
+            ]
+        )
+        mock_llm_json.return_value = {}
+        result = await sleep_agent.analyze_sleep("user-1", date="2026-06-15")
+        assert result["date"] == "2026-06-15"
+        assert result["has_data"] is True
+
+    @pytest.mark.asyncio
+    async def test_analyze_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        today = datetime.now().date().isoformat()
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": today, "quality": 70, "duration_hours": 6.0, "sleep_debt_hours": 2.0},
+            ]
+        )
+        mock_llm_json.side_effect = RuntimeError("LLM error")
+        with pytest.raises(RuntimeError):
+            await sleep_agent.analyze_sleep("user-1")
+
+    # -- suggest_bedtime ------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_suggest_bedtime_poor_sleep(self, mock_supabase):
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"quality": 50},
+                {"quality": 55},
+                {"quality": 45},
+            ]
+        )
+        result = await sleep_agent.suggest_bedtime("user-1")
+        assert result["suggested_bedtime"] == "21:30"
+
+    @pytest.mark.asyncio
+    async def test_suggest_bedtime_moderate_sleep(self, mock_supabase):
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"quality": 65},
+                {"quality": 70},
+                {"quality": 68},
+            ]
+        )
+        result = await sleep_agent.suggest_bedtime("user-1")
+        assert result["suggested_bedtime"] == "22:00"
+
+    @pytest.mark.asyncio
+    async def test_suggest_bedtime_good_sleep(self, mock_supabase):
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"quality": 85},
+                {"quality": 90},
+            ]
+        )
+        result = await sleep_agent.suggest_bedtime("user-1")
+        assert result["suggested_bedtime"] == "22:30"
+
+    @pytest.mark.asyncio
+    async def test_suggest_bedtime_no_data(self, mock_supabase):
+        result = await sleep_agent.suggest_bedtime("user-1")
+        assert result["suggested_bedtime"] == "22:00"
+        assert result["based_on_avg_quality"] == 70.0
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 9. nudge_agent — generate_nudge, check_course_nudges, check_habit_streaks, run_all
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestNudgeAgent:
+    """Course/habit nudges — 4 public functions."""
+
+    # -- generate_nudge -------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_generate_nudge_fallback(self, mock_get_agent_none, mock_llm_json):
+        mock_llm_json.return_value = {
+            "nudge_text": "You've missed a few days!",
+            "smallest_action": "Spend 10 min today",
+            "escalation": False,
+        }
+        result = await nudge_agent.generate_nudge("user-1", "habit_miss_2day", {"name": "Exercise"})
+        assert result["nudge_text"] == "You've missed a few days!"
+        assert result["smallest_action"] == "Spend 10 min today"
+        assert result["nudge_type"] == "habit_miss_2day"
+
+    @pytest.mark.asyncio
+    async def test_generate_nudge_happy_path(self, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {
+            "nudge_text": "Keep your streak alive!",
+            "smallest_action": "Do 5 pushups now",
+            "escalation": True,
+        }
+        result = await nudge_agent.generate_nudge("user-1", "streak_at_risk", {"name": "Pushups", "current_streak": 10})
+        assert result["escalation"] is True
+        assert result["nudge_text"] == "Keep your streak alive!"
+
+    @pytest.mark.asyncio
+    async def test_generate_nudge_invalid_type(self, mock_get_agent):
+        result = await nudge_agent.generate_nudge("user-1", "invalid_type", {})
+        assert "error" in result
+        assert "Unknown" in result["error"]
+
+    @pytest.mark.asyncio
+    async def test_generate_nudge_llm_error_propagates(self, mock_get_agent, mock_llm_json):
+        mock_llm_json.side_effect = RuntimeError("LLM error")
+        with pytest.raises(RuntimeError):
+            await nudge_agent.generate_nudge("user-1", "streak_at_risk", {})
+
+    # -- check_course_nudges --------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_check_course_nudges_triggers(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "Python 101", "progress": 15, "status": "in_progress"},
+                {"id": "c2", "title": "Advanced JS", "progress": 80, "status": "in_progress"},
+                {"id": "c3", "title": "Completed Course", "progress": 100, "status": "completed"},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "nudge_text": "Catch up on Python 101",
+            "smallest_action": "Watch one lecture",
+            "escalation": False,
+        }
+        results = await nudge_agent.check_course_nudges("user-1")
+        assert len(results) == 1
+        assert results[0]["nudge_type"] == "course_behind"
+
+    @pytest.mark.asyncio
+    async def test_check_course_nudges_none(self, mock_supabase):
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "Done", "progress": 100, "status": "completed"},
+            ]
+        )
+        results = await nudge_agent.check_course_nudges("user-1")
+        assert results == []
+
+    # -- check_habit_streaks --------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_check_habit_streaks_streak_at_risk(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Meditate",
+                    "is_active": True,
+                    "current_streak": 10,
+                    "best_streak": 15,
+                    "missed_days": 0,
+                },
+            ]
+        )
+        mock_llm_json.return_value = {
+            "nudge_text": "Don't break your streak!",
+            "smallest_action": "Meditate 2 min",
+            "escalation": False,
+        }
+        results = await nudge_agent.check_habit_streaks("user-1")
+        assert len(results) == 1
+        assert results[0]["nudge_type"] == "streak_at_risk"
+
+    @pytest.mark.asyncio
+    async def test_check_habit_streaks_missed_5day(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Read",
+                    "is_active": True,
+                    "current_streak": 3,
+                    "best_streak": 10,
+                    "missed_days": 5,
+                },
+            ]
+        )
+        mock_llm_json.return_value = {
+            "nudge_text": "You've missed 5 days!",
+            "smallest_action": "Read 1 page",
+            "escalation": True,
+        }
+        results = await nudge_agent.check_habit_streaks("user-1")
+        assert len(results) == 1
+        assert results[0]["nudge_type"] == "habit_miss_5day"
+
+    @pytest.mark.asyncio
+    async def test_check_habit_streaks_missed_2day(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Write",
+                    "is_active": True,
+                    "current_streak": 1,
+                    "best_streak": 7,
+                    "missed_days": 2,
+                },
+            ]
+        )
+        mock_llm_json.return_value = {
+            "nudge_text": "Missed 2 days!",
+            "smallest_action": "Write for 5 min",
+            "escalation": False,
+        }
+        results = await nudge_agent.check_habit_streaks("user-1")
+        assert len(results) == 1
+        assert results[0]["nudge_type"] == "habit_miss_2day"
+
+    @pytest.mark.asyncio
+    async def test_check_habit_streaks_inactive_skipped(self, mock_supabase):
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Old habit",
+                    "is_active": False,
+                    "current_streak": 0,
+                    "best_streak": 0,
+                    "missed_days": 10,
+                },
+            ]
+        )
+        results = await nudge_agent.check_habit_streaks("user-1")
+        assert results == []
+
+    @pytest.mark.asyncio
+    async def test_check_habit_streaks_no_nudges_needed(self, mock_supabase):
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "New habit",
+                    "is_active": True,
+                    "current_streak": 1,
+                    "best_streak": 1,
+                    "missed_days": 0,
+                },
+            ]
+        )
+        results = await nudge_agent.check_habit_streaks("user-1")
+        assert results == []
+
+    # -- run_all_nudges -------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_run_all_nudges(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "Behind Course", "progress": 10, "status": "in_progress"},
+            ]
+        )
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Exercise",
+                    "is_active": True,
+                    "current_streak": 8,
+                    "best_streak": 10,
+                    "missed_days": 0,
+                },
+            ]
+        )
+        mock_llm_json.return_value = {
+            "nudge_text": "Nudge text",
+            "smallest_action": "Action step",
+            "escalation": False,
+        }
+        result = await nudge_agent.run_all_nudges("user-1")
+        assert result["total_nudges"] == 2
+        assert len(result["course_nudges"]) == 1
+        assert len(result["habit_nudges"]) == 1
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 10. roadmap_agent — optimize_roadmap
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+class TestRoadmapAgent:
+    """Skill development roadmap optimizer — 4 paths."""
+
+    @pytest.mark.asyncio
+    async def test_fallback_when_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {"id": "user-1", "skills": ["Python"], "interests": ["Web"], "career_goal": "Full-stack developer"},
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "React", "status": "in_progress"},
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Build portfolio", "status": "active"},
+            ]
+        )
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"count": 10},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "milestones": [
+                {
+                    "title": "Learn React",
+                    "deadline_estimate": "3 months",
+                    "skills_gained": ["React"],
+                    "priority": "high",
+                }
+            ],
+            "recommended_path": ["React", "Node.js"],
+            "estimated_completion": "6 months",
+        }
+        result = await roadmap_agent.optimize_roadmap("user-1")
+        assert len(result["milestones"]) == 1
+        assert result["milestones"][0]["title"] == "Learn React"
+        assert result["recommended_path"] == ["React", "Node.js"]
+        assert result["estimated_completion"] == "6 months"
+        assert result["active_courses"] == 1
+        assert result["active_goals"] == 1
+
+    @pytest.mark.asyncio
+    async def test_happy_path(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "user-1",
+                    "skills": ["JS", "CSS"],
+                    "interests": ["Frontend"],
+                    "career_goal": "Frontend engineer",
+                },
+            ]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[
+                {"id": "c1", "title": "React"},
+                {"id": "c2", "title": "Vue"},
+            ]
+        )
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[
+                {"id": "g1", "title": "Portfolio", "status": "active"},
+            ]
+        )
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"count": 25},
+            ]
+        )
+        mock_llm_json.return_value = {
+            "milestones": [
+                {
+                    "title": "Master React",
+                    "deadline_estimate": "2 months",
+                    "skills_gained": ["React", "Testing"],
+                    "priority": "high",
+                },
+                {
+                    "title": "Build 3 projects",
+                    "deadline_estimate": "4 months",
+                    "skills_gained": ["Next.js", "Tailwind"],
+                    "priority": "medium",
+                },
+            ],
+            "recommended_path": ["React basics", "Advanced React", "Projects"],
+            "estimated_completion": "6 months",
+        }
+        result = await roadmap_agent.optimize_roadmap("user-1")
+        assert len(result["milestones"]) == 2
+        assert result["active_courses"] == 2
+
+    @pytest.mark.asyncio
+    async def test_no_user_record(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {
+            "milestones": [],
+            "recommended_path": [],
+            "estimated_completion": "6 months",
+        }
+        result = await roadmap_agent.optimize_roadmap("user-1")
+        assert result["milestones"] == []
+        assert result["active_courses"] == 0
+        assert result["active_goals"] == 0
+
+    @pytest.mark.asyncio
+    async def test_empty_data_uses_defaults(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.return_value = {}
+        result = await roadmap_agent.optimize_roadmap("user-1")
+        assert result["milestones"] == []
+        assert result["recommended_path"] == []
+        assert result["estimated_completion"] == "6 months"
+
+    @pytest.mark.asyncio
+    async def test_llm_error_propagates(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_llm_json.side_effect = RuntimeError("LLM failure")
+        with pytest.raises(RuntimeError):
+            await roadmap_agent.optimize_roadmap("user-1")
