@@ -16,166 +16,147 @@ Second Brain OS is built on 7 core principles that drive every architectural dec
 
 ## Monorepo Layout
 
-```
-ARIA OS - SecondBrain/
-│
-├── apps/                              # Deployable applications
-│   ├── web/                           # Next.js 14 frontend
-│   │   ├── app/                       # App Router pages (15 modules)
-│   │   │   ├── (auth)/               # Login, auth callback
-│   │   │   ├── dashboard/            # Morning briefing, productivity score
-│   │   │   ├── tasks/                # Task manager with kanban
-│   │   │   ├── courses/              # Course tracker
-│   │   │   ├── youtube/              # YouTube knowledge vault
-│   │   │   ├── resources/            # Resource library
-│   │   │   ├── ideas/                # Idea vault
-│   │   │   ├── goals/                # Roadmap builder (React Flow)
-│   │   │   ├── opportunities/        # Opportunity radar
-│   │   │   ├── income/               # Income tracker
-│   │   │   ├── projects/             # Project tracker
-│   │   │   ├── academics/            # Academic planner
-│   │   │   ├── habits/               # Habit engine
-│   │   │   ├── sleep/                # Sleep monitor
-│   │   │   ├── time/                 # Time tracker
-│   │   │   └── chat/                 # ARIA chat panel
-│   │   ├── components/               # Shared UI components
-│   │   ├── lib/                      # Zustand stores, utilities
-│   │   ├── hooks/                    # Custom React hooks
-│   │   └── public/                   # Static assets, manifest.json, sw.js
-│   │
-│   ├── api/                          # FastAPI backend
-│   │   └── app/
-│   │       ├── api/                  # REST routes per module
-│   │       ├── services/             # Business logic layer
-│   │       └── ai/                   # Context builder, action executor
-│   │
-│   ├── admin/                        # Admin panel (WIP)
-│   └── mobile/                       # React Native mobile (WIP)
-│
-├── packages/                         # Shared libraries
-│   ├── ai/agents/                    # AI agent modules (8 agents)
-│   │   ├── orchestrator.ts           # Master coordinator agent
-│   │   ├── planner.ts                # Daily/weekly scheduling
-│   │   ├── reminder.ts               # Missed task detection + escalation
-│   │   ├── sleep.ts                  # Sleep scoring + task adjustment
-│   │   ├── analytics.ts              # Productivity scores + insights
-│   │   ├── learning.ts               # Course tracking + spaced repetition
-│   │   ├── career.ts                 # GitHub monitoring + opportunity matching
-│   │   └── memory.ts                 # Long-term preference/pattern storage
-│   ├── config/core/                  # FastAPI config, auth middleware, Supabase client
-│   ├── database/schemas/             # Pydantic models for all 21 tables
-│   ├── shared/utils/                 # Logging, cache, rate limiter, retry, security
-│   ├── types/                        # Shared TypeScript/Pydantic type definitions
-│   └── ui/                           # Shared React components (Button, Card, Input, Modal)
-│
-├── services/                         # Background services
-│   └── scheduler/                    # APScheduler + cron job orchestration
-│       ├── main.py                   # Scheduler entry point
-│       └── jobs/                     # Individual job definitions
-│
-├── docs/                             # Documentation
-│   ├── product/                      # PRD, Features, Roadmap
-│   ├── design/                       # UI/UX design system
-│   ├── engineering/                  # Architecture, API, Database (this directory)
-│   ├── ai/                           # Agents, AI_Instructions, Prompts
-│   ├── security/                     # Security policies
-│   ├── devops/                       # Deployment guides
-│   └── operations/                   # Implementation status, Tech stack
-│
-├── infrastructure/                   # Infrastructure-as-Code (WIP)
-│   ├── docker/                       # Docker Compose for local dev
-│   ├── terraform/                    # Cloud provisioning
-│   └── k8s/                          # Kubernetes manifests (future)
-│
-├── tests/                            # Test suites
-│   ├── unit/                         # Unit tests
-│   ├── integration/                  # Integration tests
-│   └── e2e/                          # End-to-end tests (Playwright)
-│
-├── scripts/                          # Build/deployment scripts
-│   ├── setup.sh                      # First-time environment setup
-│   └── seed.ts                       # Database seeding
-│
-├── analytics/                        # Analytics configuration
-├── monitoring/                       # Monitoring config (Sentry, uptime)
-│
-├── package.json                      # Root workspace config (npm workspaces)
-├── turbo.json                        # Turborepo pipeline config
-├── AGENTS.md                         # AI developer guide
-└── README.md                         # Project overview
+```mermaid
+graph TD
+    ROOT[ARIA OS - SecondBrain]
+
+    subgraph Apps["apps/ — Deployable Applications"]
+        WEB[web/<br/>Next.js 14 Frontend]
+        API[api/<br/>FastAPI Backend]
+        ADMIN[admin/<br/>Admin Panel<br/>(WIP)]
+        MOBILE[mobile/<br/>React Native<br/>(WIP)]
+
+        subgraph WebDetail["web/ details"]
+            APP[app/<br/>15 module pages]
+            COMP[components/<br/>Shared UI]
+            LIB[lib/<br/>Stores + Utils]
+            HOOKS[hooks/<br/>Custom Hooks]
+            PUBLIC[public/<br/>Assets + Manifest]
+        end
+
+        subgraph ApiDetail["api/ details"]
+            ROUTES[api/routes<br/>REST per module]
+            SVC[services/<br/>Business logic]
+            AI_SVC[ai/<br/>Context + Actions]
+        end
+    end
+
+    subgraph Packages["packages/ — Shared Libraries"]
+        AGENTS[ai/agents/<br/>8 AI Agent Modules]
+        CONFIG[config/core/<br/>FastAPI + Auth + Supabase]
+        SCHEMAS[database/schemas/<br/>Pydantic Models]
+        UTILS[shared/utils/<br/>Logging, Cache, Retry]
+        TYPES[types/<br/>Shared Type Definitions]
+        UI[ui/<br/>Shared React Components]
+    end
+
+    subgraph Services["services/ — Background"]
+        SCHED[scheduler/<br/>APScheduler]
+        CRON[crons/<br/>7 Job Definitions]
+    end
+
+    subgraph Infra["infrastructure/ — IaC (WIP)"]
+        DOCKER[docker/<br/>Compose]
+        TF[terraform/<br/>Cloud Provisioning]
+        K8S[k8s/<br/>Kubernetes Manifests]
+    end
+
+    subgraph Docs["docs/ — Documentation"]
+        DP[product/]
+        DD[design/]
+        DE[engineering/]
+        DA[ai/]
+        DS[security/]
+        DVD[devops/]
+        DO[operations/]
+    end
+
+    subgraph Testing["tests/"]
+        TU[unit/]
+        TI[integration/]
+        TE[e2e/<br/>Playwright]
+    end
+
+    ROOT --> Apps
+    ROOT --> Packages
+    ROOT --> Services
+    ROOT --> Infra
+    ROOT --> Docs
+    ROOT --> Testing
+    ROOT --> scripts[scripts/<br/>Build + Deploy]
+    ROOT --> analytics[analytics/]
+    ROOT --> monitoring[monitoring/<br/>Sentry + Uptime]
+    ROOT --> CFG[package.json + turbo.json + AGENTS.md + README.md]
+
+    style ROOT fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9,font-weight:bold
+    style Apps fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Packages fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Services fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Infra fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Docs fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style Testing fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ---
 
 ## Module Dependency Graph
 
-```
-                    ┌─────────────────────────────┐
-                    │       Dashboard             │
-                    │  (Aggregates all modules)   │
-                    └──────┬──────┬──────┬───────┘
-                           │      │      │
-           ┌───────────────┘      │      └───────────────┐
-           ▼                      ▼                      ▼
-   ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
-   │  Task Manager│◄────►│ Course       │◄────►│ YouTube      │
-   │  (Core)      │      │ Tracker      │      │ Vault        │
-   └──┬───┬───┬───┘      └──────┬───────┘      └──────┬───────┘
-      │   │   │                 │                      │
-      │   │   │        ┌────────┴────────┐     ┌───────┴───────┐
-      │   │   │        │  Study Sessions │     │  Resource     │
-      │   │   │        │                 │     │  Library      │
-      │   │   │        └─────────────────┘     └───────────────┘
-      │   │   │
-      │   │   └──────────────┐
-      │   │                  │
-  ┌───┴───┴────────┐  ┌─────┴──────┐
-  │  Time Tracker  │  │  Habit     │
-  │  (Pomodoro)    │  │  Engine    │
-  └───────┬────────┘  └─────┬──────┘
-          │                 │
-          ▼                 ▼
-  ┌──────────────┐  ┌──────────────┐
-  │  Sleep       │  │  Weekly      │
-  │  Monitor     │  │  Review      │
-  └──────┬───────┘  └──────┬───────┘
-         │                 │
-         ▼                 ▼
-  ┌──────────────┐  ┌──────────────┐
-  │  Goal &      │  │  Academic    │
-  │  Roadmap     │  │  Planner     │
-  └──────┬───────┘  └──────┬───────┘
-         │                 │
-         ▼                 ▼
-  ┌──────────────┐  ┌──────────────┐
-  │  Opportunity │  │  Income      │
-  │  Radar       │  │  Tracker     │
-  └──────┬───────┘  └──────┬───────┘
-         │                 │
-         ▼                 ▼
-  ┌──────────────┐  ┌──────────────┐
-  │  Project     │  │  Idea Vault  │
-  │  Tracker     │  │              │
-  └──────────────┘  └──────────────┘
+```mermaid
+graph TD
+    DASH[Dashboard<br/>Aggregates All Modules]
 
-Data Flow Between Modules:
-─────────────────────────────────
+    TM[Task Manager<br/>Core Module] <--> CT[Course Tracker]
+    TM <--> YT[YouTube Vault]
+    CT --> SS[Study Sessions]
+    YT --> RL[Resource Library]
 
-Task → Time:   Every timer session links to a task
-Task → Goal:   Tasks optionally link to goals for progress tracking
-Course → Task: Course generates daily study tasks automatically
-Course → Goal: Courses link to learning goals
-Sleep → Task:  Low sleep score → heavy tasks moved to tomorrow
-Sleep → Habit: Sleep consistency tracked as a habit
-Habit → Goal:  Habit completion contributes to goal progress
-Goal → Roadmap: Goals link to roadmap nodes for timeline tracking
-Project → Task: Project next_action generates tasks
-Project → Income: Projects link to income sources
-Idea → Project: Validated ideas become projects
-Opportunity → Goal: Opportunities can trigger new roadmap creation
-Income → Project: Income sources link to their generating projects
-Weekly → All:   Weekly review aggregates all modules
+    TM --> TT[Time Tracker<br/>Pomodoro]
+    TM --> HE[Habit Engine]
+
+    TT --> SM[Sleep Monitor]
+    HE --> WR[Weekly Review]
+
+    SM --> GR[Goal & Roadmap]
+    WR --> AP[Academic Planner]
+
+    GR --> OR[Opportunity Radar]
+    GR --> IT[Income Tracker]
+
+    OR --> PT[Project Tracker]
+    IT --> IV[Idea Vault]
+
+    DASH --> TM
+    DASH --> CT
+    DASH --> YT
+    DASH --> GR
+    DASH --> OR
+
+    linkStyle 0,1,2 stroke:#6366F1,stroke-width:2px
+    linkStyle 3,4 stroke:#818CF8,stroke-width:2px
+    linkStyle 5,6,7 stroke:#00FFA3,stroke-width:2px
+    linkStyle 8,9 stroke:#F59E0B,stroke-width:2px
+    linkStyle 10,11 stroke:#EF4444,stroke-width:2px
+    linkStyle 12,13,14,15,16 stroke:#94A3B8,stroke-width:2px
 ```
+
+**Data Flow Between Modules:**
+
+| Source | Target | Description |
+|--------|--------|-------------|
+| Task → Time | Data | Every timer session links to a task |
+| Task → Goal | FK | Tasks optionally link to goals for progress tracking |
+| Course → Task | Logic | Course generates daily study tasks automatically |
+| Course → Goal | FK | Courses link to learning goals |
+| Sleep → Task | Logic | Low sleep score → heavy tasks moved to tomorrow |
+| Sleep → Habit | Logic | Sleep consistency tracked as a habit |
+| Habit → Goal | Data | Habit completion contributes to goal progress |
+| Goal → Roadmap | FK | Goals link to roadmap nodes for timeline tracking |
+| Project → Task | Logic | Project `next_action` generates tasks |
+| Project → Income | FK | Projects link to income sources |
+| Idea → Project | Logic | Validated ideas become projects |
+| Opportunity → Goal | Logic | Opportunities can trigger new roadmap creation |
+| Income → Project | FK | Income sources link to their generating projects |
+| Weekly → All | Logic | Weekly review aggregates all modules |
 
 ---
 
@@ -183,104 +164,109 @@ Weekly → All:   Weekly review aggregates all modules
 
 ### Typical API Request (Frontend → Supabase)
 
-```
-User Action (click, form submit)
-       │
-       ▼
-React Component Event Handler
-       │
-       ▼
-Zustand Store Action (optimistic update)
-       │
-       ▼
-Supabase Client (`supabase.from('tasks').insert(...)`)
-       │
-       ├── RLS Policy Check (auth.uid() = user_id)
-       │      │
-       │      ├── Pass → Query Executes
-       │      └── Fail → 401 Unauthorized
-       │
-       ▼
-Supabase Realtime (broadcasts change to all clients)
-       │
-       ▼
-React Query Cache Invalidation (refetch affected queries)
-       │
-       ▼
-UI Re-renders with new data
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant C as React Component
+    participant Z as Zustand Store
+    participant SB as Supabase Client
+    participant DB as Supabase DB
+    participant RLS as RLS Policy
+    participant RT as Realtime
+    participant RQ as React Query
+
+    U->>C: Click / Form Submit
+    C->>Z: Optimistic update
+    Z->>SB: supabase.from('tasks').insert({...})
+
+    SB->>RLS: Check auth.uid() = user_id
+    alt RLS Pass
+        RLS->>DB: Query Executes
+    else RLS Fail
+        RLS-->>SB: 401 Unauthorized
+        SB-->>Z: Revert optimistic update
+    end
+
+    DB-->>RT: Broadcast change
+    RT-->>RQ: Cache invalidation
+    RQ-->>C: Refetch affected queries
+    C-->>U: Re-render with new data
 ```
 
 ### AI Chat Request
 
-```
-User types message in ARIA chat
-       │
-       ▼
-Frontend sends POST /api/chat { message }
-       │
-       ▼
-Next.js API Route (/api/chat/route.ts)
-       │
-       ├── 1. Context Builder fetches:
-       │       - User profile + skills
-       │       - Active courses with progress
-       │       - Active goals with progress
-       │       - Today's tasks + overdue tasks
-       │       - Last 10 aria_memory entries
-       │       - Last sleep log
-       │
-       ├── 2. Select AI provider:
-       │       - Ollama (if USE_LOCAL_AI=true): localhost:11434/api/generate
-       │       - Claude API (fallback): POST anthropic.com/v1/messages
-       │
-       ├── 3. AI processes context + prompt
-       │       - Returns text response + optional action JSON blocks
-       │
-       ├── 4. Action Executor parses JSON:
-       │       - { action: 'add_task', title, priority, due_date }
-       │       - { action: 'update_course', name, progress_percent }
-       │       - { action: 'save_idea', title, description, type }
-       │       - { action: 'update_goal', title, progress_percent }
-       │       Each action → Supabase CRUD operation
-       │
-       ├── 5. Memory Writer:
-       │       - Sends conversation to AI for fact extraction
-       │       - Inserts extracted facts to aria_memory table
-       │
-       ├── 6. Save to chat_messages table
-       │
-       └── 7. Return { response, action_taken } to frontend
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant API as Next.js API Route
+    participant CB as Context Builder
+    participant DB as Supabase
+    participant AI as AI Provider
+    participant AE as Action Executor
+    participant MW as Memory Writer
+
+    U->>FE: Type message in ARIA chat
+    FE->>API: POST /api/chat {message}
+
+    API->>CB: 1. Fetch user context
+    CB->>DB: Profile + skills
+    CB->>DB: Active courses + progress
+    CB->>DB: Active goals + progress
+    CB->>DB: Today's tasks + overdue
+    CB->>DB: Last 10 memory entries
+    CB->>DB: Last sleep log
+
+    alt Ollama (USE_LOCAL_AI=true)
+        API->>AI: POST localhost:11434/api/generate
+    else Claude API (fallback)
+        API->>AI: POST api.anthropic.com/v1/messages
+    end
+
+    AI-->>API: Text response + action JSON blocks
+
+    API->>AE: 4. Parse action blocks
+    AE->>DB: add_task / update_course / save_idea / update_goal
+
+    API->>MW: 5. Extract facts & preferences
+    MW->>AI: Send conversation for extraction
+    AI-->>MW: Extracted memory items
+    MW->>DB: Upsert to aria_memory
+
+    API->>DB: 6. Save to chat_messages
+
+    API-->>FE: 7. Return {response, action_taken}
+    FE-->>U: Display ARIA response
 ```
 
 ### Edge Function Execution (Cron Agent)
 
-```
-pg_cron triggers Edge Function (e.g., daily-briefing at 01:30 UTC)
-       │
-       ▼
-Supabase Edge Function (Deno runtime)
-       │
-       ├── 1. Authenticate with service_role key
-       │
-       ├── 2. Fetch user data from Supabase
-       │       - SELECT * FROM tasks WHERE due_date = today
-       │       - SELECT * FROM courses WHERE status = 'active'
-       │       - SELECT * FROM opportunities WHERE found_at > yesterday
-       │       - etc.
-       │
-       ├── 3. Call external API (Claude, Brave Search, Resend, etc.)
-       │
-       ├── 4. Process response (parse, filter, transform)
-       │
-       ├── 5. Write results back to Supabase
-       │       - INSERT/UPDATE into appropriate tables
-       │
-       ├── 6. Send notifications (push, email, SMS)
-       │       - Push: sendPushNotification(userId, title, body)
-       │       - Email: POST resend.com/emails
-       │       - SMS: POST twilio.com/2010-04-01/Accounts/{sid}/Messages
-       │
-       └── 7. Log execution result
+```mermaid
+sequenceDiagram
+    participant PG as pg_cron
+    participant EF as Supabase Edge Function (Deno)
+    participant DB as Supabase
+    participant EXT as External APIs
+    participant NOT as Notifications
+
+    PG->>EF: Trigger cron job<br/>(e.g. daily-briefing 01:30 UTC)
+    EF->>DB: 1. Auth with service_role key
+    EF->>DB: 2. Fetch user data
+    DB-->>EF: Tasks, courses, opportunities, etc.
+
+    EF->>EXT: 3. Call external API<br/>(Claude / Brave Search / Resend)
+
+    EXT-->>EF: 4. Raw response
+    EF->>EF: Parse, filter, transform
+
+    EF->>DB: 5. Write results<br/>INSERT/UPDATE tables
+
+    EF->>NOT: 6. Send notifications
+    NOT->>NOT: Push: sendPushNotification()
+    NOT->>EXT: Email: POST resend.com/emails
+    NOT->>EXT: SMS: POST api.twilio.com
+
+    EF->>DB: 7. Log execution result
 ```
 
 ---

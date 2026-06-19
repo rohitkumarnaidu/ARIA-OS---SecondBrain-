@@ -17,6 +17,68 @@
 
 ---
 
+### Architecture Diagram — Gateway Routing & Auth Middleware Pipeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph TD
+    subgraph Client["Client Layer"]
+        WebApp["Next.js Web App"]
+        Mobile["Mobile App (Future)"]
+        External["External API Clients"]
+    end
+    subgraph Gateway["API Gateway (FastAPI Middleware)"]
+        AuthMW["Auth Middleware<br/>JWT Validation · Session"]
+        RateLimiter["Rate Limiter<br/>100 req/min · Per-IP"]
+        Router["Request Router<br/>/api/v1/*"]
+        Logging["Structured Logger<br/>Request ID · Duration"]
+        CORS["CORS Middleware"]
+    end
+    subgraph Services["Backend Services"]
+        REST["REST API Handlers<br/>13 Modules"]
+        AI["AI Agent Service<br/>ARIA Orchestrator"]
+        WS["WebSocket Service (Future)"]
+    end
+    subgraph Shared["Cross-Cutting"]
+        Cache["Response Cache<br/>TTL 5 min"]
+        CircuitBr["Circuit Breaker<br/>5 failures → 60s cooldown"]
+        ErrHandler["Error Handler<br/>Standardized Error Schema"]
+    end
+    Client --> Gateway
+    Gateway --> AuthMW
+    AuthMW --> RateLimiter
+    RateLimiter --> Router
+    Router --> REST
+    Router --> AI
+    Router --> WS
+    Logging -.-> |wraps all| Gateway
+    CORS -.-> |wraps all| Gateway
+    REST --> Cache
+    AI --> CircuitBr
+    Router --> ErrHandler
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS currently routes all client traffic directly to the **FastAPI backend** hosted on Railway, with the **Next.js 14** frontend also served independently. There is no intermediary layer handling cross-cutting concerns like rate limiting, authentication, request transformation, or caching.

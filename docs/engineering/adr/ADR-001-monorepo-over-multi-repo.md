@@ -10,6 +10,33 @@ Accepted
 This project consists of multiple deployable components: a Next.js frontend (`apps/web`), a FastAPI backend (`apps/api`), a scheduler service (`services/scheduler`), AI agent modules (`packages/ai/agents`), and shared packages for config, database schemas, types, and UI components. As a solo developer, managing dependencies across these components is critical. The options were a single monorepo or separate repositories per component.
 
 ## Decision
+
+```mermaid
+graph TD
+    subgraph MONO["Monorepo (Chosen)"]
+        ROOT[ARIA OS - SecondBrain]
+        APPS[apps/<br/>Frontend + Backend + Admin]
+        PKGS[packages/<br/>AI + Config + DB + Shared]
+        SVC[services/<br/>Scheduler + Cron Jobs]
+        ROOT --> APPS
+        ROOT --> PKGS
+        ROOT --> SVC
+        APPS -.->|imports| PKGS
+    end
+
+    subgraph MULTI["Multi-Repo (Rejected)"]
+        FE[frontend-repo]
+        BE[backend-repo]
+        PKG[shared-packages]
+        SVC2[scheduler-repo]
+        FE -.->|published npm| PKG
+        BE -.->|published pypi| PKG
+    end
+
+    style MONO fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style MULTI fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
+```
+
 Adopt a monorepo structure with `apps/` for deployable applications and `packages/` for shared libraries. The root `package.json` orchestrates frontend dependencies while Python shared packages live under `packages/`. Root-level `requirements.txt` covers Python deps across all services.
 
 ## Consequences

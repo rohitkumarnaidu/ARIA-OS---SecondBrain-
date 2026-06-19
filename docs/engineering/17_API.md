@@ -17,20 +17,34 @@ Authorization: Bearer <supabase_access_token>
 ```
 
 **Auth Flow:**
-1. User signs in with Google OAuth (Supabase handles OAuth flow)
-2. Supabase returns a JWT session token
-3. Frontend includes token in `Authorization` header for all API calls
-4. Server validates JWT and extracts `user_id` from `auth.uid()`
-5. RLS on every table enforces `user_id` filtering at database level
+
+```mermaid
+sequenceDiagram
+    participant U as User/Browser
+    participant F as Frontend
+    participant S as Supabase Auth
+    participant A as API Server
+    participant D as Database
+
+    U->>F: Sign in with Google
+    F->>S: Google OAuth
+    S->>F: JWT session token
+    F->>A: API call + Authorization header
+    A->>A: Validate JWT & extract user_id
+    A->>D: Query with RLS filtering
+    D->>A: Filtered data
+    A->>F: Response
+```
 
 ### Auth Endpoints
 
-```
-POST /api/auth/login          → Google OAuth redirect
-POST /api/auth/logout         → Clear session
-POST /api/auth/callback       → OAuth callback handler
-GET  /api/auth/session        → Get current session
-GET  /api/auth/user           → Get current user profile
+```mermaid
+graph LR
+    A["POST /api/auth/login"] --> B["Google OAuth Redirect"]
+    C["POST /api/auth/logout"] --> D["Clear Session"]
+    E["POST /api/auth/callback"] --> F["OAuth Callback Handler"]
+    G["GET /api/auth/session"] --> H["Get Current Session"]
+    I["GET /api/auth/user"] --> J["Get User Profile"]
 ```
 
 ---

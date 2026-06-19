@@ -276,17 +276,31 @@ Every event in the system MUST conform to this JSON envelope:
 
 ### Lifecycle States
 
-```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────────┐    ┌───────────┐
-│  CREATED  │───▶│  ROUTED  │───▶│PROCESSED │───▶│ACKNOWLEDGED  │───▶│  ARCHIVED │
-│ (source)  │    │ (bus)    │    │(handler) │    │ (consumer)   │    │ (store)   │
-└──────────┘    └──────────┘    └──────────┘    └──────────────┘    └───────────┘
-     │               │               │
-     ▼               ▼               ▼
-┌──────────┐    ┌──────────┐    ┌──────────┐
-│  FAILED  │    │  TIMEOUT │    │ RETRYING │
-│ (retry?) │    │ (DLQ?)   │    │ (backoff)│
-└──────────┘    └──────────┘    └──────────┘
+```mermaid
+stateDiagram-v2
+    direction LR
+    cr: CREATED
+    ro: ROUTED
+    pr: PROCESSED
+    ac: ACKNOWLEDGED
+    ar: ARCHIVED
+    fl: FAILED
+    ti: TIMEOUT
+    re: RETRYING
+    dq: DLQ
+
+    [*] --> cr
+    cr --> ro
+    ro --> pr
+    pr --> ac
+    ac --> ar
+    cr --> fl
+    ro --> ti
+    pr --> re
+    fl --> re : retry &lt; max
+    fl --> dq : retry &gt;= max
+    ti --> dq
+    re --> ro
 ```
 
 ### Phase Descriptions
@@ -372,42 +386,49 @@ async def reprocess_dlq_events():
 
 ## Event Flow Architecture
 
-```
-┌───────────────────────────────────────────────────────────────────────────────────┐
-│                             Event Bus Layer                                        │
-│                                                                                   │
-│  ┌──────────────────┐   ┌──────────────────┐   ┌────────────────────────────┐    │
-│  │   Supabase        │   │   PostgreSQL      │   │   Application Bus         │    │
-│  │   Realtime        │   │   NOTIFY/LISTEN   │   │   (FastAPI + Agents)      │    │
-│  │   (WAL Changes)   │   │   (pg_notify)     │   │   (Internal Pub/Sub)      │    │
-│  └────────┬─────────┘   └────────┬─────────┘   └───────────┬────────────────┘    │
-│           │                      │                         │                      │
-│           └──────────────────────┼─────────────────────────┘                      │
-│                                  │                                                │
-│  ┌───────────────────────────────┴────────────────────────────────────────────┐  │
-│  │                         Event Router / Dispatcher                           │  │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐  │  │
-│  │  │ Type Matcher │ │ Priority Q  │ │ Retry Mgr   │ │ DLQ Writer          │  │  │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────────────┘  │  │
-│  └────────────────────────────────────────────────────────────────────────────┘  │
-│                                  │                                                │
-│  ┌───────────────────────────────┴────────────────────────────────────────────┐  │
-│  │                         Event Handlers                                      │  │
-│  │                                                                             │  │
-│  │  ┌────────────────┐ ┌────────────────┐ ┌────────────────┐ ┌──────────────┐  │  │
-│  │  │ Frontend       │ │ Edge           │ │ FastAPI        │ │ AI Agents    │  │  │
-│  │  │ (React Hooks)  │ │ Functions      │ │ Services       │ │ (LangChain)  │  │  │
-│  │  └────────────────┘ └────────────────┘ └────────────────┘ └──────────────┘  │  │
-│  └────────────────────────────────────────────────────────────────────────────┘  │
-│                                  │                                                │
-│  ┌───────────────────────────────┴────────────────────────────────────────────┐  │
-│  │                         Observability Layer                                 │  │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌──────────────────┐    │  │
-│  │  │ Event Logs   │ │ Metrics     │ │ Tracing     │ │ Alerts           │    │  │
-│  │  │ (event_logs) │ │ (counters)  │ │ (correlation)│ │ (PagerDuty/Email)│    │  │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘ └──────────────────┘    │  │
-│  └────────────────────────────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph EB["Event Bus Layer"]
+        SB["Supabase Realtime (WAL Changes)"]
+        PG["PostgreSQL NOTIFY/LISTEN (pg_notify)"]
+        AB["Application Bus (FastAPI + Agents)"]
+    end
+
+    subgraph RD["Event Router / Dispatcher"]
+        TM["Type Matcher"]
+        PQ["Priority Queue"]
+        RM["Retry Manager"]
+        DLQ["DLQ Writer"]
+    end
+
+    subgraph EH["Event Handlers"]
+        FE["Frontend (React Hooks)"]
+        EF["Edge Functions"]
+        API["FastAPI Services"]
+        AI["AI Agents (LangChain)"]
+    end
+
+    subgraph OL["Observability Layer"]
+        EL["Event Logs (event_logs)"]
+        MT["Metrics (counters)"]
+        TR["Tracing (correlation)"]
+        AL["Alerts (PagerDuty/Email)"]
+    end
+
+    SB --> TM
+    PG --> TM
+    AB --> TM
+    TM --> PQ
+    PQ --> RM
+    RM --> DLQ
+    RM --> FE
+    RM --> EF
+    RM --> API
+    RM --> AI
+    FE --> EL
+    EF --> MT
+    API --> TR
+    AI --> AL
 ```
 
 ---
@@ -762,135 +783,84 @@ Weekly Review Agent triggered (8 PM IST Sunday)
 
 ### Morning Briefing Event Chain
 
-```
-Time: 7:00 AM IST
-      │
-      ▼
-┌─────────────────┐
-│  pg_cron fires   │
-│  daily-briefing  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐
-│  Edge Function   │────▶│  Supabase        │
-│  fetches user    │     │  (read 6 tables) │
-│  context data    │     └─────────────────┘
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐
-│  Claude API      │◀────│  Context string  │
-│  (Daily Briefing │     │  (serialized)   │
-│   prompt)        │     └─────────────────┘
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Parse response  │────▶│  INSERT into     │────▶│  Realtime        │
-│  → 6 sections   │     │  daily_briefings │     │  broadcast       │
-└─────────────────┘     └─────────────────┘     └────────┬────────┘
-                                                          │
-                    ┌─────────────────────────────────────┼─────────────┐
-                    │                                     │             │
-                    ▼                                     ▼             ▼
-            ┌──────────────┐                     ┌──────────────┐ ┌──────────┐
-            │  Push         │                     │  Frontend     │ │  Email   │
-            │  Notification │                     │  (banner +   │ │  (Resend)│
-            │  (Web Push)  │                     │   briefing)  │ │          │
-            └──────────────┘                     └──────────────┘ └──────────┘
+```mermaid
+sequenceDiagram
+    participant Cron as pg_cron
+    participant EF as Edge Function
+    participant DB as Supabase
+    participant Claude as Claude API
+    participant RT as Realtime
+    participant Push as Web Push
+    participant FE as Frontend
+    participant Email as Resend
+
+    Note over Cron,Email: Time: 7:00 AM IST
+    Cron->>EF: Fire daily-briefing
+    EF->>DB: Fetch user context (6 tables)
+    DB->>EF: User data
+    EF->>Claude: Context string (serialized)
+    Claude->>EF: Daily Briefing response
+    EF->>EF: Parse response → 6 sections
+    EF->>DB: INSERT into daily_briefings
+    DB->>RT: Broadcast
+    RT->>Push: Push notification
+    RT->>FE: Banner + briefing
+    RT->>Email: Email notification
 ```
 
 ### Missed Task Escalation
 
-```
-Task due_date passes without completion
-      │
-      ▼
-┌─────────────────┐
-│  Cron: Every 15 │
-│  min checks     │
-│  missed tasks   │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Mark missed,    │
-│  reschedule +2h  │
-│  increment count │
-└────────┬────────┘
-         │
-         ├── missed_count = 1 ────────────────── Push notification
-         │
-         ├── missed_count = 2 ────────────────── Push + Email (Resend)
-         │                                            │
-         │                                            ▼
-         │                                     Email sent to user
-         │                                     with task context
-         │
-         └── missed_count >= 3 + priority=high ─ Push + Email + SMS (Twilio)
-                                                      │
-                                                      ▼
-                                               SMS: "Critical: [task] is overdue"
+```mermaid
+flowchart TD
+    A["Task due_date passes without completion"] --> B["Cron: Every 15 min checks missed tasks"]
+    B --> C["Mark missed, reschedule +2h, increment count"]
+    C --> D{missed_count?}
+    D -->|"= 1"| E["Push notification"]
+    D -->|"= 2"| F["Push + Email (Resend)"]
+    F --> G["Email sent to user with task context"]
+    D -->|">= 3 + priority=high"| H["Push + Email + SMS (Twilio)"]
+    H --> I["SMS: Critical: task is overdue"]
 ```
 
 ### Opportunity Radar Event Chain
 
-```
-Time: 6:00 AM IST
-      │
-      ▼
-┌─────────────────┐
-│  pg_cron fires   │
-│  opp-radar       │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐     ┌─────────────────┐
-│  Fetch user      │     │  Claude API      │
-│  skills + prefs  │────▶│  (query generator)│
-└─────────────────┘     └────────┬────────┘
-                                  │
-                                  ▼
-                          ┌─────────────────┐
-                          │  8 search queries│
-                          │  (one per type)  │
-                          └────────┬────────┘
-                                   │
-                     ┌─────────────┼─────────────┐
-                     ▼             ▼             ▼
-             ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-             │  Brave       │ │  Brave       │ │  Brave       │
-             │  Search API  │ │  Search API  │ │  Search API  │
-             │  (query 1)   │ │  (query 2)   │ │  (query N)   │
-             └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
-                    │                │                │
-                    └────────────────┼────────────────┘
-                                     ▼
-                           ┌─────────────────┐
-                           │  Claude API      │
-                           │  (opportunity    │
-                           │   parser)        │
-                           └────────┬────────┘
-                                    │
-                                    ▼
-                           ┌─────────────────┐
-                           │  Filter:         │
-                           │  match >= 50     │
-                           └────────┬────────┘
-                                    │
-                                    ▼
-                           ┌─────────────────┐     ┌─────────────────┐
-                           │  INSERT into     │────▶│  Check deadline  │
-                           │  opportunities   │     │  < 48h?         │
-                           └─────────────────┘     └────────┬────────┘
-                                                            │
-                                                 ┌──────────┴──────────┐
-                                                 ▼                     ▼
-                                        ┌──────────────┐     ┌─────────────────┐
-                                        │  Immediate    │     │  Morning        │
-                                        │  Push Notif   │     │  Briefing       │
-                                        └──────────────┘     └─────────────────┘
+```mermaid
+sequenceDiagram
+    participant Cron as pg_cron
+    participant EF as Edge Function
+    participant DB as Supabase
+    participant Claude as Claude API
+    participant Brave as Brave Search API
+    participant Push as Push Notification
+
+    Note over Cron,Push: Time: 6:00 AM IST
+    Cron->>EF: Fire opp-radar
+    EF->>DB: Fetch user skills + prefs
+    DB->>EF: User profile
+    EF->>Claude: Generate 8 search queries (one per type)
+    Claude->>EF: Search queries
+
+    par Query 1 to N
+        EF->>Brave: Search API (query 1)
+        Brave->>EF: Results
+    and
+        EF->>Brave: Search API (query 2)
+        Brave->>EF: Results
+    and
+        EF->>Brave: Search API (query N)
+        Brave->>EF: Results
+    end
+
+    EF->>Claude: Parse opportunities
+    Claude->>EF: Scored opportunities
+    EF->>EF: Filter match &gt;= 50
+    EF->>DB: INSERT into opportunities
+    DB->>EF: Confirm
+    alt deadline &lt; 48h
+        EF->>Push: Immediate push notification
+    else
+        EF->>EF: Include in morning briefing
+    end
 ```
 
 ---

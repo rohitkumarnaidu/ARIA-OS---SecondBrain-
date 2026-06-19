@@ -99,6 +99,63 @@ Time | Chat | Automation | Login
 
 ---
 
+## Component Hierarchy (Atomic Design)
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    subgraph Atoms["Atoms (18 Primitives)"]
+        direction LR
+        A1["Button<br/>4 variants × 3 sizes"]
+        A2["Card<br/>6 variants"]
+        A3["Input<br/>9 types"]
+        A4["Badge / Tag / Avatar / Icon"]
+        A5["Spinner / Skeleton / Progress / Tooltip"]
+        A6["Checkbox / Toggle / Select / Textarea"]
+        A7["Label / Divider / ErrorMessage"]
+    end
+
+    subgraph Molecules["Molecules (12 Composites)"]
+        direction LR
+        M1["StatsCard / FilterTabs"]
+        M2["Pagination / Breadcrumbs"]
+        M3["FormField / ButtonGroup"]
+        M4["TabBar / SearchBar"]
+        M5["DropdownMenu / ToastNotification"]
+        M6["ProgressWithLabel / InputGroup"]
+    end
+
+    subgraph Organisms["Organisms (10 Complex)"]
+        direction LR
+        O1["DataTable / KanbanBoard"]
+        O2["RoadmapEditor / Heatmap"]
+        O3["MessageList / CommandPalette"]
+        O4["Calendar / ActivityFeed"]
+        O5["Navbar / Sidebar"]
+    end
+
+    subgraph Pages["Pages (17 Screens)"]
+        direction LR
+        P1["Dashboard / Tasks / Courses"]
+        P2["Goals / Habits / Sleep"]
+        P3["Income / Projects / Ideas"]
+        P4["Resources / Opportunities / Chat"]
+        P5["Automation / Academics / YouTube"]
+        P6["Time / Login"]
+    end
+
+    Atoms --> Molecules
+    Molecules --> Organisms
+    Organisms --> Pages
+
+    style Atoms fill:#0A0B0F,stroke:#6366F1,color:#6366F1
+    style Molecules fill:#0A0B0F,stroke:#818CF8,color:#818CF8
+    style Organisms fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    style Pages fill:#0A0B0F,stroke:#F59E0B,color:#F59E0B
+```
+
+---
+
 ## 2. Button System
 
 ### 2.1 API Reference

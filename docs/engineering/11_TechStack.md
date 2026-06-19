@@ -13,6 +13,56 @@
 
 ---
 
+### Architecture Diagram — Technology Stack Landscape
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph TD
+    subgraph Frontend["Frontend Layer"]
+        NextJS["Next.js 14"] --> React["React 18"]
+        React --> TailwindCSS["Tailwind CSS"]
+        React --> FramerMotion["Framer Motion"]
+        React --> Zustand["Zustand"]
+    end
+    subgraph Backend["Backend Layer"]
+        FastAPI["FastAPI Python"] --> SupabaseSDK["Supabase SDK"]
+        FastAPI --> Agents["AI Agents"]
+    end
+    subgraph AI["AI Layer"]
+        Ollama["Ollama Mistral 7B"]
+        Claude["Claude API Fallback"]
+    end
+    subgraph Data["Data Layer"]
+        SupabasePG["Supabase PostgreSQL"]
+        Pgvector["pgvector Extension"]
+        IndexedDB["IndexedDB Cache"]
+    end
+    Frontend -->|HTTP/REST| Backend
+    Backend -->|SQL| Data
+    Backend -->|LLM Calls| AI
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS is built on **26 open-source and free-tier technologies** organized across 7 functional categories. This document serves as the authoritative reference for every technology in the stack — covering selection rationale, alternatives considered, licensing, cost, maturity, upgrade paths, vendor lock-in assessment, and exit strategies.

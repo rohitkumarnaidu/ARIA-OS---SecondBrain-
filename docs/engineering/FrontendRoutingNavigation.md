@@ -96,6 +96,77 @@ app/
 └── types/                       # Empty directory
 ```
 
+## Route Hierarchy & Auth Guards
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph TD
+    ROOT["/ (Root Layout)"] --> LANDING["/ Landing Page"]
+    ROOT --> LOGIN["/login Auth Page"]
+    ROOT --> DASH["(dashboard) Route Group"]
+
+    DASH --> LAYOUT["Dashboard Layout<br/>Sidebar + Navbar"]
+    LAYOUT --> AG["Auth Guard: useAuth"]
+
+    AG --> DASHBOARD["/dashboard"]
+    AG --> TASKS["/tasks"]
+    AG --> COURSES["/courses"]
+    AG --> HABITS["/habits"]
+    AG --> GOALS["/goals"]
+    AG --> IDEAS["/ideas"]
+    AG --> INCOME["/income"]
+    AG --> PROJECTS["/projects"]
+    AG --> RESOURCES["/resources"]
+    AG --> OPPORTUNITIES["/opportunities"]
+    AG --> SLEEP["/sleep"]
+    AG --> TIME["/time"]
+    AG --> CHAT["/chat"]
+    AG --> AUTOMATION["/automation"]
+    AG --> YOUTUBE["/youtube"]
+    AG --> ACADEMICS["/academics"]
+
+    LOGIN -.->|"redirect"| DASHBOARD
+    DASHBOARD -.->|"logout"| LOGIN
+
+    style ROOT fill:#6366F1,color:#F1F5F9
+    style LANDING fill:#00FFA3,color:#0A0B0F
+    style LOGIN fill:#818CF8,color:#F1F5F9
+    style DASH fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style LAYOUT fill:#13151A,color:#F1F5F9,stroke:#818CF8
+    style AG fill:#6366F1,color:#F1F5F9
+    style DASHBOARD fill:#00FFA3,color:#0A0B0F
+    style TASKS fill:#818CF8,color:#F1F5F9
+    style COURSES fill:#818CF8,color:#F1F5F9
+    style HABITS fill:#818CF8,color:#F1F5F9
+    style GOALS fill:#818CF8,color:#F1F5F9
+    style IDEAS fill:#818CF8,color:#F1F5F9
+    style INCOME fill:#818CF8,color:#F1F5F9
+    style PROJECTS fill:#818CF8,color:#F1F5F9
+    style RESOURCES fill:#818CF8,color:#F1F5F9
+    style OPPORTUNITIES fill:#818CF8,color:#F1F5F9
+    style SLEEP fill:#818CF8,color:#F1F5F9
+    style TIME fill:#818CF8,color:#F1F5F9
+    style CHAT fill:#818CF8,color:#F1F5F9
+    style AUTOMATION fill:#818CF8,color:#F1F5F9
+    style YOUTUBE fill:#818CF8,color:#F1F5F9
+    style ACADEMICS fill:#818CF8,color:#F1F5F9
+```
+
 **Critical issue:** The `(dashboard)` route group layout imports and renders `Sidebar` and `Navbar`, but all dashboard pages live **outside** the route group at the root of `app/`. This means:
 - The Sidebar is **never rendered** on any page
 - The Navbar is **never rendered** on any page

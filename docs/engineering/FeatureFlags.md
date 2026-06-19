@@ -14,6 +14,47 @@
 
 ---
 
+### Architecture Diagram — Feature Flag Lifecycle
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+stateDiagram-v2
+    [*] --> Development
+    Development --> Testing: PR Merged to Dev
+    Testing --> Staged: QA Passed
+    Staged --> Released: Manual Promote
+    Released --> Deprecated: Flag Cleanup PR
+    Deprecated --> Removed: Removed from Codebase
+    Testing --> Development: Fail
+    Staged --> Testing: Rollback
+    Released --> Released: Gradual Rollout<br/>10% → 25% → 50% → 100%
+    note right of Deprecated
+        Monitor usage 2 weeks
+        before full removal
+    end note
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS ships continuously via CI/CD. Without a feature flag system, every incomplete feature blocks deployment. This document defines a comprehensive two-tier feature flag system (environment variables + Supabase `user_preferences`) with a unified evaluation API, flag registry, lifecycle management, gradual rollout strategies, kill switch design, health monitoring, audit logging, CI/CD integration, and best practices.

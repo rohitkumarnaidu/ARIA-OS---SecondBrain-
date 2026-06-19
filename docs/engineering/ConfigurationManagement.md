@@ -1,4 +1,4 @@
-﻿# Configuration Management
+# Configuration Management
 
 ---
 
@@ -16,6 +16,60 @@
 | **Approved By** | — |
 
 ---
+
+
+
+### Architecture Diagram — Configuration Hierarchy
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph LR
+    subgraph Defaults["Layer 1: Defaults"]
+        CodeDefaults["Code Defaults<br/>Constants - config.py"]
+    end
+    subgraph Environment["Layer 2: Environment"]
+        EnvFile[".env Files<br/>Local Dev"]
+        VercelEnv["Vercel Env Vars<br/>Frontend Production"]
+        RailwayEnv["Railway Env Vars<br/>Backend Production"]
+    end
+    subgraph Features["Layer 3: Feature Flags"]
+        FlagReg["Flag Registry<br/>isEnabled() API"]
+    end
+    subgraph Runtime["Layer 4: Runtime"]
+        SupaPref["Supabase user_preferences<br/>User-Level Settings"]
+        AdminOverride["Admin Override<br/>admin/flags"]
+    end
+    subgraph Validation["Validation Layer"]
+        Pydantic["Pydantic Settings<br/>(Python Backend)"]
+        Zod["Zod Schema<br/>(TypeScript Frontend)"]
+    end
+    CodeDefaults -->|Overridden by| EnvFile
+    EnvFile -->|Overridden by| VercelEnv
+    VercelEnv -->|Overridden by| FlagReg
+    FlagReg -->|Overridden by| SupaPref
+    SupaPref -->|Overridden by| AdminOverride
+    Pydantic -.->|Validates| Environment
+    Zod -.->|Validates| Runtime
+```
 
 ## 1. Executive Summary
 

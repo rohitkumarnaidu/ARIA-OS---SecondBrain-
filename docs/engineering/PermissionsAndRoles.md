@@ -12,6 +12,53 @@
 
 ---
 
+## Role Hierarchy & Permission Inheritance
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph LR
+    ADMIN["Admin"] --> USER["User"]
+    USER --> READONLY["ReadOnly"]
+    USER --> COLLAB["Collaborator<br/><i>v2 — Q4 2026</i>"]
+    USER --> VIEWER["Viewer<br/><i>v2 — Q4 2026</i>"]
+    USER --> MENTOR["Mentor<br/><i>v2 — Q4 2026</i>"]
+
+    ADMIN -.-> P1["Full CRUD all modules<br/>User management<br/>Billing & audits<br/>System config"]
+    USER -.-> P2["Full CRUD own data<br/>Access shared resources<br/>Create content"]
+    READONLY -.-> P3["View assigned resources<br/>No create / update / delete"]
+    COLLAB -.-> P4["CRUD shared projects<br/>Team notes & tasks"]
+    VIEWER -.-> P5["Read-only shared projects<br/>No export"]
+    MENTOR -.-> P6["Read + comment<br/>Student goals & tasks"]
+
+    style ADMIN fill:#6366F1,color:#F1F5F9
+    style USER fill:#818CF8,color:#F1F5F9
+    style READONLY fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style COLLAB fill:#13151A,color:#F1F5F9,stroke:#818CF8
+    style VIEWER fill:#13151A,color:#F1F5F9,stroke:#334155
+    style MENTOR fill:#13151A,color:#F1F5F9,stroke:#334155
+    style P1 fill:#00FFA3,color:#0A0B0F
+    style P2 fill:#00FFA3,color:#0A0B0F
+    style P3 fill:#94A3B8,color:#0A0B0F
+    style P4 fill:#818CF8,color:#F1F5F9
+    style P5 fill:#94A3B8,color:#0A0B0F
+    style P6 fill:#94A3B8,color:#0A0B0F
+```
+
 ## 1. Executive Summary
 
 Second Brain OS currently operates as a single-user system with Row-Level Security (RLS) on all Supabase tables but zero role-based access control. As the platform evolves toward multi-user collaboration (shared projects, team goals, mentor-student workflows), a formal permissions model is required. This document defines a **three-role model** (Admin, User, ReadOnly) with a clear migration path to multi-tenancy, implemented via Supabase RLS + JWT custom claims. Target: no security bypass possible, < 50 ms overhead per authorized request.

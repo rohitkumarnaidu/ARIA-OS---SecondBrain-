@@ -81,6 +81,49 @@ async def lifespan(app: FastAPI):
 
 ---
 
+## 3. Cron Job Schedule — 24-Hour Timeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3',
+      'cScale0': '#6366F1',
+      'cScale1': '#818CF8',
+      'cScale2': '#00FFA3',
+      'cScale3': '#6366F1',
+      'cScale4': '#818CF8',
+      'cScale5': '#00FFA3'
+    }
+  }
+}%%
+gantt
+    title Cron Job Schedule — 24-Hour Timeline (IST)
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section High Priority
+    Opportunity Radar     :crit, radar_scan, 06:00, 2m
+    Daily Briefing        :crit, morning_briefing, 07:00, 1m
+
+    section Medium Priority
+    Missed Tasks Review   :missed_tasks_review, 00:00, 1m
+    Habits Reminder       :habits_check, 20:00, 1m
+    Weekly Review (Sun)   :weekly_review, 20:00, 3m
+
+    section Low Priority
+    Sleep Log Check       :sleep_analysis, 22:30, 1m
+```
+
 ## 3. Cron Job Catalog
 
 | Job ID | Name | Schedule (IST) | Cron Expression | Handler | Avg Duration | Priority |

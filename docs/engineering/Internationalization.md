@@ -61,6 +61,56 @@ This document defines the i18n architecture, locale support plan, translation ma
 
 ---
 
+## i18n Pipeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph LR
+    SRC["Source Code<br/><i>English strings in components</i>"] --> EXT["Extract Strings<br/><i>i18n-parser scan</i>"]
+    EXT --> TRANS["Translate<br/><i>Human + AI (Claude API)</i>"]
+    TRANS --> BUILD["Build Locale Bundles<br/><i>JSON / YAML files</i>"]
+    BUILD --> VAL["Validate<br/><i>Missing keys, placeholders</i>"]
+    VAL --> DEPLOY["Deploy<br/><i>CDN cache per locale</i>"]
+    DEPLOY --> RENDER["Render UI<br/><i>next-intl / react-i18next</i>"]
+
+    VAL -->|"Errors"| TRANS
+
+    subgraph CI["CI Pipeline"]
+        EXT
+        VAL
+    end
+
+    subgraph Runtime["Browser Runtime"]
+        SRC
+        RENDER
+    end
+
+    style SRC fill:#6366F1,color:#F1F5F9
+    style EXT fill:#818CF8,color:#F1F5F9
+    style TRANS fill:#6366F1,color:#F1F5F9
+    style BUILD fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style VAL fill:#818CF8,color:#F1F5F9
+    style DEPLOY fill:#00FFA3,color:#0A0B0F
+    style RENDER fill:#6366F1,color:#F1F5F9
+    style CI fill:#13151A,color:#6366F1,stroke:#334155
+    style Runtime fill:#13151A,color:#6366F1,stroke:#334155
+```
+
 ## 3. Locale Support Plan
 
 ### 3.1 Locale Roadmap

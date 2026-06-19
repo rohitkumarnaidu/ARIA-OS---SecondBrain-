@@ -17,6 +17,66 @@
 
 ---
 
+### Architecture Diagram — Worker Queue Architecture
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+flowchart TD
+    subgraph Trigger["Trigger Sources"]
+        HTTP["HTTP Request<br/>Route Handler"]
+        Cron["APScheduler Cron<br/>7 Jobs"]
+        Event["Event Bus<br/>Supabase Realtime"]
+    end
+    subgraph Queue["Task Queue"]
+        InMemory["In-Memory Queue<br/>(Alpha: asyncio.Queue)"]
+        CeleryRedis["Celery + Redis<br/>(Production Target)"]
+    end
+    subgraph Consumer["Worker Consumers"]
+        AIWorker["AI Worker<br/>Briefings · Radar · Memory"]
+        ExportWorker["Export Worker<br/>CSV · PDF"]
+        NotifWorker["Notification Worker<br/>Email · Push · In-App"]
+        CleanupWorker["Cleanup Worker<br/>Archive · Purge"]
+    end
+    subgraph Result["Result Store"]
+        DB["Supabase PostgreSQL<br/>TaskResult Table"]
+        CacheR["Redis Cache (Future)"]
+        Callback["Webhook Callback (Future)"]
+    end
+    HTTP --> InMemory
+    Cron --> InMemory
+    Event --> InMemory
+    InMemory -.-> |Scale Up| CeleryRedis
+    InMemory --> AIWorker
+    InMemory --> ExportWorker
+    InMemory --> NotifWorker
+    InMemory --> CleanupWorker
+    AIWorker --> DB
+    ExportWorker --> DB
+    NotifWorker --> DB
+    CleanupWorker --> DB
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS currently lacks a dedicated background worker infrastructure. All background processing runs either in the FastAPI request-response lifecycle (blocking the client until completion) or inside APScheduler cron job handlers in `services/scheduler/main.py`. As the platform grows — with AI briefing generation, opportunity radar scanning, data exports, and model inference — synchronous processing creates latency bottlenecks and poor user experience.

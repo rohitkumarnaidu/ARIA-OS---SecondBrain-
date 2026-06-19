@@ -8,40 +8,34 @@ ARIA (Adaptive Reasoning and Intelligence Assistant) is not a chatbot. She is a 
 
 ## The 8 Sub-Agents
 
-```
-                          ┌─────────────────────────────────┐
-                          │     Orchestrator Agent          │
-                          │  (Master Coordinator)           │
-                          │  Routes all inputs to correct   │
-                          │  agents, merges responses       │
-                          └──────────┬──────────┬───────────┘
-                                     │          │
-            ┌────────────────────────┘          └────────────────────────┐
-            ▼                                                           ▼
-   ┌──────────────────┐                                    ┌──────────────────┐
-   │  Planner Agent   │                                    │  Reminder Agent  │
-   │  Daily/weekly    │                                    │  Missed task     │
-   │  scheduling      │                                    │  detection +     │
-   │                  │                                    │  escalation      │
-   └──────────────────┘                                    └──────────────────┘
-   ┌──────────────────┐                                    ┌──────────────────┐
-   │  Sleep Monitor   │                                    │  Analytics Agent │
-   │  Agent           │                                    │  Productivity    │
-   │  Sleep scoring   │                                    │  scores, pattern │
-   │  + task adjust   │                                    │  detection       │
-   └──────────────────┘                                    └──────────────────┘
-   ┌──────────────────┐                                    ┌──────────────────┐
-   │  Learning Agent  │                                    │  Career Agent    │
-   │  Course tracking │                                    │  GitHub monitor  │
-   │  + spaced        │                                    │  + opportunity   │
-   │  repetition      │                                    │  matching        │
-   └──────────────────┘                                    └──────────────────┘
-   ┌──────────────────┐
-   │  Memory Agent    │
-   │  Preferences,    │
-   │  facts, patterns,│
-   │  decisions store │
-   └──────────────────┘
+```mermaid
+graph TD
+    ORC[Orchestrator Agent<br/>Master Coordinator<br/>Routes inputs, merges responses]
+
+    PA[Planner Agent<br/>Daily / Weekly<br/>Scheduling]
+    RA[Reminder Agent<br/>Missed Task Detection<br/>+ Escalation]
+    SMA[Sleep Monitor Agent<br/>Sleep Scoring<br/>+ Task Adjustment]
+    AA[Analytics Agent<br/>Productivity Scores<br/>Pattern Detection]
+    LA[Learning Agent<br/>Course Tracking<br/>+ Spaced Repetition]
+    CA[Career Agent<br/>GitHub Monitor<br/>+ Opp. Matching]
+    MA[Memory Agent<br/>Preferences, Facts,<br/>Patterns, Decisions]
+
+    ORC --> PA
+    ORC --> RA
+    ORC --> SMA
+    ORC --> AA
+    ORC --> LA
+    ORC --> CA
+    ORC --> MA
+
+    style ORC fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9,stroke-width:3px
+    style PA fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style RA fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SMA fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style AA fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style LA fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style CA fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style MA fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ---
@@ -57,14 +51,30 @@ ARIA (Adaptive Reasoning and Intelligence Assistant) is not a chatbot. She is a 
 - Manages conversation context and state transitions
 
 **Communication Pattern:**
-```
-User Message → Orchestrator → [Planner, Reminder, Sleep, Learning] (parallel)
-                              ↓
-                    Collect all results
-                              ↓
-                    Merge + format single response
-                              ↓
-                    Return to user
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant O as Orchestrator
+    participant P as Planner Agent
+    participant R as Reminder Agent
+    participant S as Sleep Agent
+    participant L as Learning Agent
+
+    U->>O: User Message
+    par Parallel Dispatch
+        O->>P: Schedule analysis
+        O->>R: Missed task check
+        O->>S: Sleep score check
+        O->>L: Course progress check
+    end
+
+    P-->>O: Schedule suggestion
+    R-->>O: Missed task details
+    S-->>O: Energy compatibility
+    L-->>O: Course status
+
+    O->>O: Merge + format response
+    O-->>U: Coherent single reply
 ```
 
 **Example Flow — "I missed my DSA study session"**
@@ -301,31 +311,21 @@ Return JSON array — only include courses needing attention:
 
 All agents communicate through the Orchestrator using a hub-and-spoke pattern:
 
-```
-                    ┌─────────────────┐
-                    │   User / Event   │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │  Orchestrator   │
-                    │     Agent       │
-                    └──┬──┬──┬──┬──┬──┘
-                       │  │  │  │  │
-          ┌────────────┘  │  │  │  └────────────┐
-          ▼               ▼  ▼  ▼               ▼
-   ┌──────────┐    ┌──────────────────┐    ┌──────────┐
-   │  Agent 1 │    │  Agent 2 ... N  │    │  Agent N │
-   │          │    │  (parallel)      │    │          │
-   └──────────┘    └──────────────────┘    └──────────┘
-          │               │                      │
-          └───────────────┴──────────────────────┘
-                          │
-                          ▼
-                   ┌──────────────┐
-                   │   Merged     │
-                   │   Response   │
-                   └──────────────┘
+```mermaid
+graph TD
+    UE[User / Event] --> ORC[Orchestrator Agent]
+
+    ORC --> A1[Agent 1<br/>Planner]
+    ORC --> A2[Agent 2<br/>Reminder]
+    ORC --> A3[Agent N<br/>...others]
+
+    A1 --> MERGE[Merged Response]
+    A2 --> MERGE
+    A3 --> MERGE
+    MERGE --> OUT[Return to User]
+
+    style ORC fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9,stroke-width:3px
+    style MERGE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Key characteristics:**
@@ -337,20 +337,38 @@ All agents communicate through the Orchestrator using a hub-and-spoke pattern:
 
 ### Data Flow Between Agents
 
-```
-Agent Communication Bus (Supabase):
-┌────────────────────────────────────────────────────┐
-│                                                    │
-│  tasks table        ← read/write: Reminder, Planner│
-│  courses table      ← read/write: Learning         │
-│  sleep_logs table   ← read/write: Sleep Monitor    │
-│  aria_memory table  ← read/write: Memory Agent     │
-│  daily_briefings    ← write: Analytics Agent       │
-│  weekly_reviews     ← write: Analytics Agent       │
-│  opportunities      ← write: Career Agent          │
-│  habits table       ← write: Planner               │
-│                                                    │
-└────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph DB["Supabase — Agent Communication Bus"]
+        TASKS[tasks table]
+        COURSES[courses table]
+        SLEEP[sleep_logs table]
+        MEM[aria_memory table]
+        BRIEF[daily_briefings]
+        REVIEW[weekly_reviews]
+        OPP[opportunities]
+        HABITS[habits table]
+    end
+
+    R[Reminder Agent] -->|read/write| TASKS
+    P[Planner Agent] -->|read/write| TASKS
+    L[Learning Agent] -->|read/write| COURSES
+    SM[Sleep Monitor] -->|read/write| SLEEP
+    MA[Memory Agent] -->|read/write| MEM
+    AA[Analytics Agent] -->|write| BRIEF
+    AA -->|write| REVIEW
+    CA[Career Agent] -->|write| OPP
+    P -->|write| HABITS
+
+    style DB fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style TASKS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style COURSES fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SLEEP fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style MEM fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style BRIEF fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style REVIEW fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style OPP fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style HABITS fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---
@@ -359,26 +377,25 @@ Agent Communication Bus (Supabase):
 
 ### Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Memory System                           │
-│                                                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌──────────────────────┐ │
-│  │ Short-term   │  │ Medium-term │  │ Long-term            │ │
-│  │ (Chat)       │  │ (Session)   │  │ (Persistent)          │ │
-│  │              │  │             │  │                       │ │
-│  │ Current      │  │ Last 30     │  │ aria_memory table    │ │
-│  │ conversation │  │ messages    │  │ preferences, facts,  │ │
-│  │ (context)    │  │             │  │ patterns, decisions   │ │
-│  └─────────────┘  └─────────────┘  └──────────────────────┘ │
-│         │               │                      │             │
-│         ▼               ▼                      ▼             │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │              Context Builder                          │  │
-│  │  Serializes: profile + tasks + goals + courses +     │  │
-│  │  memory + sleep → injects into every ARIA prompt     │  │
-│  └───────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph MS["Memory System"]
+        STM[Short-Term<br/>Current Conversation<br/>Context Window]
+        MTM[Medium-Term<br/>Last 30 Messages<br/>Session Data]
+        LTM[Long-Term<br/>aria_memory table<br/>Preferences, Facts,<br/>Patterns, Decisions]
+
+        STM --> CB[Context Builder]
+        MTM --> CB
+        LTM --> CB
+        CB --> PROMPT[Injected into Every ARIA Prompt<br/>Profile + Tasks + Goals + Courses + Memory + Sleep]
+    end
+
+    style MS fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style STM fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style MTM fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style LTM fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style CB fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style PROMPT fill:#13151A,stroke:#94A3B8,color:#F1F5F9
 ```
 
 ### Context Builder

@@ -14,6 +14,104 @@
 
 ---
 
+### Architecture Diagram — Vector DB Architecture & Embedding Pipeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph LR
+    subgraph Source["Content Sources"]
+        Tasks["Tasks"]
+        Goals["Goals"]
+        Ideas["Ideas"]
+        Chat["Chat Messages"]
+    end
+    subgraph Pipeline["Embedding Pipeline"]
+        TextPrep["Text Preprocessing<br/>Clean · Chunk · Normalize"]
+        EmbedModel["Embedding Model<br/>Ollama nomic-embed-text<br/>768d Vectors"]
+        BatchProc["Batch Processor<br/>Async · Rate Limited"]
+    end
+    subgraph Storage["Vector Storage"]
+        PGDB["Supabase PostgreSQL"]
+        PGVec["pgvector Extension<br/>768d · IVFFlat Index"]
+        Metadata["Metadata Store<br/>Source · Timestamp · User"]
+    end
+    subgraph Query["Query Interface"]
+        RPC["RPC match_vectors<br/>Similarity Search"]
+        HybridQ["Hybrid Search<br/>FTS + Vector Fusion"]
+        Cache["Result Cache<br/>TTL 5 min"]
+    end
+    Source --> TextPrep
+    TextPrep --> EmbedModel
+    EmbedModel --> BatchProc
+    BatchProc --> PGVec
+    PGVec --> PGDB
+    Metadata --> PGDB
+    RPC --> PGVec
+    RPC --> Metadata
+    HybridQ --> RPC
+    HybridQ --> Cache
+```
+
+### Architecture Diagram — Vector Search Flow
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+sequenceDiagram
+    participant U as User / Agent
+    participant QS as Query Service
+    participant EMB as Embedding Service
+    participant PG as pgvector / Supabase
+    participant LLM as LLM (Ollama)
+    U->>QS: "What did I decide about DSA?"
+    QS->>EMB: embed(query_text)
+    EMB-->>QS: query_vector[768d]
+    QS->>PG: RPC match_vectors(query_vector, threshold=0.7)
+    PG-->>QS: Top-K Results + Scores
+    QS->>LLM: Context + Query
+    LLM-->>QS: Synthesized Response
+    QS-->>U: "You decided to focus on graphs..."
+```
+
+---
+
 ## 1. Executive Summary
 
 Vector embeddings are the foundation of semantic understanding in Second Brain OS. They enable ARIA to go beyond keyword matching and understand the meaning and intent behind user queries. Every piece of content — tasks, goals, ideas, chat messages, learning materials, opportunities — is represented as a vector embedding that captures its semantic content.

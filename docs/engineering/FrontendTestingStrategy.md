@@ -88,6 +88,49 @@ apps/web/
 └── jest.config.ts
 ```
 
+## Test Pyramid
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph BT
+    E2E["E2E Tests<br/><i>Cypress — 5%</i>"] --> INT["Integration Tests<br/><i>Jest + RTL — 20%</i>"]
+    INT --> COMP["Component Tests<br/><i>Jest + RTL — 25%</i>"]
+    COMP --> UNIT["Unit Tests<br/><i>Jest — 40%</i>"]
+    UNIT --> STATIC["Static Analysis<br/><i>TypeScript + ESLint — 10%</i>"]
+
+    E2E -.->|"Critical user flows<br/>auth, tasks, chat"| D1
+    INT -.->|"Page interactions<br/>form flows"| D2
+    COMP -.->|"Individual components<br/>loading, error, empty"| D3
+    UNIT -.->|"Stores, hooks<br/>utilities, schemas"| D4
+    STATIC -.->|"Type checking<br/>lint rules, formatting"| D5
+
+    style E2E fill:#6366F1,color:#F1F5F9
+    style INT fill:#818CF8,color:#F1F5F9
+    style COMP fill:#6366F1,color:#F1F5F9
+    style UNIT fill:#818CF8,color:#F1F5F9
+    style STATIC fill:#00FFA3,color:#0A0B0F
+    style D1 fill:#13151A,color:#94A3B8,stroke:#334155
+    style D2 fill:#13151A,color:#94A3B8,stroke:#334155
+    style D3 fill:#13151A,color:#94A3B8,stroke:#334155
+    style D4 fill:#13151A,color:#94A3B8,stroke:#334155
+    style D5 fill:#13151A,color:#94A3B8,stroke:#334155
+```
+
 ---
 
 ## 2. Setup & Configuration

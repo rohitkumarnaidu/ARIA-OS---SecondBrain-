@@ -14,6 +14,116 @@
 
 ---
 
+## Agent Orchestration Flow
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+sequenceDiagram
+    participant User as User
+    participant ARIA as ARIA Orchestrator
+    participant Classifier as Intent Classifier
+    participant Context as Context Builder
+    participant Agent as Sub-Agent
+    participant Memory as Memory Agent
+    participant LLM as LLM Provider
+
+    User->>ARIA: User message / system event
+    ARIA->>Classifier: Classify intent
+    Classifier-->>ARIA: Intent type + confidence
+
+    alt Scheduled cron trigger
+        ARIA->>Context: Build agent context
+    else User request
+        ARIA->>Context: Fetch user state + history
+    end
+
+    Context->>Memory: Retrieve relevant memories
+    Memory-->>Context: Episodic + semantic memory
+    Context-->>ARIA: Assembled context package
+
+    par Parallel dispatch
+        ARIA->>Agent: Execute primary agent
+        ARIA->>Memory: Background consolidation
+    end
+
+    Agent->>LLM: Generate with system prompt
+    LLM-->>Agent: Structured response
+    Agent-->>ARIA: Agent output
+
+    ARIA->>Memory: Store interaction
+    ARIA->>User: Synthesized response
+
+    Note over ARIA,Memory: Circuit breaker + retry on failure
+```
+
+## Agent Communication Topology
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph TD
+    ORCH["ARIA Orchestrator<br/><i>Claude Sonnet 4</i>"]
+
+    ORCH --> BRIEF["Briefing Agent<br/><i>6 AM daily</i>"]
+    ORCH --> PLAN["Planner Agent<br/><i>On-demand</i>"]
+    ORCH --> TASK["Task Agent<br/><i>task.* intent</i>"]
+    ORCH --> LEARN["Learning Agent<br/><i>learning.* intent</i>"]
+    ORCH --> MEM["Memory Agent<br/><i>Post-interaction</i>"]
+    ORCH --> OPP["Opportunity Scanner<br/><i>Daily scheduled</i>"]
+    ORCH --> RADAR["Radar Agent<br/><i>Every 6h</i>"]
+    ORCH --> HABIT["Habit Coach<br/><i>habit.* intent</i>"]
+    ORCH --> SLEEP["Sleep Monitor<br/><i>sleep.* intent</i>"]
+
+    BRIEF -.->|"reads"| TASK
+    BRIEF -.->|"reads"| OPP
+    BRIEF -.->|"reads"| SLEEP
+    MEM -.->|"feeds"| ORCH
+    RADAR -.->|"feeds"| OPP
+    PLAN -.->|"priority data"| TASK
+    HABIT -.->|"streak data"| MEM
+    SLEEP -.->|"sleep score"| BRIEF
+
+    style ORCH fill:#6366F1,color:#F1F5F9
+    style BRIEF fill:#818CF8,color:#F1F5F9
+    style PLAN fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style TASK fill:#818CF8,color:#F1F5F9
+    style LEARN fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style MEM fill:#00FFA3,color:#0A0B0F
+    style OPP fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style RADAR fill:#818CF8,color:#F1F5F9
+    style HABIT fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style SLEEP fill:#818CF8,color:#F1F5F9
+```
+
 ## 1. Executive Summary
 
 Agent orchestration is the system by which user inputs and system events are routed to the correct AI agent(s), executed with appropriate context, and composed into a coherent response. In Second Brain OS, orchestration governs how ARIA's 8 specialized sub-agents work together — or independently — to handle tasks ranging from daily briefing generation to opportunity scanning to memory consolidation.

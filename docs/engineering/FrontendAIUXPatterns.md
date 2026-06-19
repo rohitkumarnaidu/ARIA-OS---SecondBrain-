@@ -22,6 +22,84 @@
 
 ---
 
+## AI Streaming Response Flow
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+sequenceDiagram
+    actor User as User
+    participant UI as Frontend Component
+    participant API as FastAPI Backend
+    participant LLM as LLM (Ollama/Claude)
+
+    User->>UI: Types / Clicks / Triggers AI
+    UI->>UI: Show Thinking Indicator
+    UI->>API: POST /api/v1/chat (stream=true)
+    activate API
+
+    API->>LLM: Generate response (stream)
+    activate LLM
+
+    loop Stream chunks
+        LLM-->>API: Token chunk
+        API-->>UI: SSE: data: {token}
+        UI->>UI: Append to StreamingText component
+        UI->>UI: Auto-scroll
+    end
+
+    LLM-->>API: [DONE]
+    deactivate LLM
+    API-->>UI: SSE: data: [DONE]
+    deactivate API
+
+    UI->>UI: Finalize output
+    UI->>UI: Show ConfidenceBadge
+    UI-->>User: Display complete response
+```
+
+## AI UX Component Architecture
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    AIHook["useAI<br/>Hook"] --> Comps
+
+    subgraph Comps["AI UI Components"]
+        direction LR
+        GH["GhostHint<br/>Smart Placeholder"] --> ST["StreamingText<br/>Token-by-Token"]
+        ST --> TI["ThinkingIndicator<br/>Animated Pulse"]
+        TI --> CB["ConfidenceBadge<br/>Score Display"]
+        CB --> SC["SuggestionChip<br/>One-Click Action"]
+        SC --> AU["AIUndo<br/>Rollback Action"]
+    end
+
+    subgraph States["State Machine"]
+        IDLE["IDLE"] --> THINKING["THINKING"]
+        THINKING --> RESPONSE["RESPONSE"]
+        THINKING --> ERROR["ERROR"]
+        RESPONSE --> DISMISSED["DISMISSED"]
+        ERROR --> IDLE
+        DISMISSED --> IDLE
+    end
+
+    Comps --> States
+
+    style AIHook fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style GH fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style ST fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style TI fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style CB fill:#1E293B,stroke:#F59E0B,color:#F1F5F9
+    style SC fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style AU fill:#1E293B,stroke:#EF4444,color:#F1F5F9
+    style IDLE fill:#1E293B,stroke:#94A3B8,color:#94A3B8
+    style THINKING fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style RESPONSE fill:#1E293B,stroke:#00FFA3,color:#00FFA3
+    style ERROR fill:#1E293B,stroke:#EF4444,color:#EF4444
+    style DISMISSED fill:#1E293B,stroke:#94A3B8,color:#94A3B8
+```
+
+---
+
 ## 1. Overview
 
 ### 1.1 Design Principles

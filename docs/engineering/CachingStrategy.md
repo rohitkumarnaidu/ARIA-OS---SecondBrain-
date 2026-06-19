@@ -239,27 +239,29 @@ Frontend admin page at `/admin/cache` with per-module clear buttons.
 
 Detailed flow for every data read:
 
-```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│  Client  │ ──▶ │  SWR     │ ──▶ │  API     │ ──▶ │  Cache   │
-│ (Browser)│     │ (stale)  │     │ (FastAPI)│     │ (L3)     │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-                                                        │
-                                              ┌─────────┴─────────┐
-                                              │                   │
-                                         Cache Hit          Cache Miss
-                                              │                   │
-                                              ▼                   ▼
-                                        Return data       Query Supabase
-                                              │                   │
-                                              │            ┌──────┘
-                                              │            ▼
-                                              │       Store in Cache
-                                              │            │
-                                              └────────────┘
-                                                    │
-                                                    ▼
-                                              Return response
+```mermaid
+sequenceDiagram
+    participant C as Client (Browser)
+    participant SWR as SWR (stale)
+    participant API as API (FastAPI)
+    participant Cache as Cache (L3)
+    participant DB as Supabase
+
+    C->>SWR: Request data
+    SWR->>API: Fetch
+    API->>Cache: Get key
+
+    alt Cache Hit
+        Cache->>API: Return cached data
+    else Cache Miss
+        Cache->>API: None
+        API->>DB: Query Supabase
+        DB->>API: Results
+        API->>Cache: Store in cache
+    end
+
+    API->>SWR: Response
+    SWR->>C: Return data
 ```
 
 ### Pseudocode
@@ -460,17 +462,34 @@ async def get_tasks(...):
 
 ### 12.2 Invalidation Matrix
 
-```
-            ┌─────────────────────────────────────────────────────────────┐
-            │                  New data enters system                     │
-            │         ┌──────────┬──────────┬──────────┬──────────┐      │
-            │         │  Tasks   │  Habits  │  Goals   │Analytics │      │
-├───────────┼──────────┼──────────┼──────────┼──────────┤
-│ Task CUD  │    ✓     │    —     │    ✓     │    ✓     │
-│ Habit CUD │    —     │    ✓     │    ✓     │    ✓     │
-│ Goal CUD  │    —     │    —     │    ✓     │    ✓     │
-│ Analytics │    —     │    —     │    —     │    ✓     │
-└───────────┴──────────┴──────────┴──────────┴──────────┘
+```mermaid
+graph TB
+    subgraph IN["New data enters system"]
+        T["Tasks"]
+        H["Habits"]
+        G["Goals"]
+        A["Analytics"]
+    end
+
+    subgraph OUT["Invalidated Caches"]
+        TC["Task Cache"]
+        HC["Habit Cache"]
+        GC["Goal Cache"]
+        AC["Analytics Cache"]
+    end
+
+    T --> TC
+    T --> GC
+    T --> AC
+
+    H --> HC
+    H --> GC
+    H --> AC
+
+    G --> GC
+    G --> AC
+
+    A --> AC
 ```
 
 ### 12.3 Revision History

@@ -60,6 +60,77 @@
 
 ---
 
+## Performance Optimization Decision Tree
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph TD
+    P["Performance Issue"]
+    P --> Q1{"LCP > 2.5s?"}
+    Q1 -->|Yes| O1["Optimize Images & Fonts"]
+    Q1 -->|No| Q2{"FID > 100ms?"}
+    O1 --> R1["Lazy Load Below-Fold"]
+    O1 --> R2["Preload Critical Assets"]
+
+    Q2 -->|Yes| O2["Reduce JS Bundle"]
+    Q2 -->|No| Q3{"CLS > 0.1?"}
+    O2 --> R3["Code Splitting"]
+    O2 --> R4["Tree Shaking"]
+
+    Q3 -->|Yes| O3["Set Explicit Dimensions"]
+    Q3 -->|No| Q4{"TTFB > 800ms?"}
+    O3 --> R5["Aspect Ratio Containers"]
+    O3 --> R6["Avoid Layout Shifts"]
+
+    Q4 -->|Yes| O4["Optimize Server"]
+    Q4 -->|No| Q5{"INP > 200ms?"}
+    O4 --> R7["Edge Caching"]
+    O4 --> R8["CDN Distribution"]
+
+    Q5 -->|Yes| O5["Debounce Handlers"]
+    Q5 -->|No| DONE["Within Budget"]
+    O5 --> R9["Web Workers"]
+    O5 --> R10["Virtual Scrolling"]
+
+    style P fill:#6366F1,color:#F1F5F9
+    style Q1 fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style Q2 fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style Q3 fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style Q4 fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style Q5 fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style DONE fill:#00FFA3,color:#0A0B0F
+    style O1 fill:#818CF8,color:#F1F5F9
+    style O2 fill:#818CF8,color:#F1F5F9
+    style O3 fill:#818CF8,color:#F1F5F9
+    style O4 fill:#818CF8,color:#F1F5F9
+    style O5 fill:#818CF8,color:#F1F5F9
+    style R1 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R2 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R3 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R4 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R5 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R6 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R7 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R8 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R9 fill:#13151A,color:#94A3B8,stroke:#334155
+    style R10 fill:#13151A,color:#94A3B8,stroke:#334155
+```
+
 ## 2. Bundle Optimization
 
 ### 2.1 Bundle Composition (Estimated)

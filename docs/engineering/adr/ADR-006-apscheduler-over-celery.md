@@ -10,6 +10,41 @@ Accepted
 The system requires scheduled background jobs: daily briefing generation at 7:00 AM, opportunity radar scan at 6:00 AM, habit streak recalculation at midnight, weekly review digest on Sundays, and periodic cleanup (archive completed tasks, prune old logs). Options considered: APScheduler (in-process scheduler), Celery (distributed task queue), and OS-level cron.
 
 ## Decision
+
+```mermaid
+graph TD
+    subgraph APSCHED["APScheduler (Chosen) - No Dependencies"]
+        SVC[services/scheduler/main.py<br/>AsyncIOScheduler]
+        JOBS[jobs/]
+        J1[Daily Briefing - 7 AM]
+        J2[Opportunity Radar - 6 AM]
+        J3[Habit Recalc - Midnight]
+        J4[Weekly Review - Sunday 8 PM]
+        J5[Cleanup Archive]
+
+        SVC -->|Python import| J1
+        SVC -->|Python import| J2
+        SVC -->|Python import| J3
+        SVC -->|Python import| J4
+        SVC -->|Python import| J5
+
+        J1 --> DB[(Supabase)]
+        J2 --> DB
+        J3 --> DB
+        J4 --> DB
+    end
+
+    subgraph CELERY["Celery (Rejected) - Requires Redis"]
+        CW[Worker Pool]
+        BRK[Redis / RabbitMQ Broker]
+        RES[Result Backend]
+        TASKS_T[Tasks Queue]
+    end
+
+    style APSCHED fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style CELERY fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
+```
+
 Run APScheduler's `AsyncIOScheduler` as a standalone Python service at `services/scheduler/main.py`. The scheduler reads job configurations from a YAML/JSON config file and executes agent functions directly via Python imports. Jobs are defined as async functions in `services/scheduler/jobs/`. The scheduler runs as a separate systemd service (or Windows Task Scheduler task) alongside the FastAPI application.
 
 ## Consequences

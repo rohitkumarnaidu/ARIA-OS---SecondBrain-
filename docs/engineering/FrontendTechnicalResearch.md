@@ -80,6 +80,68 @@ G. Upgrade Migration Checklist
 
 ---
 
+## Technical Research Decision Framework
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'background': '#0A0B0F',
+      'primaryColor': '#6366F1',
+      'secondaryColor': '#818CF8',
+      'tertiaryColor': '#13151A',
+      'primaryTextColor': '#F1F5F9',
+      'lineColor': '#6366F1',
+      'primaryBorderColor': '#6366F1',
+      'secondaryBorderColor': '#818CF8',
+      'tertiaryBorderColor': '#00FFA3'
+    }
+  }
+}%%
+graph LR
+    REQ["Research Question"] --> SCOPE["Scope Definition"]
+    SCOPE --> CRIT["Evaluation Criteria"]
+    CRIT --> EXPLORE["Explore Options"]
+
+    EXPLORE --> PERF["Performance<br/><i>Bundle size, TTI</i>"]
+    EXPLORE --> DX["Developer Experience<br/><i>API quality, docs</i>"]
+    EXPLORE --> ECO["Ecosystem<br/><i>Community, maturity</i>"]
+    EXPLORE --> SEC["Security<br/><i>Attack surface, audit</i>"]
+    EXPLORE --> COST["Cost<br/><i>License, infra, maint</i>"]
+    EXPLORE --> COMPAT["Compatibility<br/><i>Stack integration</i>"]
+
+    PERF --> DECIDE["Decision Matrix"]
+    DX --> DECIDE
+    ECO --> DECIDE
+    SEC --> DECIDE
+    COST --> DECIDE
+    COMPAT --> DECIDE
+
+    DECIDE --> POC["Proof of Concept"]
+    POC --> ADR["ADR Document"]
+    ADR --> IMPL["Implementation"]
+    IMPL --> REVIEW["Post-Implementation Review"]
+
+    REVIEW -.->|"Unexpected issues"| REQ
+
+    style REQ fill:#6366F1,color:#F1F5F9
+    style SCOPE fill:#818CF8,color:#F1F5F9
+    style CRIT fill:#6366F1,color:#F1F5F9
+    style EXPLORE fill:#13151A,color:#F1F5F9,stroke:#6366F1
+    style PERF fill:#13151A,color:#94A3B8,stroke:#334155
+    style DX fill:#13151A,color:#94A3B8,stroke:#334155
+    style ECO fill:#13151A,color:#94A3B8,stroke:#334155
+    style SEC fill:#13151A,color:#94A3B8,stroke:#334155
+    style COST fill:#13151A,color:#94A3B8,stroke:#334155
+    style COMPAT fill:#13151A,color:#94A3B8,stroke:#334155
+    style DECIDE fill:#818CF8,color:#F1F5F9
+    style POC fill:#6366F1,color:#F1F5F9
+    style ADR fill:#00FFA3,color:#0A0B0F
+    style IMPL fill:#818CF8,color:#F1F5F9
+    style REVIEW fill:#6366F1,color:#F1F5F9
+```
+
 ## Part I — Foundation & Stack
 
 ---

@@ -14,6 +14,94 @@
 
 ---
 
+### Architecture Diagram — Search Query Pipeline
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+flowchart LR
+    Q["User Query"] --> Parse["Query Parser<br/>Tokenize · Normalize"]
+    Parse --> Strategy["Strategy Router<br/>FTS vs Semantic vs Hybrid"]
+    Strategy --> FTS["PostgreSQL FTS<br/>tsvector · tsquery"]
+    Strategy --> Embed["Embedding Service<br/>Ollama nomic-embed-text"]
+    Strategy --> Hybrid["Hybrid Fuser<br/>RRF · Weighted Score"]
+    FTS --> Rank["Ranking Engine<br/>Relevance · Recency · User Signals"]
+    Embed --> Rank
+    Hybrid --> Rank
+    Rank --> Filter["Post-Filter<br/>Module · Date · Status"]
+    Filter --> Response["Result Response<br/>Ranked · Paginated"]
+```
+
+### Architecture Diagram — Search System Components
+
+```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#6366F1',
+      'primaryTextColor': '#F1F5F9',
+      'primaryBorderColor': '#6366F1',
+      'lineColor': '#818CF8',
+      'secondaryColor': '#13151A',
+      'tertiaryColor': '#0A0B0F',
+      'clusterBkg': '#0A0B0F',
+      'clusterBorder': '#334155',
+      'nodeBorder': '#6366F1',
+      'nodeTextColor': '#F1F5F9',
+      'edgeLabelBackground': '#13151A',
+      'fontFamily': 'DM Sans',
+      'titleColor': '#F1F5F9'
+    }
+  }
+}%%
+graph TD
+    subgraph Frontend["Frontend Components"]
+        SearchBar["Search Bar<br/>Unified Entry Point"]
+        SearchResults["Search Results UI<br/>Module Cards · Filters"]
+    end
+    subgraph API["Backend API"]
+        SearchEndpoint["/api/v1/search<br/>POST Endpoint"]
+        QueryService["Query Service<br/>Routing · Fusion"]
+    end
+    subgraph Index["Index Layer"]
+        FTSIndex["FTS Index<br/>tsvector on title + content"]
+        PGVectorIndex["pgvector Index<br/>IVFFlat · Cosine"]
+        MaterializedView["Materialized View<br/>unified_search_index"]
+    end
+    subgraph Infra["Infrastructure"]
+        Supabase["Supabase PostgreSQL<br/>FTS + pgvector"]
+        IndexUpdater["Index Updater<br/>Triggers · Cron Rebuild"]
+    end
+    SearchBar --> SearchEndpoint
+    SearchEndpoint --> QueryService
+    QueryService --> FTSIndex
+    QueryService --> PGVectorIndex
+    FTSIndex --> Supabase
+    PGVectorIndex --> Supabase
+    IndexUpdater --> Supabase
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose
