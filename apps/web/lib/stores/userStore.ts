@@ -10,8 +10,8 @@ export interface User {
   year?: number
   skills?: string[]
   bio?: string
-  daily_routine?: any
-  opportunity_preferences?: any
+  daily_routine?: Record<string, unknown>
+  opportunity_preferences?: Record<string, unknown>
 }
 
 interface UserStore {
@@ -39,8 +39,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
       })
       if (error) throw error
       set({ loading: false })
-    } catch (error: any) {
-      set({ error: error.message, loading: false })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Something went wrong'
+      set({ error: message, loading: false })
     }
   },
 
@@ -50,8 +51,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
       const { error } = await supabase.auth.signOut()
       if (error) throw error
       set({ user: null, loading: false })
-    } catch (error: any) {
-      set({ error: error.message, loading: false })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Something went wrong'
+      set({ error: message, loading: false })
     }
   },
 
@@ -70,8 +72,9 @@ export const useUserStore = create<UserStore>((set, get) => ({
       } else {
         set({ user: null, loading: false })
       }
-    } catch (error: any) {
-      set({ error: error.message, loading: false })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Something went wrong'
+      set({ error: message, loading: false })
     }
   },
 }))
