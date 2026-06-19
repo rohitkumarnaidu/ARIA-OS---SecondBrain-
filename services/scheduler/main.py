@@ -1,5 +1,9 @@
-﻿import sys
+﻿import json
+import sys
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "packages"))
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -11,7 +15,7 @@ from crons.habit_checker import run_habit_checker
 from crons.missed_task_checker import run_missed_task_checker
 from crons.sleep_reminder import run_sleep_reminder
 from crons.course_nudge import run_course_nudges
-
+from shared.utils.logger import logger
 
 scheduler = AsyncIOScheduler()
 
@@ -73,24 +77,49 @@ def setup_cron_jobs():
         replace_existing=True,
     )
 
-    print("Cron jobs scheduled:")
-    print("  - Daily Briefing: 7 AM daily")
-    print("  - Opportunity Radar: 6 AM daily")
-    print("  - Weekly Review: Sunday 8 PM")
-    print("  - Habit Checker: 8 PM daily")
-    print("  - Missed Task Checker: Midnight daily")
-    print("  - Sleep Reminder: 10:30 PM daily")
-    print("  - Course Progress Nudge: 6 PM daily")
+    logger.info("Cron jobs scheduled")
+    logger.info("  - Daily Briefing: 7 AM daily")
+    logger.info("  - Opportunity Radar: 6 AM daily")
+    logger.info("  - Weekly Review: Sunday 8 PM")
+    logger.info("  - Habit Checker: 8 PM daily")
+    logger.info("  - Missed Task Checker: Midnight daily")
+    logger.info("  - Sleep Reminder: 10:30 PM daily")
+    logger.info("  - Course Progress Nudge: 6 PM daily")
+
+
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "healthy", "service": "scheduler", "jobs": len(scheduler.get_jobs())}).encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def log_message(self, format, *args):
+        pass
+
+
+def start_health_server():
+    server = HTTPServer(("0.0.0.0", 8001), HealthHandler)
+    server.serve_forever()
+
+
+async def main():
+    setup_cron_jobs()
+    threading.Thread(target=start_health_server, daemon=True).start()
+    scheduler.start()
+    logger.info("Scheduler started")
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Scheduler stopped")
 
 
 if __name__ == "__main__":
-    setup_cron_jobs()
-    scheduler.start()
-    print("Scheduler started. Press Ctrl+C to exit.")
-
     import asyncio
 
-    try:
-        asyncio.get_event_loop().run_forever()
-    except (KeyboardInterrupt, SystemExit):
-        print("Scheduler stopped.")
+    asyncio.run(main())
