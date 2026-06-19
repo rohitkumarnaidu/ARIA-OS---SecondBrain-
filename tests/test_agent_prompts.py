@@ -76,8 +76,7 @@ class TestSystemPrompts:
     def test_guardrails_prompt(self, loader):
         prompt = loader.get_system("guardrails")
         assert prompt is not None
-        assert any(word in prompt.body.lower()
-                   for word in ["guardrail", "safety", "constraint", "limit", "boundary"])
+        assert any(word in prompt.body.lower() for word in ["guardrail", "safety", "constraint", "limit", "boundary"])
 
 
 class TestFileSize:

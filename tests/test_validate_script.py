@@ -1,8 +1,6 @@
 """Tests for the prompt validation script itself."""
 
 import pytest
-import tempfile
-import os
 from pathlib import Path
 
 
@@ -52,7 +50,8 @@ temperature: 0.5
 
     def test_validates_correct_prompt(self, tmp_path):
         fp = self._write_prompt(tmp_path, "test_agent.md", self.SAMPLE_VALID_PROMPT)
-        import yaml, re
+        import yaml
+        import re
 
         content = fp.read_text(encoding="utf-8")
         match = re.match(r"^---\s*\n(.*?\n)---", content, re.DOTALL)
@@ -67,7 +66,8 @@ temperature: 0.5
 
     def test_detects_missing_fields(self, tmp_path):
         fp = self._write_prompt(tmp_path, "bad_agent.md", self.SAMPLE_MISSING_FIELDS)
-        import yaml, re
+        import yaml
+        import re
 
         content = fp.read_text(encoding="utf-8")
         match = re.match(r"^---\s*\n(.*?\n)---", content, re.DOTALL)
@@ -85,15 +85,15 @@ temperature: 0.5
 
     def test_detects_invalid_status(self, tmp_path):
         fp = self._write_prompt(tmp_path, "bad_status.md", self.SAMPLE_INVALID_STATUS)
-        import yaml, re
+        import yaml
+        import re
 
         content = fp.read_text(encoding="utf-8")
         match = re.match(r"^---\s*\n(.*?\n)---", content, re.DOTALL)
         assert match is not None
 
         fm = yaml.safe_load(match.group(1))
-        assert fm.get("status") not in ("active", "draft", "deprecated"), \
-            "Status should be invalid"
+        assert fm.get("status") not in ("active", "draft", "deprecated"), "Status should be invalid"
 
     def test_detects_missing_frontmatter(self, tmp_path):
         fp = self._write_prompt(tmp_path, "no_fm.md", self.SAMPLE_NO_FRONTMATTER)
@@ -104,26 +104,24 @@ temperature: 0.5
         assert match is None, "Should NOT have frontmatter"
 
     def test_max_tokens_must_be_numeric(self, tmp_path):
-        bad = self.SAMPLE_VALID_PROMPT.replace(
-            "max_tokens: 4096", 'max_tokens: "4096"'
-        )
+        bad = self.SAMPLE_VALID_PROMPT.replace("max_tokens: 4096", 'max_tokens: "4096"')
         fp = self._write_prompt(tmp_path, "string_tokens.md", bad)
-        import yaml, re
+        import yaml
+        import re
 
         content = fp.read_text(encoding="utf-8")
         match = re.match(r"^---\s*\n(.*?\n)---", content, re.DOTALL)
         assert match is not None
 
         fm = yaml.safe_load(match.group(1))
-        assert not isinstance(fm.get("max_tokens"), (int, float)), \
-            "String should not pass numeric check"
+        assert not isinstance(fm.get("max_tokens"), (int, float)), "String should not pass numeric check"
 
     def test_skips_readme_files(self, tmp_path):
         readme = tmp_path / "prompts" / "README.md"
         readme.parent.mkdir(parents=True, exist_ok=True)
         readme.write_text("README content", encoding="utf-8")
 
-        agent = self._write_prompt(tmp_path, "test.md", self.SAMPLE_VALID_PROMPT)
+        self._write_prompt(tmp_path, "test.md", self.SAMPLE_VALID_PROMPT)
 
         md_files = sorted(tmp_path.rglob("*.md"))
         md_names = [f.name for f in md_files]

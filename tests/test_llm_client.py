@@ -1,8 +1,7 @@
 """Tests for LLM Client — retry logic, fallback, circuit breaker, JSON parsing."""
 
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-import json
+from unittest.mock import AsyncMock, patch
 
 
 @pytest.mark.agent
@@ -32,18 +31,14 @@ class TestLLMClient:
 
     @pytest.mark.asyncio
     async def test_generate_json_fallback_to_extract_json(self, mock_client):
-        mock_client.generate = AsyncMock(
-            return_value='Some text before ```json\n{"found": true}\n``` after'
-        )
+        mock_client.generate = AsyncMock(return_value='Some text before ```json\n{"found": true}\n``` after')
         result = await mock_client.generate_json("test prompt")
         assert "found" in result or "raw" in result
         assert result.get("found") is True or "found" in str(result)
 
     @pytest.mark.asyncio
     async def test_generate_json_returns_raw_on_failure(self, mock_client):
-        mock_client.generate = AsyncMock(
-            return_value="Not JSON at all just plain text"
-        )
+        mock_client.generate = AsyncMock(return_value="Not JSON at all just plain text")
         result = await mock_client.generate_json("test prompt")
         assert "raw" in result
         assert result.get("parse_error") is True
