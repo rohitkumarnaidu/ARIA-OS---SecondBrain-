@@ -66,6 +66,44 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    subgraph Layer_1["🎨 Frontend Layer"]
+        L1["Next.js 14 SPA"]
+        L1A["Zustand State<br/>(ADR-005)"]
+        L1B["PWA Service Worker<br/>(ADR-007)"]
+    end
+    subgraph Layer_2["⚡ API Gateway"]
+        L2["FastAPI Backend"]
+        L2A["13 domain routers<br/>/api/v1/*"]
+        L2B["Auth + Rate Limit<br/>+ Request ID"]
+    end
+    subgraph Layer_3["🧠 AI Agent Layer"]
+        L3["ARIA Orchestrator"]
+        L3A["17 agents<br/>(10 live + 7 design)"]
+        L3B["Ollama → Claude<br/>→ Algorithmic"]
+    end
+    subgraph Layer_4["🗄️ Data Layer"]
+        L4["Supabase PostgreSQL"]
+        L4A["18 tables, RLS"]
+        L4B["Event Bus<br/>asyncio.Queue"]
+    end
+    subgraph Layer_5["⏰ Scheduler Layer"]
+        L5["APScheduler Worker"]
+        L5A["7 cron jobs"]
+        L5B["Briefing, Radar,<br/>Review, Nudges"]
+    end
+    L1 --> L2 --> L3 --> L4
+    L5 --> L4
+    L5 --> L2
+    style L1 fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style L3 fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+    style L4 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Executive Architecture Summary
 
 Second Brain OS (ARIA) is a personal AI productivity system architected as a **domain-oriented monolith** with 13 bounded domains. The system follows a **strict layered architecture** where cross-domain communication flows exclusively through an event bus, direct domain-to-domain function calls are prohibited, and every domain owns its data and exposes it only through well-defined interfaces.

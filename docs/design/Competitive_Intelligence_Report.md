@@ -45,6 +45,27 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    A["🔍 Collect"] --> B["📊 Analyze"]
+    B --> C["🗺️ Map"]
+    C --> D["📋 Strategic Recommendations"]
+    A --> A1["25 Products<br/>across 6 categories"]
+    A1 --> B1["Reverse-engineer<br/>UX + AI patterns"]
+    B1 --> C1["Competitive Advantage<br/>Matrix (Section 12)"]
+    C1 --> D1["Feature Gap<br/>Matrix (Section 13)"]
+    D1 --> D2["Innovation Opportunity<br/>Matrix (Section 15)"]
+    D2 --> D3["Execution<br/>Roadmap (Section 17)"]
+    style A fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style B fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style C fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style D fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style D3 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose

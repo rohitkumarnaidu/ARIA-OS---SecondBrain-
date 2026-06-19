@@ -40,6 +40,145 @@ This document defines every screen-to-screen transition, screen state machine, m
 
 ---
 
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+stateDiagram-v2
+  direction LR
+  [*] --> Landing: First Visit
+  Landing --> Login: Click "Get Started"
+  Login --> Dashboard: OAuth Success
+  Landing --> Dashboard: Already Authenticated
+
+  state Dashboard {
+    [*] --> Loading
+    Loading --> Populated: Data Fetched
+    Loading --> Empty: No Data
+    Loading --> Error: Fetch Failed
+    Error --> Loading: Retry
+    Empty --> Populated: User Creates Data
+    Populated --> Offline: Connection Lost
+    Offline --> Populated: Connection Restored
+  }
+
+  Dashboard --> Tasks: Nav Click
+  Dashboard --> Courses: Nav Click
+  Dashboard --> Goals: Nav Click
+  Dashboard --> Habits: Nav Click
+  Dashboard --> Sleep: Nav Click
+  Dashboard --> Time: Nav Click
+  Dashboard --> Income: Nav Click
+  Dashboard --> Projects: Nav Click
+  Dashboard --> Ideas: Nav Click
+  Dashboard --> Resources: Nav Click
+  Dashboard --> Opportunities: Nav Click
+  Dashboard --> Chat: Nav Click
+  Dashboard --> Automation: Nav Click
+
+  Tasks --> Dashboard: Nav/Back
+  Courses --> Dashboard: Nav/Back
+  Goals --> Dashboard: Nav/Back
+  Habits --> Dashboard: Nav/Back
+  Sleep --> Dashboard: Nav/Back
+  Time --> Dashboard: Nav/Back
+  Income --> Dashboard: Nav/Back
+  Projects --> Dashboard: Nav/Back
+  Ideas --> Dashboard: Nav/Back
+  Resources --> Dashboard: Nav/Back
+  Opportunities --> Dashboard: Nav/Back
+  Chat --> Dashboard: Nav/Back
+  Automation --> Dashboard: Nav/Back
+
+  state Offline {
+    [*] --> CachedMode
+    CachedMode --> [*]
+  }
+
+  Dashboard --> LoggedOut: Session Expired
+  LoggedOut --> Login: Re-authenticate
+```
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph TD
+  subgraph Auth["🔐 Auth Boundary"]
+    L[/Landing Page\] --> LG[/Login - OAuth\]
+    LG --> DASH[/Dashboard\]
+    L --> DASH
+  end
+
+  subgraph Core["📊 Core Modules"]
+    DASH --> TASKS[/Tasks\]
+    DASH --> COURSES[/Courses\]
+    DASH --> GOALS[/Goals\]
+    DASH --> HABITS[/Habits\]
+    DASH --> SLEEP[/Sleep\]
+    DASH --> TIME[/Time Tracking\]
+  end
+
+  subgraph Growth["📈 Growth Modules"]
+    DASH --> INCOME[/Income\]
+    DASH --> PROJECTS[/Projects\]
+    DASH --> IDEAS[/Ideas\]
+    DASH --> RESOURCES[/Resources\]
+    DASH --> OPPORTUNITIES[/Opportunities\]
+  end
+
+  subgraph Intelligence["🤖 Intelligence Modules"]
+    DASH --> CHAT[/Chat - ARIA\]
+    DASH --> AUTO[/Automation\]
+  end
+
+  subgraph Overlays["⬆️ System Overlays"]
+    CP[Command Palette<br/>Cmd+K] --> TASKS
+    CP --> COURSES
+    CP --> CHAT
+    QC[Quick Create ⊕] --> TASKS
+    QC --> IDEAS
+    NOTIF[Notifications 🔔] --> TASKS
+    NOTIF --> DASH
+  end
+
+  LG -.->|Session Expires| LG
+
+  style Core fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Growth fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Intelligence fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Auth fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style Overlays fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+---
+
 ## 2. Navigation Topology
 
 ### 2.1 Complete Navigation Graph

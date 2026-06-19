@@ -73,6 +73,35 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    subgraph Input["Discovery Findings"]
+        F1["Product, UX &<br/>Technical Risks"]
+        F2["Design & Innovation<br/>Opportunities"]
+        F3["Competitive Gaps"]
+    end
+    subgraph Matrix["Prioritization Matrix"]
+        M1["Impact<br/>(User + Business)"]
+        M2["Effort<br/>(Engineering)"]
+        M3["Risk<br/>(Adoption + Tech)"]
+    end
+    subgraph Output["Strategic Recommendations"]
+        O1["🔴 Critical (P0)<br/>Ship-blocking"]
+        O2["🟡 High (P1)<br/>Next sprint"]
+        O3["🟢 Medium (P2)<br/>Backlog"]
+    end
+    F1 & F2 & F3 --> M1 & M2 & M3
+    M1 & M2 & M3 --> O1 & O2 & O3
+    style O1 fill:#EF4444,stroke:#EF4444,color:#F1F5F9
+    style O2 fill:#F59E0B,stroke:#F59E0B,color:#0A0B0F
+    style O3 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style M1 fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style M2 fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
 > **Note**: Sections 1-24 (pages 1-42) remain as defined in v1.0.0 (SB-DISCOVERY-001). This v2.0.0 document extends the original with 11 new enterprise-depth sections (25-35) and 5 expanded strategic sections (36-50). The total represents a complete enterprise-level discovery document.
 
 ---

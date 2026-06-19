@@ -183,8 +183,16 @@ Every screen shows only as much information as the user needs at that moment. Na
 
 Every module follows an identical interaction pattern:
 
-```
-List/Grid View → Detail View → Actions Palette → Related Items
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    LV[List/Grid View] --> DV[Detail View]
+    DV --> AP[Actions Palette]
+    AP --> RI[Related Items]
+    style LV fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DV fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style AP fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RI fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 This means a user who knows how to use Tasks intuitively knows how to use Courses, Projects, Resources, and all other modules. The content differs; the interaction model does not.
@@ -333,28 +341,31 @@ Second Brain OS adopts a **hybrid navigational model** combining the best patter
 
 ### 4.2 Four Navigation Layers
 
-```
-Layer 1: GLOBAL NAVIGATION (always visible)
-  ├── Sidebar (modules + groups)
-  ├── Top navbar (search, notifications, user, quick capture)
-  └── Keyboard shortcuts (R+letter, Cmd+K)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    L1[Layer 1: GLOBAL NAVIGATION<br/>always visible] --> L1_S[Sidebar<br/>modules + groups]
+    L1 --> L1_N[Top navbar<br/>search, notifications, user, quick capture]
+    L1 --> L1_K[Keyboard shortcuts<br/>R+letter, Cmd+K]
+    
+    L2[Layer 2: MODULE NAVIGATION<br/>visible within module] --> L2_T[Module tabs<br/>List - Kanban - Calendar]
+    L2 --> L2_S[Module search<br/>Cmd+F within module]
+    L2 --> L2_F[Filter bar<br/>status, priority, date, tags]
+    
+    L3[Layer 3: CONTEXT NAVIGATION<br/>visible on detail/item view] --> L3_B[Breadcrumbs<br/>Dashboard > Tasks > Title]
+    L3 --> L3_R[Related items sidebar<br/>linked goals, projects, resources]
+    L3 --> L3_A[Action palette<br/>available actions for this item]
+    L3 --> L3_D[Deep links<br/>links from other modules]
+    
+    L4[Layer 4: COMMAND NAVIGATION<br/>invoked on demand] --> L4_C[Command palette<br/>Cmd+K universal]
+    L4 --> L4_Q[Quick actions<br/>/commands within module]
+    L4 --> L4_V[Voice commands<br/>microphone button]
+    L4 --> L4_N[Notification deep links<br/>click notification → target]
 
-Layer 2: MODULE NAVIGATION (visible within module)
-  ├── Module tabs (List | Kanban | Calendar in Tasks)
-  ├── Module search (Cmd+F within module)
-  └── Filter bar (status, priority, date, tags)
-
-Layer 3: CONTEXT NAVIGATION (visible on detail/item view)
-  ├── Breadcrumbs (Dashboard > Tasks > Task Title)
-  ├── Related items sidebar (linked goals, projects, resources)
-  ├── Action palette (available actions for this item)
-  └── Deep links (links to this item from other modules)
-
-Layer 4: COMMAND NAVIGATION (invoked on demand)
-  ├── Command palette (Cmd+K — universal)
-  ├── Quick actions (/commands within module)
-  ├── Voice commands (microphone button on all pages)
-  └── Notification deep links (click notification → target)
+    style L1 fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style L2 fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9,stroke-width:2px
+    style L3 fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9,stroke-width:2px
+    style L4 fill:#0A0B0F,stroke:#F59E0B,color:#F1F5F9,stroke-width:2px
 ```
 
 ### 4.3 Navigation Gestures
@@ -388,47 +399,45 @@ Layer 4: COMMAND NAVIGATION (invoked on demand)
 
 #### Structure
 
-```
-┌─────────────────────────────────┐
-│  [Logo] Second Brain OS         │  ← 48px branding header
-├─────────────────────────────────┤
-│  🔍 Search (Cmd+K)              │  ← 40px search bar
-├─────────────────────────────────┤
-│  CORE                           │  ← Section label (uppercase, 11px)
-│  ◉  Dashboard          R+D      │
-│  ☐  Tasks              R+T      │
-│  💬  AI Chat            R+K     │
-├─────────────────────────────────┤
-│  LEARN                          │
-│  📚  Courses            R+C     │
-│  🎬  YouTube Vault      R+Y     │
-│  📖  Resources          R+L     │
-├─────────────────────────────────┤
-│  BUILD                          │
-│  🎯  Goals              R+G     │
-│  🗺️  Roadmap            R+M     │
-│  💡  Ideas              R+I     │
-│  📋  Projects           R+P     │
-├─────────────────────────────────┤
-│  EARN                           │
-│  🔭  Opportunities      R+O     │
-│  💰  Income             R+E     │
-├─────────────────────────────────┤
-│  WELL-BEING                     │
-│  🔄  Habits             R+H     │
-│  🌙  Sleep              R+S     │
-├─────────────────────────────────┤
-│  SYSTEM                         │
-│  ⏱   Time              R+N     │
-│  📊  Weekly Review      R+W     │
-│  📈  Analytics          R+A     │
-│  ⚡  Automation         R+V     │
-│  🌐  Browser Extension  R+B     │
-│  ⚙️  Settings           R+F     │
-├─────────────────────────────────┤
-│  [User avatar] User Name        │  ← User menu (40px)
-│       Free Plan                 │
-└─────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Logo[Logo: Second Brain OS] --> Search[🔍 Search Cmd+K]
+    Search --> Core[◉ CORE]
+    Core --> D[◉ Dashboard R+D]
+    Core --> T[☐ Tasks R+T]
+    Core --> AC[💬 AI Chat R+K]
+    Core --> Learn[📚 LEARN]
+    Learn --> C[📚 Courses R+C]
+    Learn --> Y[🎬 YouTube Vault R+Y]
+    Learn --> R[📖 Resources R+L]
+    Learn --> Build[🎯 BUILD]
+    Build --> G[🎯 Goals R+G]
+    Build --> RM[🗺️ Roadmap R+M]
+    Build --> I[💡 Ideas R+I]
+    Build --> P[📋 Projects R+P]
+    Build --> Earn[🔭 EARN]
+    Earn --> O[🔭 Opportunities R+O]
+    Earn --> IE[💰 Income R+E]
+    Earn --> WB[🔄 WELL-BEING]
+    WB --> H[🔄 Habits R+H]
+    WB --> S[🌙 Sleep R+S]
+    WB --> Sys[⏱ SYSTEM]
+    Sys --> Tk[⏱ Time R+N]
+    Sys --> WR[📊 Weekly Review R+W]
+    Sys --> An[📈 Analytics R+A]
+    Sys --> Au[⚡ Automation R+V]
+    Sys --> BE[🌐 Browser Extension R+B]
+    Sys --> Set[⚙️ Settings R+F]
+    Sys --> User[User Avatar · User Name · Free Plan]
+
+    style Logo fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style Core fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Learn fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Build fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Earn fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style WB fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Sys fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 #### Collapse Behavior
@@ -455,12 +464,22 @@ Layer 4: COMMAND NAVIGATION (invoked on demand)
 
 #### Structure
 
-```
-┌────────────────────────────────────────────────────────────────────────────┐
-│  [← Back] Module Name                      🔍  🔔  🎤  ➕  [Avatar]       │
-│                                            Search Bell Mic  Quick  User    │
-│  Subtitle / breadcrumb                                    Capture          │
-└────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph LR
+    subgraph TopNavbar[Top Navbar]
+        Back[← Back] --- Name[Module Name]
+        Name --- Search[🔍 Search]
+        Search --- Bell[🔔 Bell]
+        Bell --- Mic[🎤 Mic]
+        Mic --- Plus[➕ Quick Capture]
+        Plus --- Avatar[Avatar / User]
+    end
+    SubTitle[Subtitle / breadcrumb] --- TopNavbar
+
+    style TopNavbar fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Back fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    style Name fill:#0A0B0F,stroke:#334155,color:#F1F5F9
 ```
 
 #### Navbar Elements
@@ -478,20 +497,22 @@ Layer 4: COMMAND NAVIGATION (invoked on demand)
 
 #### Notification Center (Dropdown)
 
-```
-┌─────────────────────────────────────┐
-│  Notifications          Mark read    │  ← Header with actions
-├─────────────────────────────────────┤
-│  🔴 Today (3)                       │  ← Section header
-│  ├── Task overdue: "Submit report"  │
-│  ├── Goal milestone: 50% reached    │  ← Each: icon + text + time
-│  └── Opportunity: 92% match found   │
-│  🔴 Yesterday (5)                   │
-│  ├── ...                            │
-│  └── ...                            │
-├─────────────────────────────────────┤
-│  View all notifications →           │  ← Link to full notification center
-└─────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Header[Notifications · Mark read] --> Today[🔴 Today 3]
+    Today --> N1[Task overdue: Submit report]
+    Today --> N2[Goal milestone: 50% reached]
+    Today --> N3[Opportunity: 92% match found]
+    Today --> Yesterday[🔴 Yesterday 5]
+    Yesterday --> Y1[...]
+    Yesterday --> Y2[...]
+    Yesterday --> Footer[View all notifications →]
+
+    style Header fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Today fill:#1A1D24,stroke:#334155,color:#EF4444
+    style Yesterday fill:#1A1D24,stroke:#334155,color:#EF4444
+    style Footer fill:#13151A,stroke:#6366F1,color:#818CF8
 ```
 
 ### 5.3 Tertiary Navigation (Module-Level)
@@ -544,25 +565,32 @@ Contextual navigation appears when viewing a specific item's detail page.
 
 #### Components
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│  [← Back to Tasks]  Task: "Complete project proposal"          │
-│  Breadcrumb: Dashboard > Tasks > Complete project proposal     │
-├────────────────────────────────────────────────────────────────┤
-│  Main Content Area        │  Related Items Sidebar (280px)     │
-│                           │                                    │
-│  Title                    │  🔗 Linked to:                     │
-│  Status: In Progress      │  ├── Goal: Q2 Career Growth        │
-│  Priority: High           │  ├── Project: Portfolio Site       │
-│  Due: Jun 15, 2026        │  └── Course: Web Dev Bootcamp      │
-│  Description: ...         │                                    │
-│                           │  📎 Resources:                     │
-│  Activity Feed            │  ├── Design guidelines              │
-│  ────                     │  └── API docs                      │
-│  Jun 11 - Created         │                                    │
-│  Jun 10 - Priority set    │  💡 Related ideas:                 │
-│                           │  └── "Rewrite backend in Rust"     │
-└────────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph LR
+    subgraph Main[Main Content Area]
+        Title[Complete project proposal]
+        Status[Status: In Progress]
+        Prio[Priority: High]
+        Due[Due: Jun 15, 2026]
+        Desc[Description...]
+        Feed[Activity Feed<br/>Jun 11 - Created<br/>Jun 10 - Priority set]
+    end
+    subgraph Side[Related Items Sidebar · 280px]
+        Linked[🔗 Linked to]
+        G[Goal: Q2 Career Growth]
+        PR[Project: Portfolio Site]
+        C[Course: Web Dev Bootcamp]
+        Res[📎 Resources]
+        R1[Design guidelines]
+        R2[API docs]
+        Ideas[💡 Related ideas]
+        I1[Rewrite backend in Rust]
+    end
+    Main --- Side
+
+    style Main fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Side fill:#1A1D24,stroke:#334155,color:#F1F5F9
 ```
 
 #### Contextual Link Types
@@ -649,21 +677,23 @@ The `+` button in the top navbar always creates a new item. The type depends on 
 
 #### Quick Capture Modal
 
-```
-┌─────────────────────────────────────────────┐
-│  Quick Capture                          Esc  │
-├─────────────────────────────────────────────┤
-│  [What's on your mind?]                      │  ← Free-text input (auto-detect)
-│                                              │
-│  Detected: Task    Course    Idea    Note     │  ← AI classification chips
-│                                              │
-│  Title: _________________________________    │
-│  Module: [Tasks ▼]                           │
-│  Priority: [Medium ▼]                        │
-│  Tags: [input]    + Add tag                  │
-│                                              │
-│  [Cancel]                    [Create →]       │
-└─────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Header[Quick Capture · Esc] --> Input[What's on your mind?]
+    Input --> AI[AI Classification]
+    AI --> Task[Task]
+    AI --> Course[Course]
+    AI --> Idea[Idea]
+    AI --> Note[Note]
+    AI --> Form[Title: ________<br/>Module: Tasks ▼<br/>Priority: Medium ▼<br/>Tags: input + Add tag]
+    Form --> Actions[Cancel · Create →]
+
+    style Header fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style Input fill:#13151A,stroke:#6366F1,color:#94A3B8
+    style AI fill:#13151A,stroke:#334155,color:#F1F5F9
+    style Form fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Actions fill:#13151A,stroke:#334155,color:#F1F5F9
 ```
 
 #### Two-Key Routing (`R+letter`)
@@ -703,41 +733,30 @@ The complete Two-Key routing table:
 
 The Dashboard is organized into **8 zones** arranged in a responsive bento-grid layout:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  ZONE 1: ARIA GREETING + STATUS                                     │
-│  "Good morning. You have 4 tasks today. 1 is overdue."              │
-├──────────┬──────────┬──────────┬──────────┬──────────┬──────────────┤
-│  ZONE 2: KPI STRIP (6 metrics with trend arrows)                   │
-│  Tasks▼5% │ Streak🔥3d │ Study📚45m │ Goals🎯80%│ Inc💰$500 │ Opps🔭3  │
-├─────────────────────────────────────────────────────────────────────┤
-│  ZONE 3: TODAY'S FOCUS              │ ZONE 4: COURSE TARGET         │
-│  ┌────────────────────────────────┐ │ ┌──────────────────────────┐  │
-│  │ Priority task 1          ☐✓    │ │ │ DSA: 45/60 min today     │  │
-│  │ Priority task 2          ☐✓    │ │ │ ████████░░░ 75%          │  │
-│  │ Priority task 3          ☐✓    │ │ │ Ahead by 2 sessions      │  │
-│  │ + Add task               (+)   │ │ │ Next: Graph algorithms   │  │
-│  └────────────────────────────────┘ │ └──────────────────────────┘  │
-├─────────────────────────────────────┴──────────────────────────────┤
-│  ZONE 5: TOMORROW PREVIEW                                           │
-│  1 deadline · 2 tasks previewed · Weather/calendar note             │
-├──────────────────────────┬──────────────────────────────────────────┤
-│  ZONE 6: ACTIVITY        │ ZONE 7: OPPORTUNITIES                   │
-│  HEATMAP                 │ ┌────────────────────────────────────┐   │
-│  ┌─────────────────────┐ │ │ Senior Dev @ Google    92% match  │   │
-│  │ GitHub-style grid    │ │ │ Hackathon: Buildathon 85% match  │   │
-│  │ 6-month view         │ │ │ Scholarship: XYZ      78% match  │   │
-│  │ color by intensity   │ │ └────────────────────────────────────┘  │
-│  └─────────────────────┘ │                                          │
-├──────────────────────────┴──────────────────────────────────────────┤
-│  ZONE 8: RECENT ACTIVITY                                             │
-│  ┌────────────────────────────────────────────────────────────────┐ │
-│  │ • 2h ago — Completed task: "Write API docs"                    │ │
-│  │ • 3h ago — Added resource: "React Design Patterns"             │ │
-│  │ • 5h ago — Logged study: "DSA — 45 min"                       │ │
-│  │ • Yesterday — New idea: "Rewrite backend in Rust"              │ │
-│  └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Z1[ZONE 1: ARIA GREETING + STATUS<br/>Good morning. You have 4 tasks today. 1 is overdue.] --> Z2[ZONE 2: KPI STRIP<br/>Tasks ▼5% · Streak 🔥3d · Study 📚45m · Goals 🎯80% · Inc 💰$500 · Opps 🔭3]
+    Z2 --> Z3[ZONE 3: TODAY'S FOCUS]
+    Z2 --> Z4[ZONE 4: COURSE TARGET]
+    Z3 --> T1[Priority task 1 ☐✓]
+    Z3 --> T2[Priority task 2 ☐✓]
+    Z3 --> T3[Priority task 3 ☐✓]
+    Z3 --> TA[+ Add task]
+    Z4 --> CT[DSA: 45/60 min today<br/>████████░░░ 75%<br/>Ahead by 2 sessions<br/>Next: Graph algorithms]
+    Z3 --> Z5[ZONE 5: TOMORROW PREVIEW<br/>1 deadline · 2 tasks previewed]
+    Z5 --> Z6[ZONE 6: ACTIVITY HEATMAP<br/>GitHub-style grid · 6-month view]
+    Z5 --> Z7[ZONE 7: OPPORTUNITIES<br/>Senior Dev @ Google 92% · Hackathon 85% · Scholarship 78%]
+    Z6 --> Z8[ZONE 8: RECENT ACTIVITY<br/>2h ago Completed task · 3h ago Added resource<br/>5h ago Logged study · Yesterday New idea]
+
+    style Z1 fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style Z2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Z3 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Z4 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Z5 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Z6 fill:#13151A,stroke:#334155,color:#F1F5F9
+    style Z7 fill:#13151A,stroke:#334155,color:#F1F5F9
+    style Z8 fill:#13151A,stroke:#334155,color:#F1F5F9
 ```
 
 #### Zone Specifications
@@ -877,40 +896,29 @@ The system provides **7 search scopes**, each with specific intent and behavior:
 
 #### Search Modal Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  🔍  Search tasks, courses, projects...           Esc  ⌘K   │
-├─────────────────────────────────────────────────────────────┤
-│  RECENT (5)                                                  │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ 📋 Complete proposal — Tasks            2h ago          ││
-│  │ 📚 Web Dev Bootcamp — Courses           yesterday       ││
-│  │ 🎯 Q2 Career Growth — Goals             yesterday       ││
-│  │ 💡 Rewrite backend — Ideas              2d ago          ││
-│  │ 📖 React Patterns — Resources           3d ago          ││
-│  └─────────────────────────────────────────────────────────┘│
-│                                                              │
-│  RESULTS (grouped by module)                                 │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ 📋 TASKS (3)                                            ││
-│  │   Complete proposal                High · Due Jun 15    ││
-│  │   Complete API documentation       Medium · Due Jun 20  ││
-│  │   Complete user testing            Low · Due Jun 25     ││
-│  │ 📚 COURSES (2)                                           ││
-│  │   Web Dev Bootcamp               75% · DSA module       ││
-│  │   Complete React Masterclass      30% · Hooks module    ││
-│  │ 🎯 GOALS (1)                                             ││
-│  │   Q2 Career Growth               80% · On track         ││
-│  └─────────────────────────────────────────────────────────┘│
-│                                                              │
-│  ACTIONS (/ commands)                                        │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ /new task         Create a new task                     ││
-│  │ /new course       Create a new course                   ││
-│  │ /briefing         Generate daily briefing               ││
-│  │ /review           Generate weekly review                ││
-│  └─────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Search[🔍 Search tasks, courses, projects... · Esc ⌘K] --> Recent[RECENT]
+    Recent --> R1[📋 Complete proposal — Tasks · 2h ago]
+    Recent --> R2[📚 Web Dev Bootcamp — Courses · yesterday]
+    Recent --> R3[🎯 Q2 Career Growth — Goals · yesterday]
+    Recent --> R4[💡 Rewrite backend — Ideas · 2d ago]
+    Recent --> R5[📖 React Patterns — Resources · 3d ago]
+    Search --> Results[RESULTS grouped by module]
+    Results --> T3[📋 TASKS 3<br/>Complete proposal · High · Due Jun 15<br/>Complete API docs · Medium · Due Jun 20<br/>Complete user testing · Low · Due Jun 25]
+    Results --> C2[📚 COURSES 2<br/>Web Dev Bootcamp · 75% · DSA module<br/>React Masterclass · 30% · Hooks module]
+    Results --> G1[🎯 GOALS 1<br/>Q2 Career Growth · 80% · On track]
+    Search --> Actions[ACTIONS /commands]
+    Actions --> A1[/new task · Create a new task]
+    Actions --> A2[/new course · Create a new course]
+    Actions --> A3[/briefing · Generate daily briefing]
+    Actions --> A4[/review · Generate weekly review]
+
+    style Search fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style Recent fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Results fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Actions fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 #### Search Input Behavior
@@ -948,11 +956,20 @@ The system provides **7 search scopes**, each with specific intent and behavior:
 Semantic search uses embedding similarity (pgvector) to find conceptually related content even when keywords don't match exactly.
 
 **Query flow:**
-```
-User query → Embedding model (all-MiniLM-L6-v2) → 384-dim vector
-    → Cosine similarity search across search.documents.embedding
-    → Ranked results (threshold > 0.7 similarity)
-    → Merge with FTS results via Reciprocal Rank Fusion
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    UQ[User query] --> EM[Embedding model<br/>all-MiniLM-L6-v2]
+    EM --> VEC[384-dim vector]
+    VEC --> CS[Cosine similarity search<br/>across search.documents.embedding]
+    CS --> RR[Ranked results<br/>threshold > 0.7 similarity]
+    RR --> RRF[Merge with FTS results<br/>via Reciprocal Rank Fusion]
+    style UQ fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style EM fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style VEC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style CS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RR fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RRF fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Typical use cases:**
@@ -966,31 +983,35 @@ User query → Embedding model (all-MiniLM-L6-v2) → 384-dim vector
 
 AI Search augments standard search with LLM-powered understanding:
 
-```
-User query → Intent classifier → Determine if query needs AI augmentation
-    │
-    ├── [Standard query] → Forward to hybrid search
-    │
-    └── [Complex/ambiguous query] → Forward to LLM
-         → LLM parses intent, retrieves context via RAG
-         → Generates synthesized answer with citations
-         → Returns as "AI Answer" card above standard results
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    UQ[User query] --> IC[Intent classifier]
+    IC -->|Standard query| HS[Hybrid search<br/>FTS + Semantic]
+    IC -->|Complex/ambiguous query| LLM[Forward to LLM]
+    LLM --> RAG[LLM parses intent<br/>retrieves context via RAG]
+    RAG --> ANS[Generates synthesized answer<br/>with citations]
+    ANS --> AC[Returns as AI Answer card<br/>above standard results]
+    style UQ fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style IC fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style HS fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style LLM fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RAG fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ANS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style AC fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **AI Answer card format:**
-```
-┌─────────────────────────────────────────────────────────────┐
-│  🤖 AI Answer                                                │
-│  Based on your knowledge base, here's what I found:          │
-│                                                              │
-│  You have 4 tasks related to "design system":                │
-│  1. "Design system audit" — Tasks (due Jun 15)               │
-│  2. "Component library" — Project (active)                   │
-│  3. "Figma design tokens" — Resource (saved yesterday)       │
-│  4. "Design system presentation" — Idea (in brainstorming)   │
-│                                                              │
-│  [View all 4 results]  [Ask follow-up]                       │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    AI[🤖 AI Answer<br/>Based on your knowledge base, here's what I found:] --> R1["1. Design system audit — Tasks (due Jun 15)"]
+    AI --> R2["2. Component library — Project (active)"]
+    AI --> R3["3. Figma design tokens — Resource (saved yesterday)"]
+    AI --> R4["4. Design system presentation — Idea (in brainstorming)"]
+    AI --> FA[View all 4 results · Ask follow-up]
+    style AI fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style FA fill:#1A1D24,stroke:#6366F1,color:#818CF8
 ```
 
 ### 7.5 Command Search
@@ -1059,13 +1080,16 @@ Priority order:
 
 #### Result Card Format
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  [Module Icon] [Title]                                       │
-│  [Snippet with highlighted match]...                         │
-│  [Tags] · [Status] · [Date] · [Priority]                     │
-│  [Actions: Open · Edit · Copy link · Share]                  │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph LR
+    subgraph ResultCard[Search Result Card]
+        Icon[Module Icon] --- Title[Title]
+        Title --- Snippet[Snippet with highlighted match...]
+        Snippet --- Meta[Tags · Status · Date · Priority]
+        Meta --- Actions[Open · Edit · Copy link · Share]
+    end
+    style ResultCard fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 7.10 Search Ranking Strategy
@@ -1316,29 +1340,36 @@ AI-generated notifications have special handling:
 
 The Knowledge domain encompasses multiple content types organized in a unified hierarchy:
 
-```
-KNOWLEDGE BASE
-├── Resources (curated external content)
-│   ├── Articles
-│   ├── Documentation
-│   ├── Code snippets
-│   ├── Design files
-│   ├── Tools/Software
-│   └── Collections (user-curated groups)
-├── Ideas (internal generated content)
-│   ├── Raw (unprocessed thoughts)
-│   ├── Validating (researching feasibility)
-│   ├── Building (in progress)
-│   └── Built (completed/shipped)
-├── YouTube Vault (video content)
-│   ├── Videos (with AI-generated transcripts)
-│   ├── Playlists (user-curated)
-│   ├── Series (AI-detected related videos)
-│   └── Clips (AI-extracted key moments)
-└── Notes (free-form knowledge)
-    ├── Quick notes (captured inline)
-    ├── AI summaries (auto-generated from content)
-    └── Rich documents (full markdown)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    KB[KNOWLEDGE BASE] --> RES[Resources<br/>curated external content]
+    KB --> IDE[Ideas<br/>internal generated content]
+    KB --> YT[YouTube Vault<br/>video content]
+    KB --> NT[Notes<br/>free-form knowledge]
+    
+    RES --> RA[Articles]
+    RES --> RD[Documentation]
+    RES --> RC[Code snippets]
+    RES --> RDF[Design files]
+    RES --> RT[Tools/Software]
+    RES --> RCL[Collections<br/>user-curated groups]
+    
+    IDE --> IR[Raw<br/>unprocessed thoughts]
+    IDE --> IV[Validating<br/>researching feasibility]
+    IDE --> IB[Building<br/>in progress]
+    IDE --> IBL[Built<br/>completed/shipped]
+    
+    YT --> YV[Videos<br/>with AI transcripts]
+    YT --> YPL[Playlists<br/>user-curated]
+    YT --> YS[Series<br/>AI-detected related videos]
+    YT --> YC[Clips<br/>AI-extracted key moments]
+    
+    NT --> NQ[Quick notes<br/>captured inline]
+    NT --> NAS[AI summaries<br/>auto-generated]
+    NT --> NR[Rich documents<br/>full markdown]
+
+    style KB fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 #### Content Type Taxonomy
@@ -1362,34 +1393,49 @@ KNOWLEDGE BASE
 
 #### Navigation Hierarchy
 
-```
-Knowledge Module
-├── [Tab 1: Resources] → Grid/List view of all resources
-│   ├── Collections (grouped view)
-│   └── Detail view (resource with metadata + related items)
-├── [Tab 2: Ideas] → Pipeline view (Raw → Validating → Building → Built)
-│   └── Detail view (idea with feasibility notes + related items)
-├── [Tab 3: YouTube] → Grid view of saved videos
-│   ├── Playlists (grouped view)
-│   ├── Series (AI-detected groups)
-│   └── Detail view (video with transcript, chapters, related)
-└── [Tab 4: Notes] → List view of all notes
-    └── Detail view (full note with links)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    KM[Knowledge Module] --> T1[Tab 1: Resources<br/>Grid/List view]
+    KM --> T2[Tab 2: Ideas<br/>Pipeline view]
+    KM --> T3[Tab 3: YouTube<br/>Grid view]
+    KM --> T4[Tab 4: Notes<br/>List view]
+    
+    T1 --> T1C[Collections<br/>grouped view]
+    T1 --> T1D[Detail view<br/>resource + metadata + related]
+    
+    T2 --> T2P[Raw → Validating →<br/>Building → Built]
+    T2 --> T2D[Detail view<br/>idea + feasibility + related]
+    
+    T3 --> T3P[Playlists<br/>grouped view]
+    T3 --> T3S[Series<br/>AI-detected groups]
+    T3 --> T3D[Detail view<br/>video + transcript + chapters]
+    
+    T4 --> T4D[Detail view<br/>full note with links]
+
+    style KM fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 #### Knowledge Discovery Paths
 
-```
-Entry Point                    Discovery Path                    Destination
-───────────                    ──────────────                    ──────────
-Cmd+K search                   → Full-text + semantic match     → Knowledge item
-Module sidebar                 → Navigate to Knowledge         → Tab default view
-Quick capture (`+`)            → Auto-classify as resource     → Knowledge item
-Web clipper                    → Save to Resources             → Knowledge item
-AI suggestion                  → "You might find this useful"  → Knowledge item
-Related sidebar                → "Linked to current task"      → Knowledge item
-Collection link                → Open collection                → Grouped view
-Course association             → "Resources for this course"   → Filtered view
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    EP[Entry Point] --> DP[Discovery Path]
+    DP --> DEST[Destination]
+    
+    EP1[Cmd+K search] --> DP1[Full-text + semantic match] --> DEST1[Knowledge item]
+    EP2[Module sidebar] --> DP2[Navigate to Knowledge] --> DEST2[Tab default view]
+    EP3[Quick capture +] --> DP3[Auto-classify as resource] --> DEST3[Knowledge item]
+    EP4[Web clipper] --> DP4[Save to Resources] --> DEST4[Knowledge item]
+    EP5[AI suggestion] --> DP5[You might find this useful] --> DEST5[Knowledge item]
+    EP6[Related sidebar] --> DP6[Linked to current task] --> DEST6[Knowledge item]
+    EP7[Collection link] --> DP7[Open collection] --> DEST7[Grouped view]
+    EP8[Course association] --> DP8[Resources for this course] --> DEST8[Filtered view]
+
+    style EP fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
+    style DP fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DEST fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 10.3 Taxonomy
@@ -1456,23 +1502,32 @@ Every knowledge item is classified on 3 axes:
 
 #### Automatic Classification Pipeline
 
-```
-New content enters system
-    │
-    ├── URL detected → Fetch metadata (Open Graph, JSON-LD)
-    │   ├── → Detect content type (article, video, doc, tool)
-    │   ├── → Extract title, description, author, image
-    │   └── → Auto-tag based on content analysis
-    │
-    ├── Text captured → Classify content type (note vs idea vs task)
-    │   ├── → AI intent detection ("I should..." → task)
-    │   ├── → ("What if..." → idea)
-    │   └── → ("Good to know..." → resource)
-    │
-    └── File uploaded → Detect type from extension + MIME
-        ├── → PDF → Document
-        ├── → .py, .js → Code
-        └── → .fig, .sketch → Design
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    NC[New content enters system] --> URL[URL detected]
+    NC --> TC[Text captured]
+    NC --> FU[File uploaded]
+    
+    URL --> FM[Fetch metadata<br/>Open Graph, JSON-LD]
+    FM --> DCT[Detect content type<br/>article, video, doc, tool]
+    FM --> EX[Extract title, description, author, image]
+    FM --> AT[Auto-tag based on<br/>content analysis]
+    
+    TC --> AI[AI intent detection]
+    AI --> T["I should... → task"]
+    AI --> Id["What if... → idea"]
+    AI --> R["Good to know... → resource"]
+    
+    FU --> DT[Detect type from<br/>extension + MIME]
+    DT --> PDF[PDF → Document]
+    DT --> CD[.py, .js → Code]
+    DT --> DS[.fig, .sketch → Design]
+
+    style NC fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style URL fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style TC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style FU fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 10.6 Relationships
@@ -1524,27 +1579,21 @@ Users can click any node to navigate, or open the full knowledge graph visualiza
 
 The Knowledge module's default view is a **smart grid** showing:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Knowledge Base              [+ New]  [Filter]  [Sort]      │
-├──────────┬──────────┬──────────┬──────────┬─────────────────┤
-│          │          │          │          │                  │
-│ 📄 All   │ 📚      │ 💡      │ 🎬      │ 📝              │
-│ Resources│ Courses  │ Ideas    │ YouTube  │ Notes            │
-│ (42)     │ linked   │ (8)      │ (15)     │ (23)             │
-│          │ (12)     │          │          │                  │
-├──────────┴──────────┴──────────┴──────────┴─────────────────┤
-│  RECENTLY ADDED                                              │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐              │
-│  │Item 1│ │Item 2│ │Item 3│ │Item 4│ │Item 5│              │
-│  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘              │
-│                                                              │
-│  COLLECTIONS                                                 │
-│  ┌──────────────────┐ ┌──────────────────┐                   │
-│  │ Design Resources │ │ DSA Study Guide  │                   │
-│  │ 12 items         │ │ 8 items          │                   │
-│  └──────────────────┘ └──────────────────┘                   │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    KB[Knowledge Base · +New · Filter · Sort] --> Tabs[📄 Resources 42 · 📚 Courses linked 12 · 💡 Ideas 8 · 🎬 YouTube 15 · 📝 Notes 23]
+    Tabs --> Recent[RECENTLY ADDED]
+    Recent --> I1[Item 1]
+    Recent --> I2[Item 2]
+    Recent --> I3[Item 3]
+    Recent --> I4[Item 4]
+    Recent --> I5[Item 5]
+    Recent --> Coll[COLLECTIONS]
+    Coll --> DR[Design Resources<br/>12 items]
+    Coll --> DS[DSA Study Guide<br/>8 items]
+    style KB fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style Coll fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 10.8 Knowledge Retrieval
@@ -1568,52 +1617,37 @@ The Knowledge module's default view is a **smart grid** showing:
 
 #### Course Data Model
 
-```
-COURSE
-├── Metadata: title, platform, provider, URL, credits, enrolled date, deadline
-├── Topics (hierarchical)
-│   ├── Topic 1 (e.g., "Arrays")
-│   │   ├── Subtopic 1.1 ("Two pointers")
-│   │   └── Subtopic 1.2 ("Sliding window")
-│   ├── Topic 2 (e.g., "Trees")
-│   └── Topic 3 (e.g., "Graphs")
-├── Progress Tracking
-│   ├── Total topics: N
-│   ├── Completed topics: M
-│   ├── Progress %: M/N
-│   ├── Time spent: X hours
-│   └── Last studied: date
-├── Linked Resources
-│   ├── Course materials (from Knowledge domain)
-│   ├── External links
-│   └── Practice problems (linked to Tasks)
-└── Learning Analytics
-    ├── Study sessions (duration, focus score)
-    ├── Quiz scores (if applicable)
-    └── Concept mastery (AI-estimated: 0-100%)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    COURSE[COURSE] --> MD[Metadata<br/>title, platform, URL, credits, deadline]
+    COURSE --> TP[Topics hierarchical]
+    TP --> T1[Topic 1: Arrays]
+    TP --> T2[Topic 2: Trees]
+    TP --> T3[Topic 3: Graphs]
+    T1 --> ST11[Subtopic: Two pointers]
+    T1 --> ST12[Subtopic: Sliding window]
+    COURSE --> PT[Progress Tracking<br/>Total: N · Completed: M · M/N%<br/>Time: X hrs · Last studied]
+    COURSE --> LR[Linked Resources<br/>Course materials · External links<br/>Practice problems → Tasks]
+    COURSE --> LA[Learning Analytics<br/>Study sessions · Quiz scores<br/>Concept mastery: 0-100%]
+    style COURSE fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 #### Course Navigation
 
-```
-Courses Module
-├── [Tab 1: Grid] → Card grid of all courses
-│   ├── Each card: icon, title, progress bar, next deadline
-│   └── Sort: progress, deadline, recently active
-├── [Tab 2: Progress] → Detailed progress view
-│   ├── List of courses with detailed progress bars
-│   ├── Streak counter
-│   └── Weekly study time chart
-├── [Tab 3: Calendar] → Study schedule calendar
-│   ├── Upcoming deadlines
-│   ├── Study sessions planned
-│   └── Gap days highlighted
-└── Detail View → Single course
-    ├── Header: title, provider, progress %, deadline
-    ├── Topics list with completion checkboxes
-    ├── Study session log
-    ├── Linked resources
-    └── Related tasks
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    CM[Courses Module] --> T1[Tab 1: Grid<br/>Card grid · progress bars · deadlines]
+    CM --> T2[Tab 2: Progress<br/>Detailed progress · streak counter<br/>weekly study time chart]
+    CM --> T3[Tab 3: Calendar<br/>Upcoming deadlines · study sessions<br/>gap days highlighted]
+    CM --> DV[Detail View<br/>Single course]
+    DV --> H[Header: title, provider, progress, deadline]
+    DV --> TL[Topics list<br/>with completion checkboxes]
+    DV --> SSL[Study session log]
+    DV --> LR2[Linked resources]
+    DV --> RT[Related tasks]
+    style CM fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 ### 11.2 Learning Paths
@@ -1622,23 +1656,34 @@ Courses Module
 
 A Learning Path is a **curated sequence of courses + resources + projects** that builds toward a skill or certification:
 
-```
-LEARNING PATH: "Full-Stack Web Developer"
-├── Phase 1: Foundations
-│   ├── Course: HTML/CSS Fundamentals
-│   ├── Resource: Web Design Guidelines
-│   └── Project: Build a landing page
-├── Phase 2: Frontend
-│   ├── Course: JavaScript Deep Dive
-│   ├── Course: React Masterclass
-│   └── Project: Build a dashboard UI
-├── Phase 3: Backend
-│   ├── Course: Node.js API Design
-│   ├── Course: Database Design
-│   └── Project: Build a REST API
-└── Phase 4: Full Stack
-    ├── Course: Deployment & DevOps
-    └── Project: Full-stack application
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    LP[LEARNING PATH<br/>Full-Stack Web Developer] --> P1[Phase 1: Foundations]
+    LP --> P2[Phase 2: Frontend]
+    LP --> P3[Phase 3: Backend]
+    LP --> P4[Phase 4: Full Stack]
+    
+    P1 --> P1C[Course: HTML/CSS Fundamentals]
+    P1 --> P1R[Resource: Web Design Guidelines]
+    P1 --> P1P[Project: Build a landing page]
+    
+    P2 --> P2C1[Course: JavaScript Deep Dive]
+    P2 --> P2C2[Course: React Masterclass]
+    P2 --> P2P[Project: Build a dashboard UI]
+    
+    P3 --> P3C1[Course: Node.js API Design]
+    P3 --> P3C2[Course: Database Design]
+    P3 --> P3P[Project: Build a REST API]
+    
+    P4 --> P4C[Course: Deployment & DevOps]
+    P4 --> P4P[Project: Full-stack application]
+
+    style LP fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style P1 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style P2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style P3 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style P4 fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 #### Path Discovery
@@ -1676,22 +1721,22 @@ interface Skill {
 
 Skills are displayed as a **radar chart** (strengths) and **tree map** (breadth):
 
-```
-┌─────────────────────────────────────────────┐
-│  SKILL RADAR                                 │
-│           ┌───── Python ─────┐              │
-│           │    ████████      │              │
-│   React ████████████████████ ██ Docker      │
-│           │    ██████        │              │
-│           │   SQL ────       │              │
-│           │    ████          │              │
-│           └───── AWS ────────┘              │
-│                                              │
-│  Your strongest skills: React (88),          │
-│  Python (72), Docker (65)                    │
-│                                              │
-│  [View skill details] [AI learning plan]     │
-└─────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    SR[SKILL RADAR] --> PY[Python ████████ 72]
+    SR --> RE[React ████████████████████ 88]
+    SR --> DK[Docker ██████ 65]
+    SR --> SQL[SQL ████ 40]
+    SR --> AWS[AWS ██████ 50]
+    SR --> SS["Your strongest skills: React (88), Python (72), Docker (65)"]
+    SR --> AC[View skill details · AI learning plan]
+    style SR fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PY fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style DK fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style SQL fill:#13151A,stroke:#334155,color:#94A3B8
+    style AWS fill:#13151A,stroke:#334155,color:#94A3B8
 ```
 
 ### 11.4 Learning Relationships
@@ -1751,8 +1796,20 @@ Skills are displayed as a **radar chart** (strengths) and **tree map** (breadth)
 
 #### Match Score Calculation
 
-```
-Match Score = (Skill Match × 0.40) + (Interest Match × 0.20) + (Goal Alignment × 0.20) + (Timing × 0.10) + (Location × 0.10)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    SM[Skill Match × 0.40] --> MS[Match Score]
+    IM[Interest Match × 0.20] --> MS
+    GA[Goal Alignment × 0.20] --> MS
+    TM[Timing × 0.10] --> MS
+    LC[Location × 0.10] --> MS
+    style MS fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style SM fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style IM fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style GA fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style TM fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style LC fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 | Factor | Description | Data Source |
@@ -1800,31 +1857,18 @@ Match Score = (Skill Match × 0.40) + (Interest Match × 0.20) + (Goal Alignment
 
 #### Recommendation Presentation
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  OPPORTUNITIES FOR YOU                                       │
-├─────────────────────────────────────────────────────────────┤
-│  🔥 EXCEPTIONAL MATCHES (2)                                  │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ 💼 Senior Developer @ Google               Match: 92%   ││
-│  │    Remote · $150K-200K · Due Jul 15                     ││
-│  │    Why: Your React (88) + Python (72) match perfectly   ││
-│  │    [Apply] [Save] [Not interested]                       ││
-│  │                                                          ││
-│  │ 🏆 Hackathon: AI Buildathon               Match: 88%   ││
-│  │    Online · Jun 20-22 · Prize: $10K                     ││
-│  │    Why: AI/ML is your top interest category              ││
-│  │    [Register] [Save] [Not interested]                    ││
-│  └─────────────────────────────────────────────────────────┘│
-│                                                              │
-│  💪 STRONG MATCHES (5)                                       │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ 💼 Frontend Engineer @ Startup              Match: 82%  ││
-│  │ ...                                                     ││
-│  └─────────────────────────────────────────────────────────┘│
-│                                                              │
-│  + New opportunities found: 7  [View all →]                 │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    OP[OPPORTUNITIES FOR YOU] --> EM[🔥 EXCEPTIONAL MATCHES 2]
+    EM --> G1["💼 Senior Developer @ Google · Match 92%<br/>Remote · $150-200K · Due Jul 15<br/>Why: React 88 + Python 72 match"]
+    EM --> H1["🏆 Hackathon: AI Buildathon · Match 88%<br/>Online · Jun 20-22 · Prize $10K<br/>Why: AI/ML is top interest"]
+    OP --> SM[💪 STRONG MATCHES 5]
+    SM --> FE["💼 Frontend Engineer @ Startup · Match 82%<br/>..."]
+    OP --> NF["+ New opportunities found: 7 · View all →"]
+    style OP fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style EM fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style SM fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 12.5 Discovery Logic
@@ -1866,25 +1910,32 @@ Match Score = (Skill Match × 0.40) + (Interest Match × 0.20) + (Goal Alignment
 
 #### Report Navigation
 
-```
-Analytics Module
-├── [Tab 1: Overview] → Summary dashboard
-│   ├── Productivity trend (7d line chart)
-│   ├── Learning velocity (7d bar chart)
-│   ├── Habit compliance (7d percentage)
-│   └── Career pipeline (funnel chart)
-├── [Tab 2: Reports] → Report archive
-│   ├── List of generated reports
-│   ├── Filter by type (briefing, weekly, monthly, quarterly)
-│   └── Download as PDF/CSV
-├── [Tab 3: Metrics] → All metrics explorer
-│   ├── Search/browse metrics by category
-│   ├── Custom date range
-│   └── Export raw data
-└── [Tab 4: Trends] → Trend detection
-    ├── Automatically detected trends
-    ├── Up/down/flat indicators
-    └── AI analysis of each trend
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    AM[Analytics Module] --> T1[Tab 1: Overview<br/>Summary dashboard]
+    AM --> T2[Tab 2: Reports<br/>Report archive]
+    AM --> T3[Tab 3: Metrics<br/>All metrics explorer]
+    AM --> T4[Tab 4: Trends<br/>Trend detection]
+    
+    T1 --> T1P[Productivity trend · 7d line chart]
+    T1 --> T1L[Learning velocity · 7d bar chart]
+    T1 --> T1H[Habit compliance · 7d percentage]
+    T1 --> T1C[Career pipeline · funnel chart]
+    
+    T2 --> T2L[List of generated reports]
+    T2 --> T2F[Filter by type]
+    T2 --> T2D[Download PDF/CSV]
+    
+    T3 --> T3S[Search/browse metrics]
+    T3 --> T3D[Custom date range]
+    T3 --> T3E[Export raw data]
+    
+    T4 --> T4D[Automatically detected trends]
+    T4 --> T4U[Up/down/flat indicators]
+    T4 --> T4A[AI analysis of each trend]
+
+    style AM fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 ### 13.3 Metrics Structure
@@ -1961,14 +2012,16 @@ Insights appear in context across the system:
 
 Settings are organized into **6 sections** accessible from a single settings page with a left-nav sidebar:
 
-```
-Settings
-├── User Profile
-├── AI & Personalization
-├── Notifications
-├── Privacy & Data
-├── Appearance
-└── System
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    SETTINGS[Settings] --> SP[User Profile]
+    SETTINGS --> AI[AI & Personalization]
+    SETTINGS --> NT[Notifications]
+    SETTINGS --> PD[Privacy & Data]
+    SETTINGS --> AP[Appearance]
+    SETTINGS --> SYS[System]
+    style SETTINGS fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
 ### 14.2 User Settings
@@ -2088,13 +2141,24 @@ AI is not a single destination — it's a **pervasive layer** accessible from ev
 
 #### Workflow State Machine
 
-```
-IDLE ──► TRIGGERED ──► CONTEXT BUILDING ──► LLM CALL ──► POST-PROCESSING ──► COMPLETE
-                              │                    │
-                              ▼                    ▼
-                          (read: tasks,       Ollama → Claude
-                           goals, memory,     → Algorithmic
-                           analytics, ...)     fallback
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    IDLE[IDLE] --> TRIGGERED[TRIGGERED]
+    TRIGGERED --> CB[CONTEXT BUILDING]
+    CB --> CB_R[read: tasks, goals, memory, analytics...]
+    CB --> LLM_CALL[LLM CALL]
+    LLM_CALL --> LLM_O[Ollama]
+    LLM_CALL --> LLM_C[Claude]
+    LLM_CALL --> LLM_A[Algorithmic fallback]
+    LLM_CALL --> PP[POST-PROCESSING]
+    PP --> COMPLETE[COMPLETE]
+    style IDLE fill:#13151A,stroke:#334155,color:#94A3B8
+    style TRIGGERED fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style CB fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style LLM_CALL fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PP fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style COMPLETE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 15.3 AI Navigation
@@ -2114,20 +2178,29 @@ IDLE ──► TRIGGERED ──► CONTEXT BUILDING ──► LLM CALL ──►
 
 #### AI Chat Module Navigation
 
-```
-AI Chat
-├── [Conversation List] → Left sidebar (280px)
-│   ├── Today's conversations
-│   ├── Previous conversations
-│   └── New chat button
-├── [Active Chat] → Center (main area)
-│   ├── Message history
-│   ├── Input area + voice input
-│   └── Suggested prompts
-└── [Context Panel] → Right sidebar (320px)
-    ├── What AI knows about current context
-    ├── Suggestions based on conversation
-    └── Actions (create task, save memory, etc.)
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    AIC[AI Chat] --> CL[Conversation List<br/>Left sidebar · 280px]
+    AIC --> AC[Active Chat<br/>Center · main area]
+    AIC --> CP[Context Panel<br/>Right sidebar · 320px]
+    
+    CL --> TD[Today's conversations]
+    CL --> PV[Previous conversations]
+    CL --> NB[New chat button]
+    
+    AC --> MH[Message history]
+    AC --> IA[Input area + voice input]
+    AC --> SP[Suggested prompts]
+    
+    CP --> WA[What AI knows about context]
+    CP --> SC[Suggestions based on conversation]
+    CP --> ACT[Actions: create task, save memory, etc.]
+    
+    style AIC fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style CL fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style AC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style CP fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 15.4 AI Recommendations
@@ -2393,22 +2466,16 @@ interface AIContext {
 
 ### 18.1 Mobile Navigation Model
 
-```
-┌──────────────────────────────────────┐
-│  Status Bar                          │
-├──────────────────────────────────────┤
-│  [<] Module Name              🔍[+] │  ← Compact header
-├──────────────────────────────────────┤
-│                                      │
-│  Content (scrollable, single column) │
-│  - Full-width cards                  │
-│  - Bottom sheets for filters/actions │
-│  - Swipe gestures for quick actions  │
-│                                      │
-├──────────────────────────────────────┤
-│  🏠  📋  ➕  💬  ⚙️                 │  ← Bottom tab bar (5 items)
-│ Home Tasks  New  Chat  More          │
-└──────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    SB[Status Bar] --> CH[Compact Header<br/>← Module Name · 🔍 · +]
+    CH --> CT[Content Area<br/>scrollable · single column<br/>Full-width cards · Bottom sheets<br/>Swipe gestures]
+    CT --> BT[Bottom Tab Bar<br/>🏠 Home · 📋 Tasks · ➕ New · 💬 Chat · ⚙️ More]
+    style SB fill:#0A0B0F,stroke:#334155,color:#94A3B8
+    style CH fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style CT fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style BT fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 18.2 Bottom Tab Bar
@@ -2439,26 +2506,20 @@ interface AIContext {
 
 Pulls in from left on swipe or hamburger tap:
 
-```
-┌───────────────────────────────────┐
-│  [Avatar] User Name               │
-│           Free Plan               │
-├───────────────────────────────────┤
-│  🔍 Search                        │
-├───────────────────────────────────┤
-│  CORE                             │
-│  ◉ Dashboard              R+D     │
-│  ☐ Tasks                  R+T     │
-│  💬 AI Chat                R+K    │
-├───────────────────────────────────┤
-│  LEARN / BUILD / EARN             │
-│  ... (same as desktop sidebar)    │
-├───────────────────────────────────┤
-│  SYSTEM                           │
-│  ...                              │
-├───────────────────────────────────┤
-│  Settings (bottom)                 │
-└───────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    U[Avatar · User Name · Free Plan] --> S[🔍 Search]
+    S --> CORE[◉ CORE]
+    CORE --> D[◉ Dashboard R+D]
+    CORE --> T[☐ Tasks R+T]
+    CORE --> AC[💬 AI Chat R+K]
+    CORE --> LEARN[LEARN / BUILD / EARN<br/>same as desktop sidebar]
+    LEARN --> SYS[SYSTEM<br/>time · review · analytics<br/>automation · extension · settings]
+    SYS --> SETTINGS[Settings]
+    style CORE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style LEARN fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SYS fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---
@@ -2467,25 +2528,33 @@ Pulls in from left on swipe or hamburger tap:
 
 ### 19.1 Tablet Navigation Model
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Status Bar                                                   │
-├────────┬─────────────────────────────────────────────────────┤
-│        │  Module Name              🔍  🔔  🎤  ➕  [Avatar] │
-│  Nav   ├─────────────────────────────────────────────────────┤
-│  Icons │                                                     │
-│  (64px)│  Content Area (split-pane capable)                  │
-│        │  ┌──────────────────────┐  ┌──────────────────────┐ │
-│  ◉     │  │ List (30%)          │  │ Detail (70%)         │ │
-│  ☐     │  │ ─────────────────   │  │ ─────────────────    │ │
-│  💬    │  │ Item 1              │  │ Title, content,      │ │
-│  📚    │  │ Item 2           ▶  │  │ actions, related     │ │
-│  🎬    │  │ Item 3              │  │                      │ │
-│  📖    │  │ ...                 │  │                      │ │
-│  🎯    │  └──────────────────────┘  └──────────────────────┘ │
-│  ...   │                                                     │
-│        └─────────────────────────────────────────────────────┘
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph LR
+    subgraph Tablet[Tablet Layout]
+        SB2[Status Bar]
+        NAVI[Nav Icons<br/>64px · ◉ Dashboard · ☐ Tasks<br/>💬 Chat · 📚 Courses · 🎬 YouTube<br/>📖 Resources · 🎯 Goals · ...]
+        HEADER[Header · Module Name · 🔍 · 🔔 · 🎤 · ➕ · Avatar]
+        SPLIT[Split Pane Content]
+    end
+    SB2 --> HEADER
+    NAVI --> SPLIT
+    HEADER --> SPLIT
+    subgraph ListPane[List · 30%]
+        L1[Item 1]
+        L2[Item 2 ▶]
+        L3[Item 3]
+        L4[...]
+    end
+    subgraph DetailPane[Detail · 70%]
+        DT[Title, content<br/>actions, related]
+    end
+    SPLIT --> ListPane
+    SPLIT --> DetailPane
+    style Tablet fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style NAVI fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ListPane fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style DetailPane fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 19.2 Tablet-Specific Patterns
@@ -2506,35 +2575,40 @@ Pulls in from left on swipe or hamburger tap:
 
 ### 20.1 Desktop Navigation Model
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│  [File] [Edit] [View] [Go] [AI] [Help]                         (Menu bar)   │
-├──────────┬───────────────────────────────────────────────────────────────────┤
-│          │  Module Name              🔍  🔔  🎤  ➕  [User ▼]               │
-│  Sidebar ├───────────────────────────────────────────────────────────────────┤
-│  (240px) │  ┌────────────────────────────────────┐  ┌─────────────────────┐ │
-│          │  │ List (sortable, filterable)        │  │ Detail              │ │
-│  CORE    │  │ ─────────────────────             │  │ ───────────────     │ │
-│  ◉ Dshb  │  │ ☐ Complete proposal         High  │  │ Title: Complete...  │ │
-│  ☐ Tasks │  │ ☐ Write API docs            Med   │  │ Status: In Progress │ │
-│  💬 Chat │  │ ☐ Fix login bug             Urg   │  │ Priority: High      │ │
-│          │  │ ☐ Design system audit       Low   │  │ Due: Jun 15         │ │
-│  LEARN   │  │ ☐ Update dependencies       Med   │  │ ───────────────     │ │
-│  ...     │  └────────────────────────────────────┘  │ Description...      │ │
-│          │                                           │                     │ │
-│  BUILD   │  ┌────────────────────────────────────┐  │ Related Sidebar     │ │
-│  ...     │  │ Status Bar                        │  │ (320px, collapsible)│ │
-│          │  │ 4 items · Filtered by: Active      │  │ ┌───────────────┐  │ │
-│  EARN    │  └────────────────────────────────────┘  │ │ Linked to:    │  │ │
-│  ...     │                                          │ │ • Goal: Q2... │  │ │
-│          │                                          │ │ • Project:... │  │ │
-│  WELL    │                                          │ │ • Course: ... │  │ │
-│  ...     │                                          │ └───────────────┘  │ │
-│          │                                          └─────────────────────┘ │
-│  SYSTEM  └──────────────────────────────────────────────────────────────────┘
-│  ...     │
-│          │  [User]  [Notifications: 3]  [Sync: ✅]  (Status bar bottom)
-└──────────┴──────────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Menu[Menu Bar · File · Edit · View · Go · AI · Help] --> Main
+    subgraph Main[Desktop Layout]
+        SB3[Sidebar · 240px<br/>CORE: ◉ Dashboard · ☐ Tasks · 💬 Chat<br/>LEARN: 📚 Courses · 🎬 YouTube · 📖 Resources<br/>BUILD: 🎯 Goals · 🗺️ Roadmap · 💡 Ideas · 📋 Projects]
+        HDR[Header · Module Name · 🔍 · 🔔 · 🎤 · ➕ · User ▼]
+        Pane[Split Pane]
+    end
+    SB3 --> HDR
+    HDR --> Pane
+    subgraph List3[List · sortable · filterable]
+        T1[☐ Complete proposal · High]
+        T2[☐ Write API docs · Med]
+        T3[☐ Fix login bug · Urg]
+        T4[☐ Design system audit · Low]
+        T5[☐ Update dependencies · Med]
+    end
+    subgraph Detail3[Detail]
+        TitleD[Title: Complete proposal<br/>Status: In Progress<br/>Priority: High<br/>Due: Jun 15]
+        DescD[Description...]
+    end
+    subgraph Related3[Related Sidebar · 320px]
+        Linked[Linked to:<br/>• Goal: Q2 Career Growth<br/>• Project: Portfolio Site<br/>• Course: Web Dev Bootcamp]
+    end
+    Pane --> List3
+    Pane --> Detail3
+    Pane --> Related3
+    Main --> StatusB[Status Bar · User · Notifications 3 · Sync ✅]
+    style Main fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style SB3 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style List3 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style Detail3 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Related3 fill:#1A1D24,stroke:#334155,color:#F1F5F9
 ```
 
 ### 20.2 Desktop-Specific Patterns
@@ -2807,18 +2881,36 @@ SYSTEM      → Slot 6 (1 module) + Time + Review + Analytics + Automation + Ext
 
 When any navigation group exceeds 8 items, the system supports **lazy splitting**:
 
-```
-BEFORE:                         AFTER:
-BUILD (9 items)                 BUILD CORE (4 items)
-├── Goals                       ├── Goals
-├── Roadmap                     └── Roadmap
-├── Projects                   
-├── Ideas                       BUILD EXTENDED (5 items)
-├── Journal                     ├── Projects
-├── Collections                 ├── Ideas
-├── Templates                   ├── Journal
-├── Blueprints                  ├── Collections
-└── Playbooks                   └── Templates
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph LR
+    subgraph Before[BEFORE: BUILD 9 items]
+        B1[Goals]
+        B2[Roadmap]
+        B3[Projects]
+        B4[Ideas]
+        B5[Journal]
+        B6[Collections]
+        B7[Templates]
+        B8[Blueprints]
+        B9[Playbooks]
+    end
+    subgraph After[AFTER]
+        BC[BUILD CORE · 4 items]
+        BC1[Goals]
+        BC2[Roadmap]
+        BE[BUILD EXTENDED · 5 items]
+        BE1[Projects]
+        BE2[Ideas]
+        BE3[Journal]
+        BE4[Collections]
+        BE5[Templates]
+    end
+    Before --> After
+    style Before fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style After fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style BC fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
+    style BE fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
 ```
 
 Split is configurable: user chooses which items go to the new sub-group. This is a **rare event** (most groups start with 2-5 items and have 3+ expansion slots).
@@ -2878,37 +2970,62 @@ Split is configurable: user chooses which items go to the new sub-group. This is
 
 ### B.1 Navigation State Machine
 
-```
-IDLE ────► SEARCHING ────► RESULT_SELECTED ────► NAVIGATING ────► IDLE
-  │            │                                      │
-  ├──► NOTIFICATION    (bell click)                   │
-  ├──► QUICK_CAPTURE   (+ click / C key)              │
-  ├──► VOICE_MODE      (mic click / Cmd+Shift+M)      │
-  └──► TWO_KEY_MODE    (R key down)                   │
-                            │
-                            ├──► [letter match] ──► NAVIGATING
-                            └──► [no match / Esc] ──► IDLE
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    IDLE[IDLE] --> SEARCHING[SEARCHING]
+    SEARCHING --> RS[RESULT_SELECTED]
+    RS --> NAVIGATING[NAVIGATING]
+    NAVIGATING --> IDLE
+    
+    IDLE --> NOTIF[NOTIFICATION<br/>bell click]
+    IDLE --> QC[QUICK_CAPTURE<br/>+ click / C key]
+    IDLE --> VM[VOICE_MODE<br/>mic click / Cmd+Shift+M]
+    IDLE --> TKM[TWO_KEY_MODE<br/>R key down]
+    
+    TKM -->|letter match| NAVIGATING
+    TKM -->|no match / Esc| IDLE
+    
+    style IDLE fill:#13151A,stroke:#334155,color:#94A3B8
+    style SEARCHING fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style NAVIGATING fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style NOTIF fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style QC fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style VM fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style TKM fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### B.2 Search State Machine
 
-```
-IDLE ────► Cmd+K ────► SEARCH_INPUT_FOCUSED
-                            │
-                            ├──► TYPE ────► DEBOUNCE ────► QUERY_EXECUTED
-                            │                              │
-                            │          ┌───────────────────┤
-                            │          ▼                   ▼
-                            │   RESULTS_DISPLAYED    NO_RESULTS
-                            │          │                   │
-                            │    ┌─────┴──────┐            │
-                            │    ▼            ▼            ▼
-                            │ SELECT_RESULT  AI_ANSWER   SUGGESTIONS
-                            │    │            │            │
-                            └────┴────────────┴────────────┘
-                                      │
-                                      ▼
-                                  NAVIGATE ────► IDLE
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    IDLE2[IDLE] -->|Cmd+K| SIF[SEARCH_INPUT_FOCUSED]
+    SIF --> TY[TYPE]
+    TY --> DB[DEBOUNCE]
+    DB --> QE[QUERY_EXECUTED]
+    QE --> RD[RESULTS_DISPLAYED]
+    QE --> NR[NO_RESULTS]
+    RD --> SL[SELECT_RESULT]
+    RD --> AA[AI_ANSWER]
+    NR --> SUGG[SUGGESTIONS]
+    SL --> NAV[NAVIGATE]
+    AA --> NAV
+    SUGG --> NAV
+    NAV --> IDLE2
+    
+    style IDLE2 fill:#13151A,stroke:#334155,color:#94A3B8
+    style SIF fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style TY fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DB fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style QE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RD fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style NR fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style SL fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style AA fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SUGG fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style NAV fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ## Appendix C: Glossary

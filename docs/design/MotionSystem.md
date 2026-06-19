@@ -27,6 +27,45 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    subgraph Principles["🎯 Motion Principles"]
+        P1["Purposeful"]
+        P2["Fast & Responsive"]
+        P3["Natural"]
+        P4["Consistent"]
+        P5["Respectful"]
+        P6["Hierarchical"]
+    end
+    subgraph Durations["⏱️ Duration Tokens"]
+        D1["Micro: 80-150ms"]
+        D2["Feedback: 150-300ms"]
+        D3["Nav: 200-400ms"]
+        D4["Reveal: 300-600ms"]
+        D5["Deco: 2000-4000ms"]
+        D6["Celebration: 500-2000ms"]
+    end
+    subgraph Easings["〰️ Easing Curves"]
+        E1["Ease-out: Entries"]
+        E2["Ease-in: Exits"]
+        E3["Custom: Navigation"]
+        E4["Spring: Celebrations"]
+        E5["Linear: Data viz"]
+    end
+    subgraph Patterns["🧩 Motion Patterns"]
+        PT1["Page Transitions<br/>Staggered fade + slide"]
+        PT2["Micro-interactions<br/>Press scale 0.97→1"]
+        PT3["List animations<br/>Stagger children"]
+        PT4["Reduced motion<br/>`prefers-reduced-motion`"]
+    end
+    Principles --> Durations --> Easings --> Patterns
+    style Principles fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style Patterns fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Motion Design Principles
 
 ### 1.1 Philosophy

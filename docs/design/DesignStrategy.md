@@ -60,6 +60,42 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    subgraph Pillar_1["🎯 Product & Vision"]
+        A["Executive Design Vision"]
+        B["Product Personality"]
+        C["Brand Direction"]
+    end
+    subgraph Pillar_2["🎨 Visual & Interaction"]
+        D["Visual Strategy"]
+        E["Interaction Strategy"]
+        F["AI Design Strategy"]
+    end
+    subgraph Pillar_3["📱 Platform & Experience"]
+        G["Dashboard Strategy"]
+        H["Navigation Strategy"]
+        I["Mobile / Tablet / Desktop"]
+    end
+    subgraph Pillar_4["⚙️ Architecture & Scale"]
+        J["Component Architecture"]
+        K["Design Token Strategy"]
+        L["Enterprise Principles"]
+    end
+    A --> D --> G --> J
+    B --> E --> H --> K
+    C --> F --> I --> L
+    style A fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style B fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style C fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+    style J fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style K fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style L fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Executive Design Vision
 
 ### 1.1 The Design Vision

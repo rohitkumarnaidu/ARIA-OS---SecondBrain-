@@ -51,6 +51,53 @@
 
 ---
 
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph LR
+  subgraph Design["🖌️ Design Layer"]
+    F[Figma Design System<br/>Antigravity] --> T[Design Tokens<br/>Colors, Spacing, Typography]
+  end
+
+  subgraph Code["💻 Code Layer"]
+    T --> S[Stitch Component Library<br/>React + Tailwind]
+    S --> P[Page Composition<br/>Next.js Pages]
+  end
+
+  subgraph Review["✅ Review Layer"]
+    P --> DR[Design Review<br/>Accessibility + Visual]
+    DR --> PR[Pull Request Review<br/>Code + Token Compliance]
+  end
+
+  subgraph Deploy["🚀 Deploy Layer"]
+    PR --> CI[CI/CD Pipeline<br/>Build + Test + Lint]
+    CI --> D[Production Deploy<br/>Vercel + Railway]
+  end
+
+  D -.->|Feedback Loop| F
+
+  style Design fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Code fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Review fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Deploy fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+```
+
+---
+
 # Part I — Governance & Structure
 
 ---

@@ -68,6 +68,80 @@
 
 ---
 
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+flowchart TD
+  subgraph T0["🕐 Time-Based Journeys"]
+    direction TB
+    ON[Onboarding<br/>Day 0-3] --> FD[First Day<br/>Core Capture]
+    FD --> FW[First Week<br/>Habit Formation]
+    FW --> FM[First Month<br/>Deep Integration]
+    FM --> DW[Daily Workflow<br/>Morning→Evening]
+  end
+
+  subgraph R1["🔄 Recurring Journeys"]
+    direction TB
+    WR[Weekly Review<br/>Sunday 8 PM] --> SD[Sleep Wind-Down<br/>Nightly 9:30 PM]
+    SD --> WR
+  end
+
+  subgraph CS["🔗 Cross-Session Journeys"]
+    direction TB
+    CT[Context Threads<br/>Multi-Session Tasks] --> GP[Goal Progression<br/>Quarterly Cycles]
+    GP --> KP[Knowledge Persistence<br/>Long-Term Memory]
+  end
+
+  subgraph MS["📦 Module-Specific Journeys"]
+    direction TB
+    LJ[Learning Journey<br/>Course → Practice → Mastery]
+    KJ[Knowledge Journey<br/>Capture → Organize → Retrieve]
+    OJ[Opportunity Journey<br/>Discover → Match → Apply]
+    PJ[Project Journey<br/>Idea → Build → Ship]
+    GJ[Goal Journey<br/>Set → Track → Achieve]
+  end
+
+  T0 --> R1
+  T0 --> CS
+  T0 --> MS
+  R1 --> MS
+  CS --> MS
+
+  subgraph AI["🤖 AI Intervention Points"]
+    MB[Morning Briefing<br/>7 AM]
+    OS[Opportunity Scan<br/>6 AM]
+    PN[Progress Nudge<br/>6 PM]
+    WD[Wind-Down<br/>9:30 PM]
+  end
+
+  DW --> MB
+  DW --> OS
+  DW --> PN
+  WR --> WD
+
+  style T0 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style R1 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style CS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style MS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style AI fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+---
+
 ## 1. Executive Summary
 
 ### System Scope

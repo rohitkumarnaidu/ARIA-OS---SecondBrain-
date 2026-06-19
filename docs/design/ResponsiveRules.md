@@ -26,6 +26,30 @@
 13. [Modal & Overlay Behavior](#13-modal--overlay-behavior)
 14. [Testing Matrix](#14-testing-matrix)
 
+## Responsive Breakpoint Architecture
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph TD
+    MOBILE[Mobile<br/>320px - 639px] --> TABLET[Tablet<br/>640px - 1023px]
+    TABLET --> DESKTOP[Desktop<br/>1024px - 1439px]
+    DESKTOP --> WIDE[Wide<br/>1440px+]
+
+    MOBILE --> NAV[Bottom Navigation]
+    MOBILE --> FULL[Full-Screen Modals]
+    MOBILE --> SINGLE[Single Column Layout]
+
+    TABLET --> SIDE[Collapsed Sidebar]
+    TABLET --> TWO[Two Column Grid]
+
+    DESKTOP --> FULLNAV[Full Sidebar]
+    DESKTOP --> MULTI[Multi-Column Layout]
+    DESKTOP --> HOVER[Hover States + Tooltips]
+
+    WIDE --> EXTRA[Extended Content Panels]
+    WIDE --> ANALYTICS[Analytics Sidebar]
+```
+
 ---
 
 ## 1. Responsive Design Philosophy
