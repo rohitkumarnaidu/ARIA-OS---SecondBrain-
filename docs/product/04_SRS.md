@@ -10,6 +10,28 @@
 
 ---
 
+## Software Requirements Hierarchy
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph TD
+    SRS((SRS v1.0)) --> FUNC[Functional Requirements]
+    SRS --> NONFUNC[Non-Functional Requirements]
+    SRS --> INTERF[Interface Requirements]
+    
+    FUNC --> F1[15 Core Modules]
+    FUNC --> F2[8 Cron Jobs]
+    FUNC --> F3[8 AI Agents]
+    
+    NONFUNC --> NF1[Performance - p95 < 500ms]
+    NONFUNC --> NF2[Security - RLS + JWT]
+    NONFUNC --> NF3[Availability - 99.9%]
+    
+    INTERF --> I1[REST API v1 - 53 endpoints]
+    INTERF --> I2[Supabase PostgreSQL]
+    INTERF --> I3[Ollama / Claude APIs]
+```
+
 ## 1. Introduction
 
 ### 1.1 Purpose

@@ -21,10 +21,80 @@ Second Brain OS enters a crowded productivity SaaS market dominated by establish
 
 **Strategic Position:** We are not competing with Notion on "powerful notes" or Todoist on "task management." We are offering a **personal AI operating system for students** — a category that does not yet exist in the market.
 
+
+---
+
+### Competitive Positioning Map
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph LR
+  subgraph Direct["🎯 Direct Competitors"]
+    D1[None<br/>No product combines<br/>all 15 modules]
+  end
+
+  subgraph Adjacent["📎 Adjacent Competitors"]
+    A1[Notion<br/>General Productivity]
+    A2[Todoist<br/>Task Management]
+    A3[TickTick<br/>Tasks + Habits]
+  end
+
+  subgraph Emerging["🚀 Emerging AI-Native"]
+    E1[Motion<br/>AI Scheduling]
+    E2[Akiflow<br/>AI Time Blocking]
+    E3[Mem.ai<br/>AI Knowledge]
+    E4[Saner.AI<br/>AI Journaling]
+  end
+
+  subgraph Vicarious["🔄 Vicarious Tools"]
+    V1[Google Calendar<br/>Scheduling]
+    V2[Google Keep<br/>Quick Notes]
+    V3[Apple Reminders<br/>Simple Tasks]
+  end
+
+  subgraph SBOS["⭐ Second Brain OS"]
+    S[ARIA OS<br/>Personal AI OS for Students]
+    S1[▲ Course Tracking<br/>▲ Opportunity Radar]
+    S2[▲ Sleep-Aware Task Mgmt<br/>▲ Income Tracking]
+    S3[▲ Offline-First<br/>▲ Rs. 0 Forever]
+  end
+
+  A1 -.- S
+  A2 -.- S
+  A3 -.- S
+  E1 -.- S
+  E2 -.- S
+  E3 -.- S
+  E4 -.- S
+  V1 -.- S
+  V2 -.- S
+  V3 -.- S
+
+  style Direct fill:#13151A,stroke:#EF4444,color:#F1F5F9
+  style Adjacent fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+  style Emerging fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style Vicarious fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+  style SBOS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+```
+
 ---
 
 ## 2. Competitive Landscape Overview
-
 ### 2.1 Market Map
 
 `

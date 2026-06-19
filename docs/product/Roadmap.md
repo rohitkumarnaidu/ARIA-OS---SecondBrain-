@@ -53,6 +53,72 @@
 
 ---
 
+### 12-Month Quarterly Roadmap
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+gantt
+  title 12-Month Build Roadmap — Q3 2026 to Q2 2027
+  dateFormat  YYYY-MM-DD
+  axisFormat  %b %Y
+
+  section Phase 1: Core Foundation
+  Scaffold + Auth + DB Schema      :p1a, 2026-07-01, 14d
+  Tasks + Courses + Goals CRUD      :p1b, after p1a, 14d
+
+  section Phase 2: Save Everything
+  Ideas + Resources + Income + Projects: p2a, after p1b, 14d
+  Sleep + Time + Habits CRUD         :p2b, after p2a, 10d
+
+  section Phase 3: ARIA & Core AI
+  Prompt Loader + LLM Client         :p3a, after p2b, 10d
+  Briefing + Memory Agents           :p3b, after p3a, 10d
+  Alpha Launch 🎯 (Month 3)         :milestone, after p3b, 0d
+
+  section Phase 4: Advanced AI
+  Learning + Opportunity Agents       :p4a, after p3a, 14d
+  Task Agent + Nudge Agent           :p4b, after p4a, 10d
+
+  section Phase 5: Roadmap Engine
+  Roadmap Agent + Skill Tracking     :p5a, after p4b, 10d
+  Weekly Review Agent                :p5b, after p5a, 10d
+
+  section Phase 6: Full Life Tracking
+  YouTube + Academics Modules        :p6a, after p5b, 12d
+  Automation + Scheduler Cron Jobs   :p6b, after p6a, 10d
+  Beta Launch 🚀 (Month 6)          :milestone, after p6b, 0d
+
+  section Phase 7: Monitoring
+  Sentry + Logging + Dashboards      :p7a, after p6b, 10d
+  Rate Limiting + Caching            :p7b, after p7a, 8d
+
+  section Phase 8: Polish
+  UX + Accessibility + Performance    :p8a, after p7b, 14d
+  Edge Cases + Error Recovery        :p8b, after p8a, 10d
+
+  section Phase 9: Public Release
+  Collaboration Features + PWA       :p9a, after p8b, 10d
+  College Ambassador Program         :p9b, after p9a, 10d
+  GA Launch 🌍 (Month 12)           :milestone, after p9b, 0d
+```
+
+---
+
 ## 1. Executive Summary
 
 This roadmap outlines a **12-month rolling build plan** (Q3 2026 — Q2 2027) for Second Brain OS, organized into **9 phases** across 4 quarters. The plan transitions from solo development through core feature completion to public release, collaboration features, and mobile/extension launch.

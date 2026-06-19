@@ -15,6 +15,35 @@
 
 ---
 
+## Feature Taxonomy & Inter-Dependencies
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+flowchart LR
+    subgraph CORE[Core Modules - P0]
+        T[Tasks - 6 SF]
+        C[Courses - 8 SF]
+        G[Goals - 5 SF]
+        P[Projects - 6 SF]
+    end
+    subgraph AI[AI Services - P1]
+        B[Briefing Agent]
+        R[Weekly Review]
+        O[Opportunity Radar]
+        M[Memory Agent]
+    end
+    subgraph DATA[Data Modules - P2]
+        S[Sleep - 3 SF]
+        I[Income - 5 SF]
+        H[Habits - 7 SF]
+        IDE[Ideas - 6 SF]
+    end
+    CORE --> AI
+    AI --> DATA
+    T -.-> B
+    C -.-> R
+```
+
 ## Module 1: Tasks (EPIC-01)
 
 **Priority:** P0 | **Status:** Frontend Complete, Backend Complete (50 endpoints)

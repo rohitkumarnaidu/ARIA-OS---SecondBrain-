@@ -13,6 +13,21 @@
 
 ---
 
+## Requirements Domain Breakdown
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph TD
+    US[User Stories] -->|define| FEAT[Features]
+    FEAT -->|validated by| AC[Acceptance Criteria]
+    AC -->|drive| TECH[Technical Specifications]
+    TECH -->|implement| US
+    PRD((PRD v3.0)) --> US
+    PRD --> FEAT
+    PRD --> AC
+    PRD --> TECH
+```
+
 ## 1. Vision
 
 ARIA OS is a personal AI operating system for BTech CSE students. It manages the student's entire digital life — tasks, courses, goals, projects, income, habits, sleep, career opportunities, and ideas — through a single intelligence layer (ARIA) that understands context, remembers preferences, and proactively drives the student toward their goals. One app to replace 15 tools.

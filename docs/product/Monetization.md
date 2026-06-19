@@ -27,6 +27,80 @@ Second Brain OS will monetize through a **Freemium + Pro + Enterprise** tiered s
 
 ---
 
+### Freemium → Paid Conversion Funnel
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+flowchart LR
+  subgraph Acquisition["📢 Acquisition"]
+    A1[College Communities<br/>Reddit, Discord, WhatsApp]
+    A2[Dev.to / HackerNews<br/>Engineering Blogs]
+    A3[Word of Mouth<br/>College Ambassadors]
+  end
+
+  subgraph Freemium["🆓 Free Tier (Rs. 0)"]
+    F1[15 Modules - Full Access<br/>Core Product]
+    F2[Daily Briefing + Weekly Review<br/>Basic AI]
+    F3[5 Active Courses<br/>5 Habits]
+    F4[Unlimited Ideas<br/>50 Resources]
+  end
+
+  subgraph Activation["⚡ Value Realization"]
+    AC1[✅ Task Completion > 15/week]
+    AC2[✅ Briefing Becomes Habit]
+    AC3[✅ Radar Finds Opportunities]
+    AC4[✅ Score Shows Improvement]
+  end
+
+  subgraph Conversion["💳 Pro Conversion (Rs. 199/mo)"]
+    C1[Unlimited Courses & Habits<br/>Advanced AI Reasoning]
+    C2[Deep Analytics & Reports<br/>Export / Backup]
+    C3[Priority AI (Claude Sonnet)<br/>Unlimited Resources]
+  end
+
+  subgraph Retention["🔄 Retention & LTV"]
+    R1[Monthly Active User<br/>Yearly Discount → 16%]
+    R2[Lifetime Option<br/>Rs. 4,999 One-Time]
+    R3[Student Referral<br/>1 Month Free / Referral]
+  end
+
+  subgraph Enterprise["🏢 Enterprise (Year 2+)"]
+    E1[University Licensing<br/>Per-Seat Discounts]
+    E2[Coaching Centers<br/>Batch Management]
+    E3[Campus-Wide Deployments<br/>Custom Integrations]
+  end
+
+  Acquisition -->|Free Sign Up| Freemium
+  Freemium -->|30-Day Retention > 60%| Activation
+  Activation -->|Friction Point Reached| Conversion
+  Conversion -->|Monthly Active| Retention
+  Retention -->|B2B Expansion| Enterprise
+
+  style Acquisition fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Freemium fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Activation fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style Conversion fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+  style Retention fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Enterprise fill:#13151A,stroke:#EF4444,color:#F1F5F9
+```
+
+---
+
 ## 2. Business Model Analysis
 
 ### 2.1 Model Comparison

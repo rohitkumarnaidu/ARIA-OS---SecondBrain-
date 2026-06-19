@@ -9,6 +9,24 @@
 
 ---
 
+## Feature Priority Matrix
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph LR
+    P0[P0 - Critical] --> TASKS[Task Manager]
+    P0 --> COURSES[Course Tracker]
+    P0 --> AUTH[Authentication]
+    P1[P1 - High] --> BRIEF[Daily Briefing]
+    P1 --> SCHED[Auto-Scheduler]
+    P1 --> OPP[Opportunity Radar]
+    P2[P2 - Medium] --> SLEEP[Sleep Analysis]
+    P2 --> EXP[Data Export]
+    P2 --> VOICE[Voice Input]
+    P3[P3 - Low] --> THEMES[Theme Customization]
+    P3 --> EXT[Browser Extension]
+```
+
 ## Dashboard & Morning Briefing
 
 ### Daily Briefing (7 AM)

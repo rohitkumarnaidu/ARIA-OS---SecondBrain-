@@ -33,24 +33,36 @@ This document defines every user flow across Second Brain OS. Each flow includes
 
 ### 2.1 First-Time User Onboarding
 
-```
-[User lands on /login] -> {Has account?}
-    |-- No --> [Google OAuth Sign-In] -> [Supabase creates user row]
-    |              -> [ARIA sends welcome chat message]
-    |              -> [Onboarding wizard starts]
-    |              -> [Step 1: Set display name + timezone]
-    |              -> [Step 2: Select 3-5 goals from templates]
-    |              -> [Step 3: Connect calendar (optional)]
-    |              -> [Step 4: Set study preferences]
-    |              -> [Step 5: First task capture demo]
-    |              ==> [Background: Create default categories]
-    |              ==> [Background: Generate onboarding briefing]
-    |              -> [Redirect to /dashboard] [Metric: signup_completed]
-    |-- Yes --> [JWT validation] -> {Valid session?}
-                   |-- Yes --> [Redirect to /dashboard]
-                   |-- No --> [Refresh token] -> {Success?}
-                                 |-- Yes --> [Redirect to /dashboard]
-                                 |-- No --> [Redirect to /login]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    A[User lands on /login] --> B{Has account?}
+    B -->|No| C[Google OAuth Sign-In]
+    C --> D[Supabase creates user row]
+    D --> E[ARIA sends welcome chat message]
+    E --> F[Onboarding wizard starts]
+    F --> G[Step 1: Set display name + timezone]
+    G --> H[Step 2: Select 3-5 goals from templates]
+    H --> I[Step 3: Connect calendar - optional]
+    I --> J[Step 4: Set study preferences]
+    J --> K[Step 5: First task capture demo]
+    K -.-> L[Background: Create default categories]
+    K -.-> M[Background: Generate onboarding briefing]
+    K --> N[Redirect to /dashboard]
+    N --> O[Metric: signup_completed]
+    
+    B -->|Yes| P[JWT validation]
+    P --> Q{Valid session?}
+    Q -->|Yes| R[Redirect to /dashboard]
+    Q -->|No| S[Refresh token]
+    S --> T{Success?}
+    T -->|Yes| U[Redirect to /dashboard]
+    T -->|No| V[Redirect to /login]
+    
+    style A fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style N fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style V fill:#13151A,stroke:#EF4444,color:#F1F5F9
 ```
 
 ### 2.2 Profile Setup Sub-Flow
@@ -91,31 +103,42 @@ This document defines every user flow across Second Brain OS. Each flow includes
 
 Trigger: 7:00 AM (user's timezone) via APScheduler cron job
 
-```
-[Cron job fires at 7:00 AM user timezone]
-   -> [scheduler/main.py calls POST /api/automation/trigger/briefing]
-   -> [BriefingAgent collects context:]
-       -> Query tasks: due today + overdue + high priority
-       -> Query habits: yesterday's completion rates
-       -> Query sleep: last night's sleep score
-       -> Query courses: upcoming deadlines, today's study tasks
-       -> Query opportunities: new matches from radar
-       -> Query weather: current + forecast (via OpenWeatherMap)
-   -> [Assemble context into prompt input]
-   -> [Call PromptLoader.get_agent("briefing_agent")]
-   -> [Call LLM.generate_json with context]
-   -> {LLM succeeds?}
-       |-- Yes --> [Parse JSON response]
-       |              -> Validate schema (3 tasks, insights, quote, score)
-       |              -> [Save to daily_briefings table]
-       |              -> [Push notification: "Your briefing is ready"]
-       |              -> [Update dashboard cache]
-       |-- No --> [Fallback: algorithmic briefing]
-                     -> Top 3 tasks by priority + due date
-                     -> Missed habits summary
-                     -> Generic quote
-                     -> [Save as algorithmic briefing]
-                     -> [Log LLM failure warning]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    CRON[Cron job fires at 7:00 AM] --> API[scheduler/main.py calls<br/>POST /api/automation/trigger/briefing]
+    API --> COLLECT[BriefingAgent collects context]
+    COLLECT --> QT[Query tasks: due today + overdue + high priority]
+    COLLECT --> QH[Query habits: yesterday's completion rates]
+    COLLECT --> QS[Query sleep: last night's sleep score]
+    COLLECT --> QC[Query courses: upcoming deadlines, study tasks]
+    COLLECT --> QO[Query opportunities: new matches]
+    COLLECT --> QW[Query weather: current + forecast]
+    QT --> ASSEMBLE[Assemble context into prompt input]
+    QH --> ASSEMBLE
+    QS --> ASSEMBLE
+    QC --> ASSEMBLE
+    QO --> ASSEMBLE
+    QW --> ASSEMBLE
+    ASSEMBLE --> LOAD[Call PromptLoader.get_agent briefing_agent]
+    LOAD --> LLM[Call LLM.generate_json with context]
+    LLM --> SUCCESS{LLM succeeds?}
+    SUCCESS -->|Yes| PARSE[Parse JSON response]
+    PARSE --> VALIDATE[Validate schema<br/>3 tasks, insights, quote, score]
+    VALIDATE --> SAVE[Save to daily_briefings table]
+    SAVE --> PUSH[Push notification: Your briefing is ready]
+    PUSH --> CACHE[Update dashboard cache]
+    SUCCESS -->|No| FALLBACK[Fallback: algorithmic briefing]
+    FALLBACK --> TOP[Top 3 tasks by priority + due date]
+    TOP --> MISSED[Missed habits summary + Generic quote]
+    MISSED --> ALGO[Save as algorithmic briefing]
+    ALGO --> LOG[Log LLM failure warning]
+    
+    style CRON fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style LLM fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SUCCESS fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style PUSH fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style FALLBACK fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 **Context Assembly (Input to Agent):**
@@ -160,31 +183,45 @@ Trigger: 7:00 AM (user's timezone) via APScheduler cron job
 
 **Decision Tree: Sleep-Adjusted Briefing:**
 
-```
-{Sleep score < 60?}
-  |-- Yes --> {Score < 40?}
-  |              |-- Yes --> [Remove all deep work from top 3]
-  |              |              [Prioritize review/light tasks]
-  |              |              [Suggest rest or nap]
-  |              |-- No --> [Reduce top 3 to 2 deep + 1 shallow]
-  |                           [Add 15-min break reminders]
-  |-- No --> [Standard briefing with 3 tasks]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    S1{Sleep score &lt; 60?}
+    S1 -->|No| STD[Standard briefing with 3 tasks]
+    S1 -->|Yes| S2{Score &lt; 40?}
+    S2 -->|Yes| DEEP[Remove all deep work from top 3]
+    DEEP --> LIGHT[Prioritize review/light tasks]
+    LIGHT --> NAP[Suggest rest or nap]
+    S2 -->|No| REDUCE[Reduce top 3 to 2 deep + 1 shallow]
+    REDUCE --> BREAK[Add 15-min break reminders]
+    
+    style S1 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style S2 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style STD fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style DEEP fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style REDUCE fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 3.2 User Views Briefing
 
-```
-[User opens dashboard] -> {Briefing exists for today?}
-    |-- Yes --> [Display briefing card at top of dashboard]
-    |              -> [Top 3 tasks with checkboxes]
-    |              -> [Productivity score gauge]
-    |              -> [Sleep insight banner]
-    |              -> [Opportunity alert badge]
-    |              -> [ARIA quote of the day]
-    |              -> [Actions: Start Focus, Dismiss, Snooze (30 min)]
-    |-- No --> [Trigger on-demand briefing generation]
-                  -> [Show loading skeleton]
-                  -> [Display generated briefing]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    UD[User opens dashboard] --> CHECK{Briefing exists for today?}
+    CHECK -->|Yes| DISP[Display briefing card at top of dashboard]
+    DISP --> T3[Top 3 tasks with checkboxes]
+    DISP --> PS[Productivity score gauge]
+    DISP --> SI[Sleep insight banner]
+    DISP --> OA[Opportunity alert badge]
+    DISP --> AQ[ARIA quote of the day]
+    DISP --> ACT[Actions: Start Focus, Dismiss, Snooze 30 min]
+    CHECK -->|No| TRIGGER[Trigger on-demand briefing generation]
+    TRIGGER --> SKEL[Show loading skeleton]
+    SKEL --> GEN[Display generated briefing]
+    
+    style CHECK fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style DISP fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style TRIGGER fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 **Error Paths:**
@@ -208,27 +245,32 @@ Trigger: 7:00 AM (user's timezone) via APScheduler cron job
 
 ### 4.1 Natural Language Task Creation
 
-```
-[User activates quick capture] -> [Modal or keyboard shortcut (Cmd+K)]
-    -> [User types: "finish dbms assignment by tomorrow evening high priority"]
-    -> [On every keystroke (debounced 500ms):]
-        -> [Call AI for task parsing]
-        -> [Parse result with fields: title, priority, due_date, category]
-        -> {AI confidence > 0.8?}
-            |-- Yes --> [Display parsed fields inline]
-            |-- No --> [Show raw input with "AI suggested" label]
-        -> [Show live preview: "Task: finish dbms assignment\nPriority: High\nDue: Tomorrow 6 PM"]
-    -> [User presses Enter / clicks Add]
-    -> [POST /api/tasks/]
-    -> [Supabase inserts task row]
-    -> [Update local Zustand state]
-    -> [Show success toast: "Task created. Linked to course: DBMS."]
-    -> {Task has deadline < 24h?}
-        |-- Yes --> [Set ARIA reminder for 2 hours before deadline]
-        |-- No --> [No immediate action]
-    -> {Task mentions existing course/project?}
-        |-- Yes --> [Auto-link to course/project by name match]
-        |-- No --> [Task remains unlinked]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    QC[User activates quick capture<br/>Cmd+K] --> TYPE[User types: finish dbms assignment...]
+    TYPE --> AI[Call AI for task parsing<br/>debounced 500ms]
+    AI --> PARSE[Parse: title, priority, due_date, category]
+    PARSE --> CONF{AI confidence &gt; 0.8?}
+    CONF -->|Yes| INLINE[Display parsed fields inline]
+    CONF -->|No| RAW[Show raw input with AI suggested label]
+    INLINE --> PREVIEW[Show live preview with parsed fields]
+    RAW --> PREVIEW
+    PREVIEW --> ADD[User presses Enter / clicks Add]
+    ADD --> POST[POST /api/tasks/]
+    POST --> SUPABASE[Supabase inserts task row]
+    SUPABASE --> ZUSTAND[Update local Zustand state]
+    ZUSTAND --> TOAST[Show success toast: Task created]
+    TOAST --> DEADLINE{Task has deadline &lt; 24h?}
+    DEADLINE -->|Yes| REMINDER[Set ARIA reminder 2 hours before deadline]
+    DEADLINE -->|No| NOACT[No immediate action]
+    TOAST --> LINK{Task mentions existing course/project?}
+    LINK -->|Yes| AUTOLINK[Auto-link to course/project by name match]
+    LINK -->|No| UNLINKED[Task remains unlinked]
+    
+    style CONF fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style AI fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style TOAST fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Parsing Examples (AI Extraction):**
@@ -243,41 +285,49 @@ Trigger: 7:00 AM (user's timezone) via APScheduler cron job
 
 ### 4.2 Task Completion Flow
 
-```
-[User checks task checkbox / clicks "Complete"]
-    -> [POST /api/tasks/{id}/complete]
-    -> [Supabase sets completed_at = NOW(), status = "completed"]
-    -> [Update Zustand store (remove from active list)]
-    -> [Show subtle animation: task crosses out, fades, "ding" sound]
-    -> [Metric: task_completed logged]
-    -> [Check if all today's top 3 done]
-        -> {Top 3 completed?}
-            |-- Yes --> [Confetti animation + "Morning goal achieved!"]
-            |              [ARIA message: "You crushed your morning. Build momentum."]
-            |-- No --> [Subtle progress indicator update]
-    -> [Check task chain implications]
-        -> {Was this a blocker for other tasks?}
-            |-- Yes --> [Unblock dependent tasks]
-            |              [Notify: "Task X is ready to start now"]
-            |-- No --> [No additional action]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    CHECK[User checks task checkbox] --> POSTC[POST /api/tasks/id/complete]
+    POSTC --> SUPABASE2[Supabase: completed_at = NOW, status = completed]
+    SUPABASE2 --> STORE[Update Zustand store<br/>remove from active list]
+    STORE --> ANIM[Animation: task crosses out, fades, ding sound]
+    ANIM --> METRIC[Log: task_completed]
+    METRIC --> TOP3{Top 3 completed?}
+    TOP3 -->|Yes| CONFETTI[Confetti animation + Morning goal achieved!]
+    CONFETTI --> ARIA[ARIA message: You crushed your morning]
+    TOP3 -->|No| PROGRESS[Subtle progress indicator update]
+    METRIC --> BLOCKER{Was this a blocker for other tasks?}
+    BLOCKER -->|Yes| UNBLOCK[Unblock dependent tasks]
+    UNBLOCK --> NOTIFY[Notify: Task X is ready to start now]
+    BLOCKER -->|No| NOACT2[No additional action]
+    
+    style TOP3 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style BLOCKER fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style CONFETTI fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 4.3 Task Rescheduling Flow
 
-```
-[User long-presses / right-clicks task]
-    -> [Context menu: Complete | Reschedule | Drop | Edit]
-    -> [User selects "Reschedule"]
-    -> [Date picker appears]
-    -> [User picks new date/time]
-    -> [PUT /api/tasks/{id} with new due_date]
-    -> [Check: was this already overdue?]
-        -> {Overdue > 3 days?}
-            |-- Yes --> [Log as "stale task rescheduled"]
-            |              [ARIA note: "This has been pending a while. Consider breaking it down."]
-            |-- No --> [Normal reschedule logged]
-    -> [Update task in store]
-    -> [Show toast: "Task moved to Friday"]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    LP[User long-presses / right-clicks task] --> MENU[Context menu: Complete, Reschedule, Drop, Edit]
+    MENU --> RESCHEDULE[User selects Reschedule]
+    RESCHEDULE --> DATE[Date picker appears]
+    DATE --> PICK[User picks new date/time]
+    PICK --> PUT[PUT /api/tasks/id with new due_date]
+    PUT --> OVERDUE{Was this already overdue?}
+    OVERDUE -->|Overdue &gt; 3 days| STALE[Log as stale task rescheduled]
+    STALE --> ARIA2[ARIA note: Consider breaking it down]
+    OVERDUE -->|Normal| NORMAL[Normal reschedule logged]
+    NORMAL --> UPDATE2[Update task in store]
+    STALE --> UPDATE2
+    UPDATE2 --> TOAST2[Show toast: Task moved to date]
+    
+    style OVERDUE fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style STALE fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style TOAST2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Error Paths:**
@@ -303,42 +353,53 @@ Trigger: 7:00 AM (user's timezone) via APScheduler cron job
 
 ### 5.1 Course Registration Flow
 
-```
-[User navigates to /courses]
-    -> [Clicks "Add Course"]
-    -> [Modal: Course registration form]
-    -> [Fields: Name, Platform (Udemy/Coursera/NPTEL/College/YouTube/Other),
-        URL, Deadline, Why enrolled, Total hours, Hours/week]
-    -> [Clicks "Calculate Deadline" optionally]
-        -> {Total hours + Hours/week provided?}
-            |-- Yes --> [Auto-calculate suggested deadline]
-            |              [Show: "At 5 hrs/week, you'll finish by Dec 15"]
-            |              [User confirms or overrides]
-            |-- No --> [Manual deadline entry]
-    -> [Clicks Save]
-    -> [POST /api/courses/]
-    -> [Supabase inserts course]
-    -> ==>[Background: Generate study task template for course duration]
-    -> ==>[Background: Check if URL already exists (duplicate detection)]
-    -> [Redirect to course detail page]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    NAVC[User navigates to /courses] --> ADD[Click Add Course]
+    ADD --> MODAL[Modal: Course registration form]
+    MODAL --> FIELDS[Name, Platform, URL, Deadline, Why enrolled, Total hours, Hours/week]
+    FIELDS --> CALC[Click Calculate Deadline]
+    CALC --> CALCD{Total hours + hours/week provided?}
+    CALCD -->|Yes| AUTO[Auto-calculate suggested deadline]
+    AUTO --> SHOW[Show: At 5 hrs/week, you'll finish by Dec 15]
+    SHOW --> CONFIRM[User confirms or overrides]
+    CALCD -->|No| MANUAL[Manual deadline entry]
+    CONFIRM --> SAVE[Click Save]
+    MANUAL --> SAVE
+    SAVE --> POSTC2[POST /api/courses/]
+    POSTC2 --> INSERT[Supabase inserts course]
+    INSERT -.-> BG1[Background: Generate study task template]
+    INSERT -.-> BG2[Background: Check for duplicate URL]
+    INSERT --> REDIRECT[Redirect to course detail page]
+    
+    style CALCD fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style AUTO fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style REDIRECT fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 5.2 Course Progress & Deadline Warning Flow
 
-```
-[Cron job runs daily at 6:00 AM]
-    -> [Query all active courses with deadlines]
-    -> [For each course:]
-        -> [Calculate: hours_remaining / days_remaining vs hours_available]
-        -> {At risk of missing deadline?}
-            |-- Yes --> {Days to deadline < 3?}
-            |              |-- Yes --> [High priority notification]
-            |              |              [Create urgent study task]
-            |              |              [ARIA message: "URGENT: Course deadline approaching"]
-            |              |-- No --> [Medium priority notification]
-            |                           [Create catch-up study task]
-            |                           [Dashboard warning badge]
-            |-- No --> [On track, no action]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    CRON2[Cron job runs daily at 6:00 AM] --> QUERY[Query all active courses with deadlines]
+    QUERY --> CALC2[Calculate: hours_remaining / days_remaining vs hours_available]
+    CALC2 --> RISK{At risk of missing deadline?}
+    RISK -->|No| ONTRACK[On track, no action]
+    RISK -->|Yes| DAYS{Days to deadline &lt; 3?}
+    DAYS -->|Yes| HIGH[High priority notification]
+    HIGH --> TASK1[Create urgent study task]
+    TASK1 --> ARIA3[ARIA message: URGENT deadline approaching]
+    DAYS -->|No| MED[Medium priority notification]
+    MED --> TASK2[Create catch-up study task]
+    TASK2 --> BADGE[Dashboard warning badge]
+    
+    style RISK fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style DAYS fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style HIGH fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style MED fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style ONTRACK fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Progress Calculation:**
@@ -370,38 +431,51 @@ on_track = pace_actual >= pace_needed
 
 ### 6.1 Daily Habit Check-In
 
-```
-[System: 8:00 PM reminder OR User opens /habits]
-    -> [Display today's habits with toggle/swipe UI]
-    -> [For each habit:]
-        -> [Show: habit name, current streak, goal, completion status]
-        -> [User toggles: Done / Not Done / Skip]
-    -> {All habits logged?}
-        |-- Yes --> [Show today's habit summary]
-        |              [Streak celebration if milestone (7, 30, 60, 90 days)]
-        |              [Update productivity score +5 for full completion]
-        |-- No --> [Show progress: "3 of 5 habits logged"]
-        |              [Gentle reminder habit: "Don't break your X-day streak!"]
-    -> [POST /api/habit_logs/ batch]
-    -> [Supabase inserts habit_log rows]
-    -> [Update streak calculations in habits table]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    TRIGGER[System: 8PM reminder OR User opens /habits] --> DISPLAY[Display today's habits with toggle/swipe UI]
+    DISPLAY --> SHOW[For each habit: name, streak, goal, status]
+    SHOW --> TOGGLE[User toggles: Done / Not Done / Skip]
+    TOGGLE --> ALL{All habits logged?}
+    ALL -->|Yes| SUMMARY[Show today's habit summary]
+    SUMMARY --> STREAK[Streak celebration<br/>if milestone 7, 30, 60, 90 days]
+    STREAK --> SCORE[Update productivity score +5]
+    ALL -->|No| PROG[Show progress: 3 of 5 habits logged]
+    PROG --> REMIND[Gentle reminder: Don't break your streak!]
+    SUMMARY --> POSTB[POST /api/habit_logs/ batch]
+    PROG --> POSTB
+    POSTB --> INSERTB[Supabase inserts habit_log rows]
+    INSERTB --> UPDATESTREAK[Update streak calculations in habits table]
+    
+    style ALL fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style SUMMARY fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style PROG fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 6.2 Habit Streak Calculation
 
-```
-streak_break_detection:
-  -> Query habit_logs for last 90 days
-  -> Sort by date DESC
-  -> Count consecutive days where status = "completed"
-  -> {Missed >= 3 consecutive days?}
-      |-- Yes --> [Reset streak to 0]
-      |              [Flag for weekly review: "habit needs reassessment"]
-      |-- No --> {Daily check-ins happen but sporadic?}
-                    |-- Yes --> [Maintain streak but flag low consistency]
-                    |-- No --> [Maintain streak normally]
-  -> Update habits.streak_current
-  -> If streak_current > streak_best, update streak_best
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    START[Streak break detection] --> QUERYH[Query habit_logs for last 90 days]
+    QUERYH --> SORT[Sort by date DESC]
+    SORT --> COUNT[Count consecutive days where status = completed]
+    COUNT --> MISSED{Missed &gt;= 3 consecutive days?}
+    MISSED -->|Yes| RESET[Reset streak to 0]
+    RESET --> FLAG[Flag for weekly review: habit needs reassessment]
+    MISSED -->|No| SPORADIC{Daily check-ins happen but sporadic?}
+    SPORADIC -->|Yes| MAINTAIN[Maintain streak but flag low consistency]
+    SPORADIC -->|No| NORMAL2[Maintain streak normally]
+    MAINTAIN --> UPDATEH[Update habits.streak_current]
+    FLAG --> UPDATEH
+    NORMAL2 --> UPDATEH
+    UPDATEH --> BEST[If streak_current &gt; streak_best, update streak_best]
+    
+    style MISSED fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style SPORADIC fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style RESET fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style BEST fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 **Error Paths:**
@@ -426,28 +500,41 @@ streak_break_detection:
 
 Trigger: Sunday 8:00 PM user timezone via APScheduler
 
-```
-[Cron job fires at 8:00 PM Sunday]
-    -> [POST /api/automation/trigger/weekly-review]
-    -> [WeeklyReviewAgent collects past 7 days data:]
-        -> Query tasks: completed, missed, created, overdue
-        -> Query habits: streak changes, completion rate
-        -> Query courses: progress delta, deadlines approaching
-        -> Query income: entries, total, hourly rate
-        -> Query sleep: average score, debt trend
-        -> Query opportunities: saved, applied, outcome
-        -> Query time_entries: total focused hours, categories
-    -> [Assemble weekly context window]
-    -> [Call PromptLoader.get_agent("weekly_review_agent")]
-    -> [Call LLM.generate_json with weekly context]
-    -> {LLM succeeds?}
-        |-- Yes --> [Parse weekly review JSON]
-        |              [Validate schema]
-        |              [Save to weekly_reviews table]
-        |              [Push notification: "Your weekly review is ready"]
-        |-- No --> [Fallback: algorithmic review]
-        |              [Generate stats summary without insights]
-    -> [Update productivity score for the week]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    CRON3[Cron job fires at 8:00 PM Sunday] --> POSTW[POST /api/automation/trigger/weekly-review]
+    POSTW --> COLLECTW[WeeklyReviewAgent collects past 7 days data]
+    COLLECTW --> QTW[Query tasks: completed, missed, created, overdue]
+    COLLECTW --> QHW[Query habits: streak changes, completion rate]
+    COLLECTW --> QCW[Query courses: progress delta, deadlines]
+    COLLECTW --> QIW[Query income: entries, total, hourly rate]
+    COLLECTW --> QSW[Query sleep: average score, debt trend]
+    COLLECTW --> QOW[Query opportunities: saved, applied, outcome]
+    COLLECTW --> QTI[Query time_entries: focused hours, categories]
+    QTW --> ASSEMBLEW[Assemble weekly context window]
+    QHW --> ASSEMBLEW
+    QCW --> ASSEMBLEW
+    QIW --> ASSEMBLEW
+    QSW --> ASSEMBLEW
+    QOW --> ASSEMBLEW
+    QTI --> ASSEMBLEW
+    ASSEMBLEW --> LOADW[Call PromptLoader.get_agent weekly_review_agent]
+    LOADW --> LLMW[Call LLM.generate_json with weekly context]
+    LLMW --> SUCCESSW{LLM succeeds?}
+    SUCCESSW -->|Yes| PARSEW[Parse weekly review JSON]
+    PARSEW --> VALIDATEW[Validate schema]
+    VALIDATEW --> SAVEW[Save to weekly_reviews table]
+    SAVEW --> PUSHW[Push notification: Your weekly review is ready]
+    SUCCESSW -->|No| FALLBACKW[Fallback: algorithmic review]
+    FALLBACKW --> STATS[Generate stats summary without insights]
+    PUSHW --> SCOREW[Update productivity score for the week]
+    STATS --> SCOREW
+    
+    style SUCCESSW fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style PUSHW fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style FALLBACKW fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SCOREW fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 **Output Schema (Weekly Review):**
@@ -481,17 +568,25 @@ Trigger: Sunday 8:00 PM user timezone via APScheduler
 
 **Decision Tree: Low Score Intervention:**
 
-```
-{Weekly score < 50?}
-  |-- Yes --> {Score < 35?}
-  |              |-- Yes --> [Crisis mode: ARIA sends encouraging message]
-  |              |              [Suggest: "Let's reset. Pick 1 goal for next week."]
-  |              |              [Reduce task load recommendation by 50%]
-  |              |              [Highlight: overwork pattern detected]
-  |              |-- No --> [Gentle correction mode]
-  |                           [Flag: "You had a tough week. Here's how to bounce back."]
-  |                           [Suggest: "Focus on sleep recovery first"]
-  |-- No --> [Normal review with growth areas]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    WS{Weekly score &lt; 50?}
+    WS -->|No| NORMALR[Normal review with growth areas]
+    WS -->|Yes| WS2{Score &lt; 35?}
+    WS2 -->|Yes| CRISIS[Crisis mode: ARIA sends encouraging message]
+    CRISIS --> RESET[Suggest: Let's reset. Pick 1 goal for next week]
+    RESET --> REDUCE2[Reduce task load recommendation by 50%]
+    REDUCE2 --> OVERWORK[Highlight: overwork pattern detected]
+    WS2 -->|No| GENTLE[Gentle correction mode]
+    GENTLE --> FLAG2[Flag: You had a tough week. Bounce back.]
+    FLAG2 --> SLEEPF[Suggest: Focus on sleep recovery first]
+    
+    style WS fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style WS2 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style CRISIS fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style NORMALR fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style GENTLE fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 **Success Metrics:**
@@ -505,47 +600,72 @@ Trigger: Sunday 8:00 PM user timezone via APScheduler
 
 ### 8.1 User Initiates Chat
 
-```
-[User opens /chat or uses Cmd+Shift+C]
-    -> [Chat interface loads with message history]
-    -> [ARIA greeting based on context:]
-        -> {After 9 PM?} -> "Evening. Ready to wind down?"
-        -> {Morning before 10 AM?} -> "Good morning. Here's your day ahead."
-        -> {Tasks overdue?} -> "You have 3 pending tasks. Want to review?"
-        -> {Default} -> "I'm here. What's on your mind?"
-    -> [User types message]
-    -> [POST /api/chat/ with message + context]
-    -> [Backend assembles full context:]
-        -> Load PromptLoader.get_system("aria_system")
-        -> Load PromptLoader.get_system("guardrails")
-        -> Gather user context (recent tasks, last 10 messages, current projects)
-        -> Call LLM.generate with system + user + context
-    -> [Stream response back to frontend via SSE]
-    -> [Display streaming response in chat UI]
-    -> [User can interrupt, edit, or follow up]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    UC[User opens /chat or Cmd+Shift+C] --> LOADCHAT[Chat interface loads with message history]
+    LOADCHAT --> GREET{ARIA greeting based on context}
+    GREET -->|After 9 PM| WIND[Evening. Ready to wind down?]
+    GREET -->|Morning before 10 AM| GOOD[Good morning. Here's your day ahead.]
+    GREET -->|Tasks overdue| PENDING[You have pending tasks. Want to review?]
+    GREET -->|Default| HERE[I'm here. What's on your mind?]
+    WIND --> TYPE2[User types message]
+    GOOD --> TYPE2
+    PENDING --> TYPE2
+    HERE --> TYPE2
+    TYPE2 --> POSTCHAT[POST /api/chat/ with message + context]
+    POSTCHAT --> BACKEND[Backend assembles full context]
+    BACKEND --> LOADARIA[Load PromptLoader.get_system aria_system]
+    BACKEND --> LOADGUARD[Load PromptLoader.get_system guardrails]
+    BACKEND --> GATHER[Gather user context: recent tasks, messages, projects]
+    LOADARIA --> CALLGEN[Call LLM.generate with system + user + context]
+    LOADGUARD --> CALLGEN
+    GATHER --> CALLGEN
+    CALLGEN --> STREAM[Stream response back to frontend via SSE]
+    STREAM --> DISPLAY2[Display streaming response in chat UI]
+    DISPLAY2 --> INTERACT[User can interrupt, edit, or follow up]
+    
+    style GREET fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style BACKEND fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style CALLGEN fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style STREAM fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 8.2 Intent Classification (ARIA Router)
 
-```
-[User message received]
-    -> [Classify intent:]
-        -> {Task intent?} -> [Delegate to task_agent]
-        -> {Course intent?} -> [Query courses API directly]
-        -> {Habit intent?} -> [Query habits API directly]
-        -> {Opportunity intent?} -> [Query opportunities API]
-        -> {Memory intent?} -> [Call memory_agent for recall]
-        -> {General question?} -> [ARIA responds directly]
-        -> {Command: "brief me"} -> [Trigger briefing generation]
-        -> {Command: "review my week"} -> [Trigger weekly review]
-        -> {Unclear} -> [Ask clarifying question]
-    -> {Requires database query?}
-        |-- Yes --> [Execute query -> format results -> include in response]
-        |-- No --> [Direct LLM response]
-    -> {Requires action?}
-        |-- Yes --> [Execute action (create task, update habit)]
-        |              [Confirm action in response]
-        |-- No --> [Informational response only]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    MSG[User message received] --> CLASSIFY{Classify intent}
+    CLASSIFY -->|Task intent| TASK[Delegate to task_agent]
+    CLASSIFY -->|Course intent| COURSEQ[Query courses API directly]
+    CLASSIFY -->|Habit intent| HABITQ[Query habits API directly]
+    CLASSIFY -->|Opportunity intent| OPPQ[Query opportunities API]
+    CLASSIFY -->|Memory intent| MEMORY[Call memory_agent for recall]
+    CLASSIFY -->|General question| DIRECT[ARIA responds directly]
+    CLASSIFY -->|Command: brief me| BRIEF[Trigger briefing generation]
+    CLASSIFY -->|Command: review week| REVIEW2[Trigger weekly review]
+    CLASSIFY -->|Unclear| CLARIFY[Ask clarifying question]
+    TASK --> DBQ{Requires database query?}
+    COURSEQ --> DBQ
+    HABITQ --> DBQ
+    OPPQ --> DBQ
+    MEMORY --> DBQ
+    DIRECT --> DBQ
+    BRIEF --> DBQ
+    REVIEW2 --> DBQ
+    CLARIFY --> DBQ
+    DBQ -->|Yes| EXECUTE[Execute query → format results → include in response]
+    DBQ -->|No| LLM2[Direct LLM response]
+    EXECUTE --> ACTQ{Requires action?}
+    LLM2 --> ACTQ
+    ACTQ -->|Yes| ACTION2[Execute action: create task, update habit]
+    ACTION2 --> CONFIRMA[Confirm action in response]
+    ACTQ -->|No| INFOResp[Informational response only]
+    
+    style CLASSIFY fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style DBQ fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style ACTQ fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
 ```
 
 **Error Paths:**
@@ -572,45 +692,59 @@ Trigger: Sunday 8:00 PM user timezone via APScheduler
 
 Trigger: 6:00 AM daily via APScheduler
 
-```
-[Cron job fires at 6:00 AM]
-    -> [Query user profile: skills, interests, goals, semester, location]
-    -> [Build search queries from profile tags]
-    -> [Scrape/query opportunity sources:]
-        -> [Internshala API -> internships matching skills]
-        -> [LinkedIn scraping -> relevant job postings]
-        -> [Devfolio/Devpost -> hackathons near user]
-        -> [ScholarshipsIndia -> relevant scholarships]
-        -> [GitHub trending -> relevant repos/projects]
-    -> [Call PromptLoader.get_agent("opportunity_radar_agent")]
-    -> [Run AI matching algorithm on collected opportunities:]
-        -> [Score each opportunity 0-100 based on skill match, location, deadline, user goals]
-    -> {Match score > 70?}
-        |-- Yes --> [Save to opportunities table with match_reason]
-        |              [Include in morning briefing]
-        |              [Push notification if urgent (deadline < 3 days)]
-        |-- No --> [Archive low-score opportunities]
-    -> [Run duplicate detection: URL + title similarity > 85%]
-        -> [Merge or discard duplicates]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    C6[Cron job fires at 6:00 AM] --> PROFILE[Query user profile: skills, interests, goals, location]
+    PROFILE --> BUILDQ[Build search queries from profile tags]
+    BUILDQ --> SCRAPE[Scrape/query opportunity sources]
+    SCRAPE --> IS[Internshala API → internships]
+    SCRAPE --> LI[LinkedIn scraping → job postings]
+    SCRAPE --> DEV[Devfolio/Devpost → hackathons]
+    SCRAPE --> SI2[ScholarshipsIndia → scholarships]
+    SCRAPE --> GH[GitHub trending → repos/projects]
+    IS --> LOADOPP[Call PromptLoader.get_agent opportunity_radar_agent]
+    LI --> LOADOPP
+    DEV --> LOADOPP
+    SI2 --> LOADOPP
+    GH --> LOADOPP
+    LOADOPP --> MATCH[Run AI matching algorithm]
+    MATCH --> SCORE[Score each opportunity 0-100]
+    SCORE --> THRESH{Match score &gt; 70?}
+    THRESH -->|Yes| SAVEOPP[Save to opportunities table with match_reason]
+    SAVEOPP --> BRIEF2[Include in morning briefing]
+    BRIEF2 --> PUSHNOTIF[Push notification if deadline &lt; 3 days]
+    THRESH -->|No| ARCHIVE[Archive low-score opportunities]
+    SAVEOPP --> DUPE[Run duplicate detection: URL + title similarity &gt; 85%]
+    PUSHNOTIF --> DUPE
+    ARCHIVE --> DUPE
+    DUPE --> MERGE[Merge or discard duplicates]
+    
+    style THRESH fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style MATCH fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PUSHNOTIF fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 9.2 User Applies to Opportunity
 
-```
-[User views opportunity card]
-    -> [Options: Save | Apply | Dismiss | Share]
-    -> [User clicks "Apply"]
-        -> [Show application tracker modal]
-        -> [Fields: Applied date, Notes, Status (Applied/Interviewing/Offer/Rejected)]
-        -> [Auto-fill: company name, role, url from opportunity]
-        -> [User saves application record]
-        -> [Create follow-up task: "Follow up on [company] application" in 7 days]
-        -> [Log to income_entries if paid internship]
-    -> [User clicks "Save"]
-        -> [Move to saved opportunities]
-        -> [Set reminder for 3 days before deadline]
-    -> [User clicks "Dismiss"]
-        -> [Mark as dismissed, add to ignore list for similar]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    VIEW[User views opportunity card] --> OPTIONS{Options}
+    OPTIONS -->|Apply| MODAL2[Show application tracker modal]
+    MODAL2 --> FIELDS2[Fields: Applied date, Notes, Status]
+    FIELDS2 --> AUTOFILL[Auto-fill: company, role, url]
+    AUTOFILL --> SAVEAPP[User saves application record]
+    SAVEAPP --> FOLLOWUP[Create follow-up task in 7 days]
+    FOLLOWUP --> LOGINC[Log to income_entries if paid internship]
+    OPTIONS -->|Save| SAVEOP[Move to saved opportunities]
+    SAVEOP --> REMINDER2[Set reminder for 3 days before deadline]
+    OPTIONS -->|Dismiss| DISMISS[Mark as dismissed]
+    DISMISS --> IGNORE[Add to ignore list for similar]
+    
+    style OPTIONS fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style SAVEAPP fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style DISMISS fill:#13151A,stroke:#334155,color:#94A3B8
 ```
 
 **Error Paths:**
@@ -634,20 +768,25 @@ Trigger: 6:00 AM daily via APScheduler
 
 ### 10.1 Income Entry Flow
 
-```
-[User navigates to /income]
-    -> [Clicks "Add Income Entry"]
-    -> [Modal fields: Amount (Rs.), Source (Freelance/Internship/Scholarship/Other),
-        Description, Hours worked, Date, Project linked?]
-    -> {Hours worked > 0?}
-        |-- Yes --> [Auto-calculate hourly rate]
-        |              [Show: "Effective rate: Rs. 450/hr"]
-        |              [Compare to previous: "↑12% from last month"]
-        |-- No --> [Hourly rate not calculated]
-    -> [Clicks Save]
-    -> [POST /api/income/]
-    -> [Update dashboard income summary]
-    -> [Update monthly earning total]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    NAVI2[User navigates to /income] --> ADDINC[Click Add Income Entry]
+    ADDINC --> MODAL3[Modal: Amount, Source, Description, Hours worked, Date, Project]
+    MODAL3 --> HOURSQ{Hours worked &gt; 0?}
+    HOURSQ -->|Yes| CALCRATE[Auto-calculate hourly rate]
+    CALCRATE --> SHOWRATE[Show: Effective rate: Rs. 450/hr]
+    SHOWRATE --> COMPARE[Compare to previous: up 12% from last month]
+    HOURSQ -->|No| NORATE[Hourly rate not calculated]
+    COMPARE --> SAVEI[Click Save]
+    NORATE --> SAVEI
+    SAVEI --> POSTI[POST /api/income/]
+    POSTI --> DASHI[Update dashboard income summary]
+    DASHI --> MONTHLY[Update monthly earning total]
+    
+    style HOURSQ fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style CALCRATE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style MONTHLY fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 **Success Metrics:**
@@ -661,46 +800,61 @@ Trigger: 6:00 AM daily via APScheduler
 
 ### 11.1 Flow: Idea → Project → Task → Income
 
-```
-[User captures idea in Idea Vault]
-    -> [Idea status: Raw]
-    -> [ARIA detects high feasibility score]
-        -> [Suggests moving to "Researching" phase]
-        -> [Creates project shell with idea details]
-    -> [User moves to "Building" phase]
-        -> [ARIA generates initial task breakdown]
-        -> [Creates project in Projects module]
-        -> [Links existing tasks from task manager]
-    -> [User completes project milestone]
-        -> [ARIA suggests monetization channels]
-        -> [Creates income entry when payment received]
-        -> [Opportunity radar searches for similar paid work]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    CAPTURE[User captures idea in Idea Vault] --> RAW[Idea status: Raw]
+    RAW --> DETECT[ARIA detects high feasibility score]
+    DETECT --> SUGGESTM[Suggest moving to Researching phase]
+    SUGGESTM --> SHELL[Creates project shell with idea details]
+    SHELL --> BUILD2[User moves to Building phase]
+    BUILD2 --> BREAKDOWN[ARIA generates initial task breakdown]
+    BREAKDOWN --> PROJECTS2[Creates project in Projects module]
+    PROJECTS2 --> LINKE[Links existing tasks from task manager]
+    BUILD2 --> MILESTONE[User completes project milestone]
+    MILESTONE --> MONETIZE[ARIA suggests monetization channels]
+    MONETIZE --> INCOME2[Creates income entry when payment received]
+    INCOME2 --> RADAR[Opportunity radar searches for similar paid work]
+    
+    style CAPTURE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DETECT fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style MONETIZE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 11.2 Flow: Course → Sleep → Productivity Correlation
 
-```
-[Course deadlines approaching]
-    -> [User sacrifices sleep (logged in sleep_logs)]
-    -> [Next day: low sleep score, high fatigue]
-    -> [Morning briefing adjusts: fewer deep work tasks]
-    -> [Habit completion drops]
-    -> [Weekly review detects pattern]
-    -> [ARIA flags: "You consistently lose sleep before deadlines.
-        Consider starting course material 2 weeks earlier."]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    DEAD[Course deadlines approaching] --> SACRIFICE[User sacrifices sleep]
+    SACRIFICE --> NEXT[Next day: low sleep score, high fatigue]
+    NEXT --> ADJUST[Morning briefing adjusts: fewer deep work tasks]
+    ADJUST --> HABITDROP[Habit completion drops]
+    HABITDROP --> DETECT2[Weekly review detects pattern]
+    DETECT2 --> FLAG3[ARIA flags: You consistently lose sleep before deadlines]
+    FLAG3 --> SUGGEST2[Suggest starting course material 2 weeks earlier]
+    
+    style DEAD fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style FLAG3 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style SUGGEST2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 11.3 Flow: Opportunity → Application → Prep Tasks
 
-```
-[Opportunity radar matches internship]
-    -> [User applies]
-    -> [Auto-creates application tracker]
-    -> [Generates preparation tasks:]
-        -> [Create task: "Research company background" - due 3 days before interview]
-        -> [Create task: "Practice technical interview questions on LeetCode" - recurring]
-        -> [Create task: "Prepare portfolio/examples" - due 1 week before]
-        -> [Suggest relevant saved resources from library]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    MATCH2[Opportunity radar matches internship] --> APPLY2[User applies]
+    APPLY2 --> TRACKER[Auto-creates application tracker]
+    TRACKER --> PREPT[Generates preparation tasks]
+    PREPT --> TASK3[Research company background<br/>due 3 days before interview]
+    PREPT --> TASK4[Practice technical interview questions<br/>on LeetCode - recurring]
+    PREPT --> TASK5[Prepare portfolio/examples<br/>due 1 week before]
+    PREPT --> RESOURCE2[Suggest relevant saved resources from library]
+    
+    style MATCH2 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style PREPT fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RESOURCE2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ---
@@ -709,46 +863,65 @@ Trigger: 6:00 AM daily via APScheduler
 
 ### 12.1 Network Offline Flow
 
-```
-[Network connectivity lost detected (navigator.onLine = false)]
-    -> [Show offline indicator badge]
-    -> [Queue all writes to IndexedDB]
-    -> [Continue reading cached data]
-    -> [Switch to algorithmic mode for AI features]
-    -> {Network restored?}
-        |-- Yes --> [Sync queued writes to Supabase]
-        |              [Resolve conflicts (last-write-wins)]
-        |              [Refresh stale cache]
-        |              [Show sync complete toast]
-        |-- No --> [Remain in offline mode]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    OFFLINE[Network connectivity lost<br/>navigator.onLine = false] --> BADGE2[Show offline indicator badge]
+    BADGE2 --> QUEUE[Queue all writes to IndexedDB]
+    QUEUE --> CACHE2[Continue reading cached data]
+    CACHE2 --> ALGO2[Switch to algorithmic mode for AI features]
+    ALGO2 --> RESTORE{Network restored?}
+    RESTORE -->|Yes| SYNC[Sync queued writes to Supabase]
+    SYNC --> RESOLVE[Resolve conflicts<br/>last-write-wins]
+    RESOLVE --> REFRESH2[Refresh stale cache]
+    REFRESH2 --> TOAST3[Show sync complete toast]
+    RESTORE -->|No| OFFLINE2[Remain in offline mode]
+    
+    style OFFLINE fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style RESTORE fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style SYNC fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style OFFLINE2 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 12.2 AI Service Down Flow
 
-```
-[LLM request returns timeout or 503]
-    -> [Retry 1 with exponential backoff (2s)]
-    -> [Retry 2 with exponential backoff (4s)]
-    -> {Claude fallback available?}
-        |-- Yes --> [Route to Claude API]
-        |              [Log: "Ollama down, using Claude fallback"]
-        |-- No --> [Fallback to algorithmic mode]
-        |              [Log: "AI unavailable, using algorithm"]
-    -> [Cache algorithmic result]
-    -> [Continue service without AI]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    FAIL[LLM request returns timeout or 503] --> RETRY1[Retry 1 with exponential backoff 2s]
+    RETRY1 --> RETRY2[Retry 2 with exponential backoff 4s]
+    RETRY2 --> CLAUDE{Claude fallback available?}
+    CLAUDE -->|Yes| ROUTE[Route to Claude API]
+    ROUTE --> LOG2[Log: Ollama down, using Claude fallback]
+    CLAUDE -->|No| FALLBACK2[Fallback to algorithmic mode]
+    FALLBACK2 --> LOG3[Log: AI unavailable, using algorithm]
+    LOG2 --> CACHE3[Cache algorithmic result]
+    LOG3 --> CACHE3
+    CACHE3 --> CONTINUE2[Continue service without AI]
+    
+    style FAIL fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style CLAUDE fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style ROUTE fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style FALLBACK2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 12.3 Session Expiry Flow
 
-```
-[API returns 401 on any request]
-    -> [Attempt token refresh with refresh_token]
-    -> {Refresh successful?}
-        |-- Yes --> [Update access_token in memory]
-        |              [Retry original request]
-        |-- No --> [Clear auth state]
-        |              [Redirect to /login]
-        |              [Show: "Your session expired. Please sign in again."]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    API401[API returns 401 on any request] --> REFRESH2[Attempt token refresh with refresh_token]
+    REFRESH2 --> SUCCESS2{Refresh successful?}
+    SUCCESS2 -->|Yes| UPDATE2[Update access_token in memory]
+    UPDATE2 --> RETRY3[Retry original request]
+    SUCCESS2 -->|No| CLEAR[Clear auth state]
+    CLEAR --> LOGIN2[Redirect to /login]
+    LOGIN2 --> MSG2[Show: Your session expired. Please sign in again.]
+    
+    style API401 fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style SUCCESS2 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style RETRY3 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style LOGIN2 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ---
@@ -757,39 +930,57 @@ Trigger: 6:00 AM daily via APScheduler
 
 ### 13.1 Offline-First Sync (Planned)
 
-```
-[PWA installation flow]
-    -> [Service worker registration]
-    -> [Cache app shell + static assets]
-    -> [Background sync for writes]
-    -> [Conflict resolution: last-write-wins + manual for same-second conflicts]
-    -> [Periodic background sync every 15 min when online]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    PWA[PWA installation flow] --> SW[Service worker registration]
+    SW --> CACHE3[Cache app shell + static assets]
+    CACHE3 --> BGSYNC[Background sync for writes]
+    BGSYNC --> CONFLICT[Conflict resolution: last-write-wins<br/>+ manual for same-second conflicts]
+    CONFLICT --> PERIODIC[Periodic background sync every 15 min when online]
+    
+    style PWA fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PERIODIC fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 13.2 Mobile App Flow (Planned)
 
-```
-[React Native app launch]
-    -> [Biometric authentication (fingerprint/face)]
-    -> [Bottom tab navigation: Dashboard | Quick Capture | Chat | Profile]
-    -> [Push notification handling -> deep link to relevant screen]
-    -> [Quick capture widget on home screen]
-    -> [Offline support with local SQLite]
-    -> [Sync with backend on connectivity]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    RN[React Native app launch] --> BIO[Biometric authentication<br/>fingerprint/face]
+    BIO --> TAB[Bottom tab navigation<br/>Dashboard · Quick Capture · Chat · Profile]
+    TAB --> PUSH2[Push notification handling → deep link to relevant screen]
+    PUSH2 --> WIDGET[Quick capture widget on home screen]
+    WIDGET --> SQLITE[Offline support with local SQLite]
+    SQLITE --> SYNC2[Sync with backend on connectivity]
+    
+    style RN fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style BIO fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SYNC2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 13.3 Browser Extension Flow (Planned)
 
-```
-[User browses any webpage]
-    -> [Extension icon detects page type:]
-        -> {Course page (Udemy/Coursera)?} -> [Offer to save as course]
-        -> {YouTube video?} -> [Offer to save to knowledge vault]
-        -> {Job posting?} -> [Offer to save as opportunity]
-        -> {Interesting article?} -> [Offer to save as resource]
-        -> {Default} -> [Quick capture overlay on Cmd+Shift+K]
-    -> [One-click save to Second Brain OS]
-    -> [Auto-tagging and categorization]
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart TD
+    BROWSE[User browses any webpage] --> DETECT3[Extension icon detects page type]
+    DETECT3 -->|Course page Udemy/Coursera| SAVEAS[Offer to save as course]
+    DETECT3 -->|YouTube video| SAVEKV[Offer to save to knowledge vault]
+    DETECT3 -->|Job posting| SAVEOPP2[Offer to save as opportunity]
+    DETECT3 -->|Interesting article| SAVERES[Offer to save as resource]
+    DETECT3 -->|Default| QC2[Quick capture overlay on Cmd+Shift+K]
+    SAVEAS --> ONECLICK[One-click save to Second Brain OS]
+    SAVEKV --> ONECLICK
+    SAVEOPP2 --> ONECLICK
+    SAVERES --> ONECLICK
+    QC2 --> ONECLICK
+    ONECLICK --> AUTOTAG[Auto-tagging and categorization]
+    
+    style DETECT3 fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style ONECLICK fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style AUTOTAG fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---

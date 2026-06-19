@@ -10,6 +10,23 @@
 
 ---
 
+## User Story Workflow
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+flowchart TD
+    EPIC[Epic - EPIC-01] --> FEAT[Feature - F1.1]
+    FEAT --> US[User Story]
+    US --> AC[Acceptance Criteria]
+    AC --> AC1[AC-TASK-01: Smart Creation]
+    AC --> AC2[AC-TASK-02: Auto-Reschedule]
+    AC --> AC3[AC-TASK-03: Zero Miss]
+    AC --> AC4[AC-TASK-04: Dependencies]
+    AC1 --> DEV[Dev Implementation]
+    DEV --> TEST[Test Verification]
+    TEST --> DONE([Done - Ship])
+```
+
 ## Module 1: Dashboard & Morning Briefing
 
 | ID | As a... | I want to... | So that... | Priority |

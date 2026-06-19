@@ -13,6 +13,24 @@
 
 ---
 
+## Persona Ecosystem
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph LR
+    ARJUN[Arjun Mehta<br/>Primary - BTech CSE]
+    PRIYA[Priya Sharma<br/>Secondary - Self-Learner]
+    ROHIT[Rohit Verma<br/>Tertiary - CS Graduate]
+
+    ARJUN -->|drives| FEAT[Feature Priority]
+    PRIYA -->|shapes| AI[AI Features]
+    ROHIT -->|informs| CAREER[Career Features]
+
+    ARJUN -.->|collaborates| PRIYA
+    PRIYA -.->|competes with| ROHIT
+    ARJUN -.->|aspires to| ROHIT
+```
+
 ## 1. Introduction
 
 This document defines the user personas for Second Brain OS. Each persona represents a distinct user segment with specific goals, pain points, behaviors, and needs. Personas are based on research with 50+ BTech CSE students, supplemented by industry data on student productivity tool usage.
