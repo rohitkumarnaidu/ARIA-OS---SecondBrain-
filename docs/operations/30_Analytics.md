@@ -36,6 +36,22 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph TD
+    Events["📡 User Events"] --> Collect["📥 Event Collection SDK"]
+    Collect --> Validate["✅ Event Validation"]
+    Validate --> Enrich["🔧 Data Enrichment"]
+    Enrich --> Store["💾 Supabase Storage<br/>(analytics_events)"]
+    Store --> Aggregate["📊 SQL Aggregation<br/>(Supabase Views)"]
+    Store --> RawQuery["🔍 Raw Query API"]
+    Aggregate --> Dashboard["📈 Dashboard & Insights"]
+    Aggregate --> Export["📤 JSON/CSV Export"]
+    RawQuery --> Dashboard
+    Dashboard --> Feedback["🔄 Feedback Loop"]
+    Feedback --> Events
+```
+
 ## 1. Executive Summary
 
 Second Brain OS (ARIA OS) implements a **privacy-first, zero-telemetry analytics architecture** that enables product insight without compromising user trust. Unlike traditional analytics platforms that rely on third-party cookies, fingerprinting, and cross-site tracking, ARIA OS uses a first-party, event-based system stored in Supabase PostgreSQL.

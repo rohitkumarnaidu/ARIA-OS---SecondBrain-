@@ -14,6 +14,39 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph TD
+    Data["📦 Incoming Data"] --> Classify["📂 Classify by Tier"]
+    Classify --> Tier1["🔴 Tier 1 — Critical<br/>User Profile · Auth · Settings"]
+    Classify --> Tier2["🟠 Tier 2 — Active<br/>Tasks · Courses · Goals · Habits"]
+    Classify --> Tier3["🟡 Tier 3 — Transient<br/>Chat Messages · Session Data"]
+    Classify --> Tier4["🟢 Tier 4 — Logs<br/>Audit Logs · Analytics Events"]
+
+    Tier1 --> RetainIndef["♾️ Retain Indefinitely<br/>(While Account Active)"]
+    Tier2 --> Active["📆 Active Period"]
+    Active --> AccountActive{"Account Active?"}
+    AccountActive -->|Yes| Retain["🔄 Continue Retention"]
+    AccountActive -->|No| Deletion["🗑️ Account Deletion Trigger"]
+    Deletion --> SoftDelete["📄 Soft Delete (Flag)"]
+    SoftDelete --> Grace["⏳ Grace Period (30 days)"]
+    Grace --> Reactivates{"User Reactivates?"}
+    Reactivates -->|Yes| Restore["🔄 Restore Data"]
+    Reactivates -->|No| HardDelete["🗑️ Hard Delete / Anonymize"]
+    HardDelete --> Log["📝 Log Deletion to Audit Trail"]
+    Restore --> Retain
+
+    Tier3 --> TL["⏱️ TTL: 90 Days"]
+    TL --> AutoDelete["🗑️ Auto-Delete (Cron Job)"]
+    AutoDelete --> Log
+
+    Tier4 --> TL2["⏱️ TTL: 90 Days (Audit) / 365 Days (Aggregates)"]
+    TL2 --> Aggregate["📊 Retain Aggregates Only"]
+    Aggregate --> AutoDelete
+
+    Log --> Completion["✅ Retention Policy Enforced"]
+```
+
 ## 1. Executive Summary
 
 Second Brain OS stores personal productivity data across 15+ database tables, plus AI interaction logs, audit trails, and session data. As the system transitions from single-user to multi-user, a formal data retention policy is required to comply with privacy regulations, minimize storage costs, and reduce security exposure.

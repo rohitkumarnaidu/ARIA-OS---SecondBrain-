@@ -47,21 +47,14 @@ Applies to all production environments (staging and production). Covers all serv
 
 ## Incident Lifecycle (5 Phases)
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                          INCIDENT LIFECYCLE                                    │
-│                                                                               │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────┐    ┌──────────┐    ┌──────┐  │
-│  │ PHASE 1  │    │ PHASE 2  │    │   PHASE 3    │    │ PHASE 4  │    │ PH 5 │  │
-│  │ DETECTION│───▶│ RESPONSE │───▶│  MITIGATION  │───▶│RESOLUTION│───▶│POST- │  │
-│  │          │    │          │    │              │    │          │    │MORTEM│  │
-│  └──────────┘    └──────────┘    └──────────────┘    └──────────┘    └──────┘  │
-│       │               │               │                 │              │       │
-│       ▼               ▼               ▼                 ▼              ▼       │
-│  Alert fires     Engineer acks    Fix deployed      Monitoring      Doc written│
-│  or user report  Declare sev      Workaround       stable > 30min   Action items│
-│                   Notify team      applied           Close incident   tracked   │
-└──────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> Detection: Alert fires / User report
+    Detection --> Response: Engineer acks / Declare sev / Notify team
+    Response --> Mitigation: Fix deployed / Workaround applied
+    Mitigation --> Resolution: Monitoring stable > 30min
+    Resolution --> PostMortem: Close incident
+    PostMortem --> [*]: Doc written / Action items tracked
 ```
 
 ### Phase 1: Detection
@@ -232,17 +225,11 @@ Examples:
 ## Escalation Paths
 
 ### Standard Escalation
-```
-Developer (Primary)
-  |-- 15 min no response
-  v
-Senior Developer (Secondary)
-  |-- 30 min no resolution
-  v
-CTO / Tech Lead
-  |-- 1 hour no resolution
-  v
-Founder / Product Owner (business decisions)
+```mermaid
+flowchart TD
+    Dev[Developer Primary] -->|15 min no response| SrDev[Senior Developer Secondary]
+    SrDev -->|30 min no resolution| CTO[CTO Tech Lead]
+    CTO -->|1 hour no resolution| Founder[Founder Product Owner business decisions]
 ```
 
 ### Specific Escalation Matrix
@@ -745,10 +732,21 @@ Facilitator: {name}
 
 ### Feedback Loop
 
-```
-Incident → Post-Mortem → Action Items → Sprint Planning → Implementation → Verification
-     ↑                                                                          │
-     └──────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    participant Incident
+    participant PostMortem as Post-Mortem
+    participant Items as Action Items
+    participant Sprint as Sprint Planning
+    participant Impl as Implementation
+    participant Verify as Verification
+
+    Incident->>PostMortem: Trigger
+    PostMortem->>Items: Identify fixes
+    Items->>Sprint: Track items
+    Sprint->>Impl: Plan work
+    Impl->>Verify: Apply fix
+    Verify->>Items: Verify effectiveness
 ```
 
 ### Action Item Lifecycle

@@ -8,6 +8,30 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph LR
+    Services["🏗️ Service Inventory<br/>Supabase · Vercel · Railway · Ollama · Claude · Resend · GitHub"] --> Track["📊 Cost Tracking Dashboard"]
+    Track --> Daily["📅 Daily Usage Logs"]
+    Track --> Monthly["📆 Monthly Aggregation"]
+    Monthly --> Budget{"Budget<br/>> $5/mo?"}
+    Budget -->|No| Monitor["✅ Monitor & Maintain"]
+    Budget -->|Yes| Alert["🚨 Budget Alert Triggered"]
+    Alert --> Analyze["🔍 Analyze Cost Drivers"]
+    Analyze --> Option1["📉 Reduce AI Usage<br/>(Ollama > Claude)"]
+    Analyze --> Option2["🗜️ Optimize DB Usage<br/>(Supabase quotas)"]
+    Analyze --> Option3["🔄 Migrate Services<br/>(cheaper alternatives)"]
+    Option1 --> Optimize
+    Option2 --> Optimize
+    Option3 --> Optimize
+    Optimize --> TargetMet{"Target Met?"}
+    TargetMet -->|Yes| Monitor
+    TargetMet -->|No| Escalate["📢 Escalate — Rethink Architecture"]
+    Escalate --> Option1
+    Monitor --> Review["📋 Quarterly FinOps Review"]
+    Review --> Services
+```
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose

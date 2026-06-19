@@ -84,30 +84,32 @@ This Disaster Recovery (DR) and Business Continuity Plan (BCP) documents the pro
 
 ### 2.3 Criticality Classification
 
-```
-CRITICAL (P0)
-├── Supabase Database
-├── Supabase Auth
-├── GitHub Repository
-├── API Endpoints (all 13 routers)
-└── Environment Secrets
-
-HIGH (P1)
-├── Frontend Deployment (Vercel)
-├── AI Client Configuration
-└── Email Service Configuration
-
-MEDIUM (P2)
-├── APScheduler Jobs
-├── Analytics Data
-├── Log Files
-└── Design Assets
-
-LOW (P3)
-├── Three.js 3D Backgrounds
-├── Documentation Files
-├── Archived Data
-└── Old DB Snapshots
+```mermaid
+graph TD
+    subgraph P0[CRITICAL P0]
+        D1[Supabase Database]
+        D2[Supabase Auth]
+        D3[GitHub Repository]
+        D4[API Endpoints all 13 routers]
+        D5[Environment Secrets]
+    end
+    subgraph P1[HIGH P1]
+        D6[Frontend Deployment Vercel]
+        D7[AI Client Configuration]
+        D8[Email Service Configuration]
+    end
+    subgraph P2[MEDIUM P2]
+        D9[APScheduler Jobs]
+        D10[Analytics Data]
+        D11[Log Files]
+        D12[Design Assets]
+    end
+    subgraph P3[LOW P3]
+        D13[Three.js 3D Backgrounds]
+        D14[Documentation Files]
+        D15[Archived Data]
+        D16[Old DB Snapshots]
+    end
 ```
 
 ---
@@ -131,21 +133,31 @@ LOW (P3)
 
 ### 3.2 Probability Matrix
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    LIKELIHOOD                             │
-│         Very Low    Low    Medium    High    Very High    │
-│   ┌─────────────────────────────────────────────────┐    │
-│ C │  DB del.     DB corr.  API leak  Deploy fail   │    │
-│ R │  Repo loss   M/C fail  ---       ---           │    │
-│ I ├─────────────────────────────────────────────────┤    │
-│ T │              AI out.   ---       ---           │    │
-│ I │  ---         ---       ---       ---           │    │
-│ C ├─────────────────────────────────────────────────┤    │
-│ A │              Email out. ---      ---            │    │
-│ L │  ---         DNS exp.  ---      ---            │    │
-│   └─────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Likelihood[LIKELIHOOD]
+        VL[Very Low]
+        L[Low]
+        M[Medium]
+        H[High]
+        VH[Very High]
+    end
+
+    CRITICAL[CRITICAL] --> VL
+    CRITICAL --> L
+    CRITICAL --> M
+    CRITICAL --> H
+    CRITICAL --> VH
+
+    VL --- DB_Del[DB del]
+    VL --- Repo_Loss[Repo loss]
+    L --- DB_Corr[DB corr]
+    L --- MC_Fail[M/C fail]
+    L --- AI_Out[AI out]
+    L --- Email_Out[Email out]
+    L --- DNS_Exp[DNS exp]
+    M --- API_Leak[API leak]
+    H --- Deploy_Fail[Deploy fail]
 ```
 
 ### 3.3 Single Point of Failure Analysis
@@ -166,20 +178,16 @@ LOW (P3)
 
 ### 4.1 Backup Schedule
 
-```
-┌──────────────────┬─────────────┬────────────┬──────────────┐
-│     DATA         │ FREQUENCY   │ METHOD     │ RETENTION    │
-├──────────────────┼─────────────┼────────────┼──────────────┤
-│ PostgreSQL DB    │ Daily       │ pg_dump    │ 30 days      │
-│ Auth & Users     │ Real-time   │ Supabase   │ Unlimited    │
-│ Source Code      │ Per commit  │ GitHub     │ Unlimited    │
-│ Env Variables    │ Per change  │ Encrypted  │ Per version  │
-│ Chat History     │ Weekly      │ JSON export│ 90 days      │
-│ Config Files     │ Per release │ GitHub     │ Unlimited    │
-│ Design Assets    │ Weekly      │ Manual     │ 90 days      │
-│ Logs             │ No backup   │ —          │ 7 days       │
-└──────────────────┴─────────────┴────────────┴──────────────┘
-```
+| DATA | FREQUENCY | METHOD | RETENTION |
+|------|-----------|--------|-----------|
+| PostgreSQL DB | Daily | pg_dump | 30 days |
+| Auth & Users | Real-time | Supabase | Unlimited |
+| Source Code | Per commit | GitHub | Unlimited |
+| Env Variables | Per change | Encrypted | Per version |
+| Chat History | Weekly | JSON export | 90 days |
+| Config Files | Per release | GitHub | Unlimited |
+| Design Assets | Weekly | Manual | 90 days |
+| Logs | No backup | — | 7 days |
 
 ### 4.2 Database Backup Procedure
 
@@ -382,27 +390,14 @@ Step 4: Monitor
 
 The system is designed to operate in three modes:
 
+```mermaid
+stateDiagram-v2
+    [*] --> FullMode: All systems operational
+    FullMode --> DegradedMode: AI provider unreachable > 30s
+    DegradedMode --> EmergencyMode: Backend unavailable > 5min
+    EmergencyMode --> DegradedMode: Backend restored
+    DegradedMode --> FullMode: AI provider restored
 ```
-┌──────────────────┬──────────────────┬──────────────────┐
-│    FULL MODE     │  DEGRADED MODE   │  EMERGENCY MODE  │
-│   (All systems)  │ (AI unavailable) │  (Core only)     │
-├──────────────────┼──────────────────┼──────────────────┤
-│ ✓ All API routes │ ✓ All API routes │ ✓ Auth           │
-│ ✓ AI agents      │ ✗ AI chat        │ ✓ Tasks CRUD     │
-│ ✓ Chat           │ ✗ Briefings      │ ✓ Habits CRUD    │
-│ ✓ Briefings      │ ✗ Opportunity    │ ✓ Courses CRUD   │
-│ ✓ Scheduler      │   radar          │ ✗ Everything     │
-│ ✓ 3D backgrounds │ ✓ Scheduler      │   else           │
-│ ✓ All features   │ ✓ 3D (frontend)  │                  │
-│                  │ ✓ All other      │                  │
-│                  │   features       │                  │
-└──────────────────┴──────────────────┴──────────────────┘
-
-Transition conditions:
-  Full → Degraded:  AI provider unreachable > 30s
-  Degraded → Emergency: Backend unavailable > 5min
-  Emergency → Degraded: Backend restored
-  Degraded → Full: AI provider restored
 ```
 
 ### 6.2 Communication During Outage
@@ -579,22 +574,29 @@ echo "Result: SUCCESS/FAILURE" >> docs/operations/drill_log.md
 
 ### Appendix A: Quick Reference Card
 
+```mermaid
+graph TD
+    subgraph DR_Quick_Reference[DR Quick Reference]
+        DB[DB DOWN] --> DB1[pg_restore]
+        DB1 --> DB2[verify]
+        DB2 --> DB3[redeploy]
+        API[API DOWN] --> API1[Railway rollback]
+        API1 --> API2[verify]
+        FE[FRONTEND] --> FE1[Vercel rollback]
+        FE1 --> FE2[verify]
+        KL[KEY LEAK] --> KL1[Revoke]
+        KL1 --> KL2[rotate]
+        KL2 --> KL3[redeploy]
+        KL3 --> KL4[audit]
+        AI[AI DOWN] --> AI1[Check Ollama]
+        AI1 --> AI2[replace Claude]
+        AI2 --> AI3[algorithmic]
+        LF[LOCAL FAIL] --> LF1[git clone]
+        LF1 --> LF2[pip install]
+        LF2 --> LF3[npm install]
+        LF3 --> LF4[run]
+    end
 ```
-┌────────────────────────────────────────────────────────────┐
-│                    DR QUICK REFERENCE                        │
-│                                                              │
-│  DB DOWN:    pg_restore → verify → redeploy                 │
-│  API DOWN:   Railway rollback → verify                      │
-│  FRONTEND:   Vercel rollback → verify                       │
-│  KEY LEAK:   Revoke → rotate → redeploy → audit            │
-│  AI DOWN:    Check Ollama → replace Claude→ algorithmic    │
-│  LOCAL FAIL: git clone → pip install → npm install → run    │
-│                                                              │
-│  Supabase Dashboard: https://supabase.com/dashboard         │
-│  Vercel Dashboard:   https://vercel.com/dashboard           │
-│  Railway Dashboard:  https://railway.app/dashboard          │
-│  GitHub:             https://github.com/{owner}/{repo}      │
-└────────────────────────────────────────────────────────────┘
 ```
 
 ### Appendix B: Critical Contacts

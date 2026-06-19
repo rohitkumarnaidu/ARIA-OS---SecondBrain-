@@ -11,6 +11,33 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+flowchart LR
+    Fork["🍴 Fork Repository"] --> Clone2["📥 Clone Fork Locally"]
+    Clone2 --> Branch["🌿 Create Feature Branch<br/>feature/ · fix/ · docs/"]
+    Branch --> Setup["🔧 Setup Dev Environment<br/>make install"]
+    Setup --> Code["💻 Write Code + Tests"]
+    Code --> Lint["🧹 Run Linters<br/>make lint"]
+    Lint --> Validate["✅ Validate Prompts<br/>make validate-prompts"]
+    Validate --> Test["🧪 Run Tests<br/>make test"]
+    Test --> AllPassing{"All Passing?"}
+    AllPassing -->|No| Code
+    AllPassing -->|Yes| Commit["📝 Commit Changes<br/>Conventional Commit Format"]
+    Commit --> Push["📤 Push to Fork"]
+    Push --> PR["🔄 Open Pull Request"]
+    PR --> CI["⚙️ CI Pipeline<br/>5 Jobs Running"]
+    CI --> CIGreen{"CI Green?"}
+    CIGreen -->|No| Code
+    CIGreen -->|Yes| Review["👀 Code Review<br/>30-Item Checklist"]
+    Review --> Approved{"Approved?"}
+    Approved -->|Changes Requested| Code
+    Approved -->|Yes| Merge["🔀 Squash & Merge"]
+    Merge --> Deploy2["🚀 Auto-Deploy to Production"]
+    Deploy2 --> Monitor2["📊 Monitor for Issues"]
+    Monitor2 --> Celebrate["🎉 Contribution Complete"]
+```
+
 ## 1. Welcome & Community Values
 
 Welcome to the SecondBrain OS contributor community! We're building a personal AI productivity system designed specifically for BTech CSE students — combining tasks, courses, goals, habits, sleep, income, projects, and more into a single intelligent system with a local-first AI assistant (ARIA).

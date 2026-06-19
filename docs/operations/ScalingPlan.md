@@ -73,11 +73,12 @@ Second Brain OS scales across six dimensions:
 
 ### Scaling Strategy per Dimension
 
-```
-Scale up (vertical) → first, for simplicity
-Scale out (horizontal) → when vertical hits ceiling or cost-inefficient
-Read replicas → when read workload dominates (80/20 rule)
-Shard → only when data exceeds 50 GB or single-node write throughput is maxed
+```mermaid
+graph TD
+    SU[Scale up vertical] -->|first for simplicity| SO[Scale out horizontal]
+    SO -->|when vertical hits ceiling| RR[Read replicas]
+    RR -->|when read workload dominates 80/20 rule| SH[Shard]
+    SH -->|only when data exceeds 50 GB or write throughput maxed| END[Decision Made]
 ```
 
 ---
@@ -761,49 +762,49 @@ module.exports = withBundleAnalyzer({
 
 ## 11. Scaling Decision Tree
 
-```
-START: Users > 5?
-  ├─ No  → Stay in Phase 1 (single user, Railway + Ollama)
-  └─ Yes → Enter Phase 2
-            │
-            ├─ DB connections hitting limit (2)?
-            │   ├─ Upgrade Supabase to Pro ($25) + PgBouncer
-            │   └─ Review connection usage in middleware
-            │
-            ├─ AI latency > 5s or Ollama unavailable?
-            │   └─ Switch to Claude API fallback
-            │
-            └─ API response time > 500ms?
-                └─ Add Redis cache for hot endpoints
+```mermaid
+flowchart TD
+    START{Users > 5} -->|No| P1[Stay in Phase 1<br>single user Railway + Ollama]
+    START -->|Yes| P2[Enter Phase 2]
 
-Phase 2 achieved → Users > 50?
-  ├─ No  → Stay in Phase 2
-  └─ Yes → Enter Phase 3
-            │
-            ├─ DB read queries dominant (>80%)?
-            │   └─ Enable Supabase read replica (+$10)
-            │
-            ├─ API CPU > 70% consistently?
-            │   └─ Scale to 2-4 replicas (auto-scaling)
-            │
-            └─ AI cost > $100/mo?
-                └─ Implement model tiering + prompt caching
+    P2 --> Q1{DB connections hitting limit 2}
+    Q1 -->|Yes| A1[Upgrade Supabase to Pro $25 + PgBouncer]
+    Q1 -->|Also| A2[Review connection usage in middleware]
+    P2 --> Q2{AI latency > 5s or Ollama unavailable}
+    Q2 -->|Yes| A3[Switch to Claude API fallback]
+    P2 --> Q3{API response time > 500ms}
+    Q3 -->|Yes| A4[Add Redis cache for hot endpoints]
 
-Phase 3 achieved → Users > 500?
-  ├─ No  → Stay in Phase 3
-  └─ Yes → Enter Phase 4
-            │
-            ├─ Single DB > 10 GB?
-            │   └─ Implement vertical sharding (4 shards)
-            │
-            ├─ API auto-scaling > 4 replicas?
-            │   └─ Migrate from Railway to K8s
-            │
-            ├─ Multi-region needed (latency/GDPR)?
-            │   └─ K8s multi-region + read replicas
-            │
-            └─ AI cost > $500/mo?
-                └─ Provisioned throughput + batch processing
+    A1 --> P2Chk{Phase 2 achieved<br>Users > 50}
+    A2 --> P2Chk
+    A3 --> P2Chk
+    A4 --> P2Chk
+
+    P2Chk -->|No| P2Stay[Stay in Phase 2]
+    P2Chk -->|Yes| P3[Enter Phase 3]
+
+    P3 --> Q4{DB read queries dominant >80%}
+    Q4 -->|Yes| A5[Enable Supabase read replica +$10]
+    P3 --> Q5{API CPU > 70% consistently}
+    Q5 -->|Yes| A6[Scale to 2-4 replicas auto-scaling]
+    P3 --> Q6{AI cost > $100/mo}
+    Q6 -->|Yes| A7[Implement model tiering + prompt caching]
+
+    A5 --> P3Chk{Phase 3 achieved<br>Users > 500}
+    A6 --> P3Chk
+    A7 --> P3Chk
+
+    P3Chk -->|No| P3Stay[Stay in Phase 3]
+    P3Chk -->|Yes| P4[Enter Phase 4]
+
+    P4 --> Q7{Single DB > 10 GB}
+    Q7 -->|Yes| A8[Implement vertical sharding 4 shards]
+    P4 --> Q8{API auto-scaling > 4 replicas}
+    Q8 -->|Yes| A9[Migrate from Railway to K8s]
+    P4 --> Q9{Multi-region needed latency/GDPR}
+    Q9 -->|Yes| A10[K8s multi-region + read replicas]
+    P4 --> Q10{AI cost > $500/mo}
+    Q10 -->|Yes| A11[Provisioned throughput + batch processing]
 ```
 
 ---

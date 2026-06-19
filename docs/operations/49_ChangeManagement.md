@@ -102,8 +102,19 @@ Risk level gates the required process steps. Lower-risk changes move faster; hig
 
 ### 3.1 Process Flow
 
-```
-[Idea/Bug] → [GitHub Issue] → [Plan] → [Branch] → [Code] → [Test] → [Pull Request] → [Review] → [Merge] → [Deploy] → [Verify] → [Close Issue]
+```mermaid
+flowchart LR
+    Idea[Idea/Bug] --> GI[GitHub Issue]
+    GI --> Plan[Plan]
+    Plan --> Branch[Branch]
+    Branch --> Code[Code]
+    Code --> Test[Test]
+    Test --> PR[Pull Request]
+    PR --> Review[Review]
+    Review --> Merge[Merge]
+    Merge --> Deploy[Deploy]
+    Deploy --> Verify[Verify]
+    Verify --> CloseIssue[Close Issue]
 ```
 
 ### 3.2 Detailed Steps
@@ -711,14 +722,14 @@ Date/Time: _________________
 
 ### Appendix D: Semantic Versioning Decision Tree
 
-```
-Is this change BREAKING?
-  ├── Yes → MAJOR bump
-  └── No → Is it a NEW FEATURE?
-       ├── Yes → MINOR bump
-       └── No → Is it a BUG FIX, REFACTOR, or DOCS?
-            ├── Yes → PATCH bump
-            └── No → Evaluate manually
+```mermaid
+flowchart TD
+    Q1{Is this change BREAKING} -->|Yes| M1[MAJOR bump]
+    Q1 -->|No| Q2{Is it a NEW FEATURE}
+    Q2 -->|Yes| M2[MINOR bump]
+    Q2 -->|No| Q3{Is it a BUG FIX REFACTOR or DOCS}
+    Q3 -->|Yes| M3[PATCH bump]
+    Q3 -->|No| M4[Evaluate manually]
 ```
 
 **Breaking changes include:**

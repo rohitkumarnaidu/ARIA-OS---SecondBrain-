@@ -16,6 +16,41 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+flowchart LR
+    Identify["🔍 Identify Debt<br/>Static Analysis · Code Review · Bug Reports"] --> Classify["📂 Classify Debt"]
+    Classify --> Category{"Category"}
+    Category -->|Code Quality| CodeQ["📝 Code Quality"]
+    Category -->|Architecture| Arch["🏗️ Architecture"]
+    Category -->|Testing| Test["🧪 Testing"]
+    Category -->|Documentation| Docs["📚 Documentation"]
+    Category -->|Infrastructure| Infra["⚙️ Infrastructure"]
+    Category -->|Security| Sec["🔒 Security"]
+    Category -->|Performance| Perf["⚡ Performance"]
+    Category -->|Dependency| Dep["📦 Dependency"]
+    Category -->|UX| UX["🎨 UX"]
+    CodeQ --> Prioritize["📊 Prioritize<br/>Impact × Urgency"]
+    Arch --> Prioritize
+    Test --> Prioritize
+    Docs --> Prioritize
+    Infra --> Prioritize
+    Sec --> Prioritize
+    Perf --> Prioritize
+    Dep --> Prioritize
+    UX --> Prioritize
+    Prioritize --> Register["📋 Register in Debt Register"]
+    Register --> Schedule["📅 Schedule in Sprint"]
+    Schedule --> Refactor["🔧 Refactor / Fix"]
+    Refactor --> Verify["✅ Verify<br/>Tests · Lint · Review"]
+    Verify --> QualityGates{"Passes Quality Gates?"}
+    QualityGates -->|No| Refactor
+    QualityGates -->|Yes| Close["✅ Close Debt Item"]
+    Close --> Document["📝 Update Documentation"]
+    Document --> Monitor2["📊 Monitor for Regressions"]
+    Monitor2 --> Identify
+```
+
 ## 1. Executive Summary
 
 ### 1.1 Purpose

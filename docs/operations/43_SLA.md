@@ -44,6 +44,32 @@ Despite these constraints, the SLA targets industry-standard metrics wherever fe
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph TD
+    Services["🌐 Service Inventory<br/>(S1-S7)"] --> HealthChecks["🩺 Health Check Endpoints<br/>GET /health /live /ready"]
+    HealthChecks --> StatusOK{"Status OK?"}
+    StatusOK -->|Yes| LogHealth["✅ Log: Healthy"]
+    StatusOK -->|No| Incident["🚨 Incident Detected"]
+    Incident --> Severity{"Severity<br/>Assessment"}
+    Severity -->|P0 Critical| P0["🔴 P0 — 15min Response"]
+    Severity -->|P1 High| P1["🟠 P1 — 30min Response"]
+    Severity -->|P2 Medium| P2["🟡 P2 — 2hr Response"]
+    Severity -->|P3 Low| P3["🟢 P3 — 24hr Response"]
+    P0 --> Escalate["📞 Escalate to Developer"]
+    P1 --> Escalate
+    P2 --> Issue["📝 Create GitHub Issue"]
+    P3 --> Issue
+    Escalate --> Mitigate["🔧 Mitigate / Rollback"]
+    Mitigate --> Resolve["✅ Resolution Confirmed"]
+    Resolve --> Postmortem["📋 Postmortem (48hr)"]
+    Postmortem --> Monitor["🔁 Enhanced Monitoring"]
+    Monitor --> HealthChecks
+    Issue --> Sprint["📋 Sprint Planning"]
+    Sprint --> Fix["🔧 Fix Scheduled"]
+    Fix --> HealthChecks
+```
+
 ## 2. Service Definitions
 
 ### 2.1 Service Inventory
