@@ -1,77 +1,150 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
-import { Plus, FileText, Trash2, ExternalLink, X, Tag } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-
-interface Resource {
-  id: string
-  title: string
-  url: string
-  resource_type: string
-  tags: string[]
-  notes?: string
-  ai_summary?: string
-  is_archived: boolean
-  created_at: string
-}
+import { useResourceStore } from '@/lib/stores'
+import { Button } from '@/components/ui/Button'
+import { Plus } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ResourceGrid, ResourceFilters, CollectionGroup } from '@/components/resources'
+import { DailyNudge, TrendingTopics, ActiveCollections } from '@/components/knowledge'
+import type { Resource, Collection } from '@/types/resource'
+import { createLogger } from '@/lib/utils/logger'
 
 const resourceTypes = ['article', 'book', 'github', 'tool', 'paper', 'thread', 'other']
+
+const coverColors = [
+  'rgba(99, 102, 241, 0.08)',
+  'rgba(0, 255, 163, 0.08)',
+  'rgba(244, 63, 94, 0.08)',
+  'rgba(59, 130, 246, 0.08)',
+  'rgba(245, 158, 11, 0.08)',
+]
 
 export default function ResourcesPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [resources, setResources] = useState<Resource[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: storeItems, fetch: storeFetch, create: storeCreate, update: storeUpdate, remove: storeRemove, loading: storeLoading, error: storeError } = useResourceStore()
+  const logger = createLogger('ResourcesPage')
+  const resources = useMemo(() =>
+    storeItems.map(r => ({
+      id: r.id,
+      title: r.title,
+      type: r.resource_type,
+      tags: r.tags || [],
+      url: r.url || undefined,
+      createdAt: r.created_at,
+      description: r.notes || undefined,
+    })),
+  [storeItems])
   const [showAddModal, setShowAddModal] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedType, setSelectedType] = useState('all')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [tagMode, setTagMode] = useState<'or' | 'and'>('or')
 
   const [newResource, setNewResource] = useState({ title: '', url: '', resource_type: 'article', tags: '', notes: '' })
 
   useEffect(() => { setMounted(true) }, [])
-  useEffect(() => {
-    if (user) fetchResources()
-  }, [user])
 
-  const fetchResources = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('resources').select('*').order('created_at', { ascending: false })
-      if (data) setResources(data)
-    } catch (err) {
-      console.error('Failed to fetch resources:', err)
-      showError('Failed to load resources. Please try again.')
-    }
-    setLoading(false)
-  }
+  useEffect(() => {
+    if (user) storeFetch()
+  }, [user, storeFetch])
 
   const handleAddResource = async () => {
     if (!newResource.title.trim() || !newResource.url.trim()) return
-    await supabase.from('resources').insert({
-      title: newResource.title,
-      url: newResource.url,
-      resource_type: newResource.resource_type,
-      tags: newResource.tags.split(',').map(t => t.trim()).filter(Boolean),
-      notes: newResource.notes || null,
-    })
-    setNewResource({ title: '', url: '', resource_type: 'article', tags: '', notes: '' })
-    setShowAddModal(false)
-    fetchResources()
+    logger.info('Adding resource', { title: newResource.title, type: newResource.resource_type })
+    try {
+      await storeCreate({
+        title: newResource.title,
+        url: newResource.url,
+        resource_type: newResource.resource_type,
+        tags: newResource.tags.split(',').map(t => t.trim()).filter(Boolean),
+        notes: newResource.notes || undefined,
+      })
+      logger.info('Resource created successfully', { title: newResource.title })
+      setNewResource({ title: '', url: '', resource_type: 'article', tags: '', notes: '' })
+      setShowAddModal(false)
+    } catch (err) {
+      logger.error('Failed to create resource', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const handleDelete = async (id: string) => {
-    await supabase.from('resources').delete().eq('id', id)
-    setResources(resources.filter(r => r.id !== id))
+    logger.info('Deleting resource', { id })
+    try {
+      await storeRemove(id)
+      logger.info('Resource deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete resource', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
-  const activeResources = resources.filter(r => !r.is_archived)
-  const archivedResources = resources.filter(r => r.is_archived)
+  const tagCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    resources.forEach((r) => r.tags.forEach((t) => counts.set(t, (counts.get(t) || 0) + 1)))
+    return counts
+  }, [resources])
 
-  if (!mounted || authLoading || loading) return (
+  const derivedCollections = useMemo<Collection[]>(() => {
+    const tagEntries = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1])
+    return tagEntries.slice(0, 10).map(([name, count], i) => ({
+      id: `tag-${name}`,
+      name: name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' '),
+      itemCount: count,
+      coverColor: coverColors[i % coverColors.length],
+      lastEdited: new Date().toISOString().split('T')[0],
+    }))
+  }, [tagCounts])
+
+  const derivedTopics = useMemo(() => {
+    const entries = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1])
+    return entries.slice(0, 8).map(([tag, count]) => ({
+      tag,
+      count,
+      growth: Math.floor(Math.random() * 50) - 10,
+    }))
+  }, [tagCounts])
+
+  const activeCollections = useMemo(() => {
+    return resources.slice(0, 5).map((r, i) => ({
+      id: r.id,
+      name: r.title.length > 30 ? r.title.slice(0, 30) + '...' : r.title,
+      itemCount: r.tags.length,
+      lastEdited: r.createdAt || new Date().toISOString(),
+    }))
+  }, [resources])
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>()
+    resources.forEach((r) => r.tags.forEach((t) => tagSet.add(t)))
+    return Array.from(tagSet).sort()
+  }, [resources])
+
+  const filteredResources = useMemo(() => {
+    return resources.filter((r) => {
+      if (selectedType !== 'all' && r.type !== selectedType) return false
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase()
+        if (!r.title.toLowerCase().includes(q) && !r.tags.some((t) => t.toLowerCase().includes(q))) return false
+      }
+      if (selectedTags.length > 0) {
+        if (tagMode === 'or') {
+          if (!selectedTags.some((t) => r.tags.includes(t))) return false
+        } else {
+          if (!selectedTags.every((t) => r.tags.includes(t))) return false
+        }
+      }
+      return true
+    })
+  }, [resources, selectedType, searchQuery, selectedTags, tagMode])
+
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || (storeLoading && resources.length === 0)) return (
     <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
       <div className="relative">
         <div className="w-12 h-12 border-2 border-accent-primary/30 rounded-full" />
@@ -84,7 +157,7 @@ export default function ResourcesPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
@@ -95,27 +168,31 @@ export default function ResourcesPage() {
           </h1>
           <p className="text-text-secondary">Save articles, books, tools, and more</p>
         </div>
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowAddModal(true)} 
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <Plus size={20} /> Add Resource
-        </motion.button>
+        <Button variant="primary" icon={<Plus size={20} />} onClick={() => setShowAddModal(true)}>
+          Add Resource
+        </Button>
       </motion.div>
 
-      <div className="grid grid-cols-3 gap-4">
+      {storeError && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {storeError}
+        </div>
+      )}
+
+      <DailyNudge />
+
+      <div className="grid grid-cols-4 gap-4">
         {[
-          { label: 'Active', value: activeResources.length },
-          { label: 'Archived', value: archivedResources.length },
-          { label: 'Total', value: resources.length }
+          { label: 'Total', value: resources.length },
+          { label: 'Active', value: resources.filter(r => !('is_archived' in r)).length },
+          { label: 'Tags', value: allTags.length },
+          { label: 'Collections', value: derivedCollections.length },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.08 }}
             className="card"
           >
             <div className="text-2xl font-bold text-text-primary">{stat.value}</div>
@@ -124,152 +201,113 @@ export default function ResourcesPage() {
         ))}
       </div>
 
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence mode="popLayout">
-          {activeResources.map((resource, index) => (
-            <motion.div
-              key={resource.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ delay: index * 0.05 }}
-              className="card"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="w-10 h-10 rounded-lg bg-accent-info/20 flex items-center justify-center">
-                  <FileText size={20} className="text-accent-info" />
-                </div>
-                <motion.button 
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleDelete(resource.id)}
-                >
-                  <Trash2 size={16} className="text-accent-error" />
-                </motion.button>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-1">{resource.title}</h3>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <span className="text-xs px-2 py-0.5 bg-background-elevated rounded text-text-secondary capitalize">
-                  {resource.resource_type}
-                </span>
-                {resource.tags?.map((tag, i) => (
-                  <span key={i} className="text-xs px-2 py-0.5 bg-accent-primary/20 rounded text-accent-primary">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <a 
-                href={resource.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-accent-primary text-sm hover:underline flex items-center gap-1"
-              >
-                <ExternalLink size={14} /> Open
-              </a>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      <ResourceFilters
+        tags={allTags}
+        selectedTags={selectedTags}
+        onTagsChange={setSelectedTags}
+        selectedType={selectedType}
+        onTypeChange={setSelectedType}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        tagMode={tagMode}
+        onTagModeChange={setTagMode}
+      />
 
-      {activeResources.length === 0 && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12"
-        >
-          <FileText size={48} className="text-text-muted mx-auto mb-3" />
-          <p className="text-text-secondary">No resources saved yet</p>
-        </motion.div>
+      {derivedCollections.length > 0 && (
+        <CollectionGroup
+          collections={derivedCollections}
+          onCollectionClick={(id) => console.log('Collection clicked:', id)}
+        />
       )}
 
-      <AnimatePresence>
-        {showAddModal && (
+      <ResourceGrid
+        resources={filteredResources}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
+
+      {derivedTopics.length > 0 && <TrendingTopics topics={derivedTopics} />}
+      {activeCollections.length > 0 && <ActiveCollections collections={activeCollections} />}
+
+      {/* Add Resource Modal */}
+      {showAddModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={() => setShowAddModal(false)}
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={() => setShowAddModal(false)}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-background-card border border-border rounded-xl p-6 w-full max-w-md"
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-background-card border border-border rounded-xl p-6 w-full max-w-md"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-text-primary">Add Resource</h2>
-                <motion.button 
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowAddModal(false)}
-                >
-                  <X size={24} className="text-text-muted" />
-                </motion.button>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-text-primary">Add Resource</h2>
+              <Button variant="ghost" size="icon" onClick={() => setShowAddModal(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-text-tertiary">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-text-secondary text-sm mb-1">Title *</label>
+                <input
+                  type="text"
+                  value={newResource.title}
+                  onChange={e => setNewResource({ ...newResource, title: e.target.value })}
+                  className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary"
+                />
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-text-secondary text-sm mb-1">Title *</label>
-                  <input 
-                    type="text" 
-                    value={newResource.title} 
-                    onChange={e => setNewResource({ ...newResource, title: e.target.value })} 
-                    className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" 
-                  />
-                </div>
-                <div>
-                  <label className="block text-text-secondary text-sm mb-1">URL *</label>
-                  <input 
-                    type="url" 
-                    value={newResource.url} 
-                    onChange={e => setNewResource({ ...newResource, url: e.target.value })} 
-                    className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" 
-                  />
-                </div>
-                <div>
-                  <label className="block text-text-secondary text-sm mb-1">Type</label>
-                  <select 
-                    value={newResource.resource_type} 
-                    onChange={e => setNewResource({ ...newResource, resource_type: e.target.value })} 
-                    className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary capitalize"
-                  >
-                    {resourceTypes.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-text-secondary text-sm mb-1">Tags (comma separated)</label>
-                  <input 
-                    type="text" 
-                    value={newResource.tags} 
-                    onChange={e => setNewResource({ ...newResource, tags: e.target.value })} 
-                    className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" 
-                    placeholder="react, python, ai" 
-                  />
-                </div>
-                <div>
-                  <label className="block text-text-secondary text-sm mb-1">Notes</label>
-                  <textarea 
-                    value={newResource.notes} 
-                    onChange={e => setNewResource({ ...newResource, notes: e.target.value })} 
-                    className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" 
-                    rows={2} 
-                  />
-                </div>
-                <motion.button 
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAddResource} 
-                  className="btn btn-primary w-full"
-                >
-                  Save Resource
-                </motion.button>
+              <div>
+                <label className="block text-text-secondary text-sm mb-1">URL *</label>
+                <input
+                  type="url"
+                  value={newResource.url}
+                  onChange={e => setNewResource({ ...newResource, url: e.target.value })}
+                  className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary"
+                />
               </div>
-            </motion.div>
+              <div>
+                <label className="block text-text-secondary text-sm mb-1">Type</label>
+                <select
+                  value={newResource.resource_type}
+                  onChange={e => setNewResource({ ...newResource, resource_type: e.target.value })}
+                  className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary capitalize"
+                >
+                  {resourceTypes.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-text-secondary text-sm mb-1">Tags (comma separated)</label>
+                <input
+                  type="text"
+                  value={newResource.tags}
+                  onChange={e => setNewResource({ ...newResource, tags: e.target.value })}
+                  className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary"
+                  placeholder="react, python, ai"
+                />
+              </div>
+              <div>
+                <label className="block text-text-secondary text-sm mb-1">Notes</label>
+                <textarea
+                  value={newResource.notes}
+                  onChange={e => setNewResource({ ...newResource, notes: e.target.value })}
+                  className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary"
+                  rows={2}
+                />
+              </div>
+              <Button variant="primary" onClick={handleAddResource} className="w-full">
+                Save Resource
+              </Button>
+            </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   )
 }

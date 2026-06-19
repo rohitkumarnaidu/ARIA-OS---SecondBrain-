@@ -1,8 +1,18 @@
 {
-  "extends": ["next/core-web-vitals"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:storybook/recommended"
+  ],
   "rules": {
     "react/no-unescaped-entities": "off",
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "storybook/no-renderer-packages": "off"
   },
-  "ignorePatterns": ["components/Button.tsx", "components/Input.tsx", "components/Card.tsx", "components/Modal.tsx"]
+  "ignorePatterns": [
+    "**/*.stories.tsx",
+    "components/Button.tsx",
+    "components/Input.tsx",
+    "components/Card.tsx",
+    "components/Modal.tsx"
+  ]
 }

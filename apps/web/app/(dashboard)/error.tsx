@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 
 export default function DashboardError({
@@ -43,20 +44,16 @@ export default function DashboardError({
         )}
 
         <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={reset}
-            className="btn btn-primary gap-2"
-          >
+          <Button variant="primary" className="gap-2" onClick={reset}>
             <RefreshCw size={16} />
             Try again
-          </button>
-          <Link
-            href="/dashboard"
-            className="btn btn-secondary gap-2"
-          >
-            <Home size={16} />
-            Go to Dashboard
-          </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/dashboard">
+              <Home size={16} />
+              Go to Dashboard
+            </Link>
+          </Button>
         </div>
       </motion.div>
     </div>

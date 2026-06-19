@@ -3,64 +3,54 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
 import { Plus, Trash2, X } from 'lucide-react'
+import { useIncomeStore } from '@/lib/stores'
+import type { IncomeEntry } from '@/lib/types'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Income {
-  id: string
-  source_type: string
-  amount: number
-  platform?: string
-  description?: string
-  date: string
-  hours_spent?: number
-  effective_hourly_rate?: number
-  created_at: string
-}
+import { Button } from '@/components/ui/Button'
+import { createLogger } from '@/lib/utils/logger'
 
 const sourceTypes = ['freelance', 'project', 'stipend', 'investment', 'other']
 
 export default function IncomePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [income, setIncome] = useState<Income[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: income, loading, error, fetch: fetchIncome, create, remove } = useIncomeStore()
+  const logger = createLogger('IncomePage')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   const [newIncome, setNewIncome] = useState({ source_type: 'freelance', amount: 0, platform: '', description: '', date: new Date().toISOString().split('T')[0], hours_spent: 0 })
 
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => { setMounted(true) }, [])
+
   useEffect(() => {
     if (user) fetchIncome()
-  }, [user])
-
-  const fetchIncome = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('income_entries').select('*').order('date', { ascending: false })
-      if (data) setIncome(data)
-    } catch (err) {
-      console.error('Failed to fetch income:', err)
-      showError('Failed to load income. Please try again.')
-    }
-    setLoading(false)
-  }
+  }, [user, fetchIncome])
 
   const handleAdd = async () => {
     if (newIncome.amount <= 0) return
-    const rate = newIncome.hours_spent ? Math.round(newIncome.amount / newIncome.hours_spent) : null
-    await supabase.from('income_entries').insert({ ...newIncome, effective_hourly_rate: rate })
-    setNewIncome({ source_type: 'freelance', amount: 0, platform: '', description: '', date: new Date().toISOString().split('T')[0], hours_spent: 0 })
-    setShowAddModal(false)
-    fetchIncome()
+    logger.info('Adding income entry', { source_type: newIncome.source_type, amount: newIncome.amount, platform: newIncome.platform, hours_spent: newIncome.hours_spent })
+    try {
+      const rate = newIncome.hours_spent ? Math.round(newIncome.amount / newIncome.hours_spent) : undefined
+      await create({ ...newIncome, effective_hourly_rate: rate })
+      logger.info('Income entry created successfully', { amount: newIncome.amount, source_type: newIncome.source_type })
+      setNewIncome({ source_type: 'freelance', amount: 0, platform: '', description: '', date: new Date().toISOString().split('T')[0], hours_spent: 0 })
+      setShowAddModal(false)
+    } catch (err) {
+      logger.error('Failed to create income entry', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const handleDelete = async (id: string) => {
-    await supabase.from('income_entries').delete().eq('id', id)
-    setIncome(income.filter(i => i.id !== id))
+    logger.info('Deleting income entry', { id })
+    try {
+      await remove(id)
+      logger.info('Income entry deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete income entry', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const totalThisMonth = income.filter(i => i.date.startsWith(new Date().toISOString().slice(0, 7))).reduce((sum, i) => sum + i.amount, 0)
@@ -68,7 +58,8 @@ export default function IncomePage() {
   const totalHours = income.reduce((sum, i) => sum + (i.hours_spent || 0), 0)
   const avgRate = totalHours > 0 ? Math.round(totalAll / totalHours) : 0
 
-  if (!mounted || authLoading || loading) return (
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) return (
     <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
       <motion.div 
         className="w-12 h-12 border-4 border-accent-primary border-t-transparent rounded-full animate-pulse-glow"
@@ -91,15 +82,16 @@ export default function IncomePage() {
           <h1 className="text-2xl font-bold text-gradient">Income Tracker</h1>
           <p className="text-text-secondary">Track your earnings and hourly rates</p>
         </div>
-        <motion.button 
-          onClick={() => setShowAddModal(true)} 
-          className="btn btn-primary flex items-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Plus size={20} /> Log Income
-        </motion.button>
+        <Button variant="primary" icon={<Plus size={20} />} onClick={() => setShowAddModal(true)}>
+          Log Income
+        </Button>
       </motion.div>
+
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-4 gap-4">
         {[
@@ -149,13 +141,9 @@ export default function IncomePage() {
                     <div className="text-xs text-text-muted">{entry.date}</div>
                     {entry.effective_hourly_rate && <div className="text-xs text-accent-primary">₹{entry.effective_hourly_rate}/hr</div>}
                   </div>
-                  <motion.button 
-                    onClick={() => handleDelete(entry.id)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}>
                     <Trash2 size={16} className="text-accent-error" />
-                  </motion.button>
+                  </Button>
                 </div>
               </motion.div>
             ))}
@@ -182,13 +170,9 @@ export default function IncomePage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gradient">Log Income</h2>
-                <motion.button 
-                  onClick={() => setShowAddModal(false)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
+                <Button variant="ghost" size="icon" onClick={() => setShowAddModal(false)}>
                   <X size={24} className="text-text-muted" />
-                </motion.button>
+                </Button>
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -200,14 +184,9 @@ export default function IncomePage() {
                   <div><label className="block text-text-secondary text-sm mb-1">Date</label><input type="date" value={newIncome.date} onChange={e => setNewIncome({ ...newIncome, date: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
                 </div>
                 <div><label className="block text-text-secondary text-sm mb-1">Hours Spent</label><input type="number" value={newIncome.hours_spent} onChange={e => setNewIncome({ ...newIncome, hours_spent: parseFloat(e.target.value) || 0 })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
-                <motion.button 
-                  onClick={handleAdd} 
-                  className="w-full btn btn-primary"
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                >
+                <Button variant="primary" onClick={handleAdd} className="w-full">
                   Log Income
-                </motion.button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

@@ -3,105 +3,66 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
+import { useIdeaStore } from '@/lib/stores'
+import type { Idea } from '@/lib/types'
 import { Plus, Lightbulb, Trash2, X, Search, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Idea {
-  id: string
-  title: string
-  description?: string
-  status: string
-  market_research?: string
-  competitors?: string
-  feasibility_notes?: string
-  validation_plan?: string
-  created_at: string
-}
+import { Button } from '@/components/ui/Button'
+import { createLogger } from '@/lib/utils/logger'
 
 const statuses = ['raw', 'researching', 'validating', 'building', 'archived'] as const
 
 export default function IdeasPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [ideas, setIdeas] = useState<Idea[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: ideas, loading, error, fetch: fetchIdeas, create, update, remove } = useIdeaStore()
+  const logger = createLogger('IdeasPage')
   const [showAddModal, setShowAddModal] = useState(false)
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null)
-  const [mounted, setMounted] = useState(false)
 
   const [newIdea, setNewIdea] = useState({
     title: '',
     description: '',
   })
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
-    if (user) {
-      fetchIdeas()
-    }
-  }, [user])
-
-  const fetchIdeas = async () => {
-    setLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('ideas')
-        .select('*')
-        .order('created_at', { ascending: false })
-      
-      if (!error && data) {
-        setIdeas(data)
-      }
-    } catch (err) {
-      console.error('Failed to fetch ideas:', err)
-      showError('Failed to load ideas. Please try again.')
-    }
-    setLoading(false)
-  }
+    if (user) fetchIdeas()
+  }, [user, fetchIdeas])
 
   const handleAddIdea = async () => {
     if (!newIdea.title.trim()) return
-    
-    const { data, error } = await supabase
-      .from('ideas')
-      .insert({
-        ...newIdea,
-        status: 'raw',
-      })
-      .select()
-    
-    if (!error && data) {
-      setIdeas([data[0], ...ideas])
+    logger.info('Adding idea', { title: newIdea.title })
+    try {
+      await create({ title: newIdea.title, description: newIdea.description, status: 'raw' })
+      logger.info('Idea created successfully', { title: newIdea.title })
       setNewIdea({ title: '', description: '' })
       setShowAddModal(false)
+    } catch (err) {
+      logger.error('Failed to create idea', { error: err instanceof Error ? err.message : String(err) })
     }
   }
 
   const handleUpdateStatus = async (id: string, status: string) => {
-    const { data, error } = await supabase
-      .from('ideas')
-      .update({ status })
-      .eq('id', id)
-      .select()
-    
-    if (!error && data) {
-      setIdeas(ideas.map(i => i.id === id ? data[0] : i))
+    logger.info('Updating idea status', { id, status })
+    try {
+      await update(id, { status })
+      logger.info('Idea status updated successfully', { id, status })
+    } catch (err) {
+      logger.error('Failed to update idea status', { error: err instanceof Error ? err.message : String(err) })
     }
   }
 
   const handleDeleteIdea = async (id: string) => {
-    const { error } = await supabase
-      .from('ideas')
-      .delete()
-      .eq('id', id)
-    
-    if (!error) {
-      setIdeas(ideas.filter(i => i.id !== id))
+    logger.info('Deleting idea', { id })
+    try {
+      await remove(id)
+      logger.info('Idea deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete idea', { error: err instanceof Error ? err.message : String(err) })
     }
   }
 
@@ -126,7 +87,8 @@ export default function IdeasPage() {
     return status.charAt(0).toUpperCase() + status.slice(1)
   }
 
-  if (!mounted || authLoading || loading) {
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-64" role="status" aria-label="Loading">
         <motion.div
@@ -157,14 +119,17 @@ export default function IdeasPage() {
           </h1>
           <p className="text-text-secondary">Capture and validate your startup ideas</p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="btn btn-primary flex items-center gap-2"
-        >
+        <Button variant="primary" className="flex items-center gap-2" onClick={() => setShowAddModal(true)}>
           <Plus size={20} />
           Capture Idea
-        </button>
+        </Button>
       </motion.div>
+
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
       {/* Stats */}
       <motion.div 
@@ -316,12 +281,9 @@ export default function IdeasPage() {
                   />
                 </div>
 
-                <button
-                  onClick={handleAddIdea}
-                  className="btn btn-primary w-full"
-                >
+                <Button variant="primary" className="w-full" onClick={handleAddIdea}>
                   Capture Idea
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

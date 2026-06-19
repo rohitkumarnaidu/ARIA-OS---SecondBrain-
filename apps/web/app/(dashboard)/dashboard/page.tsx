@@ -1,29 +1,144 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { useTaskStore } from '@/lib/taskStore'
-import { 
-  Clock, Target, TrendingUp, Calendar, 
-  CheckCircle, BookOpen, Lightbulb, Zap, 
-  ChevronRight, Sparkles, Brain, Activity
-} from 'lucide-react'
+import { useTaskStore } from '@/lib/stores/taskStore'
+import { useCourseStore } from '@/lib/stores/courseStore'
+import { useGoalStore } from '@/lib/stores/goalStore'
+import {
+  StatsGrid, TaskPreviewList,
+  QuickActions, ActivityMatrix, AriasPick,
+  MorningBriefing, KPIStrip, WidgetToggle, useWidgetVisibility,
+  SmartScheduleCard,
+} from '@/components/dashboard'
+import { ProgressRing } from '@/components/ui/ProgressRing'
+import { Timeline } from '@/components/ui/Timeline'
+import type { TimelineItem } from '@/components/ui/Timeline'
 import { motion } from 'framer-motion'
+import { CheckCircle, Target, BookOpen, Zap, Radar, Calendar, Brain, AlertTriangle, Moon, Flame, Heart } from 'lucide-react'
+import { usePredictions } from '@/hooks'
+import { computeSentiment } from '@/lib/ai'
+import type { KPIItem } from '@/components/dashboard/KPIStrip'
+
+const sectionVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+}
+
+const containerVariants = {
+  initial: {},
+  animate: {
+    transition: { staggerChildren: 0.08 },
+  },
+}
+
+function generateSparklineData(value: number, count = 7): { value: number }[] {
+  const base = value / count
+  return Array.from({ length: count }, (_, i) => ({
+    value: Math.max(0, Math.round(base + (Math.random() - 0.5) * base)),
+  }))
+}
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
-  const { tasks, fetchTasks } = useTaskStore()
-  const router = useRouter()
+  const { tasks, fetchTasks, error: taskError } = useTaskStore()
+  const { items: courses, fetch: fetchCourses, error: courseError } = useCourseStore()
+  const { items: goals, fetch: fetchGoals, error: goalError } = useGoalStore()
+  const { visibility, isVisible, toggle: toggleWidget } = useWidgetVisibility()
+  const { tasks: predTasks, habits: predHabits, sleep: predSleep, slots: predSlots, loading: predLoading } = usePredictions()
+  const sentiment = useMemo(() => {
+    if (!predTasks || !predHabits || !predSleep) return null
+    return computeSentiment({
+      taskAtRisk: predTasks.at_risk_count,
+      habitAtRisk: predHabits.at_risk_count,
+      sleepTrend: predSleep.trend,
+      avgSleepScore: predSleep.average_score,
+    })
+  }, [predTasks, predHabits, predSleep])
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
-    if (user) fetchTasks()
-  }, [user, fetchTasks])
+    if (!authLoading && user) {
+      fetchTasks()
+      fetchCourses()
+      fetchGoals()
+    }
+  }, [authLoading, user, fetchTasks, fetchCourses, fetchGoals])
 
-  if (!mounted || authLoading) {
+  const activeCourses = courses.filter(c => c.status === 'in_progress').length
+  const activeGoals = goals.filter(g => g.status === 'active').length
+
+  const stats = useMemo(() => {
+    const pending = tasks.filter(t => t.status === 'pending')
+    const inProgress = tasks.filter(t => t.status === 'in_progress')
+    const completed = tasks.filter(t => t.status === 'completed')
+    const total = tasks.length
+    const productivity = total > 0 ? Math.round((completed.length / total) * 100) : 0
+    const today = new Date().toISOString().split('T')[0]
+    const todayTasks = tasks.filter(t => t.due_date?.startsWith(today))
+    return [
+      { label: 'Productivity', value: `${productivity}%`, icon: Zap, trend: productivity >= 50 ? 'up' as const : 'down' as const },
+      { label: 'Tasks Today', value: todayTasks.length || '0', icon: CheckCircle, trend: todayTasks.length > 0 ? 'up' as const : undefined },
+      { label: 'Active Courses', value: String(activeCourses), icon: BookOpen },
+      { label: 'Active Goals', value: String(activeGoals), icon: Target },
+    ]
+  }, [tasks, activeCourses, activeGoals])
+
+  const kpiItems = useMemo((): KPIItem[] => [
+    { label: 'Productivity', value: String(stats[0].value), trend: stats[0].trend === 'up' ? 'up' : 'down', data: generateSparklineData(parseInt(String(stats[0].value)) || 0), color: '#6366F1' },
+    { label: 'Tasks Done', value: String(tasks.filter(t => t.status === 'completed').length), trend: 'up', data: generateSparklineData(tasks.filter(t => t.status === 'completed').length), color: '#00FFA3' },
+    { label: 'Streak', value: '--', trend: 'neutral', data: generateSparklineData(0), color: '#F59E0B' },
+    { label: 'Focus Hours', value: '--', trend: 'neutral', data: generateSparklineData(0), color: '#818CF8' },
+  ], [stats, tasks])
+
+  const completedToday = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0]
+    return tasks.filter(t => t.completed_at?.startsWith(today)).length
+  }, [tasks])
+
+  const todayTotal = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0]
+    return tasks.filter(t => t.due_date?.startsWith(today)).length
+  }, [tasks])
+
+  const previewTasks = useMemo(() => {
+    return tasks
+      .filter(t => t.status === 'pending' || t.status === 'in_progress')
+      .slice(0, 5)
+  }, [tasks])
+
+  const activityData = useMemo(() => {
+    const dateMap = new Map<string, number>()
+    for (const task of tasks) {
+      const date = task.created_at?.split('T')[0]
+      if (date) dateMap.set(date, (dateMap.get(date) || 0) + 1)
+    }
+    return Array.from(dateMap.entries()).map(([date, count]) => ({ date, count }))
+  }, [tasks])
+
+  const ariaInsight = useMemo(() => {
+    const pending = tasks.filter(t => t.status === 'pending')
+    const inProgress = tasks.filter(t => t.status === 'in_progress')
+    const completed = tasks.filter(t => t.status === 'completed')
+
+    if (tasks.length === 0) {
+      return "Welcome to ARIA OS! Add your first task to unlock personalized productivity insights."
+    }
+    if (pending.length === 0 && inProgress.length === 0) {
+      const rate = Math.round((completed.length / tasks.length) * 100)
+      return `All done at ${rate}% completion — you're on fire! Time to plan your next big goal.`
+    }
+    const top = pending[0] || inProgress[0]
+    if (top) {
+      return `Start with "${top.title}" — it's your top priority and will set a productive tone for the day.`
+    }
+    return `You've completed ${completed.length} of ${tasks.length} tasks. Keep the momentum going!`
+  }, [tasks])
+
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative">
@@ -36,308 +151,240 @@ export default function DashboardPage() {
     )
   }
 
-  const pendingTasks = tasks.filter(t => t.status === 'pending')
-  const completedTasks = tasks.filter(t => t.status === 'completed')
-  const today = new Date().toISOString().split('T')[0]
-  const todayTasks = tasks.filter(t => t.due_date?.startsWith(today))
-  
-  const productivityScore = tasks.length > 0 
-    ? Math.round((completedTasks.length / tasks.length) * 100)
-    : 0
-
-  const topTasks = pendingTasks.slice(0, 4)
-
-  const getGreeting = () => {
-    const hour = new Date().getHours()
-    if (hour < 12) return 'Good morning'
-    if (hour < 18) return 'Good afternoon'
-    return 'Good evening'
-  }
-
-  const getPriorityStyles = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'bg-priority-urgent/10 text-priority-urgent border-priority-urgent/20'
-      case 'high': return 'bg-priority-high/10 text-priority-high border-priority-high/20'
-      case 'medium': return 'bg-priority-medium/10 text-priority-medium border-priority-medium/20'
-      default: return 'bg-priority-low/10 text-priority-low border-priority-low/20'
-    }
-  }
+  const userName = user?.email?.split('@')[0] || 'there'
+  const storeError = taskError || courseError || goalError
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Hero Section with Gradient */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background-card via-background-elevated to-background-card border border-border">
-        {/* Animated background grid */}
-        <div className="absolute inset-0 bg-grid opacity-50" />
-        
-        <div className="relative p-6 md:p-8">
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2"
-              >
-                <Sparkles size={16} className="text-accent-neon" />
-                <span className="text-xs font-medium text-text-tertiary tracking-wider uppercase">
-                  {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                </span>
-              </motion.div>
-              <motion.h1 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl font-display font-bold"
-              >
-                <span className="text-gradient">{getGreeting()}</span>
-                <span className="text-text-primary">,</span>
-              </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-text-secondary max-w-md"
-              >
-                Your AI-powered productivity command center. Let's make today count.
-              </motion.p>
-            </div>
-            
-            {/* ARIA Avatar */}
-            <motion.div 
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="hidden md:block relative"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-primary to-accent-neon p-0.5">
-                <div className="w-full h-full rounded-2xl bg-background-card flex items-center justify-center">
-                  <Brain size={28} className="text-accent-primary" />
-                </div>
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-accent-neon rounded-full animate-pulse" />
-            </motion.div>
-          </div>
+    <motion.div
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+      className="space-y-6 pb-8"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-display font-bold text-text-primary">Dashboard</h1>
+          <p className="text-sm text-text-tertiary">Your command center at a glance</p>
         </div>
+        <WidgetToggle visibility={visibility} onToggle={toggleWidget} />
       </div>
 
-      {/* Stats Grid - Cyber Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Productivity', value: `${productivityScore}%`, sub: `${completedTasks.length} completed`, icon: Zap, color: 'accent-primary', glow: 'glow-primary' },
-          { label: 'Tasks Today', value: todayTasks.length || '0', sub: `${pendingTasks.length} pending`, icon: CheckCircle, color: 'accent-secondary', glow: 'glow-success' },
-          { label: 'Active Courses', value: '0', sub: '0 completed', icon: BookOpen, color: 'accent-info', glow: '' },
-          { label: 'Active Goals', value: '0', sub: '0 completed', icon: Target, color: 'accent-neon', glow: 'glow-success' },
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * i }}
-            className={`card group hover:border-${stat.color}/30 transition-all duration-300`}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">{stat.label}</span>
-              <stat.icon size={18} className={`text-${stat.color} opacity-60 group-hover:opacity-100 transition-opacity`} />
-            </div>
-            <div className="text-2xl font-display font-bold text-text-primary mb-1">{stat.value}</div>
-            <div className="text-xs text-text-tertiary">{stat.sub}</div>
-            {stat.glow && (
-              <div className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${stat.glow}`} />
-            )}
-          </motion.div>
-        ))}
-      </div>
+      {storeError && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {storeError}
+        </div>
+      )}
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Tasks Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="lg:col-span-2 card"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-accent-primary/10 flex items-center justify-center">
-                <Activity size={20} className="text-accent-primary" />
-              </div>
-              <div>
-                <h2 className="text-lg font-display font-semibold text-text-primary">Priority Tasks</h2>
-                <p className="text-xs text-text-tertiary">Your focus list for today</p>
-              </div>
-            </div>
-            <button 
-              onClick={() => router.push('/tasks')}
-              className="btn btn-ghost text-sm gap-1.5"
-            >
-              View all <ChevronRight size={16} />
-            </button>
-          </div>
-          
-          {topTasks.length > 0 ? (
-            <div className="space-y-3">
-              {topTasks.map((task, index) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
-                  onClick={() => router.push('/tasks')}
-                  className="group flex items-center gap-4 p-4 rounded-xl bg-background-elevated/50 border border-transparent hover:border-accent-primary/20 hover:bg-background-elevated transition-all duration-200 cursor-pointer"
-                >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-accent-primary/20 to-accent-primary/5 flex items-center justify-center text-accent-primary font-display font-semibold text-sm">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-text-primary font-medium truncate group-hover:text-accent-primary transition-colors">{task.title}</div>
-                    <div className="text-xs text-text-tertiary flex items-center gap-2">
-                      <span className="capitalize">{task.category}</span>
-                      <span className="w-1 h-1 rounded-full bg-text-tertiary" />
-                      <span>{task.estimated_minutes || 30} min</span>
-                    </div>
-                  </div>
-                  <div className={`px-2.5 py-1 rounded-md text-xs font-medium border ${getPriorityStyles(task.priority)}`}>
-                    {task.priority}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-10">
-              <div className="w-16 h-16 rounded-2xl bg-accent-success/10 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle size={32} className="text-accent-success" />
-              </div>
-              <p className="text-text-primary font-medium">All caught up!</p>
-              <p className="text-text-tertiary text-sm mt-1">Add a task to get started</p>
-              <button 
-                onClick={() => router.push('/tasks')}
-                className="btn btn-primary mt-4 text-sm"
-              >
-                Add Task
-              </button>
-            </div>
-          )}
+      {isVisible('morning-briefing') && (
+        <motion.div variants={sectionVariants} key="morning-briefing">
+          <MorningBriefing
+            completedToday={completedToday}
+            totalToday={todayTotal}
+            userName={userName}
+          />
         </motion.div>
+      )}
 
-        {/* ARIA's Pick & Quick Actions */}
-        <div className="space-y-6">
-          {/* ARIA's Pick */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="card relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-accent-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-primary to-accent-neon p-0.5">
-                <div className="w-full h-full rounded-xl bg-background-card flex items-center justify-center">
-                  <Sparkles size={18} className="text-white" />
-                </div>
-              </div>
-              <h3 className="text-lg font-display font-semibold text-text-primary">ARIA's Pick</h3>
+      {isVisible('stats-grid') && (
+        <motion.div variants={sectionVariants} key="stats-grid">
+          <StatsGrid stats={stats} />
+        </motion.div>
+      )}
+
+      {isVisible('kpi-strip') && (
+        <motion.div variants={sectionVariants} key="kpi-strip">
+          <KPIStrip items={kpiItems} />
+        </motion.div>
+      )}
+
+      {isVisible('arias-pick') && (
+        <motion.div variants={sectionVariants} key="arias-pick">
+          <AriasPick insight={ariaInsight} />
+        </motion.div>
+      )}
+
+      {isVisible('predictions') && !predLoading && (predTasks || predHabits || predSleep) && (
+        <motion.div variants={sectionVariants} key="predictions">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Brain size={16} className="text-[var(--accent-neon)]" aria-hidden="true" />
+              <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">AI Predictions</h3>
             </div>
-            
-            <div className="relative p-4 rounded-xl bg-background-elevated/50 border border-border/50">
-              <p className="text-text-secondary text-sm leading-relaxed">
-                {topTasks.length > 0 
-                  ? `Start with "${topTasks[0].title}" — it's your highest priority and will set a productive tone for the day.`
-                  : 'Add tasks and let ARIA help you prioritize what matters most.'
-                }
-              </p>
-            </div>
-
-            <button 
-              onClick={() => router.push('/chat')}
-              className="mt-4 w-full btn btn-secondary text-sm justify-between group"
-            >
-              <span>Chat with ARIA</span>
-              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </motion.div>
-
-          {/* Quick Actions */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="card"
-          >
-            <h3 className="text-sm font-medium text-text-tertiary uppercase tracking-wider mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              {[
-                { icon: Clock, label: 'Add Task', path: '/tasks', color: 'accent-primary' },
-                { icon: Lightbulb, label: 'Capture Idea', path: '/ideas', color: 'accent-warning' },
-                { icon: BookOpen, label: 'Track Course', path: '/courses', color: 'accent-info' },
-                { icon: Target, label: 'Set Goal', path: '/goals', color: 'accent-secondary' },
-              ].map((action) => (
-                <button 
-                  key={action.label}
-                  onClick={() => router.push(action.path)}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-background-elevated/50 border border-transparent hover:border-border hover:bg-background-elevated transition-all duration-200 group"
-                >
-                  <div className={`w-9 h-9 rounded-lg bg-${action.color}/10 flex items-center justify-center`}>
-                    <action.icon size={18} className={`text-${action.color}`} />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {predTasks && (
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--background-elevated)]">
+                  <AlertTriangle size={18} className="text-[var(--accent-warning)] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-[var(--text-secondary)]">Task Completion</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] mt-0.5">
+                      {predTasks.at_risk_count} of {predTasks.total_pending} tasks at risk
+                    </p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                      {predTasks.high_completion} likely to complete
+                    </p>
                   </div>
-                  <span className="text-text-secondary group-hover:text-text-primary text-sm font-medium transition-colors">{action.label}</span>
-                  <ChevronRight size={16} className="ml-auto text-text-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Activity Heatmap */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="card"
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-accent-secondary/10 flex items-center justify-center">
-              <TrendingUp size={20} className="text-accent-secondary" />
-            </div>
-            <div>
-              <h2 className="text-lg font-display font-semibold text-text-primary">Activity Matrix</h2>
-              <p className="text-xs text-text-tertiary">Your productivity over time</p>
+                </div>
+              )}
+              {predHabits && (
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--background-elevated)]">
+                  <Flame size={18} className="text-[var(--accent-warning)] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-[var(--text-secondary)]">Habit Risk</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] mt-0.5">
+                      {predHabits.at_risk_count} of {predHabits.total_active} habits at risk
+                    </p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                      {predHabits.predictions.filter(p => p.risk_level === 'Low').length} habits on track
+                    </p>
+                  </div>
+                </div>
+              )}
+              {predSleep && predSleep.average_score > 0 && (
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-[var(--background-elevated)]">
+                  <Moon size={18} className="text-accent-primary shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-[var(--text-secondary)]">Sleep Trend</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)] mt-0.5">
+                      {predSleep.trend === 'improving' ? 'Improving' : predSleep.trend === 'declining' ? 'Declining' : 'Stable'} &middot; {predSleep.average_score}/100
+                    </p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                      {predSleep.recommendation}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-          <div className="text-xs text-text-tertiary">Last 30 days</div>
-        </div>
-        
-        <div className="flex gap-1.5 overflow-x-auto pb-2 no-scrollbar">
-          {Array.from({ length: 30 }, (_, i) => {
-            const intensity = Math.random()
-            const getColor = () => {
-              if (intensity > 0.8) return 'bg-accent-neon shadow-neon-sm'
-              if (intensity > 0.6) return 'bg-accent-secondary/60'
-              if (intensity > 0.3) return 'bg-accent-primary/40'
-              return 'bg-background-elevated'
-            }
-            return (
-              <div 
-                key={i}
-                className={`w-5 h-8 rounded-sm ${getColor()} transition-all duration-300 hover:scale-110 cursor-pointer`}
-                title={`Day ${i + 1}: ${Math.round(intensity * 100)}% activity`}
-              />
-            )
-          })}
-        </div>
-        
-        <div className="flex items-center gap-2 mt-4 text-xs text-text-tertiary">
-          <span>Less</span>
-          <div className="w-4 h-4 bg-background-elevated rounded-sm" />
-          <div className="w-4 h-4 bg-accent-primary/40 rounded-sm" />
-          <div className="w-4 h-4 bg-accent-secondary/60 rounded-sm" />
-          <div className="w-4 h-4 bg-accent-neon shadow-neon-sm rounded-sm" />
-          <span className="ml-1">More</span>
+        </motion.div>
+      )}
+
+      {sentiment && sentiment.level !== 'low' && (
+        <motion.div variants={sectionVariants} key="sentiment">
+          <div className="rounded-xl border border-accent-warning/20 bg-accent-warning/5 p-4">
+            <div className="flex items-start gap-3">
+              <Heart size={18} className="text-[var(--accent-warning)] shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-[var(--text-primary)]">Check-in</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">{sentiment.message}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {isVisible('task-preview') && (
+        <motion.div variants={sectionVariants} key="task-preview" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <TaskPreviewList tasks={previewTasks} />
+          </div>
+          <div className="lg:col-span-1">
+            <QuickActions />
+          </div>
+        </motion.div>
+      )}
+
+      {isVisible('activity-matrix') && (
+        <motion.div variants={sectionVariants} key="activity-matrix">
+          <ActivityMatrix data={activityData} />
+        </motion.div>
+      )}
+
+      {/* Course Progress */}
+      <motion.div variants={sectionVariants} key="course-progress">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <BookOpen size={16} className="text-[var(--accent-primary)]" aria-hidden="true" />
+            <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Course Progress</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { name: 'Machine Learning Fundamentals', progress: 65, status: 'On Track', color: 'var(--accent-success)' },
+              { name: 'System Design & Architecture', progress: 30, status: 'Needs Attention', color: 'var(--priority-urgent)' },
+              { name: 'Advanced TypeScript Patterns', progress: 88, status: 'Almost Done', color: 'var(--accent-primary)' },
+            ].map(course => (
+              <div key={course.name} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-[var(--background-elevated)]">
+                <ProgressRing progress={course.progress} size={80} strokeWidth={6} color={course.color}>
+                  <span className="text-sm font-bold font-mono" style={{ color: course.color }}>{course.progress}%</span>
+                </ProgressRing>
+                <div className="text-center min-w-0">
+                  <p className="text-xs font-medium text-[var(--text-primary)] truncate w-full">{course.name}</p>
+                  <span
+                    className="inline-block mt-1 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
+                    style={{
+                      background: `color-mix(in oklab, ${course.color} 20%, transparent)`,
+                      color: course.color,
+                    }}
+                  >
+                    {course.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
-    </div>
+
+      {/* Opportunity Feed + Smart Schedule row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div variants={sectionVariants} key="opportunity-feed">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5 h-full">
+            <div className="flex items-center gap-2 mb-4">
+              <Radar size={16} className="text-[var(--accent-warning)]" aria-hidden="true" />
+              <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Opportunity Feed</h3>
+            </div>
+            <div className="space-y-3">
+              {[
+                { title: 'Google Summer of Code 2026', score: 92, desc: 'Your profile matches 3 projects in ML and distributed systems.' },
+                { title: 'AI Research Intern — DeepMind', score: 78, desc: 'Strong match based on your research papers and coursework.' },
+              ].map(opp => (
+                <div key={opp.title} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--background-elevated)]">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{opp.title}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{opp.desc}</p>
+                  </div>
+                  <span
+                    className="shrink-0 flex items-center justify-center min-w-[40px] h-6 rounded-full text-[11px] font-mono font-bold"
+                    style={{
+                      background: `color-mix(in oklab, ${opp.score >= 90 ? 'var(--accent-success)' : opp.score >= 70 ? 'var(--accent-warning)' : 'var(--priority-urgent)'} 20%, transparent)`,
+                      color: opp.score >= 90 ? 'var(--accent-success)' : opp.score >= 70 ? 'var(--accent-warning)' : 'var(--priority-urgent)',
+                    }}
+                  >
+                    {opp.score}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div variants={sectionVariants} key="smart-schedule">
+          <SmartScheduleCard
+            slots={predSlots?.slots || []}
+            bestHour={predSlots?.best_hour || 9}
+            bestDay={predSlots?.best_day || 0}
+            loading={predLoading}
+          />
+        </motion.div>
+      </div>
+
+      {/* Milestone Timeline */}
+      <motion.div variants={sectionVariants} key="milestone-timeline">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar size={16} className="text-[var(--accent-secondary)]" aria-hidden="true" />
+            <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Milestone Timeline</h3>
+          </div>
+          <Timeline
+            items={[
+              { id: 'm1', title: 'Project Proposal', date: 'Jun 10', status: 'completed' as const },
+              { id: 'm2', title: 'Core Architecture', date: 'Jun 15', status: 'current' as const },
+              { id: 'm3', title: 'MVP Development', date: 'Jun 30', status: 'upcoming' as const },
+              { id: 'm4', title: 'Testing & QA', date: 'Jul 10', status: 'upcoming' as const },
+              { id: 'm5', title: 'Production Launch', date: 'Jul 25', status: 'upcoming' as const },
+            ]}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
   )
 }

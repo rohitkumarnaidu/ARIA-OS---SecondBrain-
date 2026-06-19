@@ -3,24 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
+import { useCourseStore } from '@/lib/stores'
+import type { Course } from '@/lib/types'
+import { createLogger } from '@/lib/utils/logger'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { Button } from '@/components/ui/Button'
 import { Plus, BookOpen, Trash2, X, Play, Award, Clock, TrendingUp, AlertTriangle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Course {
-  id: string
-  title: string
-  platform: string
-  url?: string
-  total_videos?: number
-  completed_videos: number
-  deadline?: string
-  why_enrolled?: string
-  status: string
-  daily_minutes_needed?: number
-  created_at: string
-}
 
 const platforms = ['udemy', 'coursera', 'nptel', 'youtube', 'college', 'other'] as const
 
@@ -33,13 +22,13 @@ const platformColors: Record<string, string> = {
   other: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
 }
 
+const logger = createLogger('CoursesPage')
+
 export default function CoursesPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: courses, loading, error, fetch: fetchCourses, create, update, remove } = useCourseStore()
   const [showAddModal, setShowAddModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
 
   const [newCourse, setNewCourse] = useState({
     title: '',
@@ -50,46 +39,35 @@ export default function CoursesPage() {
     why_enrolled: '',
   })
 
-  useEffect(() => { setMounted(true) }, [])
-
   useEffect(() => {
     if (user) fetchCourses()
-  }, [user])
-
-  const fetchCourses = async () => {
-    setLoading(true)
-    try {
-      const { data } = await supabase.from('courses').select('*').order('created_at', { ascending: false })
-      if (data) setCourses(data)
-    } catch (err) {
-      console.error('Failed to fetch courses:', err)
-      showError('Failed to load courses. Please try again.')
-    }
-    setLoading(false)
-  }
+  }, [user, fetchCourses])
 
   const handleAddCourse = async () => {
     if (!newCourse.title.trim() || !newCourse.deadline) return
-    
-    await supabase.from('courses').insert({
-      ...newCourse,
+
+    await create({
+      title: newCourse.title.trim(),
+      platform: newCourse.platform,
+      url: newCourse.url || undefined,
+      total_videos: newCourse.total_videos || undefined,
       deadline: new Date(newCourse.deadline).toISOString(),
-      status: 'not_started',
+      why_enrolled: newCourse.why_enrolled || undefined,
     })
-    
+
+    logger.info('Course created', { title: newCourse.title.trim(), platform: newCourse.platform })
     setNewCourse({ title: '', platform: 'udemy', url: '', total_videos: 0, deadline: '', why_enrolled: '' })
     setShowAddModal(false)
-    fetchCourses()
   }
 
   const handleUpdateProgress = async (id: string, completed: number) => {
-    const { data } = await supabase.from('courses').update({ completed_videos: completed }).eq('id', id).select()
-    if (data) setCourses(courses.map(c => c.id === id ? data[0] : c))
+    await update(id, { completed_videos: completed })
+    logger.info('Course progress updated', { courseId: id, completedVideos: completed })
   }
 
   const handleDeleteCourse = async (id: string) => {
-    await supabase.from('courses').delete().eq('id', id)
-    setCourses(courses.filter(c => c.id !== id))
+    await remove(id)
+    logger.info('Course deleted', { courseId: id })
   }
 
   const getProgress = (course: Course) => {
@@ -104,19 +82,31 @@ export default function CoursesPage() {
     return Math.ceil((remaining * 15) / daysLeft)
   }
 
+  // TODO: group by semester when Course schema supports it
   const activeCourses = courses.filter(c => c.status !== 'completed' && c.status !== 'abandoned')
   const completedCourses = courses.filter(c => c.status === 'completed')
   const totalDailyMinutes = activeCourses.reduce((sum, c) => sum + calculateDailyMinutes(c), 0)
   const behindSchedule = activeCourses.filter(c => c.deadline && calculateDailyMinutes(c) > 60)
 
-  if (!mounted || authLoading || loading) {
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="relative">
-          <div className="w-12 h-12 rounded-xl border-2 border-accent-primary/30 animate-pulse-glow" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-accent-primary border-t-transparent rounded-full animate-spin" />
+      <div className="space-y-6 pb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-3">
+            <Skeleton className="h-9 w-48" />
+            <Skeleton className="h-4 w-36" />
           </div>
+          <Skeleton className="h-10 w-36 rounded-lg" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
         </div>
       </div>
     )
@@ -124,6 +114,13 @@ export default function CoursesPage() {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
@@ -136,10 +133,10 @@ export default function CoursesPage() {
           </h1>
           <p className="text-text-secondary">Track your learning journey</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="btn btn-primary gap-2">
+        <Button onClick={() => setShowAddModal(true)} variant="primary" className="gap-2">
           <Plus size={20} />
           Add Course
-        </button>
+        </Button>
       </motion.div>
 
       {/* Stats */}
@@ -147,9 +144,10 @@ export default function CoursesPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-2 lg:grid-cols-5 gap-4"
       >
         {[
+          { label: 'Total', value: courses.length, icon: BookOpen, color: 'accent-primary' },
           { label: 'Active', value: activeCourses.length, icon: Play, color: 'accent-primary' },
           { label: 'Completed', value: completedCourses.length, icon: Award, color: 'accent-success' },
           { label: 'Min/Day', value: totalDailyMinutes, icon: Clock, color: 'accent-warning' },
@@ -307,10 +305,10 @@ export default function CoursesPage() {
               </div>
               <h3 className="text-lg font-display font-semibold text-text-primary mb-2">No courses yet</h3>
               <p className="text-text-tertiary mb-6">Start your learning journey</p>
-              <button onClick={() => setShowAddModal(true)} className="btn btn-primary mx-auto">
+              <Button onClick={() => setShowAddModal(true)} variant="primary" className="mx-auto">
                 <Plus size={20} />
                 Add Course
-              </button>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -357,7 +355,7 @@ export default function CoursesPage() {
                     <label className="block text-sm font-medium text-text-primary mb-2">Platform</label>
                     <select
                       value={newCourse.platform}
-                      onChange={e => setNewCourse({ ...newCourse, platform: e.target.value as any })}
+                      onChange={e => setNewCourse({ ...newCourse, platform: e.target.value as typeof platforms[number] })}
                       className="input capitalize"
                     >
                       {platforms.map(p => (
@@ -400,10 +398,10 @@ export default function CoursesPage() {
               </div>
 
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowAddModal(false)} className="btn btn-secondary flex-1">Cancel</button>
-                <button onClick={handleAddCourse} disabled={!newCourse.title.trim() || !newCourse.deadline} className="btn btn-primary flex-1">
+                <Button onClick={() => setShowAddModal(false)} variant="secondary" className="flex-1">Cancel</Button>
+                <Button onClick={handleAddCourse} disabled={!newCourse.title.trim() || !newCourse.deadline} variant="primary" className="flex-1">
                   Add Course
-                </button>
+                </Button>
               </div>
             </motion.div>
           </motion.div>

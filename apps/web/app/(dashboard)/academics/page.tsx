@@ -1,38 +1,18 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
+import { useAcademicStore } from '@/lib/stores'
 import { showError } from '@/lib/toast'
 import { Plus, GraduationCap, Trash2, X, Calculator, BookOpen, Award, AlertTriangle, Calendar } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Subject {
-  id: string
-  name: string
-  code?: string
-  credits?: number
-  semester?: string
-  exam_date?: string
-  target_marks?: number
-}
-
-interface Mark {
-  id: string
-  subject_id: string
-  exam_type: string
-  marks_obtained: number
-  max_marks: number
-  date: string
-}
+import { Button } from '@/components/ui/Button'
+import { createLogger } from '@/lib/utils/logger'
 
 export default function AcademicsPage() {
   const { user, loading: authLoading } = useAuth()
-  const router = useRouter()
-  const [subjects, setSubjects] = useState<Subject[]>([])
-  const [marks, setMarks] = useState<Mark[]>([])
-  const [loading, setLoading] = useState(true)
+  const { subjects, marks, loading, error, fetchAll, addSubject, addMark, deleteSubject } = useAcademicStore()
+  const logger = createLogger('AcademicsPage')
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false)
   const [showAddMarkModal, setShowAddMarkModal] = useState(false)
   const [selectedSubject, setSelectedSubject] = useState<string>('')
@@ -43,44 +23,47 @@ export default function AcademicsPage() {
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => {
-    if (user) fetchData()
-  }, [user])
+    if (user) fetchAll()
+  }, [user, fetchAll])
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const [subjectsRes, marksRes] = await Promise.all([
-        supabase.from('subjects').select('*').order('name'),
-        supabase.from('marks').select('*').order('date', { ascending: false })
-      ])
-      if (subjectsRes.data) setSubjects(subjectsRes.data)
-      if (marksRes.data) setMarks(marksRes.data)
-    } catch (err) {
-      console.error('Failed to fetch academics:', err)
-      showError('Failed to load academics data. Please try again.')
-    }
-    setLoading(false)
-  }
+  useEffect(() => {
+    if (error) showError(error)
+  }, [error])
 
   const handleAddSubject = async () => {
     if (!newSubject.name.trim()) return
-    await supabase.from('subjects').insert(newSubject)
-    setNewSubject({ name: '', code: '', credits: 3, semester: '', exam_date: '', target_marks: 85 })
-    setShowAddSubjectModal(false)
-    fetchData()
+    logger.info('Adding subject', { name: newSubject.name, code: newSubject.code, credits: newSubject.credits })
+    try {
+      await addSubject(newSubject)
+      logger.info('Subject added successfully', { name: newSubject.name })
+      setNewSubject({ name: '', code: '', credits: 3, semester: '', exam_date: '', target_marks: 85 })
+      setShowAddSubjectModal(false)
+    } catch (err) {
+      logger.error('Failed to add subject', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const handleAddMark = async () => {
     if (!selectedSubject || newMark.marks_obtained < 0) return
-    await supabase.from('marks').insert({ ...newMark, subject_id: selectedSubject })
-    setNewMark({ exam_type: 'assignment', marks_obtained: 0, max_marks: 100, date: new Date().toISOString().split('T')[0] })
-    setShowAddMarkModal(false)
-    fetchData()
+    logger.info('Adding mark', { subjectId: selectedSubject, exam_type: newMark.exam_type, marks_obtained: newMark.marks_obtained, max_marks: newMark.max_marks })
+    try {
+      await addMark({ ...newMark, subject_id: selectedSubject })
+      logger.info('Mark added successfully', { subjectId: selectedSubject, exam_type: newMark.exam_type })
+      setNewMark({ exam_type: 'assignment', marks_obtained: 0, max_marks: 100, date: new Date().toISOString().split('T')[0] })
+      setShowAddMarkModal(false)
+    } catch (err) {
+      logger.error('Failed to add mark', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const handleDeleteSubject = async (id: string) => {
-    await supabase.from('subjects').delete().eq('id', id)
-    setSubjects(subjects.filter(s => s.id !== id))
+    logger.info('Deleting subject', { id })
+    try {
+      await deleteSubject(id)
+      logger.info('Subject deleted successfully', { id })
+    } catch (err) {
+      logger.error('Failed to delete subject', { error: err instanceof Error ? err.message : String(err) })
+    }
   }
 
   const calculateCGPA = () => {
@@ -138,7 +121,8 @@ export default function AcademicsPage() {
     return 'bg-accent-error'
   }
 
-  if (!mounted || authLoading || loading) {
+  if (!mounted) return <div className="min-h-screen bg-[var(--bg-page)]" />
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative">
@@ -166,12 +150,12 @@ export default function AcademicsPage() {
           <p className="text-text-secondary">Track subjects, marks, and CGPA</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setShowAddSubjectModal(true)} className="btn btn-primary gap-2">
+          <Button variant="primary" className="gap-2" onClick={() => setShowAddSubjectModal(true)}>
             <Plus size={20} /> Add Subject
-          </button>
-          <button onClick={() => setShowAddMarkModal(true)} className="btn btn-secondary gap-2">
+          </Button>
+          <Button variant="secondary" className="gap-2" onClick={() => setShowAddMarkModal(true)}>
             <Calculator size={20} /> Log Marks
-          </button>
+          </Button>
         </div>
       </motion.div>
 
@@ -339,10 +323,10 @@ export default function AcademicsPage() {
               </div>
               <h3 className="text-lg font-display font-semibold text-text-primary mb-2">No subjects yet</h3>
               <p className="text-text-tertiary mb-6">Add your first subject</p>
-              <button onClick={() => setShowAddSubjectModal(true)} className="btn btn-primary mx-auto">
+              <Button variant="primary" className="mx-auto" onClick={() => setShowAddSubjectModal(true)}>
                 <Plus size={20} />
                 Add Subject
-              </button>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -388,8 +372,8 @@ export default function AcademicsPage() {
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowAddSubjectModal(false)} className="btn btn-secondary flex-1">Cancel</button>
-                <button onClick={handleAddSubject} disabled={!newSubject.name.trim()} className="btn btn-primary flex-1">Add Subject</button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowAddSubjectModal(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" onClick={handleAddSubject} disabled={!newSubject.name.trim()}>Add Subject</Button>
               </div>
             </motion.div>
           </motion.div>
@@ -447,8 +431,8 @@ export default function AcademicsPage() {
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowAddMarkModal(false)} className="btn btn-secondary flex-1">Cancel</button>
-                <button onClick={handleAddMark} disabled={!selectedSubject} className="btn btn-primary flex-1">Log Marks</button>
+                <Button variant="secondary" className="flex-1" onClick={() => setShowAddMarkModal(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" onClick={handleAddMark} disabled={!selectedSubject}>Log Marks</Button>
               </div>
             </motion.div>
           </motion.div>

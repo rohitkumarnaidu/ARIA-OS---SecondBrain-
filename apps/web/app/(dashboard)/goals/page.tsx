@@ -3,42 +3,29 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { showError } from '@/lib/toast'
-import { Plus, Target, Trash2, X, Calendar, TrendingUp, Flag, MapPin } from 'lucide-react'
+import { useGoalStore } from '@/lib/stores'
+import type { Goal } from '@/lib/types'
+import { createLogger } from '@/lib/utils/logger'
+import { Button } from '@/components/ui/Button'
+import { Plus, Target, Trash2, X, Calendar, TrendingUp, Flag, MapPin, AlertTriangle } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const RoadmapEditor = dynamic(() => import('@/components/RoadmapEditor'), { ssr: false })
-
-interface Goal {
-  id: string
-  title: string
-  description?: string
-  roadmap_type: string
-  target_date?: string
-  hours_per_day: number
-  days_per_week: number
-  intensity: string
-  status: string
-  progress: number
-  nodes?: any[]
-  created_at: string
-}
 
 const roadmapTypes = [
   'career_skills', 'business_launch', 'exam_prep', 'study_learning', 
   'project', 'health', 'financial', 'custom'
 ] as const
 
+const logger = createLogger('GoalsPage')
+
 export default function GoalsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [goals, setGoals] = useState<Goal[]>([])
-  const [loading, setLoading] = useState(true)
+  const { items: goals, loading, error, fetch: fetchGoals, create, update, remove } = useGoalStore()
   const [showAddModal, setShowAddModal] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null)
-  const [mounted, setMounted] = useState(false)
 
   const [newGoal, setNewGoal] = useState({
     title: '',
@@ -51,88 +38,54 @@ export default function GoalsPage() {
   })
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
     if (user) {
       fetchGoals()
     }
-  }, [user])
-
-  const fetchGoals = async () => {
-    setLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('goals')
-        .select('*')
-        .order('created_at', { ascending: false })
-      
-      if (!error && data) {
-        setGoals(data)
-      }
-    } catch (err) {
-      console.error('Failed to fetch goals:', err)
-      showError('Failed to load goals. Please try again.')
-    }
-    setLoading(false)
-  }
+  }, [user, fetchGoals])
 
   const handleAddGoal = async () => {
     if (!newGoal.title.trim()) return
     
-    const { data, error } = await supabase
-      .from('goals')
-      .insert({
-        ...newGoal,
-        target_date: newGoal.target_date ? new Date(newGoal.target_date).toISOString() : null,
-        status: 'active',
-        progress: 0,
-        nodes: [],
-      })
-      .select()
+    await create({
+      ...newGoal,
+      target_date: newGoal.target_date ? new Date(newGoal.target_date).toISOString() : undefined,
+      status: 'active',
+      progress: 0,
+      nodes: [],
+    })
     
-    if (!error && data) {
-      setGoals([data[0], ...goals])
-      setNewGoal({
-        title: '', description: '', roadmap_type: 'career_skills',
-        target_date: '', hours_per_day: 2, days_per_week: 5, intensity: 'medium'
-      })
-      setShowAddModal(false)
-    }
+    logger.info('Goal created', { title: newGoal.title.trim(), roadmap_type: newGoal.roadmap_type })
+    setNewGoal({
+      title: '', description: '', roadmap_type: 'career_skills',
+      target_date: '', hours_per_day: 2, days_per_week: 5, intensity: 'medium'
+    })
+    setShowAddModal(false)
   }
 
   const handleUpdateProgress = async (id: string, progress: number) => {
-    const { data, error } = await supabase
-      .from('goals')
-      .update({ progress: Math.min(100, Math.max(0, progress)) })
-      .eq('id', id)
-      .select()
-    
-    if (!error && data) {
-      setGoals(goals.map(g => g.id === id ? data[0] : g))
-    }
+    await update(id, { progress: Math.min(100, Math.max(0, progress)) })
+    logger.info('Goal progress updated', { goalId: id, progress })
   }
 
   const handleDeleteGoal = async (id: string) => {
-    const { error } = await supabase
-      .from('goals')
-      .delete()
-      .eq('id', id)
-    
-    if (!error) {
-      setGoals(goals.filter(g => g.id !== id))
-    }
+    await remove(id)
+    logger.info('Goal deleted', { goalId: id })
   }
 
   const activeGoals = goals.filter(g => g.status === 'active')
   const completedGoals = goals.filter(g => g.status === 'completed')
+  const now = new Date()
+  const atRisk = goals.filter(g => {
+    const progress = g.progress || 0
+    const deadline = g.target_date ? new Date(g.target_date) : null
+    return progress < 50 && deadline && deadline < new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+  }).length
 
-  const getTypeLabel = (type: string) => {
-    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  const getTypeLabel = (type: string | undefined) => {
+    return (type || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
   }
 
-  if (!mounted || authLoading || loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative">
@@ -147,6 +100,13 @@ export default function GoalsPage() {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
@@ -159,13 +119,14 @@ export default function GoalsPage() {
           </h1>
           <p className="text-text-secondary">Plan your path to success</p>
         </div>
-        <button
+        <Button
           onClick={() => setShowAddModal(true)}
-          className="btn btn-primary gap-2"
+          variant="primary"
+          className="gap-2"
         >
           <Plus size={20} />
           Add Goal
-        </button>
+        </Button>
       </motion.div>
 
       {/* Stats */}
@@ -173,10 +134,11 @@ export default function GoalsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-3 gap-4"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
       >
         {[
           { label: 'Active', value: activeGoals.length, icon: Flag, color: 'accent-primary' },
+          { label: 'At Risk', value: atRisk, icon: AlertTriangle, color: 'accent-warning' },
           { label: 'Completed', value: completedGoals.length, icon: Target, color: 'accent-success' },
           { label: 'Avg Progress', value: `${activeGoals.length > 0 ? Math.round(activeGoals.reduce((acc, g) => acc + g.progress, 0) / activeGoals.length) : 0}%`, icon: TrendingUp, color: 'accent-neon' },
         ].map((stat, i) => (
@@ -289,19 +251,32 @@ export default function GoalsPage() {
               </div>
               <h3 className="text-lg font-display font-semibold text-text-primary mb-2">No goals yet</h3>
               <p className="text-text-tertiary mb-6">Create your first goal</p>
-              <button onClick={() => setShowAddModal(true)} className="btn btn-primary mx-auto">
+              <Button onClick={() => setShowAddModal(true)} variant="primary" className="mx-auto">
                 <Plus size={20} />
                 Add Goal
-              </button>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
       {/* Add Goal Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-modal p-4" role="dialog" aria-modal="true">
-          <div className="bg-background-card border border-border rounded-2xl p-6 w-full max-w-lg">
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-modal p-4"
+            role="dialog"
+            aria-modal="true"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-background-card border border-border rounded-2xl p-6 w-full max-w-lg"
+            >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-display font-semibold text-text-primary">Create New Goal</h2>
               <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-background-elevated rounded-lg touch-target">
@@ -336,7 +311,7 @@ export default function GoalsPage() {
                 <label className="block text-sm font-medium text-text-primary mb-2">Roadmap Type</label>
                 <select
                   value={newGoal.roadmap_type}
-                  onChange={e => setNewGoal({ ...newGoal, roadmap_type: e.target.value as any })}
+                  onChange={e => setNewGoal({ ...newGoal, roadmap_type: e.target.value as typeof roadmapTypes[number] })}
                   className="input capitalize"
                 >
                   {roadmapTypes.map(t => (
@@ -383,14 +358,15 @@ export default function GoalsPage() {
             </div>
 
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowAddModal(false)} className="btn btn-secondary flex-1">Cancel</button>
-              <button onClick={handleAddGoal} disabled={!newGoal.title.trim()} className="btn btn-primary flex-1">
+              <Button onClick={() => setShowAddModal(false)} variant="secondary" className="flex-1">Cancel</Button>
+              <Button onClick={handleAddGoal} disabled={!newGoal.title.trim()} variant="primary" className="flex-1">
                 Create Goal
-              </button>
+              </Button>
             </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Roadmap Editor Modal */}
       {selectedGoal && (
@@ -405,11 +381,10 @@ export default function GoalsPage() {
             <div className="h-[70vh]">
               <RoadmapEditor 
                 goalId={selectedGoal}
-                onSave={(nodes, edges) => {
-                  supabase.from('goals').update({ nodes: nodes.map(n => n.data) }).eq('id', selectedGoal).then(() => {
-                    setSelectedGoal(null)
-                    fetchGoals()
-                  })
+                onSave={async (nodes) => {
+                  await update(selectedGoal, { nodes: nodes.map(n => n.data) })
+                  setSelectedGoal(null)
+                  fetchGoals()
                 }}
               />
             </div>
