@@ -75,6 +75,26 @@ amendment_history:
 | WAU | Weekly Active Users |
 | SPoF | Single Point of Failure |
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph LR
+    RUM["🌐 RUM<br/>web-vitals"] --> LOGS["📝 Logs<br/>Structured JSON"]
+    LOGS --> TRACES["🔍 Traces<br/>Sentry Browser"]
+    TRACES --> METRICS["📊 Metrics<br/>PostHog + Sentry"]
+    METRICS --> ALERT["🔔 Alerts<br/>PagerDuty / Slack"]
+    ALERT --> DASH["📈 Dashboard<br/>Grafana / Sentry"]
+    DASH --> RUM
+    RUM --> RUM_DETAIL["LCP / CLS / INP<br/>FCP / TTFB"]
+    LOGS --> LOG_DETAIL["Error / Warn / Info<br/>PII-redacted"]
+    TRACES --> TRACE_DETAIL["Route transitions<br/>API + AI calls"]
+    METRICS --> METRIC_DETAIL["DAU / WAU<br/>Feature adoption"]
+    style RUM fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style ALERT fill:#EF4444,stroke:#EF4444,color:#F1F5F9
+    style DASH fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 2. Executive Summary
 
 ### 2.1 Observability Philosophy

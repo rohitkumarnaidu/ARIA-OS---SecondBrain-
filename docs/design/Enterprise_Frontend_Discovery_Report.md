@@ -61,6 +61,30 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph LR
+    subgraph Audit_Dimensions["Audit Dimensions"]
+        P["📋 Product<br/>Understanding"]
+        U["👤 User Types<br/>& Journeys"]
+        A["🏗️ Architecture<br/>Data / AI / Agent"]
+        S["📱 Platform<br/>Strategy"]
+        D["🎨 Design &<br/>Innovation"]
+    end
+    subgraph Deliverables["Key Deliverables"]
+        D1["40 sections<br/>1978 lines"]
+        D2["Product Risks<br/>+ Opportunities"]
+        D3["Recommended<br/>Directions"]
+    end
+    P --> U --> A --> S --> D
+    D --> D1 & D2 & D3
+    style A fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style D fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+    style D3 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 1. Executive Summary
 
 Second Brain OS (ARIA OS) is a first-of-its-kind AI operating system purpose-built for BTech CSE students — a demographic that manages 8-12 disconnected tools, loses 80% of ideas within 24 hours, misses 60% of relevant opportunities, and abandons 70% of courses started. The product consolidates 15 integrated modules (Tasks, Courses, Goals, Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, YouTube Vault, Academics, Time Tracking, Chat/AI, Automation) into a single surface with 8 AI agents and 1 orchestrator (ARIA) that proactively pushes intelligence rather than waiting to be asked.

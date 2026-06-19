@@ -72,6 +72,29 @@ changelog:
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    subgraph Compliance_Levels["WCAG 2.2 Compliance Levels"]
+        L_A["Level A<br/>30 criteria"]
+        L_AA["Level AA<br/>50+ criteria ✅ Target"]
+        L_AAA["Level AAA<br/>Gold standard"]
+    end
+    subgraph Testing_Workflow["a11y Testing Workflow"]
+        T1["🔬 Static Analysis<br/>axe-core + lint"]
+        T2["🧪 Automated Tests<br/>Playwright a11y"]
+        T3["👁️ Manual Audit<br/>Screen reader + KB"]
+        T4["📋 QA Review<br/>Checklist (Section 28)"]
+    end
+    L_A --> L_AA --> L_AAA
+    T1 --> T2 --> T3 --> T4
+    T4 -->|"Remediation loop"| T1
+    style L_AA fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style T4 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 ## 2. Executive Summary
 
 ### 2.1 Enterprise Accessibility Philosophy

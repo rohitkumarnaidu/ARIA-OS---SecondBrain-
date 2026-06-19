@@ -11,6 +11,29 @@
 
 ---
 
+## Design System Architecture
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph TD
+    TOKENS[Design Tokens] --> COMPONENTS[Components]
+    COMPONENTS --> PATTERNS[Patterns]
+    PATTERNS --> TEMPLATES[Templates]
+    TEMPLATES --> PAGES[Pages]
+
+    TOKENS --> COLORS[Color Tokens]
+    TOKENS --> TYPO[Typography]
+    TOKENS --> SPACING[Spacing]
+
+    COMPONENTS --> ATOMS[Atoms - Button / Input]
+    COMPONENTS --> MOLECULES[Molecules - Card / Modal]
+    COMPONENTS --> ORGANISMS[Organisms - DataTable]
+
+    PAGES --> DASH[ Dashboard]
+    PAGES --> TASK[Task Manager]
+    PAGES --> COURSE[Course Tracker]
+```
+
 ## 1. Executive Summary
 
 The ARIA OS Design System is a comprehensive component library and documentation framework that ensures visual and behavioral consistency across 16 modules. Built on **Next.js 14 + React 18 + Tailwind CSS + Framer Motion + TypeScript**, it provides a single source of truth for every UI element â€” from primitive atoms like buttons and inputs to complex organisms like data tables and kanban boards.

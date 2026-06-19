@@ -72,6 +72,31 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+flowchart LR
+    R["🔬 Research"] --> I["💡 Ideate"]
+    I --> P["🎨 Prototype"]
+    P --> T["🧪 Test"]
+    T --> I
+    T --> L["✅ Launch"]
+    L --> S["📈 Ship"]
+    S --> R
+    R --> R1["25-product CI<br/>(Competitive Intel)"]
+    I --> I1["Design sprints<br/>+ storyboards"]
+    P --> P1["Figma + Framer<br/>Motion prototypes"]
+    T --> T1["Usability testing<br/>+ a11y audits"]
+    S --> S1["Stitch component<br/>+ docs publish"]
+    style R fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style I fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+    style P fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style T fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+    style L fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style S fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+```
+
+---
+
 # Part I — Vision & Philosophy
 
 ---

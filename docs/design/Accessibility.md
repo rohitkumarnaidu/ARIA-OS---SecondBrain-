@@ -25,6 +25,24 @@
 12. [Accessibility Testing Tools & Process](#12-accessibility-testing-tools--process)
 13. [Known Accessibility Issues & Roadmap](#13-known-accessibility-issues--roadmap)
 
+## Accessibility Audit & Remediation Workflow
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+flowchart TD
+    SCAN[Automated Scan - axe-core] --> IDENTIFY[Identify Violations]
+    IDENTIFY --> PRIORITIZE[Prioritize by Severity]
+    PRIORITIZE --> CRITICAL[Critical - WCAG A]
+    PRIORITIZE --> HIGH[High - WCAG AA]
+    PRIORITIZE --> MEDIUM[Medium - WCAG AAA]
+    CRITICAL --> FIX[Fix & Implement]
+    HIGH --> FIX
+    FIX --> VERIFY[Manual Verification]
+    VERIFY --> PASSED{Passed?}
+    PASSED -->|Yes| DOCUMENT[Document in Audit Log]
+    PASSED -->|No| IDENTIFY
+```
+
 ---
 
 ## 1. Accessibility Philosophy

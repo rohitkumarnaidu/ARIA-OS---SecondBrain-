@@ -113,12 +113,17 @@ What feature would you add if you could? [free text]
 
 ### 4.1 Process Overview
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  RESEARCH ──► DEFINE ──► IDEATE ──► PROTOTYPE ──► TEST ──► ITERATE │
-│     ↑                                                        │      │
-│     └──────────────────── CONTINUOUS ─────────────────────────┘      │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    RESEARCH[RESEARCH] --> DEFINE[DEFINE] --> IDEATE[IDEATE] --> PROTOTYPE[PROTOTYPE] --> TEST[TEST] --> ITERATE[ITERATE]
+    ITERATE -.->|CONTINUOUS<br/>FEEDBACK LOOP| RESEARCH
+    style RESEARCH fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DEFINE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style IDEATE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PROTOTYPE fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style TEST fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ITERATE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### 4.2 Phase Breakdown
@@ -198,16 +203,25 @@ What feature would you add if you could? [free text]
 
 ### 5.5 User Journey for Task Creation
 
-```
-Step 1: Trigger        Step 2: Capture       Step 3: Enrich        Step 4: Organize        Step 5: Execute
-┌──────────┐           ┌──────────┐          ┌──────────┐          ┌────────────┐           ┌──────────┐
-│ Quick     │──►        │ Task     │──►       │ Select   │──►       │ Task auto   │──►       │ Work on  │
-│ Capture   │           │ Form     │          │ Category │          │ appears in │          │ task     │
-│ (Cmd+K)   │           │ (inline) │          │ + Prio   │          │ Dashboard  │          │ (Pomo)   │
-└──────────┘           └──────────┘          └──────────┘          └────────────┘           └──────────┘
-   • 1 click               • Title            • Priority              • Filtered view       • Timer starts
-   • Keyboard              • Due date         • Category              • Notified             • Focus mode
-   • Share extension       • Notes (optional) • Goal link             • Streak updated       • Tracks time
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+flowchart LR
+    TC[Quick Capture<br/>Cmd+K] --> TF[Task Form<br/>Inline]
+    TF --> SC[Select Category<br/>+ Priority]
+    SC --> DA[Task auto-appears<br/>in Dashboard]
+    DA --> WT[Work on task<br/>Pomodoro]
+    
+    TC -.->|1 click · Keyboard · Share ext| TC
+    TF -.->|Title · Due date · Notes| TF
+    SC -.->|Priority · Category · Goal link| SC
+    DA -.->|Filtered view · Notified · Streak| DA
+    WT -.->|Timer starts · Focus mode · Tracks time| WT
+
+    style TC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style TF fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style SC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DA fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style WT fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ---
@@ -216,44 +230,62 @@ Step 1: Trigger        Step 2: Capture       Step 3: Enrich        Step 4: Organ
 
 ### 6.1 Site Map
 
-```
-Home (Dashboard)
-├── Tasks                     [List/Kanban view]
-│   ├── Task Detail (/tasks/:id)
-│   └── Task Filter (/tasks?status=pending)
-├── Courses                   [Grid view]
-│   ├── Course Detail (/courses/:id)
-│   └── Course Progress (/courses/:id/progress)
-├── Goals                     [Canvas/Grid view]
-│   ├── Goal Detail (/goals/:id)
-│   └── Goal Roadmap (/goals/:id/roadmap)
-├── Habits                    [Grid view]
-│   └── Habit Detail (/habits/:id)
-├── Sleep                     [Dashboard view]
-├── Income                    [Dashboard view]
-│   └── Income Entry (/income/new)
-├── Projects                  [Kanban view]
-│   └── Project Detail (/projects/:id)
-├── Ideas                     [Pipeline view]
-│   └── Idea Detail (/ideas/:id)
-├── Resources                 [Grid view]
-│   ├── Resource Detail (/resources/:id)
-│   └── Resource Collection (/resources/collections/:id)
-├── Opportunities             [List view]
-│   └── Opportunity Detail (/opportunities/:id)
-├── Time                      [List/Dashboard view]
-│   └── Time Stats (/time/stats)
-├── Chat                      [Full view]
-├── Automation                [List view]
-│   ├── Briefing (/automation/briefing)
-│   ├── Radar (/automation/radar)
-│   └── Weekly Review (/automation/weekly-review)
-└── Settings (modal/overlay)
-    ├── Profile
-    ├── Preferences
-    ├── Notifications
-    ├── Integrations
-    └── Account
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Home[Home Dashboard] --> Tasks[Tasks - List/Kanban]
+    Home --> Courses[Courses - Grid]
+    Home --> Goals[Goals - Canvas/Grid]
+    Home --> Habits[Habits - Grid]
+    Home --> Sleep[Sleep - Dashboard]
+    Home --> Income[Income - Dashboard]
+    Home --> Projects[Projects - Kanban]
+    Home --> Ideas[Ideas - Pipeline]
+    Home --> Resources[Resources - Grid]
+    Home --> Opportunities[Opportunities - List]
+    Home --> Time[Time - List/Dashboard]
+    Home --> Chat[Chat - Full]
+    Home --> Automation[Automation - List]
+    Home --> Settings[Settings - Modal/Overlay]
+    
+    Tasks --> TD[Task Detail /tasks/:id]
+    Tasks --> TF[Task Filter /tasks?status=pending]
+    Courses --> CD[Course Detail /courses/:id]
+    Courses --> CP[Course Progress /courses/:id/progress]
+    Goals --> GD[Goal Detail /goals/:id]
+    Goals --> GR[Goal Roadmap /goals/:id/roadmap]
+    Habits --> HD[Habit Detail /habits/:id]
+    Income --> IE[Income Entry /income/new]
+    Projects --> PD[Project Detail /projects/:id]
+    Ideas --> ID[Idea Detail /ideas/:id]
+    Resources --> RD[Resource Detail /resources/:id]
+    Resources --> RC[Resource Collection /resources/collections/:id]
+    Opportunities --> OD[Opportunity Detail /opportunities/:id]
+    Time --> TS[Time Stats /time/stats]
+    Automation --> AB[Briefing /automation/briefing]
+    Automation --> AR[Radar /automation/radar]
+    Automation --> AW[Weekly Review /automation/weekly-review]
+    Settings --> SP[Profile]
+    Settings --> SPr[Preferences]
+    Settings --> SN[Notifications]
+    Settings --> SI[Integrations]
+    Settings --> SA[Account]
+
+    style Home fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style Tasks fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Courses fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Goals fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Habits fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Sleep fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Income fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Projects fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Ideas fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Resources fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Opportunities fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Time fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Chat fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Automation fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Settings fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 6.2 Navigation Hierarchy
@@ -781,40 +813,51 @@ Every screen is designed **mobile-first** in Figma, then expanded to tablet and 
 
 ### 15.2 Figma File Structure
 
-```
-Project: ARIA OS — Second Brain
-├── 🎨 Design System
-│   ├── Colors
-│   ├── Typography
-│   ├── Spacing
-│   ├── Icons
-│   ├── Components
-│   │   ├── Button
-│   │   ├── Card
-│   │   ├── Input
-│   │   ├── Modal
-│   │   └── ...
-│   └── Patterns
-├── 🖥️ Screens
-│   ├── Dashboard
-│   │   ├── v1.0 — Default
-│   │   ├── v1.0 — Empty State
-│   │   ├── v1.0 — Loading
-│   │   └── v1.0 — Error State
-│   ├── Tasks
-│   │   ├── v1.0 — List View
-│   │   ├── v1.0 — Kanban View
-│   │   ├── v1.0 — Task Detail
-│   │   └── v1.0 — Create Task
-│   └── ...
-├── 🧪 Prototypes
-│   ├── Onboarding Flow
-│   ├── Task Creation Flow
-│   └── Weekly Review Flow
-└── 📝 Research
-    ├── User Personas
-    ├── User Journey Maps
-    └── Usability Test Reports
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
+graph TD
+    Project[Project: ARIA OS — Second Brain] --> DS[🎨 Design System]
+    Project --> SC[🖥️ Screens]
+    Project --> PT[🧪 Prototypes]
+    Project --> RS[📝 Research]
+    
+    DS --> DS_C[Colors]
+    DS --> DS_T[Typography]
+    DS --> DS_S[Spacing]
+    DS --> DS_I[Icons]
+    DS --> DS_CP[Components]
+    DS_CP --> BTN[Button]
+    DS_CP --> CRD[Card]
+    DS_CP --> INP[Input]
+    DS_CP --> MDL[Modal]
+    DS_CP --> DSEP[...]
+    DS --> DS_P[Patterns]
+    
+    SC --> SC_D[Dashboard]
+    SC --> SC_T[Tasks]
+    SC --> SC_SEP[...]
+    SC_D --> D_D[Default]
+    SC_D --> D_E[Empty State]
+    SC_D --> D_L[Loading]
+    SC_D --> D_ER[Error State]
+    SC_T --> T_L[List View]
+    SC_T --> T_K[Kanban View]
+    SC_T --> T_D[Task Detail]
+    SC_T --> T_C[Create Task]
+    
+    PT --> PT_O[Onboarding Flow]
+    PT --> PT_TC[Task Creation Flow]
+    PT --> PT_W[Weekly Review Flow]
+    
+    RS --> RS_P[User Personas]
+    RS --> RS_J[User Journey Maps]
+    RS --> RS_T[Usability Test Reports]
+
+    style Project fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
+    style DS fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style SC fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style PT fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style RS fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 15.3 Handoff Checklist

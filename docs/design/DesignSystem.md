@@ -68,6 +68,28 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+graph TD
+    REQ["📝 Proposal submitted"] --> REV["🔍 Design Review"]
+    REV --> APP["✅ Approval"]
+    APP --> TOK["Token Definition<br/>Antigravity"]
+    APP --> COMP["Component Build<br/>Stitch"]
+    TOK --> DOC["📚 Documentation"]
+    COMP --> DOC
+    DOC --> TEST["🧪 QA & a11y Audit"]
+    TEST --> PUB["🚀 Published<br/>v{N}.{N}.{N}"]
+    PUB --> DEP["⬇️ Dependency Update"]
+    DEP --> CONSUME["🖥️ Consumed by<br/>Frontend modules"]
+    CONSUME --> FEED["💬 Feedback loop"]
+    FEED --> REQ
+    style PUB fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style REQ fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style FEED fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
 # Part I — Foundation
 
 ---

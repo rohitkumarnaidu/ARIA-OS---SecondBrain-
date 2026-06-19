@@ -42,6 +42,29 @@
 17. [Library-Specific Rules](#17-library-specific-rules)
 18. [Appendix: Quick Reference](#18-appendix-quick-reference)
 
+## Animation Pipeline
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+flowchart LR
+    TRIGGER[User Trigger] --> ANIM[Animation Execution]
+    ANIM --> CALLBACK[Callback Fired]
+
+    TRIGGER --> CLICK[Click / Tap]
+    TRIGGER --> HOVER[Hover / Focus]
+    TRIGGER --> SCROLL[Scroll Intersection]
+    TRIGGER --> TIMER[Timer / Interval]
+
+    ANIM --> FRAME[Framer Motion Variant]
+    ANIM --> GSAP[GSAP Timeline]
+
+    CALLBACK --> STATE[State Update]
+    CALLBACK --> LOG[Telemetry Log]
+    CALLBACK --> NEXT[Next Animation]
+
+    FRAME -->|prefers-reduced-motion| SKIP[Instantly Skip]
+```
+
 ---
 
 ## 1. Executive Architecture Vision

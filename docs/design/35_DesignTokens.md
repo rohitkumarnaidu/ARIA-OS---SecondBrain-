@@ -6,6 +6,25 @@
 
 ---
 
+## Design Token Taxonomy
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph LR
+    GLOBAL[Global Tokens] --> ALIAS[Alias Tokens]
+    ALIAS --> COMP[Component Tokens]
+    COMP --> OVERRIDE[Override Tokens]
+
+    GLOBAL --> RAW[Raw Values - #0A0B0F]
+    ALIAS --> SEM[Semantic Names - bg-page]
+    COMP --> SPEC[Component-Specific - btn-primary]
+    OVERRIDE --> CONTEXT[Contextual - hover / focus]
+
+    RAW -->|maps to| SEM
+    SEM -->|composes| SPEC
+    SPEC -->|overrides| CONTEXT
+```
+
 ## CSS Custom Properties
 
 Defined in `apps/web/app/globals.css` under `@layer base`:

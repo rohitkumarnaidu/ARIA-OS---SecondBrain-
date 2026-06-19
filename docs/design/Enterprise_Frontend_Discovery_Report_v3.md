@@ -95,6 +95,39 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+flowchart LR
+    subgraph Phase_1["🔍 Research & Discovery"]
+        A["Product Understanding"]
+        B["User Research"]
+        C["Competitive Intel<br/>25 products"]
+    end
+    subgraph Phase_2["📐 Architecture & Strategy"]
+        D["IA + Navigation"]
+        E["AI UX + Agentic UX"]
+        F["Render Strategy"]
+        G["Performance Budget"]
+    end
+    subgraph Phase_3["⚡ Execution & Quality"]
+        H["CI/CD Pipeline"]
+        I["Testing & Quality Gates"]
+        J["Monitoring & Observability"]
+        K["Error Handling"]
+    end
+    subgraph Phase_4["🚀 Outcomes"]
+        O1["Production-ready<br/>frontend"]
+        O2["Enterprise UX<br/>Maturity Model"]
+    end
+    A & B & C --> D & E & F --> G --> H & I & J & K --> O1 & O2
+    style O1 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style O2 fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style A fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style G fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
 > **Note**: This v3.0.0 document supersedes both v1.0.0 (SB-DISCOVERY-001) and v2.0.0 (SB-DISCOVERY-002). It combines the foundational analysis of v1 with the enterprise-depth sections of v2, upgrades all content with insights from 25-product competitive intelligence research, and adds 3 new enterprise sections (51-53). Total represents a complete enterprise-level discovery document for ARIA OS.
 
 ---

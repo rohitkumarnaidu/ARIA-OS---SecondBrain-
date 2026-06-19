@@ -43,6 +43,35 @@
 
 ---
 
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
+flowchart LR
+    subgraph Phase_1["Phase 1: Discovery"]
+        A["Analyze 10<br/>Design Systems"]
+        B["Evaluate across<br/>12 dimensions"]
+    end
+    subgraph Phase_2["Phase 2: Synthesis"]
+        C["Token Architecture<br/>Strategy"]
+        D["Component Strategy<br/>Core + Enterprise"]
+        E["Theme Strategy"]
+    end
+    subgraph Phase_3["Phase 3: Output"]
+        F["DesignSystem.md<br/>v4.0.0"]
+        G["Antigravity<br/>Design Tokens"]
+        H["Stitch<br/>Component Library"]
+    end
+    A --> B --> C --> F
+    C --> D --> G
+    D --> E --> H
+    style F fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style G fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style H fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style A fill:#6366F1,stroke:#6366F1,color:#F1F5F9
+    style B fill:#818CF8,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Research Mandate

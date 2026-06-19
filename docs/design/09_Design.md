@@ -11,6 +11,71 @@
 
 ---
 
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph TD
+  subgraph L0["🎨 Design Tokens"]
+    TC[Color System<br/>#0A0B0F, #6366F1, #00FFA3]
+    TT[Typography<br/>Syne / DM Sans / JetBrains Mono]
+    TS[Spacing Scale<br/>4-8-12-16-24-32-48]
+    TE[Effects<br/>Glow, Glass, Grid, Scan Lines]
+  end
+
+  subgraph L1["🧱 Primitives"]
+    P1[Layout Grid<br/>12-Column Responsive]
+    P2[Color Roles<br/>bg, text, border, accent]
+    P3[Typography Scale<br/>H1-H6, Body, Caption]
+    P4[Iconography<br/>Lucide Icons]
+  end
+
+  subgraph L2["⚙️ Components"]
+    C1[Atoms<br/>Button, Input, Badge, Avatar]
+    C2[Molecules<br/>Card, Modal, Dropdown, Toast]
+    C3[Composed<br/>TaskCard, HabitCalendar, ScoreGauge]
+  end
+
+  subgraph L3["📋 Design Patterns"]
+    DP1[Data Display<br/>Tables, Lists, Kanban]
+    DP2[Forms<br/>Validation, Auto-save, Multi-step]
+    DP3[Navigation<br/>Sidebar, Tabs, Command Palette]
+    DP4[Feedback<br/>Skeleton, Empty State, Error State]
+  end
+
+  subgraph L4["📄 Pages"]
+    PG[Dashboard<br/>18 Screen Templates]
+    PG1[Module Pages<br/>Tasks, Courses, Goals, etc.]
+    PG2[Overlays<br/>Modals, Sheets, Panels]
+  end
+
+  L0 --> L1
+  L1 --> L2
+  L2 --> L3
+  L3 --> L4
+
+  style L0 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style L1 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style L2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style L3 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style L4 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+---
+
 ## 1. Executive Summary
 
 ARIA OS uses a **layered design architecture** separating tokens, primitives, components, composed components, and pages. Each layer depends only on the layers below it, ensuring consistent theming and avoiding style drift across 16 modules. This document defines the complete visual design framework — from the cyberpunk visual direction through the layout system, component specifications, color system, typography scale, iconography, data visualization, form design, dark-mode decisions, and the design review process.
