@@ -88,3 +88,6 @@ graphify-out/
 .graphify_python
 .graphify_*.json
 .graphify_*.py
+
+# Build artifacts
+*.tsbuildinfo
