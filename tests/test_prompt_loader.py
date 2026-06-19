@@ -36,8 +36,11 @@ class TestPromptLoader:
 
     def test_all_prompts_have_valid_status(self, loader):
         for key, entry in loader._entries.items():
-            assert entry.frontmatter.get("status") in ("active", "draft", "deprecated"), \
-                f"{key} has invalid status: {entry.frontmatter.get('status')}"
+            assert entry.frontmatter.get("status") in (
+                "active",
+                "draft",
+                "deprecated",
+            ), f"{key} has invalid status: {entry.frontmatter.get('status')}"
 
     def test_all_prompts_have_model(self, loader):
         for key, entry in loader._entries.items():
@@ -45,13 +48,13 @@ class TestPromptLoader:
 
     def test_all_prompts_have_max_tokens(self, loader):
         for key, entry in loader._entries.items():
-            assert isinstance(entry.frontmatter.get("max_tokens"), (int, float)), \
-                f"{key} missing or invalid max_tokens"
+            assert isinstance(entry.frontmatter.get("max_tokens"), (int, float)), f"{key} missing or invalid max_tokens"
 
     def test_all_prompts_have_temperature(self, loader):
         for key, entry in loader._entries.items():
-            assert isinstance(entry.frontmatter.get("temperature"), (int, float)), \
-                f"{key} missing or invalid temperature"
+            assert isinstance(
+                entry.frontmatter.get("temperature"), (int, float)
+            ), f"{key} missing or invalid temperature"
 
     def test_get_returns_none_for_missing(self, loader):
         assert loader.get("nonexistent_prompt") is None

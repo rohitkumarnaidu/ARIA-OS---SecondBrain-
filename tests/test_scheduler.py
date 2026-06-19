@@ -51,9 +51,7 @@ class TestScheduler:
         setup_cron_jobs()
 
         for job in scheduler.get_jobs():
-            assert isinstance(job.trigger, CronTrigger), (
-                f"Job '{job.id}' should use CronTrigger"
-            )
+            assert isinstance(job.trigger, CronTrigger), f"Job '{job.id}' should use CronTrigger"
 
 
 @pytest.mark.scheduler
