@@ -38,8 +38,13 @@ A runbook is a **standardized, step-by-step procedure** for handling operational
 
 ### 1.4 Runbook Lifecycle
 
-```
-Trigger Event → Diagnosis → Resolution → Verification → Post-Mortem → Log Entry
+```mermaid
+flowchart LR
+    TE[Trigger Event] --> DG[Diagnosis]
+    DG --> RS[Resolution]
+    RS --> VF[Verification]
+    VF --> PM[Post-Mortem]
+    PM --> LE[Log Entry]
 ```
 
 ---
@@ -2042,24 +2047,24 @@ python -m pytest tests/ -x               # Run tests
 
 ## Appendix B: Incident Severity Decision Tree
 
-```
-Is the service completely down for all users?
-├── Yes → SEV-1 (Critical)
-│   ├── Is data at risk?
-│   │   ├── Yes → SEV-1 with data loss flag
-│   │   └── No → SEV-1 standard
-│   └── Response: < 5 min, resolve < 1 hour
-│
-└── No → Is a core feature broken for significant users?
-    ├── Yes → SEV-2 (High)
-    │   ├── Workaround available?
-    │   │   ├── Yes → SEV-2, resolve < 4 hours
-    │   │   └── No → SEV-2, resolve < 2 hours
-    │   └── Response: < 15 min
-    │
-    └── No → Is it a minor feature or cosmetic issue?
-        ├── Minor feature → SEV-3 (Medium)
-        └── Cosmetic only → SEV-4 (Low)
+```mermaid
+graph TD
+    Q1[Is the service completely down for all users] -->|Yes| Y1[SEV-1 Critical]
+    Y1 --> Q2[Is data at risk]
+    Q2 -->|Yes| S1[SEV-1 with data loss flag]
+    Q2 -->|No| S2[SEV-1 standard]
+    S1 --> R1[Response < 5 min resolve < 1 hour]
+    S2 --> R1
+    Q1 -->|No| Q3[Is a core feature broken for significant users]
+    Q3 -->|Yes| Y2[SEV-2 High]
+    Y2 --> Q4[Workaround available]
+    Q4 -->|Yes| S3[SEV-2 resolve < 4 hours]
+    Q4 -->|No| S4[SEV-2 resolve < 2 hours]
+    S3 --> R2[Response < 15 min]
+    S4 --> R2
+    Q3 -->|No| Q5[Is it a minor feature or cosmetic issue]
+    Q5 -->|Minor feature| S5[SEV-3 Medium]
+    Q5 -->|Cosmetic only| S6[SEV-4 Low]
 ```
 
 ## Appendix C: Escalation Matrix

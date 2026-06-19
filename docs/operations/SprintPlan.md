@@ -28,6 +28,47 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+stateDiagram-v2
+    [*] --> Planning
+    Planning --> Development: Sprint backlog ready
+    Development --> Review: Features complete
+    Review --> Retrospective: Demo &amp; feedback
+    Retrospective --> Release: Action items documented
+    Release --> Planning: Next sprint begins
+    Release --> [*]
+
+    state Planning {
+        [*] --> BacklogGrooming
+        BacklogGrooming --> Estimation
+        Estimation --> SprintCommitment
+        SprintCommitment --> [*]
+    }
+
+    state Development {
+        [*] --> DailyStandup
+        DailyStandup --> Coding
+        Coding --> CodeReview
+        CodeReview --> Testing
+        Testing --> DailyStandup
+        Testing --> [*]
+    }
+
+    state Review {
+        [*] --> Demo
+        Demo --> StakeholderFeedback
+        StakeholderFeedback --> [*]
+    }
+
+    state Retrospective {
+        [*] --> WhatWentWell
+        WhatWentWell --> WhatToImprove
+        WhatToImprove --> ActionItems
+        ActionItems --> [*]
+    }
+```
+
 ## 1. Sprint Cadence
 
 ### 1.1 Schedule Overview

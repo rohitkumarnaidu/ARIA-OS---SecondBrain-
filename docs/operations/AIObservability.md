@@ -30,6 +30,43 @@ Second Brain OS relies on AI agents for task generation, goal planning, habit su
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+graph TD
+    APP["<b>AI Agents</b><br/>Briefing &bull; Memory &bull; Learning<br/>Opportunity &bull; Sleep &bull; Nudge"]:::primary
+    INF["<b>Inference Layer</b><br/>Ollama (local) &bull; Claude API &bull; Groq"]:::secondary
+    OBS["<b>Observability Stack</b>"]:::accent
+
+    subgraph METRICS["Metrics"]
+        LAT["Latency: p50/p95/p99"]:::secondary
+        TOK["Token usage: Input/Output"]:::warning
+        HAL["Hallucination score: 0.0&ndash;1.0"]:::danger
+    end
+
+    subgraph TRACING["Tracing"]
+        REQ["Request tracing (X-Request-ID)"]:::secondary
+        RET["Retry chain &amp; circuit breaker"]:::warning
+        FAL["Provider failover chain"]:::accent
+    end
+
+    subgraph ALERT["Alerting"]
+        SLO["SLO violation: >30s latency"]:::danger
+        COST["Cost spike: >2x daily avg"]:::warning
+        ERR["Error rate: >5% failures"]:::danger
+    end
+
+    APP --> INF --> OBS
+    OBS --> METRICS
+    OBS --> TRACING
+    OBS --> ALERT
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    classDef danger fill:#0A0B0F,stroke:#EF4444,stroke-width:2px,color:#EF4444
+```
+
 ## 2. AI Observability Challenges
 
 ### 2.1 Hallucination Detection

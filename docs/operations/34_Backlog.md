@@ -4,6 +4,33 @@
 
 Prioritized backlog based on the 8-phase build plan (Chapter 12 of the Bible). Items organized by epic, with user stories, estimates, and dependencies. Each item maps to a specific module in the system.
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+flowchart LR
+    New["🆕 New Issue / Feature Request"] --> Triage["🔍 Backlog Triage"]
+    Triage --> Valid{"Is it valid?"}
+    Valid -->|No| Close["❌ Close with Reason"]
+    Valid -->|Yes| Prioritize["📊 Prioritization Matrix"]
+    Prioritize --> Matrix{"Impact vs Effort"}
+    Matrix -->|High Impact / Low Effort| P0["🔴 P0 — Immediate"]
+    Matrix -->|High Impact / High Effort| P1["🟠 P1 — This Sprint"]
+    Matrix -->|Low Impact / Low Effort| P2["🟡 P2 — Next Sprint"]
+    Matrix -->|Low Impact / High Effort| P3["🟢 P3 — Backlog"]
+    P0 --> Assign["📋 Assign & Schedule"]
+    P1 --> Assign
+    P2 --> Assign
+    Assign --> Sprint["🏃 Sprint Planning"]
+    Sprint --> Dev["💻 Development"]
+    Dev --> Review["👀 Code Review"]
+    Review --> QA["✅ QA & Testing"]
+    QA --> Deploy["🚀 Deploy to Production"]
+    Deploy --> Monitor["📊 Monitor & Feedback"]
+    Monitor --> Close2["✅ Close Issue"]
+    Monitor --> New
+    P3 --> Requeue["📦 Requeue for Review"]
+    Requeue --> Triage
+```
+
 ## Priority Levels
 
 - **P0**: Must have for usable product (Phase 1)

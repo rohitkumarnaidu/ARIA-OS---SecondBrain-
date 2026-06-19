@@ -28,6 +28,24 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+graph LR
+    D["<b>Dependabot</b><br/>Weekly scan: npm + pip + Docker<br/>Auto-creates PRs"]:::primary --> R{"<b>Review</b><br/>CI passes?<br/>Changelog clean?"}:::accent
+    R -->|"✅ Non-breaking"| M["<b>Merge</b><br/>Approve &amp; squash<br/>Auto-deploy"]:::accent
+    R -->|"⚠️ Breaking"| B["<b>Migration Branch</b><br/>feature/dep-upgrade<br/>Code migration needed"]:::warning
+    B --> T["<b>Test</b><br/>Full suite &bull; Smoke<br/>Regression pass"]:::secondary
+    T --> M
+    R -->|"❌ Security"| S["<b>Emergency</b><br/>Critical CVE patch<br/>&lt; 24hr SLA"]:::danger
+    S --> M
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    classDef danger fill:#0A0B0F,stroke:#EF4444,stroke-width:2px,color:#EF4444
+```
+
 ## 1. External Dependency Inventory
 
 ### 1.1 NPM Packages (Frontend — apps/web)

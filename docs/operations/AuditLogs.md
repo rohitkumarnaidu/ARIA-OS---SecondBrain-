@@ -14,6 +14,25 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph LR
+    Event["⚡ System Event"] --> Capture["📥 Capture<br/>Supabase Trigger / Middleware"]
+    Capture --> Enrich["🔧 Enrich<br/>Timestamp · User · IP · Session"]
+    Enrich --> Store["💾 Store<br/>audit_logs Table"]
+    Store --> Index["📑 Index<br/>user_id · event_type · created_at"]
+    Index --> Query["🔍 Query API<br/>Structured Search · Filters · Export"]
+    Query --> Alert["🚨 Alert Rules<br/>Anomaly Detection · Thresholds"]
+    Query --> Dashboard["📊 Audit Dashboard"]
+    Query --> Compliance["📋 Compliance Reports<br/>GDPR Art.30 · SOC2"]
+    Alert --> Notify["📧 Notify Admin"]
+    Alert --> Block["⛔ Auto-Block Suspicious Activity"]
+    Notify --> Review["👀 Manual Review"]
+    Block --> Review
+    Review --> Remediate["🔧 Remediate"]
+    Remediate --> Event
+```
+
 ## 1. Executive Summary
 
 Second Brain OS processes personal productivity data across 15+ modules (tasks, courses, goals, ideas, projects, resources, opportunities, income, habits, sleep, time). As the system scales toward multi-user and handles increasingly sensitive user data, a comprehensive audit logging system is required to satisfy both internal security requirements and external regulatory mandates.

@@ -30,6 +30,23 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+flowchart LR
+    F["<b>feature/*</b><br/>1&ndash;3 day lifespan<br/>Squash-merge to main"]:::secondary --> M["<b>main</b><br/>Production-ready<br/>Always deployable"]:::accent
+    B["<b>bugfix/*</b><br/>Quick patches<br/>Direct to main"]:::warning --> M
+    HF["<b>hotfix/*</b><br/>Emergency: &lt; 4hr<br/>Security &amp; P0 bugs"]:::danger --> M
+    M --> R["<b>release/*</b><br/>release/v1.2.0<br/>QA &amp; stabilization"]:::primary
+    R --> M
+    M -.-> T["<b>Tags</b><br/>v1.0.0 &bull; v1.1.0<br/>Semantic versioning"]:::secondary
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    classDef danger fill:#0A0B0F,stroke:#EF4444,stroke-width:2px,color:#EF4444
+```
+
 ## 1. Branching Strategy
 
 ### 1.1 Strategy Overview

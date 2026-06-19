@@ -172,13 +172,15 @@ export const frontendLogger = new FrontendLogger()
 
 ### Log Pipeline Architecture
 
-```
-Application (stdout) → Rotating File (local)
-                    → Error-level → Supabase logs table
-                                   → Alert evaluation
-                                   → (Future) Log aggregation dashboard
-
-Frontend errors → POST /api/logs/frontend → Supabase logs table
+```mermaid
+graph TD
+    App[Application stdout] --> RotFile[Rotating File local]
+    App --> ErrLevel[Error-level]
+    ErrLevel --> SupaLogs[Supabase logs table]
+    ErrLevel --> Alert[Alert evaluation]
+    ErrLevel --> Future[(Future) Log aggregation dashboard]
+    FE[Frontend errors] --> POST[POST /api/logs/frontend]
+    POST --> SupaLogs
 ```
 
 ---
@@ -189,28 +191,17 @@ Frontend errors → POST /api/logs/frontend → Supabase logs table
 
 The system uses W3C Trace Context (`traceparent` header) for distributed tracing:
 
-```
-Frontend request
-  │ request_id: req_abc, trace_id: trace_7f3a, span_id: span_2d4e
-  │
-  ├── API Gateway
-  │   │ request_id: req_abc, trace_id: trace_7f3a, span_id: span_3e5f
-  │   │
-  │   ├── Database Query (Supabase)
-  │   │   │ trace_id: trace_7f3a, span_id: span_4g6h
-  │   │   └── Duration: 12ms
-  │   │
-  │   ├── Cache Lookup
-  │   │   │ trace_id: trace_7f3a, span_id: span_5h7i
-  │   │   └── Duration: 2ms (hit)
-  │   │
-  │   ├── AI Provider (Ollama/Claude)
-  │   │   │ trace_id: trace_7f3a, span_id: span_6i8j
-  │   │   └── Duration: 1,234ms
-  │   │
-  │   └── Response
-  │       │ trace_id: trace_7f3a, span_id: span_7j9k
-  │       └── Total: 1,280ms
+```mermaid
+flowchart LR
+    FR[Frontend request] -->|req_abc trace_7f3a span_2d4e| GW[API Gateway]
+    GW -->|req_abc trace_7f3a span_3e5f| DB[Database Query Supabase]
+    DB -->|trace_7f3a span_4g6h| DBRes[Duration 12ms]
+    GW -->|req_abc trace_7f3a span_3e5f| Cache[Cache Lookup]
+    Cache -->|trace_7f3a span_5h7i| CacheRes[Duration 2ms hit]
+    GW -->|req_abc trace_7f3a span_3e5f| AI[AI Provider Ollama/Claude]
+    AI -->|trace_7f3a span_6i8j| AIRes[Duration 1234ms]
+    GW -->|req_abc trace_7f3a span_3e5f| Resp[Response]
+    Resp -->|trace_7f3a span_7j9k| Total[Total 1280ms]
 ```
 
 ### Tracing Middleware

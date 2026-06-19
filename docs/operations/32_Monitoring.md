@@ -80,56 +80,38 @@ This document defines the complete monitoring and observability strategy for Sec
 
 ### 1.1 Monitoring Stack
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    MONITORING LAYER                          │
-│                                                              │
-│  ┌──────────────────┐   ┌──────────────────┐                │
-│  │  External Probes   │   │  Built-in Health  │              │
-│  │  (Better Uptime)   │   │  (FastAPI Endpoint)│             │
-│  └────────┬─────────┘   └────────┬─────────┘                │
-│           │                      │                          │
-│  ┌────────▼──────────────────────▼─────────┐                │
-│  │         Alert Manager                    │                │
-│  │  (Email / SMS / Slack Webhook)           │                │
-│  └────────────────┬────────────────────────┘                │
-│                   │                                          │
-│  ┌────────────────▼────────────────────────┐                │
-│  │      Data Storage Layer                  │                │
-│  │  ┌──────────┐  ┌──────────┐  ┌───────┐  │               │
-│  │  │Supabase  │  │ Logs     │  │Analytics│  │             │
-│  │  │Metrics   │  │(Logger)  │  │Events   │  │              │
-│  │  └──────────┘  └──────────┘  └───────┘  │               │
-│  └──────────────────────────────────────────┘               │
-│                                                              │
-│  ┌──────────────────────────────────────────┐                │
-│  │         Visualization Layer               │               │
-│  │  ┌────────────┐  ┌────────────┐          │              │
-│  │  │Status Page │  │Supabase    │          │               │
-│  │  │(Built-in)  │  │Dashboard   │          │               │
-│  │  └────────────┘  └────────────┘          │               │
-│  └──────────────────────────────────────────┘               │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Monitoring_Layer[MONITORING LAYER]
+        EP[External Probes Better Uptime] --> AM[Alert Manager]
+        BH[Built-in Health FastAPI Endpoint] --> AM
+        AM --> DSL[Data Storage Layer]
+        subgraph DSLayer[Data Storage Layer]
+            SM[Supabase Metrics] --> DSL
+            LL[Logs Logger] --> DSL
+            AE[Analytics Events] --> DSL
+        end
+        DSL --> VL[Visualization Layer]
+        subgraph VLayers[Visualization Layer]
+            SP[Status Page Built-in]
+            SD[Supabase Dashboard]
+        end
+    end
 ```
 
 ### 1.2 Data Flow
 
-```
-User Request → API Gateway → Metrics Middleware → Route Handler
-                                    │
-                            ┌───────┴───────┐
-                            │               │
-                     Performance         Business
-                     Metrics              Events
-                            │               │
-                            └───────┬───────┘
-                                    │
-                            Alert Manager
-                                    │
-                          ┌─────────┴────────┐
-                          │                  │
-                    Auto-Recovery        Human
-                    (Retry, Failover)    Alert
+```mermaid
+flowchart LR
+    UR[User Request] --> GW[API Gateway]
+    GW --> MM[Metrics Middleware]
+    MM --> RH[Route Handler]
+    MM --> PM[Performance Metrics]
+    MM --> BE[Business Events]
+    PM --> AM[Alert Manager]
+    BE --> AM
+    AM --> AR[Auto-Recovery Retry Failover]
+    AM --> HA[Human Alert]
 ```
 
 ### 1.3 Tool Selection Criteria

@@ -27,6 +27,40 @@ This roadmap defines the product evolution of **Second Brain OS (ARIA OS)** — 
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+gantt
+    title Product Roadmap — Second Brain OS
+    dateFormat  YYYY-MM-DD
+    axisFormat  %Y Q%q
+
+    section 🏗️ Foundation
+    MVP Launch (15 Modules, 6 AI Agents)    :done, mvp, 2026-04-01, 2026-06-30
+    Core Stabilization & Bug Fixes          :done, after mvp, 30d
+
+    section 🧠 Intelligence
+    Long-Term Memory                        :active, mem, 2026-07-01, 2026-09-30
+    Predictive Prioritization (ML)          :active, 2026-08-01, 2026-10-31
+    Learning Agent (Pattern Detection)      :active, 2026-07-15, 2026-09-15
+    Proactive Nudges                        :2026-09-01, 2026-11-30
+
+    section 🌐 Ecosystem
+    Mobile App (React Native / PWA)         :mobile, 2026-10-01, 2026-12-31
+    Browser Extension                       :2026-11-01, 2027-01-31
+    Calendar Sync                           :2026-10-15, 2026-12-15
+    Public API (v2)                         :2026-11-01, 2027-02-28
+
+    section 👥 Community
+    Template Marketplace                    :2027-01-01, 2027-03-31
+    Plugin System                           :2027-02-01, 2027-04-30
+    Benchmarking Dashboard                  :2027-01-15, 2027-03-15
+
+    section 💰 Monetization
+    Freemium Model                          :2027-04-01, 2027-06-30
+    Team Plans                              :2027-04-15, 2027-06-30
+    Placement Module                        :crit, 2027-05-01, 2027-06-30
+```
+
 ## 2. Strategic Pillars
 
 ### 2.1 Intelligence (ARIA as Co-Pilot)

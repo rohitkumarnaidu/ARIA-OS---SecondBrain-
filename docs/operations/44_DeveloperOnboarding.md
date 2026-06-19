@@ -24,6 +24,34 @@ Second Brain OS (ARIA OS) is a personal AI productivity system built for BTech C
 
 ### 1.2 System Overview
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+flowchart TD
+    Start["🚀 New Developer"] --> Prereqs["✅ Prerequisites<br/>Git, Node 18+, Python 3.10+, Ollama"]
+    Prereqs --> Clone["📦 Clone Repository<br/>git clone <repo-url>"]
+    Clone --> Env["🔐 Configure Environment<br/>cp .env.example .env.local"]
+    Env --> Install["📥 Install Dependencies<br/>make install"]
+    Install --> DB["🗄️ Database Setup<br/>Supabase Project + Schema"]
+    DB --> Validate["✅ Validate Installation<br/>make validate-prompts && make test"]
+    Validate --> TestsPass{"Tests Pass?"}
+    TestsPass -->|No| Debug["🔍 Debug & Troubleshoot"]
+    Debug --> Install
+    TestsPass -->|Yes| ReadDocs["📖 Read AGENTS.md<br/>Sections 1-6"]
+    ReadDocs --> ReadVision["🎯 Read Product Vision<br/>docs/product/00_ProjectVision.md"]
+    ReadVision --> DevEnv["🖥️ Start Dev Environment<br/>make dev-api + make dev-web"]
+    DevEnv --> FirstTask["🎯 Pick First Task<br/>Good First Issue Label"]
+    FirstTask --> Branch["🌿 Create Feature Branch"]
+    Branch --> Code["💻 Write Code + Tests"]
+    Code --> PR["🔄 Submit Pull Request"]
+    PR --> CI["⚙️ CI Pipeline (5 Jobs)"]
+    CI --> Review2["👀 Code Review"]
+    Review2 --> Approved{"Approved?"}
+    Approved -->|No| Code
+    Approved -->|Yes| Merge["🔀 Merge to Main"]
+    Merge --> Deploy["🚀 Auto-Deploy"]
+    Deploy --> Done["🎉 Onboarding Complete"]
+```
+
 **Frontend (Next.js 14 + React 18):** A cyberpunk-themed single-page application with 15 modules — Tasks, Courses, Goals (with roadmap canvas), Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, Academics, YouTube Vault, Chat (ARIA), Time Tracking, and Automation. Pages are built with Tailwind CSS (dark theme, neon accents), Framer Motion for animations, Three.js for 3D background effects, Zustand for state management, and React Flow for the roadmap editor. Data is fetched from Supabase directly (via SSR client) or proxied through the FastAPI backend.
 
 **Backend (FastAPI + Python 3.10+):** A REST API with 13 routers (50+ endpoints) serving task management, course tracking, habit logging, sleep analysis, income tracking, project management, idea vault, resource library, opportunity radar, academic tracking, chat (ARIA), time tracking, and automation. The API integrates with Supabase PostgreSQL for persistence, Ollama (local) for primary AI inference, and Claude API as a fallback for complex reasoning tasks. A custom rate limiter (100 req/min) and structured JSON logger are applied globally.
