@@ -5,9 +5,9 @@
 | Field | Value |
 |---|---|
 | Document ID | SB-AGENTS-REF-001 |
-| Version | 4.0.0 |
+| Version | 5.0.0 |
 | Status | Active |
-| Last Updated | 2026-06-14 |
+| Last Updated | 2026-06-18 |
 | Classification | Internal — AI Agent Instructions |
 | Target Audience | AI Agents (Claude, Cursor, Copilot, Copilot Chat) + Human Developers |
 | Review Cycle | Bi-weekly |
@@ -744,8 +744,8 @@ entry.render(field1="value1")               # Renders template with kwargs
 ```
 prompts/
 ├── system/
-│   ├── aria_system.md            (12.5KB, 369 lines)  — Core ARIA orchestration prompt
-│   └── guardrails.md             (11.7KB, 346 lines)  — Safety rules, content boundaries
+│   ├── aria_system.md            (12.5KB, 370 lines)  — Core ARIA orchestration prompt
+│   └── guardrails.md             (11.7KB, 347 lines)  — Safety rules, content boundaries
 ├── agents/
 │   ├── briefing_agent.md         (28KB, 957 lines)    — 7 day profiles, 5 examples
 │   ├── weekly_review_agent.md    (35KB, 1264 lines)   — 5 review profiles, 4 examples
@@ -758,8 +758,8 @@ prompts/
 │   ├── nudge_agent.md            (19KB, 665 lines)    — 5 nudge scenarios, escalation
 │   └── roadmap_agent.md          (7KB, 257 lines)     — Skill roadmap optimizer (NEW)
 └── templates/
-    ├── context_assembly.md                — Data assembly for agent inputs
-    └── email_templates.md                 — Digest and notification templates
+    ├── context_assembly.md        (6KB, 208 lines)    — Data assembly for agent inputs
+    └── email_templates.md         (5KB, 178 lines)    — Digest and notification templates
 ```
 
 All prompts include: role definition, input schema, output JSON schema, step-by-step instructions, 3-5 few-shot examples, edge cases, anti-patterns, quality criteria, and error recovery.
@@ -1229,11 +1229,14 @@ docker compose logs -f
 |---|---|---|---|
 | Prompt Loader | `tests/test_prompt_loader.py` | 16 | Frontmatter validation, loading, rendering, edge cases |
 | Agent Prompts | `tests/test_agent_prompts.py` | 14 | Per-agent content checks, size thresholds, tags |
-| API Endpoints | `tests/test_api_endpoints.py` | 6 | Endpoint response structure, error handling |
-| LLM Client | `tests/test_llm_client.py` | 7 | Retry logic, circuit breaker, JSON parsing |
-| Scheduler | `tests/test_scheduler.py` | 9 | Cron job registration, trigger configs, imports |
-| Validate Script | `tests/test_validate_script.py` | 7 | Validation script unit tests |
-| **Total** | | **~59 tests** | |
+| API Endpoints | `tests/test_api_endpoints.py` | 125 | Endpoint response structure, error handling, CRUD flows |
+| Agent Modules | `tests/test_agents.py` | 78 | Per-agent logic, fallback, LLM error propagation |
+| LLM Client | `tests/test_llm_client.py` | 9 | Retry logic, circuit breaker, JSON parsing |
+| Scheduler | `tests/test_scheduler.py` | 11 | Cron job registration, trigger configs, imports |
+| Schemas | `tests/test_schemas.py` | 97 | Pydantic model validation, defaults, edge cases |
+| Shared Utils | `tests/test_shared_utils.py` | 99 | Cache, security, validators, logging, notifications, AI utils |
+| Validate Script | `tests/test_validate_script.py` | 6 | Validation script unit tests |
+| **Total** | | **455 tests** | |
 
 ### 16.2 Coverage Thresholds
 
@@ -1924,3 +1927,4 @@ See `.github/dependabot.yml` for full configuration. Key settings:
 | 2.0.0 | 2026-06-11 | Developer | Enterprise upgrade: 15 sections, doc map, debugging, deployment |
 | 3.0.0 | 2026-06-11 | Developer | Enterprise v3: Prompt System Architecture (Sec 10), Prompt Development Guide (Sec 11), Testing Standards (Sec 16), CI/CD Pipeline (Sec 17), Cost & Performance (Sec 18), Onboarding & Process (Sec 21). Updated agent registry with 8 live agents, Project Structure with all modules, expanded Golden Rules to 16 rules. |
 | **4.0.0** | **2026-06-14** | **Developer** | **Enterprise v4: Full project upgrade — 7 new sections (Incident Response, Security Compliance, API Versioning, Observability, Performance Benchmarks, Dependency Management, Code Review Standards). Expanded to 17 agents (added roadmap_agent, opportunity_matching_agent). Updated prompt inventory to 14 files. Added 5 CI jobs with Docker build stage. Created Makefile, pre-commit hooks, VSCode settings, Dependabot config. Added 4 new test files (API, LLM client, scheduler, validate script). Upgraded LLM client with circuit breaker + fallback chain. Upgraded main.py with health checks + request IDs. Removed stale agent-orchestrator duplicate. Standardized API to /api/v1/ prefix. Added .dockerignore files. Coverage threshold at 70%. 25 Golden Rules. 30-item code review checklist.** |
+| 5.0.0 | 2026-06-18 | Developer | Synced prompt line counts with actual files (aria_system 370, guardrails 347). Added template file line counts. Updated test inventory to 455 tests across 9 test files. |
