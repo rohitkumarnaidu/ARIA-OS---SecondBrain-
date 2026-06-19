@@ -48,6 +48,136 @@
 
 ---
 
+### Business Requirements Domain Model
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph TD
+  subgraph Users["👥 Users"]
+    U1[BTech CSE Students]
+    U2[Self-Taught Programmers]
+    U3[Working Professionals]
+  end
+
+  subgraph Value["💎 Value Proposition"]
+    V1[Unified Surface<br/>15 Modules, 1 App]
+    V2[Active Push AI<br/>Zero-Config Intelligence]
+    V3[Zero Cost<br/>Rs. 0/month Forever]
+    V4[Privacy First<br/>Local AI, No Tracking]
+  end
+
+  subgraph Modules["📦 15 Functional Modules"]
+    M1[Tasks - Courses - Goals]
+    M2[Habits - Sleep - Time]
+    M3[Income - Projects - Ideas]
+    M4[Resources - Opportunities]
+    M5[Chat - Automation]
+    M6[YouTube - Academics]
+  end
+
+  subgraph AI["🤖 AI Layer"]
+    A1[ARIA Orchestrator]
+    A2[8 Specialized Sub-Agents]
+    A3[Ollama Local → Claude Cloud]
+    A4[Algorithmic Fallbacks]
+  end
+
+  subgraph Business["📊 Business Outcomes"]
+    B1[DAU > 100<br/>6 Months]
+    B2[Retention > 60%<br/>30-Day]
+    B3[Task Completion > 78%<br/>Post-AI]
+    B4[Infra Cost < Rs. 100/mo<br/>Always]
+  end
+
+  Users --> Value
+  Value --> Modules
+  Modules --> AI
+  AI --> Business
+  Business -.->|Validate| Users
+
+  style Users fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Value fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Modules fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style AI fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+  style Business fill:#13151A,stroke:#6366F1,color:#F1F5F9
+```
+
+### Value Chain
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+flowchart LR
+  subgraph Input["📥 Input"]
+    I1[Student Pain Points<br/>Fragmention, Overwhelm]
+    I2[Market Gap<br/>No Student-First AI Tool]
+  end
+
+  subgraph Process["⚙️ Process"]
+    P1[Build 15 Modules<br/>Monorepo Architecture]
+    P2[Train AI Agents<br/>8 Specialized Sub-Agents]
+    P3[Zero-Cost Infra<br/>Vercel + Supabase + Ollama]
+    P4[Community GTM<br/>College Ambassadors]
+  end
+
+  subgraph Output["📤 Output"]
+    O1[ARIA OS Platform<br/>Working Product]
+    O2[Documentation<br/>120+ Docs, 16 MB]
+    O3[Open Source<br/>MIT Licensed]
+  end
+
+  subgraph Outcome["💥 Outcome"]
+    OC1[DAU 100+<br/>Retention > 60%]
+    OC2[PMF Validated<br/>Community Grown]
+    OC3[Rs. 0 Infrastructure<br/>Sustainable Forever]
+  end
+
+  subgraph Impact["🌍 Impact"]
+    IM1[25K+ Students<br/>Year 5]
+    IM2[Productivity x3<br/>Measured]
+    IM3[New Category<br/>Personal AI OS]
+  end
+
+  Input --> Process --> Output --> Outcome --> Impact
+
+  style Input fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Process fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style Output fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style Outcome fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Impact fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+---
+
 ## 1. Executive Summary
 
 **Second Brain OS (ARIA OS)** is a personal AI productivity system purpose-built for BTech CSE students in India. It addresses the critical gap between student potential and student execution by providing an integrated, AI-powered system that manages courses, tasks, ideas, opportunities, projects, income, habits, sleep, and time across 15 unified modules.

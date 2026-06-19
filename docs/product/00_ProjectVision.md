@@ -54,6 +54,109 @@
 
 ---
 
+### Vision → Execution Flow
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+graph LR
+  subgraph V["🎯 Vision"]
+    V1[Purpose-Built AI OS<br/>for BTech CSE Students]
+    V2[Zero-Cost Architecture<br/>Rs. 0/month]
+    V3[15 Unified Modules<br/>One Intelligent Surface]
+  end
+
+  subgraph S["📊 Strategy"]
+    S1[Competitive Positioning<br/>Unique Category Creation]
+    S2[GTM: Student Communities<br/>College Ambassador Program]
+    S3[Monetization: Freemium →<br/>Pro → Enterprise]
+  end
+
+  subgraph R["🗺️ Roadmap"]
+    R1[12-Month Build<br/>9 Phases, 455 Hours]
+    R2[Alpha → Beta → GA<br/>Q3 2026 → Q2 2027]
+    R3[Modular Delivery<br/>Ship Every Phase]
+  end
+
+  subgraph E["⚡ Execution"]
+    E1[Ollama Local AI<br/>Claude Fallback]
+    E2[FastAPI + Next.js 14<br/>Supabase PostgreSQL]
+    E3[Solo Dev + Community<br/>Open Source Contributions]
+  end
+
+  V --> S --> R --> E
+  E -.->|Feedback| V
+
+  style V fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style S fill:#13151A,stroke:#818CF8,color:#F1F5F9
+  style R fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style E fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+### 5-Year Strategic Roadmap
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+gantt
+  title 5-Year Strategic Vision Timeline
+  dateFormat  YYYY-MM
+  axisFormat  %Y Q%q
+
+  section 🏗️ Foundation
+  Core Build (15 Modules + AI)    :2026-07, 2026-12
+  Alpha → Beta → GA Launch        :2026-10, 2027-06
+
+  section 🚀 Growth
+  Mobile App (React Native)       :2027-04, 2027-10
+  Browser Extension               :2027-07, 2027-12
+  Collaboration Features           :2027-10, 2028-03
+
+  section 📈 Scale
+  Community Platform               :2028-01, 2028-06
+  API Marketplace & Integrations   :2028-04, 2028-10
+  Enterprise Licensing             :2028-07, 2029-01
+
+  section 🌍 Ecosystem
+  Institutional Partnerships        :2029-01, 2029-06
+  ARIA Skills SDK                  :2029-04, 2029-10
+  Global Student Network            :2029-07, 2030-03
+
+  section 🔮 Horizon
+  AI Tutor & Mentor Network        :2030-01, 2030-06
+  Decentralized Knowledge Graph    :2030-04, 2030-12
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 The Vision in One Sentence

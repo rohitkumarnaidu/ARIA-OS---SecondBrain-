@@ -10,6 +10,19 @@
 
 ---
 
+## BDD Acceptance Criteria Flow
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph LR
+    GIVEN[Given - Precondition State] --> WHEN[When - Action Triggered]
+    WHEN --> THEN[Then - Expected Outcome]
+    THEN --> AND[And - Additional Checks]
+    AND --> PASS([Test Pass])
+    AND --> FAIL([Test Fail])
+    FAIL -.->|retest| WHEN
+```
+
 ## Module 1: Dashboard & Morning Briefing
 
 ### AC-DASH-01: Morning Briefing Delivery

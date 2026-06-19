@@ -19,6 +19,21 @@
 
 ---
 
+## Maturity Model Overview
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"background": "#0A0B0F", "primaryColor": "#6366F1", "primaryTextColor": "#F1F5F9", "secondaryColor": "#13151A", "secondaryTextColor": "#94A3B8", "tertiaryColor": "#00FFA3", "tertiaryTextColor": "#0A0B0F", "lineColor": "#334155", "fontFamily": "DM Sans, sans-serif"}}}%%
+graph LR
+    CENTER((Current State Assessment))
+    CENTER --> UI[UI/UX - L2 45%]
+    CENTER --> AI[AI Agents - L3 72%]
+    CENTER --> DATA[Data Layer - L1 30%]
+    CENTER --> AUTH[Auth/Security - L1 25%]
+    CENTER --> DEPLOY[Deployment - L1 20%]
+    CENTER --> TEST[Tests - L3 68%]
+    CENTER --> DOCS[Documentation - L4 90%]
+```
+
 ## 1. Executive Summary
 
 Second Brain OS is a personal AI productivity system for BTech CSE students. The codebase totals **~12,000 lines of application code** across **95 Python files** and **42 TypeScript/TSX files** (25,000+ tracked lines including lockfile). The frontend (Next.js 14) has **20 route files** covering 15 modules. The backend (FastAPI) has **13 API routers** with **~1,150 lines** and **53 endpoints**. The AI agent system has been **fully enterprise-upgraded**: 8 agent modules with PromptLoader integration, 12 validated prompt files with YAML frontmatter, and graceful fallback to inline prompts. The **PromptLoader** (`packages/ai/prompt_loader.py`) is the central prompt registry with 8 public methods. All **6 cron jobs** are implemented and registered in APScheduler. **30 tests** now exist (16 prompt loader + 14 agent prompt tests). **CI/CD pipeline** has 4 jobs (frontend, backend, prompts, security). **Documentation has been massively expanded** from ~40 docs to **~120 enterprise-grade documents** (~16 MB total). Key remaining gaps: **no Supabase project created**, **no production deployment**, **no auth wired on API routes**, and `services/agent-orchestrator/` **duplicates** `apps/api/`.

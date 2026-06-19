@@ -21,6 +21,91 @@ This document catalogs 36 real-world use cases across all 12 modules of Second B
 
 ---
 
+### Use Case Execution Flow
+
+```mermaid
+%%
+init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#0A0B0F',
+    'primaryColor': '#13151A',
+    'primaryBorderColor': '#6366F1',
+    'primaryTextColor': '#F1F5F9',
+    'lineColor': '#818CF8',
+    'secondaryColor': '#1A1D24',
+    'tertiaryColor': '#00FFA3',
+    'fontFamily': 'DM Sans',
+    'fontSize': '14px'
+  }
+}
+%%
+flowchart TD
+  Start([User Action Trigger]) --> Auth{Authenticated?}
+
+  Auth -->|No| Login[Redirect to Login]
+  Login --> Auth
+
+  Auth -->|Yes| ModuleRouter{Module Selection}
+
+  ModuleRouter -->|Dashboard| DASH[Fetch Daily Briefing]
+  ModuleRouter -->|Tasks| TASK[Load Task List]
+  ModuleRouter -->|Courses| CRS[Load Course Progress]
+  ModuleRouter -->|Habits| HAB[Load Habit Streaks]
+  ModuleRouter -->|Sleep| SLP[Load Sleep Data]
+  ModuleRouter -->|Income| INC[Load Income Entries]
+  ModuleRouter -->|Projects| PRJ[Load Project Phases]
+  ModuleRouter -->|Ideas| IDEA[Load Idea Pipeline]
+  ModuleRouter -->|Resources| RES[Load Resources]
+  ModuleRouter -->|Opportunities| OPP[Load Opportunity Radar]
+  ModuleRouter -->|Time| TIME[Load Time Entries]
+  ModuleRouter -->|Chat| CHAT[ARIA Assistant]
+  ModuleRouter -->|Automation| AUTO[Trigger Automation]
+
+  DASH --> BriefingExists{Briefing<br/>Generated?}
+  BriefingExists -->|Yes| RenderBriefing[Show Daily Briefing<br/>with Score + Insights]
+  BriefingExists -->|No| TriggerGen[Trigger On-Demand<br/>Briefing Generation]
+  TriggerGen --> GenSuccess{AI Available?}
+
+  GenSuccess -->|Yes| AgentCall[Call BriefingAgent<br/>via LLM Client]
+  GenSuccess -->|No| AlgoFallback[Algorithmic Fallback<br/>Top Tasks by Priority]
+
+  AgentCall --> ValidJSON{Valid JSON<br/>Response?}
+  ValidJSON -->|Yes| StoreBriefing[Save to daily_briefings]
+  ValidJSON -->|No| AlgoFallback
+
+  AlgoFallback --> StoreBriefing
+  StoreBriefing --> RenderBriefing
+
+  TASK --> TaskAction{Create / Read /<br/>Update / Delete?}
+  TaskAction -->|Read| ListTasks[Query tasks table<br/>filter by user_id]
+  TaskAction -->|Create| CreateTask[Validate schema →<br/>Insert to tasks table]
+  TaskAction -->|Update| UpdateTask[Update task fields<br/>+ status change]
+  TaskAction -->|Delete| DeleteTask[Soft/Hard delete<br/>cascade dependents]
+
+  CHAT --> AriaAvailable{ARIA Agent<br/>Available?}
+  AriaAvailable -->|Yes| LLMResponse[Process via ARIA<br/>Orchestrator → Sub-Agents]
+  AriaAvailable -->|No| RuleResponse[Rule-Based Fallback<br/>Keyword Matching]
+
+  RenderBriefing --> End([Render View])
+  ListTasks --> End
+  CreateTask --> End
+  UpdateTask --> End
+  DeleteTask --> End
+  LLMResponse --> End
+  RuleResponse --> End
+
+  style Start fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style End fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+  style Login fill:#13151A,stroke:#EF4444,color:#F1F5F9
+  style AlgoFallback fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+  style AgentCall fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style LLMResponse fill:#13151A,stroke:#6366F1,color:#F1F5F9
+  style RuleResponse fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+```
+
+---
+
 ## 2. Dashboard & Briefing Module (DASH)
 
 ### UC-DASH-01: View Daily Morning Briefing
