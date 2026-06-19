@@ -9,7 +9,7 @@ import {
   StatsGrid, TaskPreviewList,
   QuickActions, ActivityMatrix, AriasPick,
   MorningBriefing, KPIStrip, WidgetToggle, useWidgetVisibility,
-  SmartScheduleCard,
+  SmartScheduleCard, QuickAddTask,
 } from '@/components/dashboard'
 import { ProgressRing } from '@/components/ui/ProgressRing'
 import { Timeline } from '@/components/ui/Timeline'
@@ -174,6 +174,8 @@ export default function DashboardPage() {
           {storeError}
         </div>
       )}
+
+      <QuickAddTask />
 
       {isVisible('morning-briefing') && (
         <motion.div variants={sectionVariants} key="morning-briefing">

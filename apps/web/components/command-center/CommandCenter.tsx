@@ -25,7 +25,9 @@ import {
   CheckCircle2,
   BellOff,
 } from 'lucide-react'
-import { showSuccess } from '@/lib/toast'
+import { showSuccess, showError } from '@/lib/toast'
+import { api } from '@/lib/api'
+import { parseCommand } from '@/lib/ai/nlp'
 
 /* ───────────────────────────────────────────────
    Types
@@ -135,20 +137,12 @@ const aiSearchResults: UniversalResult[] = [
 
 const operatorsList: Operator[] = [
   {
-    command: '/new task', label: 'New Task', description: 'Create a new task',
-    icon: Plus, execute: () => { showSuccess('New task created!') },
+    command: '/new task', label: 'New Task', description: 'Add a task using natural language — e.g. /new task review PR by Friday',
+    icon: Plus, execute: async () => {},
   },
   {
-    command: '/go dashboard', label: 'Go to Dashboard', description: 'Navigate to dashboard',
-    icon: Navigation, execute: () => { window.location.href = '/dashboard' },
-  },
-  {
-    command: '/done', label: 'Mark Complete', description: 'Mark current task as done',
-    icon: CheckCircle2, execute: () => { showSuccess('Task marked as complete!') },
-  },
-  {
-    command: '/snooze', label: 'Snooze', description: 'Snooze current task',
-    icon: BellOff, execute: () => { showSuccess('Task snoozed until tomorrow') },
+    command: '/go', label: 'Navigate', description: 'Open a page — e.g. /go tasks, /go habits',
+    icon: Navigation, execute: async () => {},
   },
   {
     command: '/help', label: 'Help', description: 'Show available operators',
@@ -226,6 +220,7 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [nlLoading, setNlLoading] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -346,8 +341,40 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
       if (['ArrowDown', 'ArrowUp'].includes(e.key)) {
         e.preventDefault()
       }
+      if (e.key === 'Enter' && query && !isOperator && !nlLoading) {
+        e.preventDefault()
+        const parsed = parseCommand(query)
+        if (parsed.type !== 'unknown' && parsed.confidence >= 0.7) {
+          setNlLoading(true)
+          ;(async () => {
+            try {
+              if (parsed.type === 'navigate' || parsed.type === 'create_task') {
+                const res = await api.post<{ success: boolean; message: string; redirect_url?: string }>('/api/v1/nlp/execute', {
+                  type: parsed.type,
+                  task: parsed.task,
+                  navigation: parsed.navigation,
+                })
+                if (res.success) {
+                  showSuccess(res.message)
+                  if (res.redirect_url) {
+                    router.push(res.redirect_url)
+                  }
+                }
+              }
+            } catch {
+              showError('Failed to execute command. Try again.')
+            } finally {
+              setNlLoading(false)
+              onClose()
+            }
+          })()
+        } else if (selectableItems.length > 0) {
+          handleSelect(selectedIndex)
+        }
+        return
+      }
     },
-    [],
+    [query, isOperator, nlLoading, selectableItems, selectedIndex, handleSelect, router, onClose],
   )
 
   /* ── Window-level keyboard navigation ── */
@@ -770,7 +797,7 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
                 No results found for &ldquo;{query}&rdquo;
                 {isOperator && (
                   <div className="mt-2">
-                    Try: /new task, /go dashboard, /done, /snooze, /help
+                    Try: /new task, /go tasks, /go habits, /help
                   </div>
                 )}
               </div>
