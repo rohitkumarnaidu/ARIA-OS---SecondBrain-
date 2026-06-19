@@ -53,47 +53,46 @@ The RAG pipeline enables:
 
 ## RAG Pipeline Overview
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│                           RETRIEVAL-AUGMENTED GENERATION PIPELINE                              │
-├──────────────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                                │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐             │
-│  │  INPUT        │    │  QUERY       │    │  RETRIEVAL   │    │  RE-RANKING      │             │
-│  │  (User Query  │───▶│  PROCESSOR   │───▶│  STRATEGIES  │───▶│  (Cross-encoder  │             │
-│  │   /Agent Task)│    │  (Expand +   │    │  (Dense +    │    │   Top 5-10)      │             │
-│  │               │    │   Classify)  │    │   Sparse)    │    │                  │             │
-│  └──────────────┘    └──────────────┘    └──────┬───────┘    └────────┬─────────┘             │
-│                                                  │                     │                        │
-│                                                  ▼                     ▼                        │
-│                                         ┌────────────────┬────────────────────┐                 │
-│                                         │  VECTOR SEARCH  │  BM25 FULL-TEXT   │                 │
-│                                         │  (pgvector /    │  (Supabase text   │                 │
-│                                         │   ChromaDB)     │   Search)         │                 │
-│                                         └────────┬───────┴────────┬──────────┘                 │
-│                                                  │                │                            │
-│                                                  ▼                ▼                            │
-│                                         ┌────────────────────────────────┐                      │
-│                                         │  FUSION (Reciprocal Rank)      │                      │
-│                                         └────────────────────────────────┘                      │
-│                                                  │                                               │
-│                                                  ▼                                               │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────────┐              │
-│  │  PROMPT      │    │  CONTEXT     │    │  RELEVANCE   │    │  GENERATION      │              │
-│  │  ASSEMBLER   │◀───│  INJECTION   │◀───│  SCORING +   │◀───│  (Ollama /       │              │
-│  │  (Per-Agent  │    │  (Token      │    │  FILTERING   │    │   Claude LLM)    │              │
-│  │   Format)    │    │   Budgeted)  │    │  (Threshold) │    │                  │              │
-│  └──────────────┘    └──────────────┘    └──────────────┘    └──────────────────┘              │
-│         │                                                                                      │
-│         ▼                                                                                      │
-│  ┌──────────────────────────────────────────────────────────────────────────┐                  │
-│  │  OUTPUT (Response with cited sources + confidence scores)                │                  │
-│  └──────────────────────────────────────────────────────────────────────────┘                  │
-│                                                                                                │
-│  DATA FLOW:                                                                                    │
-│  Query → Expand → Embed → [Vector Search] + [BM25 Search] → RRF → Re-rank → Filter → Assemble  │
-│                                                                                                │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    Input["INPUT<br/>(User Query / Agent Task)"]
+    QueryProc["QUERY PROCESSOR<br/>(Expand + Classify)"]
+    Retrieval["RETRIEVAL STRATEGIES<br/>(Dense + Sparse)"]
+    Rerank["RE-RANKING<br/>(Cross-encoder Top 5-10)"]
+    VecSearch["VECTOR SEARCH<br/>(pgvector / ChromaDB)"]
+    BM25["BM25 FULL-TEXT<br/>(Supabase Text Search)"]
+    Fusion["FUSION<br/>(Reciprocal Rank)"]
+    Scoring["RELEVANCE SCORING + FILTERING<br/>(Threshold)"]
+    Gen["GENERATION<br/>(Ollama / Claude LLM)"]
+    Context["CONTEXT INJECTION<br/>(Token Budgeted)"]
+    PromptAsm["PROMPT ASSEMBLER<br/>(Per-Agent Format)"]
+    Output["OUTPUT<br/>(Response with cited sources + confidence scores)"]
+
+    Input --> QueryProc
+    QueryProc --> Retrieval
+    Retrieval --> VecSearch
+    Retrieval --> BM25
+    VecSearch --> Fusion
+    BM25 --> Fusion
+    Fusion --> Rerank
+    Rerank --> Scoring
+    Scoring --> Context
+    Context --> PromptAsm
+    PromptAsm --> Gen
+    Gen --> Output
+
+    style Input fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style QueryProc fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Retrieval fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Rerank fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style VecSearch fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style BM25 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Fusion fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Scoring fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Context fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style PromptAsm fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Gen fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Output fill:#6366F1,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---
@@ -534,36 +533,30 @@ CHUNK_CONFIG: dict[str, dict] = {
 
 ### Pipeline Flow
 
-```
-Document Source (Supabase)
-    │
-    ▼
-┌─────────────────┐
-│  1. Ingest       │  ──  Poll Supabase tables for new/updated rows
-│                  │      Triggers: CDC (trigger-based), scheduled (cron), manual
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│  2. Chunk        │  ──  Apply ChunkingPipeline based on source_type
-│                  │      Produces: content, chunk_index, token_count, hash
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│  3. Embed        │  ──  Generate embeddings via EmbeddingClient
-│                  │      Produces: vector (768d for Ollama, 1536d for OpenAI)
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│  4. Store        │  ──  Upsert into Supabase documents table
-│                  │      Dedup by chunk_hash (skip unchanged content)
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│  5. Index        │  ──  Refresh IVFFlat index (periodic)
-│                  │      Or HNSW incremental in ChromaDB
-└────────┬────────┘
-         ▼
-    READY FOR RETRIEVAL
+```mermaid
+flowchart LR
+    Source["Document Source (Supabase)"]
+    Ingest["1. Ingest<br/>Poll tables for new/updated rows<br/>Triggers: CDC, cron, manual"]
+    Chunk["2. Chunk<br/>Apply ChunkingPipeline<br/>Produces: content, chunk_index, token_count, hash"]
+    Embed["3. Embed<br/>Generate embeddings via EmbeddingClient<br/>768d (Ollama) / 1536d (OpenAI)"]
+    Store["4. Store<br/>Upsert into Supabase documents table<br/>Dedup by chunk_hash"]
+    Index["5. Index<br/>Refresh IVFFlat index (periodic)<br/>Or HNSW incremental in ChromaDB"]
+    Ready["READY FOR RETRIEVAL"]
+
+    Source --> Ingest
+    Ingest --> Chunk
+    Chunk --> Embed
+    Embed --> Store
+    Store --> Index
+    Index --> Ready
+
+    style Source fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Ingest fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Chunk fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Embed fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Store fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Index fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Ready fill:#6366F1,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### Indexing Scheduler Implementation
@@ -913,16 +906,24 @@ class ReRanker:
 
 Retrieved context is injected into the agent's prompt at a specific position to maximize LLM attention and minimize hallucination:
 
-```
-[System Prompt]
-    │
-[Retrieved Context]  ← Injected here
-    │
-[User Query]
-    │
-[Agent Instructions]
-    │
-[Response]
+```mermaid
+flowchart LR
+    SysPrompt["[System Prompt]"]
+    Context["[Retrieved Context]<br/>← Injected here"]
+    UserQuery["[User Query]"]
+    AgentInstr["[Agent Instructions]"]
+    Response["[Response]"]
+
+    SysPrompt --> Context
+    Context --> UserQuery
+    UserQuery --> AgentInstr
+    AgentInstr --> Response
+
+    style SysPrompt fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Context fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style UserQuery fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style AgentInstr fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Response fill:#6366F1,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### Context Injection Implementation
@@ -1013,48 +1014,33 @@ class ContextInjector:
 
 ### Scoring Pipeline
 
-```
-Retrieved Document
-    │
-    ▼
-┌─────────────────────────┐
-│ 1. Dense similarity     │  cosine_sim(query_embedding, doc_embedding) → 0-1
-│                         │  Threshold: > 0.5
-└─────────────────────────┘
-    │
-    ▼
-┌─────────────────────────┐
-│ 2. Sparse (BM25) score  │  ts_rank(rawvector_matches) → 0-1
-│                         │  Threshold: > 0.1
-└─────────────────────────┘
-    │
-    ▼
-┌─────────────────────────┐
-│ 3. RRF fused score      │  harmonic_rank(dense_rank, sparse_rank) → 0-1
-│                         │  Threshold: > 0.1
-└─────────────────────────┘
-    │
-    ▼
-┌─────────────────────────┐
-│ 4. Cross-encoder score  │  Pairwise(query, doc) → 0-1
-│                         │  Threshold: > 0.3 (or top 5)
-└─────────────────────────┘
-    │
-    ▼
-┌─────────────────────────┐
-│ 5. Metadata boost       │  recency: +0.1 (if < 7 days old)
-│                         │  priority: +0.2 (if urgent/high)
-│                         │  source_weight: +0.1 (for tasks, sleep)
-└─────────────────────────┘
-    │
-    ▼
-┌─────────────────────────┐
-│ 6. Final score          │  composite = final_relevance + metadata_boost
-│                         │  Threshold: > 0.4
-└─────────────────────────┘
-    │
-    ▼
-    INJECT or DISCARD
+```mermaid
+graph TD
+    Retrieved["Retrieved Document"]
+    Dense["1. Dense similarity<br/>cosine_sim(query_embedding, doc_embedding) → 0-1<br/>Threshold: > 0.5"]
+    Sparse["2. Sparse (BM25) score<br/>ts_rank(rawvector_matches) → 0-1<br/>Threshold: > 0.1"]
+    RRF["3. RRF fused score<br/>harmonic_rank(dense_rank, sparse_rank) → 0-1<br/>Threshold: > 0.1"]
+    CrossEnc["4. Cross-encoder score<br/>Pairwise(query, doc) → 0-1<br/>Threshold: > 0.3 or top 5"]
+    MetaBoost["5. Metadata boost<br/>recency: +0.1 | priority: +0.2 | source_weight: +0.1"]
+    Final["6. Final score<br/>composite = final_relevance + metadata_boost<br/>Threshold: > 0.4"]
+    Decision["INJECT or DISCARD"]
+
+    Retrieved --> Dense
+    Dense --> Sparse
+    Sparse --> RRF
+    RRF --> CrossEnc
+    CrossEnc --> MetaBoost
+    MetaBoost --> Final
+    Final --> Decision
+
+    style Retrieved fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Dense fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Sparse fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style RRF fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style CrossEnc fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style MetaBoost fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Final fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Decision fill:#EF4444,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### Filter Thresholds by Agent
@@ -1263,32 +1249,61 @@ Only respond with a number."""
 
 When retrieval quality is below target, follow this systematic iteration loop:
 
-```
-IDENTIFY FAILURE
-    │
-    ├── Low Recall (missing relevant docs)
-    │   ├── Cause: Chunking too aggressive → Reduce chunk size, increase overlap
-    │   ├── Cause: Embedding mismatch → Try different model (OpenAI > Ollama)
-    │   ├── Cause: Query too narrow → Enable query expansion
-    │   └── Cause: Index stale → Rebuild index, verify refresh schedule
-    │
-    ├── Low Precision (irrelevant docs in results)
-    │   ├── Cause: Chunking too broad → Increase chunk size, semantic boundaries
-    │   ├── Cause: Threshold too low → Increase min relevance to 0.5+
-    │   ├── Cause: Missing re-ranker → Enable cross-encoder re-ranking
-    │   └── Cause: No metadata filtering → Add source_table/priority filters
-    │
-    ├── High Hallucination (unfaithful generation)
-    │   ├── Cause: Context injection position wrong → Place before user query
-    │   ├── Cause: Token budget exceeded → Truncate less-relevant context
-    │   ├── Cause: LLM not following instructions → Strengthen faithfulness system prompt
-    │   └── Cause: Retrieved context is contradictory → Deduplicate, add confidence scores
-    │
-    └── High Latency (slow response)
-        ├── Cause: Re-ranker too expensive → Reduce re-rank candidates from 20 to 10
-        ├── Cause: Embedding model slow → Switch Ollama → nomic-embed-text is fastest
-        ├── Cause: No caching → Enable embedding + result caching
-        └── Cause: Too many docs → Reduce K values (k_dense: 20→10, k_sparse: 20→10)
+```mermaid
+graph TD
+    ID["IDENTIFY FAILURE"]
+
+    LR["Low Recall<br/>(missing relevant docs)"]
+    LP["Low Precision<br/>(irrelevant docs in results)"]
+    HH["High Hallucination<br/>(unfaithful generation)"]
+    HL["High Latency<br/>(slow response)"]
+
+    ID --> LR
+    ID --> LP
+    ID --> HH
+    ID --> HL
+
+    LR --> LR1["Chunking too aggressive → Reduce chunk size, increase overlap"]
+    LR --> LR2["Embedding mismatch → Try different model (OpenAI > Ollama)"]
+    LR --> LR3["Query too narrow → Enable query expansion"]
+    LR --> LR4["Index stale → Rebuild index, verify refresh schedule"]
+
+    LP --> LP1["Chunking too broad → Increase chunk size, semantic boundaries"]
+    LP --> LP2["Threshold too low → Increase min relevance to 0.5+"]
+    LP --> LP3["Missing re-ranker → Enable cross-encoder re-ranking"]
+    LP --> LP4["No metadata filtering → Add source_table/priority filters"]
+
+    HH --> HH1["Context injection position wrong → Place before user query"]
+    HH --> HH2["Token budget exceeded → Truncate less-relevant context"]
+    HH --> HH3["LLM not following instructions → Strengthen faithfulness prompt"]
+    HH --> HH4["Contradictory context → Deduplicate, add confidence scores"]
+
+    HL --> HL1["Re-ranker too expensive → Reduce candidates from 20 to 10"]
+    HL --> HL2["Embedding model slow → Switch to nomic-embed-text"]
+    HL --> HL3["No caching → Enable embedding + result caching"]
+    HL --> HL4["Too many docs → Reduce K values (20→10)"]
+
+    style ID fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style LR fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style LP fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style HH fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style HL fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style LR1 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LR2 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LR3 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LR4 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LP1 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LP2 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LP3 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style LP4 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HH1 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HH2 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HH3 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HH4 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HL1 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HL2 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HL3 fill:#1A1D24,stroke:#334155,color:#94A3B8
+    style HL4 fill:#1A1D24,stroke:#334155,color:#94A3B8
 ```
 
 ### Iteration Log Template

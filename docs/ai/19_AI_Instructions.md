@@ -35,6 +35,74 @@
 
 ---
 
+## System Architecture & Prompt Flow
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    User["User / Cron Trigger"] --> Orchestrator["ARIA Orchestrator"]
+    Orchestrator --> Router["Intent Classifier"]
+    Router -->|Daily Briefing| Briefing["Briefing Agent"]
+    Router -->|Task Analysis| Task["Task Agent"]
+    Router -->|Memory| Memory["Memory Agent"]
+    Router -->|Learning| Learning["Learning Agent"]
+    Router -->|Opportunities| Opp["Opportunity Agent"]
+    Router -->|Sleep| Sleep["Sleep Agent"]
+    Router -->|Nudges| Nudge["Nudge Agent"]
+    Router -->|Roadmap| Roadmap["Roadmap Agent"]
+    Router -->|Weekly Review| Weekly["Weekly Review Agent"]
+
+    subgraph Execution["Execution Layer"]
+        Briefing
+        Task
+        Memory
+        Learning
+        Opp
+        Sleep
+        Nudge
+        Roadmap
+        Weekly
+    end
+
+    subgraph Fallback["Fallback Chain"]
+        Ollama["Ollama (Local)"]
+        Claude["Claude (Cloud)"]
+        Algo["Algorithmic"]
+    end
+
+    Execution --> Ollama
+    Ollama -->|Unavailable| Claude
+    Claude -->|Unavailable| Algo
+
+    Ollama --> Output["Structured Output"]
+    Claude --> Output
+    Algo --> Output
+    Output --> Supabase["Supabase / Response"]
+```
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+flowchart LR
+    U["User Request"] --> CTX["Context Engine<br/>Fetch + Filter + Rank"]
+    CTX --> PL["PromptLoader<br/>Load Template"]
+    PL --> ASM["Context Assembler<br/>Merge Data + Template"]
+    ASM --> LLM["LLM Inference<br/>Ollama / Claude"]
+    LLM --> PARS["Output Parser<br/>Validate JSON Schema"]
+    PARS --> RES["Response to User"]
+    PARS --> DB["Write to Supabase"]
+
+    style U fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style CTX fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style PL fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style ASM fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style LLM fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+    style PARS fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style RES fill:#0A0B0F,stroke:#00FFA3,color:#00FFA3
+    style DB fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+```
+
+---
+
 ## 1. Executive Summary
 
 ### 1.1 Document Purpose

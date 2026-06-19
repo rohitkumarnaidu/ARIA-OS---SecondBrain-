@@ -55,6 +55,41 @@
 
 ---
 
+## Skills System Architecture Overview
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    CAT["Skill Categories"] --> DEF["Skill Definitions"]
+    DEF --> USR["User Skills"]
+    DEF --> TGT["Target Skills"]
+    USR --> EVI["Evidence Collection"]
+    USR --> ASS["Assessments"]
+    EVI --> VRF["Verification Engine"]
+    EVI --> TRU["Trust Scoring"]
+    ASS --> SCR["Scoring Engine"]
+    TRU --> INT["Skill Intelligence"]
+    SCR --> INT
+    INT --> ANL["Analytics"]
+    INT --> REC["Recommendations"]
+    INT --> MKT["Market Intelligence"]
+```
+
+## Skill Lifecycle
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    ACQ["Acquire"] --> PRC["Practice"]
+    PRC --> AST["Assess"]
+    AST --> CRT["Certify"]
+    CRT --> MNT["Maintain"]
+    MNT -.->|Recertify| AST
+    MNT -.->|Upskill| ACQ
+```
+
+---
+
 ## 1. Vision
 
 ### 1.1 Purpose

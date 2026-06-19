@@ -113,6 +113,35 @@ The Skill Graph (SkillGraphArchitecture.md) is the **structural layer** — it s
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### 1.2b Intelligence Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    DS["Data Sources"] --> PROC["Processing Layer"]
+    PROC --> ANALYZE["Analysis Engine"]
+    ANALYZE --> INSIGHTS["Insight Generation"]
+    INSIGHTS --> REC["Recommendations"]
+    REC --> ACT["Actions"]
+    ACT -.->|Feedback| DS
+```
+
+### 1.2c Scoring Model Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    MAT["Maturity Score"] --> COMP["Composite Score"]
+    GAP["Gap Analysis"] --> COMP
+    CAR["Career Readiness"] --> COMP
+    MKT["Market Alignment"] --> COMP
+    FUT["Future Relevance"] --> COMP
+    COMP --> FUSION["Score Fusion"]
+    FUSION --> FINAL["Normalized Score"]
+    FINAL --> RANK["Ranking Engine"]
+    RANK --> REC2["Recommendations"]
+```
+
 ### 1.3 Design Principles
 
 | Principle | Rationale | Implementation |

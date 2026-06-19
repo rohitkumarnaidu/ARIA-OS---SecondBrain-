@@ -46,46 +46,37 @@ The memory architecture is the foundational layer enabling ARIA's persistent lea
 
 ## Memory Model Reference Architecture
 
-```
-┌────────────────────────────────────────────────────────────────────────────────┐
-│                        ARIA MEMORY ARCHITECTURE (5-TIER MODEL)                  │
-├────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                  │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐   │
-│  │  TIER 0       │    │  TIER 1      │    │  TIER 2      │    │  TIER 3      │   │
-│  │  BUFFER       │───▶│  WORKING     │───▶│  EPISODIC    │───▶│  SEMANTIC    │   │
-│  │  (Last N msgs)│    │  (Session)   │    │  (History)   │    │  (Knowledge) │   │
-│  │  Volatile     │    │  Volatile    │    │  Persisted   │    │  Persisted   │   │
-│  │  In-memory    │    │  In-memory   │    │  Supabase    │    │  Supabase    │   │
-│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘    └──────┬───────┘   │
-│         │                   │                   │                   │           │
-│         │    ┌──────────────┴───────────────────────────────────┐   │           │
-│         │    │                  TIER 4                           │   │           │
-│         │    │              PROCEDURAL MEMORY                   │   │           │
-│         │    │  (Skills, Workflows, How-To Knowledge)           │   │           │
-│         │    │  Persisted — Supabase + Versioned                │   │           │
-│         │    └──────────────────────┬───────────────────────────┘   │           │
-│         │                           │                               │           │
-│         ▼                           ▼                               ▼           │
-│  ┌──────────────────────────────────────────────────────────────────────────┐   │
-│  │                     MEMORY SERIALIZATION LAYER                            │   │
-│  │  Compression → Encoding → Storage → Retrieval → Decompression            │   │
-│  └──────────────────────────────────────────────────────────────────────────┘   │
-│         │                           │                               │           │
-│         ▼                           ▼                               ▼           │
-│  ┌──────────────────────────────────────────────────────────────────────────┐   │
-│  │                     CONSOLIDATION ENGINE                                   │   │
-│  │  Short-Term → Long-Term Transfer | Summarization | Pattern Detection      │   │
-│  │  Signal Extraction | Noise Filtering | Deduplication                      │   │
-│  └──────────────────────────────────────────────────────────────────────────┘   │
-│         │                                                                       │
-│         ▼                                                                       │
-│  ┌──────────────────────────────────────────────────────────────────────────┐   │
-│  │                     RETRIEVAL ENGINE                                       │   │
-│  │  Semantic Search | Recency Boost | Relevance Scoring | Hybrid Query       │   │
-│  └──────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                  │
-└────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph MEM["ARIA MEMORY ARCHITECTURE (5-TIER MODEL)"]
+        T0[Tier 0: BUFFER<br/>Last N Messages<br/>Volatile - In-memory]
+        T1[Tier 1: WORKING<br/>Session Context<br/>Volatile - In-memory]
+        T2[Tier 2: EPISODIC<br/>Conversation History<br/>Persisted - Supabase]
+        T3[Tier 3: SEMANTIC<br/>Knowledge & Facts<br/>Persisted - Supabase]
+        T4[Tier 4: PROCEDURAL<br/>Skills & Workflows<br/>Persisted & Versioned]
+
+        T0 --> T1 --> T2 --> T3 --> T4
+
+        MSL[Memory Serialization Layer<br/>Compression → Encoding → Storage → Retrieval]
+        CE[Consolidation Engine<br/>Short→Long Term | Summarization<br/>Pattern Detection | Deduplication]
+        RE[Retrieval Engine<br/>Semantic Search | Recency Boost<br/>Relevance Scoring | Hybrid Query]
+
+        T2 --> MSL
+        T3 --> MSL
+        T4 --> MSL
+        MSL --> CE
+        CE --> RE
+    end
+
+    style MEM fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style T0 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style T1 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style T2 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style T3 fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style T4 fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style MSL fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style CE fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
+    style RE fill:#1a1a2e,stroke:#818CF8,color:#F1F5F9
 ```
 
 ---
@@ -207,36 +198,22 @@ working_memory_schema = {
 
 ### Enrichment Pipeline
 
-```
-Raw request
-    │
-    ▼
-┌─────────────────────┐
-│ Load Identity       │ ← users table (name, preferences)
-│ (50 ms)             │
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Load Temporal       │ ← server clock + academic calendar
-│ (5 ms)              │
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Load Session State  │ ← current session cache + message count
-│ (20 ms)             │
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Load Real-Time      │ ← tasks, goals, sleep, habits queries
-│ (100 ms)            │ ← Parallelized Supabase queries
-└──────────┬──────────┘
-           ▼
-┌─────────────────────┐
-│ Assemble & Validate │ ← Schema validation, size check
-│ (10 ms)             │
-└──────────┬──────────┘
-           ▼
-    Working Memory Ready
+```mermaid
+graph TD
+    REQ[Raw Request] --> ID[Load Identity<br/>50 ms]
+    ID --> TEMP[Load Temporal<br/>5 ms]
+    TEMP --> SS[Load Session State<br/>20 ms]
+    SS --> RT[Load Real-Time<br/>100 ms]
+    RT --> AV[Assemble & Validate<br/>10 ms]
+    AV --> READY[Working Memory Ready]
+
+    style REQ fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ID fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style TEMP fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style SS fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style RT fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style AV fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style READY fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### Token Budget Allocation
@@ -987,53 +964,25 @@ Memory consolidation is the process of transferring information from short-term,
 
 ### Consolidation Pipeline
 
-```
-┌──────────────────┐
-│  Raw Episodic     │  Chat messages, event logs
-│  Entries          │
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  1. Filter       │  Remove: system messages, noise, duplicates
-│     & Clean      │  Keep: user messages, ARIA responses, corrections
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  2. Group        │  Group by: session, topic, temporal proximity
-│     & Segment    │  Output: coherent interaction clusters
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  3. Summarize    │  LLM summarization per cluster
-│                  │  Input: 5-20 messages → Output: 3-5 sentence summary
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  4. Extract      │  Pattern detection, preference extraction
-│     Signals      │  Decision logging, fact extraction
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  5. Score        │  Calculate importance, confidence
-│     & Rank       │  Assign category, source metadata
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  6. Store        │  Upsert into aria_memory (Semantic)
-│                  │  Insert/update procedural_memory
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  7. Cleanup      │  Update consolidation log
-│     & Log        │  Mark processed episodes
-└──────────────────┘
+```mermaid
+graph TD
+    RAW[Raw Episodic Entries<br/>Chat messages, event logs]
+    RAW --> F1[1. Filter & Clean<br/>Remove noise, duplicates<br/>Keep user messages, corrections]
+    F1 --> F2[2. Group & Segment<br/>Group by session, topic, proximity<br/>Output: coherent clusters]
+    F2 --> F3[3. Summarize<br/>LLM summarization per cluster<br/>5-20 msgs → 3-5 sentence summary]
+    F3 --> F4[4. Extract Signals<br/>Pattern detection, preferences<br/>Decision logging, fact extraction]
+    F4 --> F5[5. Score & Rank<br/>Calculate importance, confidence<br/>Assign category, source metadata]
+    F5 --> F6[6. Store<br/>Upsert into aria_memory<br/>Insert/update procedural_memory]
+    F6 --> F7[7. Cleanup & Log<br/>Update consolidation log<br/>Mark processed episodes]
+
+    style RAW fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style F1 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style F2 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style F3 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style F4 fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style F5 fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style F6 fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style F7 fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### Consolidation Strategies
@@ -1129,46 +1078,26 @@ conversation. Include preferences about:
 
 ### Retrieval Architecture
 
-```
-User Query / Context Request
-    │
-    ▼
-┌──────────────────────────────┐
-│ Query Analyzer               │
-│ - Parse user intent          │
-│ - Determine retrieval scope  │
-│ - Select retrieval strategy  │
-└──────────┬───────────────────┘
-           │
-    ┌──────┴──────┐
-    │             │
-    ▼             ▼
-┌──────────┐ ┌──────────┐
-│Episodic  │ │Semantic  │
-│Retrieval │ │Retrieval │
-│Engine    │ │Engine    │
-└────┬─────┘ └────┬─────┘
-    │             │
-    └──────┬──────┘
-           ▼
-┌──────────────────────────────┐
-│ Scoring & Ranking            │
-│ - Recency boost              │
-│ - Relevance scoring          │
-│ - Importance weighting       │
-│ - Category preference boost  │
-└──────────┬───────────────────┘
-           │
-           ▼
-┌──────────────────────────────┐
-│ Context Assembly             │
-│ - Merge with working memory  │
-│ - Token budget enforcement   │
-│ - Serialize to LLM format    │
-└──────────┬───────────────────┘
-           │
-           ▼
-    Assembled Context
+```mermaid
+graph TD
+    UQ[User Query / Context Request] --> QA[Query Analyzer<br/>Parse user intent<br/>Determine retrieval scope<br/>Select retrieval strategy]
+
+    QA --> ER[Episodic Retrieval Engine]
+    QA --> SR[Semantic Retrieval Engine]
+
+    ER --> SC[Scoring & Ranking<br/>Recency boost<br/>Relevance scoring<br/>Importance weighting<br/>Category preference boost]
+    SR --> SC
+
+    SC --> CA[Context Assembly<br/>Merge with working memory<br/>Token budget enforcement<br/>Serialize to LLM format]
+    CA --> AC[Assembled Context]
+
+    style UQ fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style QA fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style ER fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style SR fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style SC fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style CA fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
+    style AC fill:#1a1a2e,stroke:#00FFA3,color:#F1F5F9
 ```
 
 ### Scoring Functions
@@ -1321,42 +1250,27 @@ async def hybrid_retrieval(
 
 ### State Machine
 
-```
-           ┌──────────────┐
-           │   CREATE     │
-           │ (New memory) │
-           └──────┬───────┘
-                  │
-                  ▼
-           ┌──────────────┐
-           │   ACTIVE     │◄────────────────────┐
-           │ (In context) │                     │
-           └──────┬───────┘                     │
-                  │                             │
-         ┌────────┴────────┐                    │
-         │                 │                    │
-         ▼                 ▼                    │
-   ┌──────────┐    ┌──────────────┐            │
-   │ CONSOLID.│    │  REINFORCE   │────────────┘
-   │ (to long │    │ (accessed)   │  (access updates)
-   │  term)   │    └──────┬───────┘
-   └────┬─────┘           │
-        │                 │
-        ▼                 ▼
-   ┌──────────────────────────┐
-   │          DECAY           │
-   │  (importance * 0.8 if    │
-   │   last_accessed > 90d)   │
-   └────────────┬─────────────┘
-                │
-        ┌───────┴───────┐
-        │               │
-        ▼               ▼
-   ┌──────────┐   ┌──────────┐
-   │ ARCHIVE  │   │  FORGET  │
-   │ (import  │   │ (import  │
-   │  < 0.1)  │   │  < 0.05) │
-   └──────────┘   └──────────┘
+```mermaid
+graph TD
+    C[CREATE<br/>New memory] --> A[ACTIVE<br/>In context]
+
+    A --> CON[CONSOLIDATE<br/>To long term]
+    A --> R[REINFORCE<br/>Accessed]
+    R -->|access updates| A
+
+    CON --> D[DECAY<br/>importance × 0.8 if<br/>last_accessed > 90d]
+    R --> D
+
+    D --> AR[ARCHIVE<br/>importance < 0.1]
+    D --> F[FORGET<br/>importance < 0.05]
+
+    style C fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style A fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style CON fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style R fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style D fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style AR fill:#1a1a2e,stroke:#94A3B8,color:#F1F5F9
+    style F fill:#1a1a2e,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### Lifecycle Rules

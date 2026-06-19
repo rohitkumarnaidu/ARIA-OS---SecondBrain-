@@ -91,6 +91,58 @@ prompts/
         └── test-runner.py
 ```
 
+## Prompt Lifecycle States
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Testing: Submit for CI
+    Testing --> Review: All tests pass
+    Testing --> Draft: Tests fail
+    Review --> Versioned: Approved
+    Review --> Draft: Changes requested
+    Versioned --> Deployed: Registry activated
+    Deployed --> Deprecated: New version replaces
+    Deprecated --> [*]: Sunset period ends
+
+    state Draft {
+        [*] --> Writing
+        Writing --> Editing
+        Editing --> Writing
+    }
+
+    state Testing {
+        [*] --> FormatValidation
+        FormatValidation --> ExampleExecution
+        ExampleExecution --> RegressionCheck
+        RegressionCheck --> [*]
+    }
+
+    state Review {
+        PeerReview --> SignOff
+    }
+```
+
+## Prompt Version History
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph LR
+    V1["briefing v1.0.0<br/>2026-05-01"] -->|"MAJOR: New schema"| V2["briefing v2.0.0<br/>2026-05-15"]
+    V2 -->|"MINOR: Added examples"| V3["briefing v2.1.0<br/>2026-05-28"]
+    V3 -->|"PATCH: Fix typo"| V4["briefing v2.1.1<br/>2026-06-01"]
+    V4 -->|"MAJOR: Restructured"| V5["briefing v3.0.0<br/>2026-06-11"]
+
+    style V1 fill:#1E293B,stroke:#94A3B8,color:#94A3B8
+    style V2 fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style V3 fill:#1E293B,stroke:#6366F1,color:#F1F5F9
+    style V4 fill:#1E293B,stroke:#00FFA3,color:#F1F5F9
+    style V5 fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
 ### Git Rules
 
 - **Every prompt file is immutable once merged to `main`**. To change a prompt, create a new versioned file. Do not edit an existing versioned file.

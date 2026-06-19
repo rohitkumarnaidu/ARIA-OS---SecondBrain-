@@ -89,6 +89,42 @@ The relationship between the four documents:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### 1.2b Assessment Execution Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart TD
+    TRIG["Trigger Event"] --> LOAD["Load Assessment Config"]
+    LOAD --> SEL["Select Questions"]
+    SEL --> ADM["Administer Assessment"]
+    ADM --> EVL["Evaluate Responses"]
+    EVL --> SCR["Score Calculation"]
+    SCR --> CONF["Bayesian Confidence"]
+    CONF --> REP["Generate Report"]
+    REP --> ARC["Archive Results"]
+```
+
+### 1.2c Scoring Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph LR
+    subgraph DIM["Weighted Dimensions"]
+        D1["Skill Alignment<br/>(40%)"]
+        D2["Level Match<br/>(25%)"]
+        D3["Growth Potential<br/>(15%)"]
+        D4["Interest Alignment<br/>(10%)"]
+        D5["Deadline Urgency<br/>(10%)"]
+    end
+    D1 --> FUSION["Score Fusion Engine"]
+    D2 --> FUSION
+    D3 --> FUSION
+    D4 --> FUSION
+    D5 --> FUSION
+    FUSION --> BAYES["Bayesian Update"]
+    BAYES --> FINAL["Composite Score"]
+```
+
 ### 1.3 Core Design Principles
 
 | Principle | Rationale | Implementation |

@@ -32,6 +32,43 @@ User request or system trigger
 
 ---
 
+## Skills System Architecture
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#1E293B', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#334155', 'fontFamily': 'DM Sans' }}}%%
+graph TD
+    Trigger["User Request / Cron Trigger"] --> Router["Skill Router<br/>Intent Classification"]
+    Router -->|skill:briefing| Briefing["Daily Briefing"]
+    Router -->|skill:task_breakdown| Task["Task Breakdown"]
+    Router -->|skill:memory_consolidation| Memory["Memory Consolidation"]
+    Router -->|skill:pattern_detection| Learn["Learning Patterns"]
+    Router -->|skill:opportunity_match| Opp["Opportunity Matching"]
+    Router -->|skill:sleep_analysis| Sleep["Sleep Analysis"]
+    Router -->|skill:nudge| Nudge["Course/Habit Nudge"]
+    Router -->|skill:roadmap| Roadmap["Skill Roadmap"]
+    Router -->|skill:weekly_review| Weekly["Weekly Review"]
+
+    subgraph Pipeline["Skill Execution Pipeline"]
+        Data["Data Fetch<br/>Supabase Queries"] --> Compute["Compute<br/>Score / Filter / Rank"]
+        Compute --> Prompt["Prompt Assembly<br/>Template + Context"]
+        Prompt --> LLM["LLM Call<br/>Ollama / Claude"]
+        LLM --> Parse["Parse Output"]
+        Parse --> Store["Store Result<br/>Database / Response"]
+    end
+
+    Briefing --> Pipeline
+    Task --> Pipeline
+    Memory --> Pipeline
+    Learn --> Pipeline
+    Opp --> Pipeline
+    Sleep --> Pipeline
+    Nudge --> Pipeline
+    Roadmap --> Pipeline
+    Weekly --> Pipeline
+```
+
+---
+
 ## Skill Catalog
 
 ### 1. Daily Briefing Generation

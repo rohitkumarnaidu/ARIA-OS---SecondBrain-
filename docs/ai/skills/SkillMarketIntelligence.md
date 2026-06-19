@@ -47,6 +47,36 @@
 
 ---
 
+## Market Intelligence Pipeline
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+flowchart LR
+    SRC["Data Sources"] --> COL["Collect"]
+    COL --> ANALYZE["Analyze Trends"]
+    ANALYZE --> SCORE["Demand Scoring"]
+    SCORE --> REPORT["Market Report"]
+```
+
+## Demand Scoring Architecture
+
+```mermaid
+%%{init:{'theme':'dark','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#00FFA3','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F'}}}%%
+graph TD
+    JOB["Job Postings"] --> DEMAND["Demand Score"]
+    FREE["Freelance Rates"] --> DEMAND
+    COURSE["Course Enrollment"] --> DEMAND
+    SEARCH["Search Trends"] --> DEMAND
+    SALARY["Salary Data"] --> DEMAND
+    DEMAND --> NORM["Normalization"]
+    NORM --> WEIGHT["Weighted Fusion"]
+    WEIGHT --> FINAL["Market Score"]
+    FINAL --> TREND["Trend Detection"]
+    FINAL --> FORECAST["Forecasting"]
+```
+
+---
+
 ## 1. Data Sources
 
 ### 1.1 Why a Dedicated Market Data Source Architecture?
