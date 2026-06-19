@@ -1,32 +1,18 @@
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
-export type TaskCategory = 'study' | 'project' | 'habit' | 'personal' | 'income'
-export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled'
+import type {
+  Task as CanonicalTask,
+  TaskStatus as CanonicalTaskStatus,
+  TaskPriority as CanonicalTaskPriority,
+} from '@/lib/types'
 
-export interface Task {
-  id: string
-  user_id: string
-  title: string
-  description?: string
-  priority: TaskPriority
-  category: TaskCategory
-  status: TaskStatus
-  estimated_minutes?: number
-  due_date?: string
-  goal_id?: string
-  project_id?: string
-  completed_at?: string
-  missed_count: number
-  dependency_id?: string
-  is_recurring: boolean
-  recurring_frequency?: string
-  created_at: string
-  updated_at: string
-}
+export type TaskCategory = 'study' | 'project' | 'habit' | 'personal' | 'income'
+export type { CanonicalTask as Task }
+export type { CanonicalTaskStatus as TaskStatus }
+export type { CanonicalTaskPriority as TaskPriority }
 
 export interface TaskFormData {
   title: string
   description?: string
-  priority: TaskPriority
+  priority: CanonicalTaskPriority
   category: TaskCategory
   estimated_minutes?: number
   due_date?: string
