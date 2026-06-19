@@ -1,11 +1,8 @@
-from typing import Optional, List
-from datetime import datetime, timedelta
-from config.core.supabase import get_supabase_client
+from typing import Optional
+from datetime import datetime
 
 
-def validate_task_data(
-    title: str, priority: str = "medium", category: str = "personal"
-) -> dict:
+def validate_task_data(title: str, priority: str = "medium", category: str = "personal") -> dict:
     errors = []
 
     if not title or len(title.strip()) < 1:
@@ -28,7 +25,7 @@ def validate_due_date(due_date: Optional[str]) -> bool:
     if not due_date:
         return True
     try:
-        due = datetime.fromisoformat(due_date.replace("Z", "+00:00"))
+        datetime.fromisoformat(due_date.replace("Z", "+00:00"))
         return True
     except ValueError:
         return False
