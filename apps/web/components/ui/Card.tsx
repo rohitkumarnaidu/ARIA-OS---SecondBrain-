@@ -1,39 +1,58 @@
-import { clsx } from 'clsx'
+import { type HTMLAttributes, type ReactNode } from 'react'
+import { cn } from './utils'
 
-interface CardProps {
-  children: React.ReactNode
-  className?: string
-  interactive?: boolean
-  onClick?: () => void
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'interactive' | 'compact' | 'highlight'
 }
 
-export function Card({ children, className, interactive, onClick }: CardProps) {
-  const Component = interactive ? 'button' : 'div'
-
+function Card({ className, variant = 'default', ...props }: CardProps) {
   return (
-    <Component
-      onClick={onClick}
-      className={clsx(
-        'bg-background-card border border-border rounded-xl p-4',
-        'backdrop-filter backdrop-blur-[20px]',
-        'shadow-[0_4px_24px_rgba(0,0,0,0.2)]',
-        interactive && 'cursor-pointer transition-all duration-300 hover:border-border-light hover:shadow-lg group',
+    <div
+      className={cn(
+        'contain-layout contain-paint rounded-xl backdrop-blur-[20px] shadow-[0_4px_24px_rgba(0,0,0,0.2)]',
+        'bg-background-card border border-border',
+        variant === 'default' && 'p-4',
+        variant === 'interactive' && [
+          'p-4 cursor-pointer transition-all duration-300',
+          'hover:border-border-light hover:-translate-y-0.5',
+          'hover:shadow-[0_8px_32px_rgba(0,0,0,0.3),0_0_20px_var(--accent-glow-color-soft)]',
+          'relative overflow-hidden',
+          'before:content-[""] before:absolute before:inset-0 before:pointer-events-none',
+          'before:bg-gradient-to-br before:from-[var(--accent-primary)]/8 before:to-transparent',
+          'before:opacity-0 before:transition-opacity before:duration-300',
+          'hover:before:opacity-100',
+        ].join(' '),
+        variant === 'compact' && 'p-3 text-sm',
+        variant === 'highlight' && [
+          'p-4 bg-background-elevated',
+          'border-l-4 border-l-accent-primary',
+        ].join(' '),
         className,
       )}
-    >
-      {children}
-    </Component>
+      {...props}
+    />
   )
 }
 
-export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={clsx('flex items-center justify-between mb-4', className)}>{children}</div>
+function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn('flex items-center justify-between mb-4', className)}>{children}</div>
 }
 
-export function CardTitle({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <h3 className={clsx('text-lg font-semibold text-text-primary', className)}>{children}</h3>
+function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
+  return <h3 className={cn('text-lg font-semibold text-[var(--foreground)]', className)}>{children}</h3>
 }
 
-export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={className}>{children}</div>
+function CardContent({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn(className)}>{children}</div>
 }
+
+function CardFooter({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn('flex items-center px-6 pb-6', className)} data-slot="card-footer">{children}</div>
+}
+
+function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
+  return <p className={cn('text-sm text-[var(--text-secondary)]', className)} data-slot="card-description">{children}</p>
+}
+
+export { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription }
+export type { CardProps }
