@@ -67,6 +67,53 @@ Second Brain OS (ARIA OS) is a personal productivity platform handling sensitive
 | **Fail Secure** | On failure, default to denying access | Auth failures return 401; RLS failures return empty sets; validation errors reject |
 | **Separation of Duties** | No single entity has end-to-end control | OAuth (Google) ≠ Data (Supabase) ≠ AI (Ollama/Claude) |
 
+#### 7-Layer Defense Model
+
+```mermaid
+graph TD
+    subgraph L1["Layer 1: Authentication"]
+        A1["Google OAuth 2.0 + PKCE<br/>JWT Validation<br/>Session Management"]
+    end
+    subgraph L2["Layer 2: Authorization"]
+        A2["Row-Level Security (RLS)<br/>user_id Filtering<br/>Service Role Restriction"]
+    end
+    subgraph L3["Layer 3: Rate Limiting"]
+        A3["Sliding Window (100 req/min)<br/>Per-Endpoint Limits<br/>Burst Control"]
+    end
+    subgraph L4["Layer 4: Validation"]
+        A4["Pydantic Schema Validation<br/>Input Sanitization<br/>Size Limits"]
+    end
+    subgraph L5["Layer 5: CORS"]
+        A5["Origin Whitelist<br/>Method Restrictions<br/>Preflight Cache"]
+    end
+    subgraph L6["Layer 6: Encryption"]
+        A6["TLS 1.3 In Transit<br/>AES-256 At Rest<br/>Column-Level (Planned)"]
+    end
+    subgraph L7["Layer 7: Monitoring"]
+        A7["Structured Logging<br/>Rate Limit Alerts<br/>Audit Trail"]
+    end
+
+    Attacker --> L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7
+    L7 -->|"Secure Response"| Client
+
+    style Attacker fill:#EF4444,stroke:#EF4444,color:#F1F5F9
+    style Client fill:#00FFA3,stroke:#00FFA3,color:#0A0B0F
+    style L1 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style L2 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style L3 fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style L4 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style L5 fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style L6 fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style L7 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style A1 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A2 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A3 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A4 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A5 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A6 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+    style A7 fill:#1A1D24,stroke:#334155,color:#F1F5F9
+```
+
 ### 2.2 Security Assumptions
 
 | Assumption | Rationale | Mitigation if Violated |
@@ -158,24 +205,20 @@ Goal: Inject malicious prompt to AI model
 
 ### 4.1 Authentication Architecture
 
-```
-User Browser                   Supabase Auth                   Google OAuth
-     │                              │                              │
-     │  1. Click "Sign in with Google"                             │
-     │─────────────────────────────►│                              │
-     │                              │  2. Redirect to Google       │
-     │                              │─────────────────────────────►│
-     │  3. Google consent screen    │                              │
-     │◄─────────────────────────────│                              │
-     │  4. Auth code returned       │                              │
-     │─────────────────────────────►│                              │
-     │                              │  5. Exchange code for tokens │
-     │                              │─────────────────────────────►│
-     │                              │  6. ID + Access + Refresh    │
-     │                              │◄─────────────────────────────│
-     │  7. Session created          │                              │
-     │◄─────────────────────────────│                              │
-     │  8. JWT stored in localStorage (HTTP-only cookie planned)   │
+```mermaid
+sequenceDiagram
+    participant Browser as User Browser
+    participant Supabase as Supabase Auth
+    participant Google as Google OAuth
+
+    Browser->>Supabase: 1. Click "Sign in with Google"
+    Supabase->>Google: 2. Redirect to Google
+    Google-->>Browser: 3. Google consent screen
+    Browser->>Supabase: 4. Auth code returned
+    Supabase->>Google: 5. Exchange code for tokens
+    Google-->>Supabase: 6. ID + Access + Refresh
+    Supabase-->>Browser: 7. Session created
+    Note over Browser: 8. JWT stored in localStorage<br/>(HTTP-only cookie planned)
 ```
 
 ### 4.2 Identity Provider: Google OAuth 2.0
@@ -327,10 +370,23 @@ async def get_current_user(
 
 ### 5.1 Authorization Model
 
-```
-Request → JWT Validation → user_id Extraction → RLS Enforcement → API-level user_id Filter → Response
-   │            │                    │                     │                     │
-   │     [401 if invalid]      [Extract sub]      [DB enforces policy]   [Double-check in code]
+```mermaid
+graph LR
+    A["Request"]
+    B["JWT Validation<br/>401 if invalid"]
+    C["user_id Extraction<br/>Extract sub"]
+    D["RLS Enforcement<br/>DB enforces policy"]
+    E["API-level user_id Filter<br/>Double-check in code"]
+    F["Response"]
+
+    A -->|Onward| B -->|Onward| C -->|Onward| D -->|Onward| E -->|Onward| F
+
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 5.2 Row-Level Security (RLS) — Deep Dive
@@ -608,12 +664,33 @@ def hash_ip(ip: str) -> str:
 
 ### 7.1 API Security Architecture
 
-```
-Client → WAF (L7) → Rate Limiter → CORS → Auth (JWT) → Validation → Route Handler → DB
-                                                        ↓
-                                                  Sanitization
-                                                        ↓
-                                                  Response
+```mermaid
+flowchart LR
+    A["Client"]
+    B["WAF (L7)"]
+    C["Rate Limiter"]
+    D["CORS"]
+    E["Auth (JWT)"]
+    F["Validation"]
+    G["Sanitization"]
+    H["Route Handler"]
+    I["DB"]
+    J["Response"]
+
+    A --> B --> C --> D --> E --> F --> H --> I
+    F --> G --> J
+    E -.->|Fallback| J
+
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style I fill:#1A1D24,stroke:#00FFA3,color:#0A0B0F
+    style J fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 7.2 Rate Limiting
@@ -995,14 +1072,30 @@ const supabase = createClient(
 
 ### 9.1 AI Architecture Security Overview
 
-```
-User Input → Input Sanitization → Prompt Assembly → LLM Call → Output Filtering → Response
-    │              │                     │              │             │
-    │         Strip injections      Add guardrails  Model processes  Check output
-    │                                                    │
-    │                                              ┌─────┴─────┐
-    │                                         Local Ollama  Claude API (fallback)
-    │                                         (data stays)  (DPA in place)
+```mermaid
+flowchart LR
+    A["User Input"]
+    B["Input Sanitization<br/>Strip injections"]
+    C["Prompt Assembly<br/>Add guardrails"]
+    D["LLM Call<br/>Model processes"]
+    E["Output Filtering<br/>Check output"]
+    F["Response"]
+
+    A --> B --> C --> D --> E --> F
+
+    D --> G{"Provider<br/>Selection"}
+    G --> H["Local Ollama<br/>(data stays)"]
+    G --> I["Claude API (Fallback)<br/>(DPA in place)"]
+
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style I fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 9.2 Local Ollama (Default) — Data Isolation
@@ -1114,20 +1207,22 @@ class OutputFilter:
 
 ### 10.1 Infrastructure Map
 
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐     ┌──────────┐
-│  Vercel     │────►│  Railway     │────►│  Supabase   │────►│  GCP     │
-│ (Frontend)  │     │ (Backend)    │     │ (Database)  │     │ (Cloud)  │
-│             │     │              │     │             │     │          │
-│ SSR + CDN   │     │ FastAPI      │     │ PostgreSQL  │     │ Compute  │
-│ Edge Network│     │ + Scheduler  │     │ + Auth      │     │ Network  │
-└─────────────┘     └──────────────┘     └─────────────┘     └──────────┘
-                         │
-                         ▼
-                    ┌──────────┐
-                    │  Ollama  │
-                    │ (Local)  │
-                    └──────────┘
+```mermaid
+graph LR
+    A["Vercel<br/>(Frontend)<br/>SSR + CDN<br/>Edge Network"]
+    B["Railway<br/>(Backend)<br/>FastAPI<br/>+ Scheduler"]
+    C["Supabase<br/>(Database)<br/>PostgreSQL<br/>+ Auth"]
+    D["GCP<br/>(Cloud)<br/>Compute<br/>Network"]
+    E["Ollama<br/>(Local)<br/>Local LLM"]
+
+    A -->|HTTPS| B -->|TLS 1.3| C -->|GCP Network| D
+    B -->|localhost:11434| E
+
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
 ```
 
 ### 10.2 Vercel Security Features
@@ -1259,11 +1354,55 @@ updates:
 ### 11.1 Network Segmentation
 
 | Network Zone | Components | Access | TLS |
-|---|---|---|---|
+|---|---|---|---|---|
 | **Public Zone** | Vercel Edge, Domain DNS | Internet | ✅ TLS 1.3 |
 | **Application Zone** | Railway FastAPI, Scheduler | Vercel only (via Railway URL) | ✅ TLS 1.3 |
 | **Data Zone** | Supabase PostgreSQL | Railway only | ✅ TLS 1.3 |
 | **Local Zone** | Ollama | Localhost only | ❌ No TLS (localhost) |
+
+#### Trust Boundaries
+
+```mermaid
+graph LR
+    subgraph Internet["Internet (Untrusted)"]
+        Attacker
+        User["User Browser"]
+    end
+
+    subgraph Public["Public Zone (TLS 1.3)"]
+        Vercel["Vercel Edge<br/>CDN + WAF"]
+    end
+
+    subgraph Application["Application Zone (TLS 1.3)"]
+        Railway["Railway<br/>FastAPI + Scheduler"]
+    end
+
+    subgraph Data["Data Zone (TLS 1.3)"]
+        Supabase["Supabase<br/>PostgreSQL + Auth"]
+    end
+
+    subgraph Local["Local Zone (No TLS)"]
+        Ollama["Ollama<br/>Local LLM"]
+    end
+
+    User -->|"HTTPS"| Vercel
+    Attacker -.->|"Blocked by WAF"| Vercel
+    Vercel -->|"Railway URL"| Railway
+    Railway -->|"TLS 1.3"| Supabase
+    Railway -->|"localhost:11434"| Ollama
+
+    style Internet fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Attacker fill:#EF4444,stroke:#EF4444,color:#F1F5F9
+    style User fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style Public fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Vercel fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style Application fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Railway fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style Data fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Supabase fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style Local fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style Ollama fill:#1A1D24,stroke:#94A3B8,color:#F1F5F9
+```
 
 ### 11.2 Firewall Rules
 
@@ -1290,39 +1429,26 @@ updates:
 
 ### 12.2 Incident Response Lifecycle
 
-```
-                    ┌─────────────┐
-                    │  DETECTION  │
-                    │  (Automated │
-                    │   / Manual) │
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-                    │   TRIAGE    │
-                    │  (Severity  │
-                    │   Assigned) │
-                    └──────┬──────┘
-                           ▼
-                    ┌─────────────┐
-               ┌───│ CONTAINMENT │───┐
-               │   └──────┬──────┘   │
-               │          ▼          │
-               │   ┌─────────────┐   │
-               │   │ ERADICATION │   │
-               │   └──────┬──────┘   │
-               │          ▼          │
-               │   ┌─────────────┐   │
-               │   │  RECOVERY   │   │
-               │   └──────┬──────┘   │
-               │          ▼          │
-               │   ┌─────────────┐   │
-               └──►│ POST-MORTEM │   │
-                   └─────────────┘   │
-                           ▼
-                    ┌─────────────┐
-                    │  LESSONS    │
-                    │  LEARNED    │
-                    └─────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> DETECTION: Incident Occurs
+    DETECTION --> TRIAGE: Automated / Manual
+    TRIAGE --> CONTAINMENT: Severity Assigned
+
+    state CONTAINMENT {
+        [*] --> ERADICATION
+        ERADICATION --> RECOVERY
+        RECOVERY --> [*]
+    }
+
+    CONTAINMENT --> POST_MORTEM
+    POST_MORTEM --> LESSONS_LEARNED
+    LESSONS_LEARNED --> [*]
+
+    note right of DETECTION: Automated detection<br/>or manual report
+    note right of TRIAGE: Severity S0-S4 assigned
+    note right of CONTAINMENT: Contain → Eradicate → Recover
+    note right of POST_MORTEM: Within 48 hours<br/>for S0/S1 incidents
 ```
 
 ### 12.3 Detection Phase
@@ -1482,27 +1608,38 @@ updates:
 
 ### 14.1 Security Gates in CI Pipeline
 
-```
-Git Push → PR Created → Security Gate Review
-                            │
-                    ┌───────┴───────┐
-                    │               │
-                    ▼               ▼
-              Security Lint    Dependency Check
-              (SAST)           (SCA)
-                    │               │
-                    ▼               ▼
-              Secret Scan     Container Scan
-              (Leaks)         (Trivy - future)
-                    │               │
-                    └───────┬───────┘
-                            ▼
-                    ┌───────────────┐
-                    │  All Pass?    │
-                    ├───────┬───────┤
-                    │  YES  │  NO   │
-                    ▼       ▼       ▼
-                 Merge   Block PR  Notify Dev
+```mermaid
+flowchart TD
+    A["Git Push → PR Created"]
+    B["Security Gate Review"]
+    C["Security Lint<br/>(SAST)"]
+    D["Dependency Check<br/>(SCA)"]
+    E["Secret Scan<br/>(Leaks)"]
+    F["Container Scan<br/>(Trivy - future)"]
+    G{"All Pass?"}
+    H["Merge"]
+    I["Block PR"]
+    J["Notify Dev"]
+
+    A --> B
+    B --> C & D
+    C --> E
+    D --> F
+    E & F --> G
+    G -->|YES| H
+    G -->|NO| I
+    I --> J
+
+    style A fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style B fill:#1A1D24,stroke:#818CF8,color:#F1F5F9
+    style C fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style D fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
+    style E fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style F fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style G fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
+    style H fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style I fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style J fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 14.2 CI Security Jobs

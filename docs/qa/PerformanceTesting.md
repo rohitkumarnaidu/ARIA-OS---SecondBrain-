@@ -39,6 +39,45 @@ Performance testing ensures Second Brain OS remains responsive, scalable, and re
 
 ---
 
+### Pipeline
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+flowchart LR
+    A["<b>Code Change</b><br/>PR or commit"]:::primary --> B["<b>Unit Tests</b><br/>Baseline validation"]:::secondary
+    B --> C["<b>Load Test</b><br/>50 concurrent users<br/>20 RPS target"]:::primary
+    C --> D{"<b>Thresholds</b><br/>p95 &lt; 500ms<br/>Errors &lt; 1%"}:::accent
+    D -->|"✅ Pass"| E["<b>Stress Test</b><br/>Find breaking point<br/>Weekly"]:::secondary
+    D -->|"❌ Fail"| F["<b>Optimize</b><br/>Profile &amp; fix"]:::warning
+    F --> C
+    E --> G["<b>Soak Test</b><br/>8-hour endurance<br/>Monthly"]:::primary
+    G --> H["<b>Report</b><br/>RED metrics &bull; Diff"]:::accent
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+```
+
+### Metric Taxonomy
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+graph TD
+    M["<b>Performance Metrics</b>"]:::primary
+    M --> R["<b>Rate</b><br/>Throughput &bull; RPS<br/>Concurrent users"]:::secondary
+    M --> E["<b>Errors</b><br/>Error rate &bull; 5xx<br/>Timeout percentage"]:::danger
+    M --> D["<b>Duration</b><br/>p50 &bull; p95 &bull; p99<br/>Response time"]:::primary
+    M --> RS["<b>Resources</b><br/>CPU &bull; Memory<br/>DB query time"]:::warning
+    M --> AI["<b>AI Inference</b><br/>Ollama &bull; Claude<br/>Generation latency"]:::accent
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+    classDef danger fill:#0A0B0F,stroke:#EF4444,stroke-width:2px,color:#EF4444
+```
+
 ## 2. Load Testing Tools
 
 ### 2.1 Locust.io (Python)

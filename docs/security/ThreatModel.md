@@ -38,16 +38,34 @@
 
 ### 1.1 Deployment Topology
 
+```mermaid
+graph LR
+    subgraph TRUST["Trust Boundary — Internet"]
+        B[Browser - Next.js]
+        VE[Vercel Edge]
+    end
+
+    subgraph TRUST2["Trust Boundary — Backend"]
+        API[FastAPI - Railway]
+    end
+
+    subgraph TRUST3["Trust Boundary — Data & AI"]
+        SB[Supabase DB]
+        OL[Ollama - Local]
+        CL[Claude API]
+    end
+
+    B -->|HTTPS| VE
+    VE -->|HTTPS| API
+    API --> SB
+    API --> OL
+    API --> CL
+    SB --> API
+
+    style TRUST fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
+    style TRUST2 fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9
+    style TRUST3 fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
 ```
-Browser (Next.js) ───HTTPS──→ Vercel Edge ───HTTPS──→ FastAPI (Railway)
-                                                            │
-                                                    ┌───────┼───────────┐
-                                                    │       │           │
-                                               ┌────────┐ ┌────────┐ ┌────────┐
-                                               │Supabase│ │ Ollama │ │ Claude │
-                                               │  DB    │ │ Local  │ │  API   │
-                                               └────────┘ └────────┘ └────────┘
-                                                    │
                                                ┌─────────┐
                                                │Scheduler│
                                                │ (Cron)  │

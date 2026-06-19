@@ -28,6 +28,57 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+graph TD
+    User["👤 User (Browser)"] --> DNS["🌐 DNS (Vercel)"]
+    DNS --> CDN["📡 Global CDN<br/>Vercel Edge — 100 POPs"]
+    CDN --> Edge["⚡ Edge Functions<br/>Auth · Geo · A/B Testing"]
+    Edge --> Next["📄 Next.js 14 App<br/>(Serverless — Node 18)<br/>Vercel"]
+    
+    Next --> API["🖥️ FastAPI Backend<br/>(Railway / Uvicorn)"]
+    Next --> SupaClient["🗄️ Supabase Client<br/>(Direct SSR Queries)"]
+
+    API --> Auth["🔐 Supabase Auth<br/>(Google OAuth + JWT)"]
+    API --> Scheduler["⏰ APScheduler<br/>6 Cron Jobs"]
+    API --> AI["🤖 AI Layer"]
+    API --> Email["📧 Resend API<br/>(Transactional Emails)"]
+    API --> Cache["💨 In-Memory Cache<br/>(TTL: 5 min)"]
+    API --> RateLimiter["🚦 Rate Limiter<br/>(100 req/min)"]
+
+    Scheduler --> API
+    Scheduler --> AI
+
+    AI --> Ollama["🦙 Ollama (Mistral 7B)<br/>Local · Free · Default"]
+    AI --> Claude["🧠 Claude API (Sonnet 4)<br/>Cloud · $0.015/req · Fallback"]
+    AI --> Circuit["⚡ Circuit Breaker<br/>(5 failures → 60s cooldown)"]
+
+    subgraph DB_Layer["🗄️ Database Layer"]
+        PG["PostgreSQL (Supabase)"]
+        RLS["Row-Level Security"]
+        Realtime["Realtime Subscriptions"]
+    end
+
+    SupaClient --> PG
+    API --> PG
+
+    subgraph Storage["💾 Storage"]
+        Supabase_Storage["Supabase Storage<br/>File Uploads · Avatars"]
+        Cache2["Browser Cache<br/>Service Worker"]
+    end
+
+    Next --> Storage
+    API --> Supabase_Storage
+
+    subgraph Monitoring["📊 Monitoring"]
+        Health["Health Checks<br/>GET /health"]
+        Logging["Structured JSON Logging"]
+        Tracing["Request ID Tracing"]
+    end
+
+    API --> Monitoring
+```
+
 ## 1. Infrastructure Overview
 
 ### 1.1 High-Level Architecture Diagram

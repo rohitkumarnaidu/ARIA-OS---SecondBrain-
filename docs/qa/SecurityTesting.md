@@ -1,5 +1,30 @@
 ﻿# Security Testing Strategy
 
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
+flowchart TD
+    Commit["📤 Code Commit / PR"] --> SAST["🔍 SAST — Static Analysis<br/>Bandit (Python) · ESLint (TS)"]
+    SAST --> DepScan["📦 Dependency Scan<br/>npm audit · pip-audit · Trivy"]
+    DepScan --> SecretScan["🔑 Secret Detection<br/>GitLeaks · truffleHog"]
+    SecretScan --> VulnFound{"Vulnerabilities Found?"}
+    VulnFound -->|Critical/High| Block["⛔ Block Pipeline"]
+    VulnFound -->|Medium/Low| Warn["⚠️ Warning — Log to Report"]
+    Block --> Fix["🔧 Fix & Recommit"]
+    Fix --> Commit
+    Warn --> Build["🏗️ Build & Deploy to Staging"]
+    Build --> DAST["🌐 DAST — Dynamic Analysis<br/>OWASP ZAP (Weekly)"]
+    DAST --> APISec["🔌 API Security Tests<br/>Auth · Injection · Rate Limiting"]
+    APISec --> Manual["👨‍💻 Manual Penetration Test<br/>(Quarterly)"]
+    Manual --> Report["📋 Security Report Generated"]
+    Report --> Remediate["🔧 Remediation Planning"]
+    Remediate --> Track["📊 Track in Security Backlog"]
+    Track --> Retest["🔄 Retest Verified Fixes"]
+    Retest --> Passed{"Passed?"}
+    Passed -->|Yes| Close2["✅ Security Issue Closed"]
+    Passed -->|No| Fix
+    Close2 --> Audit["📝 Security Audit Log Updated"]
+```
+
 ## 1. Security Testing Methodology
 
 ### 1.1 Approach Overview

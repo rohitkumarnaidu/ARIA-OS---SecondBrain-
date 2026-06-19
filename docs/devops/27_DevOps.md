@@ -121,28 +121,24 @@ When making DevOps decisions, apply this hierarchy:
 
 ### 3.1 Pipeline Overview
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    CI/CD Pipeline Architecture                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│   Source        Build          Test          Deploy      Monitor│
-│   Control                                                    │
-│                                                                 │
-│  ┌────────┐  ┌────────┐  ┌──────────┐  ┌────────┐  ┌─────────┐ │
-│  │ GitHub  │  │ npm ci │  │  ESLint  │  │ Vercel │  │ Vercel  │ │
-│  │ Push/PR │──│ pip    │──│  Ruff    │──│Railway │──│Analytics│ │
-│  │         │  │ install│  │  pytest  │  │        │  │ Railway │ │
-│  └────────┘  └────────┘  └──────────┘  └────────┘  └─────────┘ │
-│       │            │            │            │            │     │
-│       ▼            ▼            ▼            ▼            ▼     │
-│  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐│
-│  │ Branch  │ │ Clean    │ │ Quality  │ │ Immutable│ │ Health  ││
-│  │ Strategy│ │ Environ- │ │ Gates    │ │ Artifacts│ │ Checks  ││
-│  │         │ │ ment     │ │          │ │          │ │         ││
-│  └─────────┘ └──────────┘ └──────────┘ └──────────┘ └─────────┘│
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph CI_CD["CI/CD Pipeline Architecture"]
+        SRC["Source Control<br/>GitHub Push/PR<br/>Branch Strategy"]
+        BLD["Build<br/>npm ci<br/>pip install<br/>Clean Environment"]
+        TST["Test<br/>ESLint<br/>Ruff<br/>pytest<br/>Quality Gates"]
+        DEP["Deploy<br/>Vercel<br/>Railway<br/>Immutable Artifacts"]
+        MON["Monitor<br/>Vercel Analytics<br/>Railway Logs<br/>Health Checks"]
+
+        SRC --> BLD --> TST --> DEP --> MON
+    end
+
+    style CI_CD fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
+    style SRC fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style BLD fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style TST fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style DEP fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style MON fill:#13151A,stroke:#94A3B8,color:#F1F5F9
 ```
 
 ### 3.2 Pipeline Stages Detail

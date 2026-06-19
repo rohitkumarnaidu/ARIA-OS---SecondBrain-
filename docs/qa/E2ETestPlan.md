@@ -61,6 +61,20 @@ CI=false
 
 ### 2.1 Auth & Middleware (`auth.spec.ts`)
 
+```mermaid
+stateDiagram-v2
+    [*] --> Unauthenticated: Visit /dashboard or any protected route
+    Unauthenticated --> RedirectedLogin: Middleware 307 redirect
+    RedirectedLogin --> LoginPage: Arrive at /login
+    LoginPage --> Authenticated: Successful login
+    Authenticated --> DashboardAccess: Redirect to original requested path
+    Authenticated --> LoginPage: Visit /login while authenticated → redirected away
+    Unauthenticated --> PublicAccess: Visit / or /login
+    PublicAccess --> LoginPage: Access login page freely
+    Authenticated --> SessionExpired: Token expires
+    SessionExpired --> Unauthenticated: Login redirect
+```
+
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
 | AUTH-01 | Unauthenticated user is redirected to `/login` from `/dashboard` | P0 | ✅ |
@@ -139,23 +153,23 @@ CI=false
 
 ## 3. Test Architecture
 
-```
-apps/web/e2e/
-├── playwright.config.ts      # Playwright config with 5 browser projects
-├── fixtures/
-│   └── test.ts               # Extended test fixtures (page objects)
-├── pages/
-│   └── index.ts              # Page Object Models (Login, Dashboard, Module)
-├── specs/
-│   ├── auth.spec.ts          # Auth & middleware (9 tests)
-│   ├── navigation.spec.ts    # Routing & navigation (10 tests)
-│   ├── pwa.spec.ts           # PWA manifest + service worker (11 tests)
-│   ├── offline.spec.ts       # Offline resilience (8 tests)
-│   └── ui.spec.ts            # Component rendering (13 tests)
-├── utils/
-│   └── constants.ts          # Timeouts, routes, auth config, manifest expectations
-└── reports/                  # Generated test reports (gitignored)
-    └── html/
+```mermaid
+graph TD
+    Root[apps/web/e2e] --> PC[playwright.config.ts<br>Playwright config with 5 browser projects]
+    Root --> Fixtures[fixtures]
+    Fixtures --> FT[test.ts<br>Extended test fixtures page objects]
+    Root --> Pages[pages]
+    Pages --> PI[index.ts<br>Page Object Models Login Dashboard Module]
+    Root --> Specs[specs]
+    Specs --> AUTH[auth.spec.ts<br>Auth and middleware 9 tests]
+    Specs --> NAV[navigation.spec.ts<br>Routing and navigation 10 tests]
+    Specs --> PWA[pwa.spec.ts<br>PWA manifest + service worker 11 tests]
+    Specs --> OFFL[offline.spec.ts<br>Offline resilience 8 tests]
+    Specs --> UI[ui.spec.ts<br>Component rendering 13 tests]
+    Root --> Utils[utils]
+    Utils --> CT[constants.ts<br>Timeouts routes auth config manifest expectations]
+    Root --> Reports[reports]
+    Reports --> HTML[html<br>Generated test reports gitignored]
 ```
 
 ---

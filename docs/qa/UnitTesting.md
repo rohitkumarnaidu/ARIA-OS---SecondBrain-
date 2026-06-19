@@ -1,5 +1,21 @@
 # Unit Testing Strategy
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+graph BT
+    BASE["<b>Static Analysis</b><br/>TypeScript &bull; Ruff &bull; Black<br/>All: Pre-commit gate"]:::secondary
+    UNIT["<b>Unit Tests</b><br/>Functions &bull; Hooks &bull; Components<br/>Many: FIRST principles"]:::accent
+    INT["<b>Integration Tests</b><br/>API &bull; DB &bull; AI agents<br/>Some: Module boundaries"]:::warning
+    E2E["<b>E2E Tests</b><br/>Playwright &bull; Critical paths<br/>Few: Happy + edge flows"]:::danger
+
+    BASE --> UNIT --> INT --> E2E
+
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:3px,color:#818CF8
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:3px,color:#00FFA3
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:3px,color:#F59E0B
+    classDef danger fill:#0A0B0F,stroke:#EF4444,stroke-width:3px,color:#EF4444
+```
+
 ## 1. Unit Testing Philosophy
 
 ### Test Behavior, Not Implementation

@@ -39,6 +39,22 @@
 
 ---
 
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
+graph TD
+    A["<b>Compliance Framework</b><br/>Privacy by Design &bull; Security by Default"]:::primary --> B["<b>GDPR</b><br/>EU/EEA + UK<br/>Status: ✅ Compliant"]:::accent
+    A --> C["<b>SOC 2</b><br/>Type I + II<br/>Status: 🚧 Planning"]:::warning
+    A --> D["<b>CCPA</b><br/>California<br/>Status: 🚧 Planning"]:::warning
+    A --> E["<b>LGPD</b><br/>Brazil<br/>Status: 🚧 Planning"]:::warning
+    A --> F["<b>DPDP Act 2023</b><br/>India<br/>Status: ✅ Compliant"]:::accent
+    A --> G["<b>WCAG 2.2 AA</b><br/>Accessibility<br/>Status: ⚡ In Progress"]:::secondary
+
+    classDef primary fill:#13151A,stroke:#6366F1,stroke-width:3px,color:#F1F5F9
+    classDef accent fill:#0A0B0F,stroke:#00FFA3,stroke-width:2px,color:#00FFA3
+    classDef secondary fill:#0A0B0F,stroke:#818CF8,stroke-width:2px,color:#818CF8
+    classDef warning fill:#0A0B0F,stroke:#F59E0B,stroke-width:2px,color:#F59E0B
+```
+
 ## 1. Executive Summary
 
 Second Brain OS (ARIA OS) is designed from the ground up with **Privacy by Design** and **Security by Default** principles. This document establishes the comprehensive compliance framework governing data protection, privacy, accessibility, and regulatory adherence.

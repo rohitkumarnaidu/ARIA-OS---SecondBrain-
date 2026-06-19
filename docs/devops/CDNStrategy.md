@@ -29,50 +29,70 @@
 
 ### 1.1 CDN Topology
 
-```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                        GLOBAL CDN ARCHITECTURE                            │
-│                     Vercel Edge Network (100+ POPs)                       │
-│                                                                          │
-│   ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
-│   │ US West  │  │ US East  │  │ EU West  │  │ EU East  │  │ Asia     │  │
-│   │ (LAX)    │  │ (IAD)    │  │ (LHR)    │  │ (FRA)    │  │ (NRT)    │  │
-│   └─────┬────┘  └─────┬────┘  └─────┬────┘  └─────┬────┘  └─────┬────┘  │
-│         │              │              │              │              │     │
-│         └──────────────┼──────────────┼──────────────┘              │     │
-│                        │              │                             │     │
-│                        ▼              ▼                             │     │
-│              ┌────────────────────────────────────┐                 │     │
-│              │      VERCEL ORIGIN SHIELD           │                 │     │
-│              │  (us-east-1 — Central Cache Layer)  │                 │     │
-│              └────────────────┬───────────────────┘                 │     │
-│                               │                                     │     │
-│                               ▼                                     │     │
-│              ┌────────────────────────────────────┐                 │     │
-│              │      NEXT.JS SERVERLESS             │                 │     │
-│              │  (us-east-1 — SSR + API Routes)     │                 │     │
-│              └────────────────┬───────────────────┘                 │     │
-│                               │                                     │     │
-│                               ▼                                     │     │
-│              ┌────────────────────────────────────┐                 │     │
-│              │      RAILWAY BACKEND                │                 │     │
-│              │  (us-west — FastAPI Containers)     │                 │     │
-│              └────────────────────────────────────┘                 │     │
-└──────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph CDN["GLOBAL CDN ARCHITECTURE — Vercel Edge Network (100+ POPs)"]
+        USWest["US West<br/>(LAX)"]
+        USEast["US East<br/>(IAD)"]
+        EUWest["EU West<br/>(LHR)"]
+        EUEast["EU East<br/>(FRA)"]
+        Asia["Asia<br/>(NRT)"]
+        OriginShield["VERCEL ORIGIN SHIELD<br/>(us-east-1 — Central Cache Layer)"]
+        NextJS["NEXT.JS SERVERLESS<br/>(us-east-1 — SSR + API Routes)"]
+        Railway["RAILWAY BACKEND<br/>(us-west — FastAPI Containers)"]
+    end
+
+    USWest --> OriginShield
+    USEast --> OriginShield
+    EUWest --> OriginShield
+    EUEast --> OriginShield
+    Asia --> OriginShield
+    OriginShield --> NextJS
+    NextJS --> Railway
+
+    style CDN fill:#0A0B0F,stroke:#334155,color:#F1F5F9
+    style USWest fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style USEast fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style EUWest fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style EUEast fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style Asia fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style OriginShield fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style NextJS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Railway fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
 
 ### 1.2 Request Flow
 
-```
-1. User requests https://secondbrain-os.com
-2. DNS resolves to nearest Vercel POP (via Anycast)
-3. POP checks Edge Cache:
-   ├── HIT → Serve cached response immediately (<10ms)
-   └── MISS → Forward to Origin Shield (us-east-1)
-        └── Origin Shield checks its cache:
-             ├── HIT → Serve from Origin Shield, cache at POP
-             └── MISS → Forward to Next.js Serverless
-                  └── For API calls: Railway Backend → Supabase Database
+```mermaid
+flowchart LR
+    User["User requests<br/>https://secondbrain-os.com"]
+    DNS["DNS resolves to<br/>nearest Vercel POP (Anycast)"]
+    POP["POP checks Edge Cache"]
+    Hit["HIT → Serve cached<br/>response (<10ms)"]
+    Miss["MISS → Forward to<br/>Origin Shield (us-east-1)"]
+    Shield["Origin Shield<br/>checks its cache"]
+    ShieldHit["HIT → Serve from<br/>Origin Shield, cache at POP"]
+    ShieldMiss["MISS → Forward to<br/>Next.js Serverless"]
+    API["For API calls:<br/>Railway Backend →<br/>Supabase Database"]
+
+    User --> DNS
+    DNS --> POP
+    POP --> Hit
+    POP --> Miss
+    Miss --> Shield
+    Shield --> ShieldHit
+    Shield --> ShieldMiss
+    ShieldMiss --> API
+
+    style User fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style DNS fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style POP fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Hit fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Miss fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style Shield fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ShieldHit fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style ShieldMiss fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style API fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 1.3 Caching Layers
@@ -197,19 +217,28 @@ export const config = {
 
 ### 2.4 Origin Shield
 
-```
-Without Origin Shield:
-  POP(MISS) ──▶ Origin (Next.js Serverless)
-               POPs from 100 locations all hit origin independently
+```mermaid
+flowchart LR
+    subgraph Without["Without Origin Shield"]
+        POP1["POP(MISS)"] --> Origin1["Origin<br/>(Next.js Serverless)"]
+        Note1["POPs from 100 locations<br/>all hit origin independently"]
+    end
 
-With Origin Shield:
-  POP(MISS) ──▶ Origin Shield (us-east-1) ──▶ Origin
-               Single cache layer reduces origin load by ~80%
+    subgraph With["With Origin Shield"]
+        POP2["POP(MISS)"] --> Shield["Origin Shield<br/>(us-east-1)"]
+        Shield --> Origin2["Origin"]
+        Note2["Single cache layer<br/>reduces origin load by ~80%"]
+    end
 
-Benefits:
-  • Reduces origin requests by ~80%
-  • Lowers cold-start frequency for serverless functions
-  • Improves cache hit ratio for less popular content
+    style Without fill:#1A1D24,stroke:#EF4444,color:#F1F5F9
+    style With fill:#1A1D24,stroke:#00FFA3,color:#F1F5F9
+    style POP1 fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Origin1 fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style Note1 fill:#13151A,stroke:#334155,color:#94A3B8
+    style POP2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Shield fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style Origin2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Note2 fill:#13151A,stroke:#334155,color:#94A3B8
 ```
 
 ---
@@ -438,17 +467,27 @@ module.exports = {
 
 ### 5.2 Format Negotiation
 
-```
-Request: Accept: image/avif,image/webp,image/*
+```mermaid
+flowchart LR
+    Request["Request<br/>Accept: image/avif,image/webp,image/*"]
+    AVIF["Browser supports AVIF?"]
+    WebP["Supports WebP?"]
+    ServeAVIF["Serve .avif<br/>(50% smaller than JPEG)"]
+    ServeWebP["Serve .webp<br/>(30% smaller than JPEG)"]
+    ServeJPG["Serve .jpg<br/>(fallback)"]
 
-├── Browser supports AVIF? → Serve .avif (50% smaller than JPEG)
-└── NO → Supports WebP? → Serve .webp (30% smaller)
-        └── NO → Serve .jpg (fallback)
+    Request --> AVIF
+    AVIF -- Yes --> ServeAVIF
+    AVIF -- No --> WebP
+    WebP -- Yes --> ServeWebP
+    WebP -- No --> ServeJPG
 
-File size comparison (1920x1080 photo):
-  JPEG (Q85):  ~400KB
-  WebP (Q85):  ~280KB (30% smaller)
-  AVIF (Q60):  ~200KB (50% smaller)
+    style Request fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style AVIF fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style WebP fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style ServeAVIF fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style ServeWebP fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style ServeJPG fill:#13151A,stroke:#818CF8,color:#F1F5F9
 ```
 
 ### 5.3 Image Optimization Performance

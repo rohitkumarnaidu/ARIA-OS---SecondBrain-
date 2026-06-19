@@ -67,34 +67,36 @@
 
 ### 2.1 High-Level Architecture
 
-```
-                          ┌─────────────────────────────┐
-                          │     GitHub Repository        │
-                          │   (monorepo: apps/web,       │
-                          │    apps/api, services/*)     │
-                          └──────────┬──────────────────┘
-                                     │
-                          ┌──────────▼──────────────────┐
-                          │   GitHub Actions (CI/CD)     │
-                          │  ┌──────┬──────┬──────────┐ │
-                          │  │ Lint │ Test │ Security │ │
-                          │  └──┬───┴──┬───┴──┬───────┘ │
-                          └─────┼──────┼──────┼─────────┘
-                                │      │      │
-          ┌─────────────────────┼──────┼──────┼─────────────────────┐
-          │                     │      │      │                     │
-          ▼                     ▼      │      ▼                     ▼
-   ┌───────────┐         ┌──────────┐  │  ┌──────────┐      ┌──────────┐
-   │  Vercel   │         │  Railway │  │  │ Railway  │      │ Supabase │
-   │ Frontend  │         │ Backend  │  │  │Scheduler │      │   DB     │
-   │ (Next.js) │         │(FastAPI) │  │  │(APSch.)  │      │(Postgres)│
-   └───────────┘         └──────────┘  │  └──────────┘      └──────────┘
-                                        │
-                                        ▼
-                                 ┌──────────────┐
-                                 │  Ollama/Claude│
-                                 │  AI Services  │
-                                 └──────────────┘
+```mermaid
+graph TD
+    GH[GitHub Repository<br/>monorepo: apps/web, apps/api, services/*]
+    CI[GitHub Actions CI/CD<br/>Lint | Test | Security]
+
+    GH -->|Push / PR| CI
+
+    subgraph Deploy["Deploy Targets"]
+        VF[Vercel<br/>Frontend - Next.js]
+        RB[Railway<br/>Backend - FastAPI]
+        RS[Railway<br/>Scheduler - APScheduler]
+        SB[Supabase<br/>Database - PostgreSQL]
+        AI_S[Ollama / Claude<br/>AI Services]
+    end
+
+    CI --> VF
+    CI --> RB
+    CI --> RS
+    CI --> SB
+    VF --> AI_S
+    RB --> AI_S
+
+    style GH fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style CI fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style Deploy fill:#0A0B0F,stroke:#334155,color:#F1F5F9
+    style VF fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style RB fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style RS fill:#13151A,stroke:#EF4444,color:#F1F5F9
+    style SB fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+    style AI_S fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
 
 ### 2.2 Component Responsibility Matrix
@@ -110,32 +112,32 @@
 
 ### 2.3 Deployment Flow Diagram
 
-```
-Developer pushes code
-        │
-        ▼
-GitHub Actions triggered
-        │
-        ├──> Frontend job
-        │      ├── npm ci
-        │      ├── npm run lint
-        │      ├── npm run type-check
-        │      ├── npm run build
-        │      └── Deploy to Vercel preview (PR) / production (main)
-        │
-        ├──> Backend job
-        │      ├── pip install -r requirements.txt
-        │      ├── ruff check .
-        │      ├── pytest tests/
-        │      └── Deploy to Railway
-        │
-        ├──> Database job (manual)
-        │      ├── Run migration SQL
-        │      └── Verify schema
-        │
-        └──> Notify team
-               ├── Slack / Discord webhook
-               └── Email (on failure)
+```mermaid
+flowchart LR
+    DEV[Developer pushes code] --> GA[GitHub Actions triggered]
+
+    GA --> FE[Frontend job]
+    FE --> FE1[npm ci]
+    FE1 --> FE2[npm run lint]
+    FE2 --> FE3[npm run type-check]
+    FE3 --> FE4[npm run build]
+    FE4 --> FED{Deploy}
+    FED -->|PR| FEP[Vercel Preview]
+    FED -->|main| FER[Vercel Production]
+
+    GA --> BE[Backend job]
+    BE --> BE1[pip install]
+    BE1 --> BE2[ruff check .]
+    BE2 --> BE3[pytest tests/]
+    BE3 --> BED[Deploy to Railway]
+
+    GA --> DB[Database job - Manual]
+    DB --> DB1[Run migration SQL]
+    DB1 --> DB2[Verify schema]
+
+    GA --> NT[Notify team]
+    NT --> SL[Slack / Discord webhook]
+    NT --> EM[Email on failure]
 ```
 
 ---
@@ -222,24 +224,13 @@ environments:
 
 ### 3.3 Environment Promotion Path
 
-```
-Local Development
-    │
-    │  git push feat/*
-    ▼
-PR Preview (Vercel)
-    │
-    │  PR merged to develop
-    ▼
-Staging (develop branch)
-    │
-    │  Release PR approved + merged
-    ▼
-Production (main branch)
-    │
-    │  Hotfix? Bypass staging
-    ▼
-Hotfix (direct to main)
+```mermaid
+flowchart TD
+    LD[Local Development] -->|git push feat/*| PR[PR Preview - Vercel]
+    PR -->|PR merged to develop| ST[Staging - develop branch]
+    ST -->|Release PR approved + merged| PROD[Production - main branch]
+    PROD -->|Hotfix? Bypass staging| HF[Hotfix - direct to main]
+    HF -.->|emergency fix| PROD
 ```
 
 ---
@@ -248,25 +239,35 @@ Hotfix (direct to main)
 
 ### 4.1 Pipeline Architecture
 
-```
-GitHub Actions Workflow Engine
-        │
-        ├── PR Events (pull_request)
-        │     ├── CI check 1: Lint + Type-check (frontend)
-        │     ├── CI check 2: Ruff + PyCompile (backend)
-        │     ├── CI check 3: Pytest (all tests)
-        │     └── CI check 4: Security audit (npm audit + pip audit)
-        │
-        ├── Push to develop
-        │     └── Auto-deploy to Staging
-        │
-        ├── Push to main
-        │     ├── Auto-deploy Frontend to Production
-        │     ├── Auto-deploy Backend to Production
-        │     └── Auto-deploy Scheduler to Production
-        │
-        └── Scheduled (cron)
-              └── Weekly security scan
+```mermaid
+graph TD
+    GA[GitHub Actions Workflow Engine]
+
+    subgraph PR["PR Events (pull_request)"]
+        CI1[CI: Lint + Type-check - Frontend]
+        CI2[CI: Ruff + PyCompile - Backend]
+        CI3[CI: Pytest - All Tests]
+        CI4[CI: Security Audit - npm + pip audit]
+    end
+
+    subgraph DEV_PUSH["Push to develop"]
+        AUTO_STAGING[Auto-deploy to Staging]
+    end
+
+    subgraph MAIN_PUSH["Push to main"]
+        AUTO_FE[Auto-deploy Frontend to Production]
+        AUTO_BE[Auto-deploy Backend to Production]
+        AUTO_SCHED[Auto-deploy Scheduler to Production]
+    end
+
+    subgraph SCHED["Scheduled (cron)"]
+        WEEKLY_SCAN[Weekly Security Scan]
+    end
+
+    GA --> PR
+    GA --> DEV_PUSH
+    GA --> MAIN_PUSH
+    GA --> SCHED
 ```
 
 ### 4.2 Workflow Configuration — `ci.yml`

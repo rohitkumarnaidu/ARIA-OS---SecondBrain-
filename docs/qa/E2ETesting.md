@@ -18,14 +18,12 @@ End-to-end tests validate **complete user workflows** across system boundaries. 
 
 ### The Test Pyramid Applied
 
-```
-        ╱ ╲
-       ╱E2E╲           ~20 tests — critical user journeys
-      ╱─────╲
-     ╱Integration╲     ~50 tests — API + service interactions
-    ╱─────────────╲
-   ╱   Unit Tests   ╲  ~200+ tests — functions, agents, components
-  ╱───────────────────╲
+```mermaid
+graph TD
+    subgraph Test_Pyramid[Test Pyramid]
+        UT[Unit Tests<br>200+ tests functions agents components] --> IT[Integration<br>50 tests API + service interactions]
+        IT --> E2E[E2E<br>20 tests critical user journeys]
+    end
 ```
 
 E2E tests sit at the top of the pyramid: fewest in number, slowest to execute, broadest in scope. They catch integration failures that unit tests cannot.
@@ -134,23 +132,11 @@ export default defineConfig({
 
 ### 3.1 Dedicated Test Supabase Project
 
-```
-┌─────────────────────┐
-│   E2E Test Supabase  │  → Dedicated project: second-brain-os-e2e
-│   (isolated)         │  → All test data can be mutated freely
-└─────────┬───────────┘
-          │
-          ▼
-┌─────────────────────┐
-│  E2E Test Backend    │  → Railway staging deployment
-│  (separate instance)  │  → Points to test Supabase
-└─────────┬───────────┘
-          │
-          ▼
-┌─────────────────────┐
-│  E2E Test Frontend   │  → Vercel preview deployment
-│  (automatic per PR)  │  → Points to test backend API
-└─────────────────────┘
+```mermaid
+flowchart TD
+    TS[E2E Test Supabase isolated] -->|Dedicated project second-brain-os-e2e<br>All test data can be mutated freely| TB[E2E Test Backend<br>separate instance]
+    TB -->|Railway staging deployment<br>Points to test Supabase| TF[E2E Test Frontend<br>automatic per PR]
+    TF -->|Vercel preview deployment<br>Points to test backend API| END
 ```
 
 **Environment variables for E2E:**
