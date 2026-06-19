@@ -1,19 +1,20 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import ReactFlow, {
+import {
+  ReactFlow,
   addEdge,
   Background,
   Controls,
   MiniMap,
   useNodesState,
   useEdgesState,
-  Node,
-  Edge,
-  Connection,
+  type Node,
+  type Edge,
+  type Connection,
   MarkerType,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+} from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
 
 interface RoadmapNode {
   id: string
