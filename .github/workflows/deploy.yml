@@ -1,0 +1,26 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: deployment
+  cancel-in-progress: true
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Deploying frontend to Vercel..."
+      # Vercel deployment triggered via webhook/github integration
+
+  deploy-backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Deploying backend to Railway..."
+      # Railway deployment triggered via github integration

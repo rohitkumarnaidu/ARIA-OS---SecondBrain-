@@ -1,46 +1,23 @@
 ---
 name: Feature Request
-about: Suggest an idea for Second Brain OS
+about: Suggest an idea for ARIA OS
 title: '[FEATURE] '
-labels: enhancement
+labels: enhancement, triage
 assignees: ''
 ---
 
-## Is Your Feature Request Related to a Problem?
-A clear and concise description of what the problem is. Ex: I'm always frustrated when [...]
+## Problem Statement
+What problem does this feature solve?
 
-## Describe the Solution
-A clear and concise description of what you want to happen, including any specific implementation details or design considerations.
+## Proposed Solution
+What should happen? Be specific about the UI, behavior, and data.
 
-## Describe Alternatives
-A clear and concise description of any alternative solutions or features you've considered.
+## Alternative Solutions
+What alternatives have you considered?
 
-## Module
-<!-- Which of the 15 modules does this affect? -->
+## Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
 
-- [ ] Dashboard / Home
-- [ ] Tasks
-- [ ] Courses
-- [ ] Goals
-- [ ] Ideas
-- [ ] Projects
-- [ ] Resources
-- [ ] Opportunities
-- [ ] Income / Finance
-- [ ] Habits
-- [ ] Sleep / Wellness
-- [ ] Time Tracking
-- [ ] AI Agents
-- [ ] Admin / Settings
-- [ ] Other (please describe)
-
-## Priority
-
-- [ ] **P0** – Critical: blocks release or core functionality
-- [ ] **P1** – High: important for upcoming milestone
-- [ ] **P2** – Medium: valuable enhancement, no immediate deadline
-- [ ] **P3** – Low: nice-to-have, future consideration
-- [ ] **P4** – Wishlist: not yet scoped
-
-## Additional Context
-Add any other context, mockups, or references about the feature request here.
+## Mockups
+Attach Figma links or screenshots.
