@@ -41,6 +41,8 @@ from app.api import (
     analytics,
     predictions,
     notifications,
+    nlp,
+    prompts,
 )
 
 
@@ -205,6 +207,8 @@ app.include_router(videos.router, prefix="/api/v1/videos", tags=["videos"])
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["analytics"])
 app.include_router(predictions.router, prefix="/api/v1/predictions", tags=["predictions"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+app.include_router(nlp.router, prefix="/api/v1/nlp", tags=["nlp"])
+app.include_router(prompts.router, prefix="/api/v1/prompts", tags=["prompts"])
 
 
 @app.exception_handler(Exception)
