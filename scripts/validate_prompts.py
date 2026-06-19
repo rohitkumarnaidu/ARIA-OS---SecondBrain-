@@ -2,7 +2,6 @@ import sys
 import yaml
 import re
 import glob
-from pathlib import Path
 
 
 def validate_all():

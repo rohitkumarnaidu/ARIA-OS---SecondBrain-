@@ -1,0 +1,118 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "title": "Second Brain OS - RED Metrics",
+  "uid": "secondbrain-red",
+  "schemaVersion": 38,
+  "version": 1,
+  "tags": ["second-brain", "red-metrics"],
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "title": "Request Rate (req/min)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
+      "targets": [{
+        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m]))",
+        "legendFormat": "Rate"
+      }],
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "req/min",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 100}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Error Rate (%)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
+      "targets": [{
+        "expr": "sum(rate(http_requests_total{status=~\"5..\",service=\"secondbrain-api\"}[5m])) / sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) * 100",
+        "legendFormat": "Errors"
+      }],
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 1},
+              {"color": "red", "value": 5}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "p95 Latency (ms)",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
+      "targets": [{
+        "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service=\"secondbrain-api\"}[5m])) by (le))",
+        "legendFormat": "p95"
+      }],
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 500},
+              {"color": "red", "value": 2000}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Requests by Endpoint",
+      "type": "bargauge",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [{
+        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) by (endpoint)",
+        "legendFormat": "{{endpoint}}"
+      }],
+      "datasource": "Prometheus"
+    },
+    {
+      "title": "HTTP Status Codes",
+      "type": "piechart",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [{
+        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) by (status)",
+        "legendFormat": "{{status}}"
+      }],
+      "datasource": "Prometheus"
+    },
+    {
+      "title": "AI Response Time",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16},
+      "targets": [
+        {
+          "expr": "avg(rate(llm_request_duration_seconds_sum{service=\"secondbrain-api\"}[5m]))",
+          "legendFormat": "Avg"
+        },
+        {
+          "expr": "max(rate(llm_request_duration_seconds_sum{service=\"secondbrain-api\"}[5m]))",
+          "legendFormat": "Max"
+        }
+      ],
+      "datasource": "Prometheus"
+    }
+  ]
+}
