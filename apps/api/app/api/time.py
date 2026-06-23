@@ -8,7 +8,7 @@ from database.schemas.time_entry import TimeEntryCreate, TimeEntryUpdate, TimeEn
 router = APIRouter()
 
 
-@router.get("/", response_model=List[TimeEntryResponse])
+@router.get("/", summary="List time entries", response_model=List[TimeEntryResponse])
 async def get_time_entries(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
@@ -17,7 +17,7 @@ async def get_time_entries(
     supabase = get_supabase_client()
     response = (
         supabase.from_("time_entries")
-        .select("*")
+        .select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at")
         .eq("user_id", current_user.user.id)
         .order("start_time", ascending=False)
         .range(offset, offset + limit - 1)
@@ -26,12 +26,12 @@ async def get_time_entries(
     return response.data
 
 
-@router.get("/{entry_id}", response_model=TimeEntryResponse)
+@router.get("/{entry_id}", summary="Get a time entry by ID", response_model=TimeEntryResponse)
 async def get_time_entry(entry_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("time_entries")
-        .select("*")
+        .select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at")
         .eq("id", entry_id)
         .eq("user_id", current_user.user.id)
         .execute()
@@ -41,7 +41,7 @@ async def get_time_entry(entry_id: str, current_user=Depends(get_current_user)):
     return response.data[0]
 
 
-@router.post("/", status_code=201, response_model=TimeEntryResponse)
+@router.post("/", summary="Create a time entry", status_code=201, response_model=TimeEntryResponse)
 async def create_time_entry(entry: TimeEntryCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = entry.model_dump()
@@ -60,7 +60,7 @@ async def create_time_entry(entry: TimeEntryCreate, current_user=Depends(get_cur
     return response.data[0]
 
 
-@router.put("/{entry_id}", response_model=TimeEntryResponse)
+@router.put("/{entry_id}", summary="Update a time entry", response_model=TimeEntryResponse)
 async def update_time_entry(entry_id: str, entry_update: TimeEntryUpdate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     update_data = {k: v for k, v in entry_update.model_dump().items() if v is not None}
@@ -82,7 +82,7 @@ async def update_time_entry(entry_id: str, entry_update: TimeEntryUpdate, curren
     return response.data[0]
 
 
-@router.delete("/{entry_id}", status_code=204)
+@router.delete("/{entry_id}", summary="Delete a time entry", status_code=204)
 async def delete_time_entry(entry_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("time_entries").delete().eq("id", entry_id).eq("user_id", current_user.user.id).execute()
@@ -91,7 +91,7 @@ async def delete_time_entry(entry_id: str, current_user=Depends(get_current_user
     return None
 
 
-@router.get("/stats/daily")
+@router.get("/stats/daily", summary="Get daily time stats")
 async def get_daily_time_stats(date: Optional[str] = None, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     target_date = date or datetime.now().strftime("%Y-%m-%d")
@@ -114,7 +114,7 @@ async def get_daily_time_stats(date: Optional[str] = None, current_user=Depends(
     }
 
 
-@router.post("/stop", status_code=201)
+@router.post("/stop", summary="Stop an active timer", status_code=201)
 async def stop_timer(entry_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     end_time = datetime.now().isoformat()
