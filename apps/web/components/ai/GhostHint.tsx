@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
+import { memo, useEffect, useCallback, useRef } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -12,7 +12,7 @@ interface GhostHintProps {
   className?: string
 }
 
-export function GhostHint({ text, state, onAccept, onDismiss, className }: GhostHintProps) {
+const GhostHint = memo(function GhostHint({ text, state, onAccept, onDismiss, className }: GhostHintProps) {
   const acceptRef = useRef(onAccept)
   const dismissRef = useRef(onDismiss)
 
@@ -90,6 +90,7 @@ export function GhostHint({ text, state, onAccept, onDismiss, className }: Ghost
       )}
     </AnimatePresence>
   )
-}
+})
 
+export { GhostHint }
 export type { GhostHintProps }

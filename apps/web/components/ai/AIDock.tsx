@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { memo, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -31,7 +31,7 @@ const suggestedPrompts: SuggestionChip[] = [
   { id: 'draft', label: 'Draft a follow-up' },
 ]
 
-export function AIDock({ className }: AIDockProps) {
+export const AIDock = memo(function AIDock({ className }: AIDockProps) {
   const router = useRouter()
   const [state, setState] = useState<DockState>('idle')
   const [inputValue, setInputValue] = useState('')
@@ -307,6 +307,6 @@ export function AIDock({ className }: AIDockProps) {
       </AnimatePresence>
     </>
   )
-}
+})
 
 export type { AIDockProps }

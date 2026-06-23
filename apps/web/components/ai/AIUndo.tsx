@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { memo, useEffect, useId, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/components/ui/utils'
 
@@ -13,7 +13,7 @@ interface AIUndoProps {
 
 const DURATION = 10000
 
-function AIUndo({ message, onUndo, onExpired, duration = DURATION }: AIUndoProps) {
+const AIUndo = memo(function AIUndo({ message, onUndo, onExpired, duration = DURATION }: AIUndoProps) {
   const [timeLeft, setTimeLeft] = useState(duration)
   const [visible, setVisible] = useState(true)
   const expiredCalled = useRef(false)
@@ -118,7 +118,7 @@ function AIUndo({ message, onUndo, onExpired, duration = DURATION }: AIUndoProps
       )}
     </AnimatePresence>
   )
-}
+})
 
 export { AIUndo }
 export type { AIUndoProps }

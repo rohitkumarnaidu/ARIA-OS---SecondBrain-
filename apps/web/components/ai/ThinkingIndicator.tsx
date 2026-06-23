@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { memo, useState, useEffect } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, X } from 'lucide-react'
@@ -21,7 +21,7 @@ const dotVariants = {
   exit: { opacity: 0, scale: 0.5, transition: { duration: 0.15 } },
 }
 
-export function ThinkingIndicator({ state, messages, className }: ThinkingIndicatorProps) {
+export const ThinkingIndicator = memo(function ThinkingIndicator({ state, messages, className }: ThinkingIndicatorProps) {
   const [msgIndex, setMsgIndex] = useState(0)
 
   useEffect(() => {
@@ -126,6 +126,6 @@ export function ThinkingIndicator({ state, messages, className }: ThinkingIndica
       </AnimatePresence>
     </div>
   )
-}
+})
 
 export type { ThinkingIndicatorProps }

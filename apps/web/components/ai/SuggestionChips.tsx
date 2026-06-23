@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { motion } from 'framer-motion'
 
@@ -25,7 +25,7 @@ const chipVariants = {
   }),
 }
 
-export function SuggestionChips({ suggestions, onSelect, className }: SuggestionChipsProps) {
+export const SuggestionChips = memo(function SuggestionChips({ suggestions, onSelect, className }: SuggestionChipsProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -83,6 +83,6 @@ export function SuggestionChips({ suggestions, onSelect, className }: Suggestion
       ))}
     </div>
   )
-}
+})
 
 export type { SuggestionChip, SuggestionChipsProps }

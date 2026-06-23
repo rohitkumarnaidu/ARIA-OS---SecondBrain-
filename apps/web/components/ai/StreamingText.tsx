@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { memo, useState, useEffect, useRef } from 'react'
 import { clsx } from 'clsx'
 import { motion, useReducedMotion } from 'framer-motion'
 
@@ -11,7 +11,7 @@ interface StreamingTextProps {
   className?: string
 }
 
-export function StreamingText({ text, isStreaming, speed = 30, className }: StreamingTextProps) {
+export const StreamingText = memo(function StreamingText({ text, isStreaming, speed = 30, className }: StreamingTextProps) {
   const [revealedCount, setRevealedCount] = useState(0)
   const reduced = useReducedMotion()
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -102,6 +102,6 @@ export function StreamingText({ text, isStreaming, speed = 30, className }: Stre
       )}
     </span>
   )
-}
+})
 
 export type { StreamingTextProps }

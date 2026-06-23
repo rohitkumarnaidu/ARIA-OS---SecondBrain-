@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { Lightbulb, Sparkles, AlertTriangle, ChevronRight } from 'lucide-react'
@@ -46,7 +47,7 @@ const cardVariants = {
   },
 }
 
-export function AIInsightCard({ type, icon, title, description, action, className }: AIInsightCardProps) {
+export const AIInsightCard = memo(function AIInsightCard({ type, icon, title, description, action, className }: AIInsightCardProps) {
   const style = gradientMap[type]
 
   return (
@@ -100,6 +101,6 @@ export function AIInsightCard({ type, icon, title, description, action, classNam
       </div>
     </motion.div>
   )
-}
+})
 
 export type { AIInsightCardProps }
