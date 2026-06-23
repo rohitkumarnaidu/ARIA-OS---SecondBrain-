@@ -5,9 +5,13 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
     versioning-strategy: increase
     open-pull-requests-limit: 10
-    labels: ["dependencies", "frontend"]
+    labels:
+      - "dependencies"
+      - "frontend"
     groups:
       react:
         patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
@@ -17,43 +21,69 @@ updates:
         patterns: ["@supabase/*"]
       testing:
         patterns: ["vitest", "@testing-library/*", "jsdom"]
+    ignore:
+      - dependency-name: "next"
+        versions: [">=15"]
+      - dependency-name: "typescript"
+        versions: [">=6"]
 
   - package-ecosystem: "pip"
     directory: "/apps/api"
     schedule:
       interval: "weekly"
       day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
     open-pull-requests-limit: 10
-    labels: ["dependencies", "backend"]
+    labels:
+      - "dependencies"
+      - "backend"
     groups:
       fastapi:
         patterns: ["fastapi", "uvicorn", "pydantic"]
       ai:
-        patterns: ["anthropic", "httpx"]
+        patterns: ["anthropic", "httpx", "ollama"]
 
   - package-ecosystem: "pip"
     directory: "/services/scheduler"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
-      - "python"
+      - "scheduler"
 
   - package-ecosystem: "docker"
     directory: "/apps/api"
     schedule:
       interval: "monthly"
-    labels: ["dependencies", "docker"]
+    labels:
+      - "dependencies"
+      - "docker"
 
   - package-ecosystem: "docker"
     directory: "/apps/web"
     schedule:
       interval: "monthly"
-    labels: ["dependencies", "docker"]
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/services/scheduler"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
-    labels: ["dependencies", "ci"]
+    labels:
+      - "dependencies"
+      - "ci"
