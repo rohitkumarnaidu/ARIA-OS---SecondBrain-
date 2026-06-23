@@ -16,11 +16,11 @@ from database.schemas.prediction import (
 router = APIRouter()
 
 
-@router.get("/tasks", response_model=TaskCompletionForecast)
+@router.get("/tasks", summary="Predict task completion probabilities", response_model=TaskCompletionForecast)
 async def predict_task_completion(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("tasks").select("*").eq("user_id", current_user.user.id).order("created_at", ascending=False).execute()
+        resp = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("user_id", current_user.user.id).order("created_at", ascending=False).execute()
         tasks = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch tasks for prediction", error=str(e))
@@ -85,11 +85,11 @@ async def predict_task_completion(current_user=Depends(get_current_user)):
     )
 
 
-@router.get("/habits", response_model=HabitCompletionForecast)
+@router.get("/habits", summary="Predict habit streak risks", response_model=HabitCompletionForecast)
 async def predict_habits(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("habits").select("*").eq("user_id", current_user.user.id).execute()
+        resp = supabase.from_("habits").select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at").eq("user_id", current_user.user.id).execute()
         habits = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch habits for prediction", error=str(e))
@@ -136,11 +136,11 @@ async def predict_habits(current_user=Depends(get_current_user)):
     )
 
 
-@router.get("/sleep", response_model=SleepInsight)
+@router.get("/sleep", summary="Predict sleep insights", response_model=SleepInsight)
 async def predict_sleep(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("sleep_logs").select("*").eq("user_id", current_user.user.id).order("date", ascending=False).limit(30).execute()
+        resp = supabase.from_("sleep_logs").select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at").eq("user_id", current_user.user.id).order("date", ascending=False).limit(30).execute()
         logs = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch sleep logs for prediction", error=str(e))
@@ -155,15 +155,15 @@ async def predict_sleep(current_user=Depends(get_current_user)):
     best_bedtime = None
     best_score = 0
 
-    for l in logs:
-        score = l.get("sleep_score")
+    for entry in logs:
+        score = entry.get("sleep_score")
         if score is not None:
             score_sum += score
             score_count += 1
-        dur = l.get("duration_hours")
+        dur = entry.get("duration_hours")
         if dur is not None:
             duration_sum += dur
-        bedtime = l.get("bedtime")
+        bedtime = entry.get("bedtime")
         if bedtime and score and score > best_score:
             best_score = score
             best_bedtime = bedtime
@@ -174,14 +174,14 @@ async def predict_sleep(current_user=Depends(get_current_user)):
     recent = logs[:7]
     recent_avg = 0
     if recent:
-        r_sum = sum(l.get("sleep_score", 0) or 0 for l in recent)
+        r_sum = sum(e.get("sleep_score", 0) or 0 for e in recent)
         recent_avg = r_sum / len(recent)
 
     trend = "stable"
     if score_count >= 14:
         older = logs[-14:-7]
         if older:
-            older_avg = sum(l.get("sleep_score", 0) or 0 for l in older) / len(older)
+            older_avg = sum(e.get("sleep_score", 0) or 0 for e in older) / len(older)
             if recent_avg > older_avg + 5:
                 trend = "improving"
             elif recent_avg < older_avg - 5:
@@ -216,11 +216,11 @@ async def predict_sleep(current_user=Depends(get_current_user)):
     )
 
 
-@router.get("/slots", response_model=SmartSlotResponse)
+@router.get("/slots", summary="Predict optimal productivity slots", response_model=SmartSlotResponse)
 async def predict_smart_slots(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("time_entries").select("*").eq("user_id", current_user.user.id).execute()
+        resp = supabase.from_("time_entries").select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at").eq("user_id", current_user.user.id).execute()
         entries = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch time entries for slot prediction", error=str(e))

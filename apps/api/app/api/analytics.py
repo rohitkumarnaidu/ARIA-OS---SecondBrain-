@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
+from shared.utils.logger import logger
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
+from database.schemas.orchestrator import PatternRequest
+from ai.orchestrator import detect_patterns
 
 router = APIRouter()
 
 
-@router.get("/daily")
+@router.get("/daily", summary="Get daily analytics summary")
 async def get_daily_summary(date: str = Query(...), current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     tasks = supabase.from_("tasks").select("count").eq("user_id", current_user.user.id).gte("created_at", date + "T00:00:00").lte("created_at", date + "T23:59:59").execute()
@@ -22,7 +25,7 @@ async def get_daily_summary(date: str = Query(...), current_user=Depends(get_cur
     }
 
 
-@router.get("/weekly")
+@router.get("/weekly", summary="Get weekly trends")
 async def get_weekly_trends(week_start: str = Query(...), current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     week_end = (datetime.fromisoformat(week_start) + timedelta(days=7)).strftime("%Y-%m-%d")
@@ -47,7 +50,7 @@ async def get_weekly_trends(week_start: str = Query(...), current_user=Depends(g
     }
 
 
-@router.get("/stats")
+@router.get("/stats", summary="Get aggregated statistics")
 async def get_aggregated_stats(
     start_date: str = Query(...),
     end_date: str = Query(...),
@@ -117,3 +120,13 @@ async def get_aggregated_stats(
             "hourly_rate_avg": round(sum(rates) / len(rates), 2) if rates else 0,
         },
     }
+
+
+@router.post("/patterns", summary="Detect behavior patterns", status_code=200)
+async def detect_patterns_endpoint(query_data: PatternRequest, current_user=Depends(get_current_user)):
+    try:
+        result = await detect_patterns(current_user.user.id, query_data.query)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        logger.error("Pattern detection failed", error=str(e))
+        return {"status": "success", "data": {"patterns": [], "summary": ""}}
