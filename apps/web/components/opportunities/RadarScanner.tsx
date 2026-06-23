@@ -101,7 +101,7 @@ export function RadarScanner({ signals, className }: RadarScannerProps) {
           {signals.map((signal) => (
             <SignalDot key={signal.id} signal={signal} />
           ))}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[var(--accent-primary)] shadow-[0_0_8px_var(--accent-primary)]" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[var(--accent-primary)] shadow-glow-sm" />
         </div>
         {quadrantLabels.map((q) => (
           <span
