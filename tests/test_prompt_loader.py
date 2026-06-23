@@ -78,6 +78,55 @@ class TestPromptLoader:
                 pytest.fail(f"{key}: {errs}")
         assert len(errors) == 0, f"Found {len(errors)} prompts with errors: {errors}"
 
+    def test_get_required_returns_entry(self, loader):
+        entry = loader.get_required("aria_system", category="system")
+        assert entry is not None
+        assert entry.name == "aria_system"
+
+    def test_get_required_raises_for_missing(self, loader):
+        from ai.prompt_loader import PromptLoaderError
+        with pytest.raises(PromptLoaderError):
+            loader.get_required("nonexistent_prompt")
+
+    def test_count_prompts(self, loader):
+        counts = loader.count_prompts()
+        assert "system" in counts
+        assert "agents" in counts
+        assert "templates" in counts
+        assert counts["system"] >= 1
+        assert counts["agents"] >= 6
+        assert counts["templates"] >= 1
+
+    def test_list_categories(self, loader):
+        cats = loader.list_categories()
+        assert len(cats) >= 3
+        assert "system" in cats
+        assert "agents" in cats
+        assert "templates" in cats
+
+    def test_reload(self, loader):
+        before = loader.count_prompts()
+        loader.reload()
+        after = loader.count_prompts()
+        assert before == after
+
+    def test_get_system_entry_properties(self, loader):
+        entry = loader.get_system("aria_system")
+        assert entry is not None
+        assert entry.category == "system"
+        assert entry.system_prompt == entry.body
+
+    def test_get_agent_entry_properties(self, loader):
+        entry = loader.get_agent("briefing_agent")
+        assert entry is not None
+        assert entry.category == "agents"
+        assert entry.agent_prompt == entry.body
+
+    def test_gate_loaded_once(self):
+        """Ensure PromptLoader singleton is already populated (gate import)."""
+        from ai.prompt_loader import prompts
+        assert prompts.count_prompts()["system"] >= 1
+
 
 class TestPromptEntry:
     def test_has_body(self):
@@ -105,3 +154,56 @@ class TestPromptEntry:
             Path("test.md"),
         )
         assert entry.render() == "Plain text prompt"
+
+    def test_validate_missing_required_field(self):
+        entry = PromptEntry({}, "body", Path("test.md"))
+        errors = entry.validate()
+        assert "Missing required field: version" in errors
+        assert "Missing required field: status" in errors
+        assert "Missing required field: model" in errors
+        assert "Missing required field: max_tokens" in errors
+        assert "Missing required field: temperature" in errors
+
+    def test_validate_invalid_status(self):
+        entry = PromptEntry(
+            {"version": "1.0", "status": "invalid", "model": "m", "max_tokens": 100, "temperature": 0.5},
+            "body", Path("test.md"),
+        )
+        errors = entry.validate()
+        assert any("Invalid status" in e for e in errors)
+
+    def test_validate_max_tokens_not_number(self):
+        entry = PromptEntry(
+            {"version": "1.0", "status": "active", "model": "m", "max_tokens": "not-a-number", "temperature": 0.5},
+            "body", Path("test.md"),
+        )
+        errors = entry.validate()
+        assert any("max_tokens must be a number" in e for e in errors)
+
+    def test_validate_temperature_not_number(self):
+        entry = PromptEntry(
+            {"version": "1.0", "status": "active", "model": "m", "max_tokens": 100, "temperature": "hot"},
+            "body", Path("test.md"),
+        )
+        errors = entry.validate()
+        assert any("temperature must be a number" in e for e in errors)
+
+    def test_parse_no_frontmatter(self):
+        from ai.prompt_loader import PromptLoader
+        loader = PromptLoader(prompts_dir=Path("."))
+        content = "# Just a body\nNo frontmatter here."
+        frontmatter, body = loader._parse_frontmatter(content)
+        assert frontmatter == {}
+        assert "No frontmatter" in body
+
+    def test_validate_frontmatter_not_found(self, loader):
+        errors = loader.validate_frontmatter("nonexistent_prompt")
+        assert errors == ["Prompt not found"]
+
+    def test_validate_all_with_errors(self, tmp_path):
+        bad = tmp_path / "bad.md"
+        bad.write_text("---\nversion: 1.0\n---\nBody")
+        from ai.prompt_loader import PromptLoader
+        loader = PromptLoader(prompts_dir=tmp_path)
+        all_errors = loader.validate_all()
+        assert len(all_errors) > 0
