@@ -5,13 +5,12 @@ from database.schemas.prompt_schema import PromptMeta, PromptDetail, PromptRende
 from database.schemas.prompt_history import PromptHistoryResponse, PromptCommit
 from ai.prompt_loader import prompts
 import subprocess
-import json
 from pathlib import Path
 
 router = APIRouter()
 
 
-@router.get("/", response_model=PromptListResponse)
+@router.get("/", summary="List all prompts", response_model=PromptListResponse)
 async def list_prompts(current_user=Depends(get_current_user)):
     try:
         entries = []
@@ -33,7 +32,7 @@ async def list_prompts(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail="Failed to load prompts")
 
 
-@router.get("/{name}", response_model=PromptDetail)
+@router.get("/{name}", summary="Get prompt details by name", response_model=PromptDetail)
 async def get_prompt(name: str, current_user=Depends(get_current_user)):
     entry = prompts.get(name)
     if not entry:
@@ -49,7 +48,7 @@ async def get_prompt(name: str, current_user=Depends(get_current_user)):
     )
 
 
-@router.post("/{name}/render", response_model=PromptRenderResponse)
+@router.post("/{name}/render", summary="Render a prompt with variables", response_model=PromptRenderResponse)
 async def render_prompt(name: str, req: PromptRenderRequest, current_user=Depends(get_current_user)):
     entry = prompts.get(name)
     if not entry:
@@ -63,7 +62,7 @@ async def render_prompt(name: str, req: PromptRenderRequest, current_user=Depend
         raise HTTPException(status_code=500, detail=f"Render failed: {e}")
 
 
-@router.get("/{name}/history", response_model=PromptHistoryResponse)
+@router.get("/{name}/history", summary="Get prompt revision history", response_model=PromptHistoryResponse)
 async def get_prompt_history(name: str, current_user=Depends(get_current_user)):
     entry = prompts.get(name)
     if not entry:
