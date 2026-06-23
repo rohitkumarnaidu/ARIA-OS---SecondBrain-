@@ -9,7 +9,7 @@
 | Document ID | SB-SKILLDB-ARCH-001 |
 | Version | 1.0.0 |
 | Status | Active |
-| Last Updated | 2026-06-13 |
+| Last Updated | 2026-06-22 |
 | Classification | Internal -- Architecture Reference |
 | Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture -- 24, 22, 23, 17, 18, 19, 31, 32) |
 | Companion Docs | `docs/ai/skills/SkillEvidence.md` (Evidence Database Design -- 10) |
@@ -1415,6 +1415,30 @@ Nullable columns (by design):
 - completed_at, started_at (user_skill_assessments) -- null until complete
 - expires_at (user_skill_evidence, skill_ai_recommendations) -- optional expiry
 
+### 6.4 EXCLUDE Constraints
+
+Exclusion constraints enforce business rules that cannot be expressed with simple uniqueness or check constraints. They use GiST indexes for efficient overlapping-interval detection.
+
+| Table | Constraint | Using | Purpose |
+|---|---|---|---|
+| skill_relationships | no_overlapping_prereqs | gist (from_skill_id WITH =, to_skill_id WITH =, relationship_type WITH =) | Prevent duplicate relationship edges with same type |
+| user_skill_targets | no_overlapping_active_targets | gist (user_skill_id WITH =, timerange(created_at, COALESCE(target_date, 'infinity'::date)) WITH &&) | Prevent overlapping active target periods for the same skill |
+| skill_certifications | unique_cert_per_provider | gist (name WITH =, provider WITH =, level_mapped WITH =) | No duplicate certs at the same level from the same provider |
+| skill_market_data | no_overlapping_market_periods | gist (skill_id WITH =, daterange(recorded_at, recorded_at + '90 days'::interval) WITH &&) | At most one market data snapshot per rolling 90-day window |
+
+EXCLUDE constraints are preferred over application-level validation for overlapping-period checks because they guarantee integrity at the database level regardless of the client or access pattern.
+
+```sql
+-- Example: prevent overlapping active target periods
+ALTER TABLE user_skill_targets
+ADD CONSTRAINT no_overlapping_active_targets
+EXCLUDE USING gist (
+    user_skill_id WITH =,
+    timerange(created_at, COALESCE(target_date, 'infinity'::date)) WITH &&
+)
+WHERE (status = 'active' OR status = 'in_progress');
+```
+
 ---
 
 ## 7. Audit Tables
@@ -2328,6 +2352,42 @@ PgBouncer configurations per workload profile:
 | CDN (Edge) | Taxonomy (static) | 24 hours | Taxonomy version header |
 | pg_stat_statements | Query plan cache | Unlimited | On analyze |
 
+Cache invalidation follows the write-through + publish-subscribe pattern:
+
+```sql
+-- PostgreSQL LISTEN/NOTIFY for taxonomy cache invalidation
+CREATE OR REPLACE FUNCTION fn_notify_taxonomy_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM pg_notify('taxonomy_changed',
+        jsonb_build_object(
+            'table', TG_TABLE_NAME,
+            'operation', TG_OP,
+            'skill_id', COALESCE(NEW.skill_id, OLD.skill_id),
+            'changed_at', EXTRACT(EPOCH FROM NOW()) * 1000
+        )::TEXT
+    );
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_skills_notify AFTER INSERT OR UPDATE OR DELETE ON skills
+    FOR EACH ROW EXECUTE FUNCTION fn_notify_taxonomy_change();
+CREATE TRIGGER trg_categories_notify AFTER INSERT OR UPDATE OR DELETE ON skill_categories
+    FOR EACH ROW EXECUTE FUNCTION fn_notify_taxonomy_change();
+```
+
+Key Redis operations for cache management:
+
+| Operation | Command | Example |
+|---|---|---|
+| Taxonomy tree GET/SET | JSON.GET/JSON.SET | `JSON.SET taxonomy:root $ tree_data` |
+| User skill inventory | HGETALL/HSET | `HSET user:${id}:skills skill_id level` |
+| Market data | GET/SET | `SET market:${skill_id} ${serialized}` |
+| Invalidation publish | PUBLISH | `PUBLISH taxonomy_changed '{"skill_id":"abc"}'` |
+| Rate limiter | INCR + EXPIRE | `INCR rate:${user_id}:${endpoint}` |
+| Session store | SETEX | `SETEX session:${token} 86400 ${user_data}` |
+
 ### 12.5 Partitioning Details
 
 ```sql
@@ -2379,6 +2439,77 @@ Archive process:
 4. Upload to S3 with lifecycle policy (S3 Standard -> Glacier -> Deep Archive)
 5. Archive metadata inserted into skill_audit_archive_index
 6. Dropped from PostgreSQL after confirmation
+
+### 12.8 Backup & Recovery Strategy
+
+| Tier | Schedule | Type | Retention | RPO | RTO |
+|---|---|---|---|---|---|
+| Daily | 2 AM UTC | pg_dump (full) | 30 days | 24 hours | 2 hours |
+| Hourly | :00 mark | WAL archiving | 7 days | 1 hour | 30 min |
+| Real-time | Continuous | Streaming replica | N/A | < 1 second | 10 seconds (failover) |
+| Monthly | 1st of month | pg_dump (full, compressed) | 12 months | 30 days | 4 hours |
+| Annual | Jan 1 | pg_dump (full, encrypted) | 7 years | 1 year | 8 hours |
+
+Backup storage layout:
+```
+/backups/skills/
+├── daily/           # Compressed pg_dump, per-table
+│   └── YYYY-MM-DD/
+│       ├── taxonomy.sql.gz
+│       ├── user_skills.sql.gz
+│       ├── evidence.sql.gz
+│       ├── market.sql.gz
+│       └── events.sql.gz
+├── wal/             # WAL segments via pg_receivewal
+│   └── YYYY/MM/DD/
+│       └── HH/
+└── monthly/         # Shared with pgbackrest
+    └── skills-monthly-YYYY-MM.sql.gz
+```
+
+Recovery procedures by failure scenario:
+
+| Failure | Procedure | Target RTO |
+|---|---|---|
+| Corrupted table | Table-level restore from daily dump + WAL replay | 30 min |
+| Accidental data loss | Point-in-time recovery to timestamp | 1 hour |
+| Full instance failure | Promote streaming replica + rebuild | 10 min |
+| Region outage | Cross-region replica promotion | 5 min |
+| Logical error (bug) | Timeline fork + targeted rollback | 2 hours |
+
+### 12.9 Maintenance & pg_cron Job Scheduling
+
+| Job | Schedule | SQL Command | Purpose |
+|---|---|---|---|
+| REFRESH analytics snapshots | 0 0 * * * | `REFRESH MATERIALIZED VIEW CONCURRENTLY mv_org_skill_coverage` | Update org coverage |
+| REFRESH demand MVs | 0 6 * * * | `SELECT refresh_demand_matviews()` | Update market demand views |
+| Purge stale forecasts | 0 3 * * 0 | `DELETE FROM skill_forecasts WHERE expires_at < EXTRACT(EPOCH FROM NOW()) * 1000` | Remove expired forecasts |
+| Detach old partitions | 0 4 1 * * | `SELECT partman.undo_partition('public.skill_audit_log', 1, true)` | Archive audit data |
+| Update stale flags | 0 2 * * * | `UPDATE user_skills SET is_stale = true WHERE ...` | Mark skills needing review |
+| Recompute health scores | 0 5 * * 1 | `UPDATE skill_market_data SET skill_health = ...` | Refresh composite scores |
+| Vacuum analyze | 0 1 * * 6 | `VACUUM ANALYZE user_skills, user_skill_evidence` | Update query statistics |
+| Reindex bloat check | 0 7 * * 0 | `REINDEX INDEX CONCURRENTLY ...` | Rebuild bloated indexes |
+
+```sql
+-- Register pg_cron jobs (requires pg_cron extension)
+SELECT cron.schedule('refresh-org-coverage', '0 0 * * *',
+    $$REFRESH MATERIALIZED VIEW CONCURRENTLY mv_org_skill_coverage$$
+);
+SELECT cron.schedule('refresh-demand-mv', '0 6 * * *',
+    $$REFRESH MATERIALIZED VIEW CONCURRENTLY mv_top_demand_skills$$
+);
+SELECT cron.schedule('purge-expired-forecasts', '0 3 * * 0',
+    $$DELETE FROM skill_forecasts WHERE expires_at < EXTRACT(EPOCH FROM NOW()) * 1000$$
+);
+SELECT cron.schedule('update-stale-skills', '0 2 * * *',
+    $$UPDATE user_skills SET is_stale = true
+      WHERE updated_at < EXTRACT(EPOCH FROM NOW() - INTERVAL '90 days') * 1000
+      AND is_stale = false$$
+);
+SELECT cron.schedule('vacuum-skills-tables', '0 1 * * 6',
+    $$VACUUM ANALYZE user_skills, user_skill_evidence, skill_market_data$$
+);
+```
 
 ---
 
@@ -2572,6 +2703,19 @@ FROM user_skills;
 | pg_stat_statements | PostgreSQL extension for tracking query execution statistics. |
 | BRIN Index | Block Range INdex. Lightweight index for naturally ordered, large tables (e.g., time-series). Alternative to B-tree for partitioned tables. |
 | Covering Index | Index that includes all columns needed by a query, allowing index-only scans. |
+| CTE | Common Table Expression. Named subquery defined with `WITH` for improved readability and recursive queries. |
+| Window Function | Function that performs a calculation across a set of rows related to the current row (`ROW_NUMBER`, `RANK`, `LAG`, `LEAD`). |
+| LATERAL | PostgreSQL keyword allowing a subquery to reference columns from preceding `FROM` items, enabling row-by-row subquery execution. |
+| UPSERT | `INSERT ... ON CONFLICT DO UPDATE`. Atomic insert-or-update operation using PostgreSQL's `ON CONFLICT` clause. |
+| SERIALIZABLE | Highest PostgreSQL isolation level, guaranteeing complete transaction isolation with predicate locking. |
+| PL/pgSQL | PostgreSQL procedural language for writing functions, triggers, and stored procedures. |
+| MVCC | Multiversion Concurrency Control. PostgreSQL's mechanism for concurrent transaction isolation using row versioning. |
+| WAL | Write-Ahead Log. PostgreSQL's transaction log for crash recovery, replication, and point-in-time recovery. |
+| Logical Replication | PostgreSQL replication method that streams changes at the row level, supporting selective table replication and cross-version upgrades. |
+| FDW | Foreign Data Wrapper. PostgreSQL extension for querying external data sources as local tables. |
+| Partial Index | Index with a `WHERE` clause, indexing only a subset of rows for smaller index size and faster queries. |
+| pgcrypto | PostgreSQL extension providing cryptographic functions (hashing, encryption, random data). |
+| SECURITY DEFINER | Function execution mode where the function runs with the privileges of its owner, used for controlled privilege escalation. |
 
 ---
 
@@ -3366,3 +3510,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_org_coverage ON mv_org_skill_coverage(o
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_top_demand ON mv_top_demand_skills(skill_id);
 
 COMMIT;
+
+---
+
+## Revision History
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| 1.0.0 | 2026-06-13 | Skill Database Architecture Team | Initial release. 31 tables across 6 groups, 4 Mermaid ERDs, 43 SQL code blocks, 786-line DDL script, 4-phase migration guide, Neo4j graph schema mapping, RLS with 8 security roles, 19-index indexing strategy, complete audit/event/analytics tables. |

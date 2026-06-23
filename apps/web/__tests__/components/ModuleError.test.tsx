@@ -3,6 +3,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ModuleError } from '@/components/shared/ModuleError'
 
+vi.mock('next/link', () => ({
+  default: function MockLink({ children, href, ...props }: any) {
+    return <a href={href} {...props}>{children}</a>
+  },
+}))
+
 describe('ModuleError', () => {
   it('renders error message', () => {
     render(<ModuleError error={new Error('Something broke')} reset={() => {}} />)

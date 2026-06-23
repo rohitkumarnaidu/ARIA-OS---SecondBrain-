@@ -398,3 +398,48 @@ These are defined in `globals.css` `@layer components` and combine multiple toke
 | `.text-gradient`     | #F0F2F5 -> #8B92A5 (subtle silver)           |
 | `.text-gradient-accent` | #6366F1 -> #00FFA3 (indigo to neon)       |
 | `.text-gradient-neon`| #00FFA3 -> #6366F1 -> #FF3366 (tri-color)   |
+
+---
+
+## Token Usage Rules (Code Enforcement)
+
+These rules are enforced by `npm run token:check` in CI. Violations will fail the build.
+
+### DO — Use design tokens (CSS variables)
+
+```tsx
+// ✅ Correct — references tokens from tailwind.config.js
+<div className="bg-background-card text-text-primary border-border-default" />
+<button className="shadow-glow-sm hover:shadow-glow" />
+<div className="bg-accent-primary/10 text-accent-primary" />
+```
+
+### DON'T — Hardcode color values
+
+```tsx
+// ❌ Wrong — will FAIL CI token:check
+<div className="bg-[#13151A] text-[#F1F5F9] border-[#1E293B]" />
+<button className="shadow-[0_0_10px_rgba(99,102,241,0.3)]" />
+```
+
+### DO — Use `color-mix()` for dynamic opacity
+
+```tsx
+// ✅ Correct — uses CSS color-mix with token
+<div className="bg-[color-mix(in_oklab,var(--accent-primary)_10%,transparent)]" />
+```
+
+### DON'T — Use arbitrary opacity syntax on tokens
+
+```tsx
+// ❌ Wrong — hard to maintain, bypasses token system
+<div className="bg-[#6366F1]/10" />
+```
+
+### Run the check locally
+
+```bash
+npm run token:check       # Scans all .tsx/.css for hardcoded colors — fails on violations
+npm run token:check:fix   # Same scan, shows auto-fix suggestions
+npm run figma:sync        # Sync Figma tokens → .generated-tokens.css for review
+```
