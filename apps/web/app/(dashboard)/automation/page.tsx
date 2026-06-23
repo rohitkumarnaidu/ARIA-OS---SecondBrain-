@@ -199,7 +199,7 @@ function TimelineView({
           {/* Current time indicator */}
           <motion.div
             aria-hidden="true"
-            className="absolute top-0 bottom-6 w-px bg-accent-secondary/80 shadow-[0_0_8px_var(--accent-secondary)]"
+            className="absolute top-0 bottom-6 w-px bg-accent-secondary/80 shadow-neon-sm"
             style={{ left: `${currentPos}%`, translateX: '-50%' }}
           >
             <motion.div

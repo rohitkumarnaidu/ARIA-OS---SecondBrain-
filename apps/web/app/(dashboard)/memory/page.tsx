@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Database, RefreshCw, Download, Trash2, Search, BookOpen, Clock, User, TrendingUp, Lightbulb, MessageSquare, Code, Target, Zap, ChevronDown, ChevronUp } from 'lucide-react'
+import { Brain, Database, RefreshCw, Download, Trash2, Search, BookOpen, Clock, User, TrendingUp, Lightbulb, MessageSquare, Code, Target, Zap, ChevronDown, ChevronUp, Plus, Pencil } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -11,35 +11,27 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { cn } from '@/components/ui/utils'
 import { useMemoryStore } from '@/lib/stores'
+import { MemoryEditModal } from '@/components/memory/MemoryEditModal'
+import type { Memory, MemoryUpdate } from '@/lib/types'
 
-type MemoryCategory = 'all' | 'preferences' | 'patterns' | 'facts'
-type Confidence = 'high' | 'medium' | 'low'
-
-interface MemoryItem {
-  id: string
-  category: Exclude<MemoryCategory, 'all'>
-  content: string
-  fullContent: string
-  confidence: Confidence
-  createdAt: string
-  sourceIcon: string
-  sourceContext: string
-}
+type MemoryCategory = 'all' | 'preference' | 'pattern' | 'fact' | 'context' | 'learning'
+type MemoryImportance = 'all' | 'low' | 'medium' | 'high' | 'critical'
 
 const CATEGORY_TABS: { key: MemoryCategory; label: string; icon: typeof Brain }[] = [
   { key: 'all', label: 'All', icon: Database },
-  { key: 'preferences', label: 'Preferences', icon: User },
-  { key: 'patterns', label: 'Patterns', icon: TrendingUp },
-  { key: 'facts', label: 'Facts', icon: BookOpen },
+  { key: 'preference', label: 'Preferences', icon: User },
+  { key: 'pattern', label: 'Patterns', icon: TrendingUp },
+  { key: 'fact', label: 'Facts', icon: BookOpen },
+  { key: 'context', label: 'Context', icon: Brain },
+  { key: 'learning', label: 'Learning', icon: Lightbulb },
 ]
 
-const CONFIDENCE_CONFIG: Record<Confidence, { label: string; variant: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline' }> = {
-  high: { label: 'High', variant: 'success' },
-  medium: { label: 'Medium', variant: 'warning' },
-  low: { label: 'Low', variant: 'outline' },
+const IMPORTANCE_CONFIG: Record<string, { label: string; variant: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline'; color: string }> = {
+  critical: { label: 'Critical', variant: 'error', color: 'var(--accent-danger)' },
+  high: { label: 'High', variant: 'warning', color: 'var(--accent-warning)' },
+  medium: { label: 'Medium', variant: 'info', color: 'var(--accent-primary)' },
+  low: { label: 'Low', variant: 'outline', color: 'var(--text-tertiary)' },
 }
-
-
 
 const SOURCE_ICONS: Record<string, typeof Brain> = {
   brain: Brain,
@@ -65,6 +57,12 @@ function getRelativeDate(dateStr: string): string {
   return `${Math.floor(diffDays / 30)} months ago`
 }
 
+function formatValue(val: unknown): string {
+  if (typeof val === 'string') return val
+  if (val === null || val === undefined) return ''
+  try { return JSON.stringify(val) } catch { return String(val) }
+}
+
 const containerVariants = {
   hidden: {},
   visible: {
@@ -80,24 +78,30 @@ const statVariants = {
 export default function MemoryPage(): JSX.Element {
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState<MemoryCategory>('all')
+  const [importanceFilter, setImportanceFilter] = useState<MemoryImportance>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [allowLearning, setAllowLearning] = useState(true)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
-  const { items: storeItems, loading, error, fetch, remove } = useMemoryStore()
-
-  const memories = storeItems.map((m: any) => ({
-      id: m.id,
-      category: m.type === 'preference' || m.type === 'pattern' || m.type === 'fact' ? m.type : 'patterns',
-      content: typeof m.value === 'string' ? m.value : m.key,
-      fullContent: `${m.key}: ${JSON.stringify(m.value)}`,
-      confidence: m.importance === 'high' || m.importance === 'critical' ? 'high' as const : m.importance === 'medium' ? 'medium' as const : 'low' as const,
-      createdAt: m.created_at,
-      sourceIcon: 'brain',
-      sourceContext: `Importance: ${m.importance}`,
-    }))
+  const [editTarget, setEditTarget] = useState<Memory | null>(null)
+  const [editOpen, setEditOpen] = useState(false)
+  const [showMemoryGraph, setShowMemoryGraph] = useState(false)
+  const { items: storeItems, loading, error, fetch, remove, update } = useMemoryStore()
 
   useEffect(() => { setMounted(true); fetch() }, [fetch])
+
+  const handleEdit = useCallback((m: Memory) => {
+    setEditTarget(m)
+    setEditOpen(true)
+  }, [])
+
+  const handleSaveEdit = useCallback(async (id: string, data: MemoryUpdate) => {
+    await update(id, data)
+  }, [update])
+
+  const handleDeleteEdit = useCallback(async (id: string) => {
+    await remove(id)
+  }, [remove])
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedIds((prev) => {
@@ -116,46 +120,55 @@ export default function MemoryPage(): JSX.Element {
   }, [storeItems, remove])
 
   const handleExportMemories = useCallback(() => {
-    const blob = new Blob([JSON.stringify(memories, null, 2)], { type: 'application/json' })
+    const blob = new Blob([JSON.stringify(storeItems, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = 'aria-memories.json'
     a.click()
     URL.revokeObjectURL(url)
-  }, [memories])
+  }, [storeItems])
 
   const filteredMemories = useMemo(() => {
-    let result = memories
+    let result = storeItems
     if (activeTab !== 'all') {
-      result = result.filter((m) => m.category === activeTab)
+      result = result.filter((m) => m.type === activeTab)
+    }
+    if (importanceFilter !== 'all') {
+      result = result.filter((m) => m.importance === importanceFilter)
     }
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase()
       result = result.filter(
         (m) =>
-          m.content.toLowerCase().includes(q) ||
-          m.fullContent.toLowerCase().includes(q) ||
-          m.category.toLowerCase().includes(q)
+          m.key.toLowerCase().includes(q) ||
+          formatValue(m.value).toLowerCase().includes(q) ||
+          m.type.toLowerCase().includes(q) ||
+          (m.tags ?? []).some(t => t.toLowerCase().includes(q))
       )
     }
     return result
-  }, [memories, activeTab, searchQuery])
+  }, [storeItems, activeTab, importanceFilter, searchQuery])
 
   const stats = useMemo(() => ({
-    total: memories.length,
-    preferences: memories.filter((m) => m.category === 'preferences').length,
-    patterns: memories.filter((m) => m.category === 'patterns').length,
-    facts: memories.filter((m) => m.category === 'facts').length,
-    lastUpdated: memories.length > 0
-      ? getRelativeDate([...memories].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0].createdAt)
+    total: storeItems.length,
+    critical: storeItems.filter((m) => m.importance === 'critical').length,
+    high: storeItems.filter((m) => m.importance === 'high').length,
+    medium: storeItems.filter((m) => m.importance === 'medium').length,
+    low: storeItems.filter((m) => m.importance === 'low').length,
+    grouped: storeItems.reduce((acc, m) => {
+      acc[m.type] = (acc[m.type] || 0) + 1
+      return acc
+    }, {} as Record<string, number>),
+    lastUpdated: storeItems.length > 0
+      ? getRelativeDate([...storeItems].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0].created_at)
       : 'Never',
-  }), [memories])
+  }), [storeItems])
 
   const statCards = useMemo(() => [
     { label: 'Total Memories', value: stats.total, icon: Database, color: 'var(--accent-primary)' },
-    { label: 'Preferences', value: stats.preferences, icon: User, color: 'var(--accent-secondary)' },
-    { label: 'Patterns', value: stats.patterns, icon: TrendingUp, color: 'var(--accent-warning)' },
+    { label: 'High/Critical', value: stats.high + stats.critical, icon: Brain, color: 'var(--accent-warning)' },
+    { label: 'Types', value: Object.keys(stats.grouped).length, icon: BookOpen, color: 'var(--accent-secondary)' },
     { label: 'Last Updated', value: stats.lastUpdated, icon: Clock, color: 'var(--accent-info)' },
   ], [stats])
 
@@ -222,40 +235,63 @@ export default function MemoryPage(): JSX.Element {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search memories..."
+                placeholder="Search memories by key, value, type, or tags..."
                 className="w-full h-10 pl-10 pr-4 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                 aria-label="Search memories"
               />
             </div>
 
-            <div className="flex gap-1 overflow-x-auto pb-1" role="tablist" aria-label="Memory categories">
-              {CATEGORY_TABS.map((tab) => {
-                const Icon = tab.icon
-                const isActive = activeTab === tab.key
-                const count = tab.key === 'all'
-                  ? memories.length
-                  : memories.filter((m) => m.category === tab.key).length
-                return (
-                  <button
-                    key={tab.key}
-                    role="tab"
-                    aria-selected={isActive}
-                    aria-controls={`panel-${tab.key}`}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={cn(
-                      'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-1',
-                      isActive
-                        ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20'
-                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--background-elevated)] border border-transparent'
-                    )}
-                  >
-                    <Icon size={14} />
-                    {tab.label}
-                    <span className="text-[10px] opacity-60">({count})</span>
-                  </button>
-                )
-              })}
+            <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex gap-1 overflow-x-auto pb-1" role="tablist" aria-label="Memory categories">
+                {CATEGORY_TABS.map((tab) => {
+                  const Icon = tab.icon
+                  const isActive = activeTab === tab.key
+                  const count = tab.key === 'all'
+                    ? storeItems.length
+                    : storeItems.filter((m) => m.type === tab.key).length
+                  return (
+                    <button
+                      key={tab.key}
+                      role="tab"
+                      aria-selected={isActive}
+                      aria-controls={`panel-${tab.key}`}
+                      onClick={() => setActiveTab(tab.key)}
+                      className={cn(
+                        'flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-1',
+                        isActive
+                          ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20'
+                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--background-elevated)] border border-transparent'
+                      )}
+                    >
+                      <Icon size={14} />
+                      {tab.label}
+                      <span className="text-[10px] opacity-60">({count})</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className="flex items-center gap-1 ml-auto" role="group" aria-label="Importance filter">
+                {(['all', 'critical', 'high', 'medium', 'low'] as const).map((level) => {
+                  const isActive = importanceFilter === level
+                  return (
+                    <button
+                      key={level}
+                      onClick={() => setImportanceFilter(level)}
+                      className={cn(
+                        'px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
+                        isActive
+                          ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20'
+                          : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-transparent'
+                      )}
+                    >
+                      {level === 'all' ? 'All' : IMPORTANCE_CONFIG[level].label}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -278,7 +314,7 @@ export default function MemoryPage(): JSX.Element {
                 }
                 description={
                   searchQuery
-                    ? 'Try a different search term'
+                    ? 'Try a different search term or clear the importance filter'
                     : `Continue using ARIA to build your profile — ${activeTab} will appear here as they're detected`
                 }
               />
@@ -288,7 +324,8 @@ export default function MemoryPage(): JSX.Element {
               <AnimatePresence mode="popLayout">
                 {filteredMemories.map((memory, index) => {
                   const isExpanded = expandedIds.has(memory.id)
-                  const Icon = SOURCE_ICONS[memory.sourceIcon] || Brain
+                  const impConf = IMPORTANCE_CONFIG[memory.importance] ?? IMPORTANCE_CONFIG.medium
+                  const tags = memory.tags ?? []
 
                   return (
                     <motion.div
@@ -299,54 +336,64 @@ export default function MemoryPage(): JSX.Element {
                       exit={{ opacity: 0, scale: 0.97 }}
                       transition={{ delay: index * 0.03, type: 'spring', stiffness: 250, damping: 25 }}
                     >
-                      <Card
-                        variant="interactive"
-                        onClick={() => toggleExpand(memory.id)}
-                        className="h-full"
-                      >
+                      <Card className="h-full group relative">
                         <CardContent>
-                          <div className="flex items-start gap-3 mb-2">
-                            <Badge
-                              variant={
-                                memory.category === 'preferences'
-                                  ? 'default'
-                                  : memory.category === 'patterns'
-                                    ? 'info'
-                                    : 'success'
-                              }
-                              className="shrink-0"
-                            >
-                              {memory.category}
+                          <div className="flex items-start gap-2 mb-2">
+                            <Badge variant={memory.type === 'preference' ? 'default' : memory.type === 'pattern' ? 'info' : memory.type === 'fact' ? 'success' : memory.type === 'context' ? 'warning' : 'outline'} className="shrink-0">
+                              {memory.type}
                             </Badge>
-                            <Badge variant={CONFIDENCE_CONFIG[memory.confidence].variant}>
-                              {CONFIDENCE_CONFIG[memory.confidence].label}
+                            <Badge variant={impConf.variant}>
+                              {impConf.label}
                             </Badge>
+                            {tags.slice(0, 3).map(tag => (
+                              <Badge key={tag} variant="outline" className="text-[10px]">
+                                {tag}
+                              </Badge>
+                            ))}
                             <span className="text-xs text-[var(--text-tertiary)] ml-auto shrink-0">
-                              {getRelativeDate(memory.createdAt)}
+                              {getRelativeDate(memory.created_at)}
                             </span>
                           </div>
 
-                          <p className={cn(
-                            'text-sm text-[var(--text-primary)] leading-relaxed',
-                            !isExpanded && 'line-clamp-2'
-                          )}>
-                            {isExpanded ? memory.fullContent : memory.content}
-                          </p>
+                          <div className="flex items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-medium text-[var(--text-secondary)] mb-0.5 font-mono">
+                                {memory.key}
+                              </p>
+                              <p className={cn(
+                                'text-sm text-[var(--text-primary)] leading-relaxed',
+                                !isExpanded && 'line-clamp-2'
+                              )}>
+                                {formatValue(memory.value)}
+                              </p>
+                            </div>
+                          </div>
 
                           {isExpanded && (
                             <motion.div
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
-                              className="mt-3 pt-3 border-t border-[var(--border)]"
+                              className="mt-3 pt-3 border-t border-[var(--border)] space-y-2"
                             >
-                              <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-                                <Icon size={12} />
-                                <span>{memory.sourceContext}</span>
+                              <div className="text-xs text-[var(--text-tertiary)] font-mono">
+                                ID: {memory.id}
                               </div>
+                              {memory.expires_at && (
+                                <div className="text-xs text-[var(--accent-warning)]">
+                                  Expires: {new Date(memory.expires_at).toLocaleDateString()}
+                                </div>
+                              )}
                             </motion.div>
                           )}
 
-                          <div className="flex items-center justify-end mt-2">
+                          <div className="flex items-center justify-end gap-1 mt-2">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleEdit(memory) }}
+                              className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] hover:bg-[var(--background-elevated)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                              aria-label="Edit memory"
+                            >
+                              <Pencil size={12} />
+                            </button>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -356,13 +403,9 @@ export default function MemoryPage(): JSX.Element {
                               aria-label={isExpanded ? 'Collapse memory' : 'Expand memory'}
                             >
                               {isExpanded ? (
-                                <>
-                                  Show less <ChevronUp size={12} />
-                                </>
+                                <>Show less <ChevronUp size={12} /></>
                               ) : (
-                                <>
-                                  Show more <ChevronDown size={12} />
-                                </>
+                                <>Show more <ChevronDown size={12} /></>
                               )}
                             </button>
                           </div>
@@ -422,7 +465,7 @@ export default function MemoryPage(): JSX.Element {
                   variant="outline"
                   size="sm"
                   onClick={handleExportMemories}
-                  disabled={memories.length === 0}
+                  disabled={storeItems.length === 0}
                   aria-label="Export memories as JSON"
                 >
                   <Download size={14} />
@@ -442,7 +485,7 @@ export default function MemoryPage(): JSX.Element {
                   size="sm"
                   className="text-[var(--accent-error)] hover:bg-[var(--accent-error)]/10"
                   onClick={() => setShowClearConfirm(true)}
-                  disabled={memories.length === 0}
+                  disabled={storeItems.length === 0}
                   aria-label="Clear all memories"
                 >
                   <Trash2 size={14} />
@@ -453,6 +496,14 @@ export default function MemoryPage(): JSX.Element {
           </CardContent>
         </Card>
       </motion.div>
+
+      <MemoryEditModal
+        memory={editTarget}
+        open={editOpen}
+        onClose={() => { setEditOpen(false); setEditTarget(null) }}
+        onSave={handleSaveEdit}
+        onDelete={handleDeleteEdit}
+      />
 
       <AnimatePresence>
         {showClearConfirm && (
