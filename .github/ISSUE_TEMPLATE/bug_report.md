@@ -34,3 +34,12 @@ What actually happened (include screenshots if applicable).
 - [ ] P3 — Cosmetic (visual only)
 
 ## Logs
+```logs
+Paste any error logs from console or Sentry
+```
+
+## Possible Solution
+Optional: suggest a fix or root cause.
+
+## Related Issues
+#issue-number
