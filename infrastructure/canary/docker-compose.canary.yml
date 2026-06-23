@@ -1,0 +1,59 @@
+version: "3.8"
+
+# Canary deployment override
+# Usage: docker compose -f docker-compose.yml -f infrastructure/canary/docker-compose.canary.yml up -d
+
+services:
+  api-canary:
+    image: ghcr.io/anomalyco/aria-api:canary
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    env_file:
+      - ../../.env
+    environment:
+      - SERVICE_NAME=api-canary
+      - FEATURE_FLAG_CANARY=canary.api-v2
+      - ROLLOUT_PERCENTAGE=5
+    labels:
+      app: aria-os
+      tier: canary
+      traffic.weight: "5"
+      feature.flag: canary.api-v2
+    depends_on:
+      - supabase
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - aria-network
+
+  web-canary:
+    image: ghcr.io/anomalyco/aria-web:canary
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    env_file:
+      - ../../.env
+    environment:
+      - NEXT_PUBLIC_FEATURE_FLAG_CANARY=true
+    labels:
+      app: aria-os
+      tier: canary
+      feature.flag: canary.new-dashboard
+    depends_on:
+      - api-canary
+    restart: unless-stopped
+    networks:
+      - aria-network
+
+networks:
+  aria-network:
+    external: true
