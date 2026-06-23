@@ -37,6 +37,7 @@ import { SuggestionChips } from '@/components/ai/SuggestionChips'
 import type { SuggestionChip } from '@/components/ai/SuggestionChips'
 import { useChatStore } from '@/lib/stores'
 import { createLogger } from '@/lib/utils/logger'
+import { FeedbackWidget } from '@/components/feedback/FeedbackWidget'
 
 /* ── Types ────────────────────────────────────────── */
 
@@ -607,7 +608,12 @@ export default function ChatPage() {
                                       </p>
                                     </motion.div>
                                   )}
-                                </AnimatePresence>
+                                  </AnimatePresence>
+                              </div>
+                            )}
+                            {msg.role === 'assistant' && (
+                              <div className="mt-2 flex items-center justify-between">
+                                <FeedbackWidget source="chat" targetId={msg.id} />
                               </div>
                             )}
                           </div>

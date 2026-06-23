@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/hooks/useAuth'
 import { useTaskStore } from '@/lib/stores/taskStore'
-import { supabase } from '@/lib/supabase'
+import { taskService } from '@/lib/services'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/components/ui/utils'
 import type { Task } from '@/lib/types'
@@ -67,20 +67,14 @@ export default function TaskDetailPage() {
       return
     }
 
-    supabase
-      .from('tasks')
-      .select('*')
-      .eq('id', taskId)
-      .single()
-      .then(({ data, error: err }) => {
-        if (err) setError(err.message)
-        else if (data) {
-          setTask(data)
-          setDescription(data.description ?? '')
-          setCompleted(data.status === 'completed')
-        }
-        setLoading(false)
+    taskService.get(taskId)
+      .then(data => {
+        setTask(data)
+        setDescription(data.description ?? '')
+        setCompleted(data.status === 'completed')
       })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false))
   }, [taskId, user, tasks])
 
   useEffect(() => {
