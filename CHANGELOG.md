@@ -6,6 +6,71 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [1.1.0] - 2026-06-22
+
+### Added (Phase 5: Enterprise Polish)
+- Bundle size optimization: `sideEffects: false` in package.json for aggressive tree-shaking
+- Named exports in root barrel (`components/index.ts`) replacing wildcard `export *`
+- Response caching middleware with TTL and cache-control headers
+- Batch query executor for parallel Supabase queries with error isolation
+- Database index optimization migration (15 new composite/partial/full-text indexes)
+- PurgeCSS audit script (`scripts/purgecss-check.sh`)
+- OWASP Top 10 verification script (`scripts/owasp-check.sh`)
+- SQL injection audit script (`scripts/sql-injection-audit.sh`)
+- XSS sanitization utility with recursive object scanning
+- Security disclosure file (`.well-known/security.txt`)
+- Data retention policy documentation
+- Component API documentation: 11 Storybook stories for root + UI components
+- Release automation script (`scripts/release.sh`)
+- `optimizePackageImports` extended to cover 8 heavy packages
+
+### Changed
+- Tailwind content paths extended to cover `hooks/` and `styles/` directories
+- Safelist added for critical animation classes
+
+### Infrastructure
+- CI pipeline enhanced with Lighthouse CI, Trivy security scanning, a11y checks
+- Automated deployment workflow for Vercel + Railway
+
+### Tests
+- 1450+ tests maintained with 97.57% coverage
+
+## [1.0.0] - 2026-06-21
+
+### Added (Phase 4: Enterprise Hardening)
+- API key authentication system with SHA-256 hashing
+- GDPR data export endpoint for all 18 user tables
+- Data retention policy with automated cleanup
+- Rate limiter with standard response headers (RFC 6585)
+- Audit logging middleware for all data mutations
+- CSRF protection middleware
+- Input sanitization and XSS protection
+- Graceful shutdown handler with connection draining
+- GZip compression middleware for API responses
+- Circuit breaker + exponential backoff retry for all AI calls
+- Health probes (liveness + readiness) with dependency status
+- OpenAPI summaries on all 118 API endpoints
+- 15 new UI components (Avatar, Command, DataTable, etc.)
+- 8 motion components (PageTransition, StaggerChildren, etc.)
+- Storybook configuration with a11y addon
+- AI Assistant and Agent Activity Feed components
+- Comprehensive E2E tests for 5 critical flows
+- Runbook documentation and deployment guide
+
+### Changed
+- 51 Supabase queries optimized from `select("*")` to explicit columns
+- Frontend performance: React.memo on frequent components, dynamic imports
+- Auth module: JWT refresh flow and API key rotation support
+
+### Tests
+- Test coverage increased from 68% to 98.99% (1450 tests)
+- All 7 scheduler cron jobs fully tested
+- All 26 database schema models validated
+- All 10 agent modules tested with LLM fallback paths
+- All shared utilities at 100% coverage
+
+---
+
 ## [Unreleased]
 
 ### Added
@@ -53,5 +118,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Structured JSON logging
 - Base documentation framework
 
-[Unreleased]: https://github.com/owner/secondbrain-os/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/owner/secondbrain-os/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/owner/secondbrain-os/releases/tag/v1.0.0
 [0.1.0]: https://github.com/owner/secondbrain-os/releases/tag/v0.1.0
