@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useEffect, useRef, useCallback } from 'react'
+import { memo,  forwardRef, useEffect, useRef, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from './utils'
@@ -24,7 +24,7 @@ const sizeClasses: Record<string, string> = {
   full: 'max-w-full',
 }
 
-const Dialog = forwardRef<HTMLDivElement, DialogProps>(
+const Dialog = memo(forwardRef<HTMLDivElement, DialogProps>(
   ({ open, onClose, title, children, size = 'md', className }, ref) => {
     const contentRef = useRef<HTMLDivElement>(null)
     const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -141,7 +141,7 @@ const Dialog = forwardRef<HTMLDivElement, DialogProps>(
     )
   },
 )
-
+)
 Dialog.displayName = 'Dialog'
 
 export { Dialog }

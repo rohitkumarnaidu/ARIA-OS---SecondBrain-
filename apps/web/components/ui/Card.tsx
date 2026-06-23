@@ -1,11 +1,11 @@
-import { type HTMLAttributes, type ReactNode } from 'react'
+import { memo,  type HTMLAttributes, type ReactNode  } from 'react'
 import { cn } from './utils'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'interactive' | 'compact' | 'highlight'
 }
 
-function Card({ className, variant = 'default', ...props }: CardProps) {
+const Card = memo(function Card({ className, variant = 'default', ...props }: CardProps) {
   return (
     <div
       className={cn(
@@ -32,27 +32,27 @@ function Card({ className, variant = 'default', ...props }: CardProps) {
       {...props}
     />
   )
-}
+})
 
-function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
+const CardHeader = memo(function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cn('flex items-center justify-between mb-4', className)}>{children}</div>
-}
+})
 
-function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
+const CardTitle = memo(function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
   return <h3 className={cn('text-lg font-semibold text-[var(--foreground)]', className)}>{children}</h3>
-}
+})
 
-function CardContent({ children, className }: { children: ReactNode; className?: string }) {
+const CardContent = memo(function CardContent({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cn(className)}>{children}</div>
-}
+})
 
-function CardFooter({ children, className }: { children: ReactNode; className?: string }) {
+const CardFooter = memo(function CardFooter({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cn('flex items-center px-6 pb-6', className)} data-slot="card-footer">{children}</div>
-}
+})
 
-function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
+const CardDescription = memo(function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
   return <p className={cn('text-sm text-[var(--text-secondary)]', className)} data-slot="card-description">{children}</p>
-}
+})
 
 export { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription }
 export type { CardProps }

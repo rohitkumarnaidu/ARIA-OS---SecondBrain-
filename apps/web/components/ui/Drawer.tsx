@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useEffect, useRef, useState, useCallback } from 'react'
+import { memo,  forwardRef, useEffect, useRef, useState, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from './utils'
@@ -16,7 +16,7 @@ interface DrawerProps {
 
 const defaultSnapPoints = [25, 50, 75, 100]
 
-const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
+const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>(
   ({ open, onClose, title, children, snapPoints = defaultSnapPoints, className }, ref) => {
     const [snapIndex, setSnapIndex] = useState(snapPoints.length - 1)
     const [dragY, setDragY] = useState(0)
@@ -182,7 +182,7 @@ const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
     )
   },
 )
-
+)
 Drawer.displayName = 'Drawer'
 
 export { Drawer }

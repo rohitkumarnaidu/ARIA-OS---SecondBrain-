@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef } from 'react'
+import { memo,  forwardRef  } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -13,7 +13,7 @@ interface SwitchProps {
   className?: string
 }
 
-const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
+const Switch = memo(forwardRef<HTMLButtonElement, SwitchProps>(
   ({ checked, onChange, disabled = false, label, id, className }, ref) => {
     const switchId = id || `switch-${Math.random().toString(36).slice(2, 9)}`
 
@@ -63,7 +63,7 @@ const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
     )
   },
 )
-
+)
 Switch.displayName = 'Switch'
 
 export { Switch }

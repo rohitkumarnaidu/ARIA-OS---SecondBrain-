@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import { memo,  forwardRef, type ButtonHTMLAttributes, type ReactNode  } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
@@ -73,7 +73,7 @@ interface ButtonProps
   icon?: ReactNode
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading, icon, disabled, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
 
@@ -94,7 +94,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     )
   },
 )
-
+)
 Button.displayName = 'Button'
 
 export { Button, buttonVariants }

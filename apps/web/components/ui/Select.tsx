@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect, useCallback, useMemo  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, Check } from 'lucide-react'
 import { cn } from './utils'
@@ -21,7 +21,7 @@ interface SelectProps {
   id?: string
 }
 
-const Select = forwardRef<HTMLDivElement, SelectProps>(
+const Select = memo(forwardRef<HTMLDivElement, SelectProps>(
   ({ options, value, onChange, placeholder = 'Select...', searchable = true, disabled = false, className, id }, ref) => {
     const [open, setOpen] = useState(false)
     const [search, setSearch] = useState('')
@@ -214,7 +214,7 @@ const Select = forwardRef<HTMLDivElement, SelectProps>(
     )
   },
 )
-
+)
 Select.displayName = 'Select'
 
 export { Select }

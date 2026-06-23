@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { memo,  useEffect, useRef, useCallback  } from 'react'
 import { X } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -15,7 +15,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
 }
 
-export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
+export const Modal = memo(function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
 
@@ -89,4 +89,4 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       )}
     </AnimatePresence>
   )
-}
+})
