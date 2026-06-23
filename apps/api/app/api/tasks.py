@@ -8,18 +8,18 @@ from database.schemas.task import TaskCreate, TaskUpdate, TaskResponse
 router = APIRouter()
 
 
-@router.get("/", response_model=List[TaskResponse])
+@router.get("/", summary="List all tasks", response_model=List[TaskResponse])
 async def get_tasks(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
     supabase = get_supabase_client()
-    response = supabase.from_("tasks").select("*").eq("user_id", current_user.user.id).range(offset, offset + limit - 1).execute()
+    response = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("user_id", current_user.user.id).range(offset, offset + limit - 1).execute()
     return response.data
 
 
-@router.post("/", status_code=201, response_model=TaskResponse)
+@router.post("/", summary="Create a new task", status_code=201, response_model=TaskResponse)
 async def create_task(task: TaskCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = task.model_dump()
@@ -31,16 +31,16 @@ async def create_task(task: TaskCreate, current_user=Depends(get_current_user)):
     return response.data[0]
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
+@router.get("/{task_id}", summary="Get a task by ID", response_model=TaskResponse)
 async def get_task(task_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("tasks").select("*").eq("id", task_id).eq("user_id", current_user.user.id).execute()
+    response = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("id", task_id).eq("user_id", current_user.user.id).execute()
     if not response.data:
         raise HTTPException(status_code=404, detail="Task not found")
     return response.data[0]
 
 
-@router.put("/{task_id}", response_model=TaskResponse)
+@router.put("/{task_id}", summary="Update a task", response_model=TaskResponse)
 async def update_task(task_id: str, task_update: TaskUpdate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     update_data = {k: v for k, v in task_update.model_dump().items() if v is not None}
@@ -54,7 +54,7 @@ async def update_task(task_id: str, task_update: TaskUpdate, current_user=Depend
     return response.data[0]
 
 
-@router.delete("/{task_id}", status_code=204)
+@router.delete("/{task_id}", summary="Delete a task", status_code=204)
 async def delete_task(task_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("tasks").delete().eq("id", task_id).eq("user_id", current_user.user.id).execute()
@@ -63,7 +63,7 @@ async def delete_task(task_id: str, current_user=Depends(get_current_user)):
     return None
 
 
-@router.post("/{task_id}/complete", status_code=201, response_model=TaskResponse)
+@router.post("/{task_id}/complete", summary="Mark a task as complete", status_code=201, response_model=TaskResponse)
 async def complete_task(task_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
