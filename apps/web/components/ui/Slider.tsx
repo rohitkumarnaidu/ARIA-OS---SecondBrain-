@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, type ChangeEvent } from 'react'
+import { memo,  useState, useRef, useCallback, type ChangeEvent  } from 'react'
 import { cn } from './utils'
 
 interface SliderProps {
@@ -13,7 +13,7 @@ interface SliderProps {
   className?: string
 }
 
-function Slider({ value, onChange, min = 0, max = 100, step = 1, disabled = false, className }: SliderProps) {
+const Slider = memo(function Slider({ value, onChange, min = 0, max = 100, step = 1, disabled = false, className }: SliderProps) {
   const [showTooltip, setShowTooltip] = useState(false)
   const trackRef = useRef<HTMLDivElement>(null)
 
@@ -86,7 +86,7 @@ function Slider({ value, onChange, min = 0, max = 100, step = 1, disabled = fals
       </div>
     </div>
   )
-}
+})
 
 Slider.displayName = 'Slider'
 

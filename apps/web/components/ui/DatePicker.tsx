@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { memo,  useState, useRef, useEffect, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CalendarIcon } from 'lucide-react'
 import { cn } from './utils'
@@ -21,7 +21,7 @@ function formatDate(date: Date): string {
   return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
 }
 
-function DatePicker({ value, onChange, minDate, maxDate, disabled = false, className, placeholder = 'Pick a date' }: DatePickerProps) {
+const DatePicker = memo(function DatePicker({ value, onChange, minDate, maxDate, disabled = false, className, placeholder = 'Pick a date' }: DatePickerProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -79,7 +79,7 @@ function DatePicker({ value, onChange, minDate, maxDate, disabled = false, class
       </AnimatePresence>
     </div>
   )
-}
+})
 
 DatePicker.displayName = 'DatePicker'
 

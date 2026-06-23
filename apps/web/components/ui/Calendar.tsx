@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import { memo,  useMemo, useCallback  } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from './utils'
 
@@ -27,7 +27,7 @@ function isDateDisabled(date: Date, minDate?: Date, maxDate?: Date, disabledDate
   return false
 }
 
-function Calendar({ value, onChange, minDate, maxDate, disabledDates, className }: CalendarProps) {
+const Calendar = memo(function Calendar({ value, onChange, minDate, maxDate, disabledDates, className }: CalendarProps) {
   const today = useMemo(() => new Date(), [])
   const currentYear = today.getFullYear()
   const currentMonth = today.getMonth()
@@ -156,7 +156,7 @@ function Calendar({ value, onChange, minDate, maxDate, disabledDates, className 
       </div>
     </div>
   )
-}
+})
 
 Calendar.displayName = 'Calendar'
 

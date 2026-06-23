@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from './utils'
 
@@ -13,7 +13,7 @@ interface TooltipProps {
   hideDelay?: number
 }
 
-const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
+const Tooltip = memo(forwardRef<HTMLDivElement, TooltipProps>(
   ({ children, content, side = 'top', className, delay = 300, hideDelay = 100 }, ref) => {
     const [visible, setVisible] = useState(false)
     const showTimer = useRef<ReturnType<typeof setTimeout>>()
@@ -95,7 +95,7 @@ const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     )
   },
 )
-
+)
 Tooltip.displayName = 'Tooltip'
 
 export { Tooltip }

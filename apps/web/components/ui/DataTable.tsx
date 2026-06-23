@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, forwardRef, type HTMLAttributes } from 'react'
+import { memo,  useState, useMemo, forwardRef, type HTMLAttributes  } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -25,7 +25,7 @@ interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'childr
   onRowClick?: (row: T) => void
 }
 
-const DataTable = forwardRef<HTMLDivElement, DataTableProps<unknown>>(
+const DataTable = memo(forwardRef<HTMLDivElement, DataTableProps<unknown>>(
   (
     {
       columns,
@@ -232,7 +232,7 @@ const DataTable = forwardRef<HTMLDivElement, DataTableProps<unknown>>(
     )
   },
 )
-
+)
 DataTable.displayName = 'DataTable'
 
 export { DataTable }

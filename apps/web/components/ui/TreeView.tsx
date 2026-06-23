@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, type ReactNode } from 'react'
+import { memo,  useState, useCallback, type ReactNode  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { cn } from './utils'
@@ -20,7 +20,7 @@ interface TreeViewProps {
   className?: string
 }
 
-function TreeNode({
+const TreeNode = memo(function TreeNode({
   item,
   depth,
   onSelect,
@@ -124,9 +124,9 @@ function TreeNode({
       </AnimatePresence>
     </div>
   )
-}
+})
 
-function TreeView({ items, onSelect, defaultExpandedIds, className }: TreeViewProps) {
+const TreeView = memo(function TreeView({ items, onSelect, defaultExpandedIds, className }: TreeViewProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     () => new Set(defaultExpandedIds),
   )
@@ -157,7 +157,7 @@ function TreeView({ items, onSelect, defaultExpandedIds, className }: TreeViewPr
       ))}
     </div>
   )
-}
+})
 
 TreeView.displayName = 'TreeView'
 

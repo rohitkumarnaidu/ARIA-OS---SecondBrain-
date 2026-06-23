@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useId, type TextareaHTMLAttributes } from 'react'
+import { memo,  forwardRef, useId, type TextareaHTMLAttributes  } from 'react'
 import { cn } from './utils'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -10,7 +10,7 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   maxLength?: number
 }
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+const Textarea = memo(forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, helperText, maxLength, id, required, value, defaultValue, ...props }, ref) => {
     const genId = useId()
     const textareaId = id || genId
@@ -60,7 +60,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     )
   },
 )
-
+)
 Textarea.displayName = 'Textarea'
 
 export { Textarea }
