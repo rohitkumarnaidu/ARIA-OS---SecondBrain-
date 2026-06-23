@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/components/ui/utils'
 
@@ -46,7 +46,7 @@ const textSizeMap = {
   lg: 'text-sm',
 }
 
-function ConfidenceBadge({
+const ConfidenceBadge = memo(function ConfidenceBadge({
   value,
   label,
   showTooltip = true,
@@ -126,7 +126,7 @@ function ConfidenceBadge({
       <span className="sr-only">Confidence: {clamped}% - {level.label}</span>
     </div>
   )
-}
+})
 
 export { ConfidenceBadge }
 export type { ConfidenceBadgeProps }
