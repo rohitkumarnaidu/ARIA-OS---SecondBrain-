@@ -3,7 +3,7 @@
 import importlib.util
 from pathlib import Path
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, PropertyMock
 
 API_MAIN = str(Path(__file__).resolve().parent.parent / "apps" / "api" / "main.py")
 
@@ -44,13 +44,17 @@ class TestHealthEndpoints:
 
     def test_health_ready_returns_dependencies(self):
         from config.core.config import settings
+        original_value = settings.use_local_ai
         settings.use_local_ai = False
-        client = self._client()
-        resp = client.get("/health/ready")
-        assert resp.status_code == 200
-        data = resp.json()
-        assert "dependencies" in data
-        assert data["status"] in ("healthy", "degraded")
+        try:
+            client = self._client()
+            resp = client.get("/health/ready")
+            assert resp.status_code == 200
+            data = resp.json()
+            assert "dependencies" in data
+            assert data["status"] in ("healthy", "degraded")
+        finally:
+            settings.use_local_ai = original_value
 
     def test_health_live_returns_alive(self):
         client = self._client()
