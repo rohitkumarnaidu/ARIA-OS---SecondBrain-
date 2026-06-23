@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { memoryService } from '@/lib/services'
-import type { Memory, MemoryCreate } from '@/lib/types'
+import type { Memory, MemoryCreate, MemoryUpdate } from '@/lib/types'
 
 interface MemoryStore {
   items: Memory[]
@@ -9,6 +9,7 @@ interface MemoryStore {
   fetch: () => Promise<void>
   getById: (id: string) => Memory | undefined
   create: (data: MemoryCreate) => Promise<void>
+  update: (id: string, data: MemoryUpdate) => Promise<void>
   remove: (id: string) => Promise<void>
 }
 
@@ -37,6 +38,17 @@ export const useMemoryStore = create<MemoryStore>((set, get) => ({
       set({ items: [created, ...get().items], loading: false })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to create memory'
+      set({ error: message, loading: false })
+    }
+  },
+
+  update: async (id, data) => {
+    set({ loading: true, error: null })
+    try {
+      const updated = await memoryService.update(id, data)
+      set({ items: get().items.map(i => i.id === id ? updated : i), loading: false })
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update memory'
       set({ error: message, loading: false })
     }
   },
