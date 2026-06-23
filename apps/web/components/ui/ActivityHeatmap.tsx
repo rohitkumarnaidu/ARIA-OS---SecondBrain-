@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { memo,  useMemo, useState  } from 'react'
 import { cn } from './utils'
 
 interface ActivityHeatmapProps {
@@ -39,7 +39,7 @@ const intensityColors = [
   'bg-[var(--accent-primary)]/85',
 ]
 
-function ActivityHeatmap({ data, className }: ActivityHeatmapProps) {
+const ActivityHeatmap = memo(function ActivityHeatmap({ data, className }: ActivityHeatmapProps) {
   const [tooltip, setTooltip] = useState<{ date: string; count: number; x: number; y: number } | null>(null)
 
   const lookup = useMemo(() => {
@@ -195,7 +195,7 @@ function ActivityHeatmap({ data, className }: ActivityHeatmapProps) {
       )}
     </div>
   )
-}
+})
 
 export { ActivityHeatmap }
 export type { ActivityHeatmapProps }

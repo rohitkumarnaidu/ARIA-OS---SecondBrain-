@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from './utils'
 
@@ -6,7 +7,7 @@ interface SpinnerProps {
   className?: string
 }
 
-export function Spinner({ size = 20, className }: SpinnerProps) {
+export const Spinner = memo(function Spinner({ size = 20, className }: SpinnerProps) {
   return (
     <Loader2
       size={size}
@@ -14,4 +15,4 @@ export function Spinner({ size = 20, className }: SpinnerProps) {
       aria-hidden="true"
     />
   )
-}
+})

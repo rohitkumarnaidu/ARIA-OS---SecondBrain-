@@ -1,6 +1,6 @@
 'use client'
 
-import { useId } from 'react'
+import { memo,  useId  } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -42,7 +42,7 @@ const statusStyles = {
   },
 }
 
-function TimelineNode({ status = 'upcoming' }: { status?: TimelineItem['status'] }) {
+const TimelineNode = memo(function TimelineNode({ status = 'upcoming' }: { status?: TimelineItem['status'] }) {
   const style = statusStyles[status ?? 'upcoming']
 
   if (status === 'completed') {
@@ -120,9 +120,9 @@ function TimelineNode({ status = 'upcoming' }: { status?: TimelineItem['status']
       aria-hidden="true"
     />
   )
-}
+})
 
-function Timeline({ items, orientation = 'vertical', className }: TimelineProps) {
+const Timeline = memo(function Timeline({ items, orientation = 'vertical', className }: TimelineProps) {
   const gradientId = useId()
   const reduced = useReducedMotion()
 
@@ -222,7 +222,7 @@ function Timeline({ items, orientation = 'vertical', className }: TimelineProps)
       })}
     </div>
   )
-}
+})
 
 export { Timeline }
 export type { TimelineItem, TimelineProps }

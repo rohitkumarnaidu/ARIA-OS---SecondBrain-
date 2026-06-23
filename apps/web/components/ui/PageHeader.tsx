@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { cn } from './utils'
 
@@ -14,7 +15,7 @@ interface PageHeaderProps {
   className?: string
 }
 
-export function PageHeader({ title, description, breadcrumb, actions, className }: PageHeaderProps) {
+export const PageHeader = memo(function PageHeader({ title, description, breadcrumb, actions, className }: PageHeaderProps) {
   return (
     <div className={cn('space-y-3', className)}>
       {breadcrumb && breadcrumb.length > 0 && (
@@ -63,4 +64,4 @@ export function PageHeader({ title, description, breadcrumb, actions, className 
       </div>
     </div>
   )
-}
+})

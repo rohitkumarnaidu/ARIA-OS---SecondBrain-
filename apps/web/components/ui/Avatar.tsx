@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, type HTMLAttributes } from 'react'
+import { memo,  forwardRef, useState, type HTMLAttributes  } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from './utils'
 
@@ -55,7 +55,7 @@ function getInitials(name: string): string {
   return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
 }
 
-const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
+const Avatar = memo(forwardRef<HTMLDivElement, AvatarProps>(
   ({ src, alt, name, size = 'md', status, className, ...props }, ref) => {
     const [imgError, setImgError] = useState(false)
     const showImage = src && !imgError
@@ -99,7 +99,7 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
     )
   },
 )
-
+)
 Avatar.displayName = 'Avatar'
 
 export { Avatar }
