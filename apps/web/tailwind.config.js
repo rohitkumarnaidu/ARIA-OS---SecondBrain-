@@ -7,6 +7,16 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx}',
     './lib/**/*.{js,ts,jsx,tsx}',
+    './hooks/**/*.{js,ts,jsx,tsx}',
+    './styles/**/*.css',
+  ],
+  safelist: [
+    'animate-pulse-slow',
+    'animate-glow',
+    'animate-float',
+    'animate-scan',
+    'contain-layout',
+    'contain-paint',
   ],
   theme: {
     extend: {
