@@ -28,6 +28,7 @@ import {
 import { showSuccess, showError } from '@/lib/toast'
 import { api } from '@/lib/api'
 import { parseCommand } from '@/lib/ai/nlp'
+import { VoiceInput } from '@/components/ai/VoiceInput'
 
 /* ───────────────────────────────────────────────
    Types
@@ -502,6 +503,12 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
                   ? `cmd-item-${selectableItems[selectedIndex].id}`
                   : undefined
               }
+            />
+            <VoiceInput
+              onTranscript={(text) => {
+                setQuery(text)
+                setSelectedIndex(0)
+              }}
             />
             <button
               onClick={onClose}
