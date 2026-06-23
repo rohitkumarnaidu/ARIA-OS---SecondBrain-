@@ -21,21 +21,37 @@ def verify_password(password: str, hashed: str) -> bool:
 
 
 def sanitize_input(input_str: str) -> str:
-    """Sanitize user input to prevent injection"""
-    # Remove potentially dangerous characters
-    dangerous_patterns = [
-        r"<script",
-        r"javascript:",
-        r"onerror=",
-        r"onclick=",
-        r"onload=",
-    ]
-
     sanitized = input_str
-    for pattern in dangerous_patterns:
-        sanitized = re.sub(pattern, "", sanitized, flags=re.IGNORECASE)
-
+    patterns = [
+        (r"<script[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL),
+        (r"<script", re.IGNORECASE),
+        (r"javascript\s*:", re.IGNORECASE),
+        (r"on\w+\s*=", re.IGNORECASE),
+        (r"<iframe[^>]*>.*?</iframe>", re.IGNORECASE | re.DOTALL),
+        (r"<iframe", re.IGNORECASE),
+        (r"<embed[^>]*>", re.IGNORECASE),
+        (r"<object[^>]*>", re.IGNORECASE),
+        (r"data\s*:\s*text/html", re.IGNORECASE),
+        (r"vbscript\s*:", re.IGNORECASE),
+        (r"expression\s*\(.*\)", re.IGNORECASE),
+        (r"document\.cookie", re.IGNORECASE),
+        (r"document\.write", re.IGNORECASE),
+        (r"alert\s*\(", re.IGNORECASE),
+        (r"eval\s*\(", re.IGNORECASE),
+    ]
+    for pattern, flags in patterns:
+        sanitized = re.sub(pattern, "", sanitized, flags=flags)
     return sanitized.strip()
+
+
+def sanitize_object(obj):
+    if isinstance(obj, str):
+        return sanitize_input(obj)
+    if isinstance(obj, dict):
+        return {k: sanitize_object(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [sanitize_object(i) for i in obj]
+    return obj
 
 
 def validate_email(email: str) -> bool:

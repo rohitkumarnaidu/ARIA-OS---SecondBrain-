@@ -22,7 +22,6 @@ class RateLimiter(BaseHTTPMiddleware):
             now = datetime.now(timezone.utc)
             window_start = now - timedelta(seconds=self.window_seconds)
 
-            # Clean old requests
             if client_ip in self.requests:
                 self.requests[client_ip] = [
                     req_time for req_time in self.requests[client_ip] if req_time > window_start
@@ -30,17 +29,23 @@ class RateLimiter(BaseHTTPMiddleware):
             else:
                 self.requests[client_ip] = []
 
-            # Check rate limit
-            if len(self.requests[client_ip]) >= self.max_requests:
+            remaining = self.max_requests - len(self.requests[client_ip])
+
+            if remaining <= 0:
                 raise HTTPException(
                     status_code=429,
                     detail=f"Rate limit exceeded. Max {self.max_requests} requests per {self.window_seconds}s",
                 )
 
-            # Add current request
             self.requests[client_ip].append(now)
 
-        return await call_next(request)
+        response = await call_next(request)
+
+        response.headers["X-RateLimit-Limit"] = str(self.max_requests)
+        response.headers["X-RateLimit-Remaining"] = str(remaining - 1)
+        response.headers["X-RateLimit-Reset"] = str(int((now.timestamp() + self.window_seconds)))
+
+        return response
 
 
 class EndpointRateLimiter:
