@@ -1,0 +1,45 @@
+# Security Disclosure for ARIA OS
+
+_This file is maintained at `https://secondbrain-os.com/.well-known/security.txt`_
+
+## Contact
+
+- **Primary**: mailto:security@secondbrain-os.com
+- **PGP Fingerprint**: `E3B5 C67B 9A8F 2D1C 4F7E 8A2D 5B9C 1F3E 7D8A 0B2C`
+- **Preferred**: Encrypted email using the PGP key above for vulnerability reports.
+
+## Disclosure Policy
+
+1. **Report**: Send details of the vulnerability to security@secondbrain-os.com
+2. **Acknowledgment**: Response within 24 hours
+3. **Verification**: We verify the issue within 72 hours
+4. **Fix**: Critical/High severity fixes deployed within 7 days
+5. **Disclosure**: Coordinated disclosure after fix is deployed
+
+## Scope
+
+In-scope targets:
+- `https://secondbrain-os.com`
+- `https://api.secondbrain-os.com`
+- Mobile application (Android/iOS)
+- Public API endpoints under `/api/v1/`
+
+Out-of-scope:
+- Third-party services (Supabase, Vercel, Railway)
+- Physical security attacks
+- Social engineering attacks
+- Denial of service attacks
+
+## Hall of Fame
+
+We maintain a Hall of Fame for researchers who report valid vulnerabilities.
+
+## Bug Bounty
+
+This project does not currently offer a bug bounty program. Reports are acknowledged publicly.
+
+## Canonical
+
+- Canonical URI: `https://secondbrain-os.com/.well-known/security.txt`
+- Expires: 2027-01-01T00:00:00Z
+- Preferred-Languages: en, hi
