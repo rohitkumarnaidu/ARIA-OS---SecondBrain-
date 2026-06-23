@@ -18,6 +18,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY apps/web/ .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_PWA_ENABLED=true
 RUN npm run build
 
 # ---- Stage 3: Production ----

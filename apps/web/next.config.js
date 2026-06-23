@@ -22,9 +22,10 @@ const nextConfig = withBundleAnalyzer(withSerwist({
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_PWA_ENABLED: process.env.NEXT_PUBLIC_PWA_ENABLED,
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'd3'],
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'd3', 'three', '@xyflow/react', '@tanstack/react-table', '@tanstack/react-virtual'],
   },
 }))
 

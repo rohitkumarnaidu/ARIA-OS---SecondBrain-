@@ -2,6 +2,7 @@
   "name": "second-brain-os",
   "version": "1.0.0",
   "private": true,
+  "sideEffects": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -17,8 +18,9 @@
     "test:integration": "vitest run --reporter=verbose __tests__/integration/",
     "test:e2e": "npx playwright test",
     "analyze": "ANALYZE=true next build",
-    "figma:sync": "node scripts/sync-figma-tokens.ts",
-    "token:check": "node scripts/check-token-drift.ts",
+    "figma:sync": "node scripts/sync-figma-tokens.mjs",
+    "token:check": "node scripts/check-token-drift.mjs",
+    "token:check:fix": "node scripts/check-token-drift.mjs --fix",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -109,6 +111,6 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.3.3",
     "vite": "^8.0.16",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   }
 }
