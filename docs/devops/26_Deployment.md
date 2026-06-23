@@ -2446,7 +2446,93 @@ def get_deployment_history(limit: int = 50) -> list[dict]:
 
 ---
 
-## 21. References
+## 21. Production Runbook
+
+### 21.1 Environment Variables Reference
+
+| Variable | Purpose | Required | Source |
+|---|---|---|---|
+| `SUPABASE_URL` | Supabase project URL for DB + Auth | ✅ Yes | Supabase Dashboard → Settings → API |
+| `SUPABASE_KEY` | Supabase anon/public key (frontend) | ✅ Yes | Supabase Dashboard → Settings → API |
+| `SUPABASE_SERVICE_KEY` | Supabase service_role key (backend only) | ✅ Yes | Supabase Dashboard → Settings → API |
+| `JWT_SECRET` | JWT signing secret for token validation | ✅ Yes | Supabase Dashboard → Settings → API |
+| `JWT_ALGORITHM` | JWT algorithm (default: HS256) | ✅ Yes | Hardcoded default |
+| `CLAUDE_API_KEY` | Anthropic Claude API key for AI fallback | ✅ If `USE_LOCAL_AI=False` | Anthropic Console |
+| `OLLAMA_BASE_URL` | Ollama API endpoint URL | ✅ If `USE_LOCAL_AI=True` | `http://localhost:11434` |
+| `USE_LOCAL_AI` | Toggle between Ollama and Claude | ✅ Yes | `True` or `False` |
+| `RESEND_API_KEY` | Resend service for transactional emails | ❌ Email features | Resend Dashboard |
+| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | ✅ Yes | Deploy URL |
+| `LOG_LEVEL` | Logging verbosity (DEBUG, INFO, WARN, ERROR) | ❌ Default: INFO | — |
+| `RATE_LIMIT_MAX` | Max requests per window per IP | ❌ Default: 100 | — |
+| `RATE_LIMIT_WINDOW` | Rate limit window in seconds | ❌ Default: 60 | — |
+| `AUDIT_LOG_ENABLED` | Enable audit logging middleware | ❌ Default: True | — |
+| `CSRF_ENABLED` | Enable CSRF protection | ❌ Default: True | — |
+| `DATA_RETENTION_DAYS` | Days to retain logs/analytics before cleanup | ❌ Default: 90 | — |
+| `API_KEY_SALT` | Salt for API key hashing (SHA-256) | ✅ If API keys used | Generate with `openssl rand -hex 16` |
+| `SENTRY_DSN` | Sentry error tracking DSN | ❌ | Sentry Dashboard |
+| `APP_NAME` | Application display name | ❌ | — |
+| `ENVIRONMENT` | Deployment environment name | ❌ Default: production | — |
+
+### 21.2 Health Check Endpoints
+
+| Endpoint | Purpose | Expected Response | Frequency |
+|---|---|---|---|
+| `GET /health` | Simple liveness check | `{"status":"healthy","timestamp":"..."}` | Every 30s (load balancer) |
+| `GET /health/live` | Kubernetes liveness probe | `{"status":"alive"}` | Every 10s (K8s) |
+| `GET /health/ready` | Readiness — checks all dependencies | `{"status":"healthy","dependencies":{"supabase":"ok","ollama":"ok","claude_api":"configured"}}` | Every 15s (K8s) |
+
+**Expected readiness response:**
+```json
+{
+  "status": "healthy",
+  "version": "1.0.0",
+  "dependencies": {
+    "supabase": {"status": "ok", "latency_ms": 12},
+    "ollama": {"status": "ok", "latency_ms": 5},
+    "claude_api": {"status": "configured"}
+  },
+  "uptime_seconds": 3600,
+  "memory_usage_mb": 128
+}
+```
+
+### 21.3 Scaling Considerations
+
+| Component | Scale Strategy | Limits | Cost Implication |
+|---|---|---|---|
+| Frontend (Vercel) | Automatic — Vercel Edge Network scales globally | 100 GB bandwidth (free tier) | Free → Pro ($20/mo) |
+| Backend (Railway) | Manual — increase instances or RAM | Starter: 512 MB RAM, 1 vCPU | Starter ($5/mo) → Scale ($20+/mo) |
+| Database (Supabase) | Upgrade tier for more connections, storage, PITR | Free: 500 MB, 2 connections | Free → Pro ($25/mo) → Team ($599/mo) |
+| AI (Ollama) | Single instance, no auto-scaling | RAM: 8 GB min, 16 GB recommended | Free (local hardware) |
+| AI (Claude API) | N/A — managed by Anthropic | 50 req/min (API tier dependent) | Pay-as-you-go (~$0.015/req) |
+
+**Scaling Triggers:**
+- CPU > 80% for 5 minutes → Increase Railway instance resources
+- Memory > 80% for 5 minutes → Add another instance or upgrade tier
+- DB connections > 80% of pool → Upgrade Supabase tier or optimize pool size
+- P95 latency > 1s → Investigate + cache + optimize queries before scaling
+
+### 21.4 Disaster Recovery Procedure
+
+| Scenario | Action | RTO | RPO |
+|---|---|---|---|
+| **Frontend outage** | Rollback Vercel deployment (RB-013) | < 2 min | 0 |
+| **Backend outage** | Restart or rollback Railway service (RB-001 / RB-013) | < 5 min | 0 |
+| **Database corruption** | Point-in-Time Recovery via Supabase | < 30 min | < 5 min |
+| **Full cloud outage** | DNS switch to backup deployment | < 1 hour | < 5 min |
+| **Security breach** | Rotate all secrets + rollback deployments | < 15 min | 0 |
+| **Data loss** | Restore from latest backup | < 2 hours | < 24 hours |
+
+**DR Quick Steps:**
+1. **Identify scope**: Is it frontend, backend, database, or AI?
+2. **Contain**: Rollback the affected component immediately
+3. **Restore**: Use PITR for database (Supabase Dashboard → Database → Backups → Restore)
+4. **Verify**: Run `./scripts/health-check.sh production` — all 6 checks must pass
+5. **Document**: Log the incident in `logs/incidents.log` with timestamp, root cause, resolution
+
+---
+
+## 22. References
 
 ### 21.1 Related Documents
 

@@ -3,13 +3,95 @@
 | Field | Value |
 |---|---|
 | Document ID | SB-RUNBOOKS-001 |
-| Version | 2.0.0 |
+| Version | 2.1.0 |
 | Status | Active |
-| Last Updated | 2026-06-11 |
+| Last Updated | 2026-06-21 |
 | Classification | Internal — Operations |
 | Owner | DevOps Lead |
 | Review Cycle | Quarterly (Q1, Q2, Q3, Q4) |
 | Drill Frequency | Monthly (rotate through runbooks) |
+
+---
+
+## 0. Architecture Overview
+
+### 0.1 System Components
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        Users (Browser)                        │
+└──────────────────────────┬───────────────────────────────────┘
+                           │ HTTPS
+                           ▼
+┌──────────────────────────────────────────────────────────────┐
+│                     Vercel Edge Network                        │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │              Next.js 14 Frontend (SPA)                  │   │
+│  │  Pages: Dashboard, Tasks, Courses, Goals, Habits,       │   │
+│  │  Sleep, Income, Projects, Ideas, Resources,             │   │
+│  │  Opportunities, Time, Chat, Automation, Academics       │   │
+│  │  State: Zustand stores + React Query                    │   │
+│  └──────────────────────┬─────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │ HTTP (API calls)
+                          ▼
+┌──────────────────────────────────────────────────────────────┐
+│                    Railway (FastAPI Backend)                    │
+│  ┌────────────────────────────────────────────────────────┐   │
+│  │  26 Routers under /api/v1/ (~118 endpoints)             │   │
+│  │  Middleware: Auth, Rate Limiter, Audit Logging, CSRF,   │   │
+│  │             GZip, CORS, Request ID, Graceful Shutdown   │   │
+│  │  AI Agents: 10 async agent modules via PromptLoader    │   │
+│  │  Circuit Breaker: 5 failures → 60s cooldown             │   │
+│  │  LLM Client: Ollama (primary) → Claude (fallback)       │   │
+│  └──────────────────────┬─────────────────────────────────┘   │
+└─────────────────────────┼─────────────────────────────────────┘
+                          │
+          ┌───────────────┼───────────────┐
+          ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│  Supabase    │ │   Ollama     │ │   Claude     │
+│  PostgreSQL  │ │ Mistral 7B   │ │ Sonnet 4     │
+│  18 tables   │ │ (local)      │ │ (cloud API)  │
+│  RLS + PITR  │ │   ─────     │ │  ─────────  │
+│              │ │ APScheduler  │ │ Anthropic    │
+│              │ │ 7 cron jobs  │ │              │
+└──────────────┘ └──────────────┘ └──────────────┘
+```
+
+### 0.2 Data Flow
+
+```
+User Action → Frontend API Call → FastAPI Router → Supabase Query / AI Agent Call → Response
+                                      │
+                                      ├─ Auth check (JWT) → 401 if invalid
+                                      ├─ Rate limit check → 429 if exceeded
+                                      ├─ Audit log write (all mutations)
+                                      └─ Response compression (GZip)
+```
+
+### 0.3 Key Design Decisions
+
+| Decision | Rationale |
+|---|---|
+| In-process AI agents (not microservices) | Lower latency, simpler deployment, per ADR-004 |
+| PromptLoader with YAML frontmatter | Externalized prompts, versioned, validated in CI |
+| Graceful degradation everywhere | Every feature works without AI via algorithmic fallback |
+| Circuit breaker + retry with backoff | Prevents cascading failures, self-healing |
+| Cyberpunk design system | Dark theme #0A0B0F, neon accents #6366F1 / #00FFA3 |
+
+### 0.4 Technology Stack
+
+| Layer | Technology | Hosting |
+|---|---|---|
+| Frontend | Next.js 14, TypeScript, Tailwind CSS, Framer Motion | Vercel |
+| Backend | Python 3.10, FastAPI, Pydantic v2 | Railway |
+| Database | PostgreSQL 15 (via Supabase) | Supabase Cloud |
+| AI (local) | Ollama + Mistral 7B | Dev machine / Docker |
+| AI (cloud) | Claude Sonnet 4 via Anthropic API | Anthropic |
+| Scheduler | APScheduler (7 cron jobs) | Railway |
+| CI/CD | GitHub Actions (6 jobs) | GitHub |
+| Monitoring | Logtail / Sentry (planned) | — |
 
 ---
 
@@ -83,10 +165,11 @@ Drill Result: Pass / Fail / Untested
 
 | Severity | Label | Definition | Response Time | Resolution Time | Notification |
 |---|---|---|---|---|---|
-| **SEV-1** | Critical | Service down or unusable for all users. Data loss risk. | < 5 min | < 1 hour | PagerDuty + Slack + Email |
-| **SEV-2** | High | Service degraded for significant subset of users. Core feature broken. | < 15 min | < 4 hours | Slack + Email |
-| **SEV-3** | Medium | Minor feature broken or cosmetic issue. Workaround exists. | < 1 hour | < 24 hours | Slack (business hours) |
-| **SEV-4** | Low | Cosmetic issue, typo, non-functional impact. | < 1 week | Next sprint | Jira ticket |
+| **P0 / SEV-1** | Critical | Service down or unusable for all users. Data loss risk. | < 5 min | < 1 hour | PagerDuty + Slack + Email |
+| **P1 / SEV-2** | High | Service degraded for significant subset of users. Core feature broken. | < 15 min | < 4 hours | Slack + Email |
+| **P2 / SEV-3** | Medium | Minor feature broken or cosmetic issue. Workaround exists. | < 1 hour | < 24 hours | Slack (business hours) |
+| **P3 / SEV-4** | Low | Cosmetic issue, typo, non-functional impact. | < 1 week | Next sprint | Jira ticket |
+| **P4** | Wishlist | Enhancement, tech debt, minor improvement. | Next release | Next sprint | GitHub Issue |
 
 ### 3.1 Severity Escalation Rules
 
@@ -1856,6 +1939,324 @@ $healthReport | Out-File -FilePath logs/daily_health.log -Append
 
 ---
 
+### RB-012: High API Latency
+
+```
+---
+ID: RB-012
+Title: API Response Time Degradation (p95 > 2s)
+Severity: P1 / SEV-2
+Category: Application
+Auto-Remediation: No
+Last Tested: 2026-06-15
+Drill Result: Pass
+---
+```
+
+#### Symptoms
+- Frontend feels sluggish — API calls take > 2 seconds
+- Monitoring dashboard shows p95 latency > 2s (target: < 500ms)
+- Browser DevTools Network tab shows slow API responses
+- Users report "app is slow" or timeouts
+- Railway dashboard shows high CPU/memory usage
+
+#### Diagnosis
+
+**Step D1: Identify Slow Endpoints**
+```bash
+# Check endpoint-level latency from logs
+railway logs --service api --limit 500 | Select-String "duration_ms" | ForEach-Object {
+    if ($_ -match '"path":"([^"]+)".*"duration_ms":(\d+)') {
+        [PSCustomObject]@{ Path = $Matches[1]; Duration = [int]$Matches[2] }
+    }
+} | Group-Object Path | ForEach-Object {
+    $durations = $_.Group | ForEach-Object { $_.Duration }
+    $durations = $durations | Sort-Object
+    $count = $durations.Count
+    $p95 = $durations[[math]::Floor($count * 0.95)]
+    [PSCustomObject]@{ Path = $_.Name; Count = $count; P95 = "$p95 ms" }
+} | Sort-Object { [int]$_.P95 } -Descending | Select-Object -First 10
+```
+
+**Step D2: Check Database Query Performance**
+```sql
+-- Run in Supabase SQL Editor
+SELECT
+  query,
+  calls,
+  mean_time,
+  max_time,
+  rows
+FROM pg_stat_statements
+ORDER BY mean_time DESC
+LIMIT 20;
+```
+
+**Step D3: Check Cache Hit Ratio**
+```python
+python -c "
+from packages.shared.utils.cache import cache
+hits = sum(1 for v in cache.cache.values() if v.get('hit_count', 0) > 0)
+misses = sum(1 for v in cache.cache.values() if v.get('hit_count', 0) == 0)
+total = hits + misses
+ratio = hits / total * 100 if total > 0 else 0
+print(f'Cache hit ratio: {ratio:.1f}%')
+print(f'Total entries: {len(cache.cache)}')
+"
+```
+
+**Step D4: Check N+1 Queries**
+```python
+# Enable query logging in development
+import logging
+logging.getLogger('supabase').setLevel(logging.DEBUG)
+
+# Count queries per request — if a single page load does > 10 queries, investigate
+```
+
+**Step D5: Check External Dependencies**
+```bash
+# AI provider latency
+curl -w "p95: %{time_total}s\n" -o /dev/null -s http://localhost:11434/api/tags
+
+# Supabase latency
+curl -w "p95: %{time_total}s\n" -o /dev/null -s "$SUPABASE_URL/rest/v1/"
+```
+
+#### Resolution
+
+**Step R1: Add/Enable Caching**
+```python
+# Add caching to slow endpoints
+from packages.shared.utils.cache import cache
+
+@router.get("/dashboard/stats")
+async def get_stats(user_id: str = Depends(get_current_user)):
+    cached = await cache.get(f"stats_{user_id}")
+    if cached:
+        return cached
+    stats = await compute_stats(user_id)
+    await cache.set(f"stats_{user_id}", stats, ttl=300)
+    return stats
+```
+
+**Step R2: Optimize Database Queries**
+```sql
+-- Add missing indexes for common query patterns
+CREATE INDEX IF NOT EXISTS idx_tasks_user_status_due
+    ON tasks (user_id, status, due_date);
+CREATE INDEX IF NOT EXISTS idx_habit_logs_user_date
+    ON habit_logs (user_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_time_entries_user_start
+    ON time_entries (user_id, start_time DESC);
+```
+
+**Step R3: Add Pagination to List Endpoints**
+```python
+@router.get("/tasks")
+async def list_tasks(
+    user_id: str = Depends(get_current_user),
+    limit: int = Query(20, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
+    data = supabase.table("tasks").select("id,title,status,priority,due_date")\
+        .eq("user_id", user_id)\
+        .order("created_at", desc=True)\
+        .range(offset, offset + limit - 1)\
+        .execute()
+    return {"data": data.data, "limit": limit, "offset": offset, "total": len(data.data)}
+```
+
+**Step R4: Enable GZip Compression**
+```python
+# In main.py — already enabled if using GZip middleware
+from fastapi.middleware.gzip import GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+```
+
+**Step R5: Increase Railway Resources**
+```bash
+# Railway Dashboard → Service → Settings → Scale
+# Increase from 512 MB to 1 GB RAM
+# Or increase from 1 to 2 instances
+```
+
+#### Verification
+```bash
+# 1. p95 latency back under 500ms
+# Re-run Step D1 — Expected: no endpoints > 500ms p95
+
+# 2. Cache hit ratio > 60%
+# Re-run Step D3 — Expected: > 60%
+
+# 3. Slow queries eliminated
+# Re-run Step D2 — Expected: no queries > 200ms mean
+
+# 4. Frontend feels responsive
+curl -w "p95: %{time_total}s\n" -o /dev/null -s https://api.secondbrainos.com/api/tasks
+# Expected: < 500ms
+```
+
+#### Post-Mortem
+```bash
+$latencyReport = @"
+Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+Runbook: RB-012
+Root Cause: <slow query / missing index / cache miss / AI latency>
+Resolution: <index added / cache enabled / query optimized>
+p95 Before: $p95Before ms
+p95 After: $p95After ms
+Action Items: <preventive measures>
+"@
+$latencyReport | Out-File -FilePath logs/latency_incidents.log -Append
+```
+
+---
+
+### RB-013: Deployment Rollback
+
+```
+---
+ID: RB-013
+Title: Emergency Deployment Rollback
+Severity: P0 / SEV-1
+Category: Application
+Auto-Remediation: Partial (script available)
+Last Tested: 2026-06-10
+Drill Result: Pass
+---
+```
+
+#### Symptoms
+- Deployment causes errors, performance degradation, or data corruption
+- Monitoring alert fires immediately after deploy
+- Users report broken functionality that worked before deployment
+- CI/CD pipeline succeeds but post-deploy health checks fail
+- Error rate spikes > 1% after deployment
+
+#### Diagnosis
+
+**Step D1: Confirm Deployment is the Cause**
+```bash
+# Check deployment timestamp
+git log --oneline -1
+# Expected: recent commit deployed within last 30 minutes
+
+# Check for error spike correlation
+railway logs --service api --since "1 hour ago" | Select-String "ERROR" | Measure-Object
+```
+
+**Step D2: Check What Changed**
+```bash
+# Show diff between current and previous deployment
+git diff HEAD~1 --name-only
+
+# Show high-risk file changes
+git diff HEAD~1 -- apps/api/app/api/ packages/ai/ packages/database/
+```
+
+**Step D3: Check Health Endpoints**
+```bash
+# Backend health
+curl -s https://api.secondbrainos.com/api/health | python -m json.tool
+
+# Check individual dependency status
+curl -s https://api.secondbrainos.com/health/ready | python -m json.tool
+```
+
+#### Resolution
+
+**Step R1: Rollback Frontend (Vercel)**
+```bash
+# Method 1: Vercel Dashboard (30 seconds)
+# Deployments → Find last known-good → "Promote to Production"
+
+# Method 2: Vercel CLI
+vercel list --token $VERCEL_TOKEN
+vercel promote <deployment-id> --token $VERCEL_TOKEN
+
+# Method 3: Git revert
+git revert HEAD --no-edit
+git push origin main
+```
+
+**Step R2: Rollback Backend (Railway)**
+```bash
+# Method 1: Railway Dashboard
+# Deployments → Find last known-good → "Rollback to this deploy"
+
+# Method 2: Railway CLI
+railway rollback --service api 1
+
+# Verify rollback
+curl -s https://api.secondbrainos.com/api/health | python -c "import sys,json; d=json.load(sys.stdin); print(d['status'])"
+# Expected: healthy
+```
+
+**Step R3: Rollback Database Migration (if applicable)**
+```bash
+# Run revert migration
+python scripts/run_migrations.py revert <version>
+
+# Verify data integrity
+curl -s https://api.secondbrainos.com/api/tasks | python -c "import sys,json; d=json.load(sys.stdin); print(f'Data OK: {len(d.get(\"data\",[]))} records')"
+```
+
+**Step R4: Notify Team**
+```bash
+# Log the rollback in team channel
+$rollbackMsg = @"
+:warning: Rollback triggered
+Component: <frontend / backend / database>
+From: <vX.Y.Z>
+To: <vX.(Y-1).Z>
+Reason: <error rate spike / data corruption / performance degradation>
+Author: $env:USERNAME
+"@
+# Post to Slack webhook
+```
+
+#### Verification
+```bash
+# 1. Health endpoint returns healthy
+curl -s https://api.secondbrainos.com/api/health | Select-String "healthy"
+# Expected: "healthy"
+
+# 2. Error rate back to baseline
+# Check monitoring dashboard → Expected: < 0.5%
+
+# 3. Core features work
+curl -s -o /dev/null -w "%{http_code}" https://api.secondbrainos.com/api/tasks
+# Expected: 200
+
+# 4. Frontend loads without errors
+curl -s -o /dev/null -w "%{http_code}" https://app.secondbrainos.com
+# Expected: 200
+
+# 5. CI/CD pipeline green
+# Check GitHub Actions → Expected: all jobs passing
+```
+
+#### Post-Mortem
+```bash
+$rollbackReport = @"
+Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+Runbook: RB-013
+Component: <frontend / backend / database>
+Trigger: <deployment SHA>
+Reverted To: <deployment SHA>
+Root Cause: <bug in new code / config change / dependency issue>
+Downtime: <duration>
+Action Items:
+  - Add test for this scenario
+  - Update code review checklist
+  - <other actions>
+"@
+$rollbackReport | Out-File -FilePath logs/rollback_incidents.log -Append
+```
+
+---
+
 ## 5. Runbook Maintenance
 
 ### 5.1 Quarterly Review Process
@@ -2013,18 +2414,20 @@ if __name__ == "__main__":
 ## 8. Runbook Index
 
 | ID | Title | Severity | Category | Auto-Remediate | Last Tested |
-|---|---|---|---|---|---|
-| RB-001 | API Service Down | SEV-1 | Infrastructure | Partial | 2026-06-01 |
-| RB-002 | Frontend Down | SEV-1 | Application | No | 2026-06-01 |
-| RB-003 | Database Slow/Corrupt | SEV-2 | Database | Partial | 2026-05-15 |
-| RB-004 | AI Service Failure | SEV-2 | AI | Yes | 2026-06-01 |
-| RB-005 | Auth Failures | SEV-2 | Security | No | 2026-05-20 |
-| RB-006 | High Error Rate | SEV-2 | Application | Partial | 2026-06-01 |
-| RB-007 | Cache/Memory Issues | SEV-3 | Application | Yes | 2026-05-10 |
-| RB-008 | Rate Limiting | SEV-3 | Security | No | 2026-05-15 |
-| RB-009 | DB Connection Pool | SEV-2 | Database | Partial | 2026-05-20 |
-| RB-010 | Scheduler Failure | SEV-2 | Application | Partial | 2026-06-01 |
-| RB-011 | Daily Health Check | SEV-4 | Operations | N/A | 2026-06-10 |
+|---|---|---|---|---|---|---|
+| RB-001 | API Service Down | P0 / SEV-1 | Infrastructure | Partial | 2026-06-01 |
+| RB-002 | Frontend Down | P0 / SEV-1 | Application | No | 2026-06-01 |
+| RB-003 | Database Slow/Corrupt | P1 / SEV-2 | Database | Partial | 2026-05-15 |
+| RB-004 | AI Service Failure | P1 / SEV-2 | AI | Yes | 2026-06-01 |
+| RB-005 | Auth Failures | P1 / SEV-2 | Security | No | 2026-05-20 |
+| RB-006 | High Error Rate | P1 / SEV-2 | Application | Partial | 2026-06-01 |
+| RB-007 | Cache/Memory Issues | P2 / SEV-3 | Application | Yes | 2026-05-10 |
+| RB-008 | Rate Limiting | P2 / SEV-3 | Security | No | 2026-05-15 |
+| RB-009 | DB Connection Pool | P1 / SEV-2 | Database | Partial | 2026-05-20 |
+| RB-010 | Scheduler Failure | P1 / SEV-2 | Application | Partial | 2026-06-01 |
+| RB-011 | Daily Health Check | P3 / SEV-4 | Operations | N/A | 2026-06-10 |
+| RB-012 | High API Latency | P1 / SEV-2 | Application | No | 2026-06-15 |
+| RB-013 | Deployment Rollback | P0 / SEV-1 | Application | Partial | 2026-06-10 |
 
 ---
 
@@ -2081,8 +2484,9 @@ graph TD
 ## Revision History
 
 | Version | Date | Author | Changes |
-|---|---|---|---|
+|---|---|---|---|---|
 | 1.0.0 | 2026-05-01 | DevOps Lead | Initial runbooks (RB-001 through RB-011) |
 | 1.1.0 | 2026-05-15 | DevOps Lead | Added RB-009 (Connection Pool), verified all drills |
 | 1.2.0 | 2026-06-01 | DevOps Lead | Updated all runbooks with drill results, added auto-remediation |
 | 2.0.0 | 2026-06-11 | DevOps Lead | Enterprise upgrade: SDVRP format, severity definitions, automation, drills, escalation matrix, decision trees |
+| 2.1.0 | 2026-06-21 | DevOps Lead | Added Architecture Overview (Sec 0), P0-P4 severity naming, RB-012 (High Latency), RB-013 (Deployment Rollback) |

@@ -65,6 +65,36 @@ vi.mock('next/navigation', () => {
   }
 })
 
+/**
+ * @radix-ui/react-slot — centralised mock so every component test gets
+ * a predictable Slot that handles the Button component's conditional
+ * children ({loading && <Loader/>}{!loading && icon && <span/>}{children}).
+ *
+ * The real Slot uses React.Children.count() === 1 && isValidElement()
+ * which fails in jsdom when extra boolean children are present.
+ */
+vi.mock('@radix-ui/react-slot', () => {
+  const React = require('react') as typeof import('react')
+
+  const Slot = React.forwardRef(
+    ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown },
+     ref: React.Ref<HTMLElement>) => {
+      const childrenArray = React.Children.toArray(children)
+      const firstValid = childrenArray.find((c): c is React.ReactElement =>
+        React.isValidElement(c))
+      if (!firstValid) return React.createElement(React.Fragment, null, children)
+      return React.cloneElement(firstValid, { ...props, ref })
+    },
+  )
+  Slot.displayName = 'Slot'
+
+  const Slottable = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children)
+  ;(Slottable as Record<string, unknown>).displayName = 'Slottable'
+
+  return { Slot, Slottable, Root: Slot, default: Slot }
+})
+
 // ─── jsdom Polyfills ─────────────────────────────────────────────────────────
 
 globalThis.IntersectionObserver = class IntersectionObserver {
