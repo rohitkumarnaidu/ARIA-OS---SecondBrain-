@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Optional
+from typing import List
 from datetime import datetime
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
@@ -8,7 +8,7 @@ from database.schemas.course import CourseCreate, CourseUpdate, CourseResponse
 router = APIRouter()
 
 
-@router.get("/", response_model=List[CourseResponse])
+@router.get("/", summary="List all courses", response_model=List[CourseResponse])
 async def get_courses(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
@@ -17,7 +17,7 @@ async def get_courses(
     supabase = get_supabase_client()
     response = (
         supabase.from_("courses")
-        .select("*")
+        .select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at")
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -26,12 +26,12 @@ async def get_courses(
     return response.data
 
 
-@router.get("/{course_id}", response_model=CourseResponse)
+@router.get("/{course_id}", summary="Get a course by ID", response_model=CourseResponse)
 async def get_course(course_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("courses")
-        .select("*")
+        .select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at")
         .eq("id", course_id)
         .eq("user_id", current_user.user.id)
         .execute()
@@ -41,7 +41,7 @@ async def get_course(course_id: str, current_user=Depends(get_current_user)):
     return response.data[0]
 
 
-@router.post("/", status_code=201, response_model=CourseResponse)
+@router.post("/", summary="Create a new course", status_code=201, response_model=CourseResponse)
 async def create_course(course: CourseCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = course.model_dump()
@@ -56,7 +56,7 @@ async def create_course(course: CourseCreate, current_user=Depends(get_current_u
     return response.data[0]
 
 
-@router.put("/{course_id}", response_model=CourseResponse)
+@router.put("/{course_id}", summary="Update a course", response_model=CourseResponse)
 async def update_course(course_id: str, course_update: CourseUpdate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     update_data = {k: v for k, v in course_update.model_dump().items() if v is not None}
@@ -75,7 +75,7 @@ async def update_course(course_id: str, course_update: CourseUpdate, current_use
     return response.data[0]
 
 
-@router.delete("/{course_id}", status_code=204)
+@router.delete("/{course_id}", summary="Delete a course", status_code=204)
 async def delete_course(course_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("courses").delete().eq("id", course_id).eq("user_id", current_user.user.id).execute()

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Optional
+from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.resource import ResourceCreate, ResourceUpdate, ResourceResponse
@@ -7,7 +7,7 @@ from database.schemas.resource import ResourceCreate, ResourceUpdate, ResourceRe
 router = APIRouter()
 
 
-@router.get("/", response_model=List[ResourceResponse])
+@router.get("/", summary="List all resources", response_model=List[ResourceResponse])
 async def get_resources(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
@@ -16,7 +16,7 @@ async def get_resources(
     supabase = get_supabase_client()
     response = (
         supabase.from_("resources")
-        .select("*")
+        .select("id, user_id, title, url, tags, created_at")
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -25,16 +25,16 @@ async def get_resources(
     return response.data
 
 
-@router.get("/{resource_id}", response_model=ResourceResponse)
+@router.get("/{resource_id}", summary="Get a resource by ID", response_model=ResourceResponse)
 async def get_resource(resource_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("resources").select("*").eq("id", resource_id).eq("user_id", current_user.user.id).execute()
+    response = supabase.from_("resources").select("id, user_id, title, url, tags, created_at").eq("id", resource_id).eq("user_id", current_user.user.id).execute()
     if not response.data:
         raise HTTPException(status_code=404, detail="Resource not found")
     return response.data[0]
 
 
-@router.post("/", status_code=201, response_model=ResourceResponse)
+@router.post("/", summary="Create a new resource", status_code=201, response_model=ResourceResponse)
 async def create_resource(resource: ResourceCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = resource.model_dump()
@@ -45,7 +45,7 @@ async def create_resource(resource: ResourceCreate, current_user=Depends(get_cur
     return response.data[0]
 
 
-@router.put("/{resource_id}", response_model=ResourceResponse)
+@router.put("/{resource_id}", summary="Update a resource", response_model=ResourceResponse)
 async def update_resource(
     resource_id: str,
     resource_update: ResourceUpdate,
@@ -67,7 +67,7 @@ async def update_resource(
     return response.data[0]
 
 
-@router.delete("/{resource_id}", status_code=204)
+@router.delete("/{resource_id}", summary="Delete a resource", status_code=204)
 async def delete_resource(resource_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("resources").delete().eq("id", resource_id).eq("user_id", current_user.user.id).execute()

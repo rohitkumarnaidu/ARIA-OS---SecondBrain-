@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Optional
+from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.goal import GoalCreate, GoalUpdate, GoalResponse
@@ -7,7 +7,7 @@ from database.schemas.goal import GoalCreate, GoalUpdate, GoalResponse
 router = APIRouter()
 
 
-@router.get("/", response_model=List[GoalResponse])
+@router.get("/", summary="List all goals", response_model=List[GoalResponse])
 async def get_goals(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
@@ -16,7 +16,7 @@ async def get_goals(
     supabase = get_supabase_client()
     response = (
         supabase.from_("goals")
-        .select("*")
+        .select("id, user_id, title, description, status, progress, target_date, category, created_at, updated_at")
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -25,12 +25,12 @@ async def get_goals(
     return response.data
 
 
-@router.get("/{goal_id}", response_model=GoalResponse)
+@router.get("/{goal_id}", summary="Get a goal by ID", response_model=GoalResponse)
 async def get_goal(goal_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("goals")
-        .select("*")
+        .select("id, user_id, title, description, status, progress, target_date, category, created_at, updated_at")
         .eq("id", goal_id)
         .eq("user_id", current_user.user.id)
         .execute()
@@ -40,7 +40,7 @@ async def get_goal(goal_id: str, current_user=Depends(get_current_user)):
     return response.data[0]
 
 
-@router.post("/", status_code=201, response_model=GoalResponse)
+@router.post("/", summary="Create a new goal", status_code=201, response_model=GoalResponse)
 async def create_goal(goal: GoalCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = goal.model_dump()
@@ -61,7 +61,7 @@ async def create_goal(goal: GoalCreate, current_user=Depends(get_current_user)):
     return response.data[0]
 
 
-@router.put("/{goal_id}", response_model=GoalResponse)
+@router.put("/{goal_id}", summary="Update a goal", response_model=GoalResponse)
 async def update_goal(goal_id: str, goal_update: GoalUpdate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     update_data = {k: v for k, v in goal_update.model_dump().items() if v is not None}
@@ -75,7 +75,7 @@ async def update_goal(goal_id: str, goal_update: GoalUpdate, current_user=Depend
     return response.data[0]
 
 
-@router.delete("/{goal_id}", status_code=204)
+@router.delete("/{goal_id}", summary="Delete a goal", status_code=204)
 async def delete_goal(goal_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("goals").delete().eq("id", goal_id).eq("user_id", current_user.user.id).execute()
