@@ -362,7 +362,7 @@ function ProjectCard({ project, onDelete, onAddBlocker, onResolveBlocker }: Proj
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-      className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-4 hover:border-[var(--border)]/60 hover:shadow-[var(--shadow-glow-sm)] transition-all duration-300 group"
+      className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-4 hover:border-[var(--border)]/60 hover:shadow-glow-sm transition-all duration-300 group"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -603,11 +603,11 @@ function TimelineTab({ projects, selectedPhase, onPhaseSelect }: TimelineTabProp
                 {/* Node */}
                 <div className="relative">
                   {isCompleted ? (
-                    <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center shadow-[var(--shadow-glow-sm)]">
+                    <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center shadow-glow-sm">
                       <Check size={16} className="text-white" />
                     </div>
                   ) : isCurrent ? (
-                    <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center shadow-[var(--shadow-glow-sm)]">
+                    <div className="w-8 h-8 rounded-full bg-[var(--accent-primary)] flex items-center justify-center shadow-glow-sm">
                       <motion.div
                         animate={{ scale: [1, 1.15, 1] }}
                         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -1050,7 +1050,7 @@ export default function ProjectsPage(): JSX.Element {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, type: 'spring' }}
         onClick={() => setShowAddModal(true)}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[var(--accent-primary)] text-white shadow-[var(--shadow-glow-sm)] flex items-center justify-center hover:bg-[var(--accent-primary)]/90 transition-all md:hidden"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[var(--accent-primary)] text-white shadow-glow-sm flex items-center justify-center hover:bg-[var(--accent-primary)]/90 transition-all md:hidden"
         aria-label="Add new project"
       >
         <Plus size={24} />

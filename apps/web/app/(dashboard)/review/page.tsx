@@ -259,7 +259,7 @@ function MetricCard({ metric }: { metric: WeeklyMetric }): JSX.Element {
 
 function GlassCard({ children, className }: { children: React.ReactNode; className?: string }): JSX.Element {
   return (
-    <div className="relative rounded-xl bg-gradient-to-br from-[var(--accent-primary)]/20 to-[var(--accent-secondary)]/15 p-[1px] shadow-[0_4px_24px_rgba(0,0,0,0.25)]">
+    <div className="relative rounded-xl bg-gradient-to-br from-[var(--accent-primary)]/20 to-[var(--accent-secondary)]/15 p-[1px] shadow-glow">
       <div className={cn('rounded-[11px] bg-[var(--glass-medium)] backdrop-blur-xl p-5', className)}>
         {children}
       </div>
