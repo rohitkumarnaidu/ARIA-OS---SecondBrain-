@@ -47,5 +47,8 @@ class Settings(BaseSettings):
     sentry_dsn: Optional[str] = None
     posthog_api_key: Optional[str] = None
 
+    # External APIs
+    brave_api_key: Optional[str] = None
+
 
 settings = Settings()
