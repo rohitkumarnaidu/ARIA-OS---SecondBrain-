@@ -4,6 +4,7 @@ import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme'
 import { SkipLink } from '@/components/layout/SkipLink'
+import { PWAStatus, PWAInstallPrompt } from '@/components/pwa'
 
 const syne = Syne({
   subsets: ['latin'],
@@ -45,6 +46,8 @@ export default function RootLayout({
         <SkipLink />
         <ThemeProvider>
           {children}
+          <PWAStatus />
+          <PWAInstallPrompt />
         </ThemeProvider>
         <footer role="contentinfo" className="sr-only">
           <p>ARIA OS Second Brain — version 2.4.0-stable</p>
