@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Button } from './Button'
 
 interface EmptyStateProps {
@@ -7,7 +8,7 @@ interface EmptyStateProps {
   action?: { label: string; onClick: () => void }
 }
 
-export function EmptyState({ title, description, icon, action }: EmptyStateProps) {
+export const EmptyState = memo(function EmptyState({ title, description, icon, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center" role="status">
       {icon && <div className="mb-4 text-text-tertiary">{icon}</div>}
@@ -16,4 +17,4 @@ export function EmptyState({ title, description, icon, action }: EmptyStateProps
       {action && <Button onClick={action.onClick}>{action.label}</Button>}
     </div>
   )
-}
+})

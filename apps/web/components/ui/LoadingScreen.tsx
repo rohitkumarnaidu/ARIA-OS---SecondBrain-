@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Skeleton } from './Skeleton'
 import { cn } from './utils'
 
@@ -8,11 +9,11 @@ interface LoadingScreenProps {
   className?: string
 }
 
-function TextLine({ width }: { width: string }) {
+const TextLine = memo(function TextLine({ width }: { width: string }) {
   return <Skeleton variant="text" className={cn('h-3.5', width)} />
-}
+})
 
-function CardSkeleton() {
+const CardSkeleton = memo(function CardSkeleton() {
   return (
     <div className="rounded-xl border border-border p-5 space-y-3">
       <Skeleton className="h-5 w-3/5" variant="text" />
@@ -21,9 +22,9 @@ function CardSkeleton() {
       <TextLine width="w-2/3" />
     </div>
   )
-}
+})
 
-function ListRow() {
+const ListRow = memo(function ListRow() {
   return (
     <div className="flex items-center gap-4 py-3.5 px-4 rounded-xl border border-border min-h-[44px]">
       <Skeleton className="h-4 w-4 shrink-0 rounded" />
@@ -31,9 +32,9 @@ function ListRow() {
       <Skeleton className="h-5 w-16 shrink-0 rounded-full" />
     </div>
   )
-}
+})
 
-export function LoadingScreen({ variant = 'page', label, count = 5, className }: LoadingScreenProps) {
+export const LoadingScreen = memo(function LoadingScreen({ variant = 'page', label, count = 5, className }: LoadingScreenProps) {
   const ariaLabel = label || `Loading ${variant}`
 
   if (variant === 'card') {
@@ -98,4 +99,4 @@ export function LoadingScreen({ variant = 'page', label, count = 5, className }:
       </div>
     </div>
   )
-}
+})

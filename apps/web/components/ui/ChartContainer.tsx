@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactElement } from 'react'
+import { memo,  type ReactElement  } from 'react'
 import { ResponsiveContainer, type TooltipProps } from 'recharts'
 import {
   type ValueType,
@@ -16,7 +16,7 @@ interface ChartContainerProps {
   className?: string
 }
 
-function ChartTooltipContent({
+const ChartTooltipContent = memo(function ChartTooltipContent({
   active,
   payload,
   label,
@@ -47,9 +47,9 @@ function ChartTooltipContent({
       ))}
     </div>
   )
-}
+})
 
-function ChartContainer({
+const ChartContainer = memo(function ChartContainer({
   title,
   description,
   height = 300,
@@ -79,7 +79,7 @@ function ChartContainer({
       </div>
     </div>
   )
-}
+})
 
 export { ChartContainer, ChartTooltipContent }
 export type { ChartContainerProps }

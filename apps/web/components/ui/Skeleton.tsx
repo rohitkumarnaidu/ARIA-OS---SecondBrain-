@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { cn } from './utils'
 
 interface SkeletonProps {
@@ -5,7 +6,7 @@ interface SkeletonProps {
   variant?: 'text' | 'circle' | 'card' | 'chart' | 'table-row'
 }
 
-function Skeleton({ className, variant = 'text' }: SkeletonProps) {
+const Skeleton = memo(function Skeleton({ className, variant = 'text' }: SkeletonProps) {
   return (
     <div
       className={cn(
@@ -21,7 +22,7 @@ function Skeleton({ className, variant = 'text' }: SkeletonProps) {
       role="presentation"
     />
   )
-}
+})
 
 export { Skeleton }
 export type { SkeletonProps }

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Sparkles } from 'lucide-react'
 import { cn } from './utils'
 
@@ -10,7 +11,7 @@ interface EmptyCanvasProps {
   className?: string
 }
 
-export function EmptyCanvas({ icon, title, description, badge, actions, className }: EmptyCanvasProps) {
+export const EmptyCanvas = memo(function EmptyCanvas({ icon, title, description, badge, actions, className }: EmptyCanvasProps) {
   return (
     <div className={cn('flex-1 flex flex-col items-center justify-center p-8 min-h-0 relative', className)}>
       <div
@@ -74,4 +75,4 @@ export function EmptyCanvas({ icon, title, description, badge, actions, classNam
       </div>
     </div>
   )
-}
+})

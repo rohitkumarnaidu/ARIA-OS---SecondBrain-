@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { memo,  useState, useEffect  } from 'react'
 import { AlertTriangle, Ban, Clock, ServerCrash, ArrowLeft, RefreshCw, Mail } from 'lucide-react'
 import { cn } from './utils'
 
@@ -41,7 +41,7 @@ const statusMeta: Record<ErrorStatus, { defaultTitle: string; defaultDesc: strin
   },
 }
 
-export function ErrorState({
+export const ErrorState = memo(function ErrorState({
   status = 500,
   title,
   description,
@@ -173,4 +173,4 @@ export function ErrorState({
       </div>
     </div>
   )
-}
+})

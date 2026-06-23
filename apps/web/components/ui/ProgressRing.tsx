@@ -1,6 +1,6 @@
 'use client'
 
-import { useId } from 'react'
+import { memo,  useId  } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -14,7 +14,7 @@ interface ProgressRingProps {
   className?: string
 }
 
-function ProgressRing({
+const ProgressRing = memo(function ProgressRing({
   progress,
   size = 120,
   strokeWidth = 8,
@@ -75,7 +75,7 @@ function ProgressRing({
       )}
     </div>
   )
-}
+})
 
 export { ProgressRing }
 export type { ProgressRingProps }

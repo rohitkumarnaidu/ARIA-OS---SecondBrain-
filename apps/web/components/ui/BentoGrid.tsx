@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode } from 'react'
+import { memo,  type ReactNode  } from 'react'
 import { cn } from './utils'
 
 interface BentoGridProps {
@@ -15,7 +15,7 @@ interface BentoCardProps {
   span?: 1 | 2 | 4
 }
 
-function BentoGrid({ children, className, cols = 3 }: BentoGridProps) {
+const BentoGrid = memo(function BentoGrid({ children, className, cols = 3 }: BentoGridProps) {
   return (
     <div
       className={cn(
@@ -33,9 +33,9 @@ function BentoGrid({ children, className, cols = 3 }: BentoGridProps) {
       {children}
     </div>
   )
-}
+})
 
-function BentoCard({ children, className, span = 1 }: BentoCardProps) {
+const BentoCard = memo(function BentoCard({ children, className, span = 1 }: BentoCardProps) {
   return (
     <div
       className={cn(
@@ -52,7 +52,7 @@ function BentoCard({ children, className, span = 1 }: BentoCardProps) {
       {children}
     </div>
   )
-}
+})
 
 export { BentoGrid, BentoCard }
 export type { BentoGridProps, BentoCardProps }
