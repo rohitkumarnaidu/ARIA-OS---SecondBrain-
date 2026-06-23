@@ -484,6 +484,15 @@ export interface MemoryCreate {
   expires_at?: Timestamp
 }
 
+export interface MemoryUpdate {
+  type?: MemoryType
+  key?: string
+  value?: unknown
+  importance?: MemoryImportance
+  tags?: string[]
+  expires_at?: Timestamp
+}
+
 // ── Learning Progress ──────────────────────────────────────────────────────
 export interface LearningProgress {
   id: UUID
