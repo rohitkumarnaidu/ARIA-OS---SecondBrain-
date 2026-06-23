@@ -2,14 +2,20 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { orchestrator, type OrchestrationPlan } from '@/lib/ai/orchestrator'
-import { Bot, Loader2, CheckCircle2, XCircle, Clock, Play, RefreshCw, Cpu } from 'lucide-react'
+import {
+  Bot, Loader2, CheckCircle2, XCircle, Clock, Play, Cpu,
+  HelpCircle, UserCheck, SkipForward,
+} from 'lucide-react'
 import { motion } from 'framer-motion'
 
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<string, { icon: typeof Clock; color: string; bg: string }> = {
   pending: { icon: Clock, color: 'text-text-tertiary', bg: 'bg-background-elevated' },
   running: { icon: Loader2, color: 'text-accent-primary', bg: 'bg-accent-primary/5' },
+  waiting_confirmation: { icon: HelpCircle, color: 'text-accent-warning', bg: 'bg-accent-warning/5' },
+  confirmed: { icon: UserCheck, color: 'text-accent-primary', bg: 'bg-accent-primary/5' },
   done: { icon: CheckCircle2, color: 'text-accent-success', bg: 'bg-accent-success/5' },
   failed: { icon: XCircle, color: 'text-accent-error', bg: 'bg-accent-error/5' },
+  skipped: { icon: SkipForward, color: 'text-text-tertiary', bg: 'bg-background-elevated' },
 }
 
 const EXAMPLE_QUERIES = [
@@ -21,18 +27,19 @@ const EXAMPLE_QUERIES = [
 const STATUS_LABELS: Record<string, string> = {
   planning: 'Planning',
   running: 'Running',
+  awaiting_input: 'Awaiting Input',
   done: 'Completed',
   failed: 'Failed',
 }
 
 export default function AgentsPage() {
-  const [plan, setPlan] = useState<OrchestrationPlan | null>(orchestrator.getPlan())
+  const [plan, setPlan] = useState<OrchestrationPlan | null>(orchestrator.getPlan() ?? null)
   const [query, setQuery] = useState('')
   const [running, setRunning] = useState(false)
 
   useEffect(() => {
-    const unsub = orchestrator.subscribe(() => {
-      setPlan({ ...orchestrator.getPlan()! })
+    const unsub = orchestrator.on('plan_updated', () => {
+      setPlan(orchestrator.getPlan() ?? null)
     })
     return unsub
   }, [])
