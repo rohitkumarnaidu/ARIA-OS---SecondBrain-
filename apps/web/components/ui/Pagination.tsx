@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { memo,  useMemo  } from 'react'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { cn } from './utils'
 
@@ -34,7 +34,7 @@ function generatePageNumbers(current: number, total: number, siblings: number): 
   return [1, 'ellipsis', ...Array.from({ length: rightSibling - leftSibling + 1 }, (_, i) => leftSibling + i), 'ellipsis', total]
 }
 
-function Pagination({ currentPage, totalPages, onPageChange, siblingCount = 1, className }: PaginationProps) {
+const Pagination = memo(function Pagination({ currentPage, totalPages, onPageChange, siblingCount = 1, className }: PaginationProps) {
   const pages = useMemo(() => generatePageNumbers(currentPage, totalPages, siblingCount), [currentPage, totalPages, siblingCount])
 
   const btnBase = cn(
@@ -88,7 +88,7 @@ function Pagination({ currentPage, totalPages, onPageChange, siblingCount = 1, c
       </button>
     </nav>
   )
-}
+})
 
 Pagination.displayName = 'Pagination'
 

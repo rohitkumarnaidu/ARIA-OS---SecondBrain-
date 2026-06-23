@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useId, type ReactNode, type HTMLAttributes } from 'react'
+import { memo,  createContext, useContext, useId, type ReactNode, type HTMLAttributes  } from 'react'
 import { cn } from './utils'
 
 interface FormFieldContextValue {
@@ -24,7 +24,7 @@ interface FormFieldProps {
   className?: string
 }
 
-function FormField({ name, error, children, className }: FormFieldProps) {
+const FormField = memo(function FormField({ name, error, children, className }: FormFieldProps) {
   const id = useId()
   return (
     <FormFieldContext.Provider value={{ id, name, error }}>
@@ -33,7 +33,7 @@ function FormField({ name, error, children, className }: FormFieldProps) {
       </div>
     </FormFieldContext.Provider>
   )
-}
+})
 
 FormField.displayName = 'FormField'
 
@@ -41,7 +41,7 @@ interface FormLabelProps extends HTMLAttributes<HTMLLabelElement> {
   children: ReactNode
 }
 
-function FormLabel({ children, className, ...props }: FormLabelProps) {
+const FormLabel = memo(function FormLabel({ children, className, ...props }: FormLabelProps) {
   const { id, error } = useFormField()
   return (
     <label
@@ -56,7 +56,7 @@ function FormLabel({ children, className, ...props }: FormLabelProps) {
       {children}
     </label>
   )
-}
+})
 
 FormLabel.displayName = 'FormLabel'
 
@@ -65,7 +65,7 @@ interface FormControlProps {
   className?: string
 }
 
-function FormControl({ children, className }: FormControlProps) {
+const FormControl = memo(function FormControl({ children, className }: FormControlProps) {
   const { id, error } = useFormField()
   return (
     <div
@@ -76,7 +76,7 @@ function FormControl({ children, className }: FormControlProps) {
       {children}
     </div>
   )
-}
+})
 
 FormControl.displayName = 'FormControl'
 
@@ -85,7 +85,7 @@ interface FormMessageProps {
   className?: string
 }
 
-function FormMessage({ children, className }: FormMessageProps) {
+const FormMessage = memo(function FormMessage({ children, className }: FormMessageProps) {
   const { id, error } = useFormField()
   const msg = children ?? error
   if (!msg) return null
@@ -98,7 +98,7 @@ function FormMessage({ children, className }: FormMessageProps) {
       {msg}
     </p>
   )
-}
+})
 
 FormMessage.displayName = 'FormMessage'
 
@@ -107,7 +107,7 @@ interface FormDescriptionProps {
   className?: string
 }
 
-function FormDescription({ children, className }: FormDescriptionProps) {
+const FormDescription = memo(function FormDescription({ children, className }: FormDescriptionProps) {
   const { id } = useFormField()
   return (
     <p
@@ -117,7 +117,7 @@ function FormDescription({ children, className }: FormDescriptionProps) {
       {children}
     </p>
   )
-}
+})
 
 FormDescription.displayName = 'FormDescription'
 

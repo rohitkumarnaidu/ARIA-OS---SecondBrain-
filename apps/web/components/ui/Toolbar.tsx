@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, type HTMLAttributes } from 'react'
+import { memo,  type ReactNode, type HTMLAttributes  } from 'react'
 import { cn } from './utils'
 
 interface ToolbarProps extends HTMLAttributes<HTMLDivElement> {
@@ -8,7 +8,7 @@ interface ToolbarProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
 }
 
-function Toolbar({ variant = 'surface', className, children, ...props }: ToolbarProps) {
+const Toolbar = memo(function Toolbar({ variant = 'surface', className, children, ...props }: ToolbarProps) {
   return (
     <div
       className={cn(
@@ -23,13 +23,13 @@ function Toolbar({ variant = 'surface', className, children, ...props }: Toolbar
       {children}
     </div>
   )
-}
+})
 
 interface ToolbarSeparatorProps {
   className?: string
 }
 
-function ToolbarSeparator({ className }: ToolbarSeparatorProps) {
+const ToolbarSeparator = memo(function ToolbarSeparator({ className }: ToolbarSeparatorProps) {
   return (
     <div
       className={cn('w-px h-6 mx-1 shrink-0', className)}
@@ -38,7 +38,7 @@ function ToolbarSeparator({ className }: ToolbarSeparatorProps) {
       aria-orientation="vertical"
     />
   )
-}
+})
 
 ToolbarSeparator.displayName = 'ToolbarSeparator'
 Toolbar.displayName = 'Toolbar'

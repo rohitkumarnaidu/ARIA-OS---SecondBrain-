@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, type DragEvent, type ChangeEvent } from 'react'
+import { memo,  useState, useRef, useCallback, type DragEvent, type ChangeEvent  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, X, File } from 'lucide-react'
 import { cn } from './utils'
@@ -20,7 +20,7 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function FileUpload({ onFiles, accept, multiple = true, maxSize, maxFiles, className }: FileUploadProps) {
+const FileUpload = memo(function FileUpload({ onFiles, accept, multiple = true, maxSize, maxFiles, className }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [files, setFiles] = useState<{ file: File; error?: string }[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -175,7 +175,7 @@ function FileUpload({ onFiles, accept, multiple = true, maxSize, maxFiles, class
       </AnimatePresence>
     </div>
   )
-}
+})
 
 FileUpload.displayName = 'FileUpload'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect, useCallback, useMemo  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from './utils'
@@ -19,7 +19,7 @@ interface MultiSelectProps {
   className?: string
 }
 
-const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
+const MultiSelect = memo(forwardRef<HTMLDivElement, MultiSelectProps>(
   ({ items, values, onChange, placeholder = 'Select...', maxItems, className }, ref) => {
     const [open, setOpen] = useState(false)
     const [search, setSearch] = useState('')
@@ -222,7 +222,7 @@ const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     )
   },
 )
-
+)
 MultiSelect.displayName = 'MultiSelect'
 
 export { MultiSelect }

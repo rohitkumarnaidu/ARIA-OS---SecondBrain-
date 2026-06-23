@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef } from 'react'
+import { memo,  forwardRef  } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -19,7 +19,7 @@ const sizeMap = {
   lg: { track: 'h-7 w-14', knob: 'h-6 w-6', translate: 'translateX(112%)' },
 }
 
-const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
+const Toggle = memo(forwardRef<HTMLButtonElement, ToggleProps>(
   ({ checked, onChange, disabled = false, label, size = 'md', className }, ref) => {
     const id = `toggle-${Math.random().toString(36).slice(2, 9)}`
     const dims = sizeMap[size]
@@ -71,7 +71,7 @@ const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
     )
   },
 )
-
+)
 Toggle.displayName = 'Toggle'
 
 export { Toggle }
