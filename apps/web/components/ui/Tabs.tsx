@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useCallback } from 'react'
+import { memo,  forwardRef, useState, useRef, useCallback  } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -17,7 +17,7 @@ interface TabsProps {
   tabClassName?: string
 }
 
-const Tabs = forwardRef<HTMLDivElement, TabsProps>(
+const Tabs = memo(forwardRef<HTMLDivElement, TabsProps>(
   ({ tabs, value, onChange, className, tabClassName }, ref) => {
     const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
 
@@ -94,7 +94,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsProps>(
     )
   },
 )
-
+)
 Tabs.displayName = 'Tabs'
 
 export { Tabs }

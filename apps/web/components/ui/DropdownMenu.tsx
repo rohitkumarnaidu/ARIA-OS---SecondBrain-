@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect, useCallback } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { cn } from './utils'
@@ -21,7 +21,7 @@ interface DropdownMenuProps {
   className?: string
 }
 
-const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
+const DropdownMenu = memo(forwardRef<HTMLDivElement, DropdownMenuProps>(
   ({ trigger, items, align = 'start', className }, ref) => {
     const [open, setOpen] = useState(false)
     const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null)
@@ -184,7 +184,7 @@ const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     )
   },
 )
-
+)
 DropdownMenu.displayName = 'DropdownMenu'
 
 export { DropdownMenu }

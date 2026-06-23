@@ -1,4 +1,4 @@
-import { forwardRef, type ElementType, type HTMLAttributes } from 'react'
+import { memo,  forwardRef, type ElementType, type HTMLAttributes  } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cn } from './utils'
 
@@ -16,7 +16,7 @@ const variants = {
   outline: 'text-foreground border-border',
 } as const
 
-const Badge = forwardRef<HTMLElement, BadgeProps>(
+const Badge = memo(forwardRef<HTMLElement, BadgeProps>(
   ({ asChild = false, variant = 'default', className, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'span'
 
@@ -39,7 +39,7 @@ const Badge = forwardRef<HTMLElement, BadgeProps>(
     )
   },
 )
-
+)
 Badge.displayName = 'Badge'
 
 export { Badge }

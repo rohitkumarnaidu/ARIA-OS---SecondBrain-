@@ -1,6 +1,6 @@
 'use client'
 
-import { InputHTMLAttributes, forwardRef, useId, useState, useEffect } from 'react'
+import { memo,  InputHTMLAttributes, forwardRef, useId, useState, useEffect  } from 'react'
 import { clsx } from 'clsx'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

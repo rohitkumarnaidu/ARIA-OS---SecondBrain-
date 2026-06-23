@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useEffect, useRef, useCallback } from 'react'
+import { memo,  forwardRef, useEffect, useRef, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from './utils'
@@ -20,7 +20,7 @@ const widthClasses: Record<string, string> = {
   lg: 'max-w-lg',
 }
 
-const Sheet = forwardRef<HTMLDivElement, SheetProps>(
+const Sheet = memo(forwardRef<HTMLDivElement, SheetProps>(
   ({ open, onClose, title, children, width = 'md', className }, ref) => {
     const contentRef = useRef<HTMLDivElement>(null)
     const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -117,7 +117,7 @@ const Sheet = forwardRef<HTMLDivElement, SheetProps>(
     )
   },
 )
-
+)
 Sheet.displayName = 'Sheet'
 
 export { Sheet }

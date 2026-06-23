@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect, useCallback } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect, useCallback  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from './utils'
 
@@ -14,7 +14,7 @@ interface PopoverProps {
   className?: string
 }
 
-const Popover = forwardRef<HTMLDivElement, PopoverProps>(
+const Popover = memo(forwardRef<HTMLDivElement, PopoverProps>(
   ({ trigger, children, open: controlledOpen, onOpenChange, align = 'center', side = 'bottom', className }, ref) => {
     const [internalOpen, setInternalOpen] = useState(false)
     const isOpen = controlledOpen ?? internalOpen
@@ -102,7 +102,7 @@ const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     )
   },
 )
-
+)
 Popover.displayName = 'Popover'
 
 export { Popover }

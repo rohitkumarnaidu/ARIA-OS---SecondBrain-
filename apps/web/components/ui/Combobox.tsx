@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { memo,  forwardRef, useState, useRef, useEffect, useCallback, useMemo  } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from './utils'
@@ -21,7 +21,7 @@ interface ComboboxProps {
   className?: string
 }
 
-const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
+const Combobox = memo(forwardRef<HTMLDivElement, ComboboxProps>(
   ({ items, value, onChange, placeholder = 'Select...', searchPlaceholder = 'Search...', emptyText = 'No results found.', disabled = false, className }, ref) => {
     const [open, setOpen] = useState(false)
     const [search, setSearch] = useState('')
@@ -186,7 +186,7 @@ const Combobox = forwardRef<HTMLDivElement, ComboboxProps>(
     )
   },
 )
-
+)
 Combobox.displayName = 'Combobox'
 
 export { Combobox }

@@ -1,6 +1,6 @@
 'use client'
 
-import {
+import { memo, 
   forwardRef,
   useState,
   useCallback,
@@ -9,7 +9,7 @@ import {
   type HTMLAttributes,
   type KeyboardEvent,
   type ElementType,
-} from 'react'
+ } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search } from 'lucide-react'
 import { cn } from './utils'
@@ -36,7 +36,7 @@ interface CommandProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children' |
   onSelect?: (item: CommandItem) => void
 }
 
-const Command = forwardRef<HTMLDivElement, CommandProps>(
+const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
   (
     {
       open = true,
@@ -263,7 +263,7 @@ const Command = forwardRef<HTMLDivElement, CommandProps>(
     )
   },
 )
-
+)
 Command.displayName = 'Command'
 
 export { Command }
