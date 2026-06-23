@@ -3,6 +3,7 @@ from typing import List, Dict, Any
 from config.core.supabase import get_supabase_client
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
+from ai.brave_search import fetch_opportunities_from_web
 
 CATEGORIES = {
     "internships": ["LinkedIn", "Internshala", "AngelList", "HackerEarth"],
@@ -22,12 +23,19 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
     user_interests = user_data.get("interests", [])
 
     opp_prompt = prompts.get_agent("opportunity_radar_agent")
+    web_opps = await fetch_opportunities_from_web(user_skills, user_interests)
+    web_context = "\n".join(
+        f"- {o['title']} ({o['category']}) - {o['description'][:100]}"
+        for o in web_opps[:5]
+    ) if web_opps else "No web results found."
+
     if opp_prompt:
         system_prompt = opp_prompt.system_prompt
         user_prompt = (
             f"Scan for opportunities matching:\n"
             f"Skills: {user_skills}\n"
             f"Interests: {user_interests}\n"
+            f"Web search results:\n{web_context}\n"
             f"Return JSON array of objects with: title, category, url, deadline (ISO date), "
             f"description, skills_needed (array), match_score (0-100)."
         )
@@ -35,6 +43,7 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
         system_prompt = "You are a career opportunity scout for CS students. Return only valid JSON."
         user_prompt = (
             f"Student skills: {user_skills}, interests: {user_interests}. "
+            f"Web results:\n{web_context}\n"
             f"Suggest 5 relevant opportunities (internships, hackathons, open source programs). "
             f"Return JSON array of objects with: title, category, url, deadline (ISO date 30-90 days from now), "
             f"description, skills_needed (array), match_score (0-100)."
