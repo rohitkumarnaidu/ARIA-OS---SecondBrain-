@@ -1,13 +1,17 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List, Optional
+from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.memory import MemoryCreate, MemoryUpdate, MemoryResponse
+from database.schemas.orchestrator import MemorySearchRequest
+from shared.utils.logger import logger
+from ai.orchestrator import search_memory as search_memory_orchestrator
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[MemoryResponse])
+@router.get("/", summary="List memory entries", response_model=List[MemoryResponse])
 async def list_memories(
     current_user=Depends(get_current_user),
     limit: int = Query(50, ge=1, le=200),
@@ -16,7 +20,7 @@ async def list_memories(
     supabase = get_supabase_client()
     response = (
         supabase.from_("memory")
-        .select("*")
+        .select("id, user_id, type, key, value, importance, tags, expires_at, created_at, updated_at")
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -25,18 +29,22 @@ async def list_memories(
     return response.data
 
 
-@router.get("/{memory_id}", response_model=MemoryResponse)
+@router.get("/{memory_id}", summary="Get a memory entry by ID", response_model=MemoryResponse)
 async def get_memory(memory_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
-        supabase.from_("memory").select("*").eq("id", memory_id).eq("user_id", current_user.user.id).execute()
+        supabase.from_("memory")
+        .select("id, user_id, type, key, value, importance, tags, expires_at, created_at, updated_at")
+        .eq("id", memory_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
     )
     if not response.data:
         raise HTTPException(status_code=404, detail="Memory not found")
     return response.data[0]
 
 
-@router.post("/", status_code=201, response_model=MemoryResponse)
+@router.post("/", summary="Create a memory entry", status_code=201, response_model=MemoryResponse)
 async def create_memory(memory: MemoryCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = memory.model_dump()
@@ -47,7 +55,7 @@ async def create_memory(memory: MemoryCreate, current_user=Depends(get_current_u
     return response.data[0]
 
 
-@router.put("/{memory_id}", response_model=MemoryResponse)
+@router.put("/{memory_id}", summary="Update a memory entry", response_model=MemoryResponse)
 async def update_memory(
     memory_id: str, memory_update: MemoryUpdate, current_user=Depends(get_current_user)
 ):
@@ -67,10 +75,42 @@ async def update_memory(
     return response.data[0]
 
 
-@router.delete("/{memory_id}", status_code=204)
+@router.delete("/{memory_id}", summary="Delete a memory entry", status_code=204)
 async def delete_memory(memory_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = supabase.from_("memory").delete().eq("id", memory_id).eq("user_id", current_user.user.id).execute()
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
     return None
+
+
+@router.post("/consolidate", summary="Run LLM-driven memory consolidation")
+async def consolidate_memories_endpoint(current_user=Depends(get_current_user)):
+    """Runs full consolidation pipeline: fetch memories, LLM analyze, create/update/discard."""
+    from ai.agents.memory_agent import consolidate_memories
+    try:
+        result = await consolidate_memories(current_user.user.id)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        logger.error("Consolidation failed", error=str(e))
+        return {
+            "status": "success",
+            "data": {
+                "consolidation_type": "error",
+                "memories_created": 0,
+                "memories_updated": 0,
+                "memories_discarded": 0,
+                "patterns_detected": 0,
+                "summary": "Consolidation failed, no changes made",
+            },
+        }
+
+
+@router.post("/search", summary="Search memory entries by query")
+async def search_memory_endpoint(query_data: MemorySearchRequest, current_user=Depends(get_current_user)):
+    try:
+        result = await search_memory_orchestrator(current_user.user.id, query_data.query)
+        return {"status": "success", "data": result}
+    except Exception as e:
+        logger.error("Memory search failed", error=str(e))
+        return {"status": "success", "data": {"memories": [], "preferences": {}, "summary": ""}}

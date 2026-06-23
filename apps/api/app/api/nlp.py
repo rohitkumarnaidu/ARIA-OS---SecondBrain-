@@ -73,7 +73,7 @@ def extract_priority(text: str) -> str | None:
 
 
 def extract_minutes(text: str) -> int | None:
-    match = re.search(r"(\d+)\s*(min|minute|minutes|hour|hours|hr|hrs)\b", text.lower())
+    match = re.search(r"(\d+)\s*(mins|min|minute|minutes|hour|hours|hr|hrs)\b", text.lower())
     if not match:
         return None
     num = int(match.group(1))
@@ -91,7 +91,7 @@ def resolve_route(nav: str) -> str | None:
     return None
 
 
-@router.post("/parse", response_model=NLPParseResponse)
+@router.post("/parse", summary="Parse natural language input", response_model=NLPParseResponse)
 async def parse_natural_language(req: NLPParseRequest, current_user=Depends(get_current_user)):
     text = req.text.strip()
     lower = text.lower()
@@ -144,7 +144,7 @@ async def parse_natural_language(req: NLPParseRequest, current_user=Depends(get_
     return NLPParseResponse(type="unknown", confidence=0.2, raw=text)
 
 
-@router.post("/execute", response_model=dict)
+@router.post("/execute", summary="Execute NL command", response_model=dict)
 async def execute_command(req: dict, current_user=Depends(get_current_user)):
     cmd_type = req.get("type")
     task_data = req.get("task") or {}
@@ -171,5 +171,25 @@ async def execute_command(req: dict, current_user=Depends(get_current_user)):
             raise HTTPException(status_code=500, detail="Failed to create task")
     elif cmd_type == "navigate":
         return {"success": True, "redirect_url": req.get("navigation", "/dashboard")}
+    elif cmd_type == "schedule":
+        supabase = get_supabase_client()
+        from uuid import uuid4
+        now = datetime.now(timezone.utc).isoformat()
+        sched = req.get("schedule") or {}
+        record = {
+            "id": str(uuid4()),
+            "user_id": current_user.user.id,
+            "start_time": sched.get("start_time", now),
+            "duration_minutes": sched.get("duration_minutes", 30),
+            "description": sched.get("description", "Scheduled task"),
+            "category": sched.get("category", "focus"),
+            "created_at": now,
+        }
+        try:
+            supabase.table("time_entries").insert(record).execute()
+            return {"success": True, "message": f'Scheduled "{record["description"]}" for {record["duration_minutes"]}min'}
+        except Exception as e:
+            logger.error("Failed to create time entry via NL", error=str(e))
+            raise HTTPException(status_code=500, detail="Failed to schedule")
     else:
         return {"success": False, "message": "Unknown command type"}

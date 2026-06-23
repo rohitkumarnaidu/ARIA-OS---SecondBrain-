@@ -1,15 +1,15 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, Request, HTTPException
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
-from database.schemas.chat import ChatRequest, ChatResponse, ChatSessionResponse
+from database.schemas.chat import ChatRequest, ChatResponse
 from shared.utils.rate_limiter import endpoint_limiter
 from shared.utils.security import sanitize_input
 from shared.utils.logger import logger
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
-from ai.agents.memory_agent import store_interaction, get_recent_interactions, get_memory_summary
+from ai.agents.memory_agent import store_interaction, get_memory_summary
 
 router = APIRouter()
 
@@ -61,13 +61,13 @@ def build_context(
 
     if sleep_logs:
         latest = sleep_logs[0]
-        lines.append(f"### Last Sleep")
+        lines.append("### Last Sleep")
         lines.append(f"- Score: {latest.get('sleep_score', 'N/A')}/100, Duration: {latest.get('duration_hours', 0)}h")
         lines.append("")
 
     if time_entries:
         total_minutes = sum(t.get("duration_minutes", 0) for t in time_entries)
-        lines.append(f"### Today's Time Tracking")
+        lines.append("### Today's Time Tracking")
         lines.append(f"- Total tracked: {total_minutes // 60}h {total_minutes % 60}m")
         categories = {}
         for t in time_entries:
@@ -78,7 +78,7 @@ def build_context(
         lines.append("")
 
     if memory_summary and memory_summary.get("summary"):
-        lines.append(f"### Memory Context")
+        lines.append("### Memory Context")
         lines.append(f"- {memory_summary['summary']}")
         lines.append(f"- Preferred category: {memory_summary.get('preferences', {}).get('preferred_category', 'general')}")
         lines.append("")
@@ -95,7 +95,7 @@ def build_context(
     return "\n".join(lines)
 
 
-@router.get("/", response_model=List[dict])
+@router.get("/", summary="List chat conversations", response_model=List[dict])
 async def list_conversations(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
@@ -130,7 +130,7 @@ async def list_conversations(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail="Failed to list conversations")
 
 
-@router.post("/", status_code=201, response_model=ChatResponse)
+@router.post("/", summary="Send a chat message", status_code=201, response_model=ChatResponse)
 async def chat(request: Request, request_body: ChatRequest, current_user=Depends(get_current_user)):
     client_ip = request.client.host if request.client else "unknown"
     if not endpoint_limiter.check(client_ip, "/api/v1/chat"):
@@ -140,12 +140,12 @@ async def chat(request: Request, request_body: ChatRequest, current_user=Depends
     message = sanitize_input(request_body.message)
 
     try:
-        tasks_resp = supabase.from_("tasks").select("*").eq("user_id", current_user.user.id).eq("status", "pending").order("priority", ascending=True).execute()
-        goals_resp = supabase.from_("goals").select("*").eq("user_id", current_user.user.id).eq("status", "active").execute()
-        courses_resp = supabase.from_("courses").select("*").eq("user_id", current_user.user.id).execute()
-        habits_resp = supabase.from_("habits").select("*").eq("user_id", current_user.user.id).execute()
-        sleep_resp = supabase.from_("sleep_logs").select("*").eq("user_id", current_user.user.id).order("date", ascending=False).limit(1).execute()
-        time_resp = supabase.from_("time_entries").select("*").eq("user_id", current_user.user.id).gte("start_time", datetime.now().strftime("%Y-%m-%d")).execute()
+        tasks_resp = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("user_id", current_user.user.id).eq("status", "pending").order("priority", ascending=True).execute()
+        goals_resp = supabase.from_("goals").select("id, user_id, title, description, status, progress, target_date, category, created_at, updated_at").eq("user_id", current_user.user.id).eq("status", "active").execute()
+        courses_resp = supabase.from_("courses").select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at").eq("user_id", current_user.user.id).execute()
+        habits_resp = supabase.from_("habits").select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at").eq("user_id", current_user.user.id).execute()
+        sleep_resp = supabase.from_("sleep_logs").select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at").eq("user_id", current_user.user.id).order("date", ascending=False).limit(1).execute()
+        time_resp = supabase.from_("time_entries").select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at").eq("user_id", current_user.user.id).gte("start_time", datetime.now().strftime("%Y-%m-%d")).execute()
         history_resp = supabase.from_("chat_messages").select("role, content").eq("user_id", current_user.user.id).order("created_at", ascending=False).limit(10).execute()
 
         pending_tasks = tasks_resp.data or []
@@ -155,7 +155,11 @@ async def chat(request: Request, request_body: ChatRequest, current_user=Depends
         sleep_logs = sleep_resp.data or []
         time_entries = time_resp.data or []
         recent_messages = list(reversed(history_resp.data or []))
-        memory = await get_memory_summary(current_user.user.id)
+        memory = {}
+        try:
+            memory = await get_memory_summary(current_user.user.id)
+        except Exception as e:
+            logger.warn("Memory summary unavailable for chat", error=str(e))
 
         system_override = request_body.context or ""
         aria_prompt = prompts.get_system("aria_system")
@@ -181,7 +185,6 @@ Respond conversationally and helpfully. Be concise but thorough. If they ask abo
         logger.warn("LLM unavailable, falling back to keyword routing for chat", user_id=current_user.user.id)
         message_lower = message.lower()
         if "task" in message_lower or "todo" in message_lower:
-            active_tasks = []
             if pending_tasks:
                 top_task = pending_tasks[0]
                 response_text = f"You have {len(pending_tasks)} pending tasks. Your top priority is: '{top_task.get('title', 'Untitled')}'. Would you like me to help you complete it?"
