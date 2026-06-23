@@ -7,7 +7,7 @@ from database.schemas.review import WeeklyReviewRead
 router = APIRouter()
 
 
-@router.get("/", response_model=List[WeeklyReviewRead])
+@router.get("/", summary="List weekly reviews", response_model=List[WeeklyReviewRead])
 async def list_reviews(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
@@ -16,7 +16,7 @@ async def list_reviews(
     supabase = get_supabase_client()
     response = (
         supabase.from_("weekly_reviews")
-        .select("*")
+        .select("id, user_id, week_start, week_end, title, summary, read, created_at")
         .eq("user_id", current_user.user.id)
         .order("week_start", ascending=False)
         .range(offset, offset + limit - 1)
@@ -25,12 +25,12 @@ async def list_reviews(
     return response.data
 
 
-@router.get("/latest", response_model=Optional[WeeklyReviewRead])
+@router.get("/latest", summary="Get latest weekly review", response_model=Optional[WeeklyReviewRead])
 async def get_latest_review(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("weekly_reviews")
-        .select("*")
+        .select("id, user_id, week_start, week_end, title, summary, read, created_at")
         .eq("user_id", current_user.user.id)
         .order("week_start", ascending=False)
         .limit(1)
@@ -41,12 +41,12 @@ async def get_latest_review(current_user=Depends(get_current_user)):
     return None
 
 
-@router.get("/{review_id}", response_model=WeeklyReviewRead)
+@router.get("/{review_id}", summary="Get a review by ID", response_model=WeeklyReviewRead)
 async def get_review(review_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("weekly_reviews")
-        .select("*")
+        .select("id, user_id, week_start, week_end, title, summary, read, created_at")
         .eq("id", review_id)
         .eq("user_id", current_user.user.id)
         .execute()
