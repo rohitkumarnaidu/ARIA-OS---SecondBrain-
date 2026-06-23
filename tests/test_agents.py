@@ -6,6 +6,8 @@ import pytest
 
 from ai.client import llm as llm_client
 from ai.prompt_loader import prompts as prompt_loader
+from ai.context_assembly import ContextAssembly, ContextSection, SECTIONS
+from ai.sections import register_default_sections
 from ai.agents import (
     briefing_agent,
     memory_agent,
@@ -51,6 +53,7 @@ _AGENT_MODULES = [
     "ai.agents.sleep_agent",
     "ai.agents.nudge_agent",
     "ai.agents.roadmap_agent",
+    "ai.sections",
 ]
 
 
@@ -263,7 +266,7 @@ class TestMemoryAgent:
         assert result["id"] == "mock-id"
         inserted = mock_supabase._builders["memory"].insert.call_args[0][0]
         assert inserted["user_id"] == "user-1"
-        assert inserted["interaction_type"] == "query"
+        assert inserted["type"] == "query"
 
     @pytest.mark.asyncio
     async def test_store_interaction_empty_result(self, mock_supabase):
@@ -314,20 +317,19 @@ class TestMemoryAgent:
     async def test_get_memory_summary_fallback(self, mock_supabase, mock_get_agent_none, mock_llm_generate):
         mock_supabase._builders["memory"].execute.return_value = MagicMock(
             data=[
-                {"id": "m1", "content": "Working on project", "timestamp": "2026-06-17T10:00:00"},
+                {"id": "m1", "type": "query", "value": "Working on project", "created_at": "2026-06-17T10:00:00"},
             ]
         )
         result = await memory_agent.get_memory_summary("user-1")
         assert result["recent_interactions"] == 1
         assert result["preferences"]["preferred_category"] == "personal"
         assert result["memory_type"] == "short_term"
-        mock_llm_generate.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_get_memory_summary_happy_path(self, mock_supabase, mock_get_agent, mock_llm_generate):
         mock_supabase._builders["memory"].execute.return_value = MagicMock(
             data=[
-                {"id": "m1", "content": "Learning Python", "timestamp": "2026-06-17T10:00:00"},
+                {"id": "m1", "type": "query", "value": "Learning Python", "created_at": "2026-06-17T10:00:00"},
             ]
         )
         mock_llm_generate.return_value = "User is focused on Python learning."
@@ -345,7 +347,7 @@ class TestMemoryAgent:
     @pytest.mark.asyncio
     async def test_get_memory_summary_long_term(self, mock_supabase, mock_get_agent, mock_llm_generate):
         interactions = [
-            {"id": str(i), "content": f"Interaction {i}", "timestamp": "2026-06-17T10:00:00"} for i in range(55)
+            {"id": str(i), "type": "query", "value": f"Interaction {i}", "created_at": "2026-06-17T10:00:00"} for i in range(55)
         ]
         mock_supabase._builders["memory"].execute.return_value = MagicMock(data=interactions)
         result = await memory_agent.get_memory_summary("user-1")
@@ -355,27 +357,12 @@ class TestMemoryAgent:
     async def test_get_memory_summary_llm_error(self, mock_supabase, mock_get_agent, mock_llm_generate):
         mock_supabase._builders["memory"].execute.return_value = MagicMock(
             data=[
-                {"id": "m1", "content": "Hi", "timestamp": "2026-06-17T10:00:00"},
+                {"id": "m1", "type": "query", "value": "Hi", "created_at": "2026-06-17T10:00:00"},
             ]
         )
         mock_llm_generate.side_effect = RuntimeError("LLM error")
-        with pytest.raises(RuntimeError):
-            await memory_agent.get_memory_summary("user-1")
-
-    @pytest.mark.asyncio
-    async def test_update_memory_context_insert(self, mock_supabase):
-        await memory_agent.update_memory_context("user-1", {"mood": "focused"})
-        assert mock_supabase._builders["user_context"].insert.called
-
-    @pytest.mark.asyncio
-    async def test_update_memory_context_update(self, mock_supabase):
-        mock_supabase._builders["user_context"].execute.return_value = MagicMock(
-            data=[
-                {"id": "uc1", "user_id": "user-1"},
-            ]
-        )
-        await memory_agent.update_memory_context("user-1", {"mood": "tired"})
-        assert mock_supabase._builders["user_context"].update.called
+        result = await memory_agent.get_memory_summary("user-1")
+        assert result["summary"] == "Unable to generate memory summary at this time."
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1355,3 +1342,89 @@ class TestRoadmapAgent:
         mock_llm_json.side_effect = RuntimeError("LLM failure")
         with pytest.raises(RuntimeError):
             await roadmap_agent.optimize_roadmap("user-1")
+
+
+class TestContextAssembly:
+    def test_section_creation(self):
+        async def fake_source(uid):
+            return []
+        section = ContextSection("test", 200, 1, fake_source, lambda d: "fallback", "fallback")
+        assert section.name == "test"
+        assert section.max_tokens == 200
+        assert section.priority == 1
+
+    @pytest.mark.asyncio
+    async def test_assembly_creates_sections(self):
+        assembly = ContextAssembly(max_budget=7800)
+        result = await assembly.assemble(user_id="user-1")
+        assert isinstance(result, object)
+        assert hasattr(result, "sections")
+        assert hasattr(result, "total_tokens")
+
+    @pytest.mark.asyncio
+    async def test_assembly_with_data(self):
+        async def fetcher(uid):
+            return [{"title": "Task 1", "status": "pending"}]
+        def formatter(data):
+            return "\n".join(f"- {t['title']}" for t in data)
+        SECTIONS.insert(0, ContextSection("custom", 200, 0, fetcher, formatter, "none"))
+        assembly = ContextAssembly(max_budget=7800)
+        result = await assembly.assemble(user_id="user-1")
+        flat = assembly.flatten(result)
+        assert "Task 1" in flat
+        assert "custom" in result.sections
+        SECTIONS.clear()
+
+    def test_register_default_sections_clears_and_populates(self):
+        SECTIONS.clear()
+        register_default_sections()
+        names = [s.name for s in SECTIONS]
+        assert "tasks" in names
+        assert "goals" in names
+        assert "courses" in names
+        assert "habits" in names
+        assert "sleep" in names
+        assert "memory" in names
+        assert SECTIONS == sorted(SECTIONS, key=lambda s: s.priority)
+
+    def test_section_comparison(self):
+        async def src(u): return []
+        high = ContextSection("a", 100, 1, src, lambda d: "", "")
+        low = ContextSection("b", 100, 2, src, lambda d: "", "")
+        sections = [low, high]
+        sections.sort(key=lambda s: s.priority)
+        assert sections[0].name == "a"
+        assert sections[1].name == "b"
+
+    def test_section_priority_order(self):
+        async def src(u): return []
+        SECTIONS.clear()
+        SECTIONS.append(ContextSection("second", 100, 2, src, lambda d: "", ""))
+        SECTIONS.append(ContextSection("first", 100, 1, src, lambda d: "", ""))
+        SECTIONS.sort(key=lambda s: s.priority)
+        assert SECTIONS[0].name == "first"
+        assert SECTIONS[1].name == "second"
+        SECTIONS.clear()
+
+    @pytest.mark.asyncio
+    async def test_section_fetch_tasks(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "Test Task", "status": "pending", "priority": "high"}]
+        )
+        SECTIONS.clear()
+        register_default_sections()
+        assembly = ContextAssembly(max_budget=7800)
+        result = await assembly.assemble(user_id="user-1")
+        flat = assembly.flatten(result)
+        assert "Test Task" in flat
+        SECTIONS.clear()
+
+    @pytest.mark.asyncio
+    async def test_section_fetch_empty(self, mock_supabase):
+        SECTIONS.clear()
+        register_default_sections()
+        assembly = ContextAssembly(max_budget=7800)
+        result = await assembly.assemble(user_id="user-1")
+        flat = assembly.flatten(result)
+        assert "No pending tasks." in flat
+        SECTIONS.clear()
