@@ -3,16 +3,17 @@ from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from shared.utils.logger import logger
 from database.schemas.notification import NotificationResponse
+from datetime import datetime
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[NotificationResponse])
+@router.get("/", summary="List notifications", response_model=list[NotificationResponse])
 async def list_notifications(limit: int = 50, offset: int = 0, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
         resp = supabase.from_("notifications")\
-            .select("*")\
+            .select("id, user_id, title, message, category, priority, read, action_url, icon, created_at")\
             .eq("user_id", current_user.user.id)\
             .order("created_at", ascending=False)\
             .range(offset, offset + limit - 1)\
@@ -23,7 +24,7 @@ async def list_notifications(limit: int = 50, offset: int = 0, current_user=Depe
         return []
 
 
-@router.patch("/{notification_id}/read", response_model=dict)
+@router.patch("/{notification_id}/read", summary="Mark notification as read", response_model=dict)
 async def mark_read(notification_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
@@ -42,7 +43,7 @@ async def mark_read(notification_id: str, current_user=Depends(get_current_user)
         raise HTTPException(status_code=500, detail="Failed to mark as read")
 
 
-@router.post("/read-all", response_model=dict)
+@router.post("/read-all", summary="Mark all notifications as read", response_model=dict)
 async def mark_all_read(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
@@ -57,7 +58,7 @@ async def mark_all_read(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail="Failed to mark all as read")
 
 
-@router.post("/generate", response_model=list[NotificationResponse])
+@router.post("/generate", summary="Generate proactive nudges", response_model=list[NotificationResponse])
 async def generate_proactive_nudges(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     created = []
@@ -143,7 +144,7 @@ async def generate_proactive_nudges(current_user=Depends(get_current_user)):
             logger.error("Failed to insert habit nudge", error=str(e))
 
     # Sleep trend
-    scores = [l.get("sleep_score", 0) or 0 for l in sleep_logs]
+    scores = [sl.get("sleep_score", 0) or 0 for sl in sleep_logs]
     if len(scores) >= 7:
         recent = sum(scores[:7]) / 7
         if len(scores) >= 14:
@@ -170,3 +171,43 @@ async def generate_proactive_nudges(current_user=Depends(get_current_user)):
                     logger.error("Failed to insert sleep nudge", error=str(e))
 
     return [NotificationResponse(**n) for n in created]
+
+
+@router.get("/deadline-alerts", summary="Get deadline alerts", response_model=list)
+async def deadline_alerts(current_user=Depends(get_current_user)):
+    supabase = get_supabase_client()
+    from datetime import timezone
+    now = datetime.now(timezone.utc)
+
+    try:
+        tasks_resp = supabase.from_("tasks").select("id, title, due_date, priority, status").eq("user_id", current_user.user.id).eq("status", "pending").neq("due_date", None).execute()
+        tasks = tasks_resp.data or []
+    except Exception as e:
+        logger.error("Failed to check deadline alerts", error=str(e))
+        tasks = []
+
+    alerts = []
+    for t in tasks:
+        due = t.get("due_date")
+        if not due:
+            continue
+        try:
+            due_dt = datetime.fromisoformat(due)
+            if due_dt.tzinfo is None:
+                due_dt = due_dt.replace(tzinfo=timezone.utc)
+        except (ValueError, TypeError):
+            continue
+
+        remaining = (due_dt - now).total_seconds() / 3600
+        if 0 < remaining <= 48:
+            alerts.append({
+                "id": t["id"],
+                "title": t["title"],
+                "due_date": due,
+                "hours_remaining": round(remaining, 1),
+                "priority": t.get("priority", "medium"),
+                "urgent": remaining <= 24,
+            })
+
+    alerts.sort(key=lambda a: a["hours_remaining"])
+    return alerts[:20]
