@@ -4,14 +4,14 @@
 # =============================================================================
 
 # ---- Stage 1: Dependencies ----
-FROM node:18-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /app
 
 COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --only=production
 
 # ---- Stage 2: Build ----
-FROM node:18-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -22,7 +22,7 @@ ENV NEXT_PUBLIC_PWA_ENABLED=true
 RUN npm run build
 
 # ---- Stage 3: Production ----
-FROM node:18-alpine AS production
+FROM node:26-alpine AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -46,7 +46,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 CMD ["node", "server.js"]
 
 # ---- Stage 4: Development (hot-reload) ----
-FROM node:18-alpine AS development
+FROM node:26-alpine AS development
 WORKDIR /app
 
 ENV NODE_ENV=development
