@@ -714,3 +714,15 @@ class TestLLMClientEdgeCases:
         result = await client.generate_json("test")
         assert result["items"][0]["x"] == 1
         assert result["items"][1]["x"] == 2
+
+    @pytest.mark.asyncio
+    async def test_generate_json_dict_result(self, client):
+        client.generate = AsyncMock(return_value='{"key": "value"}')
+        result = await client.generate_json("test")
+        assert result["key"] == "value"
+
+    @pytest.mark.asyncio
+    async def test_generate_json_total_parse_failure(self, client):
+        client.generate = AsyncMock(return_value="some random text")
+        result = await client.generate_json("test")
+        assert result["parse_error"] is True

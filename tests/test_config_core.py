@@ -460,3 +460,114 @@ class TestSettings:
             result = await _verify_supabase_token("test-token")
             assert result.id == "user-1"
             mock_supabase.auth.get_user.assert_called_once_with("test-token")
+
+# ===========================================================================
+# auth — refresh_jwt_token (100% coverage gap closure)
+# ===========================================================================
+
+
+class TestRefreshJwtToken:
+    """Enterprise-grade tests for refresh_jwt_token (auth.py lines 97-118)."""
+
+    def test_refresh_jwt_token_success(self):
+        """Valid refresh token returns new access + refresh pair."""
+        from config.core.auth import refresh_jwt_token
+        import jwt as pyjwt
+        from config.core.config import settings
+
+        now = datetime.now(timezone.utc)
+        refresh_token = pyjwt.encode(
+            {"sub": "user-1", "type": "refresh", "exp": now + timedelta(days=30)},
+            settings.jwt_secret,
+            algorithm=settings.jwt_algorithm,
+        )
+
+        result = refresh_jwt_token(refresh_token)
+
+        assert "access_token" in result
+        assert "refresh_token" in result
+        assert result["token_type"] == "bearer"
+        assert isinstance(result["expires_in"], int)
+        assert result["expires_in"] > 0
+
+        decoded_access = pyjwt.decode(
+            result["access_token"], settings.jwt_secret, algorithms=[settings.jwt_algorithm]
+        )
+        assert decoded_access["sub"] == "user-1"
+        assert decoded_access["type"] == "access"
+        decoded_refresh = pyjwt.decode(
+            result["refresh_token"], settings.jwt_secret, algorithms=[settings.jwt_algorithm]
+        )
+        assert decoded_refresh["sub"] == "user-1"
+        assert decoded_refresh["type"] == "refresh"
+
+    def test_refresh_jwt_token_missing_sub_returns_401(self):
+        """Token without 'sub' claim raises HTTPException 401."""
+        from config.core.auth import refresh_jwt_token
+        from fastapi import HTTPException
+        import jwt as pyjwt
+        from config.core.config import settings
+
+        now = datetime.now(timezone.utc)
+        token = pyjwt.encode(
+            {"type": "refresh", "exp": now + timedelta(days=30)},
+            settings.jwt_secret,
+            algorithm=settings.jwt_algorithm,
+        )
+        with pytest.raises(HTTPException) as exc:
+            refresh_jwt_token(token)
+        assert exc.value.status_code == 401
+        assert "Invalid refresh token" in exc.value.detail
+
+    def test_refresh_jwt_token_wrong_type_returns_401(self):
+        """Token with type != 'refresh' raises HTTPException 401."""
+        from config.core.auth import refresh_jwt_token
+        from fastapi import HTTPException
+        import jwt as pyjwt
+        from config.core.config import settings
+
+        now = datetime.now(timezone.utc)
+        token = pyjwt.encode(
+            {"sub": "user-1", "type": "access", "exp": now + timedelta(days=30)},
+            settings.jwt_secret,
+            algorithm=settings.jwt_algorithm,
+        )
+        with pytest.raises(HTTPException) as exc:
+            refresh_jwt_token(token)
+        assert exc.value.status_code == 401
+        assert "Invalid refresh token" in exc.value.detail
+
+    def test_refresh_jwt_token_expired_returns_401(self):
+        """Expired token raises HTTPException 401."""
+        from config.core.auth import refresh_jwt_token
+        from fastapi import HTTPException
+        import jwt as pyjwt
+        from config.core.config import settings
+
+        past = datetime.now(timezone.utc) - timedelta(hours=1)
+        token = pyjwt.encode(
+            {"sub": "user-1", "type": "refresh", "exp": past},
+            settings.jwt_secret,
+            algorithm=settings.jwt_algorithm,
+        )
+        with pytest.raises(HTTPException) as exc:
+            refresh_jwt_token(token)
+        assert exc.value.status_code == 401
+        assert "Invalid or expired refresh token" in exc.value.detail
+
+    def test_refresh_jwt_token_invalid_signature_returns_401(self):
+        """Token signed with wrong secret raises HTTPException 401."""
+        from config.core.auth import refresh_jwt_token
+        from fastapi import HTTPException
+        import jwt as pyjwt
+
+        now = datetime.now(timezone.utc)
+        token = pyjwt.encode(
+            {"sub": "user-1", "type": "refresh", "exp": now + timedelta(days=30)},
+            "wrong-secret",
+            algorithm="HS256",
+        )
+        with pytest.raises(HTTPException) as exc:
+            refresh_jwt_token(token)
+        assert exc.value.status_code == 401
+        assert "Invalid or expired refresh token" in exc.value.detail

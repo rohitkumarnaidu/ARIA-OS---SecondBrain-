@@ -11,6 +11,7 @@ from database.schemas.course import CourseCreate, CourseUpdate, CourseResponse
 from database.schemas.data_export import ExportRequest, ExportResponse
 from database.schemas.error_response import ErrorResponse
 from database.schemas.feedback import FeedbackCreate, FeedbackResponse, FeedbackSummary
+from database.schemas.consolidation import MemoryToCreate, MemoryToUpdate, MemoryToDiscard, ConsolidationResult
 from database.schemas.goal import GoalCreate, GoalUpdate, GoalResponse
 from database.schemas.habit import HabitCreate, HabitUpdate, HabitResponse
 from database.schemas.idea import IdeaCreate, IdeaUpdate, IdeaResponse
@@ -1217,3 +1218,61 @@ class TestVideoResponse:
     def test_missing_required(self):
         with pytest.raises(ValidationError):
             VideoResponse()
+
+
+class TestMemoryToCreate:
+    def test_valid(self):
+        m = MemoryToCreate(type="preference", key="theme", value="dark")
+        assert m.type == "preference"
+        assert m.key == "theme"
+        assert m.value == "dark"
+        assert m.importance == "medium"
+        assert m.tags is None
+
+    def test_with_tags(self):
+        m = MemoryToCreate(type="fact", key="name", value="Alice", importance="high", tags=["user", "personal"])
+        assert m.tags == ["user", "personal"]
+        assert m.importance == "high"
+
+
+class TestMemoryToUpdate:
+    def test_valid(self):
+        m = MemoryToUpdate(id="mem-1", updates={"value": "new-value"})
+        assert m.id == "mem-1"
+
+
+class TestMemoryToDiscard:
+    def test_valid(self):
+        m = MemoryToDiscard(id="mem-1", reason="duplicate")
+        assert m.id == "mem-1"
+        assert m.reason == "duplicate"
+
+
+class TestConsolidationResult:
+    def test_valid(self):
+        r = ConsolidationResult(
+            consolidation_type="daily",
+            memories_created=3,
+            memories_updated=1,
+            memories_discarded=0,
+            patterns_detected=1,
+            summary="Consolidated 3 memories",
+        )
+        assert r.consolidation_type == "daily"
+        assert r.memories_created == 3
+
+    def test_with_details(self):
+        r = ConsolidationResult(
+            consolidation_type="daily",
+            memories_created=1,
+            memories_updated=0,
+            memories_discarded=0,
+            patterns_detected=0,
+            summary="Done",
+            details={"created": ["mem-1"]},
+        )
+        assert r.details == {"created": ["mem-1"]}
+
+    def test_missing_required(self):
+        with pytest.raises(ValidationError):
+            ConsolidationResult()
