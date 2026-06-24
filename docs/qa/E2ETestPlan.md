@@ -116,7 +116,7 @@ stateDiagram-v2
 | PWA-08 | PWA install prompt criteria are met (`display: standalone`) | P1 | ✅ |
 | PWA-09 | Theme color matches design token `#6366F1` | P1 | ✅ |
 | PWA-10 | Background color matches design token `#0A0B0F` | P1 | ✅ |
-| PWA-11 next-pwa runtime caching policies are applied | P2 | ✅ |
+| PWA-11 @serwist/next runtime caching policies are applied | P2 | ✅ |
 
 ### 2.4 Offline & Network Resilience (`offline.spec.ts`)
 

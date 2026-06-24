@@ -1284,7 +1284,7 @@ export default function manifest(): MetadataRoute.Manifest {
 
 ### 12.2 Service Worker Strategy (Serwist)
 
-**Decision**: Serwist over Workbox — purpose-built for Next.js 15 App Router with full PPR, edge runtime support, and native next.config.ts integration. Replaces `next-pwa` (deprecated for Next.js 14+).
+**Decision**: Serwist over Workbox — purpose-built for Next.js 15 App Router with full PPR, edge runtime support, and native next.config.ts integration. Replaces `@serwist/next` (deprecated for Next.js 14+).
 
 ```typescript
 // next.config.ts

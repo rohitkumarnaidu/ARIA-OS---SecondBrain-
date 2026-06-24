@@ -69,7 +69,7 @@ The frontend currently runs **Next.js 14.2.0 / React 18.2.0 / Tailwind v3.4.1**.
 | **Client State** | Zustand v4.4.7 | Zustand v5.x | Phase 1 |
 | **Form Management** | react-hook-form v7 | react-hook-form v7 (upgrade) | Phase 1 |
 | **Animations** | Framer Motion v10.18 | Framer Motion v11 + GSAP | Phase 2 |
-| **PWA** | next-pwa v5.6 (Workbox) | @serwist/next | Phase 2 |
+| **PWA** | @serwist/next v5.6 (Workbox) | @serwist/next | Phase 2 |
 | **E2E Testing** | @playwright/test v1.60 | @playwright/test latest | Phase 1 |
 | **Observability** | None | Sentry + PostHog + OpenTelemetry | Phase 2 |
 | **State Persistence** | None (in-memory only) | Zustand persist + IndexedDB | Phase 2 |
@@ -1958,11 +1958,11 @@ export async function replayQueue() {
 
 ### 14.2 Service Worker Strategy
 
-**Current (next-pwa v5 with Workbox):**
+**Current (@serwist/next v5 with Workbox):**
 
 ```javascript
 // next.config.js (current)
-const withPWA = require('"'"'next-pwa'"'"')({
+const withPWA = require('"'"'@serwist/next'"'"')({
   dest: '"'"'public'"'"',
   register: true,
   skipWaiting: true,
@@ -2012,14 +2012,14 @@ export default withSerwist(nextConfig)
 
 **Current realities:**
 - PWA manifest exists with correct icons, theme, background colors
-- next-pwa v5 configured in next.config.js
+- @serwist/next v5 configured in next.config.js
 - SW precaches static assets, uses appropriate strategies
 - skipWaiting: true for immediate updates
 - No custom install prompt UI
 - No update notification flow
 
 **Migration plan:**
-- **Phase 1:** Keep next-pwa (stable, works with v14)
+- **Phase 1:** Keep @serwist/next (stable, works with v14)
 - **Phase 2:** Migrate to @serwist/next (better v15 support)
 - **Phase 2:** Add custom BeforeInstallPrompt UI
 - **Phase 3:** Add update notification toast
@@ -2798,7 +2798,7 @@ Phase 2 (Short-term -- Data layer + UX):
   - Add parallel routes (@modal)
 
 Phase 3 (Mid-term -- PWA + AI):
-  - Migrate PWA from next-pwa to @serwist/next
+  - Migrate PWA from @serwist/next to @serwist/next
   - Add push notifications
   - Add background sync for offline mutations
   - Implement streaming SSR for dashboard
@@ -2829,7 +2829,7 @@ Phase 4 (Long-term -- Enterprise):
 | **TanStack Query** | Phase 2 | High | Well-documented migration path from inline fetching |
 | **Sentry** | Phase 2 | High | Straightforward @sentry/nextjs integration |
 | **PostHog** | Phase 2 | Medium | Self-host vs cloud decision |
-| **@serwist/next** | Phase 3 | Medium | Newer library, less community than next-pwa |
+| **@serwist/next** | Phase 3 | Medium | Newer library, less community than @serwist/next |
 | **GSAP** | Phase 3 | Medium | Mixing animation libraries adds complexity |
 | **Tauri** | Phase 4 | Low | New platform, separate build pipeline |
 

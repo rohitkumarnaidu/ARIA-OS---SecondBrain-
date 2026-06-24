@@ -709,7 +709,7 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 │                                                                 │
 │  Week 30 (15 hrs)                                               │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │ T-109 PWA with next-pwa — service worker                │ 4h │
+│  │ T-109 PWA with @serwist/next — service worker                │ 4h │
 │  │ T-110 IndexedDB offline storage for all CRUD ops        │ 5h │
 │  │ T-111 Background sync when coming online                 │ 3h │
 │  │ T-112 Lighthouse audit + performance optimization       │ 3h │
