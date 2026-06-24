@@ -69,7 +69,11 @@ export const ErrorState = memo(function ErrorState({
     return () => clearInterval(interval)
   }, [status])
 
-  const meta = statusMeta[status]
+  const meta = statusMeta[status as keyof typeof statusMeta] || {
+    defaultTitle: `Error ${status}`,
+    defaultDesc: 'An unexpected error occurred.',
+    icon: <AlertTriangle size={28} />,
+  }
   const resolvedTitle = title || meta.defaultTitle
   const resolvedDesc = (description || meta.defaultDesc)
     .replace(/\{resource\}/g, resource)
