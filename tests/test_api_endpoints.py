@@ -591,10 +591,20 @@ class TestTaskEndpoints:
         resp = client.put("/api/v1/tasks/nonexistent", json={"title": "Nope"}, headers=AUTH_HEADER)
         assert resp.status_code == 404
 
+    def test_update_task_db_error(self, client, mock_supabase):
+        _cfg(mock_supabase, [], error="update failed")
+        resp = client.put("/api/v1/tasks/task-1", json={"title": "X"}, headers=AUTH_HEADER)
+        assert resp.status_code == 400
+
     def test_delete_task(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_TASK])
         resp = client.delete("/api/v1/tasks/task-1", headers=AUTH_HEADER)
         assert resp.status_code == 204
+
+    def test_delete_task_db_error(self, client, mock_supabase):
+        _cfg(mock_supabase, [{}], error="delete failed")
+        resp = client.delete("/api/v1/tasks/task-1", headers=AUTH_HEADER)
+        assert resp.status_code == 400
 
     def test_complete_task(self, client, mock_supabase):
         updated = {**SAMPLE_TASK, "status": "completed", "completed_at": "2026-06-14T15:00:00"}
@@ -607,6 +617,11 @@ class TestTaskEndpoints:
         _cfg(mock_supabase, [])
         resp = client.post("/api/v1/tasks/nonexistent/complete", headers=AUTH_HEADER)
         assert resp.status_code == 404
+
+    def test_complete_task_db_error(self, client, mock_supabase):
+        _cfg(mock_supabase, [], error="update failed")
+        resp = client.post("/api/v1/tasks/task-1/complete", headers=AUTH_HEADER)
+        assert resp.status_code == 400
 
     def test_task_unauthorized(self, client, no_auth):
         resp = client.get("/api/v1/tasks/")
@@ -1140,6 +1155,15 @@ class TestTimeEndpoints:
     def test_update_time_entry(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_TIME_ENTRY])
         resp = client.put("/api/v1/time/time-1", json={"category": "meeting"}, headers=AUTH_HEADER)
+        assert resp.status_code == 200
+
+    def test_update_time_entry_with_datetimes(self, client, mock_supabase):
+        _cfg(mock_supabase, [SAMPLE_TIME_ENTRY])
+        from datetime import datetime
+        resp = client.put("/api/v1/time/time-1", json={
+            "start_time": datetime(2026, 6, 14, 10, 0).isoformat(),
+            "end_time": datetime(2026, 6, 14, 12, 0).isoformat(),
+        }, headers=AUTH_HEADER)
         assert resp.status_code == 200
 
     def test_update_time_entry_not_found(self, client, mock_supabase):
