@@ -207,6 +207,30 @@ class TestContextAssembly:
         assert len(result.truncated) > 0
         SECTIONS.clear()
 
+    @pytest.mark.asyncio
+    async def test_assemble_truncates_at_budget_limit(self):
+        def fetcher(uid):
+            return [{"content": "x"}]
+
+        def small_formatter(data):
+            return "short " * 10  # ~25 tokens
+
+        from ai.context_assembly import ContextSection, SECTIONS
+        SECTIONS.clear()
+
+        SECTIONS.append(ContextSection("small1", 10000, 1, fetcher, small_formatter, "fb"))
+        SECTIONS.append(ContextSection("small2", 10000, 2, fetcher, small_formatter, "fb"))
+        SECTIONS.append(ContextSection("small3", 10000, 3, fetcher, small_formatter, "fb"))
+
+        tight = __import__("ai.context_assembly", fromlist=["ContextAssembly"]).ContextAssembly(
+            max_budget=30, hard_cap=100
+        )
+        result = await tight.assemble(user_id="user-1")
+        assert "small1" in result.sections
+        assert "small2" in result.sections
+        assert "small3" in result.truncated
+        SECTIONS.clear()
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # sections.py — Section fetch functions and formatters
@@ -627,3 +651,652 @@ class TestLearningAgentEdgeCases:
                 assert "patterns" in result
                 assert "recommendations" in result
                 assert "Stay consistent" in result["recommendations"][0]
+
+
+# =============================================================================
+# orchestrator.py — 5 main functions with LLM + DB + fallback paths
+# =============================================================================
+
+
+class TestOrchestrator:
+
+    # ─── orchestrator.mock_helpers ─────────────────────────────────────────
+
+    @staticmethod
+    def _build_execute(data=None, err=None):
+        return MagicMock(data=data or [], error=err)
+
+    @staticmethod
+    def _mock_supabase(mocker):
+        class _AutoBuilders(dict):
+            def __missing__(self, key):
+                b = MagicMock()
+                b.execute.return_value = TestOrchestrator._build_execute()
+                for c in ("select", "eq", "order", "limit", "in_", "ilike", "gte", "lt", "range"):
+                    getattr(b, c).return_value = b
+                b.insert.return_value = MagicMock(
+                    execute=MagicMock(return_value=TestOrchestrator._build_execute([{}]))
+                )
+                b.update.return_value = b
+
+                def _delete_side():
+                    db = MagicMock()
+                    db.eq.return_value = db
+                    db.execute.return_value = TestOrchestrator._build_execute([{}])
+                    return db
+
+                b.delete.side_effect = _delete_side
+                self[key] = b
+                return b
+
+        builders = _AutoBuilders()
+        client = MagicMock()
+        client.from_.side_effect = lambda n: builders[n]
+        client._builders = builders
+        mocker.patch("ai.orchestrator.get_supabase_client", return_value=client)
+        return client
+
+    # ─── orchestrate_plan ──────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_orchestrate_plan_success(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "Write", "status": "pending", "priority": "high",
+                   "category": "work", "due_date": "2026-07-01"}]
+        )
+        client._builders["goals"].execute.return_value = MagicMock(
+            data=[{"id": "g1", "title": "Learn AI", "status": "active", "target_date": "2026-12-01"}]
+        )
+        client._builders["courses"].execute.return_value = MagicMock(
+            data=[{"id": "c1", "name": "ML 101", "status": "in_progress"}]
+        )
+
+        mock_prompt = MagicMock()
+        mock_prompt.system_prompt = "You are a planner."
+        with patch("ai.orchestrator.prompts.get_agent", return_value=mock_prompt):
+            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+                "steps": [{"action": "study", "target": "ML", "reasoning": "Good", "confidence": 0.8}],
+                "summary": "Study ML",
+            })):
+                from ai.orchestrator import orchestrate_plan
+                result = await orchestrate_plan("user-1", "help me study")
+                assert result["summary"] == "Study ML"
+                assert len(result["steps"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_orchestrate_plan_no_prompt(self, mocker):
+        client = self._mock_supabase(mocker)
+        with patch("ai.orchestrator.prompts.get_agent", return_value=None):
+            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+                "steps": [], "summary": "Fallback plan",
+            })):
+                from ai.orchestrator import orchestrate_plan
+                result = await orchestrate_plan("user-1", "plan")
+                assert result["summary"] == "Fallback plan"
+
+    @pytest.mark.asyncio
+    async def test_orchestrate_plan_data_fetch_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.side_effect = Exception("DB down")
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "steps": [], "summary": "ok",
+        })):
+            from ai.orchestrator import orchestrate_plan
+            result = await orchestrate_plan("user-1", "x")
+            assert "steps" in result
+
+    @pytest.mark.asyncio
+    async def test_orchestrate_plan_llm_unavailable(self, mocker):
+        client = self._mock_supabase(mocker)
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.orchestrator.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            from ai.orchestrator import orchestrate_plan
+            result = await orchestrate_plan("user-1", "x")
+            assert len(result["steps"]) > 0
+            assert "Fallback" in result["steps"][0]["reasoning"]
+
+    @pytest.mark.asyncio
+    async def test_orchestrate_plan_steps_not_list(self, mocker):
+        client = self._mock_supabase(mocker)
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "steps": "not a list", "summary": "oops",
+        })):
+            from ai.orchestrator import orchestrate_plan
+            result = await orchestrate_plan("user-1", "x")
+            assert result["steps"] == []
+
+    # ─── search_memory ─────────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_search_memory_success(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "note", "key": "python", "value": "Learning Python",
+                   "importance": "high", "tags": ["code"], "created_at": "2026-01-01T00:00:00"}]
+        )
+        client._builders["tasks"].execute.return_value = MagicMock(data=[])  # for get_user_preferences
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["goals"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+
+        with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="User is learning Python.")):
+            from ai.orchestrator import search_memory
+            result = await search_memory("user-1", "python")
+            assert len(result["memories"]) == 1
+            assert result["summary"] == "User is learning Python."
+
+    @pytest.mark.asyncio
+    async def test_search_memory_fetch_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.side_effect = Exception("DB error")
+        with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
+            from ai.orchestrator import search_memory
+            result = await search_memory("user-1", "x")
+            assert result["memories"] == []
+
+    @pytest.mark.asyncio
+    async def test_search_memory_prefs_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.return_value = MagicMock(data=[])
+        with patch("ai.agents.memory_agent.get_user_preferences",
+                   new=AsyncMock(side_effect=Exception("prefs fail"))):
+            with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
+                from ai.orchestrator import search_memory
+                result = await search_memory("user-1", "x")
+                assert result["preferences"]["preferred_category"] == "personal"
+
+    @pytest.mark.asyncio
+    async def test_search_memory_llm_unavailable(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "note", "key": "python", "value": "Learning",
+                   "importance": "high", "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        client._builders["tasks"].execute.return_value = MagicMock(data=[])
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["goals"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.orchestrator.llm.generate",
+                   side_effect=LLMProviderUnavailableError("down")):
+            from ai.orchestrator import search_memory
+            result = await search_memory("user-1", "python")
+            assert result["summary"] == ""
+
+    @pytest.mark.asyncio
+    async def test_search_memory_no_prompt(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.return_value = MagicMock(data=[])
+        client._builders["tasks"].execute.return_value = MagicMock(data=[])
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["goals"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.prompts.get_agent", return_value=None):
+            with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="inline")):
+                from ai.orchestrator import search_memory
+                result = await search_memory("user-1", "x")
+                assert result["summary"] == "inline"
+
+    @pytest.mark.asyncio
+    async def test_search_memory_no_match(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "note", "key": "other", "value": "Other",
+                   "importance": "low", "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        client._builders["tasks"].execute.return_value = MagicMock(data=[])
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["goals"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
+            from ai.orchestrator import search_memory
+            result = await search_memory("user-1", "query-no-match")
+            assert len(result["memories"]) == 1  # falls back to top 20
+
+    # ─── detect_patterns ───────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_success(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "Work", "status": "completed", "priority": "high",
+                   "category": "study", "created_at": "2026-06-01T00:00:00", "completed_at": "2026-06-02T00:00:00"},
+                  {"id": "t2", "title": "Task2", "status": "pending", "priority": "low",
+                   "category": "personal", "created_at": "2026-06-01T00:00:00", "completed_at": None}]
+        )
+        client._builders["habits"].execute.return_value = MagicMock(
+            data=[{"id": "h1", "name": "Read", "is_active": True, "current_streak": 10,
+                   "best_streak": 20, "consistency_percentage": 80}]
+        )
+        client._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[{"date": "2026-06-20", "sleep_score": 85, "duration_hours": 8}]
+        )
+        client._builders["time_entries"].execute.return_value = MagicMock(
+            data=[{"duration_minutes": 120, "is_deep_work": True, "category": "coding", "start_time": "2026-06-20T09:00:00"}]
+        )
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "insights": [{"type": "good", "description": "Keep it up", "confidence": 0.8, "data": {}}]
+        })):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "how am I doing")
+            assert len(result["patterns"]) == 5
+            assert len(result["insights"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_data_fetch_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.side_effect = Exception("DB error")
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "x")
+            assert result["patterns"][0]["confidence"] == 0.8
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_llm_unavailable(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
+                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+        )
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
+        client._builders["time_entries"].execute.return_value = MagicMock(data=[])
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.orchestrator.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "x")
+            # 1 completed out of 1 = 100% → no productivity_warning
+            assert len(result["insights"]) == 0
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_no_prompt(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(data=[])
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
+        client._builders["time_entries"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.prompts.get_agent", return_value=None):
+            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
+                from ai.orchestrator import detect_patterns
+                result = await detect_patterns("user-1", "x")
+                assert len(result["patterns"]) == 5
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_insight_as_string(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
+                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+        )
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
+        client._builders["time_entries"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "insights": "Just a string insight"
+        })):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "x")
+            assert len(result["insights"]) == 1
+            assert result["insights"][0]["type"] == "llm_insight"
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_insight_wrong_type(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
+                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+        )
+        client._builders["habits"].execute.return_value = MagicMock(data=[])
+        client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
+        client._builders["time_entries"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "insights": 42  # not a list or string
+        })):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "x")
+            assert result["insights"] == []
+
+    @pytest.mark.asyncio
+    async def test_detect_patterns_triggers_low_insights(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"id": "t1", "title": "W", "status": "pending", "priority": "low",
+                   "category": "personal", "created_at": "2026-01-01T00:00:00", "completed_at": None}]
+        )
+        client._builders["habits"].execute.return_value = MagicMock(
+            data=[{"id": "h1", "name": "Read", "is_active": True, "current_streak": 1,
+                   "best_streak": 5, "consistency_percentage": 30}]
+        )
+        client._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[{"date": "2026-01-01", "sleep_score": 60, "duration_hours": 5}]
+        )
+        client._builders["time_entries"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
+            from ai.orchestrator import detect_patterns
+            result = await detect_patterns("user-1", "x")
+            insight_types = [i["type"] for i in result["insights"]]
+            assert "productivity_warning" in insight_types
+            assert "sleep_improvement" in insight_types
+
+    # ─── match_opportunities ──────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_success(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(
+            data=[{"id": "o1", "title": "ML Course", "match_score": 0.9, "status": "new",
+                   "category": "course", "created_at": "2026-06-01T00:00:00"}]
+        )
+        client._builders["courses"].execute.return_value = MagicMock(
+            data=[{"name": "AI", "skills": ["python", "ml"], "status": "completed"}]
+        )
+        client._builders["roadmap"].execute.return_value = MagicMock(
+            data=[{"skill_name": "deep learning", "status": "in_progress"}]
+        )
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "matches": [{"id": "o1", "title": "ML Course", "score": 0.95, "reasoning": "Great fit"}]
+        })):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "find courses")
+            assert len(result["matches"]) == 1
+            assert "Matched" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_fetch_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.side_effect = Exception("DB error")
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "x")
+            assert result["matches"] == []
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_skills_as_string(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(
+            data=[{"name": "AI", "skills": "python,ml", "status": "completed"}]
+        )
+        client._builders["roadmap"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "x")
+            assert "matches" in result
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_skills_fetch_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.side_effect = Exception("skills fail")
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "x")
+            assert "matches" in result
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_llm_unavailable(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(
+            data=[{"id": "o1", "title": "Course", "match_score": 0.8, "status": "new",
+                   "category": "tech", "created_at": "2026-06-01T00:00:00"}]
+        )
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        client._builders["roadmap"].execute.return_value = MagicMock(data=[])
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.orchestrator.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "x")
+            assert len(result["matches"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_no_prompt(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        client._builders["roadmap"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.prompts.get_agent", return_value=None):
+            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
+                from ai.orchestrator import match_opportunities
+                result = await match_opportunities("user-1", "x")
+                assert result["matches"] == []
+
+    @pytest.mark.asyncio
+    async def test_match_opportunities_not_a_list(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["opportunities"].execute.return_value = MagicMock(data=[])
+        client._builders["courses"].execute.return_value = MagicMock(data=[])
+        client._builders["roadmap"].execute.return_value = MagicMock(data=[])
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
+            "matches": "not a list"
+        })):
+            from ai.orchestrator import match_opportunities
+            result = await match_opportunities("user-1", "x")
+            assert result["matches"] == []
+
+    # ─── execute_action ────────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_execute_action_create_task(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "new"}], error=None))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "Buy groceries")
+        assert result["action"] == "create_task"
+        assert "Created task" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_create_task_db_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[], error=MagicMock(message="insert failed")))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "Buy")
+        assert result["action"] == "noop"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_update_task_all_fields(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "update", {
+            "action": "update_task", "task_id": "t1",
+            "title": "New", "status": "completed", "priority": "high",
+        })
+        assert result["action"] == "update_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_update_task(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "update task", {"action": "update_task", "task_id": "t1", "title": "New"})
+        assert result["action"] == "update_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_update_task_no_id(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "new"}], error=None))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "update", {"action": "update_task"})
+        assert result["action"] == "create_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_complete_task(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "complete", {"action": "complete_task", "task_id": "t1"})
+        assert result["action"] == "complete_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_complete_task_search(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "complete homework", {"action": "complete_task"})
+        assert result["action"] == "complete_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_complete_task_not_found(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "complete nonexistent", {"action": "complete_task"})
+        assert "not found" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_create_habit_log(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["habits"].execute.return_value = MagicMock(data=[{"id": "h1"}], error=None)
+        client._builders["habit_logs"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "hl1"}], error=None))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "log habit exercise", {"action": "create_habit_log", "habit_name": "exercise"})
+        assert result["action"] == "create_habit_log"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_create_habit_log_not_found(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["habits"].execute.return_value = MagicMock(data=[], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "log habit bad", {"action": "create_habit_log"})
+        assert "not found" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_delete_task(self, mocker):
+        client = self._mock_supabase(mocker)
+        del_qb = MagicMock()
+        del_qb.eq.return_value = del_qb
+        del_qb.execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        client._builders["tasks"].delete.side_effect = None
+        client._builders["tasks"].delete.return_value = del_qb
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "delete", {"action": "delete_task", "task_id": "t1"})
+        assert result["action"] == "delete_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_update_task_db_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[], error=MagicMock(message="update failed"))
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "update", {"action": "update_task", "task_id": "t1"})
+        assert result["action"] == "noop"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_complete_task_db_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(
+            data=[], error=MagicMock(message="complete failed"))
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "complete", {"action": "complete_task", "task_id": "t1"})
+        assert result["action"] == "noop"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_habit_log_db_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["habits"].execute.return_value = MagicMock(data=[{"id": "h1"}], error=None)
+        client._builders["habit_logs"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(
+                data=[], error=MagicMock(message="insert failed")))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "log habit run", {"action": "create_habit_log", "habit_name": "run"})
+        assert result["action"] == "noop"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_delete_task_db_error(self, mocker):
+        client = self._mock_supabase(mocker)
+        del_qb = MagicMock()
+        del_qb.eq.return_value = del_qb
+        del_qb.execute.return_value = MagicMock(
+            data=[], error=MagicMock(message="delete failed"))
+        client._builders["tasks"].delete.side_effect = None
+        client._builders["tasks"].delete.return_value = del_qb
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "delete", {"action": "delete_task", "task_id": "t1"})
+        assert result["action"] == "noop"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_delete_task_not_found(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "delete", {"action": "delete_task"})
+        assert "not found" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_action_from_context(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "n"}], error=None))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "some query", {"action": "create_task", "title": "Explicit"})
+        assert "Explicit" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_query_prefixes(self, mocker):
+        client = self._mock_supabase(mocker)
+        from ai.orchestrator import execute_action
+
+        # update prefix
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        r = await execute_action("user-1", "update my task", {"task_id": "t1", "title": "New"})
+        assert r["action"] == "update_task"
+
+        # complete prefix → no task_id → search → found → complete
+        client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
+        client._builders["tasks"].update.return_value = client._builders["tasks"]
+        r = await execute_action("user-1", "complete my task")
+        assert r["action"] == "complete_task"
+
+        # log habit prefix
+        client._builders["habits"].execute.return_value = MagicMock(data=[{"id": "h1"}], error=None)
+        client._builders["habit_logs"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "hl1"}], error=None))
+        )
+        r = await execute_action("user-1", "log habit reading")
+        assert r["action"] == "create_habit_log"
+
+        # delete prefix → no task_id → search → not found
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
+        r = await execute_action("user-1", "delete old_task")
+        assert "not found" in r["summary"]
+
+    @pytest.mark.asyncio
+    async def test_execute_action_else_falls_to_create(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.return_value = MagicMock(
+            execute=MagicMock(return_value=MagicMock(data=[{"id": "n"}], error=None))
+        )
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "do something", {"action": "unknown_action"})
+        assert result["action"] == "create_task"
+
+    @pytest.mark.asyncio
+    async def test_execute_action_exception(self, mocker):
+        client = self._mock_supabase(mocker)
+        client._builders["tasks"].insert.side_effect = Exception("unexpected error")
+        from ai.orchestrator import execute_action
+        result = await execute_action("user-1", "buy", {})
+        assert result["action"] == "noop"

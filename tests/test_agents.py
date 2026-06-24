@@ -1,6 +1,6 @@
 """Comprehensive tests for all 10 AI agent modules — fallback, happy, error, empty paths."""
 
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import MagicMock, AsyncMock, patch
 from datetime import datetime, timedelta
 import pytest
 
@@ -251,6 +251,13 @@ class TestBriefingAgent:
         assert result["productivity_tip"] == "Break big tasks into smaller chunks"
         assert result["focus_area"] == "Clear your pending tasks first"
 
+    @pytest.mark.asyncio
+    async def test_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await briefing_agent.generate_daily_briefing("user-1")
+        assert result["productivity_tip"] == "Break big tasks into smaller chunks"
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 2. memory_agent — store, query, preferences, summary
@@ -362,6 +369,392 @@ class TestMemoryAgent:
         )
         mock_llm_generate.side_effect = RuntimeError("LLM error")
         result = await memory_agent.get_memory_summary("user-1")
+        assert result["summary"] == "Unable to generate memory summary at this time."
+
+    # --- store_interaction error path ---
+
+    @pytest.mark.asyncio
+    async def test_store_interaction_db_error(self, mock_supabase):
+        mock_supabase._builders["memory"].insert.side_effect = Exception("DB down")
+        result = await memory_agent.store_interaction("user-1", "query", "test")
+        assert result is None
+
+    # --- get_recent_interactions error path ---
+
+    @pytest.mark.asyncio
+    async def test_get_recent_interactions_error(self, mock_supabase):
+        mock_supabase._builders["memory"].execute.side_effect = Exception("query failed")
+        result = await memory_agent.get_recent_interactions("user-1")
+        assert result == []
+
+    # --- get_user_preferences — habits, courses, goals, error ---
+
+    @pytest.mark.asyncio
+    async def test_get_user_preferences_with_habits_and_courses(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(
+            data=[{"frequency": "daily", "streak": 10}, {"frequency": "weekly", "streak": 5}]
+        )
+        mock_supabase._builders["goals"].neq.return_value = mock_supabase._builders["goals"]
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(
+            data=[{"id": "g1", "status": "active"}]
+        )
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(
+            data=[{"status": "in_progress", "progress": 75}, {"status": "in_progress", "progress": 50}]
+        )
+        result = await memory_agent.get_user_preferences("user-1")
+        assert result["total_habits"] == 2
+        assert result["habit_streak_avg"] == 7
+        assert result["active_goal_count"] == 1
+        assert result["total_courses"] == 2
+        assert result["course_progress_avg"] == 62.5
+
+    @pytest.mark.asyncio
+    async def test_get_user_preferences_db_error(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.side_effect = Exception("DB error")
+        result = await memory_agent.get_user_preferences("user-1")
+        assert result["preferred_category"] == "personal"
+
+    @pytest.mark.asyncio
+    async def test_get_user_preferences_high_workload(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[{"category": "study", "priority": "high"}] * 3 +
+                 [{"category": "personal", "priority": "low"}] * 1
+        )
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(data=[])
+        result = await memory_agent.get_user_preferences("user-1")
+        assert result["work_hours_pattern"] == "high_workload"
+
+    # --- get_session_context — conversation grouping, error ---
+
+    @pytest.mark.asyncio
+    async def test_get_session_context_with_conversations(self, mock_supabase):
+        mock_supabase._builders["chat_messages"].execute.return_value = MagicMock(
+            data=[
+                {"conversation_id": "conv1", "role": "user", "content": "What is my schedule?", "created_at": "a"},
+                {"conversation_id": "conv1", "role": "assistant", "content": "You have 3 tasks", "created_at": "b"},
+                {"conversation_id": "conv2", "role": "user", "content": "Remind me", "created_at": "c"},
+                {"conversation_id": "conv3", "role": "user", "content": "", "created_at": "d"},
+                {"conversation_id": "conv3", "role": "assistant", "content": "OK", "created_at": "e"},
+            ]
+        )
+        result = await memory_agent.get_session_context("user-1")
+        assert result["active_conversations"] == 2  # conv1 (>1) + conv3 (>1)
+        assert result["total_recent_messages"] == 5
+        assert result["last_interaction"] == "a"
+
+    @pytest.mark.asyncio
+    async def test_get_session_context_empty(self, mock_supabase):
+        mock_supabase._builders["chat_messages"].execute.return_value = MagicMock(data=[])
+        result = await memory_agent.get_session_context("user-1")
+        assert result["total_recent_messages"] == 0
+        assert result["last_interaction"] is None
+
+    @pytest.mark.asyncio
+    async def test_get_session_context_db_error(self, mock_supabase):
+        mock_supabase._builders["chat_messages"].execute.side_effect = Exception("DB error")
+        result = await memory_agent.get_session_context("user-1")
+        assert result["active_conversations"] == 0
+
+    # --- consolidate_memories — LLM path, fallback, error ---
+
+    def _setup_prefs_empty(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["chat_messages"].execute.return_value = MagicMock(data=[])
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_full_llm(self, mock_supabase, mock_get_agent, mock_llm_json):
+        self._setup_prefs_empty(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k", "value": "test",
+                   "importance": "medium", "tags": ["t"], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_llm_json.return_value = {
+            "memories_to_create": [
+                {"memory_type": "insight", "content": "Key insight",
+                 "domain": "work", "confidence": 0.9, "source": "chat", "ttl_days": 30}
+            ],
+            "memories_to_update": [],
+            "memories_to_discard": [],
+            "analysis": {"summary": "Done", "key_observation": "Productive", "actionable": True},
+            "pattern_detected": "consistent_work",
+            "contradictions": [],
+            "confidence_level": "high",
+            "processing_notes": "OK",
+        }
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "llm_driven"
+        assert result["memories_created"] == 1
+        assert result["patterns_detected"] == 1
+
+    def _setup_prefs_empty_with_neq(self, mock_supabase):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["goals"].neq.return_value = mock_supabase._builders["goals"]
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["chat_messages"].execute.return_value = MagicMock(data=[])
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_update_discard(self, mock_supabase, mock_get_agent, mock_llm_json):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k",
+                   "value": {"content": "old"}, "importance": "medium",
+                   "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_supabase._builders["memory"].delete.return_value = mock_supabase._builders["memory"]
+        mock_llm_json.return_value = {
+            "memories_to_create": [],
+            "memories_to_update": [
+                {"memory_id": "m1", "updates": {"confidence": 0.85, "content": "Updated"}}
+            ],
+            "memories_to_discard": [{"memory_id": "m2"}],
+            "analysis": {"summary": "Done", "key_observation": None, "actionable": False},
+            "pattern_detected": None,
+            "contradictions": [{"type": "time"}],
+            "confidence_level": "medium",
+        }
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["memories_updated"] == 1
+        assert result["memories_discarded"] == 1
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_update_low_confidence(self, mock_supabase, mock_get_agent, mock_llm_json):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k",
+                   "value": {"content": "old"}, "importance": "medium",
+                   "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_supabase._builders["memory"].delete.return_value = mock_supabase._builders["memory"]
+        mock_llm_json.return_value = {
+            "memories_to_create": [],
+            "memories_to_update": [
+                {"memory_id": "m1", "updates": {"confidence": 0.25, "content": "low confidence update"}}
+            ],
+            "memories_to_discard": [],
+            "analysis": {"summary": "Done", "key_observation": None, "actionable": False},
+            "pattern_detected": None,
+            "contradictions": [],
+            "confidence_level": "low",
+        }
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["memories_updated"] == 1
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_update_error(self, mock_supabase, mock_get_agent, mock_llm_json):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k",
+                   "value": {"content": "old"}, "importance": "medium",
+                   "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_llm_json.return_value = {
+            "memories_to_create": [],
+            "memories_to_update": [
+                {"memory_id": "m1", "updates": {"confidence": 0.9, "content": "update"}}
+            ],
+            "memories_to_discard": [],
+            "analysis": {"summary": "Done", "key_observation": None, "actionable": False},
+            "pattern_detected": None,
+            "contradictions": [],
+            "confidence_level": "high",
+        }
+        # Make the update execute raise
+        mock_supabase._builders["memory"].update.side_effect = lambda d: MagicMock(
+            eq=lambda k, v: MagicMock(
+                eq=lambda k2, v2: MagicMock(
+                    execute=MagicMock(side_effect=Exception("update failed"))
+                )
+            )
+        )
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["memories_updated"] == 0
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_discard_error(self, mock_supabase, mock_get_agent, mock_llm_json):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k",
+                   "value": "test", "importance": "medium",
+                   "tags": [], "created_at": "2026-01-01T00:00:00"}]
+        )
+        del_mock = MagicMock()
+        del_mock.eq.side_effect = lambda k, v: MagicMock(
+            eq=lambda k2, v2: MagicMock(
+                execute=MagicMock(side_effect=Exception("discard failed"))
+            )
+        )
+        mock_supabase._builders["memory"].delete.return_value = del_mock
+        mock_llm_json.return_value = {
+            "memories_to_create": [],
+            "memories_to_update": [],
+            "memories_to_discard": [{"memory_id": "m2"}],
+            "analysis": {"summary": "Done", "key_observation": None, "actionable": False},
+            "pattern_detected": None,
+            "contradictions": [],
+            "confidence_level": "high",
+        }
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["memories_discarded"] == 0
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_llm_unavailable(self, mock_supabase, mock_get_agent):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k", "value": "test",
+                   "importance": "medium", "tags": ["t"], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_supabase._builders["memory"].delete.return_value = mock_supabase._builders["memory"]
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.agents.memory_agent.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("API down")):
+            result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "rule_based"
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_fallback_no_prompt(self, mock_supabase, mock_get_agent_none, mock_llm_json):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k", "value": "test",
+                   "importance": "medium", "tags": ["t"], "created_at": "2026-01-01T00:00:00"}]
+        )
+        mock_llm_json.return_value = {
+            "memories_to_create": [],
+            "memories_to_update": [],
+            "memories_to_discard": [],
+            "analysis": {"summary": "inline fallback", "actionable": False},
+            "pattern_detected": None,
+            "contradictions": [],
+            "confidence_level": "low",
+        }
+        result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "llm_driven"
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_outer_error(self, mock_supabase, mock_get_agent):
+        with patch("ai.agents.memory_agent.get_recent_interactions",
+                   side_effect=Exception("outer fail")):
+            result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "error"
+
+    # --- _rule_based_consolidation tested via LLM-unavailable fallback ---
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_stale_expired(self, mock_supabase, mock_get_agent):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        from datetime import datetime, timezone, timedelta
+        past = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        future = (datetime.now(timezone.utc) + timedelta(days=365)).isoformat()
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "type": "query", "key": "k", "value": "v",
+                 "importance": "medium", "tags": ["t"], "created_at": "2026-01-01T00:00:00",
+                 "expires_at": past},
+                {"id": "m2", "type": "note", "key": "k2", "value": "v2",
+                 "importance": "low", "tags": [], "created_at": "2026-01-02T00:00:00",
+                 "expires_at": future},
+                {"id": "m3", "type": "query", "key": "k3", "value": "v3",
+                 "importance": "medium", "tags": [], "created_at": "2026-01-03T00:00:00",
+                 "expires_at": past},
+                {"id": "m4", "type": "query", "key": "k4", "value": "v4",
+                 "importance": "medium", "tags": [], "created_at": "2026-01-04T00:00:00",
+                 "expires_at": past},
+            ]
+        )
+        mock_supabase._builders["memory"].delete.return_value = mock_supabase._builders["memory"]
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.agents.memory_agent.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "rule_based"
+        assert result["memories_discarded"] == 3
+        # 3 stale deleted (m1, m3, m4), patterns_detected >= 1 (query has 3+ items)
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_rule_based_error(self, mock_supabase, mock_get_agent):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "key": "k", "value": "v",
+                   "importance": "medium", "tags": [], "created_at": "2026-01-01T00:00:00",
+                   "expires_at": "2020-01-01T00:00:00+00:00"}]
+        )
+        del_mock = MagicMock()
+        del_mock.eq.side_effect = lambda k, v: MagicMock(
+            eq=lambda k2, v2: MagicMock(
+                execute=MagicMock(side_effect=Exception("rule-based delete failed"))
+            )
+        )
+        mock_supabase._builders["memory"].delete.return_value = del_mock
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.agents.memory_agent.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "rule_based"
+        assert result["memories_discarded"] == 0
+
+    @pytest.mark.asyncio
+    async def test_consolidate_memories_stale_parse_error(self, mock_supabase, mock_get_agent):
+        self._setup_prefs_empty_with_neq(mock_supabase)
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[
+                {"id": "m1", "type": "query", "key": "k", "value": "v",
+                 "importance": "medium", "tags": [], "created_at": "2026-01-01T00:00:00",
+                 "expires_at": "not-a-date"},
+            ]
+        )
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.agents.memory_agent.llm.generate_json",
+                   side_effect=LLMProviderUnavailableError("down")):
+            result = await memory_agent.consolidate_memories("user-1")
+        assert result["consolidation_type"] == "rule_based"
+        assert result["memories_discarded"] == 0
+
+    # --- prune_expired_memories ---
+
+    @pytest.mark.asyncio
+    async def test_prune_expired_memories_success(self, mock_supabase):
+        mock_supabase._builders["memory"].delete.return_value = mock_supabase._builders["memory"]
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(data=[{"id": "m1"}])
+        result = await memory_agent.prune_expired_memories("user-1")
+        assert result == 1
+
+    @pytest.mark.asyncio
+    async def test_prune_expired_memories_error(self, mock_supabase):
+        mock_supabase._builders["memory"].delete.side_effect = Exception("delete failed")
+        result = await memory_agent.prune_expired_memories("user-1")
+        assert result == 0
+
+    # --- get_memory_summary — LLMProviderUnavailableError ---
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_llm_unavailable(self, mock_supabase, mock_get_agent):
+        mock_supabase._builders["memory"].execute.return_value = MagicMock(
+            data=[{"id": "m1", "type": "query", "value": "Hi",
+                   "importance": "high", "created_at": "2026-06-17T10:00:00"}]
+        )
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["habits"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["goals"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["courses"].execute.return_value = MagicMock(data=[])
+        mock_supabase._builders["chat_messages"].execute.return_value = MagicMock(data=[])
+        from ai.client import LLMProviderUnavailableError
+        with patch("ai.agents.memory_agent.llm.generate",
+                   side_effect=LLMProviderUnavailableError("down")):
+            result = await memory_agent.get_memory_summary("user-1")
+        assert "recent interactions" in result["summary"]
+
+    @pytest.mark.asyncio
+    async def test_get_memory_summary_outer_error(self, mock_supabase, mock_get_agent):
+        with patch("ai.agents.memory_agent.get_user_preferences",
+                   side_effect=Exception("boom")):
+            result = await memory_agent.get_memory_summary("user-1")
         assert result["summary"] == "Unable to generate memory summary at this time."
 
 
@@ -540,6 +933,13 @@ class TestOpportunityAgent:
         with pytest.raises(RuntimeError):
             await opportunity_agent.run_opportunity_radar("user-1")
 
+    @pytest.mark.asyncio
+    async def test_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await opportunity_agent.run_opportunity_radar("user-1")
+        assert len(result) == 3
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 5. opportunity_matching_agent — match_opportunities
@@ -621,6 +1021,13 @@ class TestOpportunityMatchingAgent:
         mock_llm_json.side_effect = RuntimeError("LLM failed")
         with pytest.raises(RuntimeError):
             await opportunity_matching_agent.match_opportunities("user-1")
+
+    @pytest.mark.asyncio
+    async def test_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await opportunity_matching_agent.match_opportunities("user-1")
+        assert result == []
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -707,6 +1114,18 @@ class TestTaskAgent:
         mock_llm_json.side_effect = RuntimeError("LLM broken")
         with pytest.raises(RuntimeError):
             await task_agent.breakdown_task("user-1", "t1")
+
+    @pytest.mark.asyncio
+    async def test_breakdown_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
+            data=[
+                {"id": "t1", "title": "Test", "description": "", "category": "personal"},
+            ]
+        )
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await task_agent.breakdown_task("user-1", "t1")
+        assert len(result) == 1
 
     # -- check_missed_tasks ---------------------------------------------------
 
@@ -888,6 +1307,13 @@ class TestWeeklyReviewAgent:
         with pytest.raises(RuntimeError):
             await weekly_review_agent.generate_weekly_review("user-1")
 
+    @pytest.mark.asyncio
+    async def test_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await weekly_review_agent.generate_weekly_review("user-1")
+        assert result["summary"].startswith("Completed")
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 8. sleep_agent — analyze_sleep, suggest_bedtime
@@ -960,6 +1386,19 @@ class TestSleepAgent:
         mock_llm_json.side_effect = RuntimeError("LLM error")
         with pytest.raises(RuntimeError):
             await sleep_agent.analyze_sleep("user-1")
+
+    @pytest.mark.asyncio
+    async def test_analyze_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        today = datetime.now().date().isoformat()
+        mock_supabase._builders["sleep_logs"].execute.return_value = MagicMock(
+            data=[
+                {"id": "s1", "date": today, "quality": 70, "duration_hours": 6.0, "sleep_debt_hours": 2.0},
+            ]
+        )
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await sleep_agent.analyze_sleep("user-1")
+        assert "sleep_analysis" in result
 
     # -- suggest_bedtime ------------------------------------------------------
 
@@ -1049,6 +1488,13 @@ class TestNudgeAgent:
         mock_llm_json.side_effect = RuntimeError("LLM error")
         with pytest.raises(RuntimeError):
             await nudge_agent.generate_nudge("user-1", "streak_at_risk", {})
+
+    @pytest.mark.asyncio
+    async def test_generate_nudge_llm_unavailable_fallback(self, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await nudge_agent.generate_nudge("user-1", "streak_at_risk", {})
+        assert result["nudge_text"] == "Time to check in on your progress!"
 
     # -- check_course_nudges --------------------------------------------------
 
@@ -1342,6 +1788,13 @@ class TestRoadmapAgent:
         mock_llm_json.side_effect = RuntimeError("LLM failure")
         with pytest.raises(RuntimeError):
             await roadmap_agent.optimize_roadmap("user-1")
+
+    @pytest.mark.asyncio
+    async def test_llm_unavailable_fallback(self, mock_supabase, mock_get_agent, mock_llm_json):
+        from ai.client import LLMProviderUnavailableError
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+        result = await roadmap_agent.optimize_roadmap("user-1")
+        assert result["milestones"] == []
 
 
 class TestContextAssembly:

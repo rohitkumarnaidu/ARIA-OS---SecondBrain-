@@ -17,6 +17,23 @@ import shared.utils.cache as cache_mod
 pytestmark = pytest.mark.asyncio
 
 
+def mock_async_iter(*items):
+    """Create an async iterable from items for mocking body_iterator."""
+    class _AsyncIter:
+        def __init__(self, items):
+            self._items = items
+            self._idx = 0
+        def __aiter__(self):
+            return self
+        async def __anext__(self):
+            if self._idx >= len(self._items):
+                raise StopAsyncIteration
+            val = self._items[self._idx]
+            self._idx += 1
+            return val
+    return _AsyncIter(items)
+
+
 class TestSimpleCache:
 
     async def test_set_and_get(self):
@@ -1525,57 +1542,69 @@ class TestRetentionCleanup:
 # ──────────────────────────────────────────────
 
 
-from shared.utils.security import sanitize_object
-
-
 class TestSecuritySanitizeObject:
+    """NOTE: import locally to avoid shadowing by xss.sanitize_object import at line 1833."""
 
     def test_sanitize_object_string(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object("<script>alert(1)</script>") == ""
 
     def test_sanitize_object_clean_string(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object("hello world") == "hello world"
 
     def test_sanitize_object_plain_dict(self):
+        from shared.utils.security import sanitize_object
         result = sanitize_object({"name": "<script>x</script>", "desc": "safe"})
         assert result == {"name": "", "desc": "safe"}
 
     def test_sanitize_object_nested_dict(self):
+        from shared.utils.security import sanitize_object
         result = sanitize_object({"outer": {"inner": "<script>x</script>"}})
         assert result == {"outer": {"inner": ""}}
 
     def test_sanitize_object_list(self):
+        from shared.utils.security import sanitize_object
         result = sanitize_object(["<script>x</script>", "hello", "<script>y</script>"])
         assert result == ["", "hello", ""]
 
     def test_sanitize_object_list_of_dicts(self):
+        from shared.utils.security import sanitize_object
         result = sanitize_object([{"msg": "<script>x</script>"}, {"msg": "safe"}])
         assert result == [{"msg": ""}, {"msg": "safe"}]
 
     def test_sanitize_object_nested_list_in_dict(self):
+        from shared.utils.security import sanitize_object
         result = sanitize_object({"items": ["<script>x</script>", 42]})
         assert result == {"items": ["", 42]}
 
     def test_sanitize_object_integer(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object(42) == 42
 
     def test_sanitize_object_float(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object(3.14) == 3.14
 
     def test_sanitize_object_boolean(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object(True) is True
         assert sanitize_object(False) is False
 
     def test_sanitize_object_none(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object(None) is None
 
     def test_sanitize_object_empty_string(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object("") == ""
 
     def test_sanitize_object_empty_dict(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object({}) == {}
 
     def test_sanitize_object_empty_list(self):
+        from shared.utils.security import sanitize_object
         assert sanitize_object([]) == []
 
 
@@ -1718,3 +1747,967 @@ class TestValidatorsEdgeCases:
 
     def test_validate_recurring_frequency_empty_string(self):
         assert validate_recurring_frequency("") is True
+
+
+# ──────────────────────────────────────────────
+# validators.py — MISSING FUNCTIONS (validate_task_input, validate_project_input, validate_date_range, sanitize_and_validate)
+# ──────────────────────────────────────────────
+
+
+from shared.utils.validators import (
+    validate_task_input,
+    validate_project_input,
+    validate_date_range,
+    sanitize_and_validate,
+)
+
+
+class TestValidatorsFullCoverage:
+
+    def test_validate_task_input_empty_title(self):
+        errors = validate_task_input({"title": ""})
+        assert "title is required" in errors
+
+    def test_validate_task_input_whitespace_title(self):
+        errors = validate_task_input({"title": "   "})
+        assert "title is required" in errors
+
+    def test_validate_task_input_title_too_long(self):
+        errors = validate_task_input({"title": "x" * 201})
+        assert "title must be at most 200 characters" in errors
+
+    def test_validate_task_input_invalid_status(self):
+        errors = validate_task_input({"title": "Valid", "status": "nope"})
+        assert any("status must be one of" in e for e in errors)
+
+    def test_validate_task_input_invalid_priority(self):
+        errors = validate_task_input({"title": "Valid", "priority": "nope"})
+        assert any("priority must be one of" in e for e in errors)
+
+    def test_validate_task_input_valid(self):
+        errors = validate_task_input({"title": "Valid Task", "status": "pending", "priority": "high"})
+        assert errors == []
+
+    def test_validate_project_input_empty_title(self):
+        errors = validate_project_input({"title": ""})
+        assert "title is required" in errors
+
+    def test_validate_project_input_whitespace_title(self):
+        errors = validate_project_input({"title": "   "})
+        assert "title is required" in errors
+
+    def test_validate_project_input_invalid_phase(self):
+        errors = validate_project_input({"title": "Project", "phase": "invalid"})
+        assert any("phase must be one of" in e for e in errors)
+
+    def test_validate_project_input_valid(self):
+        errors = validate_project_input({"title": "My Project", "phase": "planning"})
+        assert errors == []
+
+    def test_validate_date_range_valid(self):
+        assert validate_date_range("2026-01-01", "2026-12-31") is True
+
+    def test_validate_date_range_equal(self):
+        assert validate_date_range("2026-06-01T00:00:00", "2026-06-01T00:00:00") is True
+
+    def test_validate_date_range_start_after_end(self):
+        assert validate_date_range("2026-12-31", "2026-01-01") is False
+
+    def test_validate_date_range_invalid_start(self):
+        assert validate_date_range("bad-date", "2026-01-01") is False
+
+    def test_validate_date_range_invalid_end(self):
+        assert validate_date_range("2026-01-01", "bad-date") is False
+
+    def test_sanitize_and_validate_task_valid(self):
+        sanitized, errors = sanitize_and_validate({"title": "Task"}, "task")
+        assert errors == []
+        assert sanitized["title"] == "Task"
+
+    def test_sanitize_and_validate_project_valid(self):
+        sanitized, errors = sanitize_and_validate({"title": "Proj", "phase": "execution"}, "project")
+        assert errors == []
+
+    def test_sanitize_and_validate_unknown_schema(self):
+        sanitized, errors = sanitize_and_validate({"title": "X"}, "unknown_type")
+        assert "unknown schema type: unknown_type" in errors
+
+    def test_sanitize_and_validate_errors_propagate(self):
+        sanitized, errors = sanitize_and_validate({"title": "", "priority": "invalid"}, "task")
+        assert "title is required" in errors
+
+
+# ──────────────────────────────────────────────
+# xss.py — full coverage (0% → 100%)
+# ──────────────────────────────────────────────
+
+
+from shared.utils.xss import (
+    sanitize_html,
+    strip_html,
+    sanitize_object,
+    has_xss,
+    detect_xss_in_object,
+)
+
+
+class TestXSS:
+
+    def test_sanitize_html_removes_script(self):
+        result = sanitize_html("<script>alert('xss')</script>")
+        assert "<script>" not in result
+
+    def test_sanitize_html_escapes_basic_html(self):
+        result = sanitize_html("<b>bold</b>")
+        assert "&lt;b&gt;bold&lt;/b&gt;" in result or "bold" in result
+
+    def test_sanitize_html_javascript_uri(self):
+        result = sanitize_html('<a href="javascript:alert(1)">link</a>')
+        assert "javascript:" not in result
+
+    def test_sanitize_html_event_handler(self):
+        result = sanitize_html('<div onclick="evil()">x</div>')
+        assert "onclick" not in result
+
+    def test_sanitize_html_iframe(self):
+        result = sanitize_html("<iframe src='evil'></iframe>")
+        assert "<iframe" not in result
+
+    def test_sanitize_html_object(self):
+        result = sanitize_html("<object data='evil'></object>")
+        assert "<object" not in result
+
+    def test_sanitize_html_embed(self):
+        result = sanitize_html("<embed src='evil'>")
+        assert "<embed" not in result
+
+    def test_sanitize_html_svg_onload(self):
+        result = sanitize_html('<svg onload="alert(1)">')
+        assert "onload" not in result
+
+    def test_sanitize_html_eval(self):
+        result = sanitize_html("eval(someCode)")
+        assert "eval(" not in result
+
+    def test_sanitize_html_document_cookie(self):
+        result = sanitize_html("document.cookie")
+        assert "document.cookie" not in result
+
+    def test_sanitize_html_data_uri(self):
+        result = sanitize_html('data:text/html,<script>alert(1)</script>')
+        assert "data:text/html" not in result
+
+    def test_sanitize_html_non_string(self):
+        assert sanitize_html(123) == "123"
+
+    def test_sanitize_html_normal_text_unchanged(self):
+        result = sanitize_html("hello world")
+        assert "hello world" in result
+
+    def test_strip_html_removes_tags(self):
+        result = strip_html("<p>Hello <b>World</b></p>")
+        assert "<p>" not in result and "<b>" not in result
+
+    def test_strip_html_keeps_text(self):
+        result = strip_html("<p>Hello <b>World</b></p>")
+        assert "Hello" in result and "World" in result
+
+    def test_strip_html_non_string(self):
+        assert strip_html(42) == "42"
+
+    def test_strip_html_unescapes_entities(self):
+        result = strip_html("&amp; &lt; &gt;")
+        assert "&" in result
+
+    def test_sanitize_object_string(self):
+        result = sanitize_object("<script>alert(1)</script>")
+        assert "<script>" not in result
+
+    def test_sanitize_object_dict(self):
+        result = sanitize_object({"content": "<script>alert(1)</script>"})
+        assert "<script>" not in result["content"]
+
+    def test_sanitize_object_nested_dict(self):
+        result = sanitize_object({"a": {"b": "<script>x</script>"}})
+        assert "<script>" not in result["a"]["b"]
+
+    def test_sanitize_object_list(self):
+        result = sanitize_object(["<script>alert(1)</script>"])
+        assert "<script>" not in result[0]
+
+    def test_sanitize_object_nested_list(self):
+        result = sanitize_object([{"x": "<script>a</script>"}])
+        assert "<script>" not in result[0]["x"]
+
+    def test_sanitize_object_max_depth(self):
+        deep = {"l1": {"l2": {"l3": {"l4": "<script>x</script>"}}}}
+        result = sanitize_object(deep, max_depth=2)
+        assert isinstance(result["l1"]["l2"]["l3"], dict)
+
+    def test_sanitize_object_passthrough_non_string(self):
+        assert sanitize_object(42) == 42
+        assert sanitize_object(None) is None
+        assert sanitize_object(True) is True
+
+    def test_has_xss_detects_script(self):
+        assert has_xss("<script>alert(1)</script>") is not None
+
+    def test_has_xss_detects_javascript_uri(self):
+        assert has_xss("javascript:alert(1)") is not None
+
+    def test_has_xss_detects_event_handler(self):
+        assert has_xss('<div onclick="x">') is not None
+
+    def test_has_xss_returns_none_for_safe(self):
+        assert has_xss("hello world") is None
+
+    def test_has_xss_detects_eval(self):
+        assert has_xss("eval(something)") is not None
+
+    def test_has_xss_detects_document_cookie(self):
+        assert has_xss("document.cookie") is not None
+
+    def test_detect_xss_in_object_string(self):
+        findings = detect_xss_in_object("<script>alert(1)</script>")
+        assert len(findings) == 1
+        assert findings[0][0] == "ROOT"
+
+    def test_detect_xss_in_object_safe_string(self):
+        assert detect_xss_in_object("hello world") == []
+
+    def test_detect_xss_in_object_dict(self):
+        findings = detect_xss_in_object({"name": "<script>x</script>"})
+        assert any("name" in f[0] for f in findings)
+
+    def test_detect_xss_in_object_dict_safe_value(self):
+        assert detect_xss_in_object({"name": "Alice"}) == []
+
+    def test_detect_xss_in_object_nested_dict(self):
+        findings = detect_xss_in_object({"a": {"b": "<script>x</script>"}})
+        assert any("a.b" in f[0] for f in findings)
+
+    def test_detect_xss_in_object_list(self):
+        findings = detect_xss_in_object(["<script>x</script>"])
+        assert len(findings) >= 1
+
+    def test_detect_xss_in_object_nested_list(self):
+        findings = detect_xss_in_object([{"x": "javascript:alert(1)"}])
+        assert len(findings) >= 1
+
+    def test_detect_xss_in_object_max_depth(self):
+        deep = {"l1": {"l2": {"l3": {"x": "<script>a</script>"}}}}
+        findings = detect_xss_in_object(deep, max_depth=2)
+        assert len(findings) == 0
+
+    def test_detect_xss_in_object_list_of_dicts(self):
+        findings = detect_xss_in_object([{"name": "safe"}, {"name": "<script>x</script>"}])
+        assert any("name" in f[0] for f in findings)
+
+    def test_detect_xss_in_object_non_string_passthrough(self):
+        assert detect_xss_in_object(42) == []
+        assert detect_xss_in_object(None) == []
+
+
+# ──────────────────────────────────────────────
+# cache_middleware.py — full coverage (0% → 100%)
+# ──────────────────────────────────────────────
+
+
+from shared.utils.cache_middleware import ResponseCacheMiddleware
+from fastapi import FastAPI, Request
+from starlette.responses import Response as StarletteResponse
+
+
+class TestResponseCacheMiddleware:
+
+    def test_init_defaults(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        assert mw.default_ttl == 60
+        assert mw.max_size == 256
+        assert "/health" in mw._skip_paths
+
+    def test_init_custom_ttl(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app, default_ttl=120, max_size=512)
+        assert mw.default_ttl == 120
+        assert mw.max_size == 512
+
+    def test_skip_paths(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        assert "/health" in mw._skip_paths
+        assert "/metrics" in mw._skip_paths
+        assert "/api/v1/chat" in mw._skip_paths
+
+    @pytest.mark.asyncio
+    async def test_dispatch_skips_non_get(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "POST"
+        request.url.path = "/api/v1/tasks"
+        call_next = AsyncMock(return_value=StarletteResponse("ok"))
+        resp = await mw.dispatch(request, call_next)
+        assert resp.body.decode() == "ok"
+
+    @pytest.mark.asyncio
+    async def test_dispatch_skips_health(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/health"
+        request.headers = {}
+        call_next = AsyncMock(return_value=StarletteResponse("ok"))
+        resp = await mw.dispatch(request, call_next)
+        assert resp.body.decode() == "ok"
+
+    @pytest.mark.asyncio
+    async def test_dispatch_skip_no_cache_header(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers = {"cache-control": "no-cache"}
+        call_next = AsyncMock(return_value=StarletteResponse("fresh"))
+        resp = await mw.dispatch(request, call_next)
+        assert resp.body.decode() == "fresh"
+
+    def test_cache_key_format(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.query_params = {"page": "1"}
+        key = mw._cache_key(request)
+        assert key.startswith("rm:")
+
+    def test_cache_key_different_params(self):
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        r1 = MagicMock(spec=Request)
+        r1.method = "GET"
+        r1.url.path = "/api/v1/tasks"
+        r1.query_params = {"page": "1"}
+        r2 = MagicMock(spec=Request)
+        r2.method = "GET"
+        r2.url.path = "/api/v1/tasks"
+        r2.query_params = {"page": "2"}
+        assert mw._cache_key(r1) != mw._cache_key(r2)
+
+    @pytest.mark.asyncio
+    async def test_dispatch_cache_hit(self):
+        from shared.utils.cache_middleware import cache as mw_cache
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers = {}
+        request.query_params = {}
+        cached_body = b'{"tasks":[]}'
+        await mw_cache.set("rm:test", {
+            "body": cached_body,
+            "status": 200,
+            "media_type": "application/json",
+            "headers": {"content-type": "application/json"},
+        })
+        orig = mw._cache_key
+        mw._cache_key = MagicMock(return_value="rm:test")
+        call_next = AsyncMock()
+        resp = await mw.dispatch(request, call_next)
+        assert resp.status_code == 200
+        assert resp.headers.get("X-Cache") == "HIT"
+        call_next.assert_not_called()
+        mw._cache_key = orig
+
+    @pytest.mark.asyncio
+    async def test_dispatch_cache_miss_stores_response(self):
+        from shared.utils.cache_middleware import cache as mw_cache
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app, default_ttl=60)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers = {}
+        request.query_params = {}
+        orig_get = mw_cache.get
+        orig_set = mw_cache.set
+        stored = {}
+        async def fake_get(k):
+            return stored.get(k)
+        async def fake_set(k, v, ttl=60):
+            stored[k] = v
+        mw_cache.get = fake_get
+        mw_cache.set = fake_set
+
+        class FakeResponse:
+            status_code = 200
+            media_type = "application/json"
+            headers = {"content-length": "100", "content-type": "application/json"}
+            body_iterator = mock_async_iter(b'{"tasks":[]}')
+
+        call_next = AsyncMock(return_value=FakeResponse())
+        resp = await mw.dispatch(request, call_next)
+        assert resp.status_code == 200
+        assert len(stored) == 1
+        key = list(stored.keys())[0]
+        assert stored[key]["body"] == b'{"tasks":[]}'
+        mw_cache.get = orig_get
+        mw_cache.set = orig_set
+
+    @pytest.mark.asyncio
+    async def test_dispatch_skips_cache_on_error_response(self):
+        from shared.utils.cache_middleware import cache as mw_cache
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers = {}
+        request.query_params = {}
+        orig_get = mw_cache.get
+        mw_cache.get = AsyncMock(return_value=None)
+        call_next = AsyncMock()
+        resp_mock = MagicMock()
+        resp_mock.status_code = 500
+        resp_mock.headers = {"content-length": "50"}
+        call_next.return_value = resp_mock
+        resp = await mw.dispatch(request, call_next)
+        assert resp.status_code == 500
+        mw_cache.get = orig_get
+
+    @pytest.mark.asyncio
+    async def test_dispatch_skips_cache_on_large_response(self):
+        from shared.utils.cache_middleware import cache as mw_cache
+        app = FastAPI()
+        mw = ResponseCacheMiddleware(app)
+        request = MagicMock(spec=Request)
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers = {}
+        request.query_params = {}
+        orig_get = mw_cache.get
+        mw_cache.get = AsyncMock(return_value=None)
+        call_next = AsyncMock()
+        resp_mock = MagicMock()
+        resp_mock.status_code = 200
+        resp_mock.headers = {"content-length": "999999"}
+        call_next.return_value = resp_mock
+        resp = await mw.dispatch(request, call_next)
+        assert resp.status_code == 200
+        mw_cache.get = orig_get
+
+
+# ──────────────────────────────────────────────
+# batch.py — full coverage (0% → 100%)
+# ──────────────────────────────────────────────
+
+
+from shared.utils.batch import BatchResult, BatchExecutor, batch_supabase_queries
+from datetime import datetime, timezone
+
+
+class TestBatchResult:
+
+    def test_ok_stores_result(self):
+        r = BatchResult()
+        r.ok("tasks", [1, 2, 3])
+        assert r.results["tasks"] == [1, 2, 3]
+
+    def test_fail_stores_error(self):
+        r = BatchResult()
+        r.fail("tasks", "Something went wrong")
+        assert r.errors["tasks"] == "Something went wrong"
+
+    def test_success_count(self):
+        r = BatchResult()
+        r.ok("a", 1)
+        r.ok("b", 2)
+        assert r.success_count == 2
+
+    def test_error_count(self):
+        r = BatchResult()
+        r.fail("a", "err")
+        r.fail("b", "err")
+        assert r.error_count == 2
+
+    def test_duration_ms_before_finish(self):
+        r = BatchResult()
+        assert r.duration_ms >= 0
+
+    def test_duration_ms_after_finish(self):
+        r = BatchResult()
+        r.finish()
+        assert r.completed_at is not None
+        assert r.duration_ms >= 0
+
+    def test_finish_sets_completed_at(self):
+        r = BatchResult()
+        r.finish()
+        assert r.completed_at is not None
+        assert isinstance(r.completed_at, datetime)
+
+
+class TestBatchExecutor:
+
+    @pytest.mark.asyncio
+    async def test_execute_single_query(self):
+        async def fetch():
+            return [1, 2, 3]
+
+        executor = BatchExecutor(concurrency=2)
+        executor.add("data", fetch)
+        result = await executor.execute()
+        assert result.results["data"] == [1, 2, 3]
+        assert result.error_count == 0
+
+    @pytest.mark.asyncio
+    async def test_execute_multiple_queries(self):
+        async def a():
+            return "A"
+
+        async def b():
+            return "B"
+
+        executor = BatchExecutor()
+        executor.add("a", a)
+        executor.add("b", b)
+        result = await executor.execute()
+        assert result.results["a"] == "A"
+        assert result.results["b"] == "B"
+
+    @pytest.mark.asyncio
+    async def test_execute_error_isolation(self):
+        async def good():
+            return "ok"
+
+        async def bad():
+            raise ValueError("oops")
+
+        executor = BatchExecutor()
+        executor.add("good", good)
+        executor.add("bad", bad)
+        result = await executor.execute()
+        assert result.results["good"] == "ok"
+        assert "oops" in result.errors["bad"]
+
+    @pytest.mark.asyncio
+    async def test_execute_sync_function(self):
+        def sync_fn():
+            return "sync-result"
+
+        executor = BatchExecutor()
+        executor.add("sync", sync_fn)
+        result = await executor.execute()
+        assert result.results["sync"] == "sync-result"
+
+    @pytest.mark.asyncio
+    async def test_execute_empty(self):
+        executor = BatchExecutor()
+        result = await executor.execute()
+        assert result.results == {}
+        assert result.errors == {}
+
+    @pytest.mark.asyncio
+    async def test_concurrency_limit(self):
+        import time
+
+        async def slow():
+            await asyncio.sleep(0.05)
+            return "done"
+
+        executor = BatchExecutor(concurrency=2)
+        for i in range(4):
+            executor.add(f"q{i}", slow)
+        start = time.monotonic()
+        result = await executor.execute()
+        elapsed = time.monotonic() - start
+        assert len(result.results) == 4
+        assert elapsed < 0.15
+
+
+class TestBatchSupabaseQueries:
+
+    @pytest.mark.asyncio
+    async def test_batch_supabase_returns_data(self):
+        async def fetch_tasks():
+            return ["task1"]
+
+        async def fetch_habits():
+            return ["habit1"]
+
+        result = await batch_supabase_queries({
+            "tasks": fetch_tasks,
+            "habits": fetch_habits,
+        })
+        assert result["data"]["tasks"] == ["task1"]
+        assert result["data"]["habits"] == ["habit1"]
+        assert "duration_ms" in result
+
+    @pytest.mark.asyncio
+    async def test_batch_supabase_with_errors(self):
+        async def fail_fn():
+            raise RuntimeError("db error")
+
+        result = await batch_supabase_queries({"x": fail_fn})
+        assert "db error" in result["errors"]["x"]
+
+
+# ──────────────────────────────────────────────
+# rate_limiter.py — remaining uncovered paths
+# ──────────────────────────────────────────────
+
+
+class TestRateLimiterFullCoverage:
+
+    def test_endpoint_limiter_rate_limited(self):
+        from shared.utils.rate_limiter import endpoint_limiter
+        ip = "10.0.0.1"
+        endpoint = "/api/chat"
+        for _ in range(30):
+            endpoint_limiter.check(ip, endpoint)
+        assert endpoint_limiter.check(ip, endpoint) is False
+
+    def test_endpoint_limiter_default_used(self):
+        from shared.utils.rate_limiter import endpoint_limiter
+        ip = "10.0.0.2"
+        allowed = endpoint_limiter.check(ip, "/unknown/endpoint")
+        assert allowed is True
+
+    def test_endpoint_limiter_window_cleanup(self):
+        from shared.utils.rate_limiter import endpoint_limiter
+        import time
+        ip = "10.0.0.3"
+        ep = "/api/tasks"
+        for _ in range(60):
+            endpoint_limiter.check(ip, ep)
+        assert endpoint_limiter.check(ip, ep) is False
+
+    def test_rate_limiter_init_max_requests(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        rl = RateLimiter(FastAPI(), max_requests=10, window_seconds=5)
+        assert rl.max_requests == 10
+        assert rl.window_seconds == 5
+
+    def test_rate_limiter_has_lock(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        rl = RateLimiter(FastAPI())
+        assert hasattr(rl, "_lock")
+
+    @pytest.mark.asyncio
+    async def test_rate_limiter_dispatch_allowed(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        from starlette.responses import Response
+        app = FastAPI()
+        rl = RateLimiter(app, max_requests=100, window_seconds=60)
+        request = MagicMock(spec=Request)
+        request.client.host = "10.0.0.1"
+        request.method = "GET"
+        call_next = AsyncMock(return_value=Response("ok"))
+        resp = await rl.dispatch(request, call_next)
+        assert resp.status_code == 200
+        assert resp.headers.get("X-RateLimit-Limit") == "100"
+
+    @pytest.mark.asyncio
+    async def test_rate_limiter_dispatch_rate_limited(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        from fastapi import HTTPException
+        app = FastAPI()
+        rl = RateLimiter(app, max_requests=1, window_seconds=60)
+        request = MagicMock(spec=Request)
+        request.client.host = "10.0.0.2"
+        request.method = "GET"
+        call_next = AsyncMock(return_value=MagicMock(status_code=200))
+        await rl.dispatch(request, call_next)
+        with pytest.raises(HTTPException) as exc:
+            await rl.dispatch(request, call_next)
+        assert exc.value.status_code == 429
+
+    @pytest.mark.asyncio
+    async def test_rate_limiter_unknown_client(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        from starlette.responses import Response
+        app = FastAPI()
+        rl = RateLimiter(app, max_requests=5, window_seconds=60)
+        request = MagicMock(spec=Request)
+        request.client = None
+        request.method = "GET"
+        call_next = AsyncMock(return_value=Response("ok"))
+        resp = await rl.dispatch(request, call_next)
+        assert resp.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_rate_limiter_window_cleanup(self):
+        from shared.utils.rate_limiter import RateLimiter
+        from fastapi import FastAPI
+        app = FastAPI()
+        rl = RateLimiter(app, max_requests=5, window_seconds=0)
+        request = MagicMock(spec=Request)
+        request.client.host = "10.0.0.3"
+        request.method = "GET"
+        call_next = AsyncMock(return_value=MagicMock(status_code=200))
+        for _ in range(5):
+            await rl.dispatch(request, call_next)
+        assert 10.0 not in rl.requests or len(rl.requests.get("10.0.0.3", [])) == 0
+
+
+# ──────────────────────────────────────────────
+# feature_flags.py — full coverage (35% → 100%)
+# ──────────────────────────────────────────────
+
+
+from shared.utils.feature_flags import FeatureFlag, FeatureFlagStore
+
+
+class TestFeatureFlag:
+
+    def test_init_defaults(self):
+        ff = FeatureFlag("test.feature")
+        assert ff.key == "test.feature"
+        assert ff.enabled is False
+        assert ff.rollout_percentage == 0
+        assert ff.user_segments == []
+        assert ff.metadata == {}
+
+    def test_init_custom(self):
+        ff = FeatureFlag("my.flag", enabled=True, rollout_percentage=50, user_segments=["alpha"], metadata={"v": 1})
+        assert ff.enabled is True
+        assert ff.rollout_percentage == 50
+        assert ff.user_segments == ["alpha"]
+        assert ff.metadata == {"v": 1}
+
+    def test_rollout_percentage_clamping(self):
+        ff = FeatureFlag("x", rollout_percentage=150)
+        assert ff.rollout_percentage == 100
+        ff2 = FeatureFlag("y", rollout_percentage=-10)
+        assert ff2.rollout_percentage == 0
+
+    def test_to_dict(self):
+        ff = FeatureFlag("k", enabled=True, rollout_percentage=50)
+        d = ff.to_dict()
+        assert d["key"] == "k"
+        assert d["enabled"] is True
+        assert d["rollout_percentage"] == 50
+
+    def test_from_dict(self):
+        ff = FeatureFlag.from_dict({"key": "test", "enabled": True, "rollout_percentage": 75})
+        assert ff.key == "test"
+        assert ff.enabled is True
+        assert ff.rollout_percentage == 75
+
+    def test_from_dict_missing_fields(self):
+        ff = FeatureFlag.from_dict({})
+        assert ff.key == ""
+        assert ff.enabled is False
+
+
+class TestFeatureFlagStore:
+
+    def test_flags_env_loading(self, monkeypatch):
+        monkeypatch.setenv("FF_NEW_DASHBOARD", "true")
+        monkeypatch.setenv("FF_DARK_MODE", "1")
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.get("new.dashboard") is True
+        assert store.get("dark.mode") is True
+
+    def test_flags_env_loading_disabled(self, monkeypatch):
+        monkeypatch.setenv("FF_EXPERIMENT", "false")
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.get("experiment") is False
+
+    def test_get_flag_not_found_defaults_false(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.get("nonexistent") is False
+
+    def test_get_flag_not_found_custom_default(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.get("nonexistent", default=True) is True
+
+    def test_get_disabled_flag(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=False))
+        assert store.get("test") is False
+
+    def test_get_fully_rolled_out(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=100))
+        assert store.get("test") is True
+
+    def test_get_with_user_in_segment(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["vip-user"]))
+        assert store.get("test", user_id="vip-user") is True
+
+    def test_get_with_user_not_in_segment(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0))
+        result = store.get("test", user_id="normal-user")
+        assert result is False
+
+    def test_get_rollout_bucket(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=100))
+        assert store.get("test", user_id="any-user") is True
+
+    def test_get_variant_disabled_flag(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=False))
+        assert store.get_variant("test", "user-1") == "control"
+
+    def test_get_variant_fully_rolled_out(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=100))
+        assert store.get_variant("test", "user-1") == "treatment"
+
+    def test_get_variant_user_in_segment(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["vip"]))
+        assert store.get_variant("test", "vip") == "treatment"
+
+    def test_get_variant_user_not_in_segment(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0))
+        assert store.get_variant("test", "normal") == "control"
+
+    def test_get_variant_in_bucket(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=100))
+        assert store.get_variant("test", "anyone") == "treatment"
+
+    def test_get_variant_treatment_via_bucket_check(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("bucket.flag", FeatureFlag("bucket.flag", enabled=True, rollout_percentage=1))
+        assert store.get_variant("bucket.flag", "user-57") == "treatment"
+
+    def test_get_variant_flag_not_found(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.get_variant("missing", "user-1") == "control"
+
+    def test_set_flag(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        ff = FeatureFlag("my.flag", enabled=True, rollout_percentage=100)
+        store.set("my.flag", ff)
+        assert store.get("my.flag") is True
+
+    def test_delete_flag_exists(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("x", FeatureFlag("x"))
+        assert store.delete("x") is True
+
+    def test_delete_flag_not_found(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        assert store.delete("nonexistent") is False
+
+    def test_all_flags(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("a", FeatureFlag("a"))
+        store.set("b", FeatureFlag("b"))
+        all_f = store.all_flags()
+        assert "a" in all_f
+        assert "b" in all_f
+
+    def test_all_flags_is_copy(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("x", FeatureFlag("x"))
+        all_f = store.all_flags()
+        all_f["y"] = FeatureFlag("y")
+        assert "y" not in store._flags
+
+    @pytest.mark.asyncio
+    async def test_refresh_skips_if_recent(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store._last_refresh = 9999999999
+        await store.refresh()
+        assert store._last_refresh == 9999999999
+
+    @pytest.mark.asyncio
+    async def test_refresh_loads_from_db(self):
+        store = FeatureFlagStore(refresh_interval_seconds=0)
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = [
+            {"key": "db.flag", "enabled": True, "rollout_percentage": 100, "user_segments": [], "metadata": {}}
+        ]
+        mock_supabase.from_.return_value.select.return_value.execute.return_value = mock_response
+        with patch("shared.utils.feature_flags.get_supabase_client", return_value=mock_supabase):
+            await store.refresh()
+        assert store.get("db.flag") is True
+
+    @pytest.mark.asyncio
+    async def test_refresh_empty_db(self):
+        store = FeatureFlagStore(refresh_interval_seconds=0)
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = []
+        mock_supabase.from_.return_value.select.return_value.execute.return_value = mock_response
+        with patch("shared.utils.feature_flags.get_supabase_client", return_value=mock_supabase):
+            await store.refresh()
+        assert store._last_refresh > 0
+
+    @pytest.mark.asyncio
+    async def test_refresh_db_error_safe(self):
+        store = FeatureFlagStore(refresh_interval_seconds=0)
+        store.set("existing", FeatureFlag("existing", enabled=True, rollout_percentage=100))
+        mock_supabase = MagicMock()
+        mock_supabase.from_.return_value.select.return_value.execute.side_effect = RuntimeError("db down")
+        with patch("shared.utils.feature_flags.get_supabase_client", return_value=mock_supabase):
+            await store.refresh()
+        assert store.get("existing") is True
+        assert store._last_refresh == 0
+
+    @pytest.mark.asyncio
+    async def test_refresh_db_error_does_not_set_last_refresh(self):
+        store = FeatureFlagStore(refresh_interval_seconds=0)
+        mock_supabase = MagicMock()
+        mock_supabase.from_.return_value.select.return_value.execute.side_effect = RuntimeError("db down")
+        with patch("shared.utils.feature_flags.get_supabase_client", return_value=mock_supabase):
+            await store.refresh()
+        assert store._last_refresh == 0
+
+    def test_user_bucket(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        bucket = store._user_bucket("user-1", "test.flag")
+        assert 0 <= bucket < 100
+        bucket2 = store._user_bucket("user-1", "test.flag")
+        assert bucket == bucket2
+        bucket3 = store._user_bucket("user-2", "test.flag")
+        assert bucket != bucket3
+
+    def test_get_no_user_id_partial_rollout(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=50))
+        assert store.get("test") is True
+
+    def test_get_variant_control_when_bucket_above_rollout(self):
+        store = FeatureFlagStore(refresh_interval_seconds=999)
+        store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0))
+        assert store.get_variant("test", "any-user") == "control"
+
+
+# ──────────────────────────────────────────────
+# date_utils.py — line 50 December edge case
+# ──────────────────────────────────────────────
+
+
+class TestDateUtilsDecemberEdgeCase:
+
+    def test_get_month_range_december(self, monkeypatch):
+        import shared.utils.date_utils as du
+        dec = datetime(2026, 12, 15, 0, 0, 0)
+        monkeypatch.setattr(du, "datetime", type("FrozenDT", (), {
+            "now": staticmethod(lambda: dec),
+            "date": type("FrozenD", (), {"today": staticmethod(lambda: dec.date())}),
+        }))
+        first, last = du.get_month_range()
+        assert first.month == 12
+        assert last.month == 12
+        assert last.day >= 28
