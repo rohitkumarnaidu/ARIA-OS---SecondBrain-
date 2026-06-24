@@ -14,7 +14,7 @@ Future mobile access is planned so users can interact with their Second Brain on
 ```mermaid
 graph TD
     subgraph PWA["PWA (Chosen) - Single Codebase"]
-        FE[next-pwa<br/>Next.js + Service Worker]
+        FE[@serwist/next<br/>Next.js + Service Worker]
         SW[Service Worker<br/>Offline Cache + Background Sync]
         WEB[Desktop Web]
         TAB[Tablet]
@@ -38,7 +38,7 @@ graph TD
     style NATIVE fill:#0A0B0F,stroke:#EF4444,color:#F1F5F9
 ```
 
-Implement the existing Next.js application as a Progressive Web App using `next-pwa` or the built-in PWA capabilities of Next.js. The web app already uses responsive Tailwind layouts, so mobile viewport support is already partially in place. A service worker will be added for offline caching of static assets and API responses. Native apps (React Native or Flutter) are deferred until post-MVP validation.
+Implement the existing Next.js application as a Progressive Web App using `@serwist/next` or the built-in PWA capabilities of Next.js. The web app already uses responsive Tailwind layouts, so mobile viewport support is already partially in place. A service worker will be added for offline caching of static assets and API responses. Native apps (React Native or Flutter) are deferred until post-MVP validation.
 
 ## Consequences
 

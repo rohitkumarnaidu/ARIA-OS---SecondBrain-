@@ -541,7 +541,7 @@ All 5 agents were previously async shells with **zero LLM calls**. They now call
 | PI-002 | No DB indexes on FKs | Medium | CREATE INDEX | 1h |
 | PI-003 | No lazy loading on frontend | Medium | Add React.lazy() | 2h |
 | PI-004 | No API response caching | Medium | Add cache middleware | 3h |
-| PI-005 | No PWA/service worker | High | Add next-pwa | 6h |
+| PI-005 | No PWA/service worker | High | Add @serwist/next | 6h |
 | PI-006 | No image optimization | Low | Switch to next/image | 1h |
 
 ---

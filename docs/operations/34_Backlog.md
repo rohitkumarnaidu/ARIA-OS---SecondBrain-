@@ -230,7 +230,7 @@ flowchart LR
 ### P3 - PWA
 | ID | Story | Estimate | Dependencies | Status |
 |----|-------|----------|--------------|--------|
-| F-085 | Service worker caches core app shell for offline use | 2 days | next-pwa | Not started |
+| F-085 | Service worker caches core app shell for offline use | 2 days | @serwist/next | Not started |
 | F-086 | IndexedDB stores user data for offline access | 2 days | F-085 | Not started |
 | F-087 | Background sync on reconnect | 1 day | F-085 | Not started |
 
