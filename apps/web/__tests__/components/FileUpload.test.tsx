@@ -38,4 +38,44 @@ describe('FileUpload', () => {
     const { container } = render(<FileUpload onFiles={() => {}} className="custom" />)
     expect(container.firstChild).toHaveClass('custom')
   })
+
+  it('handles multiple files at once', () => {
+    const onFiles = vi.fn()
+    const { container } = render(<FileUpload onFiles={onFiles} />)
+    const input = container.querySelector('input[type="file"]')!
+    const file1 = createFile('a.jpg')
+    const file2 = createFile('b.png')
+    Object.defineProperty(input, 'files', { value: [file1, file2] })
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    expect(screen.getByText('a.jpg')).toBeInTheDocument()
+    expect(screen.getByText('b.png')).toBeInTheDocument()
+  })
+
+  it('accepts multiple attribute on input', () => {
+    const { container } = render(<FileUpload onFiles={() => {}} multiple />)
+    const input = container.querySelector('input[type="file"]')
+    expect(input).toHaveAttribute('multiple')
+  })
+
+  it('does not have accept attribute when not provided', () => {
+    const { container } = render(<FileUpload onFiles={() => {}} />)
+    const input = container.querySelector('input[type="file"]')
+    expect(input).not.toHaveAttribute('accept')
+  })
+
+  it('shows file size in human-readable format', () => {
+    const onFiles = vi.fn()
+    const { container } = render(<FileUpload onFiles={onFiles} />)
+    const input = container.querySelector('input[type="file"]')!
+    const file = createFile('large.bin', 2 * 1024 * 1024)
+    Object.defineProperty(input, 'files', { value: [file] })
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+    expect(screen.getByText('large.bin')).toBeInTheDocument()
+    expect(screen.getByText(/(MB|MiB)/i)).toBeInTheDocument()
+  })
+
+  it('has accessible drop zone label', () => {
+    render(<FileUpload onFiles={() => {}} />)
+    expect(screen.getByRole('button')).toBeInTheDocument()
+  })
 })

@@ -43,4 +43,31 @@ describe('Form', () => {
       expect(screen.getByText('Enter your full name')).toBeInTheDocument()
     })
   })
+
+  describe('Edge Cases', () => {
+    it('FormMessage handles empty error gracefully', () => {
+      render(<FormField><FormMessage /></FormField>)
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('FormLabel does not render without FormField context', () => {
+      expect(() => render(<FormLabel>Orphan</FormLabel>)).toThrow()
+    })
+
+    it('FormControl renders null children gracefully', () => {
+      render(<FormField><FormControl>{null}</FormControl></FormField>)
+    })
+
+    it('FormMessage has role="alert"', () => {
+      render(<FormField error="Error message"><FormMessage /></FormField>)
+      expect(screen.getByRole('alert')).toHaveTextContent('Error message')
+    })
+
+    it('FormField renders with long error message', () => {
+      const longError = 'E'.repeat(200)
+      render(<FormField error={longError}><FormMessage /></FormField>)
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+      expect(screen.getByText(longError)).toBeInTheDocument()
+    })
+  })
 })

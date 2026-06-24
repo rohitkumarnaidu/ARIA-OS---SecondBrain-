@@ -70,4 +70,40 @@ describe('Button', () => {
     const btn = screen.getByTestId('test-btn')
     expect(btn).toHaveAttribute('type', 'submit')
   })
+
+  describe('Edge Cases', () => {
+    it('renders with extremely long text without breaking layout', () => {
+      const longText = 'A'.repeat(200)
+      render(<Button>{longText}</Button>)
+      const btn = screen.getByRole('button')
+      expect(btn).toBeInTheDocument()
+      expect(btn.textContent).toBe(longText)
+    })
+
+    it('has accessible role and aria-disabled when disabled', () => {
+      render(<Button disabled>Aria Disabled</Button>)
+      const btn = screen.getByRole('button', { name: /aria disabled/i })
+      expect(btn).toHaveAttribute('aria-disabled', 'true')
+      expect(btn).not.toHaveAttribute('aria-busy')
+    })
+
+    it('supports keyboard Enter and Space activation', async () => {
+      const onClick = vi.fn()
+      const user = userEvent.setup()
+      render(<Button onClick={onClick}>Keyboard</Button>)
+      const btn = screen.getByRole('button', { name: /keyboard/i })
+      btn.focus()
+      await user.keyboard('{Enter}')
+      expect(onClick).toHaveBeenCalledTimes(1)
+      await user.keyboard(' ')
+      expect(onClick).toHaveBeenCalledTimes(2)
+    })
+
+    it('loading state disables and shows aria-busy', () => {
+      render(<Button loading>Loading State</Button>)
+      const btn = screen.getByRole('button', { name: /loading state/i })
+      expect(btn).toBeDisabled()
+      expect(btn).toHaveAttribute('aria-busy', 'true')
+    })
+  })
 })

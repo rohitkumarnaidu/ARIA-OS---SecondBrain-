@@ -1,19 +1,32 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useNotificationStore } from '@/lib/stores/notificationStore'
+import type { AppNotification } from '@/lib/types'
+
+const mockNotifications: AppNotification[] = Array.from({ length: 18 }, (_, i) => ({
+  id: `mock-${i}`,
+  user_id: 'test-user',
+  title: `Notification ${i}`,
+  message: `Message ${i}`,
+  category: i % 3 === 0 ? 'task' : i % 3 === 1 ? 'habit' : 'system',
+  priority: i < 6 ? 'high' : i < 12 ? 'medium' : 'low',
+  read: i >= 9,
+  createdAt: new Date(Date.now() - i * 3600000).toISOString(),
+  created_at: new Date(Date.now() - i * 3600000).toISOString(),
+}))
 
 describe('notificationStore', () => {
   beforeEach(() => {
     useNotificationStore.setState(useNotificationStore.getInitialState())
   })
 
-  it('initial state has mock notifications', () => {
+  it('initial state has empty notifications', () => {
     const { notifications, panelOpen } = useNotificationStore.getState()
-    expect(notifications.length).toBeGreaterThan(0)
-    expect(notifications.length).toBe(18)
+    expect(notifications).toEqual([])
     expect(panelOpen).toBe(false)
   })
 
   it('markAsRead updates a notification status', () => {
+    useNotificationStore.setState({ notifications: mockNotifications })
     const store = useNotificationStore.getState()
     const unread = store.notifications.find((n) => !n.read)
     expect(unread).toBeDefined()
@@ -24,6 +37,7 @@ describe('notificationStore', () => {
   })
 
   it('markAllAsRead updates all unread notifications', () => {
+    useNotificationStore.setState({ notifications: mockNotifications })
     const beforeCount = useNotificationStore.getState().unreadCount()
     expect(beforeCount).toBeGreaterThan(0)
 
@@ -35,6 +49,7 @@ describe('notificationStore', () => {
   })
 
   it('mock data has correct structure', () => {
+    useNotificationStore.setState({ notifications: mockNotifications })
     const { notifications } = useNotificationStore.getState()
     for (const n of notifications) {
       expect(n).toHaveProperty('id')

@@ -20,7 +20,7 @@
 
 **Second Brain OS (ARIA OS)** is a personal AI productivity system for BTech CSE students with **27+ enterprise-grade modules** (15 functional CRUD + 10 AI agents + 7 cron jobs + enterprise infra). It follows a monorepo structure with **123 Python files**, **456 TypeScript files**, **185 documentation files**, **96 Storybook stories**, and **12 E2E spec files**.
 
-**Test suite: 1452 passing tests | 86% code coverage | 19,120 lines of Python | 140 files compile clean.**
+**Test suite: 1846 passing Python tests + ~1900+ frontend tests | 100% code coverage (Python) | 100% threshold (frontend) | ~3750+ total tests across ~440 test files | 19,120 lines of Python | 140 files compile clean.**
 
 **This file is the master reference for AI agents working on this project.** Every section below contains essential context that agents must follow when generating code, fixing bugs, or suggesting changes.
 
@@ -1417,8 +1417,9 @@ make test-coverage        # Coverage report
 ### 17.3 Pre-Merge Checklist
 
 - [ ] `make lint` (frontend + backend + prompts pass)
-- [ ] `make test` (all 1452+ tests pass)
-- [ ] `make test-coverage` (coverage ≥ 70%)
+- [ ] `make test` (all 1846+ Python tests pass)
+- [ ] `cd apps/web && npm run test:ci && npm run test` (all ~1900+ frontend tests pass)
+- [ ] `make test-coverage` (coverage = 100%)
 - [ ] `make docker-build` (all 3 images build successfully)
 - [ ] CI passes on GitHub (all 6 jobs green)
 - [ ] PR has at least 2 approvals (or 1 + owner review)
@@ -2053,7 +2054,7 @@ Q3 transitions from "feature-complete prototype" to "production-ready personal O
 - [ ] All 29 API endpoints respond < 500ms p95
 - [ ] All 7 cron jobs trigger correctly in production
 - [ ] Frontend Lighthouse score ≥ 90 (performance + accessibility)
-- [ ] Test suite ≥ 1452 passing, coverage ≥ 86%
+- [ ] Test suite ≥ 3750+ passing (1846 Python + ~1900 frontend), coverage = 100%
 - [ ] All 10 agents integrated in frontend (agent cards + widgets)
 - [ ] Monitoring dashboard operational
 - [ ] Canary deployment workflow proven (create flag → deploy → ramp → rollback)

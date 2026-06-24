@@ -47,4 +47,27 @@ describe('Input', () => {
     expect(errorId).toBeTruthy()
     expect(document.getElementById(errorId!)).toHaveTextContent('Error')
   })
+
+  describe('Edge Cases', () => {
+    it('renders disabled state', () => {
+      render(<Input label="Disabled" disabled />)
+      expect(screen.getByLabelText('Disabled')).toBeDisabled()
+    })
+
+    it('handles max length content without breaking layout', () => {
+      const longValue = 'L'.repeat(500)
+      render(<Input label="Long" defaultValue={longValue} />)
+      expect(screen.getByLabelText('Long')).toHaveValue(longValue)
+    })
+
+    it('supports placeholder text', () => {
+      render(<Input label="Name" placeholder="Enter your name" />)
+      expect(screen.getByPlaceholderText('Enter your name')).toBeInTheDocument()
+    })
+
+    it('has accessible role for error', () => {
+      render(<Input label="Name" error="Required" />)
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+  })
 })

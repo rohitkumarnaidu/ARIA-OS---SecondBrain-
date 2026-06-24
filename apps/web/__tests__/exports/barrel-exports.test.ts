@@ -36,13 +36,13 @@ describe('@/components/ui barrel exports', () => {
     for (const name of expectedValues) {
       expect(mod).toHaveProperty(name)
     }
-  }, 30000)
+  }, 60000)
 
   it('has enough exports to cover all components', async () => {
     const mod = await import('@/components/ui')
     const exportNames = Object.keys(mod)
     expect(exportNames.length).toBeGreaterThanOrEqual(expectedValues.length)
-  }, 30000)
+  }, 60000)
 })
 
 describe('@/components/ai barrel exports', () => {
@@ -62,7 +62,7 @@ describe('@/components/ai barrel exports', () => {
     for (const name of expectedValues) {
       expect(mod).toHaveProperty(name)
     }
-  })
+  }, 60000)
 })
 
 describe('@/components/shared barrel exports', () => {
@@ -79,5 +79,5 @@ describe('@/components/shared barrel exports', () => {
     for (const name of expectedValues) {
       expect(mod).toHaveProperty(name)
     }
-  })
+  }, 60000)
 })

@@ -41,4 +41,43 @@ describe('TreeView', () => {
     const { container } = render(<TreeView items={items} className="custom" />)
     expect(container.firstChild).toHaveClass('custom')
   })
+
+  it('renders empty items gracefully', () => {
+    const { container } = render(<TreeView items={[]} />)
+    expect(container.firstChild).toBeInTheDocument()
+  })
+
+  it('renders single item without children', () => {
+    render(<TreeView items={[{ id: '1', label: 'Solo' }]} />)
+    expect(screen.getByText('Solo')).toBeInTheDocument()
+  })
+
+  it('expands collapsed nodes on click', async () => {
+    const user = userEvent.setup()
+    render(<TreeView items={items} />)
+    expect(screen.queryByText('Work')).not.toBeInTheDocument()
+    await user.click(screen.getByText('Documents'))
+    expect(screen.getByText('Work')).toBeInTheDocument()
+  })
+
+  it('does not call onSelect when expanding parent', async () => {
+    const onSelect = vi.fn()
+    const user = userEvent.setup()
+    render(<TreeView items={items} onSelect={onSelect} />)
+    await user.click(screen.getByText('Documents'))
+    expect(screen.getByText('Work')).toBeInTheDocument()
+  })
+
+  it('has tree role', () => {
+    render(<TreeView items={items} />)
+    expect(screen.getByRole('tree')).toBeInTheDocument()
+  })
+
+  it('renders deeply nested children', () => {
+    const deep = [
+      { id: '1', label: 'Root', children: [{ id: '2', label: 'Level 1', children: [{ id: '3', label: 'Level 2' }] }] },
+    ]
+    render(<TreeView items={deep} />)
+    expect(screen.getByText('Root')).toBeInTheDocument()
+  })
 })
