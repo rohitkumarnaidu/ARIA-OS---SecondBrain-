@@ -32,7 +32,7 @@ jobs:
         working-directory: apps/web
       - name: Upload frontend coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage
           path: apps/web/coverage/
@@ -51,7 +51,7 @@ jobs:
         run: npx playwright test --config=playwright.config.ts --grep="@a11y"
         working-directory: apps/web
         continue-on-error: true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
@@ -72,7 +72,7 @@ jobs:
       - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
       - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/
       - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=100 -x
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
