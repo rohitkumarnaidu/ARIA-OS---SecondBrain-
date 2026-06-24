@@ -154,7 +154,7 @@ def app():
         data_export, automation, videos, briefings, roadmap,
         memory, academics, reviews, monitoring, feedback,
         courses, goals, habits, ideas, income,
-        opportunities, projects, resources, sleep, time,
+        opportunities, projects, resources, sleep, time, auth,
     )
 
     application = FastAPI(title="Test API Advanced")
@@ -184,6 +184,7 @@ def app():
     application.include_router(resources.router, prefix="/api/v1/resources", tags=["resources"])
     application.include_router(sleep.router, prefix="/api/v1/sleep", tags=["sleep"])
     application.include_router(time.router, prefix="/api/v1/time", tags=["time"])
+    application.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
     return application
 
 
@@ -1298,6 +1299,37 @@ class TestMemoryEndpoints:
     def test_memory_unauthorized(self, client, no_auth):
         assert client.get("/api/v1/memory/").status_code == 401
 
+    def test_consolidate_memories_error(self, client):
+        with patch("ai.agents.memory_agent.consolidate_memories", new=AsyncMock(side_effect=Exception("consolidation failed"))):
+            resp = client.post("/api/v1/memory/consolidate", headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["status"] == "success"
+            assert data["data"]["memories_created"] == 0
+
+    def test_search_memory_error(self, client):
+        with patch("app.api.memory.search_memory_orchestrator", new=AsyncMock(side_effect=Exception("search failed"))):
+            resp = client.post("/api/v1/memory/search", json={"query": "test"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["data"]["memories"] == []
+
+    def test_consolidate_memories_success(self, client):
+        with patch("ai.agents.memory_agent.consolidate_memories", new=AsyncMock(return_value={
+            "consolidation_type": "full", "memories_created": 2,
+        })):
+            resp = client.post("/api/v1/memory/consolidate", headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            assert resp.json()["data"]["memories_created"] == 2
+
+    def test_search_memory_success(self, client):
+        with patch("app.api.memory.search_memory_orchestrator", new=AsyncMock(return_value={
+            "memories": [{"id": "m1"}], "preferences": {}, "summary": "found",
+        })):
+            resp = client.post("/api/v1/memory/search", json={"query": "test"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            assert resp.json()["data"]["memories"][0]["id"] == "m1"
+
 
 # ===========================================================================
 # ACADEMICS — 8 endpoints
@@ -1838,6 +1870,104 @@ class TestNotificationAdvancedEdgeCases:
         assert resp.status_code == 200
         alerts = resp.json()
         assert len(alerts) == 1
+
+    def test_generate_nudges_habit_insert_error(self, client, mock_supabase):
+        call_count = [0]
+
+        def from_side(table):
+            call_count[0] += 1
+            if table == "tasks":
+                return MockQueryBuilder(return_data=[{
+                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
+                }])
+            if table == "habits":
+                return MockQueryBuilder(return_data=[{
+                    "id": "h-1", "name": "Meditation", "current_streak": 0,
+                    "consistency_percent": 30, "is_active": True,
+                }])
+            if table == "sleep_logs":
+                return MockQueryBuilder(return_data=[])
+            if call_count[0] >= 5:
+                raise Exception("DB error on habit insert")
+            return MockQueryBuilder(return_data=[])
+
+        mock_supabase.from_.side_effect = from_side
+        resp = client.post("/api/v1/notifications/generate", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+
+    def test_generate_nudges_sleep_insert_error_real(self, client, mock_supabase):
+        call_count = [0]
+
+        def from_side(table):
+            call_count[0] += 1
+            if table == "tasks":
+                return MockQueryBuilder(return_data=[{
+                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
+                }])
+            if table == "habits":
+                return MockQueryBuilder(return_data=[])
+            if table == "sleep_logs":
+                # Most recent 7 scores low (declining), older 7 high
+                return MockQueryBuilder(return_data=[
+                    {"sleep_score": 70, "date": f"2026-06-{14-i:02d}"} for i in range(7)
+                ] + [
+                    {"sleep_score": 85, "date": f"2026-06-{7-i:02d}"} for i in range(7)
+                ])
+            if call_count[0] >= 5:
+                raise Exception("DB error on sleep insert")
+            return MockQueryBuilder(return_data=[])
+
+        mock_supabase.from_.side_effect = from_side
+        resp = client.post("/api/v1/notifications/generate", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+
+
+# ===========================================================================
+# AUTH — rotate-key and refresh token edge cases
+# ===========================================================================
+
+
+@pytest.mark.api
+class TestAuthRoutes:
+
+    def test_rotate_key_success(self, client):
+        with patch("app.api.auth.rotate_api_key", return_value={"api_key": "new-key"}):
+            resp = client.post("/api/v1/auth/rotate-key", headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            assert resp.json()["api_key"] == "new-key"
+
+    def test_rotate_key_unexpected_error(self, client):
+        with patch("app.api.auth.rotate_api_key", side_effect=Exception("boom")):
+            resp = client.post("/api/v1/auth/rotate-key", headers=_AUTH_HEADER)
+            assert resp.status_code == 500
+
+    def test_refresh_token_success(self, client):
+        with patch("app.api.auth.refresh_jwt_token", return_value={"access_token": "new-token"}):
+            resp = client.post("/api/v1/auth/refresh", json={"refresh_token": "valid-refresh"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            assert resp.json()["access_token"] == "new-token"
+
+    def test_refresh_token_http_error_re_raised(self, client):
+        from fastapi import HTTPException
+        with patch("app.api.auth.refresh_jwt_token", side_effect=HTTPException(401, "bad token")):
+            resp = client.post("/api/v1/auth/refresh", json={"refresh_token": "bad"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 401
+
+    def test_refresh_token_unexpected_error(self, client):
+        with patch("app.api.auth.refresh_jwt_token", side_effect=Exception("boom")):
+            resp = client.post("/api/v1/auth/refresh", json={"refresh_token": "x"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 500
+
+    def test_rotate_key_no_user_id(self, client, app):
+        class NoIdUser:
+            class Inner:
+                pass
+            user = Inner()
+        from config.core.auth import get_current_user
+        app.dependency_overrides[get_current_user] = lambda: NoIdUser()
+        resp = client.post("/api/v1/auth/rotate-key", headers=_AUTH_HEADER)
+        assert resp.status_code == 401
+        app.dependency_overrides[get_current_user] = lambda: _make_auth_mock_user()
 
 
 # ===========================================================================
@@ -2481,6 +2611,23 @@ class TestOpportunityEndpoints:
 
     def test_opportunities_unauthorized(self, client, no_auth):
         assert client.get("/api/v1/opportunities/").status_code == 401
+
+    def test_match_opportunities_error(self, client):
+        with patch("app.api.opportunities.match_opportunities", new=AsyncMock(side_effect=Exception("match failed"))):
+            resp = client.post("/api/v1/opportunities/match", json={"query": "test"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["status"] == "success"
+            assert data["data"]["matches"] == []
+
+    def test_match_opportunities_success(self, client):
+        with patch("app.api.opportunities.match_opportunities", new=AsyncMock(return_value={
+            "matches": [{"id": "m1", "score": 95}], "summary": "good fit",
+        })):
+            resp = client.post("/api/v1/opportunities/match", json={"query": "test"}, headers=_AUTH_HEADER)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["data"]["matches"][0]["score"] == 95
 
 
 # ===========================================================================

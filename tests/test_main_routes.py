@@ -298,8 +298,12 @@ class TestLifespan:
     @pytest.mark.asyncio
     async def test_shutdown_pending_tasks_timeout(self):
         app = FastAPI()
-        app.state.pending_ai_tasks = ["mock"]
-        with patch("asyncio.wait_for", side_effect=TimeoutError("timed out")):
+        async def never_complete():
+            import asyncio
+            await asyncio.Event().wait()
+        app.state.pending_ai_tasks = [never_complete()]
+        import asyncio as _asyncio
+        with patch("asyncio.wait_for", side_effect=_asyncio.TimeoutError("timed out")):
             with patch("api_main_module.cache.clear", new=AsyncMock()):
                 async with api_main.lifespan(app):
                     pass

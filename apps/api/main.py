@@ -83,7 +83,7 @@ async def lifespan(application: FastAPI):
     yield
     logger.info("Second Brain OS API shutting down")
 
-    pending_tasks = getattr(app.state, "pending_ai_tasks", [])
+    pending_tasks = getattr(application.state, "pending_ai_tasks", [])
     if pending_tasks:
         logger.info("Awaiting pending AI tasks", count=len(pending_tasks))
         import asyncio
