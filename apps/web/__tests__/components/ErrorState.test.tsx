@@ -67,4 +67,22 @@ describe('ErrorState', () => {
     render(<ErrorState />)
     expect(screen.getByRole('alert')).toBeTruthy()
   })
+
+  it('handles unknown status code', () => {
+    render(<ErrorState status={999} />)
+    expect(screen.getByRole('alert')).toBeTruthy()
+  })
+
+  it('renders long custom title and description', () => {
+    const longTitle = 'E'.repeat(100)
+    const longDesc = 'D'.repeat(200)
+    render(<ErrorState title={longTitle} description={longDesc} />)
+    expect(screen.getByText(longTitle)).toBeTruthy()
+    expect(screen.getByText(longDesc)).toBeTruthy()
+  })
+
+  it('applies custom className', () => {
+    const { container } = render(<ErrorState className="custom-error" />)
+    expect(container.firstChild).toHaveClass('custom-error')
+  })
 })

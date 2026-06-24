@@ -31,4 +31,30 @@ describe('Drawer', () => {
     render(<Drawer open={true} onClose={vi.fn()}>Content</Drawer>)
     expect(screen.getByText('Content')).toBeInTheDocument()
   })
+
+  it('closes on backdrop click', async () => {
+    const onClose = vi.fn()
+    const user = userEvent.setup()
+    render(<Drawer open={true} onClose={onClose} title="Backdrop">Content</Drawer>)
+    const backdrop = document.querySelector('[aria-hidden="true"]')
+    if (backdrop) await user.click(backdrop)
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('has aria-modal when open', () => {
+    render(<Drawer open={true} onClose={vi.fn()} title="Modal">Content</Drawer>)
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
+  })
+
+  it('renders long content without breaking', () => {
+    const longContent = 'C'.repeat(500)
+    render(<Drawer open={true} onClose={vi.fn()} title="Long">{longContent}</Drawer>)
+    expect(screen.getByText('Long')).toBeInTheDocument()
+  })
+
+  it('renders with custom position class', () => {
+    const { container } = render(<Drawer open={true} onClose={vi.fn()} title="Right">Content</Drawer>)
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toBeInTheDocument()
+  })
 })

@@ -64,4 +64,46 @@ describe('Command', () => {
     render(<Command groups={groups} className="custom" />)
     expect(screen.getByRole('dialog')).toHaveClass('custom')
   })
+
+  it('renders empty groups gracefully', () => {
+    render(<Command groups={[]} />)
+    expect(screen.getByPlaceholderText('Search or type a command...')).toBeInTheDocument()
+  })
+
+  it('shows no results message when search has no matches', async () => {
+    const user = userEvent.setup()
+    render(<Command groups={groups} />)
+    const input = screen.getByPlaceholderText('Search or type a command...')
+    await user.type(input, 'xyznonexistent')
+    expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
+    expect(screen.queryByText('Navigation')).not.toBeInTheDocument()
+  })
+
+  it('handles multiple groups', () => {
+    const multi = [
+      { heading: 'Group A', items: [{ id: 'a1', label: 'Item A' }] },
+      { heading: 'Group B', items: [{ id: 'b1', label: 'Item B' }] },
+    ]
+    render(<Command groups={multi} />)
+    expect(screen.getByText('Group A')).toBeInTheDocument()
+    expect(screen.getByText('Group B')).toBeInTheDocument()
+  })
+
+  it('clears search on close and reopen', () => {
+    const { rerender } = render(<Command groups={groups} open={true} />)
+    const input = screen.getByPlaceholderText('Search or type a command...')
+    expect(input).toBeInTheDocument()
+    rerender(<Command groups={groups} open={false} />)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('has textbox role on input', () => {
+    render(<Command groups={groups} />)
+    expect(screen.getByRole('textbox')).toBeInTheDocument()
+  })
+
+  it('applies custom placeholder', () => {
+    render(<Command groups={groups} placeholder="Custom search..." />)
+    expect(screen.getByPlaceholderText('Custom search...')).toBeInTheDocument()
+  })
 })

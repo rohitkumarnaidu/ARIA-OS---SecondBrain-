@@ -45,4 +45,40 @@ describe('DropdownMenu', () => {
     fireEvent.click(screen.getByText('Menu'))
     expect(screen.getByRole('menu')).toBeInTheDocument()
   })
+
+  it('renders with empty items array', () => {
+    render(<DropdownMenu trigger={<button>Menu</button>} items={[]} />)
+    fireEvent.click(screen.getByText('Menu'))
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+  })
+
+  it('renders single item', () => {
+    const onClick = vi.fn()
+    render(<DropdownMenu trigger={<button>Menu</button>} items={[{ label: 'Only', onClick }]} />)
+    fireEvent.click(screen.getByText('Menu'))
+    fireEvent.click(screen.getByText('Only'))
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('closes menu when item clicked', () => {
+    const onClick = vi.fn()
+    render(<DropdownMenu trigger={<button>Menu</button>} items={[{ label: 'Close Me', onClick }]} />)
+    fireEvent.click(screen.getByText('Menu'))
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('Close Me'))
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+  })
+
+  it('renders disabled item with aria-disabled', () => {
+    render(<DropdownMenu trigger={<button>Menu</button>} items={[{ label: 'Disabled', disabled: true, onClick: vi.fn() }]} />)
+    fireEvent.click(screen.getByText('Menu'))
+    const item = screen.getByText('Disabled').closest('[role="menuitem"]')
+    expect(item).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('has menu role', () => {
+    render(<DropdownMenu trigger={<button>Menu</button>} items={[{ label: 'Item', onClick: vi.fn() }]} />)
+    fireEvent.click(screen.getByText('Menu'))
+    expect(screen.getByRole('menu')).toBeInTheDocument()
+  })
 })

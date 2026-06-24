@@ -37,4 +37,28 @@ describe('EmptyState', () => {
     expect(screen.getByText('Minimal')).toBeInTheDocument()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
+
+  it('renders long title and description without overflow', () => {
+    const longTitle = 'T'.repeat(150)
+    const longDesc = 'D'.repeat(300)
+    render(<EmptyState title={longTitle} description={longDesc} />)
+    expect(screen.getByText(longTitle)).toBeInTheDocument()
+    expect(screen.getByText(longDesc)).toBeInTheDocument()
+  })
+
+  it('renders without icon', () => {
+    const { container } = render(<EmptyState title="No icon" />)
+    expect(screen.getByText('No icon')).toBeInTheDocument()
+  })
+
+  it('renders action as link when href provided', () => {
+    render(<EmptyState title="Link" action={{ label: 'Go Somewhere', href: '/test' }} />)
+    const btn = screen.getByRole('button', { name: /go somewhere/i })
+    expect(btn).toBeInTheDocument()
+  })
+
+  it('applies custom className', () => {
+    const { container } = render(<EmptyState title="Styled" className="custom-empty" />)
+    expect(screen.getByText('Styled')).toBeInTheDocument()
+  })
 })

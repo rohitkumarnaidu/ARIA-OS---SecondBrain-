@@ -43,4 +43,25 @@ describe('EmptyCanvas', () => {
     render(<EmptyCanvas title="No items" description="..." />)
     expect(screen.getByText('CANVAS_AREA')).toBeTruthy()
   })
+
+  it('renders without badge when not provided', () => {
+    render(<EmptyCanvas title="No badge" description="..." />)
+    expect(screen.queryByText('NEW')).not.toBeInTheDocument()
+  })
+
+  it('renders without actions when not provided', () => {
+    render(<EmptyCanvas title="No actions" description="..." />)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  })
+
+  it('renders long title', () => {
+    const longTitle = 'L'.repeat(100)
+    render(<EmptyCanvas title={longTitle} description="..." />)
+    expect(screen.getByText(longTitle)).toBeTruthy()
+  })
+
+  it('applies custom className', () => {
+    const { container } = render(<EmptyCanvas title="Styled" description="..." className="custom-canvas" />)
+    expect(container.firstChild).toHaveClass('custom-canvas')
+  })
 })
