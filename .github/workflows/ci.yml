@@ -28,8 +28,15 @@ jobs:
         working-directory: apps/web
       - run: npm run build
         working-directory: apps/web
-      - run: npm run test:ci -- --coverage.thresholds.lines=80 --coverage.thresholds.branches=70 --coverage.thresholds.functions=70
+      - run: npm run test:ci -- --coverage.thresholds.lines=100 --coverage.thresholds.branches=100 --coverage.thresholds.functions=100
         working-directory: apps/web
+      - name: Upload frontend coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: apps/web/coverage/
+          retention-days: 7
       - name: Install Playwright browsers
         if: github.event_name == 'pull_request'
         run: npx playwright install --with-deps chromium
@@ -64,7 +71,7 @@ jobs:
       - run: pip install -r apps/api/requirements.txt -r services/scheduler/requirements.txt ruff black pytest pytest-cov pytest-asyncio pytest-mock httpx
       - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
       - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/
-      - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=70 -x
+      - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=100 -x
       - uses: actions/upload-artifact@v4
         if: always()
         with:
