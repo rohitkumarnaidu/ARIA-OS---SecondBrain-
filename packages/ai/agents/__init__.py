@@ -9,6 +9,7 @@ from . import (
     nudge_agent,
     roadmap_agent,
     opportunity_matching_agent,
+    skill_agent,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "nudge_agent",
     "roadmap_agent",
     "opportunity_matching_agent",
+    "skill_agent",
 ]

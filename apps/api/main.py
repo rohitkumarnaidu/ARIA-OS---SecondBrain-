@@ -52,6 +52,7 @@ from app.api import (
     monitoring,
     data_export,
     feature_flags,
+    skills,
 )
 
 
@@ -134,6 +135,7 @@ app = FastAPI(
         {"name": "monitoring", "description": "Token usage and cost tracking"},
         {"name": "auth", "description": "Authentication, token refresh, and API key rotation"},
         {"name": "data", "description": "GDPR data export and data management"},
+        {"name": "skills", "description": "Skills taxonomy, user skills, evidence, market intelligence, and learning paths"},
         {"name": "system", "description": "Health check and system endpoints"},
     ],
 )
@@ -264,6 +266,7 @@ app.include_router(monitoring.router, prefix="/api/v1/monitoring", tags=["monito
 app.include_router(data_export.router, prefix="/api/v1/data", tags=["data"])
 app.include_router(feature_flags.router, prefix="/api/v1/feature-flags", tags=["feature_flags"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(skills.router, prefix="/api/v1/skills", tags=["skills"])
 
 
 @app.exception_handler(Exception)

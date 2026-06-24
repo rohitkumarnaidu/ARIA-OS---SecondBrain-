@@ -16,6 +16,9 @@ from crons.habit_checker import run_habit_checker
 from crons.missed_task_checker import run_missed_task_checker
 from crons.sleep_reminder import run_sleep_reminder
 from crons.course_nudge import run_course_nudges
+from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+from crons.skill_evidence_expiry import run_skill_evidence_expiry
+from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
 from shared.utils.logger import logger
 
 scheduler = AsyncIOScheduler()
@@ -78,6 +81,30 @@ def setup_cron_jobs():
         replace_existing=True,
     )
 
+    scheduler.add_job(
+        run_skill_intelligence_refresh,
+        trigger=CronTrigger(hour=5, minute=0),
+        id="skill_intelligence_refresh",
+        name="Skill Intelligence Refresh at 5 AM",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        run_skill_evidence_expiry,
+        trigger=CronTrigger(hour=3, minute=0),
+        id="skill_evidence_expiry",
+        name="Skill Evidence Expiry Check at 3 AM",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        run_skill_analytics_snapshot,
+        trigger=CronTrigger(hour=23, minute=30),
+        id="skill_analytics_snapshot",
+        name="Skill Analytics Daily Snapshot at 11:30 PM",
+        replace_existing=True,
+    )
+
     logger.info("Cron jobs scheduled")
     logger.info("  - Daily Briefing: 7 AM daily")
     logger.info("  - Opportunity Radar: 6 AM daily")
@@ -86,6 +113,9 @@ def setup_cron_jobs():
     logger.info("  - Missed Task Checker: Midnight daily")
     logger.info("  - Sleep Reminder: 10:30 PM daily")
     logger.info("  - Course Progress Nudge: 6 PM daily")
+    logger.info("  - Skill Intelligence Refresh: 5 AM daily")
+    logger.info("  - Skill Evidence Expiry: 3 AM daily")
+    logger.info("  - Skill Analytics Snapshot: 11:30 PM daily")
 
 
 class HealthHandler(BaseHTTPRequestHandler):
