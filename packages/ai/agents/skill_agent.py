@@ -45,7 +45,7 @@ async def assess_user_skill(user_skill_id: str, user_id: str) -> Dict[str, Any]:
             f"State: {us.get('state', 'unknown')}\n"
             f"Confidence Score: {us.get('confidence_score', 0)}\n"
             f"Evidence Items: {len(evidence)}\n"
-            f"Evidence Summary: {[e.get('source_type') + ': ' + e.get('title', '')[:50] for e in evidence[:5]]}\n"
+            f"Evidence Summary: {[(e.get('source_type') or 'unknown') + ': ' + (e.get('title') or '')[:50] for e in evidence[:5]]}\n"
             f"Return JSON with: recommended_level, confidence_adjustment, gap_analysis, next_milestones."
         )
     else:
@@ -112,7 +112,7 @@ async def recommend_skills(user_id: str) -> Dict[str, Any]:
             f"Current Skill Count: {len(current_skills)}\n"
             f"Available to Learn: {len(candidates)} skills\n"
             f"Top Candidate Names: {[s['name'] for s in candidates[:20]]}\n"
-            f"Return JSON with: recommendations (array of {skill_id, name, reason, priority}), focus_area, estimated_time."
+            "Return JSON with: recommendations (array of {skill_id, name, reason, priority}), focus_area, estimated_time."
         )
     else:
         system = "You are a skill recommendation AI. Return only valid JSON."
@@ -206,7 +206,7 @@ async def generate_skill_roadmap(user_id: str, target_skill_id: str) -> Dict[str
             f"Description: {skill.get('description', '')}\n"
             f"Current Level: {user_skill.get('level', 0)}/5\n"
             f"Target Level: {skill.get('level_max', 5)}/5\n"
-            f"Return JSON with: phases (array of {phase_name, skills_to_learn, resources, estimated_hours, milestones}), total_estimated_hours, difficulty."
+            "Return JSON with: phases (array of {phase_name, skills_to_learn, resources, estimated_hours, milestones}), total_estimated_hours, difficulty."
         )
     else:
         system = "You are a learning roadmap generator. Return only valid JSON."

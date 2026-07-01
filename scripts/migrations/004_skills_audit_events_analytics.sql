@@ -233,3 +233,46 @@ CREATE INDEX IF NOT EXISTS idx_forecasts_skill ON skill_forecasts(skill_id);
 CREATE INDEX IF NOT EXISTS idx_forecasts_metric ON skill_forecasts(metric);
 CREATE INDEX IF NOT EXISTS idx_forecasts_date ON skill_forecasts(forecast_date);
 CREATE INDEX IF NOT EXISTS idx_forecasts_skill_metric ON skill_forecasts(skill_id, metric);
+
+-- === 11. Notify Trigger: Taxonomy Changes ===
+
+CREATE OR REPLACE FUNCTION fn_notify_taxonomy_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM pg_notify('taxonomy_changed', jsonb_build_object(
+        'table', TG_TABLE_NAME,
+        'operation', TG_OP,
+        'changed_at', EXTRACT(EPOCH FROM NOW()) * 1000
+    )::TEXT);
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+CREATE TRIGGER trg_skills_notify AFTER INSERT OR UPDATE OR DELETE ON skills
+    FOR EACH ROW EXECUTE FUNCTION fn_notify_taxonomy_change();
+CREATE TRIGGER trg_categories_notify AFTER INSERT OR UPDATE OR DELETE ON skill_categories
+    FOR EACH ROW EXECUTE FUNCTION fn_notify_taxonomy_change();
+
+-- === 12. Extended Partitioning — Additional Partition Children ===
+
+-- skill_webhook_queue: daily by created_at
+CREATE TABLE IF NOT EXISTS skill_webhook_queue_2026_q3 PARTITION OF skill_webhook_queue
+    FOR VALUES FROM (1767225600000) TO (1775174400000);
+CREATE TABLE IF NOT EXISTS skill_webhook_queue_2026_q4 PARTITION OF skill_webhook_queue
+    FOR VALUES FROM (1775174400000) TO (1783123200000);
+
+-- skill_analytics_snapshots: quarterly by snapshot_date (DATE type)
+CREATE TABLE IF NOT EXISTS skill_analytics_snapshots_2026_q3 PARTITION OF skill_analytics_snapshots
+    FOR VALUES FROM ('2026-07-01') TO ('2026-10-01');
+CREATE TABLE IF NOT EXISTS skill_analytics_snapshots_2026_q4 PARTITION OF skill_analytics_snapshots
+    FOR VALUES FROM ('2026-10-01') TO ('2027-01-01');
+
+-- === 13. Doc Compatibility: Add missing columns ===
+
+ALTER TABLE skill_events ADD COLUMN IF NOT EXISTS event_version INT DEFAULT 1;
+
+-- === 14. Improved Comments ===
+
+COMMENT ON TABLE skill_events IS 'Event sourcing bus recording all domain events. Partitioned monthly by created_at.';
+COMMENT ON TABLE skill_webhook_queue IS 'Webhook delivery queue. Partitioned daily by created_at.';
+COMMENT ON TABLE skill_analytics_snapshots IS 'Daily analytics snapshots per user for trend analysis. Partitioned quarterly by snapshot_date.';

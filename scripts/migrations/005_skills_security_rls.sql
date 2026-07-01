@@ -462,3 +462,47 @@ ALTER TABLE skill_webhook_queue FORCE ROW LEVEL SECURITY;
 ALTER TABLE skill_event_subscriptions FORCE ROW LEVEL SECURITY;
 ALTER TABLE skill_analytics_snapshots FORCE ROW LEVEL SECURITY;
 ALTER TABLE skill_forecasts FORCE ROW LEVEL SECURITY;
+
+-- === Column-Level Permissions (Section 11.3 of architecture doc) ===
+
+REVOKE UPDATE ON user_skill_evidence FROM PUBLIC;
+GRANT UPDATE (title, description, url, metadata) ON user_skill_evidence TO authenticated;
+
+REVOKE DELETE ON skill_audit_log FROM PUBLIC;
+REVOKE DELETE ON skill_taxonomy_history FROM PUBLIC;
+REVOKE DELETE ON skill_events FROM PUBLIC;
+
+-- === Connection Security (Section 11.5 — requires superuser to execute) ===
+
+DO $$
+BEGIN
+    -- These require superuser; run separately if not available
+    -- ALTER SYSTEM SET ssl = on;
+    -- ALTER SYSTEM SET ssl_ciphers = 'HIGH:!aNULL:!eNULL:!DES';
+    RAISE NOTICE 'Connection security settings (ssl, ciphers) require superuser. Apply manually.';
+END $$;
+
+ALTER ROLE skill_user SET statement_timeout = '30s';
+ALTER ROLE skill_api SET statement_timeout = '60s';
+ALTER ROLE skill_scheduler SET statement_timeout = '120s';
+ALTER ROLE skill_analytics SET statement_timeout = '120s';
+
+-- === Audit Notify Trigger Function ===
+
+CREATE OR REPLACE FUNCTION skill_notify_audit_event()
+RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM pg_notify('audit_event', jsonb_build_object(
+        'table', TG_TABLE_NAME,
+        'action', TG_OP,
+        'record_id', NEW.record_id,
+        'user_id', NEW.user_id,
+        'changed_at', NEW.created_at
+    )::TEXT);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Attach to high-volume tables only
+CREATE TRIGGER trg_audit_log_notify AFTER INSERT ON skill_audit_log
+    FOR EACH ROW EXECUTE FUNCTION skill_notify_audit_event();

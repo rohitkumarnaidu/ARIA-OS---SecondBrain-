@@ -19,6 +19,8 @@ from crons.course_nudge import run_course_nudges
 from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
 from crons.skill_evidence_expiry import run_skill_evidence_expiry
 from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+from crons.skill_mv_refresh import run_skill_mv_refresh
+from crons.skill_retention_cleanup import run_skill_retention_cleanup
 from shared.utils.logger import logger
 
 scheduler = AsyncIOScheduler()
@@ -105,6 +107,22 @@ def setup_cron_jobs():
         replace_existing=True,
     )
 
+    scheduler.add_job(
+        run_skill_mv_refresh,
+        trigger=CronTrigger(hour=4, minute=0),
+        id="skill_mv_refresh",
+        name="Skill MV Refresh at 4 AM",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        run_skill_retention_cleanup,
+        trigger=CronTrigger(hour=2, minute=30),
+        id="skill_retention_cleanup",
+        name="Skill Retention Cleanup at 2:30 AM",
+        replace_existing=True,
+    )
+
     logger.info("Cron jobs scheduled")
     logger.info("  - Daily Briefing: 7 AM daily")
     logger.info("  - Opportunity Radar: 6 AM daily")
@@ -116,6 +134,8 @@ def setup_cron_jobs():
     logger.info("  - Skill Intelligence Refresh: 5 AM daily")
     logger.info("  - Skill Evidence Expiry: 3 AM daily")
     logger.info("  - Skill Analytics Snapshot: 11:30 PM daily")
+    logger.info("  - Skill MV Refresh: 4 AM daily")
+    logger.info("  - Skill Retention Cleanup: 2:30 AM daily")
 
 
 class HealthHandler(BaseHTTPRequestHandler):

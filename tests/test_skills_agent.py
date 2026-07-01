@@ -2,6 +2,7 @@
 
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
+from ai.client import LLMProviderUnavailableError
 
 
 def _mock_builder(data=None):
@@ -40,7 +41,7 @@ async def test_assess_user_skill_happy_path():
 async def test_assess_user_skill_fallback():
     from ai.agents.skill_agent import assess_user_skill
     with patch("ai.agents.skill_agent.get_supabase_client") as mock, \
-         patch("ai.agents.skill_agent.llm.generate_json", side_effect=Exception("AI down")):
+         patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("AI down")):
         client = MagicMock()
         client.from_.return_value = _mock_builder([
             {"user_skill_id": "us-1", "skill_id": "sk-1", "level": 2, "state": "practicing", "confidence_score": 0.6, "evidence_score": 0.5}
@@ -54,7 +55,7 @@ async def test_assess_user_skill_fallback():
 async def test_recommend_skills():
     from ai.agents.skill_agent import recommend_skills
     with patch("ai.agents.skill_agent.get_supabase_client") as mock, \
-         patch("ai.agents.skill_agent.llm.generate_json", side_effect=Exception("AI down")):
+         patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("AI down")):
         client = MagicMock()
         skills_data = _mock_builder([{"skill_id": "s1", "name": "Python", "category_id": "c1", "skill_health": 85}])
         user_skills_data = _mock_builder([])
@@ -75,7 +76,7 @@ async def test_recommend_skills():
 async def test_generate_skill_roadmap():
     from ai.agents.skill_agent import generate_skill_roadmap
     with patch("ai.agents.skill_agent.get_supabase_client") as mock, \
-         patch("ai.agents.skill_agent.llm.generate_json", side_effect=Exception("AI down")):
+         patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("AI down")):
         client = MagicMock()
         client.from_.return_value = _mock_builder([
             {"skill_id": "sk-1", "name": "React", "description": "UI library", "level_max": 5}
@@ -112,7 +113,7 @@ async def test_verify_evidence_happy():
 async def test_analyze_career_readiness():
     from ai.agents.skill_agent import analyze_career_readiness
     with patch("ai.agents.skill_agent.get_supabase_client") as mock, \
-         patch("ai.agents.skill_agent.llm.generate_json", side_effect=Exception("AI down")):
+         patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("AI down")):
         client = MagicMock()
         user_data = _mock_builder([{"skills": ["Python", "JS"], "career_goal": "Engineer", "interests": ["AI"]}])
         us_data = _mock_builder([{"skill_id": "s1", "level": 3, "state": "active"}])
