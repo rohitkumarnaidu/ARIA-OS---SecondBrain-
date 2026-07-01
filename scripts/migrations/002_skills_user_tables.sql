@@ -5,6 +5,8 @@
 --          user_skill_versions
 -- =============================================================
 
+CREATE EXTENSION IF NOT EXISTS "btree_gist";
+
 -- === 1. user_skills ===
 CREATE TABLE IF NOT EXISTS user_skills (
     user_skill_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -72,7 +74,7 @@ CREATE TABLE IF NOT EXISTS user_skill_evidence (
     created_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000),
     updated_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000),
     CONSTRAINT unique_evidence_signed_hash UNIQUE (signed_hash)
-);
+) PARTITION BY RANGE (collected_at);
 
 COMMENT ON TABLE user_skill_evidence IS 'Evidence items shadow table -- denormalized for fast user-skill queries';
 COMMENT ON COLUMN user_skill_evidence.signed_hash IS 'SHA-256 hash of evidence content for tamper detection';
@@ -174,7 +176,7 @@ CREATE TABLE IF NOT EXISTS user_skill_versions (
     metadata            JSONB NOT NULL DEFAULT '{}',
     created_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000),
     CONSTRAINT unique_version_per_skill UNIQUE (user_skill_id, version_number)
-);
+) PARTITION BY RANGE (created_at);
 
 COMMENT ON TABLE user_skill_versions IS 'Immutable version history of user_skill state changes';
 
@@ -183,3 +185,30 @@ CREATE INDEX IF NOT EXISTS idx_versions_user ON user_skill_versions(user_id);
 CREATE INDEX IF NOT EXISTS idx_versions_type ON user_skill_versions(change_type);
 CREATE INDEX IF NOT EXISTS idx_versions_created ON user_skill_versions(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_versions_changed_by ON user_skill_versions(changed_by);
+
+-- EXCLUDE constraint: prevent overlapping active targets per user_skill (Section 6.4)
+ALTER TABLE user_skill_targets ADD CONSTRAINT IF NOT EXISTS no_overlapping_active_targets
+EXCLUDE USING gist (
+    user_skill_id WITH =,
+    daterange(
+        (TO_TIMESTAMP(created_at / 1000))::DATE,
+        COALESCE(target_date, 'infinity'::date),
+        '[]'::TEXT
+    ) WITH &&
+) WHERE (status = 'active' OR status = 'in_progress');
+
+-- Partition children for user_skill_evidence (monthly by collected_at)
+CREATE TABLE IF NOT EXISTS user_skill_evidence_2026_q3 PARTITION OF user_skill_evidence
+    FOR VALUES FROM (1767225600000) TO (1775174400000);
+CREATE TABLE IF NOT EXISTS user_skill_evidence_2026_q4 PARTITION OF user_skill_evidence
+    FOR VALUES FROM (1775174400000) TO (1783123200000);
+
+-- Partition children for user_skill_versions (monthly by created_at)
+CREATE TABLE IF NOT EXISTS user_skill_versions_2026_q3 PARTITION OF user_skill_versions
+    FOR VALUES FROM (1767225600000) TO (1775174400000);
+CREATE TABLE IF NOT EXISTS user_skill_versions_2026_q4 PARTITION OF user_skill_versions
+    FOR VALUES FROM (1775174400000) TO (1783123200000);
+
+-- Comments
+COMMENT ON TABLE user_skill_evidence IS 'Evidence items shadow table -- denormalized for fast user-skill queries. Partitioned monthly by collected_at.';
+COMMENT ON TABLE user_skill_versions IS 'Immutable version history of user_skill state changes. Partitioned monthly by created_at.';

@@ -81,7 +81,27 @@ async def lifespan(application: FastAPI):
         )
         logger.info("Sentry initialized for backend")
 
+    # Start background event processing services
+    try:
+        from shared.utils.event_outbox import event_outbox
+        from shared.utils.webhook_delivery import webhook_delivery
+        await event_outbox.start_background_polling()
+        await webhook_delivery.start_background_polling()
+        logger.info("Background event outbox and webhook delivery services started")
+    except Exception as e:
+        logger.warn("Failed to start background event services", error=str(e))
+
     yield
+
+    # Stop background event processing services
+    try:
+        from shared.utils.event_outbox import event_outbox
+        from shared.utils.webhook_delivery import webhook_delivery
+        await event_outbox.stop_background_polling()
+        await webhook_delivery.stop_background_polling()
+        logger.info("Background event outbox and webhook delivery services stopped")
+    except Exception as e:
+        logger.warn("Failed to stop background event services", error=str(e))
     logger.info("Second Brain OS API shutting down")
 
     pending_tasks = getattr(application.state, "pending_ai_tasks", [])

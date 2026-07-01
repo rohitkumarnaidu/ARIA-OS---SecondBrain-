@@ -3,10 +3,12 @@
 -- Creates: skill_categories, skills, skill_relationships,
 --          tags, skill_tags, skill_external_mappings,
 --          skill_roadmap_definitions
+-- Extensions: pgcrypto, ltree, btree_gist
 -- =============================================================
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "ltree";
+CREATE EXTENSION IF NOT EXISTS "btree_gist";
 
 -- === 1. skill_categories ===
 CREATE TABLE IF NOT EXISTS skill_categories (
@@ -93,6 +95,16 @@ CREATE INDEX IF NOT EXISTS idx_relationships_to ON skill_relationships(to_skill_
 CREATE INDEX IF NOT EXISTS idx_relationships_type ON skill_relationships(relationship_type);
 CREATE INDEX IF NOT EXISTS idx_relationships_weight ON skill_relationships(weight DESC);
 CREATE INDEX IF NOT EXISTS idx_relationships_from_type ON skill_relationships(from_skill_id, relationship_type);
+
+-- EXCLUDE constraint: prevent overlapping prerequisite relationships (Section 6.4 of architecture doc)
+ALTER TABLE skill_relationships ADD CONSTRAINT IF NOT EXISTS no_overlapping_prereqs
+EXCLUDE USING gist (
+    from_skill_id WITH =,
+    to_skill_id WITH =,
+    relationship_type WITH =
+);
+
+COMMENT ON TABLE skill_relationships IS 'Typed, weighted, directed edges between skills for graph traversal with EXCLUDE constraint preventing duplicate relationship types between same skill pair';
 
 -- === 4. tags ===
 CREATE TABLE IF NOT EXISTS tags (

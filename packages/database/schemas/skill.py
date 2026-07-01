@@ -789,9 +789,68 @@ class SkillEventResponse(SkillEventBase):
         from_attributes = True
 
 
+class AuditAction(str, Enum):
+    insert = "INSERT"
+    update = "UPDATE"
+    delete = "DELETE"
+    soft_delete = "SOFT_DELETE"
+    restore = "RESTORE"
+
+
+class EventOutboxStatus(str, Enum):
+    pending = "pending"
+    processing = "processing"
+    delivered = "delivered"
+    failed = "failed"
+    dead_letter = "dead_letter"
+
+
+class WebhookStatus(str, Enum):
+    pending = "pending"
+    delivering = "delivering"
+    delivered = "delivered"
+    failed = "failed"
+    dead_letter = "dead_letter"
+
+
+class SubscriptionStatus(str, Enum):
+    active = "active"
+    paused = "paused"
+    disabled = "disabled"
+
+
+class ForecastMetric(str, Enum):
+    demand = "demand"
+    growth = "growth"
+    salary = "salary"
+    competition = "competition"
+    future_relevance = "future_relevance"
+    skill_health = "skill_health"
+    avg_skill_level = "avg_skill_level"
+    skill_count = "skill_count"
+    readiness_score = "readiness_score"
+    learning_velocity = "learning_velocity"
+    income_potential = "income_potential"
+    emerging_coverage = "emerging_coverage"
+
+
+class ForecastScope(str, Enum):
+    individual = "individual"
+    organization = "organization"
+    global_ = "global"
+
+
+class ForecastModel(str, Enum):
+    linear = "linear"
+    holt_winters = "holt_winters"
+    arima = "arima"
+    bass_diffusion = "bass_diffusion"
+    ensemble = "ensemble"
+
+
 class SkillForecastBase(BaseModel):
     skill_id: str
-    metric: str
+    metric: ForecastMetric
     forecast_date: str
     predicted_value: float
     confidence_lower: Optional[float] = None
@@ -806,6 +865,191 @@ class SkillForecastCreate(SkillForecastBase):
 
 class SkillForecastResponse(SkillForecastBase):
     forecast_id: str
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+# === Audit & Event Infrastructure Models ===
+
+
+class SkillAuditLogCreate(BaseModel):
+    table_name: str
+    record_id: str
+    user_id: Optional[str] = None
+    action: AuditAction
+    old_data: Optional[dict] = None
+    new_data: Optional[dict] = None
+    changed_fields: Optional[list[str]] = None
+    change_reason: Optional[str] = None
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
+    request_id: Optional[str] = None
+
+
+class SkillAuditLogResponse(SkillAuditLogCreate):
+    audit_id: str
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+class SkillEventSubscriptionCreate(BaseModel):
+    name: str
+    url: str
+    event_types: list[str] = []
+    headers: dict = {}
+    is_active: bool = True
+    retry_policy: dict = {"max_retries": 5, "backoff": "exponential", "initial_delay_ms": 1000}
+
+
+class SkillEventSubscriptionUpdate(BaseModel):
+    name: Optional[str] = None
+    url: Optional[str] = None
+    event_types: Optional[list[str]] = None
+    headers: Optional[dict] = None
+    is_active: Optional[bool] = None
+    retry_policy: Optional[dict] = None
+
+
+class SkillEventSubscriptionResponse(SkillEventSubscriptionCreate):
+    subscription_id: str
+    last_delivered_at: Optional[int] = None
+    last_error_at: Optional[int] = None
+    delivery_count: int = 0
+    failure_count: int = 0
+    created_at: int
+    updated_at: int
+
+    class Config:
+        from_attributes = True
+
+
+class SkillEventOutboxCreate(BaseModel):
+    event_type: str
+    aggregate_type: str
+    aggregate_id: str
+    payload: dict
+    headers: dict = {}
+
+
+class SkillEventOutboxResponse(SkillEventOutboxCreate):
+    outbox_id: str
+    status: EventOutboxStatus
+    retry_count: int = 0
+    max_retries: int = 3
+    last_error: Optional[str] = None
+    scheduled_at: Optional[int] = None
+    processed_at: Optional[int] = None
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+class SkillWebhookQueueResponse(BaseModel):
+    webhook_id: str
+    subscription_id: str
+    event_type: str
+    payload: dict
+    url: str
+    headers: dict = {}
+    status: WebhookStatus
+    retry_count: int = 0
+    max_retries: int = 5
+    last_error: Optional[str] = None
+    last_http_status: Optional[int] = None
+    scheduled_at: Optional[int] = None
+    delivered_at: Optional[int] = None
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+# === Analytics Snapshot Models ===
+
+
+class SkillAnalyticsSnapshotCreate(BaseModel):
+    user_id: str
+    snapshot_date: str
+    avg_skill_level: Optional[float] = None
+    skill_count: Optional[int] = None
+    readiness_score: Optional[float] = None
+    learning_velocity: Optional[float] = None
+    diversification_score: Optional[float] = None
+    income_per_hour: Optional[float] = None
+    market_alignment: Optional[float] = None
+    emerging_coverage: Optional[int] = None
+    milestone_completion: Optional[float] = None
+    evidence_ratio: Optional[float] = None
+    metadata: dict = {}
+
+
+class SkillAnalyticsSnapshotResponse(SkillAnalyticsSnapshotCreate):
+    snapshot_id: str
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+# === History Models ===
+
+
+class SkillTaxonomyHistoryCreate(BaseModel):
+    entity_type: str
+    entity_id: str
+    version: int
+    previous_state: dict
+    new_state: dict
+    change_type: str
+    changed_by: Optional[str] = None
+    change_reason: Optional[str] = None
+
+
+class SkillTaxonomyHistoryResponse(SkillTaxonomyHistoryCreate):
+    history_id: str
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+class SkillUserSkillHistoryCreate(BaseModel):
+    user_id: str
+    skill_id: str
+    version: int
+    proficiency_before: Optional[int] = None
+    proficiency_after: Optional[int] = None
+    hours_since_last: Optional[float] = None
+    change_type: str
+    changed_by: Optional[str] = None
+
+
+class SkillUserSkillHistoryResponse(SkillUserSkillHistoryCreate):
+    history_id: str
+    created_at: int
+
+    class Config:
+        from_attributes = True
+
+
+class SkillMarketHistoryCreate(BaseModel):
+    skill_id: str
+    demand_score: Optional[int] = None
+    growth_score: Optional[float] = None
+    salary_median: Optional[int] = None
+    competition_score: Optional[int] = None
+    future_relevance: Optional[float] = None
+    skill_health: Optional[float] = None
+    snapshot_source: str = "automated"
+
+
+class SkillMarketHistoryResponse(SkillMarketHistoryCreate):
+    market_history_id: str
     created_at: int
 
     class Config:

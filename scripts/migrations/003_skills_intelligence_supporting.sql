@@ -5,6 +5,8 @@
 --          ai_recommendations, activity_log
 -- =============================================================
 
+CREATE EXTENSION IF NOT EXISTS "btree_gist";
+
 -- === 1. skill_market_data ===
 CREATE TABLE IF NOT EXISTS skill_market_data (
     skill_id            UUID PRIMARY KEY REFERENCES skills(skill_id) ON DELETE CASCADE,
@@ -83,7 +85,12 @@ CREATE TABLE IF NOT EXISTS skill_certifications (
     metadata            JSONB NOT NULL DEFAULT '{}',
     created_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000),
     updated_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000),
-    CONSTRAINT unique_certification UNIQUE (name, provider)
+    CONSTRAINT unique_certification UNIQUE (name, provider),
+    CONSTRAINT unique_cert_per_provider EXCLUDE USING gist (
+        name WITH =,
+        provider WITH =,
+        level_mapped WITH =
+    )
 );
 
 CREATE INDEX IF NOT EXISTS idx_certs_skill ON skill_certifications(skill_id);
@@ -243,7 +250,7 @@ CREATE TABLE IF NOT EXISTS skill_user_activity_log (
     skill_id            UUID REFERENCES skills(skill_id) ON DELETE SET NULL,
     metadata            JSONB NOT NULL DEFAULT '{}',
     created_at          BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)
-);
+) PARTITION BY RANGE (created_at);
 
 CREATE INDEX IF NOT EXISTS idx_activity_user ON skill_user_activity_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_activity_type ON skill_user_activity_log(activity_type);
@@ -251,3 +258,9 @@ CREATE INDEX IF NOT EXISTS idx_activity_skill ON skill_user_activity_log(skill_i
 CREATE INDEX IF NOT EXISTS idx_activity_created ON skill_user_activity_log(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_activity_user_type ON skill_user_activity_log(user_id, activity_type);
 CREATE INDEX IF NOT EXISTS idx_activity_user_date ON skill_user_activity_log(user_id, created_at DESC);
+
+-- Partition children for skill_user_activity_log (monthly by created_at)
+CREATE TABLE IF NOT EXISTS skill_user_activity_log_2026_q3 PARTITION OF skill_user_activity_log
+    FOR VALUES FROM (1767225600000) TO (1775174400000);
+CREATE TABLE IF NOT EXISTS skill_user_activity_log_2026_q4 PARTITION OF skill_user_activity_log
+    FOR VALUES FROM (1775174400000) TO (1783123200000);
