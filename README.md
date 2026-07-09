@@ -50,7 +50,7 @@ A personal AI productivity system for BTech CSE students that acts as your memor
 
 1. Navigate to the backend directory:
 ```bash
-cd services/agent-orchestrator
+cd apps/api
 ```
 
 2. Create a virtual environment:
@@ -59,7 +59,7 @@ python -m venv venv
 ```
 
 3. Activate the virtual environment:
-- Windows: `venv\Scripts\activate`
+- Windows: `venv\Scripts\Activate`
 - Linux/Mac: `source venv/bin/activate`
 
 4. Install dependencies:
@@ -68,14 +68,9 @@ pip install -r requirements.txt
 ```
 
 5. Set up environment variables:
-Create a `.env` file in `services/agent-orchestrator/`:
-```env
-SUPABASE_URL=your_supabase_url
-SUPABASE_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_KEY=your_supabase_service_key
-CLAUDE_API_KEY=your_claude_api_key
-OLLAMA_BASE_URL=http://localhost:11434
-JWT_SECRET=your_jwt_secret
+```bash
+cp ../../.env.example .env
+# Edit .env with your Supabase credentials
 ```
 
 6. Run the backend server:
@@ -116,26 +111,26 @@ The frontend will be available at `http://localhost:3000`
 ```
 ARIA OS - SecondBrain/
 ├── apps/
+│   ├── api/             FastAPI backend (app/api/)
 │   └── web/             Next.js 14 frontend
 ├── packages/
-│   ├── ai/agents/       AI agent modules
+│   ├── ai/              AI agent modules + PromptLoader + LLM client
 │   ├── config/core/     FastAPI config, auth, supabase
 │   ├── database/schemas/ Pydantic models
-│   └── shared/utils/    Logging, cache, rate limiter, etc.
+│   ├── shared/utils/    Logging, cache, rate limiter, security, audit
+│   ├── types/           Shared TypeScript types
+│   └── ui/              Shared React components
 ├── services/
-│   ├── agent-orchestrator/ FastAPI backend (app/api/)
-│   └── scheduler/       APScheduler + crons
-├── docs/
-│   ├── product/         PRD, Features, Roadmap
-│   ├── design/          UIUX
-│   ├── engineering/     Architecture, API, Database
-│   ├── ai/              Agents, AI_Instructions
-│   ├── security/
-│   ├── devops/          Deployment
-│   └── operations/      Implementation Status, TechStack
-├── infrastructure/      Docker, Terraform, K8s (WIP)
-├── tests/
-└── scripts/
+│   └── scheduler/       APScheduler + 7 cron jobs
+├── prompts/             AI prompt templates (YAML frontmatter)
+│   ├── system/          System prompts (aria_system, guardrails)
+│   ├── agents/          Agent prompts (briefing, memory, sleep, etc.)
+│   └── templates/       Context assembly, email templates
+├── docs/                ~185 files (product, design, engineering, AI, security, devops, qa, operations)
+├── infrastructure/      Docker, canary deployment
+├── tests/               2411 Python tests
+├── scripts/             Security, SOC 2, release, bundle audit
+└── analytics/           Analytics config
 ```
 
 ## Documentation
