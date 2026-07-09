@@ -19,18 +19,22 @@ pytestmark = pytest.mark.asyncio
 
 def mock_async_iter(*items):
     """Create an async iterable from items for mocking body_iterator."""
+
     class _AsyncIter:
         def __init__(self, items):
             self._items = items
             self._idx = 0
+
         def __aiter__(self):
             return self
+
         async def __anext__(self):
             if self._idx >= len(self._items):
                 raise StopAsyncIteration
             val = self._items[self._idx]
             self._idx += 1
             return val
+
     return _AsyncIter(items)
 
 
@@ -720,6 +724,7 @@ async def test_get_current_user_raises_on_invalid_token():
     from unittest.mock import patch
 
     from jose import JWTError
+
     with patch("config.core.auth.jwt.decode", side_effect=JWTError("bad token")):
         with pytest.raises(HTTPException) as exc:
             await get_current_user(authorization="invalid-token")
@@ -729,6 +734,7 @@ async def test_get_current_user_raises_on_invalid_token():
 class TestAudit:
     def test_action_from_method(self):
         from shared.utils.audit import action_from_method
+
         assert action_from_method("POST") == "create"
         assert action_from_method("PUT") == "update"
         assert action_from_method("PATCH") == "update"
@@ -737,6 +743,7 @@ class TestAudit:
 
     def test_mutation_methods_set(self):
         from shared.utils.audit import MUTATION_METHODS, CREATE_ACTIONS, UPDATE_ACTIONS, DELETE_ACTIONS
+
         assert "POST" in MUTATION_METHODS
         assert "PUT" in MUTATION_METHODS
         assert "PATCH" in MUTATION_METHODS
@@ -750,11 +757,13 @@ class TestAudit:
 class TestCSRF:
     def test_safe_methods_pass(self):
         from shared.utils.csrf import SAFE_METHODS
+
         for method in ("GET", "HEAD", "OPTIONS", "TRACE"):
             assert method in SAFE_METHODS
 
     def test_unsafe_methods_not_safe(self):
         from shared.utils.csrf import SAFE_METHODS
+
         for method in ("POST", "PUT", "PATCH", "DELETE"):
             assert method not in SAFE_METHODS
 
@@ -762,6 +771,7 @@ class TestCSRF:
 class TestAuditSchema:
     def test_audit_create_defaults(self):
         from database.schemas.audit import AuditLogCreate
+
         entry = AuditLogCreate(user_id="u1", action="create", resource="tasks")
         assert entry.user_id == "u1"
         assert entry.resource_id is None
@@ -771,6 +781,7 @@ class TestAuditSchema:
     def test_audit_response_fields(self):
         from database.schemas.audit import AuditLogResponse
         from datetime import datetime
+
         entry = AuditLogResponse(id="1", user_id="u1", action="create", resource="tasks", created_at=datetime.now())
         assert entry.id == "1"
         assert entry.created_at is not None
@@ -779,6 +790,7 @@ class TestAuditSchema:
 class TestErrorResponseSchema:
     def test_error_response_defaults(self):
         from database.schemas.error_response import ErrorResponse
+
         err = ErrorResponse(detail="Not found")
         assert err.detail == "Not found"
         assert err.error_code is None
@@ -787,6 +799,7 @@ class TestErrorResponseSchema:
 
     def test_error_response_full(self):
         from database.schemas.error_response import ErrorResponse
+
         err = ErrorResponse(detail="Bad request", error_code="INVALID_INPUT", request_id="abc", timestamp=123456.0)
         assert err.detail == "Bad request"
         assert err.error_code == "INVALID_INPUT"
@@ -806,6 +819,7 @@ class TestRateLimiterHeaders:
 
     def test_endpoint_limiter_limits(self):
         from shared.utils.rate_limiter import endpoint_limiter
+
         limits = endpoint_limiter.limits
         assert "/api/chat" in limits
         assert limits["/api/chat"]["max"] == 30
@@ -817,12 +831,14 @@ class TestRetentionModule:
     def test_retention_module_imports(self):
         from shared.utils.retention import run_data_retention_cleanup, cleanup_old_audit_logs
         import inspect
+
         assert inspect.iscoroutinefunction(run_data_retention_cleanup)
         assert inspect.iscoroutinefunction(cleanup_old_audit_logs)
 
     def test_retention_config_structure(self):
         from shared.utils.retention import run_data_retention_cleanup
         import inspect
+
         sig = inspect.signature(run_data_retention_cleanup)
         assert "audit_days" in sig.parameters
         assert "chat_days" in sig.parameters
@@ -832,6 +848,7 @@ class TestRetentionModule:
 
     def test_endpoint_limiter_check_allows(self):
         from shared.utils.rate_limiter import endpoint_limiter
+
         allowed = endpoint_limiter.check("127.0.0.1", "/api/tasks")
         assert allowed is True
 
@@ -839,6 +856,7 @@ class TestRetentionModule:
 class TestAuditEdgeCases:
     def test_action_from_method_all(self):
         from shared.utils.audit import action_from_method
+
         assert action_from_method("POST") == "create"
         assert action_from_method("PUT") == "update"
         assert action_from_method("PATCH") == "update"
@@ -851,11 +869,13 @@ class TestAuditEdgeCases:
 class TestHealthEndpoint:
     def test_health_response_structure(self):
         from apps.api.main import app
+
         assert app.title == "Second Brain OS API"
         assert app.version is not None
 
     def test_app_has_routes(self):
         from apps.api.main import app
+
         route_paths = [r.path for r in app.routes]
         assert "/" in route_paths
         assert "/health" in route_paths
@@ -971,6 +991,7 @@ class TestSanitizer:
 
     def test_input_sanitizer_is_base_http_middleware(self):
         from starlette.middleware.base import BaseHTTPMiddleware
+
         assert issubclass(InputSanitizer, BaseHTTPMiddleware)
 
     def test_dangerous_patterns_defined(self):
@@ -1280,7 +1301,15 @@ class TestAuditLog:
         mock_supabase = MagicMock()
         mock_supabase.from_.return_value.insert.return_value.execute.return_value = MagicMock(data=[])
         with patch("shared.utils.audit.get_supabase_client", return_value=mock_supabase):
-            await log_audit(user_id="u1", action="create", resource="tasks", resource_id="r1", details={"k": "v"}, ip_address="127.0.0.1", user_agent="agent")
+            await log_audit(
+                user_id="u1",
+                action="create",
+                resource="tasks",
+                resource_id="r1",
+                details={"k": "v"},
+                ip_address="127.0.0.1",
+                user_agent="agent",
+            )
         mock_supabase.from_.assert_called_once_with("audit_logs")
         insert_call = mock_supabase.from_.return_value.insert
         insert_call.assert_called_once()
@@ -1320,7 +1349,9 @@ class TestAuditLog:
         mock_request.headers.get.return_value = "test-agent"
         with patch("shared.utils.audit.log_audit", AsyncMock()) as mock_log:
             await audit_middleware_dispatch(mock_request, MagicMock(), user_id="u1")
-            mock_log.assert_awaited_once_with(user_id="u1", action="create", resource="tasks", ip_address="10.0.0.1", user_agent="test-agent")
+            mock_log.assert_awaited_once_with(
+                user_id="u1", action="create", resource="tasks", ip_address="10.0.0.1", user_agent="test-agent"
+            )
 
     async def test_audit_middleware_skips_get(self):
         mock_request = MagicMock()
@@ -1344,7 +1375,9 @@ class TestAuditLog:
         mock_request.headers.get.return_value = None
         with patch("shared.utils.audit.log_audit", AsyncMock()) as mock_log:
             await audit_middleware_dispatch(mock_request, MagicMock(), user_id="u1")
-            mock_log.assert_awaited_once_with(user_id="u1", action="update", resource="goals", ip_address=None, user_agent=None)
+            mock_log.assert_awaited_once_with(
+                user_id="u1", action="update", resource="goals", ip_address=None, user_agent=None
+            )
 
     async def test_audit_middleware_handles_delete(self):
         mock_request = MagicMock()
@@ -1354,15 +1387,14 @@ class TestAuditLog:
         mock_request.headers.get.return_value = "agent"
         with patch("shared.utils.audit.log_audit", AsyncMock()) as mock_log:
             await audit_middleware_dispatch(mock_request, MagicMock(), user_id="u1")
-            mock_log.assert_awaited_once_with(user_id="u1", action="delete", resource="ideas", ip_address="10.0.0.1", user_agent="agent")
+            mock_log.assert_awaited_once_with(
+                user_id="u1", action="delete", resource="ideas", ip_address="10.0.0.1", user_agent="agent"
+            )
 
 
 # ──────────────────────────────────────────────
 # csrf.py — CSRFProtectionMiddleware (56% coverage)
 # ──────────────────────────────────────────────
-
-
-import json
 
 
 from shared.utils.csrf import CSRFMiddleware, CSRF_HEADER
@@ -1372,6 +1404,7 @@ class TestCSRFMiddleware:
 
     def test_is_base_http_middleware(self):
         from starlette.middleware.base import BaseHTTPMiddleware
+
         assert issubclass(CSRFMiddleware, BaseHTTPMiddleware)
 
     async def test_safe_methods_pass_through(self):
@@ -1397,7 +1430,6 @@ class TestCSRFMiddleware:
         call_next.assert_awaited_once()
 
     async def test_missing_csrf_token_returns_403(self):
-        from fastapi.responses import JSONResponse
         mock_request = MagicMock()
         mock_request.method = "POST"
         mock_request.headers = {"origin": "http://example.com", "referer": ""}
@@ -1435,6 +1467,7 @@ class TestCSRFMiddleware:
 
     async def test_request_id_empty_string_when_missing(self):
         from types import SimpleNamespace
+
         mock_request = MagicMock()
         mock_request.method = "POST"
         mock_request.headers = {"origin": "http://example.com", "referer": ""}
@@ -1547,64 +1580,78 @@ class TestSecuritySanitizeObject:
 
     def test_sanitize_object_string(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object("<script>alert(1)</script>") == ""
 
     def test_sanitize_object_clean_string(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object("hello world") == "hello world"
 
     def test_sanitize_object_plain_dict(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object({"name": "<script>x</script>", "desc": "safe"})
         assert result == {"name": "", "desc": "safe"}
 
     def test_sanitize_object_nested_dict(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object({"outer": {"inner": "<script>x</script>"}})
         assert result == {"outer": {"inner": ""}}
 
     def test_sanitize_object_list(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object(["<script>x</script>", "hello", "<script>y</script>"])
         assert result == ["", "hello", ""]
 
     def test_sanitize_object_list_of_dicts(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object([{"msg": "<script>x</script>"}, {"msg": "safe"}])
         assert result == [{"msg": ""}, {"msg": "safe"}]
 
     def test_sanitize_object_nested_list_in_dict(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object({"items": ["<script>x</script>", 42]})
         assert result == {"items": ["", 42]}
 
     def test_sanitize_object_integer(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object(42) == 42
 
     def test_sanitize_object_float(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object(3.14) == 3.14
 
     def test_sanitize_object_boolean(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object(True) is True
         assert sanitize_object(False) is False
 
     def test_sanitize_object_none(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object(None) is None
 
     def test_sanitize_object_empty_string(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object("") == ""
 
     def test_sanitize_object_empty_dict(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object({}) == {}
 
     def test_sanitize_object_empty_list(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object([]) == []
 
 
@@ -1894,7 +1941,7 @@ class TestXSS:
         assert "document.cookie" not in result
 
     def test_sanitize_html_data_uri(self):
-        result = sanitize_html('data:text/html,<script>alert(1)</script>')
+        result = sanitize_html("data:text/html,<script>alert(1)</script>")
         assert "data:text/html" not in result
 
     def test_sanitize_html_non_string(self):
@@ -2101,6 +2148,7 @@ class TestResponseCacheMiddleware:
     @pytest.mark.asyncio
     async def test_dispatch_cache_hit(self):
         from shared.utils.cache_middleware import cache as mw_cache
+
         app = FastAPI()
         mw = ResponseCacheMiddleware(app)
         request = MagicMock(spec=Request)
@@ -2109,12 +2157,15 @@ class TestResponseCacheMiddleware:
         request.headers = {}
         request.query_params = {}
         cached_body = b'{"tasks":[]}'
-        await mw_cache.set("rm:test", {
-            "body": cached_body,
-            "status": 200,
-            "media_type": "application/json",
-            "headers": {"content-type": "application/json"},
-        })
+        await mw_cache.set(
+            "rm:test",
+            {
+                "body": cached_body,
+                "status": 200,
+                "media_type": "application/json",
+                "headers": {"content-type": "application/json"},
+            },
+        )
         orig = mw._cache_key
         mw._cache_key = MagicMock(return_value="rm:test")
         call_next = AsyncMock()
@@ -2127,6 +2178,7 @@ class TestResponseCacheMiddleware:
     @pytest.mark.asyncio
     async def test_dispatch_cache_miss_stores_response(self):
         from shared.utils.cache_middleware import cache as mw_cache
+
         app = FastAPI()
         mw = ResponseCacheMiddleware(app, default_ttl=60)
         request = MagicMock(spec=Request)
@@ -2137,10 +2189,13 @@ class TestResponseCacheMiddleware:
         orig_get = mw_cache.get
         orig_set = mw_cache.set
         stored = {}
+
         async def fake_get(k):
             return stored.get(k)
+
         async def fake_set(k, v, ttl=60):
             stored[k] = v
+
         mw_cache.get = fake_get
         mw_cache.set = fake_set
 
@@ -2162,6 +2217,7 @@ class TestResponseCacheMiddleware:
     @pytest.mark.asyncio
     async def test_dispatch_skips_cache_on_error_response(self):
         from shared.utils.cache_middleware import cache as mw_cache
+
         app = FastAPI()
         mw = ResponseCacheMiddleware(app)
         request = MagicMock(spec=Request)
@@ -2183,6 +2239,7 @@ class TestResponseCacheMiddleware:
     @pytest.mark.asyncio
     async def test_dispatch_skips_cache_on_large_response(self):
         from shared.utils.cache_middleware import cache as mw_cache
+
         app = FastAPI()
         mw = ResponseCacheMiddleware(app)
         request = MagicMock(spec=Request)
@@ -2208,7 +2265,6 @@ class TestResponseCacheMiddleware:
 
 
 from shared.utils.batch import BatchResult, BatchExecutor, batch_supabase_queries
-from datetime import datetime, timezone
 
 
 class TestBatchResult:
@@ -2314,7 +2370,6 @@ class TestBatchExecutor:
 
     @pytest.mark.asyncio
     async def test_concurrency_limit(self):
-        import time
 
         async def slow():
             await asyncio.sleep(0.05)
@@ -2340,10 +2395,12 @@ class TestBatchSupabaseQueries:
         async def fetch_habits():
             return ["habit1"]
 
-        result = await batch_supabase_queries({
-            "tasks": fetch_tasks,
-            "habits": fetch_habits,
-        })
+        result = await batch_supabase_queries(
+            {
+                "tasks": fetch_tasks,
+                "habits": fetch_habits,
+            }
+        )
         assert result["data"]["tasks"] == ["task1"]
         assert result["data"]["habits"] == ["habit1"]
         assert "duration_ms" in result
@@ -2366,6 +2423,7 @@ class TestRateLimiterFullCoverage:
 
     def test_endpoint_limiter_rate_limited(self):
         from shared.utils.rate_limiter import endpoint_limiter
+
         ip = "10.0.0.1"
         endpoint = "/api/chat"
         for _ in range(30):
@@ -2374,13 +2432,14 @@ class TestRateLimiterFullCoverage:
 
     def test_endpoint_limiter_default_used(self):
         from shared.utils.rate_limiter import endpoint_limiter
+
         ip = "10.0.0.2"
         allowed = endpoint_limiter.check(ip, "/unknown/endpoint")
         assert allowed is True
 
     def test_endpoint_limiter_window_cleanup(self):
         from shared.utils.rate_limiter import endpoint_limiter
-        import time
+
         ip = "10.0.0.3"
         ep = "/api/tasks"
         for _ in range(60):
@@ -2390,6 +2449,7 @@ class TestRateLimiterFullCoverage:
     def test_rate_limiter_init_max_requests(self):
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
+
         rl = RateLimiter(FastAPI(), max_requests=10, window_seconds=5)
         assert rl.max_requests == 10
         assert rl.window_seconds == 5
@@ -2397,6 +2457,7 @@ class TestRateLimiterFullCoverage:
     def test_rate_limiter_has_lock(self):
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
+
         rl = RateLimiter(FastAPI())
         assert hasattr(rl, "_lock")
 
@@ -2405,6 +2466,7 @@ class TestRateLimiterFullCoverage:
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
         from starlette.responses import Response
+
         app = FastAPI()
         rl = RateLimiter(app, max_requests=100, window_seconds=60)
         request = MagicMock(spec=Request)
@@ -2420,6 +2482,7 @@ class TestRateLimiterFullCoverage:
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
         from fastapi import HTTPException
+
         app = FastAPI()
         rl = RateLimiter(app, max_requests=1, window_seconds=60)
         request = MagicMock(spec=Request)
@@ -2436,6 +2499,7 @@ class TestRateLimiterFullCoverage:
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
         from starlette.responses import Response
+
         app = FastAPI()
         rl = RateLimiter(app, max_requests=5, window_seconds=60)
         request = MagicMock(spec=Request)
@@ -2449,6 +2513,7 @@ class TestRateLimiterFullCoverage:
     async def test_rate_limiter_window_cleanup(self):
         from shared.utils.rate_limiter import RateLimiter
         from fastapi import FastAPI
+
         app = FastAPI()
         rl = RateLimiter(app, max_requests=5, window_seconds=0)
         request = MagicMock(spec=Request)
@@ -2702,11 +2767,20 @@ class TestDateUtilsDecemberEdgeCase:
 
     def test_get_month_range_december(self, monkeypatch):
         import shared.utils.date_utils as du
+
         dec = datetime(2026, 12, 15, 0, 0, 0)
-        monkeypatch.setattr(du, "datetime", type("FrozenDT", (), {
-            "now": staticmethod(lambda: dec),
-            "date": type("FrozenD", (), {"today": staticmethod(lambda: dec.date())}),
-        }))
+        monkeypatch.setattr(
+            du,
+            "datetime",
+            type(
+                "FrozenDT",
+                (),
+                {
+                    "now": staticmethod(lambda: dec),
+                    "date": type("FrozenD", (), {"today": staticmethod(lambda: dec.date())}),
+                },
+            ),
+        )
         first, last = du.get_month_range()
         assert first.month == 12
         assert last.month == 12

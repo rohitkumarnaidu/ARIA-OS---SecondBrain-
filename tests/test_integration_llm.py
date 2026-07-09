@@ -7,7 +7,7 @@ across the entire request lifecycle.
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock, PropertyMock
+from unittest.mock import patch, MagicMock, AsyncMock
 from fastapi.testclient import TestClient
 from config.core.auth import get_current_user
 
@@ -15,6 +15,7 @@ from config.core.auth import get_current_user
 class MockUser:
     class InnerUser:
         id = "test-integration-user-llm"
+
     user = InnerUser()
 
 
@@ -52,6 +53,7 @@ def _mock_supabase():
 @pytest.fixture(autouse=True)
 def _override_auth():
     from apps.api.main import app
+
     original = app.dependency_overrides.copy()
     app.dependency_overrides[get_current_user] = override_get_current_user
     yield
@@ -65,6 +67,7 @@ class TestChatIntegration:
     @pytest.fixture(autouse=True)
     def _configure_settings(self):
         from config.core.config import settings
+
         orig_url = settings.supabase_url
         orig_key = settings.supabase_key
         settings.supabase_url = "https://test.supabase.co"
@@ -78,13 +81,20 @@ class TestChatIntegration:
         with patch("ai.client.llm.generate", new_callable=AsyncMock) as gen:
             gen.return_value = "You have 3 pending tasks. Your top priority is the DB project."
             with patch("ai.client.llm.generate_json", new_callable=AsyncMock) as json_gen:
-                json_gen.return_value = {"summary": "Focused on DB project", "preferences": {"preferred_category": "academic"}}
+                json_gen.return_value = {
+                    "summary": "Focused on DB project",
+                    "preferences": {"preferred_category": "academic"},
+                }
                 with patch("ai.agents.memory_agent.get_memory_summary", new_callable=AsyncMock) as mem:
-                    mem.return_value = {"summary": "User is working on DB project", "preferences": {"preferred_category": "academic"}}
+                    mem.return_value = {
+                        "summary": "User is working on DB project",
+                        "preferences": {"preferred_category": "academic"},
+                    }
                     yield
 
     def _client(self):
         from apps.api.main import app
+
         return TestClient(app)
 
     def test_chat_success_returns_201(self):
@@ -98,10 +108,13 @@ class TestChatIntegration:
 
     def test_chat_with_context_override(self):
         client = self._client()
-        resp = client.post("/api/v1/chat/", json={
-            "message": "Summarize my day",
-            "context": "Focus on academic achievements",
-        })
+        resp = client.post(
+            "/api/v1/chat/",
+            json={
+                "message": "Summarize my day",
+                "context": "Focus on academic achievements",
+            },
+        )
         assert resp.status_code == 201
         data = resp.json()
         assert data["response"]
@@ -129,6 +142,7 @@ class TestChatIntegration:
     def test_chat_llm_fallback_keyword_tasks(self):
         with patch("ai.client.llm.generate", new_callable=AsyncMock) as gen:
             from ai.client import LLMProviderUnavailableError
+
             gen.side_effect = LLMProviderUnavailableError("Ollama not available")
             client = self._client()
             resp = client.post("/api/v1/chat/", json={"message": "show me my tasks"})
@@ -139,6 +153,7 @@ class TestChatIntegration:
     def test_chat_llm_fallback_keyword_help(self):
         with patch("ai.client.llm.generate", new_callable=AsyncMock) as gen:
             from ai.client import LLMProviderUnavailableError
+
             gen.side_effect = LLMProviderUnavailableError("API down")
             client = self._client()
             resp = client.post("/api/v1/chat/", json={"message": "help me"})
@@ -162,6 +177,7 @@ class TestBriefingsIntegration:
     @pytest.fixture(autouse=True)
     def _configure_settings(self):
         from config.core.config import settings
+
         orig_url = settings.supabase_url
         orig_key = settings.supabase_key
         settings.supabase_url = "https://test.supabase.co"
@@ -172,6 +188,7 @@ class TestBriefingsIntegration:
 
     def _client(self):
         from apps.api.main import app
+
         return TestClient(app)
 
     def test_list_briefings_returns_200(self):
@@ -199,6 +216,7 @@ class TestAutomationIntegration:
     @pytest.fixture(autouse=True)
     def _configure_settings(self):
         from config.core.config import settings
+
         orig_url = settings.supabase_url
         orig_key = settings.supabase_key
         settings.supabase_url = "https://test.supabase.co"
@@ -209,10 +227,12 @@ class TestAutomationIntegration:
 
     def _client(self):
         from apps.api.main import app
+
         return TestClient(app)
 
     def test_trigger_briefing_success(self):
         import app.api.automation as am
+
         with patch.object(am, "generate_daily_briefing", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = {"briefing": "Test briefing", "priorities": ["Study SQL"]}
             client = self._client()
@@ -224,6 +244,7 @@ class TestAutomationIntegration:
 
     def test_trigger_radar_success(self):
         import app.api.automation as am
+
         with patch.object(am, "run_opportunity_radar", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = [{"id": "opp1", "title": "Hackathon", "match_score": 92}]
             client = self._client()
@@ -235,6 +256,7 @@ class TestAutomationIntegration:
 
     def test_trigger_weekly_review_success(self):
         import app.api.automation as am
+
         with patch.object(am, "generate_weekly_review", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = {"summary": "Great week", "score": 88}
             client = self._client()
@@ -245,6 +267,7 @@ class TestAutomationIntegration:
 
     def test_trigger_sleep_analysis_success(self):
         import app.api.automation as am
+
         with patch.object(am, "analyze_sleep", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = {"score": 82, "recommendation": "Sleep more"}
             client = self._client()
@@ -255,6 +278,7 @@ class TestAutomationIntegration:
 
     def test_trigger_nudges_success(self):
         import app.api.automation as am
+
         with patch.object(am, "run_all_nudges", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = [{"type": "course", "message": "Complete DB assignment"}]
             client = self._client()
@@ -265,6 +289,7 @@ class TestAutomationIntegration:
 
     def test_trigger_briefing_server_error(self):
         import app.api.automation as am
+
         with patch.object(am, "generate_daily_briefing", new_callable=AsyncMock) as mock_fn:
             mock_fn.side_effect = RuntimeError("LLM provider chain exhausted")
             client = self._client()
@@ -280,6 +305,7 @@ class TestPlanExecuteIntegration:
     @pytest.fixture(autouse=True)
     def _configure_settings(self):
         from config.core.config import settings
+
         orig_url = settings.supabase_url
         orig_key = settings.supabase_key
         settings.supabase_url = "https://test.supabase.co"
@@ -290,10 +316,12 @@ class TestPlanExecuteIntegration:
 
     def _client(self):
         from apps.api.main import app
+
         return TestClient(app)
 
     def test_plan_success(self):
         import app.api.automation as am
+
         with patch.object(am, "orchestrate_plan", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = {
                 "plan_id": "plan-1",
@@ -308,6 +336,7 @@ class TestPlanExecuteIntegration:
 
     def test_plan_fallback_on_error(self):
         import app.api.automation as am
+
         with patch.object(am, "orchestrate_plan", new_callable=AsyncMock) as mock_fn:
             mock_fn.side_effect = RuntimeError("Planner failed")
             client = self._client()
@@ -319,6 +348,7 @@ class TestPlanExecuteIntegration:
 
     def test_execute_success(self):
         import app.api.automation as am
+
         with patch.object(am, "orchestrate_execute", new_callable=AsyncMock) as mock_fn:
             mock_fn.return_value = {"action": "query", "result": {"tasks": []}, "summary": "Found 0 tasks"}
             client = self._client()
@@ -329,6 +359,7 @@ class TestPlanExecuteIntegration:
 
     def test_execute_fallback_on_error(self):
         import app.api.automation as am
+
         with patch.object(am, "orchestrate_execute", new_callable=AsyncMock) as mock_fn:
             mock_fn.side_effect = RuntimeError("Execution failed")
             client = self._client()
@@ -344,6 +375,7 @@ class TestHealthIntegration:
 
     def _client(self):
         from apps.api.main import app
+
         return TestClient(app)
 
     def test_health_returns_200(self):

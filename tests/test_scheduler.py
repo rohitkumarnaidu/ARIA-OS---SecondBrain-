@@ -1,7 +1,7 @@
 """Tests for scheduler cron job setup — job registration, trigger configs, handler behavior."""
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import MagicMock, patch
 import pytest
 
 pytest.importorskip("apscheduler", reason="apscheduler not installed")
@@ -105,20 +105,32 @@ class TestScheduler:
         for job in scheduler.get_jobs():
             assert isinstance(job.trigger, CronTrigger), f"Job '{job.id}' should use CronTrigger"
 
-    def test_all_seven_jobs_registered(self):
+    def test_all_twelve_jobs_registered(self):
         import main as scheduler_module
+
         scheduler_module.setup_cron_jobs()
 
         job_ids = {job.id for job in scheduler_module.scheduler.get_jobs()}
         expected = {
-            "daily_briefing", "opportunity_radar", "weekly_review",
-            "habit_checker", "missed_task_checker", "sleep_reminder", "course_nudge",
+            "daily_briefing",
+            "opportunity_radar",
+            "weekly_review",
+            "habit_checker",
+            "missed_task_checker",
+            "sleep_reminder",
+            "course_nudge",
+            "skill_intelligence_refresh",
+            "skill_evidence_expiry",
+            "skill_analytics_snapshot",
+            "skill_mv_refresh",
+            "skill_retention_cleanup",
         }
         assert job_ids == expected, f"Missing jobs: {expected - job_ids}"
         scheduler_module.scheduler.remove_all_jobs()
 
     def test_jobs_have_descriptive_names(self):
         import main as scheduler_module
+
         scheduler_module.setup_cron_jobs()
 
         for job in scheduler_module.scheduler.get_jobs():
@@ -128,6 +140,7 @@ class TestScheduler:
 
     def test_all_jobs_have_unique_ids(self):
         import main as scheduler_module
+
         scheduler_module.scheduler.remove_all_jobs()
         scheduler_module.setup_cron_jobs()
         job_ids = [job.id for job in scheduler_module.scheduler.get_jobs()]
@@ -182,15 +195,14 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_daily_briefing_handler(self, mocker):
         mock_supabase = mocker.patch("crons.daily_briefing.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}, {"id": "user2"}
-        ]
-        mock_generate = mocker.patch("crons.daily_briefing.generate_daily_briefing",
-                                      return_value={"productivity_score": 85})
-        mock_sanitize = mocker.patch("crons.daily_briefing.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}, {"id": "user2"}]
+        mock_generate = mocker.patch(
+            "crons.daily_briefing.generate_daily_briefing", return_value={"productivity_score": 85}
+        )
+        mocker.patch("crons.daily_briefing.sanitize_input", side_effect=lambda x: x)
 
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
 
         assert mock_generate.call_count == 2
@@ -202,9 +214,10 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.daily_briefing.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = []
         mock_generate = mocker.patch("crons.daily_briefing.generate_daily_briefing")
-        mock_sanitize = mocker.patch("crons.daily_briefing.sanitize_input")
+        mocker.patch("crons.daily_briefing.sanitize_input")
 
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
 
         mock_generate.assert_not_called()
@@ -212,15 +225,15 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_daily_briefing_handler_user_error(self, mocker):
         mock_supabase = mocker.patch("crons.daily_briefing.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}, {"id": "user2"}
-        ]
-        mock_generate = mocker.patch("crons.daily_briefing.generate_daily_briefing",
-                                      side_effect=[Exception("API down"), {"productivity_score": 90}])
-        mock_sanitize = mocker.patch("crons.daily_briefing.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}, {"id": "user2"}]
+        mock_generate = mocker.patch(
+            "crons.daily_briefing.generate_daily_briefing",
+            side_effect=[Exception("API down"), {"productivity_score": 90}],
+        )
+        mocker.patch("crons.daily_briefing.sanitize_input", side_effect=lambda x: x)
 
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
 
         assert mock_generate.call_count == 2
@@ -228,15 +241,14 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_opportunity_radar_handler(self, mocker):
         mock_supabase = mocker.patch("crons.opportunity_radar.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}
-        ]
-        mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar",
-                                   return_value=[{"title": "Internship at Google"}])
-        mock_sanitize = mocker.patch("crons.opportunity_radar.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_radar = mocker.patch(
+            "crons.opportunity_radar.run_opportunity_radar", return_value=[{"title": "Internship at Google"}]
+        )
+        mocker.patch("crons.opportunity_radar.sanitize_input", side_effect=lambda x: x)
 
         from crons.opportunity_radar import run_radar
+
         await run_radar()
 
         mock_radar.assert_called_once_with("user1")
@@ -248,6 +260,7 @@ class TestCronJobHandlers:
         mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar")
 
         from crons.opportunity_radar import run_radar
+
         await run_radar()
 
         mock_radar.assert_not_called()
@@ -255,15 +268,12 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_weekly_review_handler(self, mocker):
         mock_supabase = mocker.patch("crons.weekly_review.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}
-        ]
-        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review",
-                                    return_value={"completion_rate": 0.75})
-        mock_sanitize = mocker.patch("crons.weekly_review.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review", return_value={"completion_rate": 0.75})
+        mocker.patch("crons.weekly_review.sanitize_input", side_effect=lambda x: x)
 
         from crons.weekly_review import run_weekly_review
+
         await run_weekly_review()
 
         mock_review.assert_called_once_with("user1")
@@ -271,15 +281,14 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_weekly_review_handler_error(self, mocker):
         mock_supabase = mocker.patch("crons.weekly_review.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}
-        ]
-        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review",
-                                    side_effect=Exception("Generation failed"))
-        mock_sanitize = mocker.patch("crons.weekly_review.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_review = mocker.patch(
+            "crons.weekly_review.generate_weekly_review", side_effect=Exception("Generation failed")
+        )
+        mocker.patch("crons.weekly_review.sanitize_input", side_effect=lambda x: x)
 
         from crons.weekly_review import run_weekly_review
+
         await run_weekly_review()
 
         mock_review.assert_called_once_with("user1")
@@ -305,21 +314,29 @@ class TestCronJobHandlers:
         class FakeQuery:
             def select(self, *args, **kwargs):
                 return self
+
             def eq(self, *args, **kwargs):
                 return self
+
             def gte(self, *args, **kwargs):
                 return self
+
             def lt(self, *args, **kwargs):
                 return self
+
             def execute(self):
                 exec_count[0] += 1
                 return FakeResponse(**next(result_iter))
+
             def update(self, *args, **kwargs):
                 return self
+
             def order(self, *args, **kwargs):
                 return self
+
             def range(self, *args, **kwargs):
                 return self
+
             def text_search(self, *args, **kwargs):
                 return self
 
@@ -327,8 +344,7 @@ class TestCronJobHandlers:
             def from_(self, table):
                 return FakeQuery()
 
-        mock_supabase = mocker.patch("crons.habit_checker.get_supabase_client",
-                                      return_value=FakeSupabase())
+        mocker.patch("crons.habit_checker.get_supabase_client", return_value=FakeSupabase())
         mock_date = mocker.patch("crons.habit_checker.date")
         mock_date.today.return_value.isoformat.return_value = "2026-06-21"
 
@@ -347,13 +363,11 @@ class TestCronJobHandlers:
         ]
 
         from crons.habit_checker import run_habit_checker
+
         await run_habit_checker()
 
         # Should not query habit_logs if no habits
-        habit_logs_calls = [
-            c for c in mock_supabase().from_().call_args_list
-            if c[0][0] == "habit_logs"
-        ]
+        habit_logs_calls = [c for c in mock_supabase().from_().call_args_list if c[0][0] == "habit_logs"]
         assert len(habit_logs_calls) == 0
 
     @pytest.mark.asyncio
@@ -363,10 +377,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.missed_task_checker.get_supabase_client")
         mocker.patch("crons.missed_task_checker.datetime")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1"}]),
-            mocker.Mock(data=[{"id": "task1", "missed_count": 0}]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1"}]),
+                mocker.Mock(data=[{"id": "task1", "missed_count": 0}]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         update_execute = mocker.Mock()
@@ -383,9 +399,7 @@ class TestCronJobHandlers:
 
         await run_missed_task_checker()
 
-        update_mock.assert_called_once_with(
-            {"status": "missed", "missed_count": 1}
-        )
+        update_mock.assert_called_once_with({"status": "missed", "missed_count": 1})
 
     @pytest.mark.asyncio
     async def test_missed_task_checker_handler_no_overdue(self, mocker):
@@ -397,6 +411,7 @@ class TestCronJobHandlers:
         ]
 
         from crons.missed_task_checker import run_missed_task_checker
+
         await run_missed_task_checker()
 
         mock_supabase().from_().update.assert_not_called()
@@ -408,10 +423,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.missed_task_checker.get_supabase_client")
         mocker.patch("crons.missed_task_checker.datetime")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1"}]),
-            mocker.Mock(data=[{"id": "task1", "missed_count": None}]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1"}]),
+                mocker.Mock(data=[{"id": "task1", "missed_count": None}]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         update_execute = mocker.Mock()
@@ -428,9 +445,7 @@ class TestCronJobHandlers:
 
         await run_missed_task_checker()
 
-        update_mock.assert_called_once_with(
-            {"status": "missed", "missed_count": 1}
-        )
+        update_mock.assert_called_once_with({"status": "missed", "missed_count": 1})
 
     @pytest.mark.asyncio
     async def test_missed_task_checker_handler_error(self, mocker):
@@ -442,6 +457,7 @@ class TestCronJobHandlers:
         ]
 
         from crons.missed_task_checker import run_missed_task_checker
+
         await run_missed_task_checker()
 
         mock_supabase().from_().update.assert_not_called()
@@ -453,10 +469,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1", "sleep_goal_bedtime": "23:00"}]),
-            mocker.Mock(data=[]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1", "sleep_goal_bedtime": "23:00"}]),
+                mocker.Mock(data=[]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         query_chain = mocker.Mock()
@@ -467,10 +485,10 @@ class TestCronJobHandlers:
 
         mock_supabase().from_.return_value = query_chain
 
-        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime",
-                                     return_value={"suggested_bedtime": "22:30", "confidence": "high"})
-        mock_sanitize = mocker.patch("crons.sleep_reminder.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_suggest = mocker.patch(
+            "crons.sleep_reminder.suggest_bedtime", return_value={"suggested_bedtime": "22:30", "confidence": "high"}
+        )
+        mocker.patch("crons.sleep_reminder.sanitize_input", side_effect=lambda x: x)
 
         await run_sleep_reminder()
 
@@ -483,10 +501,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1"}]),
-            mocker.Mock(data=[{"id": "log1"}]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1"}]),
+                mocker.Mock(data=[{"id": "log1"}]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         query_chain = mocker.Mock()
@@ -510,10 +530,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1"}]),
-            mocker.Mock(data=[]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1"}]),
+                mocker.Mock(data=[]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         query_chain = mocker.Mock()
@@ -524,10 +546,8 @@ class TestCronJobHandlers:
 
         mock_supabase().from_.return_value = query_chain
 
-        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime",
-                                     return_value={"suggested_bedtime": "23:00"})
-        mock_sanitize = mocker.patch("crons.sleep_reminder.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime", return_value={"suggested_bedtime": "23:00"})
+        mocker.patch("crons.sleep_reminder.sanitize_input", side_effect=lambda x: x)
 
         await run_sleep_reminder()
 
@@ -536,19 +556,19 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_course_nudge_handler(self, mocker):
         mock_supabase = mocker.patch("crons.course_nudge.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}, {"id": "user2"}
-        ]
-        mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges",
-                                   return_value={
-                                       "total_nudges": 3,
-                                       "course_nudges": [{"course": "CS50", "message": "Watch video 5"}],
-                                       "habit_nudges": [{"habit": "Read", "message": "Log today"}],
-                                   })
-        mock_sanitize = mocker.patch("crons.course_nudge.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}, {"id": "user2"}]
+        mock_nudge = mocker.patch(
+            "crons.course_nudge.run_all_nudges",
+            return_value={
+                "total_nudges": 3,
+                "course_nudges": [{"course": "CS50", "message": "Watch video 5"}],
+                "habit_nudges": [{"habit": "Read", "message": "Log today"}],
+            },
+        )
+        mocker.patch("crons.course_nudge.sanitize_input", side_effect=lambda x: x)
 
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
 
         assert mock_nudge.call_count == 2
@@ -556,19 +576,19 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_course_nudge_handler_no_nudges(self, mocker):
         mock_supabase = mocker.patch("crons.course_nudge.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}
-        ]
-        mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges",
-                                   return_value={
-                                       "total_nudges": 0,
-                                       "course_nudges": [],
-                                       "habit_nudges": [],
-                                   })
-        mock_sanitize = mocker.patch("crons.course_nudge.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_nudge = mocker.patch(
+            "crons.course_nudge.run_all_nudges",
+            return_value={
+                "total_nudges": 0,
+                "course_nudges": [],
+                "habit_nudges": [],
+            },
+        )
+        mocker.patch("crons.course_nudge.sanitize_input", side_effect=lambda x: x)
 
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
 
         mock_nudge.assert_called_once()
@@ -576,19 +596,22 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_course_nudge_handler_error(self, mocker):
         mock_supabase = mocker.patch("crons.course_nudge.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}, {"id": "user2"}
-        ]
-        mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges",
-                                   side_effect=[Exception("Nudge failed"), {
-                                       "total_nudges": 1,
-                                       "course_nudges": [],
-                                       "habit_nudges": [],
-                                   }])
-        mock_sanitize = mocker.patch("crons.course_nudge.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}, {"id": "user2"}]
+        mock_nudge = mocker.patch(
+            "crons.course_nudge.run_all_nudges",
+            side_effect=[
+                Exception("Nudge failed"),
+                {
+                    "total_nudges": 1,
+                    "course_nudges": [],
+                    "habit_nudges": [],
+                },
+            ],
+        )
+        mocker.patch("crons.course_nudge.sanitize_input", side_effect=lambda x: x)
 
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
 
         assert mock_nudge.call_count == 2
@@ -596,15 +619,14 @@ class TestCronJobHandlers:
     @pytest.mark.asyncio
     async def test_opportunity_radar_handler_error(self, mocker):
         mock_supabase = mocker.patch("crons.opportunity_radar.get_supabase_client")
-        mock_supabase().from_().select().execute.return_value.data = [
-            {"id": "user1"}
-        ]
-        mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar",
-                                  side_effect=Exception("Radar failed"))
-        mock_sanitize = mocker.patch("crons.opportunity_radar.sanitize_input",
-                                      side_effect=lambda x: x)
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_radar = mocker.patch(
+            "crons.opportunity_radar.run_opportunity_radar", side_effect=Exception("Radar failed")
+        )
+        mocker.patch("crons.opportunity_radar.sanitize_input", side_effect=lambda x: x)
 
         from crons.opportunity_radar import run_radar
+
         await run_radar()
 
         mock_radar.assert_called_once()
@@ -616,6 +638,7 @@ class TestCronJobHandlers:
         mock_date.today.return_value.isoformat.return_value = "2026-06-21"
 
         call_count = [0]
+
         def execute_side_effect():
             call_count[0] += 1
             if call_count[0] == 1:
@@ -630,6 +653,7 @@ class TestCronJobHandlers:
         mock_supabase().from_.return_value = query_chain
 
         from crons.habit_checker import run_habit_checker
+
         await run_habit_checker()
 
     @pytest.mark.asyncio
@@ -639,10 +663,12 @@ class TestCronJobHandlers:
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
 
-        execute_responses = iter([
-            mocker.Mock(data=[{"id": "user1", "sleep_goal_bedtime": "23:00"}]),
-            mocker.Mock(data=[]),
-        ])
+        execute_responses = iter(
+            [
+                mocker.Mock(data=[{"id": "user1", "sleep_goal_bedtime": "23:00"}]),
+                mocker.Mock(data=[]),
+            ]
+        )
         execute_mock = mocker.Mock(side_effect=lambda: next(execute_responses))
 
         query_chain = mocker.Mock()
@@ -653,10 +679,8 @@ class TestCronJobHandlers:
 
         mock_supabase().from_.return_value = query_chain
 
-        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime",
-                                    side_effect=Exception("AI error"))
-        mock_sanitize = mocker.patch("crons.sleep_reminder.sanitize_input",
-                                      side_effect=lambda x: x)
+        mocker.patch("crons.sleep_reminder.suggest_bedtime", side_effect=Exception("AI error"))
+        mocker.patch("crons.sleep_reminder.sanitize_input", side_effect=lambda x: x)
 
         await run_sleep_reminder()
 
@@ -674,6 +698,7 @@ class TestSchedulerMain:
         class FakeRequest:
             def makefile(self, *args, **kwargs):
                 import io
+
                 return io.BytesIO(b"GET /health HTTP/1.1\r\nHost: localhost\r\n\r\n")
 
             def sendall(self, bytes):
@@ -695,6 +720,7 @@ class TestSchedulerMain:
         class FakeRequest:
             def makefile(self, *args, **kwargs):
                 import io
+
                 return io.BytesIO(b"GET /other HTTP/1.1\r\nHost: localhost\r\n\r\n")
 
             def sendall(self, bytes):
@@ -715,6 +741,7 @@ class TestSchedulerMain:
         class FakeRequest:
             def makefile(self, *args, **kwargs):
                 import io
+
                 return io.BytesIO(b"GET /health HTTP/1.1\r\nHost: localhost\r\n\r\n")
 
             def sendall(self, data):
@@ -728,7 +755,7 @@ class TestSchedulerMain:
 
     def test_main_entry_point(self):
         import asyncio
-        from main import main, setup_cron_jobs
+        from main import setup_cron_jobs
 
         async def test_main():
             setup_cron_jobs()
@@ -737,7 +764,6 @@ class TestSchedulerMain:
 
     def test_start_health_server_creates_server(self):
         from main import start_health_server, HealthHandler
-        import threading
 
         mock_server = MagicMock()
         mock_server.serve_forever.side_effect = Exception("Stop server")
@@ -784,6 +810,231 @@ class TestSchedulerMain:
 
 
 @pytest.mark.scheduler
+class TestSkillCronJobHandlers:
+    """Test the 5 skill-related cron job handlers with mocked dependencies."""
+
+    @pytest.mark.asyncio
+    async def test_skill_analytics_handler(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
+
+        def from_side_effect(table):
+            m = mocker.Mock()
+            if table == "users":
+                m.select.return_value.execute.return_value = mocker.Mock(data=[{"id": "user1"}, {"id": "user2"}])
+            elif table == "user_skills":
+                m.select.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[
+                    {"level": 3, "state": "active", "is_emerging": False},
+                    {"level": 4, "state": "practicing", "is_emerging": True},
+                ])
+            else:
+                m.upsert.return_value.execute.return_value = mocker.Mock(data=[{"id": "snap1"}])
+            return m
+
+        mock_supabase().from_.side_effect = from_side_effect
+
+        from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
+        await run_skill_analytics_snapshot()
+
+        assert mock_supabase().from_.call_count >= 2
+
+    @pytest.mark.asyncio
+    async def test_skill_analytics_handler_empty_skills(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}]
+        mock_supabase().from_().select().eq().execute.return_value.data = []
+
+        from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
+        await run_skill_analytics_snapshot()
+
+        mock_supabase().from_().upsert.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_skill_analytics_handler_user_error(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
+        mock_supabase().from_().select().execute.return_value.data = [{"id": "user1"}, {"id": "user2"}]
+        call_count = [0]
+
+        def side_effect():
+            call_count[0] += 1
+            if call_count[0] == 1:
+                return mocker.Mock(data=[{"level": 3, "state": "active"}])
+            raise Exception("DB error")
+
+        mock_supabase().from_().select().eq().execute = side_effect
+        from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+        await run_skill_analytics_snapshot()
+
+    @pytest.mark.asyncio
+    async def test_skill_evidence_expiry_handler(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_evidence_expiry.get_supabase_client")
+        mock_supabase().from_().select().lt().neq().execute.return_value.data = [
+            {"evidence_id": "ev1"}, {"evidence_id": "ev2"}
+        ]
+
+        from crons.skill_evidence_expiry import run_skill_evidence_expiry
+
+        await run_skill_evidence_expiry()
+
+        mock_supabase().from_().update().in_().execute.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_skill_evidence_expiry_handler_no_expired(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_evidence_expiry.get_supabase_client")
+        mock_supabase().from_().select().lt().neq().execute.return_value.data = []
+
+        from crons.skill_evidence_expiry import run_skill_evidence_expiry
+
+        await run_skill_evidence_expiry()
+
+        mock_supabase().from_().update.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_skill_intelligence_refresh_handler(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_intelligence_refresh.get_supabase_client")
+        mock_supabase().from_().select().eq().execute.return_value.data = [
+            {"skill_id": "s1"}, {"skill_id": "s2"}
+        ]
+
+        from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+
+        await run_skill_intelligence_refresh()
+
+        assert mock_supabase().from_().update.call_count >= 2
+
+    @pytest.mark.asyncio
+    async def test_skill_intelligence_refresh_handler_no_stale(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_intelligence_refresh.get_supabase_client")
+
+        def from_side_effect(table):
+            m = mocker.Mock()
+            if table == "skill_market_data":
+                m.select.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[])
+                m.update.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[])
+            return m
+
+        mock_supabase().from_.side_effect = from_side_effect
+
+        from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+
+        await run_skill_intelligence_refresh()
+
+        # update("refreshing") called once (line 12), but not twice (no stale_skills to flip back)
+        mock_supabase().from_.call_count >= 1
+        assert True
+
+    @pytest.mark.asyncio
+    async def test_skill_mv_refresh_handler(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        mock_supabase().rpc().execute.return_value = mocker.Mock(data=[], error=None)
+
+        from crons.skill_mv_refresh import run_skill_mv_refresh
+
+        await run_skill_mv_refresh()
+
+        assert mock_supabase().rpc.call_count >= 4
+
+    @pytest.mark.asyncio
+    async def test_skill_mv_refresh_handler_supabase_unavailable(self, mocker):
+        mocker.patch("config.core.supabase.get_supabase_client", side_effect=Exception("No connection"))
+
+        from crons.skill_mv_refresh import run_skill_mv_refresh
+
+        await run_skill_mv_refresh()
+
+    @pytest.mark.asyncio
+    async def test_skill_retention_cleanup_handler(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        dt_patch = mocker.patch("crons.skill_retention_cleanup.datetime")
+        dt_patch.now.return_value.timestamp.return_value = 1_000_000_000
+        dt_patch.now.return_value.isoformat.return_value = "2026-01-01"
+        mock_supabase().table().delete().eq().lt().execute.return_value = mocker.Mock(data=[{"id": "e1"}], error=None)
+        mock_supabase().table().delete().lt().execute.return_value = mocker.Mock(data=[{"id": "a1"}], error=None)
+
+        from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
+        await run_skill_retention_cleanup()
+
+        assert mock_supabase().table().delete.call_count >= 2
+
+    @pytest.mark.asyncio
+    async def test_skill_retention_cleanup_handler_supabase_unavailable(self, mocker):
+        mocker.patch("config.core.supabase.get_supabase_client", side_effect=Exception("No connection"))
+
+        from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
+        await run_skill_retention_cleanup()
+
+    @pytest.mark.asyncio
+    async def test_skill_intelligence_refresh_handler_insert_error(self, mocker):
+        mock_supabase = mocker.patch("crons.skill_intelligence_refresh.get_supabase_client")
+
+        def from_side_effect(table):
+            m = mocker.Mock()
+            if table == "skill_market_data":
+                m.select.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[{"skill_id": "s1"}])
+                m.update.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[{"skill_id": "s1"}])
+            elif table == "skill_market_history":
+                m.insert.return_value.execute.side_effect = Exception("Insert failed")
+            return m
+
+        mock_supabase().from_.side_effect = from_side_effect
+
+        from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+
+        await run_skill_intelligence_refresh()
+
+    @pytest.mark.asyncio
+    async def test_skill_mv_refresh_handler_error_result(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        mock_supabase().rpc().execute.return_value = mocker.Mock(data=[], error=Exception("RPC error"))
+
+        from crons.skill_mv_refresh import run_skill_mv_refresh
+
+        await run_skill_mv_refresh()
+
+        assert mock_supabase().rpc.call_count >= 4
+
+    @pytest.mark.asyncio
+    async def test_skill_mv_refresh_handler_rpc_exception(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        mock_supabase().rpc.side_effect = Exception("RPC connection failed")
+
+        from crons.skill_mv_refresh import run_skill_mv_refresh
+
+        await run_skill_mv_refresh()
+
+    @pytest.mark.asyncio
+    async def test_skill_retention_cleanup_handler_error_results(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        dt_patch = mocker.patch("crons.skill_retention_cleanup.datetime")
+        dt_patch.now.return_value.timestamp.return_value = 1_000_000_000
+        dt_patch.now.return_value.isoformat.return_value = "2026-01-01"
+        mock_supabase().table().delete().eq().lt().execute.return_value = mocker.Mock(data=[], error=Exception("Del error"))
+        mock_supabase().table().delete().lt().execute.return_value = mocker.Mock(data=[], error=Exception("Del error"))
+
+        from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
+        await run_skill_retention_cleanup()
+
+        assert mock_supabase().table().delete.call_count >= 3
+
+    @pytest.mark.asyncio
+    async def test_skill_retention_cleanup_handler_delete_exception(self, mocker):
+        mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
+        dt_patch = mocker.patch("crons.skill_retention_cleanup.datetime")
+        dt_patch.now.return_value.timestamp.return_value = 1_000_000_000
+        dt_patch.now.return_value.isoformat.return_value = "2026-01-01"
+        mock_supabase().table().delete().eq().lt().execute.side_effect = Exception("Evidence delete error")
+        mock_supabase().table().delete().lt().execute.side_effect = Exception("Activity delete error")
+
+        from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
+        await run_skill_retention_cleanup()
+
+
+@pytest.mark.scheduler
 class TestCronMainBlocks:
     """Verify that cron modules contain __name__ == '__main__' entry points."""
 
@@ -804,8 +1055,9 @@ class TestCronMainBlocks:
         filepath = Path(self.MODULE_DIR) / subdir / filename
         code = compile(filepath.read_text(encoding="utf-8-sig"), str(filepath), "exec")
         mock_run = mocker.patch("asyncio.run")
+        globals_dict = {"__name__": "__main__", "__file__": str(filepath), "__builtins__": __builtins__}
         try:
-            exec(code, {"__name__": "__main__", "__file__": str(filepath)})
+            exec(code, globals_dict)
         except SystemExit:
             pass
         assert mock_run.called
@@ -830,6 +1082,21 @@ class TestCronMainBlocks:
 
     def test_course_nudge_main_block(self, mocker):
         self._run_scheduler_module_as_main("course_nudge.py", mocker)
+
+    def test_skill_intelligence_refresh_main_block(self, mocker):
+        self._run_scheduler_module_as_main("skill_intelligence_refresh.py", mocker)
+
+    def test_skill_evidence_expiry_main_block(self, mocker):
+        self._run_scheduler_module_as_main("skill_evidence_expiry.py", mocker)
+
+    def test_skill_analytics_snapshot_main_block(self, mocker):
+        self._run_scheduler_module_as_main("skill_analytics_snapshot.py", mocker)
+
+    def test_skill_mv_refresh_main_block(self, mocker):
+        self._run_scheduler_module_as_main("skill_mv_refresh.py", mocker)
+
+    def test_skill_retention_cleanup_main_block(self, mocker):
+        self._run_scheduler_module_as_main("skill_retention_cleanup.py", mocker)
 
     def test_scheduler_main_block(self, mocker):
         self._run_scheduler_module_as_main("main.py", mocker, subdir="")

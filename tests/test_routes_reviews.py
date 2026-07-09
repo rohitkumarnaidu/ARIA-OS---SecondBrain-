@@ -20,9 +20,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "week_start": "2026-06-15", "title": "W25 Review"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "week_start": "2026-06-15", "title": "W25 Review"}]
+        )
 
         from app.api.reviews import list_reviews
 
@@ -37,9 +37,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.reviews import list_reviews
 
@@ -53,9 +53,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "week_start": "2026-06-15"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "week_start": "2026-06-15"}]
+        )
 
         from app.api.reviews import get_latest_review
 
@@ -69,9 +69,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.reviews import get_latest_review
 
@@ -85,9 +85,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[{"id": "review-1", "week_start": "2026-06-15"}])
+        )
 
         from app.api.reviews import get_review
 
@@ -101,9 +101,9 @@ class TestReviewsRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[])
+        )
 
         from app.api.reviews import get_review
         from fastapi import HTTPException

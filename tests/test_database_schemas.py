@@ -3,7 +3,7 @@
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from database.schemas.academic import SubjectCreate, SubjectResponse, MarkCreate, MarkResponse
+from database.schemas.academic import SubjectCreate, SubjectResponse, MarkCreate
 from database.schemas.audit import AuditLogCreate, AuditLogResponse
 from database.schemas.briefing import BriefingRead, BriefingListResponse, BriefingTriggerResponse
 from database.schemas.chat import ChatRequest, ChatMessage, ChatResponse, ChatSessionResponse
@@ -15,27 +15,38 @@ from database.schemas.consolidation import MemoryToCreate, MemoryToUpdate, Memor
 from database.schemas.goal import GoalCreate, GoalUpdate, GoalResponse
 from database.schemas.habit import HabitCreate, HabitUpdate, HabitResponse
 from database.schemas.idea import IdeaCreate, IdeaUpdate, IdeaResponse
-from database.schemas.income import IncomeCreate, IncomeUpdate, IncomeResponse
-from database.schemas.memory import MemoryCreate, MemoryUpdate, MemoryResponse
+from database.schemas.income import IncomeCreate, IncomeResponse
+from database.schemas.memory import MemoryCreate, MemoryResponse
 from database.schemas.nlp import NLPParseRequest, NLPParseResponse, NLPExecuteRequest, NLPExecuteResponse
 from database.schemas.notification import NotificationResponse, NotificationRead
-from database.schemas.opportunity import OpportunityCreate, OpportunityUpdate, OpportunityResponse
-from database.schemas.prediction import (TimeSlot, SmartSlotResponse, BedtimePrediction, StreakPrediction,
-                                          CompletionPrediction, HabitCompletionForecast,
-                                          TaskCompletionForecast, SleepInsight)
-from database.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
+from database.schemas.opportunity import OpportunityCreate, OpportunityResponse
+from database.schemas.prediction import (
+    TimeSlot,
+    SmartSlotResponse,
+    BedtimePrediction,
+    StreakPrediction,
+    CompletionPrediction,
+    HabitCompletionForecast,
+    TaskCompletionForecast,
+    SleepInsight,
+)
+from database.schemas.project import ProjectCreate, ProjectResponse
 from database.schemas.prompt_history import PromptCommit, PromptHistoryResponse
-from database.schemas.prompt_schema import (PromptMeta, PromptDetail, PromptRenderRequest,
-                                             PromptRenderResponse, PromptListResponse)
-from database.schemas.resource import ResourceCreate, ResourceUpdate, ResourceResponse
+from database.schemas.prompt_schema import (
+    PromptMeta,
+    PromptDetail,
+    PromptRenderRequest,
+    PromptRenderResponse,
+    PromptListResponse,
+)
+from database.schemas.resource import ResourceCreate, ResourceResponse
 from database.schemas.review import WeeklyReviewRead, WeeklyReviewListResponse
-from database.schemas.roadmap import RoadmapMilestoneCreate, RoadmapMilestoneUpdate, RoadmapMilestoneResponse
-from database.schemas.sleep import SleepCreate, SleepUpdate, SleepResponse
+from database.schemas.roadmap import RoadmapMilestoneCreate, RoadmapMilestoneResponse
+from database.schemas.sleep import SleepCreate, SleepResponse
 from database.schemas.task import TaskCreate, TaskUpdate, TaskResponse, Priority, Category, TaskStatus
-from database.schemas.time_entry import TimeEntryCreate, TimeEntryUpdate, TimeEntryResponse
+from database.schemas.time_entry import TimeEntryCreate, TimeEntryResponse
 from database.schemas.user import UserCreate, UserUpdate, UserResponse
-from database.schemas.video import VideoCreate, VideoUpdate, VideoResponse
-
+from database.schemas.video import VideoCreate, VideoResponse
 
 NOW = datetime(2026, 6, 21, 12, 0, 0)
 
@@ -43,6 +54,7 @@ NOW = datetime(2026, 6, 21, 12, 0, 0)
 # ─────────────────────────────────────────────
 # ACADEMIC
 # ─────────────────────────────────────────────
+
 
 class TestSubjectCreate:
     def test_valid(self):
@@ -52,7 +64,9 @@ class TestSubjectCreate:
         assert s.credits is None
 
     def test_with_all_fields(self):
-        s = SubjectCreate(name="Algorithms", code="CS201", credits=4, semester="3", exam_date="2026-12-15", target_marks=90.0)
+        s = SubjectCreate(
+            name="Algorithms", code="CS201", credits=4, semester="3", exam_date="2026-12-15", target_marks=90.0
+        )
         assert s.code == "CS201"
         assert s.credits == 4
         assert s.target_marks == 90.0
@@ -101,6 +115,7 @@ class TestMarkCreate:
 # AUDIT
 # ─────────────────────────────────────────────
 
+
 class TestAuditLogCreate:
     def test_valid(self):
         a = AuditLogCreate(user_id="u1", action="read", resource="tasks")
@@ -109,8 +124,15 @@ class TestAuditLogCreate:
         assert a.details is None
 
     def test_with_all_fields(self):
-        a = AuditLogCreate(user_id="u1", action="create", resource="goals", resource_id="g1",
-                           details={"key": "val"}, ip_address="127.0.0.1", user_agent="Mozilla")
+        a = AuditLogCreate(
+            user_id="u1",
+            action="create",
+            resource="goals",
+            resource_id="g1",
+            details={"key": "val"},
+            ip_address="127.0.0.1",
+            user_agent="Mozilla",
+        )
         assert a.resource_id == "g1"
         assert a.details == {"key": "val"}
 
@@ -138,6 +160,7 @@ class TestAuditLogResponse:
 # BRIEFING
 # ─────────────────────────────────────────────
 
+
 class TestBriefingRead:
     def test_valid(self):
         b = BriefingRead(id="b1", user_id="u1", date="2026-06-21", created_at=NOW)
@@ -145,11 +168,25 @@ class TestBriefingRead:
         assert b.title is None
 
     def test_with_all_fields(self):
-        b = BriefingRead(id="b1", user_id="u1", date="2026-06-21", title="Morning Briefing",
-                          summary="Good day", opening="Hello", top_priority="Task 1",
-                          tasks_count=5, habits_streak=3, sleep_score=85.0, ai_insight="Keep going",
-                          productivity_tip="Focus", focus_area="Study", generated_by="ARIA",
-                          read=True, raw_json={"key": "val"}, created_at=NOW)
+        b = BriefingRead(
+            id="b1",
+            user_id="u1",
+            date="2026-06-21",
+            title="Morning Briefing",
+            summary="Good day",
+            opening="Hello",
+            top_priority="Task 1",
+            tasks_count=5,
+            habits_streak=3,
+            sleep_score=85.0,
+            ai_insight="Keep going",
+            productivity_tip="Focus",
+            focus_area="Study",
+            generated_by="ARIA",
+            read=True,
+            raw_json={"key": "val"},
+            created_at=NOW,
+        )
         assert b.read is True
         assert b.tasks_count == 5
         assert b.sleep_score == 85.0
@@ -199,6 +236,7 @@ class TestBriefingTriggerResponse:
 # CHAT
 # ─────────────────────────────────────────────
 
+
 class TestChatRequest:
     def test_valid(self):
         c = ChatRequest(message="Hello ARIA")
@@ -244,6 +282,7 @@ class TestChatSessionResponse:
 # ─────────────────────────────────────────────
 # COURSE
 # ─────────────────────────────────────────────
+
 
 class TestCourseCreate:
     def test_valid(self):
@@ -299,6 +338,7 @@ class TestCourseResponse:
 # DATA EXPORT
 # ─────────────────────────────────────────────
 
+
 class TestExportRequest:
     def test_valid(self):
         e = ExportRequest()
@@ -311,7 +351,9 @@ class TestExportRequest:
 
 class TestExportResponse:
     def test_valid(self):
-        e = ExportResponse(user_id="u1", exported_at="2026-06-21T12:00:00", data={"tasks": []}, table_count=1, record_count=0)
+        e = ExportResponse(
+            user_id="u1", exported_at="2026-06-21T12:00:00", data={"tasks": []}, table_count=1, record_count=0
+        )
         assert e.table_count == 1
 
     def test_missing_fields(self):
@@ -322,6 +364,7 @@ class TestExportResponse:
 # ─────────────────────────────────────────────
 # ERROR RESPONSE
 # ─────────────────────────────────────────────
+
 
 class TestErrorResponse:
     def test_valid(self):
@@ -346,6 +389,7 @@ class TestErrorResponse:
 # ─────────────────────────────────────────────
 # FEEDBACK
 # ─────────────────────────────────────────────
+
 
 class TestFeedbackCreate:
     def test_valid(self):
@@ -385,6 +429,7 @@ class TestFeedbackSummary:
 # GOAL
 # ─────────────────────────────────────────────
 
+
 class TestGoalCreate:
     def test_valid(self):
         g = GoalCreate(title="Learn React")
@@ -394,8 +439,15 @@ class TestGoalCreate:
         assert g.intensity == "medium"
 
     def test_with_all_fields(self):
-        g = GoalCreate(title="Master Python", description="Deep dive", target_date="2026-12-31",
-                        hours_per_day=3.0, days_per_week=4.0, intensity="high", category="programming")
+        g = GoalCreate(
+            title="Master Python",
+            description="Deep dive",
+            target_date="2026-12-31",
+            hours_per_day=3.0,
+            days_per_week=4.0,
+            intensity="high",
+            category="programming",
+        )
         assert g.intensity == "high"
 
     def test_missing_title(self):
@@ -436,6 +488,7 @@ class TestGoalResponse:
 # ─────────────────────────────────────────────
 # HABIT
 # ─────────────────────────────────────────────
+
 
 class TestHabitCreate:
     def test_valid(self):
@@ -493,6 +546,7 @@ class TestHabitResponse:
 # IDEA
 # ─────────────────────────────────────────────
 
+
 class TestIdeaCreate:
     def test_valid(self):
         i = IdeaCreate(title="Startup idea")
@@ -527,6 +581,7 @@ class TestIdeaResponse:
 # INCOME
 # ─────────────────────────────────────────────
 
+
 class TestIncomeCreate:
     def test_valid(self):
         i = IncomeCreate(source_type="freelance", amount=500.0)
@@ -555,6 +610,7 @@ class TestIncomeResponse:
 # MEMORY
 # ─────────────────────────────────────────────
 
+
 class TestMemoryCreate:
     def test_valid(self):
         m = MemoryCreate(type="preference", key="theme", value="dark")
@@ -562,8 +618,14 @@ class TestMemoryCreate:
         assert m.tags is None
 
     def test_with_all_fields(self):
-        m = MemoryCreate(type="fact", key="user_name", value="John", importance="high",
-                          tags=["user", "personal"], expires_at="2026-12-31")
+        m = MemoryCreate(
+            type="fact",
+            key="user_name",
+            value="John",
+            importance="high",
+            tags=["user", "personal"],
+            expires_at="2026-12-31",
+        )
         assert m.importance == "high"
         assert m.tags == ["user", "personal"]
 
@@ -584,14 +646,16 @@ class TestMemoryCreate:
 
 class TestMemoryResponse:
     def test_valid(self):
-        m = MemoryResponse(id="m1", user_id="u1", type="fact", key="k", value="v", importance="low",
-                            created_at=NOW, updated_at=NOW)
+        m = MemoryResponse(
+            id="m1", user_id="u1", type="fact", key="k", value="v", importance="low", created_at=NOW, updated_at=NOW
+        )
         assert m.key == "k"
 
 
 # ─────────────────────────────────────────────
 # NLP
 # ─────────────────────────────────────────────
+
 
 class TestNLPParseRequest:
     def test_valid(self):
@@ -637,10 +701,19 @@ class TestNLPExecuteResponse:
 # NOTIFICATION
 # ─────────────────────────────────────────────
 
+
 class TestNotificationResponse:
     def test_valid(self):
-        n = NotificationResponse(id="n1", user_id="u1", title="Reminder", message="Check tasks",
-                                  category="task", priority="high", read=False, created_at="2026-06-21")
+        n = NotificationResponse(
+            id="n1",
+            user_id="u1",
+            title="Reminder",
+            message="Check tasks",
+            category="task",
+            priority="high",
+            read=False,
+            created_at="2026-06-21",
+        )
         assert n.priority == "high"
 
     def test_missing_required(self):
@@ -662,6 +735,7 @@ class TestNotificationRead:
 # OPPORTUNITY
 # ─────────────────────────────────────────────
 
+
 class TestOpportunityCreate:
     def test_valid(self):
         o = OpportunityCreate(title="Internship", url="https://example.com")
@@ -679,8 +753,9 @@ class TestOpportunityCreate:
 
 class TestOpportunityResponse:
     def test_valid(self):
-        o = OpportunityResponse(id="o1", user_id="u1", title="Intern", url="https://ex.com",
-                                 status="open", created_at=NOW)
+        o = OpportunityResponse(
+            id="o1", user_id="u1", title="Intern", url="https://ex.com", status="open", created_at=NOW
+        )
         assert o.match_score is None
 
     def test_missing_id(self):
@@ -691,6 +766,7 @@ class TestOpportunityResponse:
 # ─────────────────────────────────────────────
 # PREDICTION
 # ─────────────────────────────────────────────
+
 
 class TestTimeSlot:
     def test_valid(self):
@@ -712,8 +788,9 @@ class TestSmartSlotResponse:
 
 class TestBedtimePrediction:
     def test_valid(self):
-        b = BedtimePrediction(optimal_bedtime="22:00", optimal_wake="06:00", expected_score=85.0,
-                               confidence="high", based_on_sessions=30)
+        b = BedtimePrediction(
+            optimal_bedtime="22:00", optimal_wake="06:00", expected_score=85.0, confidence="high", based_on_sessions=30
+        )
         assert b.expected_score == 85.0
 
     def test_missing_fields(self):
@@ -723,57 +800,79 @@ class TestBedtimePrediction:
 
 class TestStreakPrediction:
     def test_valid(self):
-        s = StreakPrediction(habit_id="h1", habit_name="Read", current_streak=5, risk_level="low",
-                              risk_probability=0.2, recommendation="Keep going")
+        s = StreakPrediction(
+            habit_id="h1",
+            habit_name="Read",
+            current_streak=5,
+            risk_level="low",
+            risk_probability=0.2,
+            recommendation="Keep going",
+        )
         assert s.risk_probability == 0.2
 
 
 class TestCompletionPrediction:
     def test_valid(self):
-        c = CompletionPrediction(task_id="t1", title="Task", probability=0.75, confidence="medium",
-                                  recommendation="Focus")
+        c = CompletionPrediction(
+            task_id="t1", title="Task", probability=0.75, confidence="medium", recommendation="Focus"
+        )
         assert c.probability == 0.75
 
     def test_with_due_date(self):
-        c = CompletionPrediction(task_id="t1", title="Task", probability=0.75, confidence="medium",
-                                  due_date="2026-07-01", recommendation="Prioritize")
+        c = CompletionPrediction(
+            task_id="t1",
+            title="Task",
+            probability=0.75,
+            confidence="medium",
+            due_date="2026-07-01",
+            recommendation="Prioritize",
+        )
         assert c.due_date == "2026-07-01"
 
 
 class TestHabitCompletionForecast:
     def test_valid(self):
-        pred = StreakPrediction(habit_id="h1", habit_name="Read", current_streak=5, risk_level="low",
-                                risk_probability=0.2, recommendation="Keep going")
+        pred = StreakPrediction(
+            habit_id="h1",
+            habit_name="Read",
+            current_streak=5,
+            risk_level="low",
+            risk_probability=0.2,
+            recommendation="Keep going",
+        )
         h = HabitCompletionForecast(total_active=10, at_risk_count=2, predictions=[pred])
         assert h.total_active == 10
 
 
 class TestTaskCompletionForecast:
     def test_valid(self):
-        pred = CompletionPrediction(task_id="t1", title="Task", probability=0.75, confidence="medium",
-                                     recommendation="Focus")
+        pred = CompletionPrediction(
+            task_id="t1", title="Task", probability=0.75, confidence="medium", recommendation="Focus"
+        )
         t = TaskCompletionForecast(total_pending=20, high_completion=10, at_risk_count=5, predictions=[pred])
         assert t.total_pending == 20
 
 
 class TestSleepInsight:
     def test_valid(self):
-        s = SleepInsight(average_score=78.5, average_duration=7.5, trend="improving",
-                          recommendation="Maintain routine")
+        s = SleepInsight(average_score=78.5, average_duration=7.5, trend="improving", recommendation="Maintain routine")
         assert s.average_score == 78.5
         assert s.bedtime_prediction is None
 
     def test_with_bedtime_prediction(self):
-        bp = BedtimePrediction(optimal_bedtime="22:00", optimal_wake="06:00", expected_score=85.0,
-                                confidence="high", based_on_sessions=30)
-        s = SleepInsight(average_score=78.5, average_duration=7.5, trend="stable",
-                          recommendation="Good", bedtime_prediction=bp)
+        bp = BedtimePrediction(
+            optimal_bedtime="22:00", optimal_wake="06:00", expected_score=85.0, confidence="high", based_on_sessions=30
+        )
+        s = SleepInsight(
+            average_score=78.5, average_duration=7.5, trend="stable", recommendation="Good", bedtime_prediction=bp
+        )
         assert s.bedtime_prediction.optimal_bedtime == "22:00"
 
 
 # ─────────────────────────────────────────────
 # PROJECT
 # ─────────────────────────────────────────────
+
 
 class TestProjectCreate:
     def test_valid(self):
@@ -803,10 +902,12 @@ class TestProjectResponse:
 # PROMPT HISTORY
 # ─────────────────────────────────────────────
 
+
 class TestPromptCommit:
     def test_valid(self):
-        p = PromptCommit(hash="abc123", date="2026-06-21", author="dev", message="Update prompt",
-                          additions=10, deletions=2)
+        p = PromptCommit(
+            hash="abc123", date="2026-06-21", author="dev", message="Update prompt", additions=10, deletions=2
+        )
         assert p.hash == "abc123"
         assert p.additions == 10
 
@@ -817,8 +918,7 @@ class TestPromptCommit:
 
 class TestPromptHistoryResponse:
     def test_valid(self):
-        c = PromptCommit(hash="abc123", date="2026-06-21", author="dev", message="Update",
-                          additions=5, deletions=1)
+        c = PromptCommit(hash="abc123", date="2026-06-21", author="dev", message="Update", additions=5, deletions=1)
         p = PromptHistoryResponse(name="briefing_agent", commits=[c])
         assert p.name == "briefing_agent"
         assert len(p.commits) == 1
@@ -828,17 +928,31 @@ class TestPromptHistoryResponse:
 # PROMPT SCHEMA
 # ─────────────────────────────────────────────
 
+
 class TestPromptMeta:
     def test_valid(self):
-        p = PromptMeta(name="test", category="agents", file_path="prompts/agents/test.md",
-                        frontmatter={"version": "1.0"}, body_length=100, word_count=20)
+        p = PromptMeta(
+            name="test",
+            category="agents",
+            file_path="prompts/agents/test.md",
+            frontmatter={"version": "1.0"},
+            body_length=100,
+            word_count=20,
+        )
         assert p.word_count == 20
 
 
 class TestPromptDetail:
     def test_valid(self):
-        p = PromptDetail(name="test", category="agents", file_path="prompts/agents/test.md",
-                          frontmatter={"version": "1.0"}, body="# Hello", body_length=7, word_count=1)
+        p = PromptDetail(
+            name="test",
+            category="agents",
+            file_path="prompts/agents/test.md",
+            frontmatter={"version": "1.0"},
+            body="# Hello",
+            body_length=7,
+            word_count=1,
+        )
         assert p.body == "# Hello"
 
 
@@ -860,8 +974,9 @@ class TestPromptRenderResponse:
 
 class TestPromptListResponse:
     def test_valid(self):
-        meta = PromptMeta(name="test", category="agents", file_path="test.md",
-                          frontmatter={}, body_length=10, word_count=2)
+        meta = PromptMeta(
+            name="test", category="agents", file_path="test.md", frontmatter={}, body_length=10, word_count=2
+        )
         p = PromptListResponse(total=1, prompts=[meta])
         assert p.total == 1
 
@@ -869,6 +984,7 @@ class TestPromptListResponse:
 # ─────────────────────────────────────────────
 # RESOURCE
 # ─────────────────────────────────────────────
+
 
 class TestResourceCreate:
     def test_valid(self):
@@ -895,18 +1011,31 @@ class TestResourceResponse:
 # REVIEW (Weekly Review)
 # ─────────────────────────────────────────────
 
+
 class TestWeeklyReviewRead:
     def test_valid(self):
         r = WeeklyReviewRead(id="r1", user_id="u1", week_start="2026-06-15", week_end="2026-06-21", created_at=NOW)
         assert r.summary is None
 
     def test_with_all_fields(self):
-        r = WeeklyReviewRead(id="r1", user_id="u1", week_start="2026-06-15", week_end="2026-06-21",
-                              summary="Good week", tasks_completed=12, tasks_added=5,
-                              habits_consistency=0.8, focus_hours=25.0, highlights=["Task A"],
-                              challenges=["Task B"], next_week_focus=["Task C"],
-                              ai_insights="Keep it up", mood_trend="positive",
-                              generated_by="ARIA", created_at=NOW)
+        r = WeeklyReviewRead(
+            id="r1",
+            user_id="u1",
+            week_start="2026-06-15",
+            week_end="2026-06-21",
+            summary="Good week",
+            tasks_completed=12,
+            tasks_added=5,
+            habits_consistency=0.8,
+            focus_hours=25.0,
+            highlights=["Task A"],
+            challenges=["Task B"],
+            next_week_focus=["Task C"],
+            ai_insights="Keep it up",
+            mood_trend="positive",
+            generated_by="ARIA",
+            created_at=NOW,
+        )
         assert r.tasks_completed == 12
         assert r.habits_consistency == 0.8
 
@@ -915,8 +1044,16 @@ class TestWeeklyReviewRead:
             WeeklyReviewRead()
 
     def test_list_fields(self):
-        r = WeeklyReviewRead(id="r1", user_id="u1", week_start="2026-06-15", week_end="2026-06-21",
-                              highlights=["A", "B"], challenges=["C"], next_week_focus=["D"], created_at=NOW)
+        r = WeeklyReviewRead(
+            id="r1",
+            user_id="u1",
+            week_start="2026-06-15",
+            week_end="2026-06-21",
+            highlights=["A", "B"],
+            challenges=["C"],
+            next_week_focus=["D"],
+            created_at=NOW,
+        )
         assert r.highlights == ["A", "B"]
         assert r.challenges == ["C"]
 
@@ -932,6 +1069,7 @@ class TestWeeklyReviewListResponse:
 # ROADMAP
 # ─────────────────────────────────────────────
 
+
 class TestRoadmapMilestoneCreate:
     def test_valid(self):
         r = RoadmapMilestoneCreate(skill="Python", category="Programming")
@@ -945,16 +1083,30 @@ class TestRoadmapMilestoneCreate:
         assert r.status == "not_started"
 
     def test_with_all_fields(self):
-        r = RoadmapMilestoneCreate(skill="Kubernetes", category="DevOps", target_date="2026-12-31",
-                                    progress=50.0, status="in_progress", is_recommended=True)
+        r = RoadmapMilestoneCreate(
+            skill="Kubernetes",
+            category="DevOps",
+            target_date="2026-12-31",
+            progress=50.0,
+            status="in_progress",
+            is_recommended=True,
+        )
         assert r.progress == 50.0
         assert r.is_recommended is True
 
 
 class TestRoadmapMilestoneResponse:
     def test_valid(self):
-        r = RoadmapMilestoneResponse(id="r1", user_id="u1", skill="Python", category="Programming",
-                                      progress=25.0, status="in_progress", created_at=NOW, updated_at=NOW)
+        r = RoadmapMilestoneResponse(
+            id="r1",
+            user_id="u1",
+            skill="Python",
+            category="Programming",
+            progress=25.0,
+            status="in_progress",
+            created_at=NOW,
+            updated_at=NOW,
+        )
         assert r.is_recommended is False
 
     def test_missing_required(self):
@@ -965,6 +1117,7 @@ class TestRoadmapMilestoneResponse:
 # ─────────────────────────────────────────────
 # SLEEP
 # ─────────────────────────────────────────────
+
 
 class TestSleepCreate:
     def test_valid(self):
@@ -979,15 +1132,13 @@ class TestSleepCreate:
 
 class TestSleepResponse:
     def test_valid(self):
-        s = SleepResponse(id="s1", user_id="u1", bedtime="22:00", wake_time="06:00",
-                           quality_rating=4, created_at=NOW)
+        s = SleepResponse(id="s1", user_id="u1", bedtime="22:00", wake_time="06:00", quality_rating=4, created_at=NOW)
         assert s.duration_hours == 0.0
         assert s.sleep_score == 0
         assert s.sleep_debt == 0.0
 
     def test_defaults(self):
-        s = SleepResponse(id="s1", user_id="u1", bedtime="22:00", wake_time="06:00",
-                           quality_rating=4, created_at=NOW)
+        s = SleepResponse(id="s1", user_id="u1", bedtime="22:00", wake_time="06:00", quality_rating=4, created_at=NOW)
         assert s.duration_hours == 0.0
         assert s.sleep_score == 0
 
@@ -995,6 +1146,7 @@ class TestSleepResponse:
 # ─────────────────────────────────────────────
 # TASK (with Enums)
 # ─────────────────────────────────────────────
+
 
 class TestTaskCreate:
     def test_valid(self):
@@ -1061,8 +1213,16 @@ class TestTaskUpdate:
 
 class TestTaskResponse:
     def test_valid(self):
-        t = TaskResponse(id="t1", user_id="u1", title="Task", status=TaskStatus.pending,
-                          completed_at=None, missed_count=0, created_at=NOW, updated_at=NOW)
+        t = TaskResponse(
+            id="t1",
+            user_id="u1",
+            title="Task",
+            status=TaskStatus.pending,
+            completed_at=None,
+            missed_count=0,
+            created_at=NOW,
+            updated_at=NOW,
+        )
         assert t.status == TaskStatus.pending
         assert t.missed_count == 0
         assert t.completed_at is None
@@ -1073,17 +1233,32 @@ class TestTaskResponse:
 
     def test_default_missed_count(self):
         with pytest.raises(ValidationError):
-            TaskResponse(id="t1", user_id="u1", title="Task", status=TaskStatus.pending,
-                          created_at=NOW, updated_at=NOW)
+            TaskResponse(id="t1", user_id="u1", title="Task", status=TaskStatus.pending, created_at=NOW, updated_at=NOW)
 
     def test_completed_at(self):
-        t = TaskResponse(id="t1", user_id="u1", title="Task", status=TaskStatus.completed,
-                          completed_at=NOW, missed_count=0, created_at=NOW, updated_at=NOW)
+        t = TaskResponse(
+            id="t1",
+            user_id="u1",
+            title="Task",
+            status=TaskStatus.completed,
+            completed_at=NOW,
+            missed_count=0,
+            created_at=NOW,
+            updated_at=NOW,
+        )
         assert t.completed_at == NOW
 
     def test_serialization(self):
-        t = TaskResponse(id="t1", user_id="u1", title="Task", status=TaskStatus.pending,
-                          completed_at=None, missed_count=0, created_at=NOW, updated_at=NOW)
+        t = TaskResponse(
+            id="t1",
+            user_id="u1",
+            title="Task",
+            status=TaskStatus.pending,
+            completed_at=None,
+            missed_count=0,
+            created_at=NOW,
+            updated_at=NOW,
+        )
         d = t.model_dump()
         assert d["status"] == "pending"
 
@@ -1096,6 +1271,7 @@ class TestTaskResponse:
 # TIME ENTRY
 # ─────────────────────────────────────────────
 
+
 class TestTimeEntryCreate:
     def test_valid(self):
         t = TimeEntryCreate(start_time=NOW)
@@ -1107,8 +1283,15 @@ class TestTimeEntryCreate:
         assert t.category == "work"
 
     def test_with_all_fields(self):
-        t = TimeEntryCreate(task_id="t1", project_id="p1", start_time=NOW, end_time=NOW,
-                             duration_minutes=60, description="Worked on feature", category="development")
+        t = TimeEntryCreate(
+            task_id="t1",
+            project_id="p1",
+            start_time=NOW,
+            end_time=NOW,
+            duration_minutes=60,
+            description="Worked on feature",
+            category="development",
+        )
         assert t.duration_minutes == 60
         assert t.category == "development"
 
@@ -1124,10 +1307,18 @@ class TestTimeEntryCreate:
 
 class TestTimeEntryResponse:
     def test_valid(self):
-        t = TimeEntryResponse(id="t1", user_id="u1", task_id=None, project_id=None,
-                               start_time="2026-06-21T12:00:00", end_time=None,
-                               duration_minutes=None, description=None,
-                               category="work", created_at=NOW)
+        t = TimeEntryResponse(
+            id="t1",
+            user_id="u1",
+            task_id=None,
+            project_id=None,
+            start_time="2026-06-21T12:00:00",
+            end_time=None,
+            duration_minutes=None,
+            description=None,
+            category="work",
+            created_at=NOW,
+        )
         assert t.task_id is None
 
     def test_missing_required(self):
@@ -1139,6 +1330,7 @@ class TestTimeEntryResponse:
 # USER
 # ─────────────────────────────────────────────
 
+
 class TestUserCreate:
     def test_valid(self):
         u = UserCreate(email="test@example.com")
@@ -1146,8 +1338,15 @@ class TestUserCreate:
         assert u.skills == []
 
     def test_with_all_fields(self):
-        u = UserCreate(email="user@example.com", name="John", avatar_url="https://av.com/a.jpg",
-                        college="MIT", year=3, skills=["Python", "React"], bio="Developer")
+        u = UserCreate(
+            email="user@example.com",
+            name="John",
+            avatar_url="https://av.com/a.jpg",
+            college="MIT",
+            year=3,
+            skills=["Python", "React"],
+            bio="Developer",
+        )
         assert u.year == 3
         assert u.skills == ["Python", "React"]
 
@@ -1195,6 +1394,7 @@ class TestUserResponse:
 # VIDEO
 # ─────────────────────────────────────────────
 
+
 class TestVideoCreate:
     def test_valid(self):
         v = VideoCreate(url="https://youtube.com/watch?v=abc", title="Tutorial")
@@ -1211,8 +1411,14 @@ class TestVideoCreate:
 
 class TestVideoResponse:
     def test_valid(self):
-        v = VideoResponse(id="v1", user_id="u1", url="https://youtube.com/watch?v=abc",
-                           title="Tutorial", status="saved", created_at=NOW)
+        v = VideoResponse(
+            id="v1",
+            user_id="u1",
+            url="https://youtube.com/watch?v=abc",
+            title="Tutorial",
+            status="saved",
+            created_at=NOW,
+        )
         assert v.status == "saved"
 
     def test_missing_required(self):

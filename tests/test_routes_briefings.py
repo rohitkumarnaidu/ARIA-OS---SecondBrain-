@@ -21,9 +21,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "title": "Morning Briefing", "date": "2026-06-24"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "Morning Briefing", "date": "2026-06-24"}]
+        )
 
         from app.api.briefings import list_briefings
 
@@ -40,9 +40,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.briefings import list_briefings
 
@@ -59,9 +59,9 @@ class TestBriefingsRoutes:
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
 
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "title": "Today", "date": "2026-06-24"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "Today", "date": "2026-06-24"}]
+        )
 
         from app.api.briefings import get_today_briefing
 
@@ -79,14 +79,14 @@ class TestBriefingsRoutes:
         mock_supabase.return_value = mock_client
 
         # First query chain: from_().select().eq().eq().limit().execute() → empty
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         # Second query chain: from_().select().eq().order().limit().execute() → latest
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "2", "title": "Latest", "date": "2026-06-23"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[{"id": "2", "title": "Latest", "date": "2026-06-23"}]
+        )
 
         from app.api.briefings import get_today_briefing
 
@@ -103,13 +103,13 @@ class TestBriefingsRoutes:
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
 
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.briefings import get_today_briefing
 
@@ -125,8 +125,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[{"id": "b1", "title": "Briefing 1", "date": "2026-06-24"}])
+        )
 
         from app.api.briefings import get_briefing
 
@@ -142,8 +143,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[])
+        )
 
         from app.api.briefings import get_briefing
         from fastapi import HTTPException
@@ -161,8 +163,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(error=None, data=[{"id": "b1", "read": True}])
+        )
 
         from app.api.briefings import mark_briefing_read
 
@@ -178,8 +181,9 @@ class TestBriefingsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(error=None, data=[])
+        )
 
         from app.api.briefings import mark_briefing_read
         from fastapi import HTTPException

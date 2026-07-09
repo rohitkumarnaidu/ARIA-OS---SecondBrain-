@@ -3,7 +3,6 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # context_assembly.py — ContextAssembly class
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -15,6 +14,7 @@ class TestContextAssembly:
     @pytest.fixture
     def assembly(self):
         from ai.context_assembly import ContextAssembly
+
         return ContextAssembly(max_budget=2000, hard_cap=2500)
 
     def test_estimate_tokens(self, assembly):
@@ -41,6 +41,7 @@ class TestContextAssembly:
 
         section = ContextSection("tasks", 500, 1, fetcher, formatter, "No tasks")
         from ai.context_assembly import SECTIONS
+
         SECTIONS.insert(0, section)
         result = await assembly.assemble(user_id="user-1")
         assert "tasks" in result.sections
@@ -61,6 +62,7 @@ class TestContextAssembly:
 
         section = ContextSection("large", 100, 1, fetcher, formatter, "fallback")
         from ai.context_assembly import SECTIONS
+
         SECTIONS.insert(0, section)
         result = await assembly.assemble(user_id="user-1")
         assert "large" in result.sections
@@ -90,6 +92,7 @@ class TestContextAssembly:
             max_budget=5, hard_cap=10
         )
         from ai.context_assembly import SECTIONS
+
         SECTIONS.clear()
         SECTIONS.append(ContextSection("big", 500, 1, big_fetcher, big_formatter, "fallback"))
         SECTIONS.append(ContextSection("small", 500, 2, small_fetcher, small_formatter, "fallback"))
@@ -193,6 +196,7 @@ class TestContextAssembly:
             return "big " * 2000  # ~1000 tokens
 
         from ai.context_assembly import ContextSection, SECTIONS
+
         SECTIONS.clear()
 
         # First section fills the budget
@@ -216,6 +220,7 @@ class TestContextAssembly:
             return "short " * 10  # ~25 tokens
 
         from ai.context_assembly import ContextSection, SECTIONS
+
         SECTIONS.clear()
 
         SECTIONS.append(ContextSection("small1", 10000, 1, fetcher, small_formatter, "fb"))
@@ -248,6 +253,7 @@ class TestSectionFetchers:
         )
         with patch("ai.sections.get_supabase_client", return_value=mock_client):
             from ai.sections import _fetch_tasks
+
             result = await _fetch_tasks("user-1")
             assert len(result) == 1
             assert result[0]["title"] == "Task 1"
@@ -256,6 +262,7 @@ class TestSectionFetchers:
     async def test_fetch_tasks_returns_empty_on_error(self):
         with patch("ai.sections.get_supabase_client", side_effect=Exception("DB down")):
             from ai.sections import _fetch_tasks
+
             result = await _fetch_tasks("user-1")
             assert result == []
 
@@ -267,6 +274,7 @@ class TestSectionFetchers:
         )
         with patch("ai.sections.get_supabase_client", return_value=mock_client):
             from ai.sections import _fetch_goals
+
             result = await _fetch_goals("user-1")
             assert len(result) == 1
 
@@ -274,17 +282,19 @@ class TestSectionFetchers:
     async def test_fetch_goals_empty_on_error(self):
         with patch("ai.sections.get_supabase_client", side_effect=Exception("error")):
             from ai.sections import _fetch_goals
+
             result = await _fetch_goals("user-1")
             assert result == []
 
     @pytest.mark.asyncio
     async def test_fetch_courses_returns_data(self):
         mock_client = MagicMock()
-        mock_client.from_.return_value.select.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(
-            data=[{"title": "CS 101", "status": "in_progress", "progress_percent": 30}]
+        mock_client.from_.return_value.select.return_value.eq.return_value.limit.return_value.execute.return_value = (
+            MagicMock(data=[{"title": "CS 101", "status": "in_progress", "progress_percent": 30}])
         )
         with patch("ai.sections.get_supabase_client", return_value=mock_client):
             from ai.sections import _fetch_courses
+
             result = await _fetch_courses("user-1")
             assert len(result) == 1
 
@@ -292,6 +302,7 @@ class TestSectionFetchers:
     async def test_fetch_courses_empty_on_error(self):
         with patch("ai.sections.get_supabase_client", side_effect=Exception("error")):
             from ai.sections import _fetch_courses
+
             result = await _fetch_courses("user-1")
             assert result == []
 
@@ -303,6 +314,7 @@ class TestSectionFetchers:
         )
         with patch("ai.sections.get_supabase_client", return_value=mock_client):
             from ai.sections import _fetch_habits
+
             result = await _fetch_habits("user-1")
             assert len(result) == 1
 
@@ -310,6 +322,7 @@ class TestSectionFetchers:
     async def test_fetch_habits_empty_on_error(self):
         with patch("ai.sections.get_supabase_client", side_effect=Exception("error")):
             from ai.sections import _fetch_habits
+
             result = await _fetch_habits("user-1")
             assert result == []
 
@@ -321,6 +334,7 @@ class TestSectionFetchers:
         )
         with patch("ai.sections.get_supabase_client", return_value=mock_client):
             from ai.sections import _fetch_sleep
+
             result = await _fetch_sleep("user-1")
             assert len(result) == 1
 
@@ -328,6 +342,7 @@ class TestSectionFetchers:
     async def test_fetch_sleep_empty_on_error(self):
         with patch("ai.sections.get_supabase_client", side_effect=Exception("error")):
             from ai.sections import _fetch_sleep
+
             result = await _fetch_sleep("user-1")
             assert result == []
 
@@ -335,6 +350,7 @@ class TestSectionFetchers:
     async def test_fetch_memory_returns_data(self):
         with patch("ai.sections.get_memory_summary", new=AsyncMock(return_value={"summary": "Focused on Python"})):
             from ai.sections import _fetch_memory
+
             result = await _fetch_memory("user-1")
             assert result == {"summary": "Focused on Python"}
 
@@ -342,6 +358,7 @@ class TestSectionFetchers:
     async def test_fetch_memory_empty_on_error(self):
         with patch("ai.sections.get_memory_summary", side_effect=Exception("error")):
             from ai.sections import _fetch_memory
+
             result = await _fetch_memory("user-1")
             assert result == {}
 
@@ -351,6 +368,7 @@ class TestSectionFormatters:
 
     def test_fmt_tasks_with_data(self):
         from ai.sections import _fmt_tasks
+
         result = _fmt_tasks([{"title": "Work", "priority": "high"}, {"title": "Read", "priority": "low"}])
         assert "Work" in result
         assert "high" in result
@@ -359,71 +377,86 @@ class TestSectionFormatters:
 
     def test_fmt_tasks_empty(self):
         from ai.sections import _fmt_tasks
+
         assert _fmt_tasks([]) == "No pending tasks."
         assert _fmt_tasks(None) == "No pending tasks."
 
     def test_fmt_goals_with_data(self):
         from ai.sections import _fmt_goals
+
         result = _fmt_goals([{"title": "Learn", "progress": 75}])
         assert "Learn" in result
         assert "75%" in result
 
     def test_fmt_goals_empty(self):
         from ai.sections import _fmt_goals
+
         assert _fmt_goals([]) == "No active goals."
         assert _fmt_goals(None) == "No active goals."
 
     def test_fmt_courses_with_active(self):
         from ai.sections import _fmt_courses
-        result = _fmt_courses([
-            {"title": "Python", "status": "in_progress", "progress_percent": 50},
-            {"title": "Done", "status": "completed", "progress_percent": 100},
-        ])
+
+        result = _fmt_courses(
+            [
+                {"title": "Python", "status": "in_progress", "progress_percent": 50},
+                {"title": "Done", "status": "completed", "progress_percent": 100},
+            ]
+        )
         assert "Python" in result
         assert "50%" in result
         assert "Done" not in result
 
     def test_fmt_courses_no_active(self):
         from ai.sections import _fmt_courses
+
         result = _fmt_courses([{"title": "Done", "status": "completed"}])
         assert result == "No courses in progress."
 
     def test_fmt_courses_empty(self):
         from ai.sections import _fmt_courses
+
         assert _fmt_courses([]) == "No courses in progress."
 
     def test_fmt_habits_with_data(self):
         from ai.sections import _fmt_habits
+
         result = _fmt_habits([{"name": "Run", "current_streak": 10}])
         assert "Run" in result
         assert "10d" in result
 
     def test_fmt_habits_empty(self):
         from ai.sections import _fmt_habits
+
         assert _fmt_habits([]) == "No active habits."
 
     def test_fmt_sleep_with_data(self):
         from ai.sections import _fmt_sleep
+
         result = _fmt_sleep([{"sleep_score": 90, "duration_hours": 8}])
         assert "90" in result
         assert "8h" in result
 
     def test_fmt_sleep_empty(self):
         from ai.sections import _fmt_sleep
+
         assert _fmt_sleep([]) == "No sleep data yet."
 
     def test_fmt_memory_dict(self):
         from ai.sections import _fmt_memory
+
         result = _fmt_memory({"summary": "Focused on work"})
         assert "Focused on work" in result
 
     def test_fmt_memory_non_dict(self):
         from ai.sections import _fmt_memory
+
         result = _fmt_memory("raw string")
         assert result == "No memory data."
 
     def test_fmt_memory_empty_dict(self):
         from ai.sections import _fmt_memory
+
         result = _fmt_memory({})
         assert "No memory summary" in result
 
@@ -434,6 +467,7 @@ class TestRegisterDefaultSections:
     def test_registers_all_sections(self):
         from ai.sections import register_default_sections
         from ai.context_assembly import SECTIONS
+
         SECTIONS.clear()
         register_default_sections()
         names = [s.name for s in SECTIONS]
@@ -449,6 +483,7 @@ class TestRegisterDefaultSections:
     def test_sections_sorted_by_priority(self):
         from ai.sections import register_default_sections
         from ai.context_assembly import SECTIONS
+
         SECTIONS.clear()
         register_default_sections()
         for i in range(len(SECTIONS) - 1):
@@ -458,6 +493,7 @@ class TestRegisterDefaultSections:
     def test_register_clears_existing(self):
         from ai.sections import register_default_sections
         from ai.context_assembly import SECTIONS
+
         SECTIONS.clear()
         from ai.context_assembly import ContextSection
 
@@ -485,6 +521,7 @@ class TestBraveSearch:
         with patch("ai.brave_search.settings") as mock_settings:
             mock_settings.brave_api_key = None
             from ai.brave_search import brave_search
+
             result = await brave_search("test query")
             assert result == []
 
@@ -504,27 +541,32 @@ class TestBraveSearch:
         return mock_get
 
     @pytest.mark.asyncio
-    async def test_brave_search_returns_empty_when_no_key(self):
-        with patch("ai.brave_search.settings") as mock_settings:
-            mock_settings.brave_api_key = None
-            from ai.brave_search import brave_search
-            result = await brave_search("test query")
-            assert result == []
-
-    @pytest.mark.asyncio
     async def test_brave_search_success(self):
         with patch("ai.brave_search.settings") as mock_settings:
             mock_settings.brave_api_key = "test-key"
-            mock_get = self._make_brave_get_mock(json_data={
-                "web": {
-                    "results": [
-                        {"title": "MLH Fellowship 2026", "url": "https://mlh.io", "description": "Remote fellowship", "age": "2 days ago"},
-                        {"title": "GSoC 2026", "url": "https://summerofcode.withgoogle.com", "description": "Open source", "age": "1 week ago"},
-                    ]
+            mock_get = self._make_brave_get_mock(
+                json_data={
+                    "web": {
+                        "results": [
+                            {
+                                "title": "MLH Fellowship 2026",
+                                "url": "https://mlh.io",
+                                "description": "Remote fellowship",
+                                "age": "2 days ago",
+                            },
+                            {
+                                "title": "GSoC 2026",
+                                "url": "https://summerofcode.withgoogle.com",
+                                "description": "Open source",
+                                "age": "1 week ago",
+                            },
+                        ]
+                    }
                 }
-            })
+            )
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import brave_search
+
                 results = await brave_search("internship 2026")
                 assert len(results) == 2
                 assert results[0]["title"] == "MLH Fellowship 2026"
@@ -537,6 +579,7 @@ class TestBraveSearch:
             mock_get = self._make_brave_get_mock(status=429)
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import brave_search
+
                 results = await brave_search("test")
                 assert results == []
 
@@ -548,6 +591,7 @@ class TestBraveSearch:
             mock_get.__aenter__ = AsyncMock(side_effect=Exception("Network error"))
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import brave_search
+
                 results = await brave_search("test")
                 assert results == []
 
@@ -558,6 +602,7 @@ class TestBraveSearch:
             mock_get = self._make_brave_get_mock(json_data={"web": {"results": []}})
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import brave_search
+
                 results = await brave_search("test")
                 assert results == []
 
@@ -568,6 +613,7 @@ class TestBraveSearch:
             mock_get = self._make_brave_get_mock(json_data={"web": {}})
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import brave_search
+
                 results = await brave_search("test")
                 assert results == []
 
@@ -587,16 +633,28 @@ class TestFetchOpportunitiesFromWeb:
     async def test_fetch_opportunities_with_results(self):
         with patch("ai.brave_search.settings") as mock_settings:
             mock_settings.brave_api_key = "test-key"
-            mock_get = self._make_opp_get_mock([
-                {"title": "SWE Intern", "url": "https://example.com/intern", "description": "Software engineering internship", "age": "3 days ago"},
-            ])
+            mock_get = self._make_opp_get_mock(
+                [
+                    {
+                        "title": "SWE Intern",
+                        "url": "https://example.com/intern",
+                        "description": "Software engineering internship",
+                        "age": "3 days ago",
+                    },
+                ]
+            )
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import fetch_opportunities_from_web
+
                 results = await fetch_opportunities_from_web(["Python"], ["AI", "Web"])
                 assert len(results) > 0
                 assert results[0]["category"] in [
-                    "internships", "hackathons", "open_source",
-                    "startup_competitions", "fellowships", "freelance",
+                    "internships",
+                    "hackathons",
+                    "open_source",
+                    "startup_competitions",
+                    "fellowships",
+                    "freelance",
                 ]
                 assert results[0]["source"] == "brave_search"
                 assert "skills_needed" in results[0]
@@ -606,11 +664,19 @@ class TestFetchOpportunitiesFromWeb:
     async def test_fetch_opportunities_deduplicates_urls(self):
         with patch("ai.brave_search.settings") as mock_settings:
             mock_settings.brave_api_key = "test-key"
-            mock_get = self._make_opp_get_mock([
-                {"title": "Duplicate", "url": "https://example.com/dup", "description": "Same URL", "age": "1 day ago"},
-            ])
+            mock_get = self._make_opp_get_mock(
+                [
+                    {
+                        "title": "Duplicate",
+                        "url": "https://example.com/dup",
+                        "description": "Same URL",
+                        "age": "1 day ago",
+                    },
+                ]
+            )
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import fetch_opportunities_from_web
+
                 results = await fetch_opportunities_from_web(["Python"], ["AI"])
                 assert len(results) <= 20
 
@@ -618,15 +684,22 @@ class TestFetchOpportunitiesFromWeb:
     async def test_fetch_opportunities_caps_at_20(self):
         with patch("ai.brave_search.settings") as mock_settings:
             mock_settings.brave_api_key = "test-key"
-            mock_get = self._make_opp_get_mock([
-                {"title": f"Result {i}", "url": f"https://example.com/{i}", "description": f"Desc {i}", "age": "1 day ago"}
-                for i in range(5)
-            ])
+            mock_get = self._make_opp_get_mock(
+                [
+                    {
+                        "title": f"Result {i}",
+                        "url": f"https://example.com/{i}",
+                        "description": f"Desc {i}",
+                        "age": "1 day ago",
+                    }
+                    for i in range(5)
+                ]
+            )
             with patch("aiohttp.ClientSession.get", return_value=mock_get):
                 from ai.brave_search import fetch_opportunities_from_web
+
                 results = await fetch_opportunities_from_web(["Python"], ["AI"])
                 assert len(results) <= 20
-
 
 
 class TestLearningAgentEdgeCases:
@@ -635,6 +708,7 @@ class TestLearningAgentEdgeCases:
     async def test_detect_patterns_llm_unavailable(self):
         from ai.agents.learning_agent import detect_learning_patterns
         from ai.client import LLMProviderUnavailableError
+
         with patch("ai.agents.learning_agent.track_user_progress", return_value={}):
             with patch("ai.agents.learning_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
                 result = await detect_learning_patterns("user-1")
@@ -645,6 +719,7 @@ class TestLearningAgentEdgeCases:
     async def test_suggest_focus_llm_unavailable(self):
         from ai.agents.learning_agent import suggest_learning_focus
         from ai.client import LLMProviderUnavailableError
+
         with patch("ai.agents.learning_agent.detect_learning_patterns", return_value=["pattern1"]):
             with patch("ai.agents.learning_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
                 result = await suggest_learning_focus("user-1")
@@ -674,9 +749,7 @@ class TestOrchestrator:
                 b.execute.return_value = TestOrchestrator._build_execute()
                 for c in ("select", "eq", "order", "limit", "in_", "ilike", "gte", "lt", "range"):
                     getattr(b, c).return_value = b
-                b.insert.return_value = MagicMock(
-                    execute=MagicMock(return_value=TestOrchestrator._build_execute([{}]))
-                )
+                b.insert.return_value = MagicMock(execute=MagicMock(return_value=TestOrchestrator._build_execute([{}])))
                 b.update.return_value = b
 
                 def _delete_side():
@@ -702,8 +775,16 @@ class TestOrchestrator:
     async def test_orchestrate_plan_success(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "Write", "status": "pending", "priority": "high",
-                   "category": "work", "due_date": "2026-07-01"}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Write",
+                    "status": "pending",
+                    "priority": "high",
+                    "category": "work",
+                    "due_date": "2026-07-01",
+                }
+            ]
         )
         client._builders["goals"].execute.return_value = MagicMock(
             data=[{"id": "g1", "title": "Learn AI", "status": "active", "target_date": "2026-12-01"}]
@@ -715,23 +796,36 @@ class TestOrchestrator:
         mock_prompt = MagicMock()
         mock_prompt.system_prompt = "You are a planner."
         with patch("ai.orchestrator.prompts.get_agent", return_value=mock_prompt):
-            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-                "steps": [{"action": "study", "target": "ML", "reasoning": "Good", "confidence": 0.8}],
-                "summary": "Study ML",
-            })):
+            with patch(
+                "ai.orchestrator.llm.generate_json",
+                new=AsyncMock(
+                    return_value={
+                        "steps": [{"action": "study", "target": "ML", "reasoning": "Good", "confidence": 0.8}],
+                        "summary": "Study ML",
+                    }
+                ),
+            ):
                 from ai.orchestrator import orchestrate_plan
+
                 result = await orchestrate_plan("user-1", "help me study")
                 assert result["summary"] == "Study ML"
                 assert len(result["steps"]) == 1
 
     @pytest.mark.asyncio
     async def test_orchestrate_plan_no_prompt(self, mocker):
-        client = self._mock_supabase(mocker)
+        self._mock_supabase(mocker)
         with patch("ai.orchestrator.prompts.get_agent", return_value=None):
-            with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-                "steps": [], "summary": "Fallback plan",
-            })):
+            with patch(
+                "ai.orchestrator.llm.generate_json",
+                new=AsyncMock(
+                    return_value={
+                        "steps": [],
+                        "summary": "Fallback plan",
+                    }
+                ),
+            ):
                 from ai.orchestrator import orchestrate_plan
+
                 result = await orchestrate_plan("user-1", "plan")
                 assert result["summary"] == "Fallback plan"
 
@@ -739,31 +833,46 @@ class TestOrchestrator:
     async def test_orchestrate_plan_data_fetch_error(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.side_effect = Exception("DB down")
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "steps": [], "summary": "ok",
-        })):
+        with patch(
+            "ai.orchestrator.llm.generate_json",
+            new=AsyncMock(
+                return_value={
+                    "steps": [],
+                    "summary": "ok",
+                }
+            ),
+        ):
             from ai.orchestrator import orchestrate_plan
+
             result = await orchestrate_plan("user-1", "x")
             assert "steps" in result
 
     @pytest.mark.asyncio
     async def test_orchestrate_plan_llm_unavailable(self, mocker):
-        client = self._mock_supabase(mocker)
+        self._mock_supabase(mocker)
         from ai.client import LLMProviderUnavailableError
-        with patch("ai.orchestrator.llm.generate_json",
-                   side_effect=LLMProviderUnavailableError("down")):
+
+        with patch("ai.orchestrator.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             from ai.orchestrator import orchestrate_plan
+
             result = await orchestrate_plan("user-1", "x")
             assert len(result["steps"]) > 0
             assert "Fallback" in result["steps"][0]["reasoning"]
 
     @pytest.mark.asyncio
     async def test_orchestrate_plan_steps_not_list(self, mocker):
-        client = self._mock_supabase(mocker)
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "steps": "not a list", "summary": "oops",
-        })):
+        self._mock_supabase(mocker)
+        with patch(
+            "ai.orchestrator.llm.generate_json",
+            new=AsyncMock(
+                return_value={
+                    "steps": "not a list",
+                    "summary": "oops",
+                }
+            ),
+        ):
             from ai.orchestrator import orchestrate_plan
+
             result = await orchestrate_plan("user-1", "x")
             assert result["steps"] == []
 
@@ -773,8 +882,17 @@ class TestOrchestrator:
     async def test_search_memory_success(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["memory"].execute.return_value = MagicMock(
-            data=[{"id": "m1", "type": "note", "key": "python", "value": "Learning Python",
-                   "importance": "high", "tags": ["code"], "created_at": "2026-01-01T00:00:00"}]
+            data=[
+                {
+                    "id": "m1",
+                    "type": "note",
+                    "key": "python",
+                    "value": "Learning Python",
+                    "importance": "high",
+                    "tags": ["code"],
+                    "created_at": "2026-01-01T00:00:00",
+                }
+            ]
         )
         client._builders["tasks"].execute.return_value = MagicMock(data=[])  # for get_user_preferences
         client._builders["habits"].execute.return_value = MagicMock(data=[])
@@ -783,6 +901,7 @@ class TestOrchestrator:
 
         with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="User is learning Python.")):
             from ai.orchestrator import search_memory
+
             result = await search_memory("user-1", "python")
             assert len(result["memories"]) == 1
             assert result["summary"] == "User is learning Python."
@@ -793,6 +912,7 @@ class TestOrchestrator:
         client._builders["memory"].execute.side_effect = Exception("DB error")
         with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
             from ai.orchestrator import search_memory
+
             result = await search_memory("user-1", "x")
             assert result["memories"] == []
 
@@ -800,10 +920,10 @@ class TestOrchestrator:
     async def test_search_memory_prefs_error(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["memory"].execute.return_value = MagicMock(data=[])
-        with patch("ai.agents.memory_agent.get_user_preferences",
-                   new=AsyncMock(side_effect=Exception("prefs fail"))):
+        with patch("ai.agents.memory_agent.get_user_preferences", new=AsyncMock(side_effect=Exception("prefs fail"))):
             with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
                 from ai.orchestrator import search_memory
+
                 result = await search_memory("user-1", "x")
                 assert result["preferences"]["preferred_category"] == "personal"
 
@@ -811,17 +931,27 @@ class TestOrchestrator:
     async def test_search_memory_llm_unavailable(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["memory"].execute.return_value = MagicMock(
-            data=[{"id": "m1", "type": "note", "key": "python", "value": "Learning",
-                   "importance": "high", "tags": [], "created_at": "2026-01-01T00:00:00"}]
+            data=[
+                {
+                    "id": "m1",
+                    "type": "note",
+                    "key": "python",
+                    "value": "Learning",
+                    "importance": "high",
+                    "tags": [],
+                    "created_at": "2026-01-01T00:00:00",
+                }
+            ]
         )
         client._builders["tasks"].execute.return_value = MagicMock(data=[])
         client._builders["habits"].execute.return_value = MagicMock(data=[])
         client._builders["goals"].execute.return_value = MagicMock(data=[])
         client._builders["courses"].execute.return_value = MagicMock(data=[])
         from ai.client import LLMProviderUnavailableError
-        with patch("ai.orchestrator.llm.generate",
-                   side_effect=LLMProviderUnavailableError("down")):
+
+        with patch("ai.orchestrator.llm.generate", side_effect=LLMProviderUnavailableError("down")):
             from ai.orchestrator import search_memory
+
             result = await search_memory("user-1", "python")
             assert result["summary"] == ""
 
@@ -836,6 +966,7 @@ class TestOrchestrator:
         with patch("ai.orchestrator.prompts.get_agent", return_value=None):
             with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="inline")):
                 from ai.orchestrator import search_memory
+
                 result = await search_memory("user-1", "x")
                 assert result["summary"] == "inline"
 
@@ -843,8 +974,17 @@ class TestOrchestrator:
     async def test_search_memory_no_match(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["memory"].execute.return_value = MagicMock(
-            data=[{"id": "m1", "type": "note", "key": "other", "value": "Other",
-                   "importance": "low", "tags": [], "created_at": "2026-01-01T00:00:00"}]
+            data=[
+                {
+                    "id": "m1",
+                    "type": "note",
+                    "key": "other",
+                    "value": "Other",
+                    "importance": "low",
+                    "tags": [],
+                    "created_at": "2026-01-01T00:00:00",
+                }
+            ]
         )
         client._builders["tasks"].execute.return_value = MagicMock(data=[])
         client._builders["habits"].execute.return_value = MagicMock(data=[])
@@ -852,6 +992,7 @@ class TestOrchestrator:
         client._builders["courses"].execute.return_value = MagicMock(data=[])
         with patch("ai.orchestrator.llm.generate", new=AsyncMock(return_value="")):
             from ai.orchestrator import search_memory
+
             result = await search_memory("user-1", "query-no-match")
             assert len(result["memories"]) == 1  # falls back to top 20
 
@@ -861,25 +1002,62 @@ class TestOrchestrator:
     async def test_detect_patterns_success(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "Work", "status": "completed", "priority": "high",
-                   "category": "study", "created_at": "2026-06-01T00:00:00", "completed_at": "2026-06-02T00:00:00"},
-                  {"id": "t2", "title": "Task2", "status": "pending", "priority": "low",
-                   "category": "personal", "created_at": "2026-06-01T00:00:00", "completed_at": None}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "Work",
+                    "status": "completed",
+                    "priority": "high",
+                    "category": "study",
+                    "created_at": "2026-06-01T00:00:00",
+                    "completed_at": "2026-06-02T00:00:00",
+                },
+                {
+                    "id": "t2",
+                    "title": "Task2",
+                    "status": "pending",
+                    "priority": "low",
+                    "category": "personal",
+                    "created_at": "2026-06-01T00:00:00",
+                    "completed_at": None,
+                },
+            ]
         )
         client._builders["habits"].execute.return_value = MagicMock(
-            data=[{"id": "h1", "name": "Read", "is_active": True, "current_streak": 10,
-                   "best_streak": 20, "consistency_percentage": 80}]
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Read",
+                    "is_active": True,
+                    "current_streak": 10,
+                    "best_streak": 20,
+                    "consistency_percentage": 80,
+                }
+            ]
         )
         client._builders["sleep_logs"].execute.return_value = MagicMock(
             data=[{"date": "2026-06-20", "sleep_score": 85, "duration_hours": 8}]
         )
         client._builders["time_entries"].execute.return_value = MagicMock(
-            data=[{"duration_minutes": 120, "is_deep_work": True, "category": "coding", "start_time": "2026-06-20T09:00:00"}]
+            data=[
+                {
+                    "duration_minutes": 120,
+                    "is_deep_work": True,
+                    "category": "coding",
+                    "start_time": "2026-06-20T09:00:00",
+                }
+            ]
         )
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "insights": [{"type": "good", "description": "Keep it up", "confidence": 0.8, "data": {}}]
-        })):
+        with patch(
+            "ai.orchestrator.llm.generate_json",
+            new=AsyncMock(
+                return_value={
+                    "insights": [{"type": "good", "description": "Keep it up", "confidence": 0.8, "data": {}}]
+                }
+            ),
+        ):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "how am I doing")
             assert len(result["patterns"]) == 5
             assert len(result["insights"]) == 1
@@ -890,6 +1068,7 @@ class TestOrchestrator:
         client._builders["tasks"].execute.side_effect = Exception("DB error")
         with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "x")
             assert result["patterns"][0]["confidence"] == 0.8
 
@@ -897,16 +1076,26 @@ class TestOrchestrator:
     async def test_detect_patterns_llm_unavailable(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
-                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "W",
+                    "status": "completed",
+                    "priority": "low",
+                    "category": "work",
+                    "created_at": "2026-01-01T00:00:00",
+                    "completed_at": "2026-01-02T00:00:00",
+                }
+            ]
         )
         client._builders["habits"].execute.return_value = MagicMock(data=[])
         client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
         client._builders["time_entries"].execute.return_value = MagicMock(data=[])
         from ai.client import LLMProviderUnavailableError
-        with patch("ai.orchestrator.llm.generate_json",
-                   side_effect=LLMProviderUnavailableError("down")):
+
+        with patch("ai.orchestrator.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "x")
             # 1 completed out of 1 = 100% → no productivity_warning
             assert len(result["insights"]) == 0
@@ -921,6 +1110,7 @@ class TestOrchestrator:
         with patch("ai.orchestrator.prompts.get_agent", return_value=None):
             with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
                 from ai.orchestrator import detect_patterns
+
                 result = await detect_patterns("user-1", "x")
                 assert len(result["patterns"]) == 5
 
@@ -928,16 +1118,26 @@ class TestOrchestrator:
     async def test_detect_patterns_insight_as_string(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
-                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "W",
+                    "status": "completed",
+                    "priority": "low",
+                    "category": "work",
+                    "created_at": "2026-01-01T00:00:00",
+                    "completed_at": "2026-01-02T00:00:00",
+                }
+            ]
         )
         client._builders["habits"].execute.return_value = MagicMock(data=[])
         client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
         client._builders["time_entries"].execute.return_value = MagicMock(data=[])
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "insights": "Just a string insight"
-        })):
+        with patch(
+            "ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": "Just a string insight"})
+        ):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "x")
             assert len(result["insights"]) == 1
             assert result["insights"][0]["type"] == "llm_insight"
@@ -946,16 +1146,26 @@ class TestOrchestrator:
     async def test_detect_patterns_insight_wrong_type(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "W", "status": "completed", "priority": "low",
-                   "category": "work", "created_at": "2026-01-01T00:00:00", "completed_at": "2026-01-02T00:00:00"}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "W",
+                    "status": "completed",
+                    "priority": "low",
+                    "category": "work",
+                    "created_at": "2026-01-01T00:00:00",
+                    "completed_at": "2026-01-02T00:00:00",
+                }
+            ]
         )
         client._builders["habits"].execute.return_value = MagicMock(data=[])
         client._builders["sleep_logs"].execute.return_value = MagicMock(data=[])
         client._builders["time_entries"].execute.return_value = MagicMock(data=[])
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "insights": 42  # not a list or string
-        })):
+        with patch(
+            "ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": 42})  # not a list or string
+        ):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "x")
             assert result["insights"] == []
 
@@ -963,12 +1173,29 @@ class TestOrchestrator:
     async def test_detect_patterns_triggers_low_insights(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "W", "status": "pending", "priority": "low",
-                   "category": "personal", "created_at": "2026-01-01T00:00:00", "completed_at": None}]
+            data=[
+                {
+                    "id": "t1",
+                    "title": "W",
+                    "status": "pending",
+                    "priority": "low",
+                    "category": "personal",
+                    "created_at": "2026-01-01T00:00:00",
+                    "completed_at": None,
+                }
+            ]
         )
         client._builders["habits"].execute.return_value = MagicMock(
-            data=[{"id": "h1", "name": "Read", "is_active": True, "current_streak": 1,
-                   "best_streak": 5, "consistency_percentage": 30}]
+            data=[
+                {
+                    "id": "h1",
+                    "name": "Read",
+                    "is_active": True,
+                    "current_streak": 1,
+                    "best_streak": 5,
+                    "consistency_percentage": 30,
+                }
+            ]
         )
         client._builders["sleep_logs"].execute.return_value = MagicMock(
             data=[{"date": "2026-01-01", "sleep_score": 60, "duration_hours": 5}]
@@ -976,6 +1203,7 @@ class TestOrchestrator:
         client._builders["time_entries"].execute.return_value = MagicMock(data=[])
         with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"insights": []})):
             from ai.orchestrator import detect_patterns
+
             result = await detect_patterns("user-1", "x")
             insight_types = [i["type"] for i in result["insights"]]
             assert "productivity_warning" in insight_types
@@ -987,8 +1215,16 @@ class TestOrchestrator:
     async def test_match_opportunities_success(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["opportunities"].execute.return_value = MagicMock(
-            data=[{"id": "o1", "title": "ML Course", "match_score": 0.9, "status": "new",
-                   "category": "course", "created_at": "2026-06-01T00:00:00"}]
+            data=[
+                {
+                    "id": "o1",
+                    "title": "ML Course",
+                    "match_score": 0.9,
+                    "status": "new",
+                    "category": "course",
+                    "created_at": "2026-06-01T00:00:00",
+                }
+            ]
         )
         client._builders["courses"].execute.return_value = MagicMock(
             data=[{"name": "AI", "skills": ["python", "ml"], "status": "completed"}]
@@ -996,10 +1232,14 @@ class TestOrchestrator:
         client._builders["roadmap"].execute.return_value = MagicMock(
             data=[{"skill_name": "deep learning", "status": "in_progress"}]
         )
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "matches": [{"id": "o1", "title": "ML Course", "score": 0.95, "reasoning": "Great fit"}]
-        })):
+        with patch(
+            "ai.orchestrator.llm.generate_json",
+            new=AsyncMock(
+                return_value={"matches": [{"id": "o1", "title": "ML Course", "score": 0.95, "reasoning": "Great fit"}]}
+            ),
+        ):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "find courses")
             assert len(result["matches"]) == 1
             assert "Matched" in result["summary"]
@@ -1010,6 +1250,7 @@ class TestOrchestrator:
         client._builders["opportunities"].execute.side_effect = Exception("DB error")
         with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "x")
             assert result["matches"] == []
 
@@ -1023,6 +1264,7 @@ class TestOrchestrator:
         client._builders["roadmap"].execute.return_value = MagicMock(data=[])
         with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "x")
             assert "matches" in result
 
@@ -1033,6 +1275,7 @@ class TestOrchestrator:
         client._builders["courses"].execute.side_effect = Exception("skills fail")
         with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "x")
             assert "matches" in result
 
@@ -1040,15 +1283,24 @@ class TestOrchestrator:
     async def test_match_opportunities_llm_unavailable(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["opportunities"].execute.return_value = MagicMock(
-            data=[{"id": "o1", "title": "Course", "match_score": 0.8, "status": "new",
-                   "category": "tech", "created_at": "2026-06-01T00:00:00"}]
+            data=[
+                {
+                    "id": "o1",
+                    "title": "Course",
+                    "match_score": 0.8,
+                    "status": "new",
+                    "category": "tech",
+                    "created_at": "2026-06-01T00:00:00",
+                }
+            ]
         )
         client._builders["courses"].execute.return_value = MagicMock(data=[])
         client._builders["roadmap"].execute.return_value = MagicMock(data=[])
         from ai.client import LLMProviderUnavailableError
-        with patch("ai.orchestrator.llm.generate_json",
-                   side_effect=LLMProviderUnavailableError("down")):
+
+        with patch("ai.orchestrator.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "x")
             assert len(result["matches"]) == 1
 
@@ -1061,6 +1313,7 @@ class TestOrchestrator:
         with patch("ai.orchestrator.prompts.get_agent", return_value=None):
             with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": []})):
                 from ai.orchestrator import match_opportunities
+
                 result = await match_opportunities("user-1", "x")
                 assert result["matches"] == []
 
@@ -1070,10 +1323,9 @@ class TestOrchestrator:
         client._builders["opportunities"].execute.return_value = MagicMock(data=[])
         client._builders["courses"].execute.return_value = MagicMock(data=[])
         client._builders["roadmap"].execute.return_value = MagicMock(data=[])
-        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={
-            "matches": "not a list"
-        })):
+        with patch("ai.orchestrator.llm.generate_json", new=AsyncMock(return_value={"matches": "not a list"})):
             from ai.orchestrator import match_opportunities
+
             result = await match_opportunities("user-1", "x")
             assert result["matches"] == []
 
@@ -1086,6 +1338,7 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[{"id": "new"}], error=None))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "Buy groceries")
         assert result["action"] == "create_task"
         assert "Created task" in result["summary"]
@@ -1097,6 +1350,7 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[], error=MagicMock(message="insert failed")))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "Buy")
         assert result["action"] == "noop"
 
@@ -1106,10 +1360,18 @@ class TestOrchestrator:
         client._builders["tasks"].update.return_value = client._builders["tasks"]
         client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
         from ai.orchestrator import execute_action
-        result = await execute_action("user-1", "update", {
-            "action": "update_task", "task_id": "t1",
-            "title": "New", "status": "completed", "priority": "high",
-        })
+
+        result = await execute_action(
+            "user-1",
+            "update",
+            {
+                "action": "update_task",
+                "task_id": "t1",
+                "title": "New",
+                "status": "completed",
+                "priority": "high",
+            },
+        )
         assert result["action"] == "update_task"
 
     @pytest.mark.asyncio
@@ -1118,7 +1380,10 @@ class TestOrchestrator:
         client._builders["tasks"].update.return_value = client._builders["tasks"]
         client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
         from ai.orchestrator import execute_action
-        result = await execute_action("user-1", "update task", {"action": "update_task", "task_id": "t1", "title": "New"})
+
+        result = await execute_action(
+            "user-1", "update task", {"action": "update_task", "task_id": "t1", "title": "New"}
+        )
         assert result["action"] == "update_task"
 
     @pytest.mark.asyncio
@@ -1128,6 +1393,7 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[{"id": "new"}], error=None))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "update", {"action": "update_task"})
         assert result["action"] == "create_task"
 
@@ -1137,6 +1403,7 @@ class TestOrchestrator:
         client._builders["tasks"].update.return_value = client._builders["tasks"]
         client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "complete", {"action": "complete_task", "task_id": "t1"})
         assert result["action"] == "complete_task"
 
@@ -1146,6 +1413,7 @@ class TestOrchestrator:
         client._builders["tasks"].update.return_value = client._builders["tasks"]
         client._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1"}], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "complete homework", {"action": "complete_task"})
         assert result["action"] == "complete_task"
 
@@ -1154,6 +1422,7 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "complete nonexistent", {"action": "complete_task"})
         assert "not found" in result["summary"]
 
@@ -1165,7 +1434,10 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[{"id": "hl1"}], error=None))
         )
         from ai.orchestrator import execute_action
-        result = await execute_action("user-1", "log habit exercise", {"action": "create_habit_log", "habit_name": "exercise"})
+
+        result = await execute_action(
+            "user-1", "log habit exercise", {"action": "create_habit_log", "habit_name": "exercise"}
+        )
         assert result["action"] == "create_habit_log"
 
     @pytest.mark.asyncio
@@ -1173,6 +1445,7 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         client._builders["habits"].execute.return_value = MagicMock(data=[], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "log habit bad", {"action": "create_habit_log"})
         assert "not found" in result["summary"]
 
@@ -1186,6 +1459,7 @@ class TestOrchestrator:
         client._builders["tasks"].delete.return_value = del_qb
         client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "delete", {"action": "delete_task", "task_id": "t1"})
         assert result["action"] == "delete_task"
 
@@ -1193,9 +1467,9 @@ class TestOrchestrator:
     async def test_execute_action_update_task_db_error(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].update.return_value = client._builders["tasks"]
-        client._builders["tasks"].execute.return_value = MagicMock(
-            data=[], error=MagicMock(message="update failed"))
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=MagicMock(message="update failed"))
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "update", {"action": "update_task", "task_id": "t1"})
         assert result["action"] == "noop"
 
@@ -1203,9 +1477,9 @@ class TestOrchestrator:
     async def test_execute_action_complete_task_db_error(self, mocker):
         client = self._mock_supabase(mocker)
         client._builders["tasks"].update.return_value = client._builders["tasks"]
-        client._builders["tasks"].execute.return_value = MagicMock(
-            data=[], error=MagicMock(message="complete failed"))
+        client._builders["tasks"].execute.return_value = MagicMock(data=[], error=MagicMock(message="complete failed"))
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "complete", {"action": "complete_task", "task_id": "t1"})
         assert result["action"] == "noop"
 
@@ -1214,10 +1488,10 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         client._builders["habits"].execute.return_value = MagicMock(data=[{"id": "h1"}], error=None)
         client._builders["habit_logs"].insert.return_value = MagicMock(
-            execute=MagicMock(return_value=MagicMock(
-                data=[], error=MagicMock(message="insert failed")))
+            execute=MagicMock(return_value=MagicMock(data=[], error=MagicMock(message="insert failed")))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "log habit run", {"action": "create_habit_log", "habit_name": "run"})
         assert result["action"] == "noop"
 
@@ -1226,12 +1500,12 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         del_qb = MagicMock()
         del_qb.eq.return_value = del_qb
-        del_qb.execute.return_value = MagicMock(
-            data=[], error=MagicMock(message="delete failed"))
+        del_qb.execute.return_value = MagicMock(data=[], error=MagicMock(message="delete failed"))
         client._builders["tasks"].delete.side_effect = None
         client._builders["tasks"].delete.return_value = del_qb
         client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "delete", {"action": "delete_task", "task_id": "t1"})
         assert result["action"] == "noop"
 
@@ -1240,6 +1514,7 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         client._builders["tasks"].execute.return_value = MagicMock(data=[], error=None)
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "delete", {"action": "delete_task"})
         assert "not found" in result["summary"]
 
@@ -1250,6 +1525,7 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[{"id": "n"}], error=None))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "some query", {"action": "create_task", "title": "Explicit"})
         assert "Explicit" in result["summary"]
 
@@ -1290,6 +1566,7 @@ class TestOrchestrator:
             execute=MagicMock(return_value=MagicMock(data=[{"id": "n"}], error=None))
         )
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "do something", {"action": "unknown_action"})
         assert result["action"] == "create_task"
 
@@ -1298,5 +1575,6 @@ class TestOrchestrator:
         client = self._mock_supabase(mocker)
         client._builders["tasks"].insert.side_effect = Exception("unexpected error")
         from ai.orchestrator import execute_action
+
         result = await execute_action("user-1", "buy", {})
         assert result["action"] == "noop"

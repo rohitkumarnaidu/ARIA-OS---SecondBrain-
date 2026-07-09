@@ -1,6 +1,6 @@
 """Tests for /api/v1/automation/ endpoints."""
 
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 

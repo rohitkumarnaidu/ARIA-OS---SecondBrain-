@@ -1160,10 +1160,15 @@ class TestTimeEndpoints:
     def test_update_time_entry_with_datetimes(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_TIME_ENTRY])
         from datetime import datetime
-        resp = client.put("/api/v1/time/time-1", json={
-            "start_time": datetime(2026, 6, 14, 10, 0).isoformat(),
-            "end_time": datetime(2026, 6, 14, 12, 0).isoformat(),
-        }, headers=AUTH_HEADER)
+
+        resp = client.put(
+            "/api/v1/time/time-1",
+            json={
+                "start_time": datetime(2026, 6, 14, 10, 0).isoformat(),
+                "end_time": datetime(2026, 6, 14, 12, 0).isoformat(),
+            },
+            headers=AUTH_HEADER,
+        )
         assert resp.status_code == 200
 
     def test_update_time_entry_not_found(self, client, mock_supabase):
@@ -1351,33 +1356,70 @@ class TestFeedbackEndpoints:
     """Test feedback submission and summary."""
 
     def test_submit_feedback(self, client, mock_supabase):
-        _cfg(mock_supabase, [{"id": "fb-1", "source": "chat", "target_id": "msg-1", "rating": 5, "comment": "Great response", "metadata": {}, "created_at": "2026-01-01T00:00:00Z"}])
-        resp = client.post("/api/v1/feedback/", json={
-            "source": "chat",
-            "target_id": "msg-1",
-            "rating": 5,
-            "comment": "Great response",
-        }, headers=AUTH_HEADER)
+        _cfg(
+            mock_supabase,
+            [
+                {
+                    "id": "fb-1",
+                    "source": "chat",
+                    "target_id": "msg-1",
+                    "rating": 5,
+                    "comment": "Great response",
+                    "metadata": {},
+                    "created_at": "2026-01-01T00:00:00Z",
+                }
+            ],
+        )
+        resp = client.post(
+            "/api/v1/feedback/",
+            json={
+                "source": "chat",
+                "target_id": "msg-1",
+                "rating": 5,
+                "comment": "Great response",
+            },
+            headers=AUTH_HEADER,
+        )
         assert resp.status_code == 201
         body = resp.json()
         assert body["source"] == "chat"
         assert body["rating"] == 5
 
     def test_submit_feedback_low_rating(self, client, mock_supabase):
-        _cfg(mock_supabase, [{"id": "fb-2", "source": "chat", "target_id": "msg-2", "rating": 1, "comment": "", "metadata": {}, "created_at": "2026-01-01T00:00:00Z"}])
-        resp = client.post("/api/v1/feedback/", json={
-            "source": "chat",
-            "target_id": "msg-2",
-            "rating": 1,
-        }, headers=AUTH_HEADER)
+        _cfg(
+            mock_supabase,
+            [
+                {
+                    "id": "fb-2",
+                    "source": "chat",
+                    "target_id": "msg-2",
+                    "rating": 1,
+                    "comment": "",
+                    "metadata": {},
+                    "created_at": "2026-01-01T00:00:00Z",
+                }
+            ],
+        )
+        resp = client.post(
+            "/api/v1/feedback/",
+            json={
+                "source": "chat",
+                "target_id": "msg-2",
+                "rating": 1,
+            },
+            headers=AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_feedback_summary(self, client, mock_supabase):
-        _cfg(mock_supabase, [
-            {"id": "1", "source": "chat", "rating": 5},
-            {"id": "2", "source": "chat", "rating": 4},
-            {"id": "3", "source": "briefing", "rating": 1},
-        ])
+        _cfg(
+            mock_supabase,
+            [
+                {"id": "1", "source": "chat", "rating": 5},
+                {"id": "2", "source": "chat", "rating": 4},
+                {"id": "3", "source": "briefing", "rating": 1},
+            ],
+        )
         resp = client.get("/api/v1/feedback/summary", headers=AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -1386,9 +1428,14 @@ class TestFeedbackEndpoints:
         assert body["by_source"]["briefing"] == 1
 
     def test_feedback_unauthorized(self, client, no_auth):
-        resp = client.post("/api/v1/feedback/", json={
-            "source": "chat", "target_id": "x", "rating": 3,
-        })
+        resp = client.post(
+            "/api/v1/feedback/",
+            json={
+                "source": "chat",
+                "target_id": "x",
+                "rating": 3,
+            },
+        )
         assert resp.status_code == 401
 
 
@@ -1398,22 +1445,29 @@ class TestMonitoringEndpoints:
 
     def test_record_token_usage(self, client, mock_supabase):
         _cfg(mock_supabase, [{"id": "tu-1"}])
-        resp = client.post("/api/v1/monitoring/token-usage", json={
-            "agent": "briefing_agent",
-            "model": "ollama/mistral:7b",
-            "prompt_tokens": 500,
-            "completion_tokens": 300,
-            "duration_ms": 1200,
-        }, headers=AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/monitoring/token-usage",
+            json={
+                "agent": "briefing_agent",
+                "model": "ollama/mistral:7b",
+                "prompt_tokens": 500,
+                "completion_tokens": 300,
+                "duration_ms": 1200,
+            },
+            headers=AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
 
     def test_token_usage_summary(self, client, mock_supabase):
-        _cfg(mock_supabase, [
-            {"agent": "briefing", "total_tokens": 800, "duration_ms": 1200},
-            {"agent": "memory", "total_tokens": 200, "duration_ms": 300},
-            {"agent": "briefing", "total_tokens": 600, "duration_ms": 900},
-        ])
+        _cfg(
+            mock_supabase,
+            [
+                {"agent": "briefing", "total_tokens": 800, "duration_ms": 1200},
+                {"agent": "memory", "total_tokens": 200, "duration_ms": 300},
+                {"agent": "briefing", "total_tokens": 600, "duration_ms": 900},
+            ],
+        )
         resp = client.get("/api/v1/monitoring/token-usage/summary", headers=AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -1422,7 +1476,12 @@ class TestMonitoringEndpoints:
         assert body["by_agent"]["briefing"] == 1400
 
     def test_monitoring_unauthorized(self, client, no_auth):
-        resp = client.post("/api/v1/monitoring/token-usage", json={
-            "agent": "test", "prompt_tokens": 0, "completion_tokens": 0,
-        })
+        resp = client.post(
+            "/api/v1/monitoring/token-usage",
+            json={
+                "agent": "test",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+            },
+        )
         assert resp.status_code == 401

@@ -1,10 +1,10 @@
 """Comprehensive tests for low-coverage API route files."""
+
 import subprocess
 import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi.testclient import TestClient
 from datetime import datetime, timezone
-
 
 # ===========================================================================
 # Reuse helpers from test_api_endpoints.py — imports are guarded to run
@@ -120,7 +120,8 @@ def _router_modules_advanced():
 
 
 def _register_mock_agent_modules():
-    import sys, types
+    import sys
+    import types
 
     specs = {
         "briefing_agent": {"generate_daily_briefing"},
@@ -150,11 +151,33 @@ _register_mock_agent_modules()
 def app():
     from fastapi import FastAPI
     from app.api import (
-        chat, predictions, nlp, notifications, analytics, prompts,
-        data_export, automation, videos, briefings, roadmap,
-        memory, academics, reviews, monitoring, feedback,
-        courses, goals, habits, ideas, income,
-        opportunities, projects, resources, sleep, time, auth,
+        chat,
+        predictions,
+        nlp,
+        notifications,
+        analytics,
+        prompts,
+        data_export,
+        automation,
+        videos,
+        briefings,
+        roadmap,
+        memory,
+        academics,
+        reviews,
+        monitoring,
+        feedback,
+        courses,
+        goals,
+        habits,
+        ideas,
+        income,
+        opportunities,
+        projects,
+        resources,
+        sleep,
+        time,
+        auth,
     )
 
     application = FastAPI(title="Test API Advanced")
@@ -202,6 +225,7 @@ def mock_supabase():
 @pytest.fixture(autouse=True)
 def _setup_deps(app, mock_supabase):
     from config.core.auth import get_current_user
+
     app.dependency_overrides[get_current_user] = lambda: _make_auth_mock_user()
 
     patchers = []
@@ -222,6 +246,7 @@ def no_auth(app):
     app.dependency_overrides.clear()
     yield
     from config.core.auth import get_current_user
+
     app.dependency_overrides[get_current_user] = lambda: _make_auth_mock_user()
 
 
@@ -230,115 +255,197 @@ def no_auth(app):
 # ===========================================================================
 
 SAMPLE_TASK_PENDING = {
-    "id": "task-1", "user_id": "user-1", "title": "Write report",
-    "status": "pending", "priority": "high",
-    "due_date": "2026-07-01T12:00:00", "estimated_minutes": 120,
-    "completed_at": None, "missed_count": 0, "category": "work",
-    "description": "Q3 report", "project_id": None, "goal_id": None,
-    "is_recurring": False, "recurring_frequency": None, "dependency_id": None,
-    "created_at": "2026-06-01T12:00:00", "updated_at": "2026-06-01T12:00:00",
+    "id": "task-1",
+    "user_id": "user-1",
+    "title": "Write report",
+    "status": "pending",
+    "priority": "high",
+    "due_date": "2026-07-01T12:00:00",
+    "estimated_minutes": 120,
+    "completed_at": None,
+    "missed_count": 0,
+    "category": "work",
+    "description": "Q3 report",
+    "project_id": None,
+    "goal_id": None,
+    "is_recurring": False,
+    "recurring_frequency": None,
+    "dependency_id": None,
+    "created_at": "2026-06-01T12:00:00",
+    "updated_at": "2026-06-01T12:00:00",
 }
 
 SAMPLE_TASK_COMPLETED = {
-    "id": "task-2", "user_id": "user-1", "title": "Submit assignment",
-    "status": "completed", "priority": "high",
-    "due_date": "2026-06-15T12:00:00", "estimated_minutes": 60,
-    "completed_at": "2026-06-14T12:00:00", "missed_count": 0,
-    "category": "academic", "description": None, "project_id": None,
-    "goal_id": None, "is_recurring": False, "recurring_frequency": None,
-    "dependency_id": None, "created_at": "2026-06-01T12:00:00",
+    "id": "task-2",
+    "user_id": "user-1",
+    "title": "Submit assignment",
+    "status": "completed",
+    "priority": "high",
+    "due_date": "2026-06-15T12:00:00",
+    "estimated_minutes": 60,
+    "completed_at": "2026-06-14T12:00:00",
+    "missed_count": 0,
+    "category": "academic",
+    "description": None,
+    "project_id": None,
+    "goal_id": None,
+    "is_recurring": False,
+    "recurring_frequency": None,
+    "dependency_id": None,
+    "created_at": "2026-06-01T12:00:00",
     "updated_at": "2026-06-14T12:00:00",
 }
 
 SAMPLE_HABIT = {
-    "id": "habit-1", "user_id": "user-1", "name": "Morning Meditation",
-    "frequency": "daily", "is_active": True, "current_streak": 15,
-    "best_streak": 30, "consistency_percent": 80.0,
+    "id": "habit-1",
+    "user_id": "user-1",
+    "name": "Morning Meditation",
+    "frequency": "daily",
+    "is_active": True,
+    "current_streak": 15,
+    "best_streak": 30,
+    "consistency_percent": 80.0,
     "created_at": "2026-01-01T00:00:00",
 }
 
 SAMPLE_SLEEP_LOG = {
-    "id": "sleep-1", "user_id": "user-1",
-    "date": "2026-06-20", "bedtime": "2026-06-19T23:00:00",
-    "wake_time": "2026-06-20T07:00:00", "duration_hours": 8.0,
-    "sleep_score": 85, "sleep_debt": 0.0, "quality_rating": 4,
+    "id": "sleep-1",
+    "user_id": "user-1",
+    "date": "2026-06-20",
+    "bedtime": "2026-06-19T23:00:00",
+    "wake_time": "2026-06-20T07:00:00",
+    "duration_hours": 8.0,
+    "sleep_score": 85,
+    "sleep_debt": 0.0,
+    "quality_rating": 4,
     "created_at": "2026-06-20T07:30:00",
 }
 
 SAMPLE_TIME_ENTRY = {
-    "id": "time-1", "user_id": "user-1",
+    "id": "time-1",
+    "user_id": "user-1",
     "start_time": "2026-06-20T09:00:00",
     "end_time": "2026-06-20T10:30:00",
-    "duration_minutes": 90, "category": "development",
-    "task_id": None, "project_id": None,
-    "is_deep_work": True, "description": "Coding session",
+    "duration_minutes": 90,
+    "category": "development",
+    "task_id": None,
+    "project_id": None,
+    "is_deep_work": True,
+    "description": "Coding session",
     "created_at": "2026-06-20T10:30:00",
 }
 
 SAMPLE_NOTIFICATION = {
-    "id": "notif-1", "user_id": "user-1", "title": "Overdue task",
-    "message": "Task is past deadline", "category": "task",
-    "priority": "high", "read": False,
-    "action_url": "/dashboard/tasks", "icon": "alert-circle",
+    "id": "notif-1",
+    "user_id": "user-1",
+    "title": "Overdue task",
+    "message": "Task is past deadline",
+    "category": "task",
+    "priority": "high",
+    "read": False,
+    "action_url": "/dashboard/tasks",
+    "icon": "alert-circle",
     "created_at": "2026-06-20T00:00:00",
 }
 
 SAMPLE_VIDEO = {
-    "id": "vid-1", "user_id": "user-1", "title": "FastAPI Tutorial",
-    "url": "https://youtube.com/watch?v=abc123", "status": "saved",
-    "thumbnail_url": None, "ai_summary": None,
+    "id": "vid-1",
+    "user_id": "user-1",
+    "title": "FastAPI Tutorial",
+    "url": "https://youtube.com/watch?v=abc123",
+    "status": "saved",
+    "thumbnail_url": None,
+    "ai_summary": None,
     "created_at": "2026-06-01T12:00:00",
 }
 
 SAMPLE_BRIEFING = {
-    "id": "brief-1", "user_id": "user-1", "date": "2026-06-20",
-    "title": "Morning Briefing", "summary": "You have 3 tasks today",
-    "priorities": ["Write report", "Gym"], "read": False,
+    "id": "brief-1",
+    "user_id": "user-1",
+    "date": "2026-06-20",
+    "title": "Morning Briefing",
+    "summary": "You have 3 tasks today",
+    "priorities": ["Write report", "Gym"],
+    "read": False,
     "created_at": "2026-06-20T07:00:00",
 }
 
 SAMPLE_MILESTONE = {
-    "id": "ms-1", "user_id": "user-1", "title": "Learn React",
-    "description": "Complete React course", "target_date": "2026-09-01",
-    "status": "in_progress", "progress": 40.0, "category": "frontend",
+    "id": "ms-1",
+    "user_id": "user-1",
+    "title": "Learn React",
+    "description": "Complete React course",
+    "target_date": "2026-09-01",
+    "status": "in_progress",
+    "progress": 40.0,
+    "category": "frontend",
     "created_at": "2026-06-01T12:00:00",
 }
 
 SAMPLE_MEMORY = {
-    "id": "mem-1", "user_id": "user-1", "type": "preference",
-    "key": "pref_theme", "value": "dark", "importance": "medium",
-    "created_at": "2026-06-01T12:00:00", "updated_at": "2026-06-01T12:00:00",
+    "id": "mem-1",
+    "user_id": "user-1",
+    "type": "preference",
+    "key": "pref_theme",
+    "value": "dark",
+    "importance": "medium",
+    "created_at": "2026-06-01T12:00:00",
+    "updated_at": "2026-06-01T12:00:00",
 }
 
 SAMPLE_SUBJECT = {
-    "id": "sub-1", "user_id": "user-1", "name": "Data Structures",
-    "code": "CS201", "semester": "3rd", "created_at": "2026-01-15T00:00:00",
+    "id": "sub-1",
+    "user_id": "user-1",
+    "name": "Data Structures",
+    "code": "CS201",
+    "semester": "3rd",
+    "created_at": "2026-01-15T00:00:00",
 }
 
 SAMPLE_MARK = {
-    "id": "mark-1", "user_id": "user-1", "subject_id": "sub-1",
-    "exam_type": "Midterm", "marks_obtained": 85.0, "max_marks": 100.0,
-    "date": "2026-03-15", "created_at": "2026-03-15T00:00:00",
+    "id": "mark-1",
+    "user_id": "user-1",
+    "subject_id": "sub-1",
+    "exam_type": "Midterm",
+    "marks_obtained": 85.0,
+    "max_marks": 100.0,
+    "date": "2026-03-15",
+    "created_at": "2026-03-15T00:00:00",
 }
 
 SAMPLE_REVIEW = {
-    "id": "rev-1", "user_id": "user-1",
-    "week_start": "2026-06-15", "week_end": "2026-06-21",
-    "title": "Weekly Review", "summary": "Good week",
-    "read": False, "created_at": "2026-06-21T20:00:00",
+    "id": "rev-1",
+    "user_id": "user-1",
+    "week_start": "2026-06-15",
+    "week_end": "2026-06-21",
+    "title": "Weekly Review",
+    "summary": "Good week",
+    "read": False,
+    "created_at": "2026-06-21T20:00:00",
 }
 
 SAMPLE_ROADMAP = {
-    "id": "rm-1", "user_id": "user-1", "skill": "Python",
-    "category": "programming", "target_date": "2026-08-01",
-    "progress": 50.0, "status": "in_progress", "is_recommended": True,
-    "created_at": "2026-06-01T12:00:00", "updated_at": "2026-06-15T12:00:00",
+    "id": "rm-1",
+    "user_id": "user-1",
+    "skill": "Python",
+    "category": "programming",
+    "target_date": "2026-08-01",
+    "progress": 50.0,
+    "status": "in_progress",
+    "is_recommended": True,
+    "created_at": "2026-06-01T12:00:00",
+    "updated_at": "2026-06-15T12:00:00",
 }
 
 SAMPLE_LEARNING_PROGRESS = {
-    "id": "lp-1", "user_id": "user-1", "date": "2026-06-20",
-    "completion_rate": 75.0, "courses_active": 2, "habits_streak": 10,
-    "focus_minutes": 120, "sleep_score": 80,
+    "id": "lp-1",
+    "user_id": "user-1",
+    "date": "2026-06-20",
+    "completion_rate": 75.0,
+    "courses_active": 2,
+    "habits_streak": 10,
+    "focus_minutes": 120,
+    "sleep_score": 80,
 }
 
 
@@ -465,11 +572,15 @@ class TestPredictionEndpoints:
     def test_predict_sleep_with_trend_improving(self, client, mock_supabase):
         logs = []
         for i in range(21):
-            logs.append({
-                **SAMPLE_SLEEP_LOG, "id": f"sleep-{i}",
-                "sleep_score": 60 + (i if i >= 14 else 0),
-                "duration_hours": 7.0, "date": f"2026-06-{i+1:02d}",
-            })
+            logs.append(
+                {
+                    **SAMPLE_SLEEP_LOG,
+                    "id": f"sleep-{i}",
+                    "sleep_score": 60 + (i if i >= 14 else 0),
+                    "duration_hours": 7.0,
+                    "date": f"2026-06-{i+1:02d}",
+                }
+            )
         _cfg(mock_supabase, logs)
         resp = client.get("/api/v1/predictions/sleep", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -484,86 +595,77 @@ class TestPredictionEndpoints:
 class TestNLPEndpoints:
 
     def test_parse_create_task_slash(self, client, mock_suppress_nlp=None):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "/new task Buy groceries tomorrow high priority"
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse", json={"text": "/new task Buy groceries tomorrow high priority"}, headers=_AUTH_HEADER
+        )
         assert resp.status_code == 200
         body = resp.json()
         assert body["type"] == "create_task"
         assert body["confidence"] >= 0.8
 
     def test_parse_navigate_slash(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "/go tasks"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "/go tasks"}, headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
         assert body["type"] == "navigate"
         assert body["navigation"] == "/dashboard/tasks"
 
     def test_parse_navigate_natural(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "show me my habits"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "show me my habits"}, headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
         assert body["type"] == "navigate"
 
     def test_parse_create_task_natural(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "create a task to finish homework"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "create a task to finish homework"}, headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
         assert body["type"] == "create_task"
         assert "homework" in body["task"]["title"]
 
     def test_parse_unknown(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "what is the meaning of life"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "what is the meaning of life"}, headers=_AUTH_HEADER)
         assert resp.status_code == 200
         assert resp.json()["type"] == "unknown"
 
     def test_parse_priority_high(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "urgent task to fix login bug"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "urgent task to fix login bug"}, headers=_AUTH_HEADER)
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["priority"] == "high"
 
     def test_parse_priority_low(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "someday organize bookshelf"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "someday organize bookshelf"}, headers=_AUTH_HEADER)
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["priority"] == "low"
 
     def test_parse_date_today(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "remind me to call dentist today"
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/nlp/parse", json={"text": "remind me to call dentist today"}, headers=_AUTH_HEADER)
         body = resp.json()
         if body["type"] == "create_task":
             from datetime import datetime
+
             assert body["task"]["due_date"] == datetime.now().strftime("%Y-%m-%d")
 
     def test_parse_minutes(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "add task to review PR (30 minutes)"
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse", json={"text": "add task to review PR (30 minutes)"}, headers=_AUTH_HEADER
+        )
         body = resp.json()
         if body["type"] == "create_task" and body["task"]["estimated_minutes"]:
             assert body["task"]["estimated_minutes"] == 30
 
     def test_execute_create_task(self, client, mock_supabase):
         _cfg(mock_supabase, [{"id": "new-task-1"}])
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "create_task",
-            "task": {"title": "Test task", "priority": "high"},
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "create_task",
+                "task": {"title": "Test task", "priority": "high"},
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["success"] is True
 
@@ -571,25 +673,37 @@ class TestNLPEndpoints:
         """Simulate DB insert failure in execute_command create_task path."""
         mock_supabase.table.side_effect = Exception("insert failed")
         mock_supabase.from_.side_effect = Exception("insert failed")
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "create_task",
-            "task": {"title": "Fail task"},
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "create_task",
+                "task": {"title": "Fail task"},
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 500
 
     def test_execute_navigate(self, client):
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "navigate",
-            "navigation": "/dashboard/tasks",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "navigate",
+                "navigation": "/dashboard/tasks",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["success"] is True
         assert resp.json()["redirect_url"] == "/dashboard/tasks"
 
     def test_execute_unknown(self, client):
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "unknown",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "unknown",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["success"] is False
 
@@ -658,18 +772,29 @@ class TestNotificationEndpoints:
     def test_generate_nudges(self, client, mock_supabase):
         def from_side(table):
             if table == "tasks":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_TASK_PENDING,
-                    "due_date": "2020-01-01T00:00:00",
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_TASK_PENDING,
+                            "due_date": "2020-01-01T00:00:00",
+                        }
+                    ]
+                )
             if table == "habits":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_HABIT, "current_streak": 0, "consistency_percent": 20,
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_HABIT,
+                            "current_streak": 0,
+                            "consistency_percent": 20,
+                        }
+                    ]
+                )
             if table == "sleep_logs":
                 scores = [{"sleep_score": 50 + i, "date": f"2026-06-{i+1:02d}"} for i in range(14)]
                 return MockQueryBuilder(return_data=scores)
             return MockQueryBuilder(return_data=[])
+
         mock_supabase.from_.side_effect = from_side
         resp = client.post("/api/v1/notifications/generate", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -719,9 +844,12 @@ class TestNotificationEndpoints:
 class TestAnalyticsEndpoints:
 
     def test_daily_summary(self, client, mock_supabase):
-        _cfg(mock_supabase, [
-            {"sleep_score": 82, "duration_hours": 7.5},
-        ])
+        _cfg(
+            mock_supabase,
+            [
+                {"sleep_score": 82, "duration_hours": 7.5},
+            ],
+        )
         resp = client.get("/api/v1/analytics/daily?date=2026-06-20", headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -734,10 +862,13 @@ class TestAnalyticsEndpoints:
         assert resp.status_code == 422
 
     def test_weekly_trends(self, client, mock_supabase):
-        _cfg(mock_supabase, [
-            {"status": "completed"},
-            {"status": "pending"},
-        ])
+        _cfg(
+            mock_supabase,
+            [
+                {"status": "completed"},
+                {"status": "pending"},
+            ],
+        )
         resp = client.get("/api/v1/analytics/weekly?week_start=2026-06-15", headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -755,7 +886,11 @@ class TestAnalyticsEndpoints:
             if table == "tasks":
                 return MockQueryBuilder(return_data=[{"status": "completed", "priority": "high"}])
             if table == "habits":
-                return MockQueryBuilder(return_data=[{"is_active": True, "current_streak": 5, "best_streak": 10, "consistency_percentage": 70.0}])
+                return MockQueryBuilder(
+                    return_data=[
+                        {"is_active": True, "current_streak": 5, "best_streak": 10, "consistency_percentage": 70.0}
+                    ]
+                )
             if table == "sleep_logs":
                 return MockQueryBuilder(return_data=[{"duration_hours": 7.5, "sleep_score": 80, "sleep_debt": 0.5}])
             if table == "time_entries":
@@ -848,17 +983,15 @@ class TestPromptEndpoints:
         assert resp.status_code == 404
 
     def test_render_prompt(self, client):
-        resp = client.post("/api/v1/prompts/briefing_agent/render", json={
-            "variables": {"name": "Alice"}
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/prompts/briefing_agent/render", json={"variables": {"name": "Alice"}}, headers=_AUTH_HEADER
+        )
         assert resp.status_code == 200
         body = resp.json()
         assert "rendered" in body
 
     def test_render_prompt_not_found(self, client):
-        resp = client.post("/api/v1/prompts/nonexistent/render", json={
-            "variables": {}
-        }, headers=_AUTH_HEADER)
+        resp = client.post("/api/v1/prompts/nonexistent/render", json={"variables": {}}, headers=_AUTH_HEADER)
         assert resp.status_code == 404
 
     def test_render_prompt_no_variables(self, client):
@@ -871,9 +1004,9 @@ class TestPromptEndpoints:
             mock_entry = MagicMock()
             mock_entry.render.side_effect = KeyError("missing_var")
             mock_ps.get.return_value = mock_entry
-            resp = client.post("/api/v1/prompts/briefing_agent/render", json={
-                "variables": {"foo": "bar"}
-            }, headers=_AUTH_HEADER)
+            resp = client.post(
+                "/api/v1/prompts/briefing_agent/render", json={"variables": {"foo": "bar"}}, headers=_AUTH_HEADER
+            )
             assert resp.status_code == 422
 
     def test_get_prompt_history(self, client):
@@ -926,6 +1059,7 @@ class TestDataExportEndpoints:
             if table in ("tasks", "courses", "habits"):
                 return MockQueryBuilder(return_data=[{"id": f"{table}-1", "user_id": "user-1"}])
             return MockQueryBuilder(return_data=[])
+
         mock_supabase.from_.side_effect = from_side
         resp = client.get("/api/v1/data/export", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -978,7 +1112,11 @@ class TestAutomationAdvancedEndpoints:
             "app.api.automation.analyze_sleep": {"status": "ok"},
             "app.api.automation.suggest_bedtime": {"status": "ok", "bedtime": "22:00"},
             "app.api.automation.run_all_nudges": {"status": "ok", "nudges": 3},
-            "app.api.automation.run_data_retention_cleanup": {"audit_logs_removed": 5, "chat_messages_removed": 10, "notifications_removed": 3},
+            "app.api.automation.run_data_retention_cleanup": {
+                "audit_logs_removed": 5,
+                "chat_messages_removed": 10,
+                "notifications_removed": 3,
+            },
         }
         for target, retval in targets.items():
             p = patch(target, new=AsyncMock(return_value=retval))
@@ -1038,19 +1176,27 @@ class TestVideoEndpoints:
 
     def test_create_video(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_VIDEO])
-        resp = client.post("/api/v1/videos/", json={
-            "url": "https://youtube.com/watch?v=new",
-            "title": "New Video",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/videos/",
+            json={
+                "url": "https://youtube.com/watch?v=new",
+                "title": "New Video",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["id"] == "vid-1"
 
     def test_create_video_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/videos/", json={
-            "url": "https://youtube.com/watch?v=fail",
-            "title": "Fail",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/videos/",
+            json={
+                "url": "https://youtube.com/watch?v=fail",
+                "title": "Fail",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_video(self, client, mock_supabase):
@@ -1184,17 +1330,27 @@ class TestRoadmapEndpoints:
 
     def test_create_milestone(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_ROADMAP])
-        resp = client.post("/api/v1/roadmap/", json={
-            "skill": "Docker", "category": "devops",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/roadmap/",
+            json={
+                "skill": "Docker",
+                "category": "devops",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["id"] == "rm-1"
 
     def test_create_milestone_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/roadmap/", json={
-            "skill": "Fail", "category": "x",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/roadmap/",
+            json={
+                "skill": "Fail",
+                "category": "x",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_milestone(self, client, mock_supabase):
@@ -1258,17 +1414,29 @@ class TestMemoryEndpoints:
 
     def test_create_memory(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_MEMORY])
-        resp = client.post("/api/v1/memory/", json={
-            "type": "preference", "key": "theme", "value": "dark",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/memory/",
+            json={
+                "type": "preference",
+                "key": "theme",
+                "value": "dark",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["key"] == "pref_theme"
 
     def test_create_memory_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/memory/", json={
-            "type": "preference", "key": "x", "value": "y",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/memory/",
+            json={
+                "type": "preference",
+                "key": "x",
+                "value": "y",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_memory(self, client, mock_supabase):
@@ -1300,7 +1468,9 @@ class TestMemoryEndpoints:
         assert client.get("/api/v1/memory/").status_code == 401
 
     def test_consolidate_memories_error(self, client):
-        with patch("ai.agents.memory_agent.consolidate_memories", new=AsyncMock(side_effect=Exception("consolidation failed"))):
+        with patch(
+            "ai.agents.memory_agent.consolidate_memories", new=AsyncMock(side_effect=Exception("consolidation failed"))
+        ):
             resp = client.post("/api/v1/memory/consolidate", headers=_AUTH_HEADER)
             assert resp.status_code == 200
             data = resp.json()
@@ -1315,17 +1485,30 @@ class TestMemoryEndpoints:
             assert data["data"]["memories"] == []
 
     def test_consolidate_memories_success(self, client):
-        with patch("ai.agents.memory_agent.consolidate_memories", new=AsyncMock(return_value={
-            "consolidation_type": "full", "memories_created": 2,
-        })):
+        with patch(
+            "ai.agents.memory_agent.consolidate_memories",
+            new=AsyncMock(
+                return_value={
+                    "consolidation_type": "full",
+                    "memories_created": 2,
+                }
+            ),
+        ):
             resp = client.post("/api/v1/memory/consolidate", headers=_AUTH_HEADER)
             assert resp.status_code == 200
             assert resp.json()["data"]["memories_created"] == 2
 
     def test_search_memory_success(self, client):
-        with patch("app.api.memory.search_memory_orchestrator", new=AsyncMock(return_value={
-            "memories": [{"id": "m1"}], "preferences": {}, "summary": "found",
-        })):
+        with patch(
+            "app.api.memory.search_memory_orchestrator",
+            new=AsyncMock(
+                return_value={
+                    "memories": [{"id": "m1"}],
+                    "preferences": {},
+                    "summary": "found",
+                }
+            ),
+        ):
             resp = client.post("/api/v1/memory/search", json={"query": "test"}, headers=_AUTH_HEADER)
             assert resp.status_code == 200
             assert resp.json()["data"]["memories"][0]["id"] == "m1"
@@ -1352,17 +1535,26 @@ class TestAcademicEndpoints:
 
     def test_create_subject(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_SUBJECT])
-        resp = client.post("/api/v1/academics/subjects", json={
-            "name": "Algorithms", "code": "CS301",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/academics/subjects",
+            json={
+                "name": "Algorithms",
+                "code": "CS301",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["name"] == "Data Structures"
 
     def test_create_subject_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/academics/subjects", json={
-            "name": "Fail",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/academics/subjects",
+            json={
+                "name": "Fail",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_delete_subject(self, client, mock_supabase):
@@ -1388,19 +1580,33 @@ class TestAcademicEndpoints:
 
     def test_create_mark(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_MARK])
-        resp = client.post("/api/v1/academics/marks", json={
-            "subject_id": "sub-1", "exam_type": "Final",
-            "marks_obtained": 90, "max_marks": 100, "date": "2026-06-20",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/academics/marks",
+            json={
+                "subject_id": "sub-1",
+                "exam_type": "Final",
+                "marks_obtained": 90,
+                "max_marks": 100,
+                "date": "2026-06-20",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["id"] == "mark-1"
 
     def test_create_mark_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/academics/marks", json={
-            "subject_id": "x", "exam_type": "Final",
-            "marks_obtained": 90, "max_marks": 100, "date": "2026-06-20",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/academics/marks",
+            json={
+                "subject_id": "x",
+                "exam_type": "Final",
+                "marks_obtained": 90,
+                "max_marks": 100,
+                "date": "2026-06-20",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_delete_mark(self, client, mock_supabase):
@@ -1516,9 +1722,15 @@ class TestMonitoringEdgeCases:
     def test_record_token_usage_db_error_still_ok(self, client, mock_supabase):
         """Even if DB insert fails, endpoint returns 200 with status ok."""
         mock_supabase.from_.side_effect = Exception("DB error")
-        resp = client.post("/api/v1/monitoring/token-usage", json={
-            "agent": "test", "prompt_tokens": 100, "completion_tokens": 50,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/monitoring/token-usage",
+            json={
+                "agent": "test",
+                "prompt_tokens": 100,
+                "completion_tokens": 50,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["status"] == "ok"
 
@@ -1557,9 +1769,15 @@ class TestFeedbackEdgeCases:
     def test_submit_feedback_db_error(self, client, mock_supabase):
         """Feedback submission failure should return 500."""
         mock_supabase.from_.side_effect = Exception("DB error")
-        resp = client.post("/api/v1/feedback/", json={
-            "source": "chat", "target_id": "msg-1", "rating": 4,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/feedback/",
+            json={
+                "source": "chat",
+                "target_id": "msg-1",
+                "rating": 4,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 500
 
     def test_summary_empty(self, client, mock_supabase):
@@ -1576,12 +1794,15 @@ class TestFeedbackEdgeCases:
         assert body["total"] == 0
 
     def test_summary_mixed_ratings(self, client, mock_supabase):
-        _cfg(mock_supabase, [
-            {"id": "1", "source": "chat", "rating": 5},
-            {"id": "2", "source": "chat", "rating": 1},
-            {"id": "3", "source": "briefing", "rating": 4},
-            {"id": "4", "source": "briefing", "rating": 2},
-        ])
+        _cfg(
+            mock_supabase,
+            [
+                {"id": "1", "source": "chat", "rating": 5},
+                {"id": "2", "source": "chat", "rating": 1},
+                {"id": "3", "source": "briefing", "rating": 4},
+                {"id": "4", "source": "briefing", "rating": 2},
+            ],
+        )
         resp = client.get("/api/v1/feedback/summary", headers=_AUTH_HEADER)
         body = resp.json()
         assert body["total"] == 4
@@ -1595,54 +1816,88 @@ class TestFeedbackEdgeCases:
 # ===========================================================================
 
 SAMPLE_COURSE = {
-    "id": "course-1", "user_id": "user-1", "title": "React Masterclass",
-    "platform": "Udemy", "url": "https://udemy.com/course/react",
-    "status": "in_progress", "progress_percent": 40,
-    "total_videos": 50, "completed_videos": 20,
-    "deadline": None, "created_at": "2026-06-01T12:00:00",
+    "id": "course-1",
+    "user_id": "user-1",
+    "title": "React Masterclass",
+    "platform": "Udemy",
+    "url": "https://udemy.com/course/react",
+    "status": "in_progress",
+    "progress_percent": 40,
+    "total_videos": 50,
+    "completed_videos": 20,
+    "deadline": None,
+    "created_at": "2026-06-01T12:00:00",
     "updated_at": "2026-06-15T12:00:00",
 }
 
 SAMPLE_GOAL = {
-    "id": "goal-1", "user_id": "user-1", "title": "Learn Machine Learning",
-    "description": "Complete ML specialization", "status": "active",
-    "progress": 30, "target_date": "2026-12-31", "category": "learning",
-    "created_at": "2026-06-01T12:00:00", "updated_at": "2026-06-15T12:00:00",
+    "id": "goal-1",
+    "user_id": "user-1",
+    "title": "Learn Machine Learning",
+    "description": "Complete ML specialization",
+    "status": "active",
+    "progress": 30,
+    "target_date": "2026-12-31",
+    "category": "learning",
+    "created_at": "2026-06-01T12:00:00",
+    "updated_at": "2026-06-15T12:00:00",
 }
 
 SAMPLE_IDEA = {
-    "id": "idea-1", "user_id": "user-1", "title": "Build a chatbot",
-    "description": "AI chatbot for customer support", "stage": "validating",
-    "status": "raw", "market_research": None, "competitors": None,
-    "created_at": "2026-06-01T12:00:00", "updated_at": None,
+    "id": "idea-1",
+    "user_id": "user-1",
+    "title": "Build a chatbot",
+    "description": "AI chatbot for customer support",
+    "stage": "validating",
+    "status": "raw",
+    "market_research": None,
+    "competitors": None,
+    "created_at": "2026-06-01T12:00:00",
+    "updated_at": None,
 }
 
 SAMPLE_INCOME = {
-    "id": "income-1", "user_id": "user-1", "amount": 500.0,
-    "source_type": "Freelance", "platform": None,
-    "description": None, "date": "2026-06-15",
-    "hours_spent": 10.0, "effective_hourly_rate": 50.0,
+    "id": "income-1",
+    "user_id": "user-1",
+    "amount": 500.0,
+    "source_type": "Freelance",
+    "platform": None,
+    "description": None,
+    "date": "2026-06-15",
+    "hours_spent": 10.0,
+    "effective_hourly_rate": 50.0,
     "created_at": "2026-06-15T12:00:00",
 }
 
 SAMPLE_OPPORTUNITY = {
-    "id": "opp-1", "user_id": "user-1", "title": "Software Engineer Intern",
-    "url": "https://company.com/jobs", "match_score": 85,
-    "status": "new", "category": "internship",
+    "id": "opp-1",
+    "user_id": "user-1",
+    "title": "Software Engineer Intern",
+    "url": "https://company.com/jobs",
+    "match_score": 85,
+    "status": "new",
+    "category": "internship",
     "created_at": "2026-06-01T12:00:00",
 }
 
 SAMPLE_PROJECT = {
-    "id": "project-1", "user_id": "user-1", "title": "Portfolio Site",
-    "status": "in_progress", "phase": "development",
-    "blockers": None, "repo_url": "https://github.com/user/portfolio",
+    "id": "project-1",
+    "user_id": "user-1",
+    "title": "Portfolio Site",
+    "status": "in_progress",
+    "phase": "development",
+    "blockers": None,
+    "repo_url": "https://github.com/user/portfolio",
     "created_at": "2026-06-01T12:00:00",
     "updated_at": "2026-06-15T12:00:00",
 }
 
 SAMPLE_RESOURCE = {
-    "id": "res-1", "user_id": "user-1", "title": "FastAPI Docs",
-    "url": "https://fastapi.tiangolo.com", "tags": ["python", "api"],
+    "id": "res-1",
+    "user_id": "user-1",
+    "title": "FastAPI Docs",
+    "url": "https://fastapi.tiangolo.com",
+    "tags": ["python", "api"],
     "created_at": "2026-06-01T12:00:00",
 }
 
@@ -1670,6 +1925,7 @@ class TestPredictionAdvancedEdgeCases:
 
     def test_predict_tasks_due_today(self, client, mock_supabase):
         from datetime import datetime, timezone
+
         today = datetime.now(timezone.utc).isoformat()
         task = {**SAMPLE_TASK_PENDING, "due_date": today}
         _cfg(mock_supabase, [task, SAMPLE_TASK_COMPLETED])
@@ -1678,6 +1934,7 @@ class TestPredictionAdvancedEdgeCases:
 
     def test_predict_tasks_due_within_3_days(self, client, mock_supabase):
         from datetime import datetime, timezone, timedelta
+
         future = (datetime.now(timezone.utc) + timedelta(days=2)).isoformat()
         task = {**SAMPLE_TASK_PENDING, "due_date": future}
         _cfg(mock_supabase, [task, SAMPLE_TASK_COMPLETED])
@@ -1714,11 +1971,15 @@ class TestPredictionAdvancedEdgeCases:
         """Data is returned by mock in DESC date order (newest first)."""
         logs = []
         for i in reversed(range(21)):
-            logs.append({
-                **SAMPLE_SLEEP_LOG, "id": f"sleep-{i}",
-                "sleep_score": 50 + (i if i >= 14 else 0),
-                "duration_hours": 7.0, "date": f"2026-06-{i+1:02d}",
-            })
+            logs.append(
+                {
+                    **SAMPLE_SLEEP_LOG,
+                    "id": f"sleep-{i}",
+                    "sleep_score": 50 + (i if i >= 14 else 0),
+                    "duration_hours": 7.0,
+                    "date": f"2026-06-{i+1:02d}",
+                }
+            )
         _cfg(mock_supabase, logs)
         resp = client.get("/api/v1/predictions/sleep", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -1727,11 +1988,15 @@ class TestPredictionAdvancedEdgeCases:
     def test_predict_sleep_trend_declining(self, client, mock_supabase):
         logs = []
         for i in reversed(range(21)):
-            logs.append({
-                **SAMPLE_SLEEP_LOG, "id": f"sleep-{i}",
-                "sleep_score": 80 - (i if i >= 14 else 0),
-                "duration_hours": 7.0, "date": f"2026-06-{i+1:02d}",
-            })
+            logs.append(
+                {
+                    **SAMPLE_SLEEP_LOG,
+                    "id": f"sleep-{i}",
+                    "sleep_score": 80 - (i if i >= 14 else 0),
+                    "duration_hours": 7.0,
+                    "date": f"2026-06-{i+1:02d}",
+                }
+            )
         _cfg(mock_supabase, logs)
         resp = client.get("/api/v1/predictions/sleep", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -1784,9 +2049,14 @@ class TestNotificationAdvancedEdgeCases:
         def from_side(table):
             call_count[0] += 1
             if table == "tasks":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_TASK_PENDING,
+                            "due_date": "2020-01-01T00:00:00",
+                        }
+                    ]
+                )
             if call_count[0] >= 2:
                 raise Exception("DB error on insert")
             return MockQueryBuilder(return_data=[])
@@ -1801,17 +2071,34 @@ class TestNotificationAdvancedEdgeCases:
         def from_side(table):
             call_count[0] += 1
             if table == "tasks":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_TASK_PENDING,
+                            "due_date": "2020-01-01T00:00:00",
+                        }
+                    ]
+                )
             if call_count[0] == 2:
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_HABIT, "current_streak": 10,
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_HABIT,
+                            "current_streak": 10,
+                        }
+                    ]
+                )
             if call_count[0] == 3:
-                return MockQueryBuilder(return_data=[{
-                    "id": "sl-1", "sleep_score": 50, "date": "2026-06-01",
-                } for _ in range(14)])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            "id": "sl-1",
+                            "sleep_score": 50,
+                            "date": "2026-06-01",
+                        }
+                        for _ in range(14)
+                    ]
+                )
             if call_count[0] >= 4:
                 raise Exception("DB error on sleep insert")
             return MockQueryBuilder(return_data=[])
@@ -1848,6 +2135,7 @@ class TestNotificationAdvancedEdgeCases:
 
     def test_deadline_alerts_upcoming(self, client, mock_supabase):
         from datetime import datetime, timezone, timedelta
+
         task = {
             **SAMPLE_TASK_PENDING,
             "due_date": (datetime.now(timezone.utc) + timedelta(hours=12)).isoformat(),
@@ -1861,6 +2149,7 @@ class TestNotificationAdvancedEdgeCases:
 
     def test_deadline_alerts_naive_datetime(self, client, mock_supabase):
         from datetime import datetime, timedelta
+
         task = {
             **SAMPLE_TASK_PENDING,
             "due_date": (datetime.utcnow() + timedelta(hours=12)).isoformat(),
@@ -1877,14 +2166,26 @@ class TestNotificationAdvancedEdgeCases:
         def from_side(table):
             call_count[0] += 1
             if table == "tasks":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_TASK_PENDING,
+                            "due_date": "2020-01-01T00:00:00",
+                        }
+                    ]
+                )
             if table == "habits":
-                return MockQueryBuilder(return_data=[{
-                    "id": "h-1", "name": "Meditation", "current_streak": 0,
-                    "consistency_percent": 30, "is_active": True,
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            "id": "h-1",
+                            "name": "Meditation",
+                            "current_streak": 0,
+                            "consistency_percent": 30,
+                            "is_active": True,
+                        }
+                    ]
+                )
             if table == "sleep_logs":
                 return MockQueryBuilder(return_data=[])
             if call_count[0] >= 5:
@@ -1901,18 +2202,22 @@ class TestNotificationAdvancedEdgeCases:
         def from_side(table):
             call_count[0] += 1
             if table == "tasks":
-                return MockQueryBuilder(return_data=[{
-                    **SAMPLE_TASK_PENDING, "due_date": "2020-01-01T00:00:00",
-                }])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            **SAMPLE_TASK_PENDING,
+                            "due_date": "2020-01-01T00:00:00",
+                        }
+                    ]
+                )
             if table == "habits":
                 return MockQueryBuilder(return_data=[])
             if table == "sleep_logs":
                 # Most recent 7 scores low (declining), older 7 high
-                return MockQueryBuilder(return_data=[
-                    {"sleep_score": 70, "date": f"2026-06-{14-i:02d}"} for i in range(7)
-                ] + [
-                    {"sleep_score": 85, "date": f"2026-06-{7-i:02d}"} for i in range(7)
-                ])
+                return MockQueryBuilder(
+                    return_data=[{"sleep_score": 70, "date": f"2026-06-{14-i:02d}"} for i in range(7)]
+                    + [{"sleep_score": 85, "date": f"2026-06-{7-i:02d}"} for i in range(7)]
+                )
             if call_count[0] >= 5:
                 raise Exception("DB error on sleep insert")
             return MockQueryBuilder(return_data=[])
@@ -1949,6 +2254,7 @@ class TestAuthRoutes:
 
     def test_refresh_token_http_error_re_raised(self, client):
         from fastapi import HTTPException
+
         with patch("app.api.auth.refresh_jwt_token", side_effect=HTTPException(401, "bad token")):
             resp = client.post("/api/v1/auth/refresh", json={"refresh_token": "bad"}, headers=_AUTH_HEADER)
             assert resp.status_code == 401
@@ -1962,8 +2268,11 @@ class TestAuthRoutes:
         class NoIdUser:
             class Inner:
                 pass
+
             user = Inner()
+
         from config.core.auth import get_current_user
+
         app.dependency_overrides[get_current_user] = lambda: NoIdUser()
         resp = client.post("/api/v1/auth/rotate-key", headers=_AUTH_HEADER)
         assert resp.status_code == 401
@@ -1988,7 +2297,11 @@ class TestAutomationRateLimitEdgeCases:
             "app.api.automation.analyze_sleep": {"status": "ok"},
             "app.api.automation.suggest_bedtime": {"status": "ok", "bedtime": "22:00"},
             "app.api.automation.run_all_nudges": {"status": "ok", "nudges": 3},
-            "app.api.automation.run_data_retention_cleanup": {"audit_logs_removed": 5, "chat_messages_removed": 10, "notifications_removed": 3},
+            "app.api.automation.run_data_retention_cleanup": {
+                "audit_logs_removed": 5,
+                "chat_messages_removed": 10,
+                "notifications_removed": 3,
+            },
         }
         for target, retval in targets.items():
             p = patch(target, new=AsyncMock(return_value=retval))
@@ -2110,9 +2423,13 @@ class TestPromptAdvancedEdgeCases:
             mock_entry.render.side_effect = RuntimeError("render crash")
             mock_pm.get.return_value = mock_entry
             mock_pm.list_prompts.return_value = ["briefing_agent"]
-            resp = client.post("/api/v1/prompts/briefing_agent/render", json={
-                "variables": {"x": "y"},
-            }, headers=_AUTH_HEADER)
+            resp = client.post(
+                "/api/v1/prompts/briefing_agent/render",
+                json={
+                    "variables": {"x": "y"},
+                },
+                headers=_AUTH_HEADER,
+            )
             assert resp.status_code == 500
 
     def test_prompt_history_git_timeout(self, client):
@@ -2164,18 +2481,28 @@ class TestCourseEndpoints:
 
     def test_create_course(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_COURSE])
-        resp = client.post("/api/v1/courses/", json={
-            "title": "Vue Basics", "platform": "YouTube",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/courses/",
+            json={
+                "title": "Vue Basics",
+                "platform": "YouTube",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["id"] == "course-1"
 
     def test_create_course_with_deadline(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_COURSE])
-        resp = client.post("/api/v1/courses/", json={
-            "title": "Vue Basics", "platform": "YouTube",
-            "deadline": "2026-12-31T23:59:59Z",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/courses/",
+            json={
+                "title": "Vue Basics",
+                "platform": "YouTube",
+                "deadline": "2026-12-31T23:59:59Z",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_update_course_invalid_deadline(self, client, mock_supabase):
@@ -2185,9 +2512,14 @@ class TestCourseEndpoints:
 
     def test_create_course_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/courses/", json={
-            "title": "Fail", "platform": "x",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/courses/",
+            json={
+                "title": "Fail",
+                "platform": "x",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_course(self, client, mock_supabase):
@@ -2252,32 +2584,52 @@ class TestGoalEndpoints:
 
     def test_create_goal(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_GOAL])
-        resp = client.post("/api/v1/goals/", json={
-            "title": "Learn Go", "category": "programming",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/goals/",
+            json={
+                "title": "Learn Go",
+                "category": "programming",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_goal_with_target_date(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_GOAL])
-        resp = client.post("/api/v1/goals/", json={
-            "title": "Learn Go", "category": "programming",
-            "target_date": "2026-12-31T23:59:59Z",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/goals/",
+            json={
+                "title": "Learn Go",
+                "category": "programming",
+                "target_date": "2026-12-31T23:59:59Z",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_goal_invalid_target_date(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_GOAL])
-        resp = client.post("/api/v1/goals/", json={
-            "title": "Learn Go", "category": "programming",
-            "target_date": "not-a-date",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/goals/",
+            json={
+                "title": "Learn Go",
+                "category": "programming",
+                "target_date": "not-a-date",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_goal_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/goals/", json={
-            "title": "Fail", "category": "x",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/goals/",
+            json={
+                "title": "Fail",
+                "category": "x",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_goal(self, client, mock_supabase):
@@ -2342,16 +2694,26 @@ class TestHabitEndpoints:
 
     def test_create_habit(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_HABIT])
-        resp = client.post("/api/v1/habits/", json={
-            "name": "Read", "frequency": "daily",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/habits/",
+            json={
+                "name": "Read",
+                "frequency": "daily",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_habit_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/habits/", json={
-            "name": "Fail", "frequency": "daily",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/habits/",
+            json={
+                "name": "Fail",
+                "frequency": "daily",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_habit(self, client, mock_supabase):
@@ -2416,16 +2778,24 @@ class TestIdeaEndpoints:
 
     def test_create_idea(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_IDEA])
-        resp = client.post("/api/v1/ideas/", json={
-            "title": "New app idea",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/ideas/",
+            json={
+                "title": "New app idea",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_idea_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/ideas/", json={
-            "title": "Fail",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/ideas/",
+            json={
+                "title": "Fail",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_idea(self, client, mock_supabase):
@@ -2490,24 +2860,40 @@ class TestIncomeEndpoints:
 
     def test_create_income(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_INCOME])
-        resp = client.post("/api/v1/income/", json={
-            "source_type": "Freelance", "amount": 100, "hours_spent": 5,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/income/",
+            json={
+                "source_type": "Freelance",
+                "amount": 100,
+                "hours_spent": 5,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
         assert resp.json()["effective_hourly_rate"] == 50.0
 
     def test_create_income_no_rate(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_INCOME])
-        resp = client.post("/api/v1/income/", json={
-            "source_type": "Gift", "amount": 100,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/income/",
+            json={
+                "source_type": "Gift",
+                "amount": 100,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_income_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/income/", json={
-            "source_type": "Test", "amount": 50,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/income/",
+            json={
+                "source_type": "Test",
+                "amount": 50,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_income(self, client, mock_supabase):
@@ -2572,16 +2958,26 @@ class TestOpportunityEndpoints:
 
     def test_create_opportunity(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_OPPORTUNITY])
-        resp = client.post("/api/v1/opportunities/", json={
-            "title": "New Job", "url": "https://example.com",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/opportunities/",
+            json={
+                "title": "New Job",
+                "url": "https://example.com",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_opportunity_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/opportunities/", json={
-            "title": "Fail", "url": "https://x.com",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/opportunities/",
+            json={
+                "title": "Fail",
+                "url": "https://x.com",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_opportunity(self, client, mock_supabase):
@@ -2621,9 +3017,15 @@ class TestOpportunityEndpoints:
             assert data["data"]["matches"] == []
 
     def test_match_opportunities_success(self, client):
-        with patch("app.api.opportunities.match_opportunities", new=AsyncMock(return_value={
-            "matches": [{"id": "m1", "score": 95}], "summary": "good fit",
-        })):
+        with patch(
+            "app.api.opportunities.match_opportunities",
+            new=AsyncMock(
+                return_value={
+                    "matches": [{"id": "m1", "score": 95}],
+                    "summary": "good fit",
+                }
+            ),
+        ):
             resp = client.post("/api/v1/opportunities/match", json={"query": "test"}, headers=_AUTH_HEADER)
             assert resp.status_code == 200
             data = resp.json()
@@ -2663,16 +3065,24 @@ class TestProjectEndpoints:
 
     def test_create_project(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_PROJECT])
-        resp = client.post("/api/v1/projects/", json={
-            "title": "New Project",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/projects/",
+            json={
+                "title": "New Project",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_project_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/projects/", json={
-            "title": "Fail",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/projects/",
+            json={
+                "title": "Fail",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_project(self, client, mock_supabase):
@@ -2737,16 +3147,26 @@ class TestResourceEndpoints:
 
     def test_create_resource(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_RESOURCE])
-        resp = client.post("/api/v1/resources/", json={
-            "title": "New Resource", "url": "https://example.com",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/resources/",
+            json={
+                "title": "New Resource",
+                "url": "https://example.com",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_resource_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/resources/", json={
-            "title": "Fail", "url": "https://x.com",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/resources/",
+            json={
+                "title": "Fail",
+                "url": "https://x.com",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_resource(self, client, mock_supabase):
@@ -2826,26 +3246,44 @@ class TestSleepEndpoints:
 
     def test_create_sleep(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_SLEEP_LOG])
-        resp = client.post("/api/v1/sleep/", json={
-            "date": "2026-06-20", "bedtime": "23:00", "wake_time": "07:00",
-            "quality_rating": 4,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/sleep/",
+            json={
+                "date": "2026-06-20",
+                "bedtime": "23:00",
+                "wake_time": "07:00",
+                "quality_rating": 4,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_sleep_crosses_midnight(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_SLEEP_LOG])
-        resp = client.post("/api/v1/sleep/", json={
-            "date": "2026-06-20", "bedtime": "23:00", "wake_time": "06:00",
-            "quality_rating": 3,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/sleep/",
+            json={
+                "date": "2026-06-20",
+                "bedtime": "23:00",
+                "wake_time": "06:00",
+                "quality_rating": 3,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_sleep_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/sleep/", json={
-            "date": "2026-06-20", "bedtime": "23:00", "wake_time": "07:00",
-            "quality_rating": 4,
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/sleep/",
+            json={
+                "date": "2026-06-20",
+                "bedtime": "23:00",
+                "wake_time": "07:00",
+                "quality_rating": 4,
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_delete_sleep(self, client, mock_supabase):
@@ -2895,19 +3333,27 @@ class TestTimeEndpoints:
 
     def test_create_time_entry(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_TIME_ENTRY])
-        resp = client.post("/api/v1/time/", json={
-            "start_time": "2026-06-20T09:00:00",
-            "end_time": "2026-06-20T10:30:00",
-            "category": "coding",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/time/",
+            json={
+                "start_time": "2026-06-20T09:00:00",
+                "end_time": "2026-06-20T10:30:00",
+                "category": "coding",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 201
 
     def test_create_time_entry_db_error(self, client, mock_supabase):
         _cfg(mock_supabase, [], error="insert failed")
-        resp = client.post("/api/v1/time/", json={
-            "start_time": "2026-06-20T09:00:00",
-            "end_time": "2026-06-20T10:00:00",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/time/",
+            json={
+                "start_time": "2026-06-20T09:00:00",
+                "end_time": "2026-06-20T10:00:00",
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 400
 
     def test_update_time_entry(self, client, mock_supabase):
@@ -2948,7 +3394,10 @@ class TestTimeEndpoints:
         assert resp.status_code == 200
 
     def test_stop_timer(self, client, mock_supabase):
-        _cfg(mock_supabase, [{**SAMPLE_TIME_ENTRY, "start_time": "2026-06-20T09:00:00", "end_time": "2026-06-20T10:30:00"}])
+        _cfg(
+            mock_supabase,
+            [{**SAMPLE_TIME_ENTRY, "start_time": "2026-06-20T09:00:00", "end_time": "2026-06-20T10:30:00"}],
+        )
         resp = client.post("/api/v1/time/stop?entry_id=time-1", headers=_AUTH_HEADER)
         assert resp.status_code == 201
 
@@ -2976,12 +3425,14 @@ class TestBuildContext:
 
     def test_pending_tasks_over_5_shows_more(self):
         from app.api.chat import build_context
+
         tasks = [{"title": f"Task {i}", "priority": "medium", "due_date": "2026-07-01"} for i in range(10)]
         result = build_context(tasks, [], [], [], [], [], [], {})
         assert "... and 5 more" in result
 
     def test_habits_section(self):
         from app.api.chat import build_context
+
         habits = [{"name": "Meditation", "is_active": True, "current_streak": 15}]
         result = build_context([], [], [], habits, [], [], [], {})
         assert "Habits" in result
@@ -2989,12 +3440,14 @@ class TestBuildContext:
 
     def test_habits_none_active(self):
         from app.api.chat import build_context
+
         habits = [{"name": "Old habit", "is_active": False, "current_streak": 0}]
         result = build_context([], [], [], habits, [], [], [], {})
         assert "Habits" not in result
 
     def test_sleep_section(self):
         from app.api.chat import build_context
+
         logs = [{"sleep_score": 82, "duration_hours": 7.5}]
         result = build_context([], [], [], [], logs, [], [], {})
         assert "Last Sleep" in result
@@ -3002,6 +3455,7 @@ class TestBuildContext:
 
     def test_time_tracking_with_categories(self):
         from app.api.chat import build_context
+
         entries = [
             {"duration_minutes": 90, "category": "development"},
             {"duration_minutes": 30, "category": "meeting"},
@@ -3014,12 +3468,14 @@ class TestBuildContext:
 
     def test_time_tracking_empty_categories(self):
         from app.api.chat import build_context
+
         entries = [{"duration_minutes": 90}]
         result = build_context([], [], [], [], [], entries, [], {})
         assert "Time Tracking" in result
 
     def test_recent_conversation_history(self):
         from app.api.chat import build_context
+
         messages = [
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": "Hi there!"},
@@ -3030,6 +3486,7 @@ class TestBuildContext:
 
     def test_memory_summary_included(self):
         from app.api.chat import build_context
+
         memory = {"summary": "User prefers short answers", "preferences": {"preferred_category": "general"}}
         result = build_context([], [], [], [], [], [], [], memory)
         assert "Memory Context" in result
@@ -3037,6 +3494,7 @@ class TestBuildContext:
 
     def test_goals_section(self):
         from app.api.chat import build_context
+
         goals = [{"title": "Learn Rust", "progress": 45}]
         result = build_context([], goals, [], [], [], [], [], {})
         assert "Active Goals" in result
@@ -3044,18 +3502,21 @@ class TestBuildContext:
 
     def test_courses_in_progress(self):
         from app.api.chat import build_context
+
         courses = [{"title": "ML Course", "status": "in_progress", "progress_percent": 60}]
         result = build_context([], [], courses, [], [], [], [], {})
         assert "Courses In Progress" in result
 
     def test_courses_no_in_progress(self):
         from app.api.chat import build_context
+
         courses = [{"title": "Done", "status": "completed", "progress_percent": 100}]
         result = build_context([], [], courses, [], [], [], [], {})
         assert "Courses In Progress" not in result
 
     def test_message_truncation(self):
         from app.api.chat import build_context
+
         long = "x" * 200
         messages = [{"role": "user", "content": long}]
         result = build_context([], [], [], [], [], [], messages, {})
@@ -3063,6 +3524,7 @@ class TestBuildContext:
 
     def test_courses_field_not_present(self):
         from app.api.chat import build_context
+
         courses = [{"title": "C1"}]
         result = build_context([], [], courses, [], [], [], [], {})
         assert "Courses" not in result or True  # should not crash
@@ -3079,12 +3541,30 @@ class TestChatListConversations:
     def test_list_conversations_multiple(self, client, mock_supabase):
         def from_side(table):
             if table == "chat_messages":
-                return MockQueryBuilder(return_data=[
-                    {"conversation_id": "conv-1", "created_at": "2026-06-20T12:00:00", "content": "Hello ARIA", "role": "user"},
-                    {"conversation_id": "conv-1", "created_at": "2026-06-20T12:00:01", "content": "Hi there!", "role": "assistant"},
-                    {"conversation_id": "conv-2", "created_at": "2026-06-19T10:00:00", "content": "What are my tasks?", "role": "user"},
-                ])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            "conversation_id": "conv-1",
+                            "created_at": "2026-06-20T12:00:00",
+                            "content": "Hello ARIA",
+                            "role": "user",
+                        },
+                        {
+                            "conversation_id": "conv-1",
+                            "created_at": "2026-06-20T12:00:01",
+                            "content": "Hi there!",
+                            "role": "assistant",
+                        },
+                        {
+                            "conversation_id": "conv-2",
+                            "created_at": "2026-06-19T10:00:00",
+                            "content": "What are my tasks?",
+                            "role": "user",
+                        },
+                    ]
+                )
             return MockQueryBuilder(return_data=[])
+
         mock_supabase.from_.side_effect = from_side
         resp = client.get("/api/v1/chat/", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -3097,10 +3577,18 @@ class TestChatListConversations:
     def test_list_conversations_single(self, client, mock_supabase):
         def from_side(table):
             if table == "chat_messages":
-                return MockQueryBuilder(return_data=[
-                    {"conversation_id": None, "created_at": "2026-06-20T12:00:00", "content": "Hello", "role": "user"},
-                ])
+                return MockQueryBuilder(
+                    return_data=[
+                        {
+                            "conversation_id": None,
+                            "created_at": "2026-06-20T12:00:00",
+                            "content": "Hello",
+                            "role": "user",
+                        },
+                    ]
+                )
             return MockQueryBuilder(return_data=[])
+
         mock_supabase.from_.side_effect = from_side
         resp = client.get("/api/v1/chat/", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -3113,6 +3601,7 @@ class TestChatListConversations:
             if table == "chat_messages":
                 return MockQueryBuilder(return_data=[])
             return MockQueryBuilder(return_data=[])
+
         mock_supabase.from_.side_effect = from_side
         resp = client.get("/api/v1/chat/", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -3133,9 +3622,16 @@ class TestChatListConversations:
 # ===========================================================================
 
 
-def _setup_full_chat_mocks(mock_supabase, tasks=None, goals=None, courses=None,
-                            habits=None, sleep_logs=None, time_entries=None,
-                            chat_messages=None):
+def _setup_full_chat_mocks(
+    mock_supabase,
+    tasks=None,
+    goals=None,
+    courses=None,
+    habits=None,
+    sleep_logs=None,
+    time_entries=None,
+    chat_messages=None,
+):
     def side_effect(table):
         builders = {
             "tasks": MockQueryBuilder(return_data=tasks or []),
@@ -3147,6 +3643,7 @@ def _setup_full_chat_mocks(mock_supabase, tasks=None, goals=None, courses=None,
             "chat_messages": MockQueryBuilder(return_data=chat_messages or []),
         }
         return builders.get(table, MockQueryBuilder(return_data=[]))
+
     mock_supabase.from_.side_effect = side_effect
 
 
@@ -3169,10 +3666,14 @@ class TestChatAdvancedEndpoints:
     def test_chat_with_system_override(self, client, mock_supabase):
         _setup_full_chat_mocks(mock_supabase)
         with patch("app.api.chat.llm.generate", new=AsyncMock(return_value="With override")):
-            resp = client.post("/api/v1/chat/", json={
-                "message": "Analyze my day",
-                "context": "Be extra concise",
-            }, headers=_AUTH_HEADER)
+            resp = client.post(
+                "/api/v1/chat/",
+                json={
+                    "message": "Analyze my day",
+                    "context": "Be extra concise",
+                },
+                headers=_AUTH_HEADER,
+            )
         assert resp.status_code == 201
         assert resp.json()["response"] == "With override"
 
@@ -3191,9 +3692,12 @@ class TestChatAdvancedEndpoints:
         assert resp.status_code == 201
 
     def test_chat_habit_fallback(self, client, mock_supabase):
-        _setup_full_chat_mocks(mock_supabase, habits=[
-            {"name": "Meditation", "is_active": True, "current_streak": 15},
-        ])
+        _setup_full_chat_mocks(
+            mock_supabase,
+            habits=[
+                {"name": "Meditation", "is_active": True, "current_streak": 15},
+            ],
+        )
         resp = client.post("/api/v1/chat/", json={"message": "tell me about habits"}, headers=_AUTH_HEADER)
         assert resp.status_code == 201
         assert "active habits" in resp.json()["response"].lower()
@@ -3205,9 +3709,12 @@ class TestChatAdvancedEndpoints:
         assert "no habits" in resp.json()["response"].lower()
 
     def test_chat_courses_fallback_in_progress(self, client, mock_supabase):
-        _setup_full_chat_mocks(mock_supabase, courses=[
-            {"title": "ML Course", "status": "in_progress"},
-        ])
+        _setup_full_chat_mocks(
+            mock_supabase,
+            courses=[
+                {"title": "ML Course", "status": "in_progress"},
+            ],
+        )
         resp = client.post("/api/v1/chat/", json={"message": "courses update"}, headers=_AUTH_HEADER)
         assert resp.status_code == 201
         assert "currently taking" in resp.json()["response"].lower()
@@ -3232,8 +3739,15 @@ class TestChatAdvancedEndpoints:
         habits = [{"name": "Read", "is_active": True, "current_streak": 7}]
         sleep_logs = [{"sleep_score": 80, "duration_hours": 7.0}]
         time_entries = [{"duration_minutes": 120, "category": "coding"}]
-        _setup_full_chat_mocks(mock_supabase, tasks=tasks, goals=goals, courses=courses,
-                                habits=habits, sleep_logs=sleep_logs, time_entries=time_entries)
+        _setup_full_chat_mocks(
+            mock_supabase,
+            tasks=tasks,
+            goals=goals,
+            courses=courses,
+            habits=habits,
+            sleep_logs=sleep_logs,
+            time_entries=time_entries,
+        )
         with patch("app.api.chat.llm.generate", new=AsyncMock(return_value="Full context response")):
             resp = client.post("/api/v1/chat/", json={"message": "give me a summary"}, headers=_AUTH_HEADER)
         assert resp.status_code == 201
@@ -3257,135 +3771,200 @@ class TestChatAdvancedEndpoints:
 class TestNLPExtended:
 
     def test_parse_date_tomorrow(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "create a task to study tomorrow",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "create a task to study tomorrow",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             from datetime import datetime, timedelta
+
             expected = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
             assert body["task"]["due_date"] == expected
 
     def test_parse_date_day_name(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "remind me to submit assignment on monday",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "remind me to submit assignment on monday",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["due_date"] is not None
 
     def test_parse_date_relative_days(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "create task finish project in 3 days",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "create task finish project in 3 days",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["due_date"] is not None
 
     def test_parse_date_relative_weeks(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "add task review code in 2 weeks",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "add task review code in 2 weeks",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["due_date"] is not None
 
     def test_parse_date_mm_dd_yyyy(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "create task buy gift 12/25/2026",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "create task buy gift 12/25/2026",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["due_date"] == "2026-12-25"
 
     def test_parse_date_mm_dd_yy(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "add task renew license 1/15/26",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "add task renew license 1/15/26",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task":
             assert body["task"]["due_date"] == "2026-01-15"
 
     def test_parse_hours_minutes(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "create task code review (2 hours)",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "create task code review (2 hours)",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         if body["type"] == "create_task" and body["task"]["estimated_minutes"]:
             assert body["task"]["estimated_minutes"] == 120
 
     def test_parse_remind_me_pattern(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "remind me to call the bank",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "remind me to call the bank",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "create_task"
         assert "call the bank" in body["task"]["title"]
 
     def test_parse_i_need_to_pattern(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "i need to finish the report",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "i need to finish the report",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "create_task"
 
     def test_parse_schedule_pattern(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "schedule study session for tomorrow",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "schedule study session for tomorrow",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "create_task"
 
     def test_parse_go_to_navigation(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "go to my resources",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "go to my resources",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "navigate"
         assert "resources" in body["navigation"]
 
     def test_parse_show_navigation(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "show me my income",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "show me my income",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "navigate"
         assert "income" in body["navigation"]
 
     def test_parse_open_navigation(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "open my goals page",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "open my goals page",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "navigate"
         assert "goals" in body["navigation"]
 
     def test_parse_partial_route_match(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "go to my youtube vault",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "go to my youtube vault",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "navigate"
         assert "youtube-vault" in body["navigation"]
 
     def test_parse_take_me_to_navigation(self, client):
-        resp = client.post("/api/v1/nlp/parse", json={
-            "text": "take me to the dashboard",
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/parse",
+            json={
+                "text": "take me to the dashboard",
+            },
+            headers=_AUTH_HEADER,
+        )
         body = resp.json()
         assert body["type"] == "navigate"
 
     def test_execute_schedule(self, client, mock_supabase):
         _cfg(mock_supabase, [{"id": "sched-1"}])
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "schedule",
-            "schedule": {
-                "description": "Focus session",
-                "duration_minutes": 60,
-                "start_time": "2026-06-20T14:00:00",
-                "category": "focus",
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "schedule",
+                "schedule": {
+                    "description": "Focus session",
+                    "duration_minutes": 60,
+                    "start_time": "2026-06-20T14:00:00",
+                    "category": "focus",
+                },
             },
-        }, headers=_AUTH_HEADER)
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 200
         assert resp.json()["success"] is True
         assert "Scheduled" in resp.json()["message"]
@@ -3393,10 +3972,14 @@ class TestNLPExtended:
     def test_execute_schedule_db_error(self, client, mock_supabase):
         mock_supabase.table.side_effect = Exception("DB error")
         mock_supabase.from_.side_effect = Exception("DB error")
-        resp = client.post("/api/v1/nlp/execute", json={
-            "type": "schedule",
-            "schedule": {"description": "Fail", "duration_minutes": 30},
-        }, headers=_AUTH_HEADER)
+        resp = client.post(
+            "/api/v1/nlp/execute",
+            json={
+                "type": "schedule",
+                "schedule": {"description": "Fail", "duration_minutes": 30},
+            },
+            headers=_AUTH_HEADER,
+        )
         assert resp.status_code == 500
 
 
@@ -3410,85 +3993,102 @@ class TestNLPHelpers:
 
     def test_extract_date_day_name(self):
         from app.api.nlp import extract_date
+
         result = extract_date("do this on monday")
         assert result is not None
 
     def test_extract_date_tomorrow(self):
         from app.api.nlp import extract_date
         from datetime import datetime, timedelta
+
         expected = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
         assert extract_date("do it tomorrow") == expected
 
     def test_extract_date_today(self):
         from app.api.nlp import extract_date
         from datetime import datetime
+
         assert extract_date("do it today") == datetime.now().strftime("%Y-%m-%d")
 
     def test_extract_date_mm_dd_yyyy(self):
         from app.api.nlp import extract_date
+
         assert extract_date("by 12/25/2026") == "2026-12-25"
 
     def test_extract_date_mm_dd_yy(self):
         from app.api.nlp import extract_date
+
         assert extract_date("by 1/15/26") == "2026-01-15"
 
     def test_extract_date_relative_days(self):
         from app.api.nlp import extract_date
         from datetime import datetime, timedelta
+
         expected = (datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d")
         assert extract_date("do it in 3 days") == expected
 
     def test_extract_date_relative_weeks(self):
         from app.api.nlp import extract_date
         from datetime import datetime, timedelta
+
         expected = (datetime.now() + timedelta(weeks=2)).strftime("%Y-%m-%d")
         assert extract_date("do it in 2 weeks") == expected
 
     def test_extract_date_none(self):
         from app.api.nlp import extract_date
+
         assert extract_date("no date here") is None
 
     def test_extract_priority_high(self):
         from app.api.nlp import extract_priority
+
         assert extract_priority("urgent task") == "high"
         assert extract_priority("critical bug") == "high"
         assert extract_priority("high priority item") == "high"
 
     def test_extract_priority_low(self):
         from app.api.nlp import extract_priority
+
         assert extract_priority("low priority thing") == "low"
         assert extract_priority("whenever you can") == "low"
         assert extract_priority("optional task") == "low"
 
     def test_extract_priority_none(self):
         from app.api.nlp import extract_priority
+
         assert extract_priority("normal task") is None
 
     def test_extract_minutes_hours(self):
         from app.api.nlp import extract_minutes
+
         assert extract_minutes("takes 2 hours") == 120
         assert extract_minutes("takes 1 hr") == 60
         assert extract_minutes("takes 3 hrs") == 180
 
     def test_extract_minutes_minutes(self):
         from app.api.nlp import extract_minutes
+
         assert extract_minutes("takes 30 minutes") == 30
         assert extract_minutes("takes 45 min") == 45
         assert extract_minutes("takes 60 mins") == 60
 
     def test_extract_minutes_none(self):
         from app.api.nlp import extract_minutes
+
         assert extract_minutes("no time given") is None
 
     def test_resolve_route_exact(self):
         from app.api.nlp import resolve_route
+
         assert resolve_route("tasks") == "/dashboard/tasks"
         assert resolve_route("  tasks  ") == "/dashboard/tasks"
 
     def test_resolve_route_partial_match(self):
         from app.api.nlp import resolve_route
+
         assert resolve_route("youtube") is not None
 
     def test_resolve_route_none(self):
         from app.api.nlp import resolve_route
+
         assert resolve_route("nonexistent") is None

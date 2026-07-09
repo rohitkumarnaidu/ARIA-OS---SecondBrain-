@@ -2,7 +2,6 @@
 
 import pytest
 from pathlib import Path
-from unittest.mock import AsyncMock, patch, MagicMock
 from ai.prompt_loader import PromptLoader
 
 
@@ -114,10 +113,12 @@ class TestAgentModuleImports:
 
     def test_briefing_agent_has_function(self):
         from ai.agents.briefing_agent import generate_daily_briefing
+
         assert callable(generate_daily_briefing)
 
     def test_weekly_review_agent_has_function(self):
         from ai.agents.weekly_review_agent import generate_weekly_review
+
         assert callable(generate_weekly_review)
 
     def test_memory_agent_has_functions(self):
@@ -130,42 +131,61 @@ class TestAgentModuleImports:
             get_memory_summary,
             prune_expired_memories,
         )
-        for fn in [store_interaction, get_recent_interactions, get_user_preferences,
-                   get_session_context, consolidate_memories, get_memory_summary,
-                   prune_expired_memories]:
+
+        for fn in [
+            store_interaction,
+            get_recent_interactions,
+            get_user_preferences,
+            get_session_context,
+            consolidate_memories,
+            get_memory_summary,
+            prune_expired_memories,
+        ]:
             assert callable(fn)
 
     def test_learning_agent_has_functions(self):
         from ai.agents.learning_agent import track_user_progress, detect_learning_patterns, suggest_learning_focus
+
         for fn in [track_user_progress, detect_learning_patterns, suggest_learning_focus]:
             assert callable(fn)
 
     def test_sleep_agent_has_functions(self):
         from ai.agents.sleep_agent import analyze_sleep, suggest_bedtime
+
         for fn in [analyze_sleep, suggest_bedtime]:
             assert callable(fn)
 
     def test_nudge_agent_has_functions(self):
         from ai.agents.nudge_agent import generate_nudge, check_course_nudges, check_habit_streaks, run_all_nudges
+
         for fn in [generate_nudge, check_course_nudges, check_habit_streaks, run_all_nudges]:
             assert callable(fn)
 
     def test_task_agent_has_functions(self):
-        from ai.agents.task_agent import breakdown_task, check_missed_tasks, suggest_task_prioritization, auto_reschedule_overdue
+        from ai.agents.task_agent import (
+            breakdown_task,
+            check_missed_tasks,
+            suggest_task_prioritization,
+            auto_reschedule_overdue,
+        )
+
         for fn in [breakdown_task, check_missed_tasks, suggest_task_prioritization, auto_reschedule_overdue]:
             assert callable(fn)
 
     def test_opportunity_agent_has_functions(self):
         from ai.agents.opportunity_agent import run_opportunity_radar, scan_default_opportunities, calculate_match_score
+
         for fn in [run_opportunity_radar, scan_default_opportunities, calculate_match_score]:
             assert callable(fn)
 
     def test_opportunity_matching_agent_has_function(self):
         from ai.agents.opportunity_matching_agent import match_opportunities
+
         assert callable(match_opportunities)
 
     def test_roadmap_agent_has_function(self):
         from ai.agents.roadmap_agent import optimize_roadmap
+
         assert callable(optimize_roadmap)
 
 
@@ -174,6 +194,7 @@ class TestAgentModuleExports:
 
     def test_all_modules_in_export(self):
         from ai.agents import __all__
+
         expected = [
             "task_agent",
             "memory_agent",
@@ -238,30 +259,35 @@ class TestAgentFunctionSignatures:
     def test_briefing_agent_signature(self):
         from ai.agents.briefing_agent import generate_daily_briefing
         import inspect
+
         sig = inspect.signature(generate_daily_briefing)
         assert "user_id" in sig.parameters
 
     def test_weekly_review_agent_signature(self):
         from ai.agents.weekly_review_agent import generate_weekly_review
         import inspect
+
         sig = inspect.signature(generate_weekly_review)
         assert "user_id" in sig.parameters
 
     def test_roadmap_agent_signature(self):
         from ai.agents.roadmap_agent import optimize_roadmap
         import inspect
+
         sig = inspect.signature(optimize_roadmap)
         assert "user_id" in sig.parameters
 
     def test_opportunity_matching_agent_signature(self):
         from ai.agents.opportunity_matching_agent import match_opportunities
         import inspect
+
         sig = inspect.signature(match_opportunities)
         assert "user_id" in sig.parameters
 
     def test_sleep_analyze_signature(self):
         from ai.agents.sleep_agent import analyze_sleep
         import inspect
+
         sig = inspect.signature(analyze_sleep)
         assert "user_id" in sig.parameters
         assert "date" in sig.parameters
@@ -272,6 +298,7 @@ class TestAgentDefaultOpportunities:
 
     def test_scan_default_opportunities_returns_list(self):
         from ai.agents.opportunity_agent import scan_default_opportunities
+
         result = scan_default_opportunities(["Python", "React"])
         assert len(result) == 3
         assert all("title" in o for o in result)
@@ -283,16 +310,19 @@ class TestAgentDefaultOpportunities:
 
     def test_calculate_match_score(self):
         from ai.agents.opportunity_agent import calculate_match_score
+
         result = calculate_match_score({"match_score": 88}, ["Python"], ["AI"])
         assert result == 88
 
     def test_calculate_match_score_default(self):
         from ai.agents.opportunity_agent import calculate_match_score
+
         result = calculate_match_score({}, ["Python"], ["AI"])
         assert result == 50
 
     def test_nudge_types_are_defined(self):
         from ai.agents.nudge_agent import NUDGE_TYPES
+
         expected = ["course_behind", "habit_miss_2day", "habit_miss_5day", "multiple_courses_behind", "streak_at_risk"]
         assert NUDGE_TYPES == expected
 
