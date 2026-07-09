@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/secondbrain/web
+  repository: ghcr.io/app/web
   tag: latest
   pullPolicy: Always
 
@@ -20,9 +20,9 @@ resources:
 env:
   NEXT_PUBLIC_SUPABASE_URL: ""
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
-  NEXT_PUBLIC_API_URL: "https://api.secondbrain-os.com"
+  NEXT_PUBLIC_API_URL: "https://api.app.com"
 
 ingress:
   enabled: true
-  host: app.secondbrain-os.com
+  host: app.app.com
   tls: true

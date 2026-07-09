@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scheduler
-  namespace: secondbrain
+  namespace: app
   labels:
     app: scheduler
     tier: backend
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: scheduler
-          image: ghcr.io/secondbrain/scheduler:latest
+          image: ghcr.io/app/scheduler:latest
           envFrom:
             - configMapRef:
                 name: app-config

@@ -12,7 +12,7 @@
 
 # ── Networks ─────────────────────────────────────────────────────────────────
 networks:
-  secondbrain-net:
+  app-net:
     driver: bridge
 
 # ── Volumes ──────────────────────────────────────────────────────────────────
@@ -28,7 +28,7 @@ services:
   # Next.js 14 application with hot-reload for development.
   # Builds from apps/web/ and exposes port 3000.
   frontend:
-    container_name: secondbrain-frontend
+    container_name: app-frontend
     build:
       context: .
       dockerfile: apps/web/Dockerfile
@@ -48,7 +48,7 @@ services:
       # Persist node_modules in a named volume so the container installs deps
       - node_modules:/app/node_modules
     networks:
-      - secondbrain-net
+      - app-net
     depends_on:
       backend:
         condition: service_started
@@ -72,7 +72,7 @@ services:
   # FastAPI application with auto-reload for development.
   # Builds from apps/api/ and exposes port 8000.
   backend:
-    container_name: secondbrain-backend
+    container_name: app-backend
     build:
       context: .
       dockerfile: apps/api/Dockerfile
@@ -98,7 +98,7 @@ services:
       # Mount source code for auto-reload; the container's WORKDIR should be /app
       - ./apps/api:/app
     networks:
-      - secondbrain-net
+      - app-net
     restart: unless-stopped
     deploy:
       resources:
@@ -119,7 +119,7 @@ services:
   # APScheduler that runs cron jobs (daily briefing, habit checks, etc.).
   # No ports exposed; runs headlessly alongside the backend.
   scheduler:
-    container_name: secondbrain-scheduler
+    container_name: app-scheduler
     build:
       context: .
       dockerfile: services/scheduler/Dockerfile
@@ -141,7 +141,7 @@ services:
     volumes:
       - ./services/scheduler:/app
     networks:
-      - secondbrain-net
+      - app-net
     depends_on:
       backend:
         condition: service_started
@@ -167,14 +167,14 @@ services:
   # Once running, set OLLAMA_BASE_URL=http://ollama:11434 in the .env file.
   # ⚠ Requires ~5 GB free RAM and ~4 GB disk for the Mistral 7B model.
   # ollama:
-  #   container_name: secondbrain-ollama
+  #   container_name: app-ollama
   #   image: ollama/ollama:latest
   #   ports:
   #     - "11434:11434"
   #   volumes:
   #     - ollama-models:/root/.ollama
   #   networks:
-  #     - secondbrain-net
+  #     - app-net
   #   command: serve
   #   # Uncomment below to auto-pull Mistral on restart (slows startup):
   #   # entrypoint: >

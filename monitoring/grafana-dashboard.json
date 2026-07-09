@@ -2,7 +2,7 @@
   "__inputs": [],
   "__requires": [],
   "title": "Second Brain OS - RED Metrics",
-  "uid": "secondbrain-red",
+  "uid": "app-red",
   "schemaVersion": 38,
   "version": 1,
   "tags": ["second-brain", "red-metrics"],
@@ -14,7 +14,7 @@
       "type": "stat",
       "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0},
       "targets": [{
-        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m]))",
+        "expr": "sum(rate(http_requests_total{service=\"api\"}[5m]))",
         "legendFormat": "Rate"
       }],
       "datasource": "Prometheus",
@@ -37,7 +37,7 @@
       "type": "stat",
       "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0},
       "targets": [{
-        "expr": "sum(rate(http_requests_total{status=~\"5..\",service=\"secondbrain-api\"}[5m])) / sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) * 100",
+        "expr": "sum(rate(http_requests_total{status=~\"5..\",service=\"api\"}[5m])) / sum(rate(http_requests_total{service=\"api\"}[5m])) * 100",
         "legendFormat": "Errors"
       }],
       "datasource": "Prometheus",
@@ -60,7 +60,7 @@
       "type": "stat",
       "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0},
       "targets": [{
-        "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service=\"secondbrain-api\"}[5m])) by (le))",
+        "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service=\"api\"}[5m])) by (le))",
         "legendFormat": "p95"
       }],
       "datasource": "Prometheus",
@@ -83,7 +83,7 @@
       "type": "bargauge",
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
       "targets": [{
-        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) by (endpoint)",
+        "expr": "sum(rate(http_requests_total{service=\"api\"}[5m])) by (endpoint)",
         "legendFormat": "{{endpoint}}"
       }],
       "datasource": "Prometheus"
@@ -93,7 +93,7 @@
       "type": "piechart",
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
       "targets": [{
-        "expr": "sum(rate(http_requests_total{service=\"secondbrain-api\"}[5m])) by (status)",
+        "expr": "sum(rate(http_requests_total{service=\"api\"}[5m])) by (status)",
         "legendFormat": "{{status}}"
       }],
       "datasource": "Prometheus"
@@ -104,11 +104,11 @@
       "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16},
       "targets": [
         {
-          "expr": "avg(rate(llm_request_duration_seconds_sum{service=\"secondbrain-api\"}[5m]))",
+          "expr": "avg(rate(llm_request_duration_seconds_sum{service=\"api\"}[5m]))",
           "legendFormat": "Avg"
         },
         {
-          "expr": "max(rate(llm_request_duration_seconds_sum{service=\"secondbrain-api\"}[5m]))",
+          "expr": "max(rate(llm_request_duration_seconds_sum{service=\"api\"}[5m]))",
           "legendFormat": "Max"
         }
       ],

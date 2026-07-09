@@ -19,10 +19,10 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@secondbrain/types": ["../../packages/types/src"],
-      "@secondbrain/types/*": ["../../packages/types/src/*"],
-      "@secondbrain/ui": ["../../packages/ui/src"],
-      "@secondbrain/ui/*": ["../../packages/ui/src/*"]
+      "@app/types": ["../../packages/types/src"],
+      "@app/types/*": ["../../packages/types/src/*"],
+      "@app/ui": ["../../packages/ui/src"],
+      "@app/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

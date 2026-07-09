@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web
-  namespace: secondbrain
+  namespace: app
   labels:
     app: web
     tier: frontend
@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/secondbrain/web:latest
+          image: ghcr.io/app/web:latest
           ports:
             - containerPort: 3000
           envFrom:
