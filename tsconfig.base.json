@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@secondbrain/types": ["packages/types/src"],
+      "@secondbrain/types/*": ["packages/types/src/*"],
+      "@secondbrain/ui": ["packages/ui/src"],
+      "@secondbrain/ui/*": ["packages/ui/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next", "coverage"]
+}

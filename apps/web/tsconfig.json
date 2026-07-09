@@ -18,7 +18,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@secondbrain/types": ["../../packages/types/src"],
+      "@secondbrain/types/*": ["../../packages/types/src/*"],
+      "@secondbrain/ui": ["../../packages/ui/src"],
+      "@secondbrain/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

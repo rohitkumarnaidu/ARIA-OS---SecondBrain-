@@ -23,6 +23,10 @@ apps/mobile/node_modules/
 .pnp
 .pnp.js
 
+# pnpm store (if using pnpm in CI)
+.pnpm-store/
+pnpm-lock.yaml
+
 # Python
 __pycache__/
 *.py[cod]
