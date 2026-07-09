@@ -13,6 +13,7 @@ async def run_skill_mv_refresh():
     supabase = None
     try:
         from config.core.supabase import get_supabase_client
+
         supabase = get_supabase_client()
     except Exception:
         logger.error("Failed to get Supabase client for MV refresh")
@@ -36,3 +37,9 @@ async def run_skill_mv_refresh():
             logger.warn(f"Failed to refresh {view}: {e}")
 
     logger.info("Skill materialized view refresh complete")
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(run_skill_mv_refresh())

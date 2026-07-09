@@ -38,19 +38,26 @@ async def run_skill_analytics_snapshot():
                 "created_at": now_ms,
             }
 
-            result = supabase.from_("skill_analytics_snapshots").upsert(
-                snapshot,
-                on_conflict="user_id, snapshot_date",
-            ).execute()
+            result = (
+                supabase.from_("skill_analytics_snapshots")
+                .upsert(
+                    snapshot,
+                    on_conflict="user_id, snapshot_date",
+                )
+                .execute()
+            )
             if result.data:
                 snapshot_count += 1
 
         except Exception as e:
             logger.error("Analytics snapshot error", user_id=user.get("id"), error=str(e))
 
-    logger.info("Daily skill analytics snapshot completed", users_processed=len(users), snapshots_created=snapshot_count)
+    logger.info(
+        "Daily skill analytics snapshot completed", users_processed=len(users), snapshots_created=snapshot_count
+    )
 
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(run_skill_analytics_snapshot())

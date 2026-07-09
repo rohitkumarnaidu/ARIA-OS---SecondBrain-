@@ -16,6 +16,7 @@ async def run_skill_retention_cleanup():
     supabase = None
     try:
         from config.core.supabase import get_supabase_client
+
         supabase = get_supabase_client()
     except Exception:
         logger.error("Failed to get Supabase client for retention cleanup")
@@ -27,10 +28,13 @@ async def run_skill_retention_cleanup():
     forecast_cutoff = (now - timedelta(days=180)).isoformat()
 
     try:
-        result = supabase.table("user_skill_evidence").delete() \
-            .eq("state", "expired") \
-            .lt("collected_at", evidence_cutoff) \
+        result = (
+            supabase.table("user_skill_evidence")
+            .delete()
+            .eq("state", "expired")
+            .lt("collected_at", evidence_cutoff)
             .execute()
+        )
         if result.error:
             logger.warn(f"Evidence cleanup error: {result.error.message}")
         else:
@@ -39,9 +43,7 @@ async def run_skill_retention_cleanup():
         logger.warn(f"Failed evidence cleanup: {e}")
 
     try:
-        result = supabase.table("skill_activity_logs").delete() \
-            .lt("created_at", activity_cutoff) \
-            .execute()
+        result = supabase.table("skill_activity_logs").delete().lt("created_at", activity_cutoff).execute()
         if result.error:
             logger.warn(f"Activity cleanup error: {result.error.message}")
         else:
@@ -50,9 +52,7 @@ async def run_skill_retention_cleanup():
         logger.warn(f"Failed activity cleanup: {e}")
 
     try:
-        result = supabase.table("skill_forecasts").delete() \
-            .lt("forecast_date", forecast_cutoff) \
-            .execute()
+        result = supabase.table("skill_forecasts").delete().lt("forecast_date", forecast_cutoff).execute()
         if result.error:
             logger.warn(f"Forecast cleanup error: {result.error.message}")
         else:
@@ -61,3 +61,9 @@ async def run_skill_retention_cleanup():
         logger.warn(f"Failed forecast cleanup: {e}")
 
     logger.info("Skill data retention cleanup complete")
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(run_skill_retention_cleanup())
