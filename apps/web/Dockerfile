@@ -3,15 +3,22 @@
 # Multi-stage: development (hot-reload) + production (optimized)
 # =============================================================================
 
-# ---- Stage 1: Dependencies ----
-FROM node:18-alpine AS deps
+# ---- Stage 1: Production Dependencies (only runtime deps) ----
+FROM node:20-alpine AS deps-prod
 WORKDIR /app
 
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev --legacy-peer-deps
 
-# ---- Stage 2: Build ----
-FROM node:18-alpine AS builder
+# ---- Stage 2: Build Dependencies (including devDeps for build) ----
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+COPY apps/web/package.json apps/web/package-lock.json ./
+RUN npm ci --legacy-peer-deps
+
+# ---- Stage 3: Build ----
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -21,8 +28,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_PWA_ENABLED=true
 RUN npm run build
 
-# ---- Stage 3: Production ----
-FROM node:18-alpine AS production
+# ---- Stage 4: Production ----
+FROM node:20-alpine AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -45,15 +52,15 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 
 CMD ["node", "server.js"]
 
-# ---- Stage 4: Development (hot-reload) ----
-FROM node:18-alpine AS development
+# ---- Stage 5: Development (hot-reload) ----
+FROM node:20-alpine AS development
 WORKDIR /app
 
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY apps/web/ .
 
