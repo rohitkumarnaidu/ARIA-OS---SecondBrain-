@@ -144,7 +144,9 @@ class HealthHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({"status": "healthy", "service": "scheduler", "jobs": len(scheduler.get_jobs())}).encode())
+            self.wfile.write(
+                json.dumps({"status": "healthy", "service": "scheduler", "jobs": len(scheduler.get_jobs())}).encode()
+            )
         else:
             self.send_response(404)
             self.end_headers()
