@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "group:monorepos",
+    "schedule:weekly",
+    ":separateMajorMinor",
+    ":combinePatchMinorUpdates"
+  ],
+  "labels": ["dependencies", "automated"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["npm"],
+      "addLabels": ["npm"]
+    },
+    {
+      "matchManagers": ["pip_requirements", "pip_setup"],
+      "addLabels": ["python"]
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "addLabels": ["docker"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  },
+  "lockFileMaintenance": { "enabled": true },
+  "platform": "github"
+}

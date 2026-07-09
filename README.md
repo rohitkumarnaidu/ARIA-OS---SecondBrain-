@@ -1,4 +1,4 @@
-# Second Brain OS
+# App
 
 A personal AI productivity system for BTech CSE students that acts as your memory, advisor, opportunity scanner, and daily planner. Built to help you become a builder - not just collect degrees.
 
@@ -109,7 +109,6 @@ The frontend will be available at `http://localhost:3000`
 ## Project Structure
 
 ```
-ARIA OS - SecondBrain/
 ├── apps/
 │   ├── api/             FastAPI backend (app/api/)
 │   └── web/             Next.js 14 frontend
@@ -127,10 +126,11 @@ ARIA OS - SecondBrain/
 │   ├── agents/          Agent prompts (briefing, memory, sleep, etc.)
 │   └── templates/       Context assembly, email templates
 ├── docs/                ~185 files (product, design, engineering, AI, security, devops, qa, operations)
-├── infrastructure/      Docker, canary deployment
+├── infrastructure/      Helm, K8s, Docker, Terraform, nginx, canary
 ├── tests/               2411 Python tests
 ├── scripts/             Security, SOC 2, release, bundle audit
-└── analytics/           Analytics config
+├── security/            SOC 2 reports, pen test reports
+├── monitoring/          Grafana dashboards
 ```
 
 ## Documentation
