@@ -17,7 +17,9 @@ async def get_courses(
     supabase = get_supabase_client()
     response = (
         supabase.from_("courses")
-        .select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at")
+        .select(
+            "id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at"
+        )
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -31,7 +33,9 @@ async def get_course(course_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
         supabase.from_("courses")
-        .select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at")
+        .select(
+            "id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at"
+        )
         .eq("id", course_id)
         .eq("user_id", current_user.user.id)
         .execute()

@@ -12,10 +12,38 @@ router = APIRouter()
 @router.get("/daily", summary="Get daily analytics summary")
 async def get_daily_summary(date: str = Query(...), current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    tasks = supabase.from_("tasks").select("count").eq("user_id", current_user.user.id).gte("created_at", date + "T00:00:00").lte("created_at", date + "T23:59:59").execute()
-    habits = supabase.from_("habit_logs").select("count").eq("user_id", current_user.user.id).eq("date", date).eq("completed", True).execute()
-    sleep = supabase.from_("sleep_logs").select("sleep_score, duration_hours").eq("user_id", current_user.user.id).eq("date", date).limit(1).execute()
-    time = supabase.from_("time_entries").select("duration_minutes, is_deep_work").eq("user_id", current_user.user.id).gte("start_time", date + "T00:00:00").lte("start_time", date + "T23:59:59").execute()
+    tasks = (
+        supabase.from_("tasks")
+        .select("count")
+        .eq("user_id", current_user.user.id)
+        .gte("created_at", date + "T00:00:00")
+        .lte("created_at", date + "T23:59:59")
+        .execute()
+    )
+    habits = (
+        supabase.from_("habit_logs")
+        .select("count")
+        .eq("user_id", current_user.user.id)
+        .eq("date", date)
+        .eq("completed", True)
+        .execute()
+    )
+    sleep = (
+        supabase.from_("sleep_logs")
+        .select("sleep_score, duration_hours")
+        .eq("user_id", current_user.user.id)
+        .eq("date", date)
+        .limit(1)
+        .execute()
+    )
+    time = (
+        supabase.from_("time_entries")
+        .select("duration_minutes, is_deep_work")
+        .eq("user_id", current_user.user.id)
+        .gte("start_time", date + "T00:00:00")
+        .lte("start_time", date + "T23:59:59")
+        .execute()
+    )
     return {
         "date": date,
         "tasks_completed": len(tasks.data or []),
@@ -29,10 +57,38 @@ async def get_daily_summary(date: str = Query(...), current_user=Depends(get_cur
 async def get_weekly_trends(week_start: str = Query(...), current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     week_end = (datetime.fromisoformat(week_start) + timedelta(days=7)).strftime("%Y-%m-%d")
-    tasks = supabase.from_("tasks").select("status").eq("user_id", current_user.user.id).gte("created_at", week_start).lte("created_at", week_end).execute()
-    habits = supabase.from_("habit_logs").select("completed").eq("user_id", current_user.user.id).gte("date", week_start).lte("date", week_end).execute()
-    sleep = supabase.from_("sleep_logs").select("sleep_score").eq("user_id", current_user.user.id).gte("date", week_start).lte("date", week_end).execute()
-    time = supabase.from_("time_entries").select("duration_minutes, is_deep_work").eq("user_id", current_user.user.id).gte("start_time", week_start).lte("start_time", week_end).execute()
+    tasks = (
+        supabase.from_("tasks")
+        .select("status")
+        .eq("user_id", current_user.user.id)
+        .gte("created_at", week_start)
+        .lte("created_at", week_end)
+        .execute()
+    )
+    habits = (
+        supabase.from_("habit_logs")
+        .select("completed")
+        .eq("user_id", current_user.user.id)
+        .gte("date", week_start)
+        .lte("date", week_end)
+        .execute()
+    )
+    sleep = (
+        supabase.from_("sleep_logs")
+        .select("sleep_score")
+        .eq("user_id", current_user.user.id)
+        .gte("date", week_start)
+        .lte("date", week_end)
+        .execute()
+    )
+    time = (
+        supabase.from_("time_entries")
+        .select("duration_minutes, is_deep_work")
+        .eq("user_id", current_user.user.id)
+        .gte("start_time", week_start)
+        .lte("start_time", week_end)
+        .execute()
+    )
     task_data = tasks.data or []
     total_tasks = len(task_data)
     completed_tasks = len([t for t in task_data if t.get("status") == "completed"])
@@ -58,12 +114,32 @@ async def get_aggregated_stats(
 ):
     supabase = get_supabase_client()
     tasks = supabase.from_("tasks").select("status, priority").eq("user_id", current_user.user.id).execute()
-    habits = supabase.from_("habits").select("is_active, current_streak, best_streak, consistency_percentage").eq("user_id", current_user.user.id).execute()
-    sleep = supabase.from_("sleep_logs").select("duration_hours, sleep_score, sleep_debt").eq("user_id", current_user.user.id).execute()
-    time = supabase.from_("time_entries").select("duration_minutes, is_deep_work").eq("user_id", current_user.user.id).execute()
+    habits = (
+        supabase.from_("habits")
+        .select("is_active, current_streak, best_streak, consistency_percentage")
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
+    sleep = (
+        supabase.from_("sleep_logs")
+        .select("duration_hours, sleep_score, sleep_debt")
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
+    time = (
+        supabase.from_("time_entries")
+        .select("duration_minutes, is_deep_work")
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     projects = supabase.from_("projects").select("status").eq("user_id", current_user.user.id).execute()
     ideas = supabase.from_("ideas").select("status").eq("user_id", current_user.user.id).execute()
-    income = supabase.from_("income_entries").select("amount, effective_hourly_rate").eq("user_id", current_user.user.id).execute()
+    income = (
+        supabase.from_("income_entries")
+        .select("amount, effective_hourly_rate")
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
 
     task_data = tasks.data or []
     task_total = len(task_data)
@@ -82,7 +158,7 @@ async def get_aggregated_stats(
     income_data = income.data or []
     rates = [i.get("effective_hourly_rate") for i in income_data if i.get("effective_hourly_rate")]
     by_stage = {}
-    for i in (ideas.data or []):
+    for i in ideas.data or []:
         s = i.get("status", "raw")
         by_stage[s] = by_stage.get(s, 0) + 1
     return {
@@ -95,11 +171,17 @@ async def get_aggregated_stats(
         },
         "habits": {
             "total": len(active_habits),
-            "consistency": round(sum(h.get("consistency_percentage", 0) for h in active_habits) / len(active_habits), 1) if active_habits else 0,
+            "consistency": (
+                round(sum(h.get("consistency_percentage", 0) for h in active_habits) / len(active_habits), 1)
+                if active_habits
+                else 0
+            ),
             "best_streak": best_streak,
         },
         "sleep": {
-            "avg_duration": round(sum(s.get("duration_hours", 0) for s in sleep_data) / len(sleep_data), 1) if sleep_data else 0,
+            "avg_duration": (
+                round(sum(s.get("duration_hours", 0) for s in sleep_data) / len(sleep_data), 1) if sleep_data else 0
+            ),
             "avg_score": round(sum(sleep_scores) / len(sleep_scores), 1) if sleep_scores else 0,
             "total_debt": round(sum(s.get("sleep_debt", 0) for s in sleep_data), 1),
         },

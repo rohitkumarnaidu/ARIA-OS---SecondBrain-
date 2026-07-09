@@ -91,8 +91,11 @@ class TestFeatureFlagRoutes:
         from database.schemas.feature_flag import FeatureFlagCreate
 
         flag_data = FeatureFlagCreate(
-            key="new-flag", enabled=True,
-            rollout_percentage=100, user_segments=[], metadata={},
+            key="new-flag",
+            enabled=True,
+            rollout_percentage=100,
+            user_segments=[],
+            metadata={},
         )
         result = await create_feature_flag(flag_data=flag_data, user_id="test-user")
         assert result["key"] == "test-flag"
@@ -120,8 +123,10 @@ class TestFeatureFlagRoutes:
         from database.schemas.feature_flag import FeatureFlagUpdate
 
         flag_data = FeatureFlagUpdate(enabled=False)
-        result = await update_feature_flag(
-            key="test-flag", flag_data=flag_data, user_id="test-user",
+        await update_feature_flag(
+            key="test-flag",
+            flag_data=flag_data,
+            user_id="test-user",
         )
         assert mock_flag.enabled is False
         mock_flags.set.assert_called_once_with("test-flag", mock_flag)
@@ -138,8 +143,10 @@ class TestFeatureFlagRoutes:
             user_segments=["all"],
             metadata={"env": "prod"},
         )
-        result = await update_feature_flag(
-            key="test-flag", flag_data=flag_data, user_id="test-user",
+        await update_feature_flag(
+            key="test-flag",
+            flag_data=flag_data,
+            user_id="test-user",
         )
         assert mock_flag.rollout_percentage == 100
         assert mock_flag.user_segments == ["all"]
@@ -156,7 +163,9 @@ class TestFeatureFlagRoutes:
         flag_data = FeatureFlagUpdate(enabled=False)
         with pytest.raises(HTTPException) as exc:
             await update_feature_flag(
-                key="nonexistent", flag_data=flag_data, user_id="test-user",
+                key="nonexistent",
+                flag_data=flag_data,
+                user_id="test-user",
             )
         assert exc.value.status_code == 404
 

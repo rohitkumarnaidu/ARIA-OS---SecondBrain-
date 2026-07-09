@@ -28,7 +28,13 @@ async def get_resources(
 @router.get("/{resource_id}", summary="Get a resource by ID", response_model=ResourceResponse)
 async def get_resource(resource_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("resources").select("id, user_id, title, url, tags, created_at").eq("id", resource_id).eq("user_id", current_user.user.id).execute()
+    response = (
+        supabase.from_("resources")
+        .select("id, user_id, title, url, tags, created_at")
+        .eq("id", resource_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     if not response.data:
         raise HTTPException(status_code=404, detail="Resource not found")
     return response.data[0]

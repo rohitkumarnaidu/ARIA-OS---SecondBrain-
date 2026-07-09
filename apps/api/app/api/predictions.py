@@ -20,7 +20,15 @@ router = APIRouter()
 async def predict_task_completion(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("user_id", current_user.user.id).order("created_at", ascending=False).execute()
+        resp = (
+            supabase.from_("tasks")
+            .select(
+                "id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count"
+            )
+            .eq("user_id", current_user.user.id)
+            .order("created_at", ascending=False)
+            .execute()
+        )
         tasks = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch tasks for prediction", error=str(e))
@@ -50,6 +58,7 @@ async def predict_task_completion(current_user=Depends(get_current_user)):
         if due:
             try:
                 from datetime import datetime
+
                 due_date = datetime.fromisoformat(due.replace("Z", "+00:00"))
                 days_left = (due_date - datetime.now(due_date.tzinfo)).days
                 if days_left < 0:
@@ -68,14 +77,20 @@ async def predict_task_completion(current_user=Depends(get_current_user)):
         elif prob < 40:
             at_risk_count += 1
 
-        predictions.append(CompletionPrediction(
-            task_id=t.get("id", ""),
-            title=t.get("title", "Untitled"),
-            probability=round(prob, 1),
-            confidence=confidence,
-            due_date=due,
-            recommendation="On track" if prob >= 70 else "Needs attention" if prob >= 40 else "High risk — prioritize this task",
-        ))
+        predictions.append(
+            CompletionPrediction(
+                task_id=t.get("id", ""),
+                title=t.get("title", "Untitled"),
+                probability=round(prob, 1),
+                confidence=confidence,
+                due_date=due,
+                recommendation=(
+                    "On track"
+                    if prob >= 70
+                    else "Needs attention" if prob >= 40 else "High risk — prioritize this task"
+                ),
+            )
+        )
 
     return TaskCompletionForecast(
         total_pending=len(pending),
@@ -89,7 +104,14 @@ async def predict_task_completion(current_user=Depends(get_current_user)):
 async def predict_habits(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("habits").select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at").eq("user_id", current_user.user.id).execute()
+        resp = (
+            supabase.from_("habits")
+            .select(
+                "id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .execute()
+        )
         habits = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch habits for prediction", error=str(e))
@@ -120,14 +142,24 @@ async def predict_habits(current_user=Depends(get_current_user)):
         if risk >= 50:
             at_risk_count += 1
 
-        predictions.append(StreakPrediction(
-            habit_id=h.get("id", ""),
-            habit_name=h.get("name", "Unnamed Habit"),
-            current_streak=streak,
-            risk_level=risk_level,
-            risk_probability=risk,
-            recommendation="Keep up the momentum!" if risk < 30 else "Try to stay consistent — short sessions beat skipped days" if risk < 50 else "This habit needs attention — set a daily reminder",
-        ))
+        predictions.append(
+            StreakPrediction(
+                habit_id=h.get("id", ""),
+                habit_name=h.get("name", "Unnamed Habit"),
+                current_streak=streak,
+                risk_level=risk_level,
+                risk_probability=risk,
+                recommendation=(
+                    "Keep up the momentum!"
+                    if risk < 30
+                    else (
+                        "Try to stay consistent — short sessions beat skipped days"
+                        if risk < 50
+                        else "This habit needs attention — set a daily reminder"
+                    )
+                ),
+            )
+        )
 
     return HabitCompletionForecast(
         total_active=len(predictions),
@@ -140,14 +172,28 @@ async def predict_habits(current_user=Depends(get_current_user)):
 async def predict_sleep(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("sleep_logs").select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at").eq("user_id", current_user.user.id).order("date", ascending=False).limit(30).execute()
+        resp = (
+            supabase.from_("sleep_logs")
+            .select(
+                "id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .order("date", ascending=False)
+            .limit(30)
+            .execute()
+        )
         logs = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch sleep logs for prediction", error=str(e))
         raise HTTPException(status_code=500, detail="Failed to fetch sleep logs")
 
     if not logs:
-        return SleepInsight(average_score=0, average_duration=0, trend="insufficient_data", recommendation="Start logging your sleep to get personalized insights")
+        return SleepInsight(
+            average_score=0,
+            average_duration=0,
+            trend="insufficient_data",
+            recommendation="Start logging your sleep to get personalized insights",
+        )
 
     score_sum = 0
     duration_sum = 0.0
@@ -190,6 +236,7 @@ async def predict_sleep(current_user=Depends(get_current_user)):
     bedtime_prediction = None
     if best_bedtime:
         from datetime import datetime, timedelta
+
         try:
             bt = datetime.fromisoformat(best_bedtime.replace("Z", "+00:00"))
             optimal = (bt + timedelta(hours=8)).isoformat()
@@ -203,9 +250,15 @@ async def predict_sleep(current_user=Depends(get_current_user)):
         except (ValueError, TypeError):
             pass
 
-    rec = "Great sleep quality! Keep your consistent schedule." if avg_score >= 80 else \
-          "Good sleep habits. Try winding down 30 min earlier." if avg_score >= 65 else \
-          "Your sleep needs improvement. Aim for 7-8 hours consistently."
+    rec = (
+        "Great sleep quality! Keep your consistent schedule."
+        if avg_score >= 80
+        else (
+            "Good sleep habits. Try winding down 30 min earlier."
+            if avg_score >= 65
+            else "Your sleep needs improvement. Aim for 7-8 hours consistently."
+        )
+    )
 
     return SleepInsight(
         average_score=avg_score,
@@ -220,13 +273,21 @@ async def predict_sleep(current_user=Depends(get_current_user)):
 async def predict_smart_slots(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        resp = supabase.from_("time_entries").select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at").eq("user_id", current_user.user.id).execute()
+        resp = (
+            supabase.from_("time_entries")
+            .select(
+                "id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .execute()
+        )
         entries = resp.data or []
     except Exception as e:
         logger.error("Failed to fetch time entries for slot prediction", error=str(e))
         raise HTTPException(status_code=500, detail="Failed to fetch time entries")
 
     from collections import defaultdict
+
     slot_map: dict[tuple[int, int], list[int]] = defaultdict(list)
 
     for e in entries:
@@ -236,6 +297,7 @@ async def predict_smart_slots(current_user=Depends(get_current_user)):
             continue
         try:
             from datetime import datetime
+
             dt = datetime.fromisoformat(start.replace("Z", "+00:00"))
             hour = dt.hour
             day = dt.weekday()
@@ -262,13 +324,15 @@ async def predict_smart_slots(current_user=Depends(get_current_user)):
         completed = sum(1 for t in tasks if t.get("status") == "completed")
         total = max(len(tasks), 1)
 
-        slots.append(TimeSlot(
-            hour=hour,
-            day_of_week=day,
-            productivity_score=score,
-            task_count=count,
-            completion_rate=round(completed / total * 100, 1),
-        ))
+        slots.append(
+            TimeSlot(
+                hour=hour,
+                day_of_week=day,
+                productivity_score=score,
+                task_count=count,
+                completion_rate=round(completed / total * 100, 1),
+            )
+        )
 
     slots.sort(key=lambda s: s.productivity_score, reverse=True)
 

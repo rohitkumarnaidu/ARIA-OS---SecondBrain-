@@ -29,7 +29,11 @@ async def get_income(
 async def get_income_entry(income_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
-        supabase.from_("income_entries").select("id, user_id, amount, source, date, hours_spent, effective_hourly_rate, created_at").eq("id", income_id).eq("user_id", current_user.user.id).execute()
+        supabase.from_("income_entries")
+        .select("id, user_id, amount, source, date, hours_spent, effective_hourly_rate, created_at")
+        .eq("id", income_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
     )
     if not response.data:
         raise HTTPException(status_code=404, detail="Income entry not found")

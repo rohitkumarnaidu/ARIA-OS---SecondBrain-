@@ -28,7 +28,13 @@ async def get_ideas(
 @router.get("/{idea_id}", summary="Get an idea by ID", response_model=IdeaResponse)
 async def get_idea(idea_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("ideas").select("id, user_id, title, description, stage, created_at, updated_at").eq("id", idea_id).eq("user_id", current_user.user.id).execute()
+    response = (
+        supabase.from_("ideas")
+        .select("id, user_id, title, description, stage, created_at, updated_at")
+        .eq("id", idea_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     if not response.data:
         raise HTTPException(status_code=404, detail="Idea not found")
     return response.data[0]

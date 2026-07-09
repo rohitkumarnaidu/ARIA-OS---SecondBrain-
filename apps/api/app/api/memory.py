@@ -1,4 +1,3 @@
-from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List
 from config.core.supabase import get_supabase_client
@@ -56,17 +55,11 @@ async def create_memory(memory: MemoryCreate, current_user=Depends(get_current_u
 
 
 @router.put("/{memory_id}", summary="Update a memory entry", response_model=MemoryResponse)
-async def update_memory(
-    memory_id: str, memory_update: MemoryUpdate, current_user=Depends(get_current_user)
-):
+async def update_memory(memory_id: str, memory_update: MemoryUpdate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     update_data = {k: v for k, v in memory_update.model_dump().items() if v is not None}
     response = (
-        supabase.from_("memory")
-        .update(update_data)
-        .eq("id", memory_id)
-        .eq("user_id", current_user.user.id)
-        .execute()
+        supabase.from_("memory").update(update_data).eq("id", memory_id).eq("user_id", current_user.user.id).execute()
     )
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
@@ -88,6 +81,7 @@ async def delete_memory(memory_id: str, current_user=Depends(get_current_user)):
 async def consolidate_memories_endpoint(current_user=Depends(get_current_user)):
     """Runs full consolidation pipeline: fetch memories, LLM analyze, create/update/discard."""
     from ai.agents.memory_agent import consolidate_memories
+
     try:
         result = await consolidate_memories(current_user.user.id)
         return {"status": "success", "data": result}

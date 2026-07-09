@@ -134,5 +134,5 @@ async def stop_timer(entry_id: str, current_user=Depends(get_current_user)):
         start = datetime.fromisoformat(entry["start_time"])
         end = datetime.fromisoformat(entry["end_time"])
         duration = int((end - start).total_seconds() / 60)
-        supabase.from_("time_entries").update({"duration_minutes": duration}).eq("id", entry_id).execute()
+        supabase.from_("time_entries").update({"duration_minutes": duration}).eq("id", entry_id).eq("user_id", current_user.user.id).execute()
     return response.data[0]

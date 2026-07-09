@@ -16,7 +16,9 @@ async def get_sleep(
     supabase = get_supabase_client()
     response = (
         supabase.from_("sleep_logs")
-        .select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at")
+        .select(
+            "id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at"
+        )
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -28,7 +30,15 @@ async def get_sleep(
 @router.get("/{sleep_id}", summary="Get a sleep log by ID", response_model=SleepResponse)
 async def get_sleep_entry(sleep_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("sleep_logs").select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at").eq("id", sleep_id).eq("user_id", current_user.user.id).execute()
+    response = (
+        supabase.from_("sleep_logs")
+        .select(
+            "id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at"
+        )
+        .eq("id", sleep_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     if not response.data:
         raise HTTPException(status_code=404, detail="Sleep log not found")
     return response.data[0]
