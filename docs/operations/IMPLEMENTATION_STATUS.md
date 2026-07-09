@@ -567,7 +567,7 @@ Cron Jobs (Scheduler)
 | 2026-06-18 | Token usage monitoring dashboard | Monitoring | Code |
 | 2026-06-17 | PWA + offline fallback pages | Frontend | Code |
 | 2026-06-16 | 12 Playwright E2E test specs | Testing | Code |
-| 2026-06-15 | 96 Storybook stories for UI components | Frontend | Code |
+| 2026-06-15 | 72 Storybook stories for UI components | Frontend | Code |
 | 2026-06-14 | Motion animation library (7 components) | Frontend | Code |
 | 2026-06-13 | Data export (GDPR) + API key auth | Security | Code |
 
