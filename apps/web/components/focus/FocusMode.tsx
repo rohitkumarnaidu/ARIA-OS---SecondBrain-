@@ -42,24 +42,25 @@ export function FocusMode(): JSX.Element {
   const [phase, setPhase] = useState<FocusPhase>('work')
   const [workMinutes, setWorkMinutes] = useState(DEFAULT_WORK_MINUTES)
   const [breakMinutes] = useState(DEFAULT_BREAK_MINUTES)
-  const [objective, setObjective] = useState('')
-  const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState('')
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_WORK_MINUTES * 60)
-  const [cyclesCompleted, setCyclesCompleted] = useState(0)
-  const [workDescription, setWorkDescription] = useState('')
-  const [workTitle, setWorkTitle] = useState('')
-  const [showExitModal, setShowExitModal] = useState(false)
-  const [showCompletion, setShowCompletion] = useState(false)
-  const [sessionStartTime] = useState<number>(Date.now())
-  const [aiSuggestion, setAiSuggestion] = useState<string | null>(null)
-  const [aiInput, setAiInput] = useState('')
-  const [lineCount, setLineCount] = useState(1)
+    const [objective, setObjective] = useState('')
+    const [tags, setTags] = useState<string[]>([])
+    const [tagInput, setTagInput] = useState('')
+    const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_WORK_MINUTES * 60)
+    const [cyclesCompleted, setCyclesCompleted] = useState(0)
+    const [workDescription, setWorkDescription] = useState('')
+    const [workTitle, setWorkTitle] = useState('')
+    const [showExitModal, setShowExitModal] = useState(false)
+    const [showCompletion, setShowCompletion] = useState(false)
+    const [sessionStartTime] = useState<number>(Date.now())
+    const [aiSuggestion, setAiSuggestion] = useState<string | null>(null)
+    const [aiInput, setAiInput] = useState('')
+    const [lineCount, setLineCount] = useState(1)
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const lineNumbersRef = useRef<HTMLDivElement>(null)
-  const tagInputRef = useRef<HTMLInputElement>(null)
+    const intervalRef = useRef<NodeJS.Timeout | null>(null)
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const lineNumbersRef = useRef<HTMLDivElement>(null)
+    const tagInputRef = useRef<HTMLInputElement>(null)
+    const exitModalRef = useRef<HTMLDivElement>(null)
 
   const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000)
 
@@ -160,6 +161,43 @@ export function FocusMode(): JSX.Element {
   useEffect(() => {
     return () => clearTimer()
   }, [clearTimer])
+
+  useEffect(() => {
+    if (!showExitModal) return
+    const container = exitModalRef.current
+    if (!container) return
+    const previousFocus = document.activeElement as HTMLElement
+    const timer = setTimeout(() => {
+      const focusable = container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length) focusable[0].focus()
+    }, 50)
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { handleResumeExit(); return }
+      if (e.key === 'Tab') {
+        const current = container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (!current.length) return
+        const first = current[0]
+        const last = current[current.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+      previousFocus?.focus()
+    }
+  }, [showExitModal])
 
   const handleTagAdd = useCallback(() => {
     const trimmed = tagInput.trim()
@@ -659,6 +697,7 @@ export function FocusMode(): JSX.Element {
       <AnimatePresence>
         {showExitModal && (
           <motion.div
+            ref={exitModalRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
