@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-07-04T17:01:25Z",
+  "target": "SOC 2 Type I (Q2 2027)",
+  "scores": {
+    "security_cc": 90,
+    "availability_a1": 90,
+    "confidentiality_c": 100,
+    "processing_integrity_pi": 86,
+    "privacy_p": 100,
+    "overall": 91
+  },
+  "gaps": {
+    "auth_endpoints": null,
+    "sast_scripts": null,
+    "dast_scripts": null,
+    "tests": "Need 50+ test files"
+  },
+  "raw_evidence": {
+  "timestamp": "2026-07-04T17:01:24Z",
+  "target": "SOC 2 Type I (Q2 2027)",
+  "controls": {
+    "auth_endpoints": 222,
+    "user_id_filters": 123,
+    "rls_files": 0,
+    "auth_middleware_calls": /mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/__init__.py:0
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/academics.py:9
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/analytics.py:5
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/auth.py:2
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/automation.py:10
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/briefings.py:5
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/chat.py:3
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/courses.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/data_export.py:2
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/feature_flags.py:7
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/feedback.py:3
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/goals.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/habits.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/ideas.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/income.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/memory.py:8
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/monitoring.py:3
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/nlp.py:3
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/notifications.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/opportunities.py:7
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/predictions.py:5
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/projects.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/prompts.py:5
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/resources.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/reviews.py:4
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/roadmap.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/skills.py:91
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/sleep.py:6
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/tasks.py:7
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/time.py:8
+/mnt/c/PROJECTS/My SecondBrain/ARIA OS - SecondBrain/apps/api/app/api/videos.py:5,
+    "sast_scripts": 2,
+    "dast_scripts": 2,
+    "incident_docs": 2,
+    "sentry_enabled": true,
+    "logger_utilities": 3,
+    "ci_jobs": 10,
+    "pr_template": "present",
+    "test_files": 36,
+    "audit_enabled": true,
+    "ttl_schema_fields": 4,
+    "pruning_implemented": true,
+    "gdpr_export": "present"
+  }
+}
+}
