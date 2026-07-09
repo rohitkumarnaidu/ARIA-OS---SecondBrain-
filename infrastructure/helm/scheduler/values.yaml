@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/secondbrain/scheduler
+  repository: ghcr.io/app/scheduler
   tag: latest
   pullPolicy: Always
 

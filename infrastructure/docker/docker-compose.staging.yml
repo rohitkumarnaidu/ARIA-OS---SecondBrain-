@@ -2,15 +2,15 @@ version: "3.8"
 
 services:
   api:
-    image: ghcr.io/secondbrain/api:staging
+    image: ghcr.io/app/api:staging
     environment:
       - ENVIRONMENT=staging
       - LOG_LEVEL=INFO
 
   web:
-    image: ghcr.io/secondbrain/web:staging
+    image: ghcr.io/app/web:staging
     environment:
-      - NEXT_PUBLIC_API_URL=https://staging-api.secondbrain-os.com
+      - NEXT_PUBLIC_API_URL=https://staging-api.app.com
 
   scheduler:
-    image: ghcr.io/secondbrain/scheduler:staging
+    image: ghcr.io/app/scheduler:staging
