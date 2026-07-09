@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aria-api
+  namespace: aria-os
+  labels:
+    app: aria-api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http-api
+  selector:
+    app: aria-api

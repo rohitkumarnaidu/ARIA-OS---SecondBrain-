@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-scheduler
+  labels:
+    app: aria-scheduler
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: aria-scheduler
+  template:
+    metadata:
+      labels:
+        app: aria-scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: aria-secrets
+                  key: supabase-url
+            - name: SUPABASE_SERVICE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aria-secrets
+                  key: supabase-service-key
+            - name: USE_LOCAL_AI
+              value: "{{ .Values.env.USE_LOCAL_AI }}"
+            - name: OLLAMA_BASE_URL
+              value: "{{ .Values.env.OLLAMA_BASE_URL }}"
+            - name: CRON_BRIEFING
+              value: "{{ .Values.env.CRON_BRIEFING }}"
+            - name: CRON_RADAR
+              value: "{{ .Values.env.CRON_RADAR }}"
+            - name: CRON_REVIEW
+              value: "{{ .Values.env.CRON_REVIEW }}"
+            - name: CRON_HABIT
+              value: "{{ .Values.env.CRON_HABIT }}"
+            - name: CRON_TASK
+              value: "{{ .Values.env.CRON_TASK }}"
+            - name: CRON_SLEEP
+              value: "{{ .Values.env.CRON_SLEEP }}"
+            - name: CRON_NUDGE
+              value: "{{ .Values.env.CRON_NUDGE }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
