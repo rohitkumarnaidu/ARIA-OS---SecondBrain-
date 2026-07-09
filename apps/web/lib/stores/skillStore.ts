@@ -295,7 +295,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
     set({ loading: true, error: null })
     try {
       const data = await skillService.categories.list()
-      set({ categories: data, loading: false })
+      set({ categories: data as SkillCategory[], loading: false })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to load categories'
       set({ error: message, loading: false })
@@ -306,7 +306,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
     set({ loading: true, error: null })
     try {
       const data = await skillService.list({ category_id: categoryId })
-      set({ skills: data, loading: false })
+      set({ skills: data as Skill[], loading: false })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to load skills'
       set({ error: message, loading: false })
@@ -316,7 +316,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   createSkill: async (data) => {
     try {
       const created = await skillService.create(data)
-      set({ skills: [...get().skills, created] })
+      set({ skills: [...get().skills, created as Skill] })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to create skill'
       set({ error: message })
@@ -326,7 +326,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateSkill: async (id, data) => {
     try {
       const updated = await skillService.update(id, data)
-      set({ skills: get().skills.map(s => s.skill_id === id ? { ...s, ...updated } : s) })
+      set({ skills: get().skills.map(s => s.skill_id === id ? { ...s, ...(updated as Partial<Skill>) } : s) })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to update skill'
       set({ error: message })
@@ -347,7 +347,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
     set({ loading: true, error: null })
     try {
       const data = await skillService.userSkills.list({ state })
-      set({ userSkills: data, loading: false })
+      set({ userSkills: data as UserSkill[], loading: false })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to load user skills'
       set({ error: message, loading: false })
@@ -357,7 +357,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addUserSkill: async (data) => {
     try {
       const created = await skillService.userSkills.create(data)
-      set({ userSkills: [created, ...get().userSkills] })
+      set({ userSkills: [created as UserSkill, ...get().userSkills] })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to add skill'
       set({ error: message })
@@ -367,7 +367,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateUserSkill: async (id, data) => {
     try {
       const updated = await skillService.userSkills.update(id, data)
-      set({ userSkills: get().userSkills.map(s => s.user_skill_id === id ? { ...s, ...updated } : s) })
+      set({ userSkills: get().userSkills.map(s => s.user_skill_id === id ? { ...s, ...(updated as Partial<UserSkill>) } : s) })
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to update skill'
       set({ error: message })
@@ -387,7 +387,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchEvidence: async (userSkillId) => {
     try {
       const data = await skillService.evidence.list({ user_skill_id: userSkillId })
-      set({ evidence: data })
+      set({ evidence: data as SkillEvidence[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load evidence' })
     }
@@ -396,7 +396,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addEvidence: async (data) => {
     try {
       const created = await skillService.evidence.create(data)
-      set({ evidence: [created, ...get().evidence] })
+      set({ evidence: [created as SkillEvidence, ...get().evidence] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add evidence' })
     }
@@ -405,7 +405,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchTargets: async (status) => {
     try {
       const data = await skillService.targets.list({ status })
-      set({ targets: data })
+      set({ targets: data as SkillTarget[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load targets' })
     }
@@ -414,7 +414,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addTarget: async (data) => {
     try {
       const created = await skillService.targets.create(data)
-      set({ targets: [created, ...get().targets] })
+      set({ targets: [created as SkillTarget, ...get().targets] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add target' })
     }
@@ -423,7 +423,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchAssessments: async (userSkillId) => {
     try {
       const data = await skillService.assessments.list({ user_skill_id: userSkillId })
-      set({ assessments: data })
+      set({ assessments: data as SkillAssessment[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load assessments' })
     }
@@ -432,7 +432,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addAssessment: async (data) => {
     try {
       const created = await skillService.assessments.create(data)
-      set({ assessments: [created, ...get().assessments] })
+      set({ assessments: [created as SkillAssessment, ...get().assessments] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add assessment' })
     }
@@ -441,7 +441,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchMarketData: async (skillId) => {
     try {
       const data = await skillService.marketData.list({ skill_id: skillId })
-      set({ marketData: data })
+      set({ marketData: data as SkillMarketData[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load market data' })
     }
@@ -450,7 +450,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addMarketData: async (data) => {
     try {
       const created = await skillService.marketData.create(data)
-      set({ marketData: [...get().marketData, created] })
+      set({ marketData: [...get().marketData, created as SkillMarketData] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add market data' })
     }
@@ -459,7 +459,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateMarketData: async (skillId, data) => {
     try {
       const updated = await skillService.marketData.update(skillId, data)
-      set({ marketData: get().marketData.map(m => m.skill_id === skillId ? { ...m, ...updated } : m) })
+      set({ marketData: get().marketData.map(m => m.skill_id === skillId ? { ...m, ...(updated as Partial<SkillMarketData>) } : m) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update market data' })
     }
@@ -468,7 +468,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchIncome: async (skillId) => {
     try {
       const data = await skillService.income.list({ skill_id: skillId })
-      set({ income: data })
+      set({ income: data as SkillIncomeData[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load income data' })
     }
@@ -477,7 +477,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addIncome: async (data) => {
     try {
       const created = await skillService.income.create(data)
-      set({ income: [created, ...get().income] })
+      set({ income: [created as SkillIncomeData, ...get().income] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add income data' })
     }
@@ -486,7 +486,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchCertifications: async (skillId) => {
     try {
       const data = await skillService.certifications.list({ skill_id: skillId })
-      set({ certifications: data })
+      set({ certifications: data as SkillCertification[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load certifications' })
     }
@@ -495,7 +495,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addCertification: async (data) => {
     try {
       const created = await skillService.certifications.create(data)
-      set({ certifications: [...get().certifications, created] })
+      set({ certifications: [...get().certifications, created as SkillCertification] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add certification' })
     }
@@ -504,7 +504,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateCertification: async (id, data) => {
     try {
       const updated = await skillService.certifications.update(id, data)
-      set({ certifications: get().certifications.map(c => c.certification_id === id ? { ...c, ...updated } : c) })
+      set({ certifications: get().certifications.map(c => c.certification_id === id ? { ...c, ...(updated as Partial<SkillCertification>) } : c) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update certification' })
     }
@@ -522,7 +522,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchTopics: async (skillId) => {
     try {
       const data = await skillService.topics.list({ skill_id: skillId })
-      set({ topics: data })
+      set({ topics: data as SkillTopic[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load topics' })
     }
@@ -531,7 +531,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addTopic: async (data) => {
     try {
       const created = await skillService.topics.create(data)
-      set({ topics: [...get().topics, created] })
+      set({ topics: [...get().topics, created as SkillTopic] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add topic' })
     }
@@ -540,7 +540,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateTopic: async (id, data) => {
     try {
       const updated = await skillService.topics.update(id, data)
-      set({ topics: get().topics.map(t => t.topic_id === id ? { ...t, ...updated } : t) })
+      set({ topics: get().topics.map(t => t.topic_id === id ? { ...t, ...(updated as Partial<SkillTopic>) } : t) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update topic' })
     }
@@ -558,7 +558,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchResources: async (skillId) => {
     try {
       const data = await skillService.resources.list({ skill_id: skillId })
-      set({ resources: data })
+      set({ resources: data as SkillResource[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load resources' })
     }
@@ -567,7 +567,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addResource: async (data) => {
     try {
       const created = await skillService.resources.create(data)
-      set({ resources: [...get().resources, created] })
+      set({ resources: [...get().resources, created as SkillResource] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add resource' })
     }
@@ -576,7 +576,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateResource: async (id, data) => {
     try {
       const updated = await skillService.resources.update(id, data)
-      set({ resources: get().resources.map(r => r.resource_id === id ? { ...r, ...updated } : r) })
+      set({ resources: get().resources.map(r => r.resource_id === id ? { ...r, ...(updated as Partial<SkillResource>) } : r) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update resource' })
     }
@@ -594,7 +594,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchLearningPaths: async (targetSkillId) => {
     try {
       const data = await skillService.learningPaths.list({ target_skill_id: targetSkillId })
-      set({ learningPaths: data })
+      set({ learningPaths: data as SkillLearningPath[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load learning paths' })
     }
@@ -603,7 +603,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addLearningPath: async (data) => {
     try {
       const created = await skillService.learningPaths.create(data)
-      set({ learningPaths: [...get().learningPaths, created] })
+      set({ learningPaths: [...get().learningPaths, created as SkillLearningPath] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add learning path' })
     }
@@ -612,7 +612,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateLearningPath: async (id, data) => {
     try {
       const updated = await skillService.learningPaths.update(id, data)
-      set({ learningPaths: get().learningPaths.map(p => p.path_id === id ? { ...p, ...updated } : p) })
+      set({ learningPaths: get().learningPaths.map(p => p.path_id === id ? { ...p, ...(updated as Partial<SkillLearningPath>) } : p) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update learning path' })
     }
@@ -630,7 +630,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchRecommendations: async (type) => {
     try {
       const data = await skillService.recommendations.list({ recommendation_type: type })
-      set({ recommendations: data })
+      set({ recommendations: data as SkillAIRecommendation[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load recommendations' })
     }
@@ -648,7 +648,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchActivity: async (type) => {
     try {
       const data = await skillService.activity.list({ activity_type: type })
-      set({ activity: data })
+      set({ activity: data as SkillActivityLog[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load activity' })
     }
@@ -657,7 +657,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   logActivity: async (data) => {
     try {
       const created = await skillService.activity.log(data)
-      set({ activity: [created, ...get().activity] })
+      set({ activity: [created as SkillActivityLog, ...get().activity] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to log activity' })
     }
@@ -666,7 +666,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchExternalMappings: async (skillId) => {
     try {
       const data = await skillService.externalMappings.list({ skill_id: skillId })
-      set({ externalMappings: data })
+      set({ externalMappings: data as SkillExternalMapping[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load external mappings' })
     }
@@ -675,7 +675,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addExternalMapping: async (data) => {
     try {
       const created = await skillService.externalMappings.create(data)
-      set({ externalMappings: [...get().externalMappings, created] })
+      set({ externalMappings: [...get().externalMappings, created as SkillExternalMapping] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add external mapping' })
     }
@@ -684,7 +684,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateExternalMapping: async (id, data) => {
     try {
       const updated = await skillService.externalMappings.update(id, data)
-      set({ externalMappings: get().externalMappings.map(m => m.mapping_id === id ? { ...m, ...updated } : m) })
+      set({ externalMappings: get().externalMappings.map(m => m.mapping_id === id ? { ...m, ...(updated as Partial<SkillExternalMapping>) } : m) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update external mapping' })
     }
@@ -702,7 +702,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchRoadmapDefinitions: async () => {
     try {
       const data = await skillService.roadmapDefinitions.list()
-      set({ roadmapDefinitions: data })
+      set({ roadmapDefinitions: data as SkillRoadmapDefinition[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load roadmap definitions' })
     }
@@ -711,7 +711,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addRoadmapDefinition: async (data) => {
     try {
       const created = await skillService.roadmapDefinitions.create(data)
-      set({ roadmapDefinitions: [...get().roadmapDefinitions, created] })
+      set({ roadmapDefinitions: [...get().roadmapDefinitions, created as SkillRoadmapDefinition] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add roadmap definition' })
     }
@@ -720,7 +720,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   updateRoadmapDefinition: async (id, data) => {
     try {
       const updated = await skillService.roadmapDefinitions.update(id, data)
-      set({ roadmapDefinitions: get().roadmapDefinitions.map(d => d.roadmap_id === id ? { ...d, ...updated } : d) })
+      set({ roadmapDefinitions: get().roadmapDefinitions.map(d => d.roadmap_id === id ? { ...d, ...(updated as Partial<SkillRoadmapDefinition>) } : d) })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to update roadmap definition' })
     }
@@ -738,7 +738,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   fetchForecasts: async (skillId) => {
     try {
       const data = await skillService.forecasts.list({ skill_id: skillId })
-      set({ forecasts: data })
+      set({ forecasts: data as SkillForecast[] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to load forecasts' })
     }
@@ -747,7 +747,7 @@ export const useSkillStore = create<SkillStore>((set, get) => ({
   addForecast: async (data) => {
     try {
       const created = await skillService.forecasts.create(data)
-      set({ forecasts: [...get().forecasts, created] })
+      set({ forecasts: [...get().forecasts, created as SkillForecast] })
     } catch (err: unknown) {
       set({ error: err instanceof Error ? err.message : 'Failed to add forecast' })
     }

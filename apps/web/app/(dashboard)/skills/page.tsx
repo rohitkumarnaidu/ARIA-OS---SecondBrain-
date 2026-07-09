@@ -97,7 +97,7 @@ export default function SkillsPage() {
               {loading ? (
                 <div className="space-y-3">{[1,2,3,4,5].map(i => <Skeleton key={i} className="h-16 w-full" />)}</div>
               ) : filteredSkills.length === 0 ? (
-                <EmptyState icon={BookOpen} title="No skills found" description="Try a different search or add new skills" />
+                <EmptyState icon={<BookOpen size={24} />} title="No skills found" description="Try a different search or add new skills" />
               ) : (
                 <div className="space-y-2">
                   {filteredSkills.map((skill, i) => {
