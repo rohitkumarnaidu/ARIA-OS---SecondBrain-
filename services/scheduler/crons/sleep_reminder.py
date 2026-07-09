@@ -18,7 +18,9 @@ async def run_sleep_reminder():
             if not log_resp.data:
                 bedtime = await suggest_bedtime(sanitize_input(user["id"]))
                 goal = user.get("sleep_goal_bedtime") or "23:00"
-                logger.info("Sleep nudge sent", user_id=user["id"], suggested_bedtime=bedtime["suggested_bedtime"], goal=goal)
+                logger.info(
+                    "Sleep nudge sent", user_id=user["id"], suggested_bedtime=bedtime["suggested_bedtime"], goal=goal
+                )
         except Exception as e:
             logger.error("Sleep reminder error", user_id=user["id"], error=str(e))
 
