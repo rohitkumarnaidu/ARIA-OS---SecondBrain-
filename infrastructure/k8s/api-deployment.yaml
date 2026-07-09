@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aria-api
-  namespace: aria-os
+  name: sb-api
+  namespace: secondbrain-os
   labels:
-    app: aria-api
+    app: sb-api
     tier: backend
 spec:
   replicas: 2
@@ -15,22 +15,22 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: aria-api
+      app: sb-api
   template:
     metadata:
       labels:
-        app: aria-api
+        app: sb-api
     spec:
       containers:
         - name: api
-          image: ghcr.io/aria-os/api:latest
+          image: ghcr.io/secondbrain-os/api:latest
           ports:
             - containerPort: 8000
           envFrom:
             - configMapRef:
-                name: aria-config
+                name: sb-config
             - secretRef:
-                name: aria-secrets
+                name: sb-secrets
           livenessProbe:
             httpGet:
               path: /health

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: aria-web
-  namespace: aria-os
+  name: sb-web
+  namespace: secondbrain-os
   labels:
-    app: aria-web
+    app: sb-web
 spec:
   type: ClusterIP
   ports:
@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: http-web
   selector:
-    app: aria-web
+    app: sb-web

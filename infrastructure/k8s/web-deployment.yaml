@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aria-web
-  namespace: aria-os
+  name: sb-web
+  namespace: secondbrain-os
   labels:
-    app: aria-web
+    app: sb-web
     tier: frontend
 spec:
   replicas: 2
@@ -15,22 +15,22 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: aria-web
+      app: sb-web
   template:
     metadata:
       labels:
-        app: aria-web
+        app: sb-web
     spec:
       containers:
         - name: web
-          image: ghcr.io/aria-os/web:latest
+          image: ghcr.io/secondbrain-os/web:latest
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: aria-config
+                name: sb-config
             - secretRef:
-                name: aria-secrets
+                name: sb-secrets
           resources:
             requests:
               memory: "256Mi"

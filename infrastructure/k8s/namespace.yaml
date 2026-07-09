@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: aria-os
+  name: secondbrain-os
   labels:
-    name: aria-os
+    name: secondbrain-os
     environment: production
     managed-by: terraform
