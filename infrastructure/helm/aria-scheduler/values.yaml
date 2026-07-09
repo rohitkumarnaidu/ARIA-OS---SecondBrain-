@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/aria-os/scheduler
+  tag: latest
+  pullPolicy: Always
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "250m"
+
+env:
+  SUPABASE_URL: ""
+  SUPABASE_SERVICE_KEY: ""
+  USE_LOCAL_AI: "true"
+  OLLAMA_BASE_URL: "http://ollama:11434"
+  CRON_BRIEFING: "0 7 * * *"
+  CRON_RADAR: "0 6 * * *"
+  CRON_REVIEW: "0 20 * * 0"
+  CRON_HABIT: "0 0 * * *"
+  CRON_TASK: "*/15 * * * *"
+  CRON_SLEEP: "30 21 * * *"
+  CRON_NUDGE: "0 18 * * *"

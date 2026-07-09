@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aria-scheduler
+  namespace: aria-os
+  labels:
+    app: aria-scheduler
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aria-scheduler
+  template:
+    metadata:
+      labels:
+        app: aria-scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: ghcr.io/aria-os/scheduler:latest
+          envFrom:
+            - configMapRef:
+                name: aria-config
+            - secretRef:
+                name: aria-secrets
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"

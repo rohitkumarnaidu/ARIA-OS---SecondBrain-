@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  api:
+    extends:
+      file: ../../docker-compose.yml
+      service: api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../apps/api:/app
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+  web:
+    extends:
+      file: ../../docker-compose.yml
+      service: web
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../apps/web:/app
+      - /app/node_modules
+    command: npm run dev
+
+  scheduler:
+    extends:
+      file: ../../docker-compose.yml
+      service: scheduler
+    volumes:
+      - ../../services/scheduler:/app
+    command: python main.py --debug

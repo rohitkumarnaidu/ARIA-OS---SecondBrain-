@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  api:
+    image: ghcr.io/aria-os/api:staging
+    environment:
+      - ENVIRONMENT=staging
+      - LOG_LEVEL=INFO
+
+  web:
+    image: ghcr.io/aria-os/web:staging
+    environment:
+      - NEXT_PUBLIC_API_URL=https://staging-api.secondbrain-os.com
+
+  scheduler:
+    image: ghcr.io/aria-os/scheduler:staging

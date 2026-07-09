@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aria-config
+  namespace: aria-os
+data:
+  # Backend
+  USE_LOCAL_AI: "true"
+  OLLAMA_BASE_URL: "http://ollama-service:11434"
+  CORS_ORIGINS: "https://app.secondbrain-os.com,http://localhost:3000"
+  RATE_LIMIT_MAX: "100"
+  RATE_LIMIT_WINDOW: "60"
+
+  # Frontend
+  NEXT_PUBLIC_API_URL: "https://api.secondbrain-os.com"
+
+  # Scheduler
+  CRON_BRIEFING: "0 7 * * *"
+  CRON_RADAR: "0 6 * * *"
+  CRON_REVIEW: "0 20 * * 0"
+  CRON_HABIT: "0 0 * * *"
+  CRON_TASK: "*/15 * * * *"
+  CRON_SLEEP: "30 21 * * *"
+  CRON_NUDGE: "0 18 * * *"
