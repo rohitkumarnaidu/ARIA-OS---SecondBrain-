@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sb-api
-  namespace: secondbrain-os
+  name: api
+  namespace: secondbrain
   labels:
-    app: sb-api
+    app: api
     tier: backend
 spec:
   replicas: 2
@@ -15,22 +15,22 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: sb-api
+      app: api
   template:
     metadata:
       labels:
-        app: sb-api
+        app: api
     spec:
       containers:
         - name: api
-          image: ghcr.io/secondbrain-os/api:latest
+          image: ghcr.io/secondbrain/api:latest
           ports:
             - containerPort: 8000
           envFrom:
             - configMapRef:
-                name: sb-config
+                name: app-config
             - secretRef:
-                name: sb-secrets
+                name: app-secrets
           livenessProbe:
             httpGet:
               path: /health

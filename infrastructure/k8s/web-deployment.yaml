@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sb-web
-  namespace: secondbrain-os
+  name: web
+  namespace: secondbrain
   labels:
-    app: sb-web
+    app: web
     tier: frontend
 spec:
   replicas: 2
@@ -15,22 +15,22 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: sb-web
+      app: web
   template:
     metadata:
       labels:
-        app: sb-web
+        app: web
     spec:
       containers:
         - name: web
-          image: ghcr.io/secondbrain-os/web:latest
+          image: ghcr.io/secondbrain/web:latest
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
-                name: sb-config
+                name: app-config
             - secretRef:
-                name: sb-secrets
+                name: app-secrets
           resources:
             requests:
               memory: "256Mi"
