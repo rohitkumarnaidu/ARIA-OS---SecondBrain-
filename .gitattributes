@@ -1,1 +1,62 @@
+# Auto-detect text files
 * text=auto
+
+# Python
+*.py text diff=python eol=lf
+
+# TypeScript / JavaScript
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+
+# Web
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+
+# Config
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.env text eol=lf
+
+# Markdown / Docs
+*.md text eol=lf
+*.mdx text eol=lf
+
+# Shell / Make
+Makefile text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+
+# Images — binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.svg text eol=lf
+*.webp binary
+
+# Archives
+*.zip binary
+*.tar.gz binary
+
+# Lock files — diff-friendly
+pnpm-lock.yaml text eol=lf diff=pnpm
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+
+# Docker
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+.dockerignore text eol=lf
+
+# Git
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.gitmodules text eol=lf
