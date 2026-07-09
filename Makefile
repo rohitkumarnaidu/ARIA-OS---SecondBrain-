@@ -24,6 +24,26 @@ dev-web: ## Start Next.js frontend dev server
 dev-scheduler: ## Start APScheduler dev server
 	cd services/scheduler && python main.py
 
+# ── Turborepo Build System ───────────────────────────────────────────────────
+
+turbo-build: ## Build all packages with Turborepo (cached)
+	npx turbo run build
+
+turbo-lint: ## Lint all packages in parallel
+	npx turbo run lint
+
+turbo-type-check: ## Type-check all packages in parallel
+	npx turbo run type-check
+
+turbo-test: ## Test all packages with Turborepo
+	npx turbo run test
+
+turbo-clean: ## Clear Turborepo cache
+	npx turbo clean
+
+turbo: ## Run all Turbo checks (build + lint + type-check)
+	npx turbo run build lint type-check
+
 # ── Linting & Formatting ─────────────────────────────────────────────────────
 
 lint: ## Run all linters (Python + TypeScript)
