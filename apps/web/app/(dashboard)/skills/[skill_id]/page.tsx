@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, Brain, Target, TrendingUp, Award, BookOpen,
-  BarChart3, DollarSign, Certificate, Lightbulb, Activity,
+  BarChart3, DollarSign, Lightbulb, Activity,
   ExternalLink, Plus, Clock, CheckCircle, Zap, Star,
   LineChart, Compass, FileText, Layers
 } from 'lucide-react'
@@ -13,7 +13,8 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs'
+import { Tabs } from '@/components/ui/Tabs'
+import type { Tab } from '@/components/ui/Tabs'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SkillRadarChart } from '@/components/analytics/SkillRadarChart'
@@ -93,7 +94,7 @@ export default function SkillDetailPage() {
   if (!skill) {
     return (
       <div className="min-h-screen bg-background-page p-8">
-        <EmptyState icon={Brain} title="Skill not found" description="This skill does not exist or has been removed" />
+        <EmptyState icon={<Brain size={24} />} title="Skill not found" description="This skill does not exist or has been removed" />
       </div>
     )
   }
@@ -104,7 +105,7 @@ export default function SkillDetailPage() {
         <PageHeader
           title={skill.name}
           description={skill.description}
-          breadcrumbs={[{ label: 'Skills', href: '/skills' }, { label: skill.name }]}
+          breadcrumb={[{ label: 'Skills', href: '/skills' }, { label: skill.name }]}
           actions={
             <div className="flex gap-2">
               {userSkill && (
@@ -132,7 +133,7 @@ export default function SkillDetailPage() {
           </Card>
           <Card className="text-center p-4">
             <Zap className="w-5 h-5 text-accent-warning mx-auto mb-2" />
-            <div className="text-2xl font-bold">{skill.confidence_score ?? '-'}</div>
+            <div className="text-2xl font-bold">{userSkill?.confidence_score ?? '-'}</div>
             <div className="text-xs text-text-secondary">Confidence</div>
           </Card>
           <Card className="text-center p-4">
@@ -142,17 +143,20 @@ export default function SkillDetailPage() {
           </Card>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="overview"><Brain className="w-4 h-4 mr-2" />Overview</TabsTrigger>
-            <TabsTrigger value="evidence"><FileText className="w-4 h-4 mr-2" />Evidence</TabsTrigger>
-            <TabsTrigger value="market"><BarChart3 className="w-4 h-4 mr-2" />Market</TabsTrigger>
-            <TabsTrigger value="learning"><BookOpen className="w-4 h-4 mr-2" />Learning</TabsTrigger>
-            <TabsTrigger value="forecasts"><LineChart className="w-4 h-4 mr-2" />Forecasts</TabsTrigger>
-            <TabsTrigger value="activity"><Activity className="w-4 h-4 mr-2" />Activity</TabsTrigger>
-          </TabsList>
+        <Tabs
+          tabs={[
+            { value: 'overview', label: 'Overview' },
+            { value: 'evidence', label: 'Evidence' },
+            { value: 'market', label: 'Market' },
+            { value: 'learning', label: 'Learning' },
+            { value: 'forecasts', label: 'Forecasts' },
+            { value: 'activity', label: 'Activity' },
+          ]}
+          value={activeTab}
+          onChange={setActiveTab}
+        />
 
-          <TabsContent value="overview" className="space-y-6 mt-6">
+          {activeTab === 'overview' && <div className="space-y-6 mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -163,7 +167,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillTargets.length === 0 ? (
-                    <EmptyState icon={Target} title="No targets" description="Set a skill target to track progress" />
+                    <EmptyState icon={<Target size={24} />} title="No targets" description="Set a skill target to track progress" />
                   ) : (
                     <div className="space-y-3">
                       {skillTargets.map(t => (
@@ -174,7 +178,7 @@ export default function SkillDetailPage() {
                               Due: {new Date(t.target_date).toLocaleDateString()}
                             </div>
                           </div>
-                          <Badge variant={t.status === 'achieved' ? 'success' : t.status === 'missed' ? 'destructive' : 'outline'}>
+                          <Badge variant={t.status === 'achieved' ? 'success' : t.status === 'missed' ? 'error' : 'outline'}>
                             {t.status}
                           </Badge>
                         </div>
@@ -187,13 +191,13 @@ export default function SkillDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
-                    <Certificate className="w-4 h-4 text-accent-neon" />
+                    <Award className="w-4 h-4 text-accent-neon" />
                     Certifications
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {skillCerts.length === 0 ? (
-                    <EmptyState icon={Certificate} title="No certifications" description="Add certifications for this skill" />
+                    <EmptyState icon={<Award size={24} />} title="No certifications" description="Add certifications for this skill" />
                   ) : (
                     <div className="space-y-3">
                       {skillCerts.map(c => (
@@ -219,7 +223,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillTopics.length === 0 ? (
-                    <EmptyState icon={Layers} title="No topics" description="No subtopics defined for this skill" />
+                    <EmptyState icon={<Layers size={24} />} title="No topics" description="No subtopics defined for this skill" />
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {skillTopics.map(t => (
@@ -239,7 +243,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillMappings.length === 0 ? (
-                    <EmptyState icon={ExternalLink} title="No mappings" description="No external system mappings" />
+                    <EmptyState icon={<ExternalLink size={24} />} title="No mappings" description="No external system mappings" />
                   ) : (
                     <div className="space-y-2">
                       {skillMappings.map(m => (
@@ -270,7 +274,7 @@ export default function SkillDetailPage() {
               </CardHeader>
               <CardContent>
                 {skillRecs.length === 0 ? (
-                  <EmptyState icon={Lightbulb} title="No recommendations" description="AI recommendations will appear here" />
+                  <EmptyState icon={<Lightbulb size={24} />} title="No recommendations" description="AI recommendations will appear here" />
                 ) : (
                   <div className="space-y-3">
                     {skillRecs.map(r => (
@@ -293,9 +297,9 @@ export default function SkillDetailPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>}
 
-          <TabsContent value="evidence" className="space-y-6 mt-6">
+          {activeTab === 'evidence' && <div className="space-y-6 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-sm">
@@ -305,7 +309,7 @@ export default function SkillDetailPage() {
               </CardHeader>
               <CardContent>
                 {skillEvidence.length === 0 ? (
-                  <EmptyState icon={FileText} title="No evidence" description="Log evidence of skill application" />
+                  <EmptyState icon={<FileText size={24} />} title="No evidence" description="Log evidence of skill application" />
                 ) : (
                   <div className="space-y-3">
                     {skillEvidence.map(e => (
@@ -334,9 +338,9 @@ export default function SkillDetailPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>}
 
-          <TabsContent value="market" className="space-y-6 mt-6">
+          {activeTab === 'market' && <div className="space-y-6 mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -347,7 +351,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillMarket.length === 0 ? (
-                    <EmptyState icon={TrendingUp} title="No market data" description="Market intelligence will appear here" />
+                    <EmptyState icon={<TrendingUp size={24} />} title="No market data" description="Market intelligence will appear here" />
                   ) : (
                     <div className="space-y-4">
                       {skillMarket.map(m => (
@@ -384,7 +388,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillIncome.length === 0 ? (
-                    <EmptyState icon={DollarSign} title="No income data" description="Track income generated from this skill" />
+                    <EmptyState icon={<DollarSign size={24} />} title="No income data" description="Track income generated from this skill" />
                   ) : (
                     <div className="space-y-3">
                       {skillIncome.map(i => (
@@ -406,9 +410,9 @@ export default function SkillDetailPage() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
+          </div>}
 
-          <TabsContent value="learning" className="space-y-6 mt-6">
+          {activeTab === 'learning' && <div className="space-y-6 mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
@@ -419,7 +423,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillPaths.length === 0 ? (
-                    <EmptyState icon={BookOpen} title="No learning paths" description="Create a learning path for this skill" />
+                    <EmptyState icon={<BookOpen size={24} />} title="No learning paths" description="Create a learning path for this skill" />
                   ) : (
                     <div className="space-y-3">
                       {skillPaths.map(p => (
@@ -448,7 +452,7 @@ export default function SkillDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {skillResources.length === 0 ? (
-                    <EmptyState icon={Star} title="No resources" description="Add learning resources for this skill" />
+                    <EmptyState icon={<Star size={24} />} title="No resources" description="Add learning resources for this skill" />
                   ) : (
                     <div className="space-y-3">
                       {skillResources.map(r => (
@@ -478,9 +482,9 @@ export default function SkillDetailPage() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
+          </div>}
 
-          <TabsContent value="forecasts" className="space-y-6 mt-6">
+          {activeTab === 'forecasts' && <div className="space-y-6 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-sm">
@@ -490,7 +494,7 @@ export default function SkillDetailPage() {
               </CardHeader>
               <CardContent>
                 {skillForecasts.length === 0 ? (
-                  <EmptyState icon={LineChart} title="No forecasts" description="AI-generated forecasts will appear here" />
+                  <EmptyState icon={<LineChart size={24} />} title="No forecasts" description="AI-generated forecasts will appear here" />
                 ) : (
                   <div className="space-y-3">
                     {skillForecasts.map(f => (
@@ -518,9 +522,9 @@ export default function SkillDetailPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>}
 
-          <TabsContent value="activity" className="space-y-6 mt-6">
+          {activeTab === 'activity' && <div className="space-y-6 mt-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-sm">
@@ -530,7 +534,7 @@ export default function SkillDetailPage() {
               </CardHeader>
               <CardContent>
                 {skillActivity.length === 0 ? (
-                  <EmptyState icon={Activity} title="No activity" description="Activity logs will appear here" />
+                  <EmptyState icon={<Activity size={24} />} title="No activity" description="Activity logs will appear here" />
                 ) : (
                   <div className="space-y-3">
                     {skillActivity.map(a => (
@@ -551,8 +555,7 @@ export default function SkillDetailPage() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div>}
       </div>
     </div>
   )
