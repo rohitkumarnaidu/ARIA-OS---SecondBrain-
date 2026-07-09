@@ -1,14 +1,14 @@
 """Tests for the Skill Pydantic schemas — validation, defaults, and enums."""
 
 from database.schemas.skill import (
-    SkillCreate, SkillResponse,
-    SkillCategoryCreate, SkillCategoryResponse,
-    SkillRelationshipCreate, SkillRelationshipResponse,
-    TagCreate, TagResponse,
-    UserSkillCreate, UserSkillResponse,
+    SkillCreate,
+    SkillCategoryCreate,
+    SkillRelationshipCreate,
+    TagCreate,
+    UserSkillCreate,
     UserSkillEvidenceCreate,
-    UserSkillTargetCreate, UserSkillTargetResponse,
-    SkillMarketDataCreate, SkillMarketDataResponse,
+    UserSkillTargetCreate,
+    SkillMarketDataCreate,
     SkillCertificationCreate,
     SkillTopicCreate,
     SkillResourceCreate,
@@ -17,8 +17,11 @@ from database.schemas.skill import (
     SkillActivityLogCreate,
     SkillEventCreate,
     SkillForecastCreate,
-    UserSkillState, EvidenceSourceType, RelationshipType,
-    TargetPriority, AssessmentType, Difficulty,
+    UserSkillState,
+    EvidenceSourceType,
+    RelationshipType,
+    TargetPriority,
+    Difficulty,
 )
 
 
@@ -38,10 +41,7 @@ def test_skill_create():
 
 
 def test_skill_relationship_create():
-    r = SkillRelationshipCreate(
-        from_skill_id="s1", to_skill_id="s2",
-        relationship_type=RelationshipType.prerequisite
-    )
+    r = SkillRelationshipCreate(from_skill_id="s1", to_skill_id="s2", relationship_type=RelationshipType.prerequisite)
     assert r.relationship_type == "prerequisite"
     assert r.weight == 1.0
     assert r.is_directed is True
@@ -61,9 +61,12 @@ def test_user_skill_create():
 
 def test_user_skill_evidence_create():
     ev = UserSkillEvidenceCreate(
-        user_skill_id="us-1", user_id="u1",
+        user_skill_id="us-1",
+        user_id="u1",
         source_type=EvidenceSourceType.github,
-        title="PR Merged", signed_hash="abc123", collected_at=0,
+        title="PR Merged",
+        signed_hash="abc123",
+        collected_at=0,
     )
     assert ev.source_type == "github"
     assert ev.signed_hash == "abc123"
