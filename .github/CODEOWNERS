@@ -1,0 +1,32 @@
+# Each line is a file pattern followed by one or more owners.
+# Order matters: last matching pattern has precedence.
+
+* @developer
+
+# Core infrastructure
+/infrastructure/ @developer
+/docker-compose.yml @developer
+
+# API and backend
+/apps/api/ @developer
+/packages/config/ @developer
+/packages/database/ @developer
+/packages/shared/ @developer
+
+# Frontend
+/apps/web/ @developer
+/packages/types/ @developer
+/packages/ui/ @developer
+
+# AI system
+/packages/ai/ @developer
+/prompts/ @developer
+
+# CI/CD and security
+/.github/ @developer
+/scripts/ @developer
+/security/ @developer
+
+# Documentation
+/docs/ @developer
+AGENTS.md @developer
