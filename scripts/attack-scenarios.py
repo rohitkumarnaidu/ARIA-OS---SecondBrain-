@@ -21,15 +21,17 @@ class AttackScenario:
 
     def record(self, endpoint: str, payload: dict, status: int, expected: int, detail: str = ""):
         passed = status == expected if expected >= 0 else status != abs(expected)
-        self.results.append({
-            "scenario": self.name,
-            "endpoint": endpoint,
-            "payload": payload,
-            "actual_status": status,
-            "expected_status": expected,
-            "passed": passed,
-            "detail": detail,
-        })
+        self.results.append(
+            {
+                "scenario": self.name,
+                "endpoint": endpoint,
+                "payload": payload,
+                "actual_status": status,
+                "expected_status": expected,
+                "passed": passed,
+                "detail": detail,
+            }
+        )
 
     def report(self) -> Dict:
         total = len(self.results)
@@ -50,14 +52,19 @@ def run_sql_injection(client: httpx.Client) -> AttackScenario:
         "'; DROP TABLE tasks; --",
         "' UNION SELECT * FROM users --",
         "' OR 1=1 --",
-        "\" OR \"1\"=\"1",
+        '" OR "1"="1',
     ]
     for payload in payloads:
         for endpoint in [f"/api/v1/tasks/?search={payload}", f"/api/v1/goals/?q={payload}"]:
             try:
                 resp = client.get(endpoint, timeout=10)
-                scenario.record(endpoint, {"search": payload}, resp.status_code, 400,
-                                "Expected 400 (parameterized query) or 200 (sanitized)")
+                scenario.record(
+                    endpoint,
+                    {"search": payload},
+                    resp.status_code,
+                    400,
+                    "Expected 400 (parameterized query) or 200 (sanitized)",
+                )
             except Exception as e:
                 scenario.record(endpoint, {"search": payload}, 0, 400, str(e))
     return scenario
@@ -69,21 +76,30 @@ def run_xss(client: httpx.Client) -> AttackScenario:
         "<script>alert(1)</script>",
         "<img src=x onerror=alert(1)>",
         "javascript:alert(1)",
-        "\"><script>alert(1)</script>",
+        '"><script>alert(1)</script>',
     ]
     for payload in payloads:
         try:
-            resp = client.post(f"{TARGET}/api/v1/tasks/", json={
-                "title": payload,
-                "priority": "medium",
-                "status": "pending",
-            }, timeout=10)
+            resp = client.post(
+                f"{TARGET}/api/v1/tasks/",
+                json={
+                    "title": payload,
+                    "priority": "medium",
+                    "status": "pending",
+                },
+                timeout=10,
+            )
             if resp.status_code == 201:
                 data = resp.json()
                 title = data.get("title", "")
                 sanitized = "<" not in title and ">" not in title
-                scenario.record("/api/v1/tasks/", {"title": payload}, resp.status_code, 201,
-                                "Sanitized" if sanitized else "UNSANITIZED - XSS RISK")
+                scenario.record(
+                    "/api/v1/tasks/",
+                    {"title": payload},
+                    resp.status_code,
+                    201,
+                    "Sanitized" if sanitized else "UNSANITIZED - XSS RISK",
+                )
             else:
                 scenario.record("/api/v1/tasks/", {"title": payload}, resp.status_code, 201)
         except Exception as e:
@@ -103,8 +119,13 @@ def run_path_traversal(client: httpx.Client) -> AttackScenario:
         for endpoint in [f"/api/v1/resources/?path={payload}", f"/api/v1/tasks/?file={payload}"]:
             try:
                 resp = client.get(endpoint, timeout=10)
-                scenario.record(endpoint, {"path": payload}, resp.status_code, 400,
-                                "Blocked" if resp.status_code >= 400 else "POTENTIAL TRAVERSAL")
+                scenario.record(
+                    endpoint,
+                    {"path": payload},
+                    resp.status_code,
+                    400,
+                    "Blocked" if resp.status_code >= 400 else "POTENTIAL TRAVERSAL",
+                )
             except Exception as e:
                 scenario.record(endpoint, {"path": payload}, 0, 400, str(e))
     return scenario
@@ -122,8 +143,13 @@ def run_auth_bypass(client: httpx.Client) -> AttackScenario:
         headers = {"Authorization": f"Bearer {token}"}
         try:
             resp = client.get(f"{TARGET}/api/v1/tasks/", headers=headers, timeout=10)
-            scenario.record("/api/v1/tasks/", {"token": token[:20]}, resp.status_code, 401,
-                            "Blocked" if resp.status_code in (401, 403) else "POTENTIAL BYPASS")
+            scenario.record(
+                "/api/v1/tasks/",
+                {"token": token[:20]},
+                resp.status_code,
+                401,
+                "Blocked" if resp.status_code in (401, 403) else "POTENTIAL BYPASS",
+            )
         except Exception as e:
             scenario.record("/api/v1/tasks/", {"token": token[:20]}, 0, 401, str(e))
     return scenario
@@ -140,9 +166,13 @@ def run_rate_limit(client: httpx.Client) -> AttackScenario:
             rapid_requests += 1
         except Exception:
             break
-    scenario.record("/health", {}, 200 if rapid_requests < 20 else 429,
-                    429 if rapid_requests >= 20 else 200,
-                    f"20 rapid requests resulted in {rapid_requests} successes")
+    scenario.record(
+        "/health",
+        {},
+        200 if rapid_requests < 20 else 429,
+        429 if rapid_requests >= 20 else 200,
+        f"20 rapid requests resulted in {rapid_requests} successes",
+    )
     return scenario
 
 
@@ -156,11 +186,20 @@ def run_ssrf(client: httpx.Client) -> AttackScenario:
     ]
     for host in internal_hosts:
         try:
-            resp = client.post(f"{TARGET}/api/v1/chat/", json={
-                "message": f"Fetch data from {host}",
-            }, timeout=10)
-            scenario.record("/api/v1/chat/", {"message": f"fetch {host}"}, resp.status_code, 400,
-                            "Blocked" if resp.status_code >= 400 else "POTENTIAL SSRF")
+            resp = client.post(
+                f"{TARGET}/api/v1/chat/",
+                json={
+                    "message": f"Fetch data from {host}",
+                },
+                timeout=10,
+            )
+            scenario.record(
+                "/api/v1/chat/",
+                {"message": f"fetch {host}"},
+                resp.status_code,
+                400,
+                "Blocked" if resp.status_code >= 400 else "POTENTIAL SSRF",
+            )
         except Exception as e:
             scenario.record("/api/v1/chat/", {"message": f"fetch {host}"}, 0, 400, str(e))
     return scenario
@@ -205,7 +244,7 @@ def main():
     # Save report
     with open("security/reports/attack-scenarios.json", "w") as f:
         json.dump(consolidated, f, indent=2, default=str)
-    print(f"\nReport saved to security/reports/attack-scenarios.json")
+    print("\nReport saved to security/reports/attack-scenarios.json")
 
     sys.exit(0 if all_passed else 1)
 

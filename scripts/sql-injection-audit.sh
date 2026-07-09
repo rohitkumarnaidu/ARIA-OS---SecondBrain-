@@ -10,7 +10,7 @@ FAIL=0
 
 # Check all supabase queries use parameterized patterns (eq, text_search, match)
 echo "Checking for raw SQL patterns in Python backend..."
-RAW_SQL_COUNT=$(grep -rn "\.execute(" apps/api --include="*.py" | grep -v "test_" | grep -v "__pycache__" | grep -v "supabase\." | wc -l)
+RAW_SQL_COUNT=$(grep -rn "\.execute(" apps/api --include="*.py" 2>/dev/null | grep -v "test_" 2>/dev/null | grep -v "__pycache__" 2>/dev/null | grep -v "supabase\." 2>/dev/null | wc -l || true)
 if [ "$RAW_SQL_COUNT" -gt 0 ]; then
     echo "  WARN: Found $RAW_SQL_COUNT execute() calls not using supabase SDK (verify)"
     grep -rn "\.execute(" apps/api --include="*.py" | grep -v "test_" | grep -v "__pycache__" | grep -v "supabase\." || true
@@ -21,7 +21,7 @@ fi
 # Check for Python string formatting in queries (f-strings with SQL)
 echo ""
 echo "Checking for f-string SQL patterns..."
-FSTRING_SQL=$(grep -rn 'f".*SELECT\|f".*INSERT\|f".*UPDATE\|f".*DELETE\|f".*DROP\|f".*ALTER' apps/api --include="*.py" | grep -v "test_" | wc -l)
+FSTRING_SQL=$(grep -rn 'f".*SELECT\|f".*INSERT\|f".*UPDATE\|f".*DELETE\|f".*DROP\|f".*ALTER' apps/api --include="*.py" 2>/dev/null | grep -v "test_" 2>/dev/null | wc -l || true)
 if [ "$FSTRING_SQL" -gt 0 ]; then
     echo "  FAIL: $FSTRING_SQL f-string SQL patterns found (risk of injection)"
     FAIL=$((FAIL + 1))
@@ -32,7 +32,7 @@ fi
 # Check for string concatenation in SQL
 echo ""
 echo "Checking for string concatenation SQL..."
-CONCAT_SQL=$(grep -rn '".*SELECT.*" + \|".*INSERT.*" + \|".*UPDATE.*" + \|".*DELETE.*" + ' apps/api --include="*.py" | grep -v "test_" | wc -l)
+CONCAT_SQL=$(grep -rn '".*SELECT.*" + \|".*INSERT.*" + \|".*UPDATE.*" + \|".*DELETE.*" + ' apps/api --include="*.py" 2>/dev/null | grep -v "test_" 2>/dev/null | wc -l || true)
 if [ "$CONCAT_SQL" -gt 0 ]; then
     echo "  FAIL: $CONCAT_SQL string concat SQL patterns found"
     FAIL=$((FAIL + 2))
@@ -43,7 +43,7 @@ fi
 # Check frontend Supabase queries
 echo ""
 echo "Checking frontend Supabase query patterns..."
-FRONTEND_INJECTION=$(grep -rn "\.rpc\|\.sql\|\.raw" apps/web --include="*.ts" --include="*.tsx" | grep -v "test_" | grep -v "node_modules" | grep -v ".next" | wc -l)
+FRONTEND_INJECTION=$(grep -rn "\.rpc\|\.sql\|\.raw" apps/web --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=.next 2>/dev/null | grep -v "test_" 2>/dev/null | wc -l || true)
 if [ "$FRONTEND_INJECTION" -gt 0 ]; then
     echo "  WARN: $FRONTEND_INJECTION raw RPC/SQL calls in frontend (verify they are parameterized)"
 else

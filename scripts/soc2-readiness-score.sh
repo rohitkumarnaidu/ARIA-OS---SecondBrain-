@@ -13,10 +13,14 @@ REPORT_DIR="${OUTPUT_DIR}/${TIMESTAMP}"
 echo "=== SOC 2 Readiness Score ==="
 echo ""
 
-# Run evidence collector
-bash "${SCRIPT_DIR}/scripts/soc2-evidence-collector.sh" "${REPORT_DIR}" 2>/dev/null
+# Run evidence collector (pass base dir so collector creates its own timestamp subdir)
+bash "${SCRIPT_DIR}/scripts/soc2-evidence-collector.sh" "${OUTPUT_DIR}" 2>/dev/null
 
-EVIDENCE="${REPORT_DIR}/evidence-summary.json"
+# Find the evidence file in the collector's nested timestamp directory
+EVIDENCE=$(find "${OUTPUT_DIR}" -name "evidence-summary.json" -type f 2>/dev/null | sort -r | head -1)
+if [ -z "$EVIDENCE" ]; then
+    EVIDENCE="${REPORT_DIR}/evidence-summary.json"
+fi
 if [ ! -f "$EVIDENCE" ]; then
   echo "ERROR: Evidence collection failed"
   exit 1
@@ -29,9 +33,9 @@ SAST=$(grep -o '"sast_scripts": [0-9]*' "$EVIDENCE" | grep -o '[0-9]*')
 DAST=$(grep -o '"dast_scripts": [0-9]*' "$EVIDENCE" | grep -o '[0-9]*')
 TESTS=$(grep -o '"test_files": [0-9]*' "$EVIDENCE" | grep -o '[0-9]*')
 CI=$(grep -o '"ci_jobs": [0-9]*' "$EVIDENCE" | grep -o '[0-9]*')
-AUDIT=$(grep -o '"audit_enabled": [a-z]*' "$EVIDENCE" | grep -o '[a-z]*')
-SENTRY=$(grep -o '"sentry_enabled": [a-z]*' "$EVIDENCE" | grep -o '[a-z]*')
-GDPR=$(grep -o '"gdpr_export": "[a-z]*"' "$EVIDENCE" | grep -o '[a-z]*' | tr -d '"')
+AUDIT=$(grep -o '"audit_enabled": [a-z]*' "$EVIDENCE" | sed 's/.*: //')
+SENTRY=$(grep -o '"sentry_enabled": [a-z]*' "$EVIDENCE" | sed 's/.*: //')
+GDPR=$(grep -o '"gdpr_export": "[a-z]*"' "$EVIDENCE" | sed 's/.*: "//' | sed 's/"//')
 
 # ── Category Scoring ──────────────────────────────────────────────────────
 

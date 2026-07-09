@@ -1,10 +1,13 @@
 /**
  * Token Drift Check Script
  * 
+ * @deprecated Use apps/web/scripts/check-token-drift.mjs instead.
+ * This file is kept for CI compatibility but is no longer maintained.
+ * 
  * Scans all .tsx and .css files for hardcoded color values.
  * Designed to run in CI to prevent token drift.
  * 
- * Usage: npm run token:check
+ * Usage (deprecated): npm run token:check
  * 
  * Fails if any file contains hardcoded hex/rgb/rgba/hsl colors outside of
  * allowed files (tailwind.config.js, globals.css).

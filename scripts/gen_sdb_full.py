@@ -6,10 +6,8 @@ Usage: python gen_sdb_full.py [--migrations-dir MIGRATIONS_DIR] [--output OUTPUT
 """
 
 import argparse
-import os
 import sys
 from pathlib import Path
-
 
 MIGRATIONS = [
     "000_skills_complete_ddl.sql",
@@ -719,7 +717,7 @@ def main():
 
     status = validate_migrations(migrations_dir)
 
-    print(f"=== Skill Database Architecture Generator ===")
+    print("=== Skill Database Architecture Generator ===")
     print(f"Migrations dir: {migrations_dir.resolve()}")
     print(f"Present: {len(status['present'])}/{len(MIGRATIONS)}")
     print(f"Missing: {status['missing'] if status['missing'] else 'None'}")
@@ -761,5 +759,5 @@ def main():
         print("\nNo output options specified. Use --output, --generate-schemas, or --generate-api-stubs.")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()
