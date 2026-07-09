@@ -9,7 +9,13 @@ async def authenticate_with_api_key(api_key: str):
     supabase = get_supabase_client()
 
     try:
-        result = supabase.from_("api_keys").select("user_id, expires_at, is_active").eq("key_hash", key_hash).limit(1).execute()
+        result = (
+            supabase.from_("api_keys")
+            .select("user_id, expires_at, is_active")
+            .eq("key_hash", key_hash)
+            .limit(1)
+            .execute()
+        )
         rows = result.data or []
         if not rows:
             raise HTTPException(status_code=401, detail="Invalid API key")
@@ -19,6 +25,7 @@ async def authenticate_with_api_key(api_key: str):
             raise HTTPException(status_code=401, detail="API key is deactivated")
 
         from datetime import datetime, timezone
+
         expires = key_data.get("expires_at")
         if expires:
             expires_dt = datetime.fromisoformat(expires.replace("Z", "+00:00"))

@@ -2,7 +2,6 @@ import re
 import html
 from typing import Optional
 
-
 XSS_PATTERNS = [
     (re.compile(r"<script[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL), "script tags"),
     (re.compile(r"javascript:\s*", re.IGNORECASE), "javascript: URIs"),

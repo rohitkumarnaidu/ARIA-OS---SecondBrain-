@@ -44,13 +44,19 @@ class ResponseCacheMiddleware(BaseHTTPMiddleware):
                 body += chunk
             headers = dict(response.headers)
             headers["X-Cache"] = "MISS"
-            await cache.set(cache_key, {
-                "body": body,
-                "status": response.status_code,
-                "media_type": response.media_type,
-                "headers": headers,
-            }, ttl=self.default_ttl)
-            return Response(content=body, status_code=response.status_code, media_type=response.media_type, headers=headers)
+            await cache.set(
+                cache_key,
+                {
+                    "body": body,
+                    "status": response.status_code,
+                    "media_type": response.media_type,
+                    "headers": headers,
+                },
+                ttl=self.default_ttl,
+            )
+            return Response(
+                content=body, status_code=response.status_code, media_type=response.media_type, headers=headers
+            )
 
         return response
 

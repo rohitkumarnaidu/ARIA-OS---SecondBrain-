@@ -10,22 +10,20 @@ Cache key format: skills:<prefix>:<md5_hash>
 
 import os
 import json
-import hmac
 import hashlib
 from typing import Optional, Any, Callable
-from datetime import timedelta, datetime
+from datetime import timedelta
 from shared.utils.cache import cache as memory_cache
 from shared.utils.logger import logger
 
-
 # TTL presets (seconds) aligned with SDB §12.4 Caching Strategy
 CACHE_TTL = {
-    "taxonomy_tree": 3600,        # 1 hour — invalidated on taxonomy change
-    "market_data": 14400,         # 4 hours — invalidated on market refresh
-    "user_skills": 300,           # 5 minutes — invalidated on user skill change
-    "user_session": 86400,        # 24 hours — invalidated on logout
-    "analytics": 1800,            # 30 minutes — periodic refresh
-    "default": 300,               # 5 minutes default
+    "taxonomy_tree": 3600,  # 1 hour — invalidated on taxonomy change
+    "market_data": 14400,  # 4 hours — invalidated on market refresh
+    "user_skills": 300,  # 5 minutes — invalidated on user skill change
+    "user_session": 86400,  # 24 hours — invalidated on logout
+    "analytics": 1800,  # 30 minutes — periodic refresh
+    "default": 300,  # 5 minutes default
 }
 
 
@@ -57,6 +55,7 @@ class RedisCacheLayer:
             return
         try:
             import redis.asyncio as aioredis
+
             self._redis = aioredis.from_url(
                 url,
                 decode_responses=True,
@@ -182,14 +181,14 @@ class RedisCacheLayer:
         await self.invalidate_prefix("")
         logger.info("All skills cache invalidated")
 
-    async def get_or_set(self, key: str, fn: Callable, ttl: Optional[int] = None,
-                         prefix: Optional[str] = None) -> Any:
+    async def get_or_set(self, key: str, fn: Callable, ttl: Optional[int] = None, prefix: Optional[str] = None) -> Any:
         if prefix:
             key = self._make_key(prefix, key)
         cached = await self.get(key)
         if cached is not None:
             return cached
         import asyncio
+
         if asyncio.iscoroutinefunction(fn):
             value = await fn()
         else:
@@ -237,9 +236,11 @@ class RedisCacheLayer:
                 info = await self._redis.info("stats")
                 stats["hits"] = info.get("keyspace_hits", 0)
                 stats["misses"] = info.get("keyspace_misses", 0)
-                stats["hit_rate"] = round(
-                    info["keyspace_hits"] / (info["keyspace_hits"] + info["keyspace_misses"]) * 100, 1
-                ) if (info.get("keyspace_hits", 0) + info.get("keyspace_misses", 0)) > 0 else 0
+                stats["hit_rate"] = (
+                    round(info["keyspace_hits"] / (info["keyspace_hits"] + info["keyspace_misses"]) * 100, 1)
+                    if (info.get("keyspace_hits", 0) + info.get("keyspace_misses", 0)) > 0
+                    else 0
+                )
             except Exception:
                 pass
         return stats

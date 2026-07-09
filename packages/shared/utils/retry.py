@@ -9,6 +9,7 @@ from typing import Callable, Type, Tuple, Optional
 
 class CircuitBreakerOpenError(Exception):
     """Raised when circuit breaker is open and request is rejected"""
+
     pass
 
 
