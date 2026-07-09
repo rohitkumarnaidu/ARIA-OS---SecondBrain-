@@ -7,11 +7,25 @@ from database.schemas.data_export import ExportResponse
 router = APIRouter()
 
 EXPORTABLE_TABLES = [
-    "tasks", "courses", "goals", "habits", "habit_logs",
-    "sleep_logs", "income_entries", "projects", "ideas",
-    "resources", "opportunities", "time_entries", "chat_messages",
-    "daily_briefings", "weekly_reviews", "memory", "learning_progress",
-    "feedback", "notifications",
+    "tasks",
+    "courses",
+    "goals",
+    "habits",
+    "habit_logs",
+    "sleep_logs",
+    "income_entries",
+    "projects",
+    "ideas",
+    "resources",
+    "opportunities",
+    "time_entries",
+    "chat_messages",
+    "daily_briefings",
+    "weekly_reviews",
+    "memory",
+    "learning_progress",
+    "feedback",
+    "notifications",
 ]
 
 

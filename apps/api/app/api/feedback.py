@@ -34,7 +34,12 @@ async def submit_feedback(fb: FeedbackCreate, current_user=Depends(get_current_u
 async def feedback_summary(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        result = supabase.from_("feedback").select("id, user_id, source, target_id, rating, comment, metadata, created_at").eq("user_id", current_user.user.id).execute()
+        result = (
+            supabase.from_("feedback")
+            .select("id, user_id, source, target_id, rating, comment, metadata, created_at")
+            .eq("user_id", current_user.user.id)
+            .execute()
+        )
         items = result.data or []
     except Exception as e:
         logger.error("Failed to fetch feedback summary", error=str(e))

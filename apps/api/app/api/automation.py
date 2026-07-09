@@ -93,11 +93,14 @@ async def create_plan(query_data: PlanRequest, current_user=Depends(get_current_
         return {"status": "success", "data": result}
     except Exception as e:
         logger.error("Planner failed", error=str(e))
-        return {"status": "success", "data": {
-            "plan_id": "fallback",
-            "steps": [{"action": "search", "target": "all", "reasoning": "Fallback plan", "confidence": 0.5}],
-            "summary": "Search across all modules"
-        }}
+        return {
+            "status": "success",
+            "data": {
+                "plan_id": "fallback",
+                "steps": [{"action": "search", "target": "all", "reasoning": "Fallback plan", "confidence": 0.5}],
+                "summary": "Search across all modules",
+            },
+        }
 
 
 @router.post("/execute", summary="Execute an action", status_code=200)

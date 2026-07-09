@@ -74,13 +74,17 @@ def build_context(
             cat = t.get("category", "work")
             categories[cat] = categories.get(cat, 0) + (t.get("duration_minutes") or 0)
         if categories:
-            lines.append(f"- Breakdown: {', '.join(f'{cat}: {mins // 60}h {mins % 60}m' for cat, mins in categories.items())}")
+            lines.append(
+                f"- Breakdown: {', '.join(f'{cat}: {mins // 60}h {mins % 60}m' for cat, mins in categories.items())}"
+            )
         lines.append("")
 
     if memory_summary and memory_summary.get("summary"):
         lines.append("### Memory Context")
         lines.append(f"- {memory_summary['summary']}")
-        lines.append(f"- Preferred category: {memory_summary.get('preferences', {}).get('preferred_category', 'general')}")
+        lines.append(
+            f"- Preferred category: {memory_summary.get('preferences', {}).get('preferred_category', 'general')}"
+        )
         lines.append("")
 
     if recent_messages:
@@ -99,11 +103,13 @@ def build_context(
 async def list_conversations(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        data = supabase.from_("chat_messages")\
-            .select("conversation_id, created_at, content, role")\
-            .eq("user_id", current_user.user.id)\
-            .order("created_at", ascending=False)\
+        data = (
+            supabase.from_("chat_messages")
+            .select("conversation_id, created_at, content, role")
+            .eq("user_id", current_user.user.id)
+            .order("created_at", ascending=False)
             .execute()
+        )
 
         messages = data.data or []
         conv_map: Dict[str, dict] = {}
@@ -140,13 +146,66 @@ async def chat(request: Request, request_body: ChatRequest, current_user=Depends
     message = sanitize_input(request_body.message)
 
     try:
-        tasks_resp = supabase.from_("tasks").select("id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count").eq("user_id", current_user.user.id).eq("status", "pending").order("priority", ascending=True).execute()
-        goals_resp = supabase.from_("goals").select("id, user_id, title, description, status, progress, target_date, category, created_at, updated_at").eq("user_id", current_user.user.id).eq("status", "active").execute()
-        courses_resp = supabase.from_("courses").select("id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at").eq("user_id", current_user.user.id).execute()
-        habits_resp = supabase.from_("habits").select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at").eq("user_id", current_user.user.id).execute()
-        sleep_resp = supabase.from_("sleep_logs").select("id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at").eq("user_id", current_user.user.id).order("date", ascending=False).limit(1).execute()
-        time_resp = supabase.from_("time_entries").select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at").eq("user_id", current_user.user.id).gte("start_time", datetime.now().strftime("%Y-%m-%d")).execute()
-        history_resp = supabase.from_("chat_messages").select("role, content").eq("user_id", current_user.user.id).order("created_at", ascending=False).limit(10).execute()
+        tasks_resp = (
+            supabase.from_("tasks")
+            .select(
+                "id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count"
+            )
+            .eq("user_id", current_user.user.id)
+            .eq("status", "pending")
+            .order("priority", ascending=True)
+            .execute()
+        )
+        goals_resp = (
+            supabase.from_("goals")
+            .select("id, user_id, title, description, status, progress, target_date, category, created_at, updated_at")
+            .eq("user_id", current_user.user.id)
+            .eq("status", "active")
+            .execute()
+        )
+        courses_resp = (
+            supabase.from_("courses")
+            .select(
+                "id, user_id, title, platform, url, status, progress_percent, total_videos, completed_videos, deadline, created_at, updated_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .execute()
+        )
+        habits_resp = (
+            supabase.from_("habits")
+            .select(
+                "id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .execute()
+        )
+        sleep_resp = (
+            supabase.from_("sleep_logs")
+            .select(
+                "id, user_id, date, bedtime, wake_time, duration_hours, sleep_score, sleep_debt, quality_rating, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .order("date", ascending=False)
+            .limit(1)
+            .execute()
+        )
+        time_resp = (
+            supabase.from_("time_entries")
+            .select(
+                "id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at"
+            )
+            .eq("user_id", current_user.user.id)
+            .gte("start_time", datetime.now().strftime("%Y-%m-%d"))
+            .execute()
+        )
+        history_resp = (
+            supabase.from_("chat_messages")
+            .select("role, content")
+            .eq("user_id", current_user.user.id)
+            .order("created_at", ascending=False)
+            .limit(10)
+            .execute()
+        )
 
         pending_tasks = tasks_resp.data or []
         active_goals = goals_resp.data or []
@@ -170,7 +229,9 @@ async def chat(request: Request, request_body: ChatRequest, current_user=Depends
         else:
             system = "You are ARIA, an AI assistant for a BTech CSE student's productivity system."
 
-        context_block = build_context(pending_tasks, active_goals, courses, habits, sleep_logs, time_entries, recent_messages, memory)
+        context_block = build_context(
+            pending_tasks, active_goals, courses, habits, sleep_logs, time_entries, recent_messages, memory
+        )
         user_prompt = f"""Based on the user's current context, respond to their message.
 
 {context_block}
@@ -200,7 +261,9 @@ Respond conversationally and helpfully. Be concise but thorough. If they ask abo
             if in_progress:
                 response_text = f"You're currently taking {len(in_progress)} courses. Keep up the good work! What's your focus right now?"
             else:
-                response_text = "Start learning! Add courses from Udemy, Coursera, NPTEL, or YouTube to track your progress."
+                response_text = (
+                    "Start learning! Add courses from Udemy, Coursera, NPTEL, or YouTube to track your progress."
+                )
         elif "help" in message_lower:
             response_text = "I'm here to help! Ask me about your tasks, goals, courses, habits, or projects. I can also help you plan your day or suggest what to focus on."
         elif "habit" in message_lower:
@@ -208,12 +271,18 @@ Respond conversationally and helpfully. Be concise but thorough. If they ask abo
             if active_habits:
                 response_text = f"You have {len(active_habits)} active habits. Best streak: {max(h.get('current_streak', 0) for h in active_habits)} days. Keep it going!"
             else:
-                response_text = "No habits tracked yet. Start with something small like 'Code for 30 minutes' or 'Read before bed'."
+                response_text = (
+                    "No habits tracked yet. Start with something small like 'Code for 30 minutes' or 'Read before bed'."
+                )
         else:
             response_text = f"I understand you're asking about: '{message}'. To get personalized help, ask me about your tasks, goals, courses, habits, or projects."
 
-    supabase.from_("chat_messages").insert({"user_id": current_user.user.id, "role": "user", "content": message}).execute()
-    supabase.from_("chat_messages").insert({"user_id": current_user.user.id, "role": "assistant", "content": response_text}).execute()
+    supabase.from_("chat_messages").insert(
+        {"user_id": current_user.user.id, "role": "user", "content": message}
+    ).execute()
+    supabase.from_("chat_messages").insert(
+        {"user_id": current_user.user.id, "role": "assistant", "content": response_text}
+    ).execute()
 
     try:
         await store_interaction(current_user.user.id, "chat", message, {"response_preview": response_text[:200]})

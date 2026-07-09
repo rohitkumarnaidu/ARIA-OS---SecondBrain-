@@ -2,15 +2,13 @@ from fastapi import APIRouter, HTTPException, Depends
 from database.schemas.feature_flag import (
     FeatureFlagCreate,
     FeatureFlagUpdate,
-    FeatureFlagResponse,
 )
 from config.core.auth import get_current_user
 from shared.utils.feature_flags import flags, FeatureFlag
 from shared.utils.logger import logger
 from datetime import datetime
-import uuid
 
-router = APIRouter(prefix="/api/v1/feature-flags", tags=["feature_flags"])
+router = APIRouter()
 
 
 @router.get("/")

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional, Any, List
+from typing import Optional, List
 
 
 class FeatureFlagCreate(BaseModel):

@@ -89,7 +89,14 @@ async def delete_mark(mark_id: str, current_user=Depends(get_current_user)):
 async def learning_stats(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     try:
-        result = supabase.from_("learning_progress").select("id, user_id, date, completion_rate, courses_active, habits_streak, focus_minutes, sleep_score").eq("user_id", current_user.user.id).order("date", ascending=False).limit(30).execute()
+        result = (
+            supabase.from_("learning_progress")
+            .select("id, user_id, date, completion_rate, courses_active, habits_streak, focus_minutes, sleep_score")
+            .eq("user_id", current_user.user.id)
+            .order("date", ascending=False)
+            .limit(30)
+            .execute()
+        )
         snapshots = result.data or []
     except Exception:
         snapshots = []
@@ -105,7 +112,12 @@ async def learning_stats(current_user=Depends(get_current_user)):
     older_avg = sum(older) / len(older) if older else 0
     trend = "improving" if recent_avg > older_avg + 5 else ("declining" if recent_avg < older_avg - 5 else "stable")
 
-    return {"completion_rate": rates[0] if rates else 0, "avg_completion_rate": avg_rate, "trend": trend, "snapshots": snapshots[:30]}
+    return {
+        "completion_rate": rates[0] if rates else 0,
+        "avg_completion_rate": avg_rate,
+        "trend": trend,
+        "snapshots": snapshots[:30],
+    }
 
 
 @router.get("/learning-progress/timeline", summary="Get learning progress timeline", response_model=list)
@@ -113,7 +125,14 @@ async def learning_timeline(days: int = Query(30, ge=1, le=365), current_user=De
     supabase = get_supabase_client()
     cutoff = (datetime.now() - timedelta(days=days)).isoformat()
     try:
-        result = supabase.from_("learning_progress").select("id, user_id, date, completion_rate, courses_active, habits_streak, focus_minutes, sleep_score").eq("user_id", current_user.user.id).gte("date", cutoff).order("date", ascending=False).execute()
+        result = (
+            supabase.from_("learning_progress")
+            .select("id, user_id, date, completion_rate, courses_active, habits_streak, focus_minutes, sleep_score")
+            .eq("user_id", current_user.user.id)
+            .gte("date", cutoff)
+            .order("date", ascending=False)
+            .execute()
+        )
         return result.data or []
     except Exception as e:
         logger.error("Failed to fetch learning timeline", error=str(e))

@@ -41,9 +41,7 @@ async def get_milestone(milestone_id: str, current_user=Depends(get_current_user
 
 
 @router.post("/", summary="Create a new milestone", status_code=201, response_model=RoadmapMilestoneResponse)
-async def create_milestone(
-    milestone: RoadmapMilestoneCreate, current_user=Depends(get_current_user)
-):
+async def create_milestone(milestone: RoadmapMilestoneCreate, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     data = milestone.model_dump()
     data["user_id"] = current_user.user.id
@@ -78,9 +76,7 @@ async def update_milestone(
 @router.delete("/{milestone_id}", summary="Delete a milestone", status_code=204)
 async def delete_milestone(milestone_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = (
-        supabase.from_("roadmaps").delete().eq("id", milestone_id).eq("user_id", current_user.user.id).execute()
-    )
+    response = supabase.from_("roadmaps").delete().eq("id", milestone_id).eq("user_id", current_user.user.id).execute()
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
     return None

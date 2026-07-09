@@ -28,7 +28,13 @@ async def get_projects(
 @router.get("/{project_id}", summary="Get a project by ID", response_model=ProjectResponse)
 async def get_project(project_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("projects").select("id, user_id, title, status, phase, blockers, repo_url, created_at, updated_at").eq("id", project_id).eq("user_id", current_user.user.id).execute()
+    response = (
+        supabase.from_("projects")
+        .select("id, user_id, title, status, phase, blockers, repo_url, created_at, updated_at")
+        .eq("id", project_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     if not response.data:
         raise HTTPException(status_code=404, detail="Project not found")
     return response.data[0]

@@ -9,24 +9,47 @@ from database.schemas.nlp import NLPParseRequest, NLPParseResponse
 router = APIRouter()
 
 DAY_NAMES = {
-    "sunday": 0, "monday": 1, "tuesday": 2, "wednesday": 3,
-    "thursday": 4, "friday": 5, "saturday": 6,
-    "sun": 0, "mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6,
+    "sunday": 0,
+    "monday": 1,
+    "tuesday": 2,
+    "wednesday": 3,
+    "thursday": 4,
+    "friday": 5,
+    "saturday": 6,
+    "sun": 0,
+    "mon": 1,
+    "tue": 2,
+    "wed": 3,
+    "thu": 4,
+    "fri": 5,
+    "sat": 6,
 }
 
 ROUTE_ALIASES = {
-    "dashboard": "/dashboard", "tasks": "/dashboard/tasks",
-    "habits": "/dashboard/habits", "sleep": "/dashboard/sleep",
-    "courses": "/dashboard/courses", "goals": "/dashboard/goals",
-    "chat": "/dashboard/chat", "projects": "/dashboard/projects",
-    "ideas": "/dashboard/ideas", "time": "/dashboard/time",
-    "income": "/dashboard/income", "resources": "/dashboard/resources",
-    "opportunities": "/dashboard/opportunities", "memory": "/dashboard/memory",
-    "knowledge": "/dashboard/knowledge", "roadmap": "/dashboard/roadmap",
-    "settings": "/dashboard/settings", "analytics": "/dashboard/analytics",
-    "youtube vault": "/dashboard/youtube-vault", "focus": "/dashboard/focus",
-    "automation": "/dashboard/automation", "review": "/dashboard/review",
-    "briefing": "/dashboard/briefing", "academics": "/dashboard/academics",
+    "dashboard": "/dashboard",
+    "tasks": "/dashboard/tasks",
+    "habits": "/dashboard/habits",
+    "sleep": "/dashboard/sleep",
+    "courses": "/dashboard/courses",
+    "goals": "/dashboard/goals",
+    "chat": "/dashboard/chat",
+    "projects": "/dashboard/projects",
+    "ideas": "/dashboard/ideas",
+    "time": "/dashboard/time",
+    "income": "/dashboard/income",
+    "resources": "/dashboard/resources",
+    "opportunities": "/dashboard/opportunities",
+    "memory": "/dashboard/memory",
+    "knowledge": "/dashboard/knowledge",
+    "roadmap": "/dashboard/roadmap",
+    "settings": "/dashboard/settings",
+    "analytics": "/dashboard/analytics",
+    "youtube vault": "/dashboard/youtube-vault",
+    "focus": "/dashboard/focus",
+    "automation": "/dashboard/automation",
+    "review": "/dashboard/review",
+    "briefing": "/dashboard/briefing",
+    "academics": "/dashboard/academics",
 }
 
 
@@ -100,12 +123,17 @@ async def parse_natural_language(req: NLPParseRequest, current_user=Depends(get_
     if lower.startswith("/new task "):
         title = re.sub(r"^/new task\s+", "", text, flags=re.IGNORECASE).strip()
         if title:
-            return NLPParseResponse(type="create_task", confidence=0.9, task={
-                "title": title,
-                "due_date": extract_date(title),
-                "priority": extract_priority(title),
-                "estimated_minutes": extract_minutes(title),
-            }, raw=text)
+            return NLPParseResponse(
+                type="create_task",
+                confidence=0.9,
+                task={
+                    "title": title,
+                    "due_date": extract_date(title),
+                    "priority": extract_priority(title),
+                    "estimated_minutes": extract_minutes(title),
+                },
+                raw=text,
+            )
 
     if lower.startswith("/go ") or lower.startswith("/navigate "):
         dest = re.sub(r"^/(go|navigate)\s+", "", text, flags=re.IGNORECASE).strip()
@@ -126,12 +154,17 @@ async def parse_natural_language(req: NLPParseRequest, current_user=Depends(get_
         if match:
             title = match.group(match.lastindex).strip()
             if len(title) >= 2:
-                return NLPParseResponse(type=cmd_type, confidence=0.85, task={
-                    "title": title,
-                    "due_date": extract_date(text),
-                    "priority": extract_priority(text),
-                    "estimated_minutes": extract_minutes(text),
-                }, raw=text)
+                return NLPParseResponse(
+                    type=cmd_type,
+                    confidence=0.85,
+                    task={
+                        "title": title,
+                        "due_date": extract_date(text),
+                        "priority": extract_priority(text),
+                        "estimated_minutes": extract_minutes(text),
+                    },
+                    raw=text,
+                )
 
     # Navigation
     nav_match = re.search(r"^(go\s+to|open|show|take\s+me\s+to)\s+(.+)", text, re.IGNORECASE)
@@ -152,6 +185,7 @@ async def execute_command(req: dict, current_user=Depends(get_current_user)):
     if cmd_type == "create_task":
         supabase = get_supabase_client()
         from uuid import uuid4
+
         now = datetime.now(timezone.utc).isoformat()
         record = {
             "id": str(uuid4()),
@@ -174,6 +208,7 @@ async def execute_command(req: dict, current_user=Depends(get_current_user)):
     elif cmd_type == "schedule":
         supabase = get_supabase_client()
         from uuid import uuid4
+
         now = datetime.now(timezone.utc).isoformat()
         sched = req.get("schedule") or {}
         record = {
@@ -187,7 +222,10 @@ async def execute_command(req: dict, current_user=Depends(get_current_user)):
         }
         try:
             supabase.table("time_entries").insert(record).execute()
-            return {"success": True, "message": f'Scheduled "{record["description"]}" for {record["duration_minutes"]}min'}
+            return {
+                "success": True,
+                "message": f'Scheduled "{record["description"]}" for {record["duration_minutes"]}min',
+            }
         except Exception as e:
             logger.error("Failed to create time entry via NL", error=str(e))
             raise HTTPException(status_code=500, detail="Failed to schedule")

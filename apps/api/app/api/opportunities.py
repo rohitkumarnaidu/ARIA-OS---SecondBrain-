@@ -32,7 +32,11 @@ async def get_opportunities(
 async def get_opportunity(opportunity_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
     response = (
-        supabase.from_("opportunities").select("id, user_id, title, url, match_score, status, category, created_at").eq("id", opportunity_id).eq("user_id", current_user.user.id).execute()
+        supabase.from_("opportunities")
+        .select("id, user_id, title, url, match_score, status, category, created_at")
+        .eq("id", opportunity_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
     )
     if not response.data:
         raise HTTPException(status_code=404, detail="Opportunity not found")

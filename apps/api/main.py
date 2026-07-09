@@ -59,6 +59,7 @@ from app.api import (
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     import time
+
     application.state.start_time = time.time()
     logger.info(
         "Second Brain OS API starting",
@@ -85,6 +86,7 @@ async def lifespan(application: FastAPI):
     try:
         from shared.utils.event_outbox import event_outbox
         from shared.utils.webhook_delivery import webhook_delivery
+
         await event_outbox.start_background_polling()
         await webhook_delivery.start_background_polling()
         logger.info("Background event outbox and webhook delivery services started")
@@ -97,6 +99,7 @@ async def lifespan(application: FastAPI):
     try:
         from shared.utils.event_outbox import event_outbox
         from shared.utils.webhook_delivery import webhook_delivery
+
         await event_outbox.stop_background_polling()
         await webhook_delivery.stop_background_polling()
         logger.info("Background event outbox and webhook delivery services stopped")
@@ -108,6 +111,7 @@ async def lifespan(application: FastAPI):
     if pending_tasks:
         logger.info("Awaiting pending AI tasks", count=len(pending_tasks))
         import asyncio
+
         try:
             await asyncio.wait_for(asyncio.gather(*pending_tasks, return_exceptions=True), timeout=10)
         except asyncio.TimeoutError:
@@ -155,7 +159,10 @@ app = FastAPI(
         {"name": "monitoring", "description": "Token usage and cost tracking"},
         {"name": "auth", "description": "Authentication, token refresh, and API key rotation"},
         {"name": "data", "description": "GDPR data export and data management"},
-        {"name": "skills", "description": "Skills taxonomy, user skills, evidence, market intelligence, and learning paths"},
+        {
+            "name": "skills",
+            "description": "Skills taxonomy, user skills, evidence, market intelligence, and learning paths",
+        },
         {"name": "system", "description": "Health check and system endpoints"},
     ],
 )
@@ -204,6 +211,7 @@ async def request_id_middleware(request: Request, call_next):
             error=str(exc),
         )
         from fastapi.responses import JSONResponse
+
         return JSONResponse(
             status_code=500,
             content={

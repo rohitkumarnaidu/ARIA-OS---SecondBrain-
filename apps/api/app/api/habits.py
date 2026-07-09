@@ -16,7 +16,9 @@ async def get_habits(
     supabase = get_supabase_client()
     response = (
         supabase.from_("habits")
-        .select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at")
+        .select(
+            "id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at"
+        )
         .eq("user_id", current_user.user.id)
         .order("created_at", ascending=False)
         .range(offset, offset + limit - 1)
@@ -28,7 +30,15 @@ async def get_habits(
 @router.get("/{habit_id}", summary="Get a habit by ID", response_model=HabitResponse)
 async def get_habit(habit_id: str, current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
-    response = supabase.from_("habits").select("id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at").eq("id", habit_id).eq("user_id", current_user.user.id).execute()
+    response = (
+        supabase.from_("habits")
+        .select(
+            "id, user_id, name, frequency, is_active, current_streak, best_streak, consistency_percentage, created_at"
+        )
+        .eq("id", habit_id)
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
     if not response.data:
         raise HTTPException(status_code=404, detail="Habit not found")
     return response.data[0]
