@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: aria-config
-  namespace: aria-os
+  name: sb-config
+  namespace: secondbrain-os
 data:
   # Backend
   USE_LOCAL_AI: "true"

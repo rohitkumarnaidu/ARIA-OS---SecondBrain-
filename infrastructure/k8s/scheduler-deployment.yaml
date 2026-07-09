@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aria-scheduler
-  namespace: aria-os
+  name: sb-scheduler
+  namespace: secondbrain-os
   labels:
-    app: aria-scheduler
+    app: sb-scheduler
     tier: backend
 spec:
   replicas: 1
@@ -14,16 +14,16 @@ spec:
   template:
     metadata:
       labels:
-        app: aria-scheduler
+        app: sb-scheduler
     spec:
       containers:
         - name: scheduler
-          image: ghcr.io/aria-os/scheduler:latest
+          image: ghcr.io/secondbrain-os/scheduler:latest
           envFrom:
             - configMapRef:
-                name: aria-config
+                name: sb-config
             - secretRef:
-                name: aria-secrets
+                name: sb-secrets
           resources:
             requests:
               memory: "128Mi"

@@ -3,17 +3,17 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-web
   labels:
-    app: aria-web
+    app: secondbrain-web
     release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: aria-web
+      app: secondbrain-web
   template:
     metadata:
       labels:
-        app: aria-web
+        app: secondbrain-web
     spec:
       containers:
         - name: web
@@ -25,12 +25,12 @@ spec:
             - name: NEXT_PUBLIC_SUPABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: aria-secrets
+                  name: secondbrain-secrets
                   key: supabase-url
             - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
               valueFrom:
                 secretKeyRef:
-                  name: aria-secrets
+                  name: secondbrain-secrets
                   key: supabase-anon-key
             - name: NEXT_PUBLIC_API_URL
               value: "{{ .Values.env.NEXT_PUBLIC_API_URL }}"
