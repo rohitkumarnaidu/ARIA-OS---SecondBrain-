@@ -23,8 +23,6 @@ import {
   ListFilter,
   MessageSquare,
   TrendingUp,
-  Moon,
-  Bell,
   CheckSquare,
   AlertCircle,
   Loader2,
@@ -59,55 +57,7 @@ interface Conversation {
   messages: ChatMessage[]
 }
 
-interface AgentStatus {
-  name: string
-  icon: string
-  status: 'idle' | 'active' | 'thinking' | 'disabled'
-}
-
 /* ── Constants ────────────────────────────────────── */
-
-const AGENT_LIST: AgentStatus[] = [
-  { name: 'Briefing Agent', icon: 'Calendar', status: 'idle' as const },
-  { name: 'Task Agent', icon: 'CheckSquare', status: 'idle' as const },
-  { name: 'Memory Agent', icon: 'Brain', status: 'active' as const },
-  { name: 'Learning Agent', icon: 'TrendingUp', status: 'idle' as const },
-  { name: 'Opportunity Agent', icon: 'Zap', status: 'thinking' as const },
-  { name: 'Roadmap Agent', icon: 'Target', status: 'idle' as const },
-  { name: 'Sleep Agent', icon: 'Moon', status: 'disabled' as const },
-  { name: 'Nudge Agent', icon: 'Bell', status: 'idle' as const },
-]
-
-const AGENT_ICON_MAP: Record<string, React.ReactNode> = {
-  Calendar: <Calendar size={14} />,
-  CheckSquare: <CheckSquare size={14} />,
-  Brain: <Brain size={14} />,
-  TrendingUp: <TrendingUp size={14} />,
-  Zap: <Zap size={14} />,
-  Target: <Target size={14} />,
-  Moon: <Moon size={14} />,
-  Bell: <Bell size={14} />,
-}
-
-const STATUS_DOT: Record<string, string> = {
-  idle: 'bg-[var(--accent-success)]',
-  active: 'bg-[var(--accent-success)]',
-  thinking: 'bg-[var(--accent-warning)]',
-  disabled: 'bg-[var(--text-tertiary)]',
-}
-
-const STATUS_DOT_ANIMATION: Record<string, object | undefined> = {
-  idle: {},
-  active: {
-    animate: { scale: [1, 1.4, 1], opacity: [1, 0.6, 1] },
-    transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-  },
-  thinking: {
-    animate: { scale: [1, 1.3, 1] },
-    transition: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' },
-  },
-  disabled: {},
-}
 
 const WELCOME_CHIPS: SuggestionChip[] = [
   { id: 'plan-week', label: 'Plan my week' },
@@ -213,8 +163,6 @@ export default function ChatPage() {
   const [expandedThoughts, setExpandedThoughts] = useState<Set<string>>(new Set())
   const [sendError, setSendError] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
-  const [streamingContent, setStreamingContent] = useState('')
-  const [streamingAgent, setStreamingAgent] = useState<{ name: string; icon: string } | null>(null)
 
   const taskStore = useTaskStore()
   const habitStore = useHabitStore()
@@ -440,7 +388,7 @@ export default function ChatPage() {
                       : 'border-l-transparent hover:bg-[var(--surface-secondary)]',
                   )}
                 >
-                  <h3 className="text-sm font-medium text-[var(--text-primary)] truncate">{conv.title}</h3>
+                  <h2 className="text-sm font-medium text-[var(--text-primary)] truncate">{conv.title}</h2>
                   {conv.lastMessage && (
                     <p className="text-xs text-[var(--text-secondary)] truncate mt-0.5">{conv.lastMessage}</p>
                   )}
@@ -752,44 +700,6 @@ export default function ChatPage() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
-          {/* Agent Status Section */}
-          <section>
-            <h4 className="text-[11px] font-mono font-medium text-[var(--text-tertiary)] uppercase tracking-wider mb-3">
-              Agent Status
-            </h4>
-            <div className="space-y-2">
-              {AGENT_LIST.map((agent) => (
-                <div
-                  key={agent.name}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[var(--surface-secondary)] transition-colors"
-                >
-                  <span className="relative flex items-center justify-center w-7 h-7 rounded-md bg-[var(--surface-secondary)] text-[var(--text-secondary)]">
-                    {AGENT_ICON_MAP[agent.icon] ?? <Bot size={14} />}
-                    <motion.span
-                      {...(STATUS_DOT_ANIMATION[agent.status] ?? {})}
-                      className={cn(
-                        'absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border border-[var(--background)]',
-                        STATUS_DOT[agent.status] ?? 'bg-[var(--text-tertiary)]',
-                      )}
-                    />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[var(--text-primary)] truncate">{agent.name}</p>
-                  </div>
-                  <span className={cn(
-                    'text-[10px] font-mono capitalize',
-                    agent.status === 'active' && 'text-[var(--accent-success)]',
-                    agent.status === 'thinking' && 'text-[var(--accent-warning)]',
-                    agent.status === 'idle' && 'text-[var(--text-tertiary)]',
-                    agent.status === 'disabled' && 'text-[var(--text-tertiary)]',
-                  )}>
-                    {agent.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* System Context Section */}
           <section>
             <h4 className="text-[11px] font-mono font-medium text-[var(--text-tertiary)] uppercase tracking-wider mb-3">
@@ -803,8 +713,9 @@ export default function ChatPage() {
                   const today = new Date().toISOString().split('T')[0]
                   return t.due_date.startsWith(today)
                 }).length
+                const calcProgress = (c: import('@/lib/types').Course) => c.total_videos ? Math.round((c.completed_videos / c.total_videos) * 100) : 0
                 const avgProgress = courseStore.items.length > 0
-                  ? Math.round(courseStore.items.reduce((a, c) => a + (c.progress || 0), 0) / courseStore.items.length)
+                  ? Math.round(courseStore.items.reduce((a, c) => a + calcProgress(c), 0) / courseStore.items.length)
                   : 0
                 const deadlines = taskStore.tasks.filter(t => {
                   if (!t.due_date) return false
@@ -839,8 +750,8 @@ export default function ChatPage() {
             <div className="space-y-2">
               {(() => {
                 const totalMemories = memoryStore.items.length
-                const preferences = memoryStore.items.filter(m => m.type === 'preference' || m.type === 'preference').length
-                const patterns = memoryStore.items.filter(m => m.type === 'pattern' || m.type === 'insight').length
+                const preferences = memoryStore.items.filter(m => m.type === 'preference').length
+                const patterns = memoryStore.items.filter(m => m.type === 'pattern' || m.type === 'learning').length
                 return [
                   { label: 'Total memories', value: String(totalMemories), icon: <Brain size={14} /> },
                   { label: 'Preferences learned', value: String(preferences || Math.round(totalMemories * 0.15)), icon: <Lightbulb size={14} /> },

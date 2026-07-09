@@ -1,4 +1,5 @@
 import '@/app/globals.css'
+import '@/scripts/.generated-tokens.css'
 import type { Metadata } from 'next'
 import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'

@@ -12,13 +12,14 @@ import {
   SmartScheduleCard, QuickAddTask,
 } from '@/components/dashboard'
 import { ProgressRing } from '@/components/ui/ProgressRing'
-import { Timeline } from '@/components/ui/Timeline'
-import type { TimelineItem } from '@/components/ui/Timeline'
 import { motion } from 'framer-motion'
-import { CheckCircle, Target, BookOpen, Zap, Radar, Calendar, Brain, AlertTriangle, Moon, Flame, Heart } from 'lucide-react'
+import { CheckCircle, Target, BookOpen, Zap, Radar, Brain, AlertTriangle, Moon, Flame, Heart } from 'lucide-react'
 import { usePredictions } from '@/hooks'
 import { computeSentiment } from '@/lib/ai'
 import type { KPIItem } from '@/components/dashboard/KPIStrip'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { AgentActivityFeed } from '@/components/ai/AgentActivityFeed'
+import { useAgentActivity } from '@/lib/ai/agent-activity'
 
 const sectionVariants = {
   initial: { opacity: 0, y: 20 },
@@ -30,13 +31,6 @@ const containerVariants = {
   animate: {
     transition: { staggerChildren: 0.08 },
   },
-}
-
-function generateSparklineData(value: number, count = 7): { value: number }[] {
-  const base = value / count
-  return Array.from({ length: count }, (_, i) => ({
-    value: Math.max(0, Math.round(base + (Math.random() - 0.5) * base)),
-  }))
 }
 
 export default function DashboardPage() {
@@ -56,6 +50,7 @@ export default function DashboardPage() {
     })
   }, [predTasks, predHabits, predSleep])
   const [mounted, setMounted] = useState(false)
+  const { activities } = useAgentActivity()
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -86,12 +81,13 @@ export default function DashboardPage() {
     ]
   }, [tasks, activeCourses, activeGoals])
 
-  const kpiItems = useMemo((): KPIItem[] => [
-    { label: 'Productivity', value: String(stats[0].value), trend: stats[0].trend === 'up' ? 'up' : 'down', data: generateSparklineData(parseInt(String(stats[0].value)) || 0), color: '#6366F1' },
-    { label: 'Tasks Done', value: String(tasks.filter(t => t.status === 'completed').length), trend: 'up', data: generateSparklineData(tasks.filter(t => t.status === 'completed').length), color: '#00FFA3' },
-    { label: 'Streak', value: '--', trend: 'neutral', data: generateSparklineData(0), color: '#F59E0B' },
-    { label: 'Focus Hours', value: '--', trend: 'neutral', data: generateSparklineData(0), color: '#818CF8' },
-  ], [stats, tasks])
+  const kpiItems = useMemo((): KPIItem[] => {
+    if (tasks.length === 0) return []
+    return [
+      { label: 'Productivity', value: String(stats[0].value), trend: stats[0].trend === 'up' ? 'up' : 'down', data: [], color: '#6366F1' },
+      { label: 'Tasks Done', value: String(tasks.filter(t => t.status === 'completed').length), trend: 'up', data: [], color: '#00FFA3' },
+    ]
+  }, [stats, tasks])
 
   const completedToday = useMemo(() => {
     const today = new Date().toISOString().split('T')[0]
@@ -193,7 +189,7 @@ export default function DashboardPage() {
         </motion.div>
       )}
 
-      {isVisible('kpi-strip') && (
+      {isVisible('kpi-strip') && kpiItems.length > 0 && (
         <motion.div variants={sectionVariants} key="kpi-strip">
           <KPIStrip items={kpiItems} />
         </motion.div>
@@ -298,31 +294,36 @@ export default function DashboardPage() {
             <BookOpen size={16} className="text-[var(--accent-primary)]" aria-hidden="true" />
             <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Course Progress</h3>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { name: 'Machine Learning Fundamentals', progress: 65, status: 'On Track', color: 'var(--accent-success)' },
-              { name: 'System Design & Architecture', progress: 30, status: 'Needs Attention', color: 'var(--priority-urgent)' },
-              { name: 'Advanced TypeScript Patterns', progress: 88, status: 'Almost Done', color: 'var(--accent-primary)' },
-            ].map(course => (
-              <div key={course.name} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-[var(--background-elevated)]">
-                <ProgressRing progress={course.progress} size={80} strokeWidth={6} color={course.color}>
-                  <span className="text-sm font-bold font-mono" style={{ color: course.color }}>{course.progress}%</span>
-                </ProgressRing>
-                <div className="text-center min-w-0">
-                  <p className="text-xs font-medium text-[var(--text-primary)] truncate w-full">{course.name}</p>
-                  <span
-                    className="inline-block mt-1 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
-                    style={{
-                      background: `color-mix(in oklab, ${course.color} 20%, transparent)`,
-                      color: course.color,
-                    }}
-                  >
-                    {course.status}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+          {courses.slice(0, 3).length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {courses.slice(0, 3).map(course => {
+                const progress = course.total_videos ? Math.round((course.completed_videos / course.total_videos) * 100) : 0
+                const statusColor = course.status === 'in_progress' ? 'var(--accent-primary)' : course.status === 'completed' ? 'var(--accent-success)' : 'var(--text-tertiary)'
+                const statusLabel = course.status === 'in_progress' ? 'In Progress' : course.status === 'completed' ? 'Completed' : course.status === 'not_started' ? 'Not Started' : course.status === 'dropped' ? 'Dropped' : 'Abandoned'
+                return (
+                  <div key={course.id} className="flex flex-col items-center gap-3 p-4 rounded-lg bg-[var(--background-elevated)]">
+                    <ProgressRing progress={progress} size={80} strokeWidth={6} color={statusColor}>
+                      <span className="text-sm font-bold font-mono" style={{ color: statusColor }}>{progress}%</span>
+                    </ProgressRing>
+                    <div className="text-center min-w-0">
+                      <p className="text-xs font-medium text-[var(--text-primary)] truncate w-full">{course.title}</p>
+                      <span
+                        className="inline-block mt-1 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
+                        style={{
+                          background: `color-mix(in oklab, ${statusColor} 20%, transparent)`,
+                          color: statusColor,
+                        }}
+                      >
+                        {statusLabel}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <EmptyState title="No courses added yet." />
+          )}
         </div>
       </motion.div>
 
@@ -334,28 +335,10 @@ export default function DashboardPage() {
               <Radar size={16} className="text-[var(--accent-warning)]" aria-hidden="true" />
               <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Opportunity Feed</h3>
             </div>
-            <div className="space-y-3">
-              {[
-                { title: 'Google Summer of Code 2026', score: 92, desc: 'Your profile matches 3 projects in ML and distributed systems.' },
-                { title: 'AI Research Intern — DeepMind', score: 78, desc: 'Strong match based on your research papers and coursework.' },
-              ].map(opp => (
-                <div key={opp.title} className="flex items-start gap-3 p-3 rounded-lg bg-[var(--background-elevated)]">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{opp.title}</p>
-                    <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{opp.desc}</p>
-                  </div>
-                  <span
-                    className="shrink-0 flex items-center justify-center min-w-[40px] h-6 rounded-full text-[11px] font-mono font-bold"
-                    style={{
-                      background: `color-mix(in oklab, ${opp.score >= 90 ? 'var(--accent-success)' : opp.score >= 70 ? 'var(--accent-warning)' : 'var(--priority-urgent)'} 20%, transparent)`,
-                      color: opp.score >= 90 ? 'var(--accent-success)' : opp.score >= 70 ? 'var(--accent-warning)' : 'var(--priority-urgent)',
-                    }}
-                  >
-                    {opp.score}%
-                  </span>
-                </div>
-              ))}
-            </div>
+            <EmptyState
+              title="No opportunities found"
+              description="Run a radar scan to discover new opportunities."
+            />
           </div>
         </motion.div>
 
@@ -369,24 +352,12 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Milestone Timeline */}
-      <motion.div variants={sectionVariants} key="milestone-timeline">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar size={16} className="text-[var(--accent-secondary)]" aria-hidden="true" />
-            <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Milestone Timeline</h3>
-          </div>
-          <Timeline
-            items={[
-              { id: 'm1', title: 'Project Proposal', date: 'Jun 10', status: 'completed' as const },
-              { id: 'm2', title: 'Core Architecture', date: 'Jun 15', status: 'current' as const },
-              { id: 'm3', title: 'MVP Development', date: 'Jun 30', status: 'upcoming' as const },
-              { id: 'm4', title: 'Testing & QA', date: 'Jul 10', status: 'upcoming' as const },
-              { id: 'm5', title: 'Production Launch', date: 'Jul 25', status: 'upcoming' as const },
-            ]}
-          />
-        </div>
-      </motion.div>
+      {/* Agent Activity Feed */}
+      {isVisible('agent-activity') && (
+        <motion.div variants={sectionVariants} key="agent-activity">
+          <AgentActivityFeed activities={activities} className="w-full" />
+        </motion.div>
+      )}
     </motion.div>
   )
 }

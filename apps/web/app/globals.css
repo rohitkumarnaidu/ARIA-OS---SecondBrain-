@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import generated design tokens from Figma pipeline */
+@import '../scripts/.generated-tokens.css';
+
 /* ─────────────────────────────────────────────────
    ARIA OS — Antigravity Design System Tokens
    Dark-canvas-first. Neon intent.
@@ -70,7 +73,7 @@
 
   --text-primary: var(--foreground);
   --text-secondary: var(--muted-foreground);
-  --text-tertiary: color-mix(in oklab, var(--foreground) 50%, transparent);
+  --text-tertiary: color-mix(in oklab, var(--foreground) 65%, transparent);
   --text-inverse: var(--background);
   --text-disabled: color-mix(in oklab, var(--foreground) 35%, transparent);
 
@@ -188,7 +191,7 @@
   --background-input: var(--input-background);
   --text-primary: var(--foreground);
   --text-secondary: var(--muted-foreground);
-  --text-tertiary: color-mix(in oklab, var(--foreground) 50%, transparent);
+  --text-tertiary: color-mix(in oklab, var(--foreground) 65%, transparent);
   --text-inverse: var(--background);
   --text-disabled: color-mix(in oklab, var(--foreground) 35%, transparent);
   --border-light: color-mix(in oklab, var(--foreground) 15%, transparent);
@@ -269,7 +272,7 @@
   --background-input: var(--input-background);
   --text-primary: var(--foreground);
   --text-secondary: var(--muted-foreground);
-  --text-tertiary: color-mix(in oklab, var(--foreground) 50%, transparent);
+  --text-tertiary: color-mix(in oklab, var(--foreground) 65%, transparent);
   --text-inverse: var(--background);
   --text-disabled: color-mix(in oklab, var(--foreground) 35%, transparent);
   --border-light: color-mix(in oklab, var(--foreground) 15%, transparent);
@@ -294,9 +297,9 @@
   --glass-light: rgba(255, 255, 255, 0.03);
   --glass-medium: rgba(255, 255, 255, 0.08);
   --glass-heavy: rgba(255, 255, 255, 0.15);
-  --surface-primary: #FFFFFF;
-  --surface-secondary: #F8FAFC;
-  --surface-tertiary: #F1F5F9;
+  --surface-primary: #131317;
+  --surface-secondary: #1B1B1F;
+  --surface-tertiary: #201F23;
   --chart-1: #6366F1;
   --chart-2: #00FFA3;
   --chart-3: #818CF8;
@@ -414,6 +417,10 @@
 
   code, kbd, pre, samp {
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  kbd {
+    color: var(--text-primary) !important;
   }
 
   ::selection {
@@ -884,5 +891,6 @@
     pointer-events: none;
     opacity: 0.015;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    scroll-behavior: auto !important;
   }
 }
