@@ -145,6 +145,7 @@ const ActivityHeatmap = memo(function ActivityHeatmap({ data, className }: Activ
                     <div
                       key={cell.date}
                       role="gridcell"
+                      tabIndex={-1}
                       aria-label={`${cell.date}: ${cell.count} activities`}
                       className={cn(
                         'rounded-[2px] transition-colors duration-150',

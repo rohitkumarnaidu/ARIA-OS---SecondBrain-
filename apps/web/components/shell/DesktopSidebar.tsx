@@ -155,7 +155,7 @@ export default function DesktopSidebar({ onCommandCenter, onNewEntry }: DesktopS
               <div className="pt-4 pb-1 px-3">
                 <span
                   className="text-[10px] tracking-[0.8px] uppercase"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: SIDEBAR_TEXT_SEC, opacity: 0.5 }}
+                  style={{ fontFamily: 'JetBrains Mono, monospace', color: SIDEBAR_TEXT_SEC, opacity: 0.6 }}
                 >
                   {group.label}
                 </span>

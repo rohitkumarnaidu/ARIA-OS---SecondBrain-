@@ -786,7 +786,7 @@ function ColumnContainer({
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: `var(${column.accentVar})` }} />
-          <h3 className="text-sm font-display font-semibold text-text-primary">{column.title}</h3>
+           <h2 className="text-sm font-display font-semibold text-text-primary">{column.title}</h2>
           <span
             id={`col-count-${column.id}`}
             className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-medium bg-glass-heavy text-text-secondary"
@@ -1322,11 +1322,11 @@ export default function TasksPage() {
 
       {/* Keyboard shortcut hints */}
       <div className="fixed bottom-4 right-4 z-40 hidden lg:flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-primary/80 backdrop-blur-md border border-border text-[10px] text-text-tertiary">
-        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">n</kbd> New</span>
-        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">j</kbd> / <kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">k</kbd> Nav</span>
-        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">Enter</kbd> Open</span>
-        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">c</kbd> Complete</span>
-        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy font-mono">d</kbd> Delete</span>
+        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">n</kbd> New</span>
+        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">j</kbd> / <kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">k</kbd> Nav</span>
+        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">Enter</kbd> Open</span>
+        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">c</kbd> Complete</span>
+        <span><kbd className="px-1 py-0.5 rounded bg-glass-heavy text-text-secondary font-mono">d</kbd> Delete</span>
       </div>
     </div>
   )

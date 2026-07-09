@@ -178,9 +178,11 @@ const MultiSelect = memo(forwardRef<HTMLDivElement, MultiSelectProps>(
                     <div
                       key={item.value}
                       role="option"
+                      tabIndex={-1}
                       aria-selected={isSelected}
                       data-index={index}
                       onClick={() => { if (!atLimit) toggle(item.value) }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(item.value) } }}
                       onMouseEnter={() => setActiveIndex(index)}
                       className={cn(
                         'flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer transition-colors',

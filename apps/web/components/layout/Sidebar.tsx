@@ -43,7 +43,7 @@ export default function Sidebar() {
         </Link>
 
         <nav aria-label="Module navigation">
-          <ul className="space-y-1" role="list">
+          <ul className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href

@@ -62,7 +62,7 @@ const Tooltip = memo(forwardRef<HTMLDivElement, TooltipProps>(
         onFocus={handleFocus}
         onBlur={handleBlur}
       >
-        <div ref={triggerRef} tabIndex={0} aria-describedby={visible ? 'tooltip-content' : undefined}>
+        <div ref={triggerRef} tabIndex={0} role="button" aria-describedby={visible ? 'tooltip-content' : undefined}>
           {children}
         </div>
         <AnimatePresence>

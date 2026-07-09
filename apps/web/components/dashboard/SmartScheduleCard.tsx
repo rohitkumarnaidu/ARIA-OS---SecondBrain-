@@ -27,7 +27,7 @@ export function SmartScheduleCard({ slots, bestHour, bestDay, loading }: SmartSc
     <div className="rounded-xl border border-[var(--border)] bg-[var(--background-card)] p-5">
       <div className="flex items-center gap-2 mb-4">
         <Zap size={16} className="text-[var(--accent-neon)]" aria-hidden="true" />
-        <h3 className="text-sm font-display font-semibold text-[var(--text-primary)]">Smart Schedule</h3>
+        <h2 className="text-sm font-display font-semibold text-[var(--text-primary)]">Smart Schedule</h2>
       </div>
 
       {loading ? (

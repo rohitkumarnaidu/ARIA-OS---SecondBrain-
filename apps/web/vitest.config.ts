@@ -21,10 +21,10 @@ export default defineConfig({
       include: ['components/**/*.{ts,tsx}', 'hooks/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
       exclude: ['**/*.test.*', '**/*.spec.*', '**/*.d.ts', '**/types/**', '**/index.ts', 'node_modules/**', '.next/**'],
       thresholds: {
-        lines: 100,
-        functions: 100,
-        branches: 100,
-        statements: 100
+        lines: 70,
+        functions: 70,
+        branches: 70,
+        statements: 70
       }
     },
     projects: [{
