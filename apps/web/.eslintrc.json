@@ -1,12 +1,23 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
+  "plugins": ["jsx-a11y"],
   "rules": {
     "react/no-unescaped-entities": "off",
     "@next/next/no-img-element": "off",
-    "storybook/no-renderer-packages": "off"
+    "storybook/no-renderer-packages": "off",
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/interactive-supports-focus": "warn",
+    "jsx-a11y/no-noninteractive-tabindex": "warn",
+    "jsx-a11y/no-autofocus": "warn",
+    "jsx-a11y/no-redundant-roles": "warn",
+    "jsx-a11y/label-has-associated-control": "warn"
   },
   "ignorePatterns": [
     "**/*.stories.tsx",

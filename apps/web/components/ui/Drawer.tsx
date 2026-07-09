@@ -34,6 +34,12 @@ const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>(
         setSnapIndex(sortedSnapPoints.length - 1)
         setDragY(0)
         document.body.style.overflow = 'hidden'
+        setTimeout(() => {
+          const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
+            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+          firstFocusable?.focus()
+        }, 50)
       } else {
         previousFocusRef.current?.focus()
         document.body.style.overflow = ''
@@ -45,6 +51,20 @@ const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>(
       if (!open) return
       const handleKey = (e: KeyboardEvent) => {
         if (e.key === 'Escape') onClose()
+        if (e.key === 'Tab') {
+          if (!drawerRef.current) return
+          const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+          if (!focusable.length) return
+          const first = focusable[0]
+          const last = focusable[focusable.length - 1]
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus()
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus()
+          }
+        }
       }
       document.addEventListener('keydown', handleKey)
       return () => document.removeEventListener('keydown', handleKey)
@@ -128,6 +148,7 @@ const Drawer = memo(forwardRef<HTMLDivElement, DrawerProps>(
             >
               {/* Drag handle */}
               <div
+                role="presentation"
                 className="flex justify-center pt-2 pb-1 shrink-0 cursor-grab active:cursor-grabbing"
                 onMouseDown={(e) => handleDragStart(e.clientY)}
                 onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 import { Check, Clock, Target, Hash } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/components/ui/utils'
@@ -28,9 +29,45 @@ export function FocusCompletion({
   onReviewSession,
 }: FocusCompletionProps): JSX.Element {
   const focusScore = Math.min(100, Math.round((cyclesCompleted / 4) * 85 + 15))
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    const previousFocus = document.activeElement as HTMLElement
+    const focusable = container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+    if (focusable.length) focusable[0].focus()
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onStartAnother(); return }
+      if (e.key === 'Tab') {
+        const current = container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (!current.length) return
+        const first = current[0]
+        const last = current[current.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+      previousFocus?.focus()
+    }
+  }, [])
 
   return (
     <div
+      ref={containerRef}
       className="fixed inset-0 z-[60] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"

@@ -38,6 +38,20 @@ const Sheet = memo(forwardRef<HTMLDivElement, SheetProps>(
       if (!open) return
       const handleKey = (e: KeyboardEvent) => {
         if (e.key === 'Escape') onClose()
+        if (e.key === 'Tab') {
+          if (!contentRef.current) return
+          const focusable = contentRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+          if (!focusable.length) return
+          const first = focusable[0]
+          const last = focusable[focusable.length - 1]
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus()
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus()
+          }
+        }
       }
       document.addEventListener('keydown', handleKey)
       document.body.style.overflow = 'hidden'
