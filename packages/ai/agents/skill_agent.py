@@ -18,21 +18,33 @@ from config.core.supabase import get_supabase_client
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 
-
 # ---- SK-01: Assessment Agent ----
 
 
 async def assess_user_skill(user_skill_id: str, user_id: str) -> Dict[str, Any]:
     supabase = get_supabase_client()
-    us_resp = supabase.from_("user_skills").select("*").eq("user_skill_id", user_skill_id).eq("user_id", user_id).execute()
+    us_resp = (
+        supabase.from_("user_skills").select("*").eq("user_skill_id", user_skill_id).eq("user_id", user_id).execute()
+    )
     if not us_resp.data:
         return {"error": "User skill not found", "fallback": True}
 
     us = us_resp.data[0]
-    skill_resp = supabase.from_("skills").select("name, description, level_min, level_max").eq("skill_id", us["skill_id"]).execute()
+    skill_resp = (
+        supabase.from_("skills")
+        .select("name, description, level_min, level_max")
+        .eq("skill_id", us["skill_id"])
+        .execute()
+    )
     skill = skill_resp.data[0] if skill_resp.data else {}
 
-    evidence_resp = supabase.from_("user_skill_evidence").select("*").eq("user_skill_id", user_skill_id).eq("user_id", user_id).execute()
+    evidence_resp = (
+        supabase.from_("user_skill_evidence")
+        .select("*")
+        .eq("user_skill_id", user_skill_id)
+        .eq("user_id", user_id)
+        .execute()
+    )
     evidence = evidence_resp.data or []
 
     assessment_prompt = prompts.get_agent("skill_assessment_agent")
@@ -138,7 +150,12 @@ def algorithmic_fallback_recommendation(candidates: list, user_data: dict) -> di
     top = candidates[:5] if candidates else []
     return {
         "recommendations": [
-            {"skill_id": s.get("skill_id"), "name": s.get("name"), "reason": "Recommended based on market demand", "priority": i + 1}
+            {
+                "skill_id": s.get("skill_id"),
+                "name": s.get("name"),
+                "reason": "Recommended based on market demand",
+                "priority": i + 1,
+            }
             for i, s in enumerate(top)
         ],
         "focus_area": user_data.get("career_goal", "General"),
@@ -191,10 +208,18 @@ async def refresh_skill_intelligence(skill_id: str) -> Dict[str, Any]:
 
 async def generate_skill_roadmap(user_id: str, target_skill_id: str) -> Dict[str, Any]:
     supabase = get_supabase_client()
-    skill_resp = supabase.from_("skills").select("name, description, level_max").eq("skill_id", target_skill_id).execute()
+    skill_resp = (
+        supabase.from_("skills").select("name, description, level_max").eq("skill_id", target_skill_id).execute()
+    )
     skill = skill_resp.data[0] if skill_resp.data else {}
 
-    us_resp = supabase.from_("user_skills").select("level, state").eq("user_id", user_id).eq("skill_id", target_skill_id).execute()
+    us_resp = (
+        supabase.from_("user_skills")
+        .select("level, state")
+        .eq("user_id", user_id)
+        .eq("skill_id", target_skill_id)
+        .execute()
+    )
     user_skill = us_resp.data[0] if us_resp.data else {"level": 0}
 
     roadmap_prompt = prompts.get_agent("skill_roadmap_agent")
@@ -234,13 +259,19 @@ def algorithmic_fallback_roadmap(skill: dict, user_skill: dict) -> dict:
     phase_names = ["Foundation", "Core", "Intermediate", "Advanced", "Expert"]
     for i in range(current, min(5, skill.get("level_max", 5))):
         if i < len(phase_names):
-            phases.append({
-                "phase_name": phase_names[i],
-                "skills_to_learn": [f"{skill.get('name', 'Skill')} - {phase_names[i]}"],
-                "estimated_hours": (i + 1) * 20,
-                "milestones": [f"Complete {phase_names[i]} level"],
-            })
-    return {"phases": phases, "total_estimated_hours": sum(p.get("estimated_hours", 0) for p in phases), "difficulty": "intermediate"}
+            phases.append(
+                {
+                    "phase_name": phase_names[i],
+                    "skills_to_learn": [f"{skill.get('name', 'Skill')} - {phase_names[i]}"],
+                    "estimated_hours": (i + 1) * 20,
+                    "milestones": [f"Complete {phase_names[i]} level"],
+                }
+            )
+    return {
+        "phases": phases,
+        "total_estimated_hours": sum(p.get("estimated_hours", 0) for p in phases),
+        "difficulty": "intermediate",
+    }
 
 
 # ---- SK-05: Evidence Agent ----
@@ -248,7 +279,13 @@ def algorithmic_fallback_roadmap(skill: dict, user_skill: dict) -> dict:
 
 async def verify_evidence(evidence_id: str, user_id: str) -> Dict[str, Any]:
     supabase = get_supabase_client()
-    ev_resp = supabase.from_("user_skill_evidence").select("*").eq("evidence_id", evidence_id).eq("user_id", user_id).execute()
+    ev_resp = (
+        supabase.from_("user_skill_evidence")
+        .select("*")
+        .eq("evidence_id", evidence_id)
+        .eq("user_id", user_id)
+        .execute()
+    )
     if not ev_resp.data:
         return {"error": "Evidence not found", "fallback": True}
     evidence = ev_resp.data[0]
@@ -364,7 +401,9 @@ async def analyze_market_trends(skill_id: Optional[str] = None) -> Dict[str, Any
     if skill_id:
         market_resp = supabase.from_("skill_market_data").select("*").eq("skill_id", skill_id).execute()
     else:
-        market_resp = supabase.from_("skill_market_data").select("*").order("skill_health", desc=True).limit(20).execute()
+        market_resp = (
+            supabase.from_("skill_market_data").select("*").order("skill_health", desc=True).limit(20).execute()
+        )
     market_data = market_resp.data or []
 
     market_prompt = prompts.get_agent("skill_market_agent")
@@ -399,8 +438,12 @@ async def analyze_market_trends(skill_id: Optional[str] = None) -> Dict[str, Any
 def algorithmic_fallback_market(market_data: list) -> dict:
     return {
         "market_overview": {"total_tracked": len(market_data)},
-        "top_demand_skills": [m.get("skill_id") for m in sorted(market_data, key=lambda x: x.get("demand_score", 0), reverse=True)[:5]],
-        "growth_opportunities": [m.get("skill_id") for m in sorted(market_data, key=lambda x: x.get("growth_score", 0), reverse=True)[:3]],
+        "top_demand_skills": [
+            m.get("skill_id") for m in sorted(market_data, key=lambda x: x.get("demand_score", 0), reverse=True)[:5]
+        ],
+        "growth_opportunities": [
+            m.get("skill_id") for m in sorted(market_data, key=lambda x: x.get("growth_score", 0), reverse=True)[:3]
+        ],
         "salary_insights": {"median_range": "Market data available for tracked skills"},
         "recommendations": ["Focus on high-demand skills with low competition"],
     }
@@ -414,7 +457,12 @@ async def explore_skill_graph(skill_id: str, max_depth: int = 2) -> Dict[str, An
     skill_resp = supabase.from_("skills").select("name, category_id").eq("skill_id", skill_id).execute()
     skill = skill_resp.data[0] if skill_resp.data else {}
 
-    rel_resp = supabase.from_("skill_relationships").select("*").or_(f"from_skill_id.eq.{skill_id},to_skill_id.eq.{skill_id}").execute()
+    rel_resp = (
+        supabase.from_("skill_relationships")
+        .select("*")
+        .or_(f"from_skill_id.eq.{skill_id},to_skill_id.eq.{skill_id}")
+        .execute()
+    )
     relationships = rel_resp.data or []
 
     prerequisites = [r for r in relationships if r.get("relationship_type") == "prerequisite"]
@@ -464,7 +512,15 @@ async def match_skill_opportunities(user_id: str) -> Dict[str, Any]:
                 if us and us["level"] >= rs.get("min_level", 1):
                     matched += 1
         match_pct = round(matched / max(len(required_skills), 1) * 100, 1) if required_skills else 0
-        matches.append({"opportunity_id": opp.get("id"), "title": opp.get("title"), "match_pct": match_pct, "matched_skills": matched, "required_skills": len(required_skills)})
+        matches.append(
+            {
+                "opportunity_id": opp.get("id"),
+                "title": opp.get("title"),
+                "match_pct": match_pct,
+                "matched_skills": matched,
+                "required_skills": len(required_skills),
+            }
+        )
 
     return {
         "user_id": user_id,
