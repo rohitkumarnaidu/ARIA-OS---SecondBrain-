@@ -9,14 +9,12 @@ them via HTTP POST with configurable headers and HMAC payload signing.
 """
 
 import json
-import os
 import time
 import hmac
 import hashlib
 import asyncio
-from typing import Optional, Any
-from datetime import datetime, timezone
-from dataclasses import dataclass, field
+from typing import Optional
+from dataclasses import dataclass
 from enum import Enum
 from shared.utils.logger import logger
 
@@ -52,8 +50,7 @@ class WebhookDeliveryService:
     - Graceful degradation: logs warning instead of crashing
     """
 
-    def __init__(self, poll_interval: float = 15.0, batch_size: int = 50,
-                 request_timeout: int = 30):
+    def __init__(self, poll_interval: float = 15.0, batch_size: int = 50, request_timeout: int = 30):
         self.poll_interval = poll_interval
         self.batch_size = batch_size
         self.request_timeout = request_timeout
@@ -66,6 +63,7 @@ class WebhookDeliveryService:
         if self._supabase is None:
             try:
                 from config.core.supabase import get_supabase_client
+
                 self._supabase = get_supabase_client()
             except Exception as e:
                 logger.error(f"Cannot get Supabase client: {e}")
@@ -76,6 +74,7 @@ class WebhookDeliveryService:
         if self._http_client is None:
             try:
                 import httpx
+
                 self._http_client = httpx.AsyncClient(
                     timeout=self.request_timeout,
                     limits=httpx.Limits(max_keepalive_connections=10, max_connections=50),
@@ -109,10 +108,12 @@ class WebhookDeliveryService:
             supabase = self._get_supabase()
             if supabase:
                 try:
-                    sub_result = supabase.table("skill_event_subscriptions") \
-                        .select("secret") \
-                        .eq("subscription_id", subscription_id) \
+                    sub_result = (
+                        supabase.table("skill_event_subscriptions")
+                        .select("secret")
+                        .eq("subscription_id", subscription_id)
                         .execute()
+                    )
                     if sub_result.data:
                         secret = sub_result.data[0].get("secret")
                 except Exception:
@@ -186,12 +187,14 @@ class WebhookDeliveryService:
         try:
             now_ms = int(time.time() * 1000)
 
-            result = supabase.table("skill_webhook_queue") \
-                .select("*") \
-                .in_("status", [WebhookStatus.PENDING.value, WebhookStatus.FAILED.value]) \
-                .limit(self.batch_size) \
-                .order("created_at") \
+            result = (
+                supabase.table("skill_webhook_queue")
+                .select("*")
+                .in_("status", [WebhookStatus.PENDING.value, WebhookStatus.FAILED.value])
+                .limit(self.batch_size)
+                .order("created_at")
                 .execute()
+            )
 
             if not result.data:
                 return 0, 0
@@ -210,70 +213,73 @@ class WebhookDeliveryService:
                     continue
 
                 # Mark as delivering
-                supabase.table("skill_webhook_queue") \
-                    .update({"status": WebhookStatus.DELIVERING.value}) \
-                    .eq("webhook_id", webhook_id) \
-                    .execute()
+                supabase.table("skill_webhook_queue").update({"status": WebhookStatus.DELIVERING.value}).eq(
+                    "webhook_id", webhook_id
+                ).execute()
 
                 result_data = await self.deliver(webhook)
 
                 if result_data.success:
-                    supabase.table("skill_webhook_queue") \
-                        .update({
+                    supabase.table("skill_webhook_queue").update(
+                        {
                             "status": WebhookStatus.DELIVERED.value,
                             "delivered_at": now_ms,
                             "last_http_status": result_data.status_code,
-                        }) \
-                        .eq("webhook_id", webhook_id) \
-                        .execute()
+                        }
+                    ).eq("webhook_id", webhook_id).execute()
 
                     # Update subscriber delivery count
                     if webhook.get("subscription_id"):
-                        supabase.table("skill_event_subscriptions") \
-                            .update({
+                        supabase.table("skill_event_subscriptions").update(
+                            {
                                 "last_delivered_at": now_ms,
                                 "delivery_count": supabase.raw("delivery_count + 1"),
-                            }) \
-                            .eq("subscription_id", webhook.get("subscription_id")) \
-                            .execute()
+                            }
+                        ).eq("subscription_id", webhook.get("subscription_id")).execute()
 
                     delivered += 1
-                    logger.info("Webhook delivered", webhook_id=webhook_id,
-                                url=webhook.get("url"), status=result_data.status_code,
-                                duration_ms=result_data.duration_ms)
+                    logger.info(
+                        "Webhook delivered",
+                        webhook_id=webhook_id,
+                        url=webhook.get("url"),
+                        status=result_data.status_code,
+                        duration_ms=result_data.duration_ms,
+                    )
 
                 else:
                     new_retry = retry_count + 1
                     is_dead = new_retry >= max_retries
 
                     # Exponential backoff: 2^attempt seconds
-                    backoff_ms = (2 ** new_retry) * 1000
+                    backoff_ms = (2**new_retry) * 1000
 
-                    supabase.table("skill_webhook_queue") \
-                        .update({
+                    supabase.table("skill_webhook_queue").update(
+                        {
                             "status": WebhookStatus.DEAD_LETTER.value if is_dead else WebhookStatus.FAILED.value,
                             "retry_count": new_retry,
                             "last_error": result_data.error,
                             "last_http_status": result_data.status_code,
                             "scheduled_at": now_ms + backoff_ms if not is_dead else None,
-                        }) \
-                        .eq("webhook_id", webhook_id) \
-                        .execute()
+                        }
+                    ).eq("webhook_id", webhook_id).execute()
 
                     # Update subscriber failure count
                     if webhook.get("subscription_id") and is_dead:
-                        supabase.table("skill_event_subscriptions") \
-                            .update({
+                        supabase.table("skill_event_subscriptions").update(
+                            {
                                 "last_error_at": now_ms,
                                 "failure_count": supabase.raw("failure_count + 1"),
-                            }) \
-                            .eq("subscription_id", webhook.get("subscription_id")) \
-                            .execute()
+                            }
+                        ).eq("subscription_id", webhook.get("subscription_id")).execute()
 
                     failed += 1
-                    logger.warn("Webhook delivery failed",
-                                webhook_id=webhook_id, url=webhook.get("url"),
-                                attempt=new_retry, error=result_data.error)
+                    logger.warn(
+                        "Webhook delivery failed",
+                        webhook_id=webhook_id,
+                        url=webhook.get("url"),
+                        attempt=new_retry,
+                        error=result_data.error,
+                    )
 
             return delivered, failed
 
@@ -305,7 +311,7 @@ class WebhookDeliveryService:
                 delivered, failed = await self.poll_once()
                 if delivered > 0 or failed > 0:
                     logger.debug("Webhook poll cycle", delivered=delivered, failed=failed)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover — unreachable; poll_once catches all internally
                 logger.error(f"Webhook poll loop error: {e}")
             finally:
                 await asyncio.sleep(self.poll_interval)
@@ -323,10 +329,12 @@ class WebhookDeliveryService:
         try:
             stats = {}
             for status in ["pending", "failed", "dead_letter", "delivered"]:
-                result = supabase.table("skill_webhook_queue") \
-                    .select("webhook_id", count="exact") \
-                    .eq("status", status) \
+                result = (
+                    supabase.table("skill_webhook_queue")
+                    .select("webhook_id", count="exact")
+                    .eq("status", status)
                     .execute()
+                )
                 stats[status] = result.count if hasattr(result, "count") else 0
             return stats
         except Exception:

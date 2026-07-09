@@ -13,15 +13,17 @@ async def log_audit(
 ) -> None:
     try:
         supabase = get_supabase_client()
-        supabase.from_("audit_logs").insert({
-            "user_id": user_id,
-            "action": action,
-            "resource": resource,
-            "resource_id": resource_id,
-            "details": details,
-            "ip_address": ip_address,
-            "user_agent": user_agent,
-        }).execute()
+        supabase.from_("audit_logs").insert(
+            {
+                "user_id": user_id,
+                "action": action,
+                "resource": resource,
+                "resource_id": resource_id,
+                "details": details,
+                "ip_address": ip_address,
+                "user_agent": user_agent,
+            }
+        ).execute()
     except Exception as e:
         logger.error("Failed to write audit log", error=str(e), action=action, resource=resource)
 

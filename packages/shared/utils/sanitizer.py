@@ -2,7 +2,6 @@ import re
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
-
 DANGEROUS_PATTERNS = [
     (r"<script[^>]*>.*?</script>", re.IGNORECASE | re.DOTALL),
     (r"javascript\s*:", re.IGNORECASE),
@@ -35,7 +34,9 @@ def sanitize_dict(d: dict) -> dict:
         elif isinstance(v, dict):
             result[k] = sanitize_dict(v)
         elif isinstance(v, list):
-            result[k] = [sanitize_dict(i) if isinstance(i, dict) else sanitize_value(i) if isinstance(i, str) else i for i in v]
+            result[k] = [
+                sanitize_dict(i) if isinstance(i, dict) else sanitize_value(i) if isinstance(i, str) else i for i in v
+            ]
         else:
             result[k] = v
     return result

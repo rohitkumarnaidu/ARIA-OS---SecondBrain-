@@ -40,6 +40,7 @@ async def get_current_user(authorization: str = Depends(oauth2_scheme)):
 
     if token.startswith("sb_"):
         from config.core.api_key_auth import authenticate_with_api_key
+
         try:
             user = await authenticate_with_api_key(token)
             return user
@@ -74,13 +75,15 @@ def rotate_api_key(user_id: str) -> dict:
     old_expires = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
 
     supabase = get_supabase_client()
-    supabase.from_("api_keys").insert({
-        "user_id": user_id,
-        "key_hash": key_hash,
-        "is_active": True,
-        "expires_at": expires_at,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    supabase.from_("api_keys").insert(
+        {
+            "user_id": user_id,
+            "key_hash": key_hash,
+            "is_active": True,
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+    ).execute()
 
     cache_key = f"rotated:{key_hash}"
     rotated_keys_cache[cache_key] = {

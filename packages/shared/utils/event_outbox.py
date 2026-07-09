@@ -11,11 +11,9 @@ correlation/causation propagation, and graceful degradation.
 
 import json
 import uuid
-import os
 import time
 import asyncio
-from typing import Any, Optional, Callable, Awaitable
-from datetime import datetime, timezone, timedelta
+from typing import Optional, Callable, Awaitable
 from enum import Enum
 from dataclasses import dataclass, field
 from shared.utils.logger import logger
@@ -74,6 +72,7 @@ class EventOutboxProcessor:
         if self._supabase is None:
             try:
                 from config.core.supabase import get_supabase_client
+
                 self._supabase = get_supabase_client()
             except Exception as e:
                 logger.error(f"Cannot get Supabase client: {e}")
@@ -91,8 +90,15 @@ class EventOutboxProcessor:
             for handler in handler_list:
                 self.register_handler(event_type, handler)
 
-    async def emit(self, event_type: str, aggregate_type: str, aggregate_id: str,
-                   data: dict, headers: dict = None, user_id: Optional[str] = None):
+    async def emit(
+        self,
+        event_type: str,
+        aggregate_type: str,
+        aggregate_id: str,
+        data: dict,
+        headers: dict = None,
+        user_id: Optional[str] = None,
+    ):
         """Emit an event by writing to the outbox table."""
         supabase = self._get_supabase()
         if not supabase:
@@ -113,8 +119,12 @@ class EventOutboxProcessor:
         try:
             result = supabase.table("skill_event_outbox").insert(event).execute()
             if result.data:
-                logger.info("Event emitted to outbox", event_type=event_type,
-                            aggregate_type=aggregate_type, aggregate_id=aggregate_id)
+                logger.info(
+                    "Event emitted to outbox",
+                    event_type=event_type,
+                    aggregate_type=aggregate_type,
+                    aggregate_id=aggregate_id,
+                )
         except Exception as e:
             logger.error(f"Failed to write event to outbox: {e}", event_type=event_type)
 
@@ -125,15 +135,18 @@ class EventOutboxProcessor:
             return 0, 0
 
         try:
-            result = supabase.table("skill_event_outbox") \
-                .select("*") \
-                .in_("status", [OutboxStatus.PENDING.value, OutboxStatus.FAILED.value]) \
-                .lte("scheduled_at" if False else "created_at",
-                     lambda: f"(created_at.lte.{int(time.time() * 1000)},scheduled_at.is.null)",
-                     ) \
-                .limit(self.batch_size) \
-                .order("created_at") \
+            result = (
+                supabase.table("skill_event_outbox")
+                .select("*")
+                .in_("status", [OutboxStatus.PENDING.value, OutboxStatus.FAILED.value])
+                .lte(
+                    "scheduled_at" if False else "created_at",
+                    lambda: f"(created_at.lte.{int(time.time() * 1000)},scheduled_at.is.null)",
+                )
+                .limit(self.batch_size)
+                .order("created_at")
                 .execute()
+            )
 
             if not result.data:
                 return 0, 0
@@ -154,10 +167,9 @@ class EventOutboxProcessor:
 
                 try:
                     # Mark as processing
-                    supabase.table("skill_event_outbox") \
-                        .update({"status": OutboxStatus.PROCESSING.value}) \
-                        .eq("outbox_id", outbox_id) \
-                        .execute()
+                    supabase.table("skill_event_outbox").update({"status": OutboxStatus.PROCESSING.value}).eq(
+                        "outbox_id", outbox_id
+                    ).execute()
 
                     # Write to skill_events for event sourcing
                     source_event = {
@@ -180,39 +192,43 @@ class EventOutboxProcessor:
                     await self._route_to_webhooks(event, supabase)
 
                     # Mark as delivered
-                    supabase.table("skill_event_outbox") \
-                        .update({
+                    supabase.table("skill_event_outbox").update(
+                        {
                             "status": OutboxStatus.DELIVERED.value,
                             "processed_at": now_ms,
-                        }) \
-                        .eq("outbox_id", outbox_id) \
-                        .execute()
+                        }
+                    ).eq("outbox_id", outbox_id).execute()
 
                     processed += 1
 
                 except Exception as exc:
                     error_msg = str(exc)[:500]
                     new_retry_count = retry_count + 1
-                    new_status = OutboxStatus.DEAD_LETTER.value if new_retry_count >= max_retries else OutboxStatus.FAILED.value
+                    new_status = (
+                        OutboxStatus.DEAD_LETTER.value if new_retry_count >= max_retries else OutboxStatus.FAILED.value
+                    )
 
                     # Exponential backoff: 2s, 4s, 8s, ...
-                    backoff_ms = (2 ** new_retry_count) * 1000
+                    backoff_ms = (2**new_retry_count) * 1000
                     new_scheduled_at = now_ms + backoff_ms
 
-                    supabase.table("skill_event_outbox") \
-                        .update({
+                    supabase.table("skill_event_outbox").update(
+                        {
                             "status": new_status,
                             "retry_count": new_retry_count,
                             "last_error": error_msg,
                             "scheduled_at": new_scheduled_at,
-                        }) \
-                        .eq("outbox_id", outbox_id) \
-                        .execute()
+                        }
+                    ).eq("outbox_id", outbox_id).execute()
 
                     failed += 1
-                    logger.error(f"Outbox event processing failed",
-                                 outbox_id=outbox_id, event_type=event.get("event_type"),
-                                 retry=new_retry_count, error=error_msg)
+                    logger.error(
+                        "Outbox event processing failed",
+                        outbox_id=outbox_id,
+                        event_type=event.get("event_type"),
+                        retry=new_retry_count,
+                        error=error_msg,
+                    )
 
             return processed, failed
 
@@ -239,10 +255,7 @@ class EventOutboxProcessor:
             event_type = event.get("event_type", "")
 
             # Find active subscriptions that match this event type
-            subs_result = supabase.table("skill_event_subscriptions") \
-                .select("*") \
-                .eq("is_active", True) \
-                .execute()
+            subs_result = supabase.table("skill_event_subscriptions").select("*").eq("is_active", True).execute()
 
             if not subs_result.data:
                 return
@@ -257,12 +270,14 @@ class EventOutboxProcessor:
                 webhook_entry = {
                     "subscription_id": sub.get("subscription_id"),
                     "event_type": event_type,
-                    "payload": json.dumps({
-                        "event_type": event_type,
-                        "aggregate_type": event.get("aggregate_type"),
-                        "aggregate_id": event.get("aggregate_id"),
-                        "data": event.get("payload"),
-                    }),
+                    "payload": json.dumps(
+                        {
+                            "event_type": event_type,
+                            "aggregate_type": event.get("aggregate_type"),
+                            "aggregate_id": event.get("aggregate_id"),
+                            "data": event.get("payload"),
+                        }
+                    ),
                     "url": sub.get("url"),
                     "headers": sub.get("headers", {}),
                     "status": OutboxStatus.PENDING.value,
@@ -301,7 +316,7 @@ class EventOutboxProcessor:
                 processed, failed = await self.poll_once()
                 if processed > 0 or failed > 0:
                     logger.debug("Outbox poll cycle", processed=processed, failed=failed)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover — unreachable; poll_once catches all internally
                 logger.error(f"Outbox poll loop error: {e}")
             finally:
                 await asyncio.sleep(self.poll_interval)
@@ -311,10 +326,12 @@ class EventOutboxProcessor:
         supabase = self._get_supabase()
         if not supabase:
             return 0
-        result = supabase.table("skill_event_outbox") \
-            .update({"status": OutboxStatus.PENDING.value, "retry_count": 0, "last_error": None}) \
-            .eq("status", OutboxStatus.DEAD_LETTER.value) \
+        result = (
+            supabase.table("skill_event_outbox")
+            .update({"status": OutboxStatus.PENDING.value, "retry_count": 0, "last_error": None})
+            .eq("status", OutboxStatus.DEAD_LETTER.value)
             .execute()
+        )
         count = len(result.data) if result.data else 0
         if count:
             logger.info(f"Reprocessed {count} dead-letter outbox entries")
@@ -328,10 +345,12 @@ class EventOutboxProcessor:
         try:
             stats = {}
             for status in ["pending", "failed", "dead_letter", "delivered"]:
-                result = supabase.table("skill_event_outbox") \
-                    .select("outbox_id", count="exact") \
-                    .eq("status", status) \
+                result = (
+                    supabase.table("skill_event_outbox")
+                    .select("outbox_id", count="exact")
+                    .eq("status", status)
                     .execute()
+                )
                 stats[status] = result.count if hasattr(result, "count") else 0
             return stats
         except Exception:
