@@ -65,37 +65,18 @@ async def get_user_preferences(user_id: str) -> Dict[str, Any]:
     try:
         supabase = get_supabase_client()
 
-        tasks_resp = (
-            supabase.from_("tasks")
-            .select("category, priority, status")
-            .eq("user_id", user_id)
-            .execute()
-        )
+        tasks_resp = supabase.from_("tasks").select("category, priority, status").eq("user_id", user_id).execute()
         tasks = tasks_resp.data or []
 
-        habits_resp = (
-            supabase.from_("habits")
-            .select("frequency, streak")
-            .eq("user_id", user_id)
-            .execute()
-        )
+        habits_resp = supabase.from_("habits").select("frequency, streak").eq("user_id", user_id).execute()
         habits = habits_resp.data or []
 
         goals_resp = (
-            supabase.from_("goals")
-            .select("id, status")
-            .eq("user_id", user_id)
-            .neq("status", "completed")
-            .execute()
+            supabase.from_("goals").select("id, status").eq("user_id", user_id).neq("status", "completed").execute()
         )
         goals = goals_resp.data or []
 
-        courses_resp = (
-            supabase.from_("courses")
-            .select("status, progress")
-            .eq("user_id", user_id)
-            .execute()
-        )
+        courses_resp = supabase.from_("courses").select("status, progress").eq("user_id", user_id).execute()
         courses = courses_resp.data or []
 
         if tasks:
@@ -241,13 +222,22 @@ async def consolidate_memories(user_id: str) -> Dict[str, Any]:
                         update_payload = {}
                         if "confidence" in updates:
                             update_payload["importance"] = (
-                                "critical" if updates["confidence"] >= 0.8
-                                else "high" if updates["confidence"] >= 0.6
-                                else "medium" if updates["confidence"] >= 0.3
-                                else "low"
+                                "critical"
+                                if updates["confidence"] >= 0.8
+                                else (
+                                    "high"
+                                    if updates["confidence"] >= 0.6
+                                    else "medium" if updates["confidence"] >= 0.3 else "low"
+                                )
                             )
                         if "content" in updates:
-                            existing = supabase.from_("memory").select("value").eq("id", memory_id).eq("user_id", user_id).execute()
+                            existing = (
+                                supabase.from_("memory")
+                                .select("value")
+                                .eq("id", memory_id)
+                                .eq("user_id", user_id)
+                                .execute()
+                            )
                             if existing.data:
                                 current_value = existing.data[0].get("value", {})
                                 if isinstance(current_value, dict):
@@ -320,7 +310,9 @@ async def consolidate_memories(user_id: str) -> Dict[str, Any]:
         }
 
 
-async def _rule_based_consolidation(user_id: str, interactions: List[dict], preferences: Dict[str, Any]) -> Dict[str, Any]:
+async def _rule_based_consolidation(
+    user_id: str, interactions: List[dict], preferences: Dict[str, Any]
+) -> Dict[str, Any]:
     try:
         by_type: Dict[str, List[dict]] = {}
         for m in interactions:
@@ -440,13 +432,7 @@ async def prune_expired_memories(user_id: str) -> int:
     try:
         supabase = get_supabase_client()
         now = _utc_now()
-        response = (
-            supabase.from_("memory")
-            .delete()
-            .eq("user_id", user_id)
-            .lt("expires_at", now)
-            .execute()
-        )
+        response = supabase.from_("memory").delete().eq("user_id", user_id).lt("expires_at", now).execute()
         return len(response.data or [])
     except Exception as e:
         logger.error("prune_expired_memories failed", user_id=user_id, error=str(e))
