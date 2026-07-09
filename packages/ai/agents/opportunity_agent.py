@@ -24,10 +24,11 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
 
     opp_prompt = prompts.get_agent("opportunity_radar_agent")
     web_opps = await fetch_opportunities_from_web(user_skills, user_interests)
-    web_context = "\n".join(
-        f"- {o['title']} ({o['category']}) - {o['description'][:100]}"
-        for o in web_opps[:5]
-    ) if web_opps else "No web results found."
+    web_context = (
+        "\n".join(f"- {o['title']} ({o['category']}) - {o['description'][:100]}" for o in web_opps[:5])
+        if web_opps
+        else "No web results found."
+    )
 
     if opp_prompt:
         system_prompt = opp_prompt.system_prompt

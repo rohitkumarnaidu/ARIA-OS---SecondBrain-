@@ -6,7 +6,15 @@ from ai.agents.memory_agent import get_memory_summary
 async def _fetch_tasks(user_id: str):
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("tasks").select("title, status, priority, due_date").eq("user_id", user_id).eq("status", "pending").order("priority").limit(10).execute()
+        resp = (
+            supabase.from_("tasks")
+            .select("title, status, priority, due_date")
+            .eq("user_id", user_id)
+            .eq("status", "pending")
+            .order("priority")
+            .limit(10)
+            .execute()
+        )
         return resp.data or []
     except Exception:
         return []
@@ -15,7 +23,14 @@ async def _fetch_tasks(user_id: str):
 async def _fetch_goals(user_id: str):
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("goals").select("title, status, progress").eq("user_id", user_id).eq("status", "active").limit(5).execute()
+        resp = (
+            supabase.from_("goals")
+            .select("title, status, progress")
+            .eq("user_id", user_id)
+            .eq("status", "active")
+            .limit(5)
+            .execute()
+        )
         return resp.data or []
     except Exception:
         return []
@@ -24,7 +39,13 @@ async def _fetch_goals(user_id: str):
 async def _fetch_courses(user_id: str):
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("courses").select("title, status, progress_percent").eq("user_id", user_id).limit(5).execute()
+        resp = (
+            supabase.from_("courses")
+            .select("title, status, progress_percent")
+            .eq("user_id", user_id)
+            .limit(5)
+            .execute()
+        )
         return resp.data or []
     except Exception:
         return []
@@ -33,7 +54,14 @@ async def _fetch_courses(user_id: str):
 async def _fetch_habits(user_id: str):
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("habits").select("name, current_streak, is_active").eq("user_id", user_id).eq("is_active", True).limit(5).execute()
+        resp = (
+            supabase.from_("habits")
+            .select("name, current_streak, is_active")
+            .eq("user_id", user_id)
+            .eq("is_active", True)
+            .limit(5)
+            .execute()
+        )
         return resp.data or []
     except Exception:
         return []
@@ -42,7 +70,14 @@ async def _fetch_habits(user_id: str):
 async def _fetch_sleep(user_id: str):
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("sleep_logs").select("sleep_score, duration_hours, date").eq("user_id", user_id).order("date", ascending=False).limit(3).execute()
+        resp = (
+            supabase.from_("sleep_logs")
+            .select("sleep_score, duration_hours, date")
+            .eq("user_id", user_id)
+            .order("date", ascending=False)
+            .limit(3)
+            .execute()
+        )
         return resp.data or []
     except Exception:
         return []
@@ -96,12 +131,15 @@ def _fmt_memory(data):
 
 def register_default_sections():
     import ai.context_assembly as ca
+
     ca.SECTIONS.clear()
-    ca.SECTIONS.extend([
-        ContextSection("tasks", 800, 1, _fetch_tasks, _fmt_tasks, "No pending tasks."),
-        ContextSection("goals", 500, 2, _fetch_goals, _fmt_goals, "No active goals."),
-        ContextSection("courses", 500, 3, _fetch_courses, _fmt_courses, "No courses in progress."),
-        ContextSection("habits", 400, 4, _fetch_habits, _fmt_habits, "No active habits."),
-        ContextSection("sleep", 300, 5, _fetch_sleep, _fmt_sleep, "No sleep data."),
-        ContextSection("memory", 400, 6, _fetch_memory, _fmt_memory, "No memory data."),
-    ])
+    ca.SECTIONS.extend(
+        [
+            ContextSection("tasks", 800, 1, _fetch_tasks, _fmt_tasks, "No pending tasks."),
+            ContextSection("goals", 500, 2, _fetch_goals, _fmt_goals, "No active goals."),
+            ContextSection("courses", 500, 3, _fetch_courses, _fmt_courses, "No courses in progress."),
+            ContextSection("habits", 400, 4, _fetch_habits, _fmt_habits, "No active habits."),
+            ContextSection("sleep", 300, 5, _fetch_sleep, _fmt_sleep, "No sleep data."),
+            ContextSection("memory", 400, 6, _fetch_memory, _fmt_memory, "No memory data."),
+        ]
+    )

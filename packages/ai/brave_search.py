@@ -21,7 +21,9 @@ async def brave_search(query: str, count: int = 5) -> List[Dict[str, Any]]:
     }
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(BRAVE_API_BASE, headers=headers, params=params, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+            async with session.get(
+                BRAVE_API_BASE, headers=headers, params=params, timeout=aiohttp.ClientTimeout(total=10)
+            ) as resp:
                 if resp.status != 200:
                     return []
                 data = await resp.json()
@@ -84,13 +86,15 @@ async def fetch_opportunities_from_web(skills: List[str], interests: List[str]) 
                 url = r.get("url", "")
                 if url and url not in seen_urls:
                     seen_urls.add(url)
-                    opportunities.append({
-                        "title": r.get("title", "Untitled"),
-                        "category": category,
-                        "url": url,
-                        "description": r.get("description", ""),
-                        "source": "brave_search",
-                        "skills_needed": skills[:3],
-                        "match_score": 50,
-                    })
+                    opportunities.append(
+                        {
+                            "title": r.get("title", "Untitled"),
+                            "category": category,
+                            "url": url,
+                            "description": r.get("description", ""),
+                            "source": "brave_search",
+                            "skills_needed": skills[:3],
+                            "match_score": 50,
+                        }
+                    )
     return opportunities[:20]

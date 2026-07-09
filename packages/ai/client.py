@@ -1,6 +1,7 @@
 import json
 import asyncio
 import hashlib
+import time as _time
 from typing import Optional, Dict, Any, List, Tuple, Callable
 import httpx
 from config.core.config import settings
@@ -52,6 +53,9 @@ class LLMClient:
             expected_exception=(LLMRateLimitError, httpx.RequestError),
         )
 
+        self._last_token_usage = {}
+        self._api_base = f"http://localhost:{settings.api_port if hasattr(settings, 'api_port') else 8000}"
+
     def _get_providers(self) -> List[Tuple[str, Callable]]:
         providers = []
         if self.use_local:
@@ -68,8 +72,8 @@ class LLMClient:
         system: Optional[str] = None,
         max_tokens: int = 1024,
         temperature: Optional[float] = None,
+        agent_name: str = "unknown",
     ) -> str:
-        # Check semantic cache
         raw_key = f"{prompt}||{system}||{max_tokens}||{temperature}"
         cache_key = "llm:" + hashlib.sha256(raw_key.encode()).hexdigest()
         cached_result = await cache.get(cache_key)
@@ -79,6 +83,7 @@ class LLMClient:
 
         last_error = None
         providers = self._get_providers()
+        start_time = _time.time()
 
         for name, provider_fn in providers:
             for attempt in range(1, self.max_retries + 1):
@@ -90,6 +95,7 @@ class LLMClient:
                         max_tokens=max_tokens,
                     )
                     result = await provider_fn(prompt, system, max_tokens, temperature)
+                    duration_ms = int((_time.time() - start_time) * 1000)
                     logger.info(
                         "LLM success",
                         provider=name,
@@ -97,6 +103,18 @@ class LLMClient:
                         tokens=len(result.split()),
                     )
                     await cache.set(cache_key, result, ttl=300)
+
+                    token_usage = getattr(self, "_last_token_usage", {})
+                    asyncio.create_task(
+                        self._record_usage(
+                            agent=agent_name,
+                            model=self.model if name == "ollama" else self.claude_model,
+                            provider=name,
+                            prompt_tokens=token_usage.get("prompt_tokens", 0),
+                            completion_tokens=token_usage.get("completion_tokens", 0),
+                            duration_ms=duration_ms,
+                        )
+                    )
                     return result
                 except (LLMProviderUnavailableError, CircuitBreakerOpenError) as e:
                     logger.warn(
@@ -139,28 +157,6 @@ class LLMClient:
         logger.error("All LLM providers exhausted", last_error=str(last_error))
         raise LLMProviderUnavailableError(f"All AI providers failed. Last error: {last_error}") from last_error
 
-    async def generate_json(
-        self,
-        prompt: str,
-        system: Optional[str] = None,
-        max_tokens: int = 2048,
-        temperature: Optional[float] = None,
-    ) -> Dict[str, Any]:
-        raw = await self.generate(prompt, system, max_tokens, temperature)
-        try:
-            parsed = json.loads(raw)
-            if isinstance(parsed, dict):
-                return parsed
-            if isinstance(parsed, list):
-                return {"items": parsed}
-            return {"raw": raw}
-        except json.JSONDecodeError:
-            extracted = self._extract_json(raw)
-            if extracted is not None:
-                return extracted
-            logger.warn("Failed to parse LLM output as JSON", preview=raw[:200])
-            return {"raw": raw, "parse_error": True}
-
     def _extract_json(self, text: str) -> Optional[Dict[str, Any]]:
         for opener, closer in [("{", "}"), ("[", "]")]:
             try:
@@ -197,7 +193,12 @@ class LLMClient:
             async with httpx.AsyncClient(timeout=self.ollama_timeout) as client:
                 resp = await client.post(f"{self.ollama_base}/api/generate", json=payload)
                 resp.raise_for_status()
-                return resp.json().get("response", "")
+                data = resp.json()
+                self._last_token_usage = {
+                    "prompt_tokens": data.get("prompt_eval_count", 0),
+                    "completion_tokens": data.get("eval_count", 0),
+                }
+                return data.get("response", "")
 
         return await self.ollama_circuit.call(do_call)
 
@@ -234,9 +235,66 @@ class LLMClient:
                     retry_after = int(resp.headers.get("retry-after", 60))
                     raise LLMRateLimitError("Claude rate limited", retry_after=retry_after)
                 resp.raise_for_status()
-                return resp.json()["content"][0]["text"]
+                data = resp.json()
+                usage = data.get("usage", {})
+                self._last_token_usage = {
+                    "prompt_tokens": usage.get("input_tokens", 0),
+                    "completion_tokens": usage.get("output_tokens", 0),
+                }
+                return data["content"][0]["text"]
 
         return await self.claude_circuit.call(do_call)
+
+    async def _record_usage(
+        self,
+        agent: str,
+        model: str,
+        provider: str,
+        prompt_tokens: int,
+        completion_tokens: int,
+        duration_ms: int,
+    ):
+        if prompt_tokens == 0 and completion_tokens == 0:
+            return
+        try:
+            async with httpx.AsyncClient(timeout=5) as client:
+                await client.post(
+                    f"{self._api_base}/api/v1/monitoring/token-usage",
+                    json={
+                        "agent": agent,
+                        "model": model,
+                        "provider": provider,
+                        "prompt_tokens": prompt_tokens,
+                        "completion_tokens": completion_tokens,
+                        "duration_ms": duration_ms,
+                        "endpoint": f"llm:{provider}",
+                    },
+                )
+        except Exception:
+            pass
+
+    async def generate_json(
+        self,
+        prompt: str,
+        system: Optional[str] = None,
+        max_tokens: int = 2048,
+        temperature: Optional[float] = None,
+        agent_name: str = "unknown",
+    ) -> Dict[str, Any]:
+        raw = await self.generate(prompt, system, max_tokens, temperature, agent_name=agent_name)
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, dict):
+                return parsed
+            if isinstance(parsed, list):
+                return {"items": parsed}
+            return {"raw": raw}
+        except json.JSONDecodeError:
+            extracted = self._extract_json(raw)
+            if extracted is not None:
+                return extracted
+            logger.warn("Failed to parse LLM output as JSON", preview=raw[:200])
+            return {"raw": raw, "parse_error": True}
 
 
 llm = LLMClient()
