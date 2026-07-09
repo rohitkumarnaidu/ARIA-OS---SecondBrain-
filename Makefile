@@ -101,15 +101,44 @@ install: ## Install all dependencies
 # ── Design System ─────────────────────────────────────────────────────────────
 
 figma-sync: ## Sync design tokens from Figma to tailwind.config.js
-	cd apps/web && node ../scripts/sync-figma-tokens.ts
+	cd apps/web && node scripts/sync-figma-tokens.mjs
 
 token-check: ## Check for hardcoded color values (token drift)
-	cd apps/web && node ../scripts/check-token-drift.ts
+	cd apps/web && node scripts/check-token-drift.mjs
+
+token-check-fix: ## Auto-fix hardcoded color values
+	cd apps/web && node scripts/check-token-drift.mjs --fix
 
 # ── Infrastructure ────────────────────────────────────────────────────────────
 
 setup-ci: ## Create .github/ directory with CI workflow templates
 	@echo "✓ .github/ directory already configured"
+
+ifeq ($(OS),Windows_NT)
+  PENTEST_SCRIPT = scripts/run-pentest.ps1
+  OWASP_SCRIPT = scripts/owasp-check.ps1
+  SQLI_SCRIPT = scripts/sql-injection-audit.ps1
+  ZAP_SCRIPT = scripts/zap-pentest.ps1
+  SHELL_CMD = powershell
+else
+  PENTEST_SCRIPT = scripts/run-pentest.sh
+  OWASP_SCRIPT = scripts/owasp-check.sh
+  SQLI_SCRIPT = scripts/sql-injection-audit.ps1
+  ZAP_SCRIPT = scripts/zap-pentest.sh
+  SHELL_CMD = bash
+endif
+
+pentest: ## Run full penetration test suite (SAST + DAST + custom attacks)
+	$(SHELL_CMD) $(PENTEST_SCRIPT)
+
+owasp-check: ## Run OWASP Top 10 static analysis
+	$(SHELL_CMD) $(OWASP_SCRIPT)
+
+sqli-audit: ## Run SQL injection pattern audit
+	$(SHELL_CMD) $(SQLI_SCRIPT)
+
+zap-scan: ## Run OWASP ZAP DAST active scan (requires Docker)
+	$(SHELL_CMD) $(ZAP_SCRIPT)
 
 # ── Quality Gates ─────────────────────────────────────────────────────────────
 

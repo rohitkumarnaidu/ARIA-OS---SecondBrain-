@@ -1,0 +1,35 @@
+name: Figma Token Sync
+on:
+  push:
+    paths:
+      - 'docs/design/tokens/tokens-studio.json'
+      - 'apps/web/scripts/sync-figma-tokens.mjs'
+      - 'apps/web/scripts/check-token-drift.mjs'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync Tokens
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+        working-directory: apps/web
+      - name: Generate CSS tokens from tokens-studio.json
+        run: node scripts/sync-figma-tokens.mjs
+        working-directory: apps/web
+      - name: Check for hardcoded token drift
+        run: node scripts/check-token-drift.mjs
+        working-directory: apps/web
+      - name: Upload generated tokens as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-tokens
+          path: apps/web/scripts/.generated-tokens.css
+          retention-days: 7

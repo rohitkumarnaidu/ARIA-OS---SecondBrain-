@@ -22,8 +22,8 @@ services:
       tier: canary
       traffic.weight: "5"
       feature.flag: canary.api-v2
-    depends_on:
-      - supabase
+    # depends_on:
+    #   - supabase  # Removed — Supabase is an external service, not a local container
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
