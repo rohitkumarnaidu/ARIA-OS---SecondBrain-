@@ -29,7 +29,7 @@ echo "  user_id filters: ${USER_ID_FILTERS}"
 RLS_FILES=$(find "${SCRIPT_DIR}/packages/database" -name "*.sql" 2>/dev/null | wc -l)
 echo "  RLS SQL files: ${RLS_FILES}"
 
-AUTH_DEPLOY=$(grep -c "get_current_user" "${SCRIPT_DIR}/apps/api/app/api/"*.py 2>/dev/null || echo 0)
+AUTH_DEPLOY=$(grep -rn "get_current_user" "${SCRIPT_DIR}/apps/api/app/api/"*.py 2>/dev/null | wc -l || echo 0)
 echo "  Auth middleware calls: ${AUTH_DEPLOY}"
 
 # ── CC6.x — Encryption & Vulnerability ────────────────────────────────────
@@ -124,7 +124,8 @@ echo "  GDPR data export: ${DATA_EXPORT}"
 echo ""
 echo "=== Generating Evidence Report ==="
 
-cat > "${REPORT_DIR}/evidence-summary.json" << EVIDENCE_EOF
+JSON_OUT="${REPORT_DIR}/evidence-summary.json"
+cat > "${JSON_OUT}" << EVIDENCE_EOF
 {
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "target": "SOC 2 Type I (Q2 2027)",
@@ -148,6 +149,23 @@ cat > "${REPORT_DIR}/evidence-summary.json" << EVIDENCE_EOF
   }
 }
 EVIDENCE_EOF
+
+# Validate generated JSON
+if command -v jq &> /dev/null; then
+  if ! jq empty "${JSON_OUT}" 2>/dev/null; then
+    echo "ERROR: Generated JSON is invalid. Falling back to safe JSON."
+    python3 -c "
+import json, sys
+with open('${JSON_OUT}') as f: content = f.read()
+data = {
+  'timestamp': content.split('\"timestamp\":')[1].split(',')[0].strip().strip('\"'),
+  'target': 'SOC 2 Type I (Q2 2027)',
+  'controls': {}
+}
+with open('${JSON_OUT}', 'w') as f: json.dump(data, f, indent=2)
+" 2>/dev/null || echo '{"error":"json_corruption","fallback":true}' > "${JSON_OUT}"
+  fi
+fi
 
 echo ""
 echo "=== Evidence Collection Complete ==="

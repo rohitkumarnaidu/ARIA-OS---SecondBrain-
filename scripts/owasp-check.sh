@@ -10,7 +10,7 @@ FAIL=0
 
 # A01: Broken Access Control
 echo "[A01] Broken Access Control"
-ACCESS_VIOLATIONS=$(grep -rn "\.select\(\"\*\"\)" apps/api --include="*.py" | grep -v "test_" | grep -v "pagination" | wc -l)
+ACCESS_VIOLATIONS=$(grep -rn "\.select\(\"\*\"\)" apps/api --include="*.py" 2>/dev/null | grep -v "test_" 2>/dev/null | grep -v "pagination" 2>/dev/null | wc -l || true)
 if [ "$ACCESS_VIOLATIONS" -gt 0 ]; then
     echo "  WARN: $ACCESS_VIOLATIONS select(*) calls found (should specify columns)"
 else
@@ -98,7 +98,7 @@ fi
 
 # A10: SSRF
 echo "[A10] Server-Side Request Forgery"
-SSRF_RISK=$(grep -rn "httpx\|requests\.get\|urlopen\|fetch(" apps/api --include="*.py" | grep -v "test_" | grep -v "supabase" | grep -v "localhost" | wc -l)
+SSRF_RISK=$(grep -rn "httpx\|requests\.get\|urlopen\|fetch(" apps/api --include="*.py" 2>/dev/null | grep -v "test_" 2>/dev/null | grep -v "supabase" 2>/dev/null | grep -v "localhost" 2>/dev/null | wc -l || true)
 if [ "$SSRF_RISK" -gt 0 ]; then
     echo "  WARN: External HTTP requests found (verify URL validation)"
 else

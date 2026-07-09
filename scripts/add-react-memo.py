@@ -8,12 +8,8 @@ UI_DIR = Path("apps/web/components/ui")
 SKIP_PATTERNS = (".stories.", ".test.", ".bench.")
 SYS_ENCODING = "utf-8"
 
-ALREADY_MEMO = re.compile(
-    r"import\s*\{[^}]*\bmemo\b[^}]*\}\s*from\s*['\"]react['\"]"
-)
-REACT_IMPORT = re.compile(
-    r"(import\s*\{)([^}]*)(\}\s*from\s*['\"]react['\"])"
-)
+ALREADY_MEMO = re.compile(r"import\s*\{[^}]*\bmemo\b[^}]*\}\s*from\s*['\"]react['\"]")
+REACT_IMPORT = re.compile(r"(import\s*\{)([^}]*)(\}\s*from\s*['\"]react['\"])")
 
 
 def add_memo_import(content: str) -> str:
@@ -37,7 +33,7 @@ def wrap_forward_ref_components(content: str) -> str:
     for i, line in enumerate(lines):
         m = re.match(r"(const\s+\w+\s*=\s*)forwardRef<", line)
         if m:
-            prefix = m.group(1)
+            m.group(1)
             comp_name_match = re.search(r"const\s+(\w+)\s*=", line)
             comp_name = comp_name_match.group(1) if comp_name_match else None
 
@@ -64,7 +60,7 @@ def wrap_plain_functions(content: str) -> str:
     """Replace `function X(...)` with `const X = memo(function X(...)` for pascal-cased functions."""
 
     def replacer(m: re.Match) -> str:
-        prefix = m.group(1) or ""
+        m.group(1) or ""
         name = m.group(2)
         return f"const {name} = memo(function {name}("
 
