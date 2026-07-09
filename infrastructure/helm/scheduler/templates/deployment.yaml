@@ -3,17 +3,17 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-scheduler
   labels:
-    app: secondbrain-scheduler
+    app: scheduler
     release: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: secondbrain-scheduler
+      app: scheduler
   template:
     metadata:
       labels:
-        app: secondbrain-scheduler
+        app: scheduler
     spec:
       containers:
         - name: scheduler
@@ -23,12 +23,12 @@ spec:
             - name: SUPABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: secondbrain-secrets
+                  name: app-secrets
                   key: supabase-url
             - name: SUPABASE_SERVICE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: secondbrain-secrets
+                  name: app-secrets
                   key: supabase-service-key
             - name: USE_LOCAL_AI
               value: "{{ .Values.env.USE_LOCAL_AI }}"

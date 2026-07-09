@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: sb-api
-  namespace: secondbrain-os
+  name: api
+  namespace: secondbrain
   labels:
-    app: sb-api
+    app: api
 spec:
   type: ClusterIP
   ports:
@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: http-api
   selector:
-    app: sb-api
+    app: api

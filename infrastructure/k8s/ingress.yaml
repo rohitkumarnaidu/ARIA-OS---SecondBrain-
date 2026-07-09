@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: sb-ingress
-  namespace: secondbrain-os
+  name: main-ingress
+  namespace: secondbrain
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -13,7 +13,7 @@ spec:
     - hosts:
         - api.secondbrain-os.com
         - app.secondbrain-os.com
-      secretName: sb-tls
+      secretName: app-tls
   rules:
     - host: api.secondbrain-os.com
       http:
@@ -22,7 +22,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sb-api
+                name: api
                 port:
                   number: 8000
     - host: app.secondbrain-os.com
@@ -32,6 +32,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sb-web
+                name: web
                 port:
                   number: 3000
