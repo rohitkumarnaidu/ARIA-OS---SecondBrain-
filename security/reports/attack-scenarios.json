@@ -1,0 +1,393 @@
+{
+  "target": "http://localhost:8000",
+  "timestamp": 1783566711.9047894,
+  "scenarios": [
+    {
+      "scenario": "SQL Injection",
+      "total": 10,
+      "passed": 0,
+      "failed": 10,
+      "results": [
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/tasks/?search=' OR '1'='1",
+          "payload": {
+            "search": "' OR '1'='1"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/goals/?q=' OR '1'='1",
+          "payload": {
+            "search": "' OR '1'='1"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/tasks/?search='; DROP TABLE tasks; --",
+          "payload": {
+            "search": "'; DROP TABLE tasks; --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/goals/?q='; DROP TABLE tasks; --",
+          "payload": {
+            "search": "'; DROP TABLE tasks; --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/tasks/?search=' UNION SELECT * FROM users --",
+          "payload": {
+            "search": "' UNION SELECT * FROM users --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/goals/?q=' UNION SELECT * FROM users --",
+          "payload": {
+            "search": "' UNION SELECT * FROM users --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/tasks/?search=' OR 1=1 --",
+          "payload": {
+            "search": "' OR 1=1 --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/goals/?q=' OR 1=1 --",
+          "payload": {
+            "search": "' OR 1=1 --"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/tasks/?search=\" OR \"1\"=\"1",
+          "payload": {
+            "search": "\" OR \"1\"=\"1"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        },
+        {
+          "scenario": "SQL Injection",
+          "endpoint": "/api/v1/goals/?q=\" OR \"1\"=\"1",
+          "payload": {
+            "search": "\" OR \"1\"=\"1"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Expected 400 (parameterized query) or 200 (sanitized)"
+        }
+      ]
+    },
+    {
+      "scenario": "Cross-Site Scripting (XSS)",
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "results": [
+        {
+          "scenario": "Cross-Site Scripting (XSS)",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "title": "<script>alert(1)</script>"
+          },
+          "actual_status": 401,
+          "expected_status": 201,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "scenario": "Cross-Site Scripting (XSS)",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "title": "<img src=x onerror=alert(1)>"
+          },
+          "actual_status": 401,
+          "expected_status": 201,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "scenario": "Cross-Site Scripting (XSS)",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "title": "javascript:alert(1)"
+          },
+          "actual_status": 401,
+          "expected_status": 201,
+          "passed": false,
+          "detail": ""
+        },
+        {
+          "scenario": "Cross-Site Scripting (XSS)",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "title": "\"><script>alert(1)</script>"
+          },
+          "actual_status": 401,
+          "expected_status": 201,
+          "passed": false,
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "scenario": "Path Traversal",
+      "total": 8,
+      "passed": 0,
+      "failed": 8,
+      "results": [
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/resources/?path=../../../etc/passwd",
+          "payload": {
+            "path": "../../../etc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/tasks/?file=../../../etc/passwd",
+          "payload": {
+            "path": "../../../etc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/resources/?path=..\\..\\..\\windows\\win.ini",
+          "payload": {
+            "path": "..\\..\\..\\windows\\win.ini"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/tasks/?file=..\\..\\..\\windows\\win.ini",
+          "payload": {
+            "path": "..\\..\\..\\windows\\win.ini"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/resources/?path=%2e%2e%2f%2e%2e%2fetc/passwd",
+          "payload": {
+            "path": "%2e%2e%2f%2e%2e%2fetc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/tasks/?file=%2e%2e%2f%2e%2e%2fetc/passwd",
+          "payload": {
+            "path": "%2e%2e%2f%2e%2e%2fetc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/resources/?path=....//....//etc/passwd",
+          "payload": {
+            "path": "....//....//etc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Path Traversal",
+          "endpoint": "/api/v1/tasks/?file=....//....//etc/passwd",
+          "payload": {
+            "path": "....//....//etc/passwd"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        }
+      ]
+    },
+    {
+      "scenario": "Authentication Bypass",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "results": [
+        {
+          "scenario": "Authentication Bypass",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "token": "invalid-token"
+          },
+          "actual_status": 401,
+          "expected_status": 401,
+          "passed": true,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Authentication Bypass",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "token": "Bearer invalid"
+          },
+          "actual_status": 401,
+          "expected_status": 401,
+          "passed": true,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Authentication Bypass",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "token": "fake-jwt-token-string-for-testing"
+          },
+          "actual_status": 401,
+          "expected_status": 401,
+          "passed": true,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Authentication Bypass",
+          "endpoint": "/api/v1/tasks/",
+          "payload": {
+            "token": "'' OR 1=1 --"
+          },
+          "actual_status": 401,
+          "expected_status": 401,
+          "passed": true,
+          "detail": "Blocked"
+        }
+      ]
+    },
+    {
+      "scenario": "Rate Limit Bypass",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "results": [
+        {
+          "scenario": "Rate Limit Bypass",
+          "endpoint": "/health",
+          "payload": {},
+          "actual_status": 429,
+          "expected_status": 429,
+          "passed": true,
+          "detail": "20 rapid requests resulted in 20 successes"
+        }
+      ]
+    },
+    {
+      "scenario": "Server-Side Request Forgery",
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "results": [
+        {
+          "scenario": "Server-Side Request Forgery",
+          "endpoint": "/api/v1/chat/",
+          "payload": {
+            "message": "fetch http://localhost:5432"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Server-Side Request Forgery",
+          "endpoint": "/api/v1/chat/",
+          "payload": {
+            "message": "fetch http://127.0.0.1:8000"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Server-Side Request Forgery",
+          "endpoint": "/api/v1/chat/",
+          "payload": {
+            "message": "fetch http://169.254.169.254/latest/meta-data/"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        },
+        {
+          "scenario": "Server-Side Request Forgery",
+          "endpoint": "/api/v1/chat/",
+          "payload": {
+            "message": "fetch http://[::1]:22"
+          },
+          "actual_status": 401,
+          "expected_status": 400,
+          "passed": false,
+          "detail": "Blocked"
+        }
+      ]
+    }
+  ]
+}
