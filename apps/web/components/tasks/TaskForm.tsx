@@ -90,7 +90,6 @@ export function TaskForm({ mode, initialData, onSubmit, onCancel }: TaskFormProp
               onChange={e => setTitle(e.target.value)}
               className="input"
               placeholder="What needs to be done?"
-              autoFocus
               required
             />
           </div>

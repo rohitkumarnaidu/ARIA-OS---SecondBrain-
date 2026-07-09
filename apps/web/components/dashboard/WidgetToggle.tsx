@@ -20,6 +20,7 @@ const DEFAULT_WIDGETS: WidgetDef[] = [
   { id: 'arias-pick', label: "ARIA's Pick" },
   { id: 'task-preview', label: 'Task Preview & Quick Actions' },
   { id: 'activity-matrix', label: 'Activity Matrix' },
+  { id: 'agent-activity', label: 'Agent Activity Feed' },
 ]
 
 function loadVisibility(): Record<string, boolean> {

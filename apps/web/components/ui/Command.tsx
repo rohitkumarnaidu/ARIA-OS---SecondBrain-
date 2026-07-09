@@ -123,10 +123,11 @@ const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
         className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]"
         data-slot="command-backdrop"
       >
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        <button
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm cursor-default"
           onClick={() => onOpenChange?.(false)}
-          aria-hidden="true"
+          aria-label="Close command palette"
+          tabIndex={-1}
         />
         <div
           ref={ref}
@@ -210,6 +211,7 @@ const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
                             <div
                               key={item.id}
                               role="option"
+                              tabIndex={-1}
                               aria-selected={isActive}
                               data-command-item
                               data-disabled={item.disabled || undefined}

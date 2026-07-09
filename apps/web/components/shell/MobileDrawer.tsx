@@ -46,7 +46,7 @@ function NavSection({ title, items, pathname, onItemClick }: { title: string; it
       >
         {title}
       </p>
-      <ul className="space-y-0.5" role="list">
+      <ul className="space-y-0.5">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href

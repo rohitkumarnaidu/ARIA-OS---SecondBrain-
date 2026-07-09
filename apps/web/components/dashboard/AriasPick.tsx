@@ -33,9 +33,9 @@ export function AriasPick({ insight }: AriasPickProps) {
             <Sparkles size={18} className="text-white" />
           </div>
         </div>
-        <h3 className="text-lg font-display font-semibold text-text-primary">
+        <h2 className="text-lg font-display font-semibold text-text-primary">
           ARIA&apos;s Pick
-        </h3>
+        </h2>
       </div>
 
       <div className="relative p-4 rounded-xl bg-background-elevated/50 border border-border/50 border-l-accent-neon">

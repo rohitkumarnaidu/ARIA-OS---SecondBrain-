@@ -41,6 +41,40 @@ function extractCSSVars(tokens, prefix = '') {
     if (!val || key.startsWith('$')) continue
     if (val.type === 'color') {
       vars.push({ name: `${prefix}${key}`, value: val.value })
+    } else if (val.type === 'dimension' && typeof val.value === 'number') {
+      vars.push({ name: `${prefix}${key}`, value: `${val.value}px` })
+    } else if (val.type === 'number') {
+      const suffix = prefix.endsWith('opacity-') || prefix.endsWith('z-index-') ? '' : ''
+      vars.push({ name: `${prefix}${key}`, value: val.value })
+    } else if (val.type === 'string') {
+      vars.push({ name: `${prefix}${key}`, value: `"${val.value}"` })
+    } else if (val.type === 'shadow') {
+      let shadow = val.value
+      if (typeof shadow === 'object') {
+        const { x = 0, y = 0, blur = 0, spread = 0, color = '#000' } = shadow
+        shadow = `${x}px ${y}px ${blur}px ${spread}px ${color}`
+      }
+      vars.push({ name: `${prefix}${key}`, value: shadow })
+    } else if (val.type === 'typography') {
+      const tv = val.value
+      if (tv.fontFamily) vars.push({ name: `${prefix}${key}-font-family`, value: tv.fontFamily })
+      if (tv.fontWeight) vars.push({ name: `${prefix}${key}-font-weight`, value: tv.fontWeight })
+      if (tv.fontSize) vars.push({ name: `${prefix}${key}-font-size`, value: typeof tv.fontSize === 'number' ? `${tv.fontSize}px` : tv.fontSize })
+      if (tv.lineHeight) vars.push({ name: `${prefix}${key}-line-height`, value: typeof tv.lineHeight === 'number' ? `${tv.lineHeight}px` : tv.lineHeight })
+      if (tv.letterSpacing) vars.push({ name: `${prefix}${key}-letter-spacing`, value: typeof tv.letterSpacing === 'number' ? `${tv.letterSpacing}px` : tv.letterSpacing })
+    } else if (val.type === 'transition' || val.type === 'motion') {
+      const mv = val.value
+      if (typeof mv === 'object') {
+        if (mv.duration) vars.push({ name: `${prefix}${key}-duration`, value: mv.duration })
+        if (mv.easing) vars.push({ name: `${prefix}${key}-easing`, value: mv.easing })
+        if (mv.delay) vars.push({ name: `${prefix}${key}-delay`, value: mv.delay })
+      }
+    } else if (val.type === 'borderRadius') {
+      let br = val.value
+      if (typeof br === 'object') {
+        br = Object.values(br).filter(v => typeof v === 'number').join('px ') + 'px'
+      }
+      vars.push({ name: `${prefix}${key}`, value: typeof br === 'number' ? `${br}px` : br })
     } else if (typeof val === 'object' && !Array.isArray(val)) {
       vars.push(...extractCSSVars(val, `${prefix}${key}-`))
     }

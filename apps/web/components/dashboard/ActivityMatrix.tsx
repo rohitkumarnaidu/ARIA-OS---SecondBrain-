@@ -134,6 +134,7 @@ export function ActivityMatrix({ data }: ActivityMatrixProps) {
                 onMouseEnter={(e) => handleMouseEnter(e, cell.count, cell.dateStr)}
                 onMouseLeave={() => setTooltip(null)}
                 role="gridcell"
+                tabIndex={-1}
                 aria-label={`${cell.count} activities on ${format(cell.date, 'MMM d, yyyy')}`}
               />
             ))}

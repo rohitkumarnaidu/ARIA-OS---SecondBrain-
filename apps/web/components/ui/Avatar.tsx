@@ -75,7 +75,6 @@ const Avatar = memo(forwardRef<HTMLDivElement, AvatarProps>(
         data-slot="avatar"
         role="img"
         aria-label={ariaLabel}
-        tabIndex={0}
         {...props}
       >
         {showImage ? (

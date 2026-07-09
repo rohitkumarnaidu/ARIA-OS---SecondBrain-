@@ -91,13 +91,35 @@ async function mockSkillsApi(page: Page) {
   })
 }
 
+async function mockFailedSkillsApi(page: Page) {
+  await page.route('**/api/v1/skills/**', async route => {
+    await route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal server error' }) })
+  })
+}
+
+async function mockEmptySkillsApi(page: Page) {
+  await page.route('**/api/v1/skills/categories', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+  })
+  await page.route('**/api/v1/skills/', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+  })
+  await page.route('**/api/v1/skills/**', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+  })
+}
+
+async function login(page: Page) {
+  await page.goto('/login')
+  await page.fill('[name="email"]', 'test@example.com')
+  await page.fill('[name="password"]', 'password123')
+  await page.click('[type="submit"]')
+  await page.waitForURL('**/dashboard')
+}
+
 test.describe('Skills Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login')
-    await page.fill('[name="email"]', 'test@example.com')
-    await page.fill('[name="password"]', 'password123')
-    await page.click('[type="submit"]')
-    await page.waitForURL('**/dashboard')
+    await login(page)
   })
 
   test('renders skills page with categories and skills', async ({ page }) => {
@@ -151,15 +173,60 @@ test.describe('Skills Page', () => {
       }
     })
   })
+
+  test('shows empty state when no skills data exists', async ({ page }) => {
+    await mockEmptySkillsApi(page)
+    await page.goto('/skills')
+    await page.waitForLoadState('networkidle')
+
+    const emptyState = page.locator('text=No skills, text=Get started, text=Add your first, text=empty, [class*="empty"]').first()
+    await expect(emptyState).toBeVisible()
+  })
+
+  test('shows error state when API calls fail', async ({ page }) => {
+    await mockFailedSkillsApi(page)
+    await page.goto('/skills')
+    await page.waitForLoadState('networkidle')
+
+    const errorElement = page.locator('text=error, text=failed, text=unavailable, text=try again, [class*="error"]').first()
+    await expect(errorElement).toBeVisible()
+  })
+
+  test('loading skeleton appears while skills are fetching', async ({ page }) => {
+    await page.route('**/api/v1/skills/**', async route => {
+      await new Promise(r => setTimeout(r, 3000))
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+    })
+    await page.goto('/skills')
+    await page.waitForLoadState('domcontentloaded')
+
+    const skeleton = page.locator('[class*="skeleton"], [class*="loading"], [class*="placeholder"], [class*="shimmer"]').first()
+    await expect(skeleton).toBeVisible()
+  })
+
+  test('retry button appears after API failure', async ({ page }) => {
+    await mockFailedSkillsApi(page)
+    await page.goto('/skills')
+    await page.waitForLoadState('networkidle')
+
+    const retryButton = page.locator('button:has-text("Retry"), button:has-text("Try again"), button:has-text("Reload")').first()
+    await expect(retryButton).toBeVisible()
+  })
+
+  test('network error shows offline state', async ({ page }) => {
+    await page.route('**/api/v1/skills/**', async route => {
+      await route.abort('internetdisconnected')
+    })
+    await page.goto('/skills', { waitUntil: 'load' })
+
+    const errorElement = page.locator('text=error, text=failed, text=offline, text=network, [class*="error"], [class*="offline"]').first()
+    await expect(errorElement).toBeVisible()
+  })
 })
 
 test.describe('Skill Detail Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login')
-    await page.fill('[name="email"]', 'test@example.com')
-    await page.fill('[name="password"]', 'password123')
-    await page.click('[type="submit"]')
-    await page.waitForURL('**/dashboard')
+    await login(page)
   })
 
   test('renders skill detail with tabs', async ({ page }) => {
@@ -198,5 +265,16 @@ test.describe('Skill Detail Page', () => {
     await expect(page.locator('text=Back')).toBeVisible()
     await page.click('text=Back')
     await page.waitForURL('**/skills')
+  })
+
+  test('detail page shows error when skill not found', async ({ page }) => {
+    await page.route('**/api/v1/skills/skill-999', async route => {
+      await route.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({ error: 'Skill not found' }) })
+    })
+    await page.goto('/skills/skill-999')
+    await page.waitForLoadState('networkidle')
+
+    const errorElement = page.locator('text=not found, text=doesn\'t exist, text=error, [class*="error"], [class*="not-found"]').first()
+    await expect(errorElement).toBeVisible()
   })
 })

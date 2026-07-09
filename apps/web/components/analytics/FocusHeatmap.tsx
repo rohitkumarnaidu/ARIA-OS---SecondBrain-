@@ -93,6 +93,7 @@ export function FocusHeatmap({ data }: FocusHeatmapProps) {
                     onMouseEnter={(e) => handleMouseEnter(e, day, hour, value)}
                     onMouseLeave={() => setTooltip(null)}
                     role="gridcell"
+                    tabIndex={-1}
                     aria-label={`${day} ${hour}:00 — ${value} hours`}
                   />
                 )

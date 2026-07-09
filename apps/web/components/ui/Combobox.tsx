@@ -163,9 +163,11 @@ const Combobox = memo(forwardRef<HTMLDivElement, ComboboxProps>(
                     <div
                       key={item.value}
                       role="option"
+                      tabIndex={-1}
                       aria-selected={isSelected}
                       data-index={index}
                       onClick={() => { onChange?.(item.value); setOpen(false) }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange?.(item.value); setOpen(false) } }}
                       onMouseEnter={() => setActiveIndex(index)}
                       className="flex items-center gap-2 px-3 py-2.5 text-sm cursor-pointer transition-colors"
                       style={{

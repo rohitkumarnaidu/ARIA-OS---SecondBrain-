@@ -673,7 +673,6 @@ export function YouTubeVault(): JSX.Element {
                             'text-[var(--text-primary)]',
                             'focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]',
                           )}
-                          autoFocus
                           aria-label="Collection name"
                         />
                         <button
@@ -771,8 +770,8 @@ export function YouTubeVault(): JSX.Element {
                         'transition-all duration-300',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
                       )}
+                      role="button"
                       tabIndex={0}
-                      role="article"
                       aria-label={`${video.title} by ${video.channel}`}
                     >
                     {/* Thumbnail */}
@@ -921,8 +920,8 @@ export function YouTubeVault(): JSX.Element {
                         'transition-all duration-200',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]',
                       )}
+                      role="button"
                       tabIndex={0}
-                      role="listitem"
                       aria-label={`${video.title} by ${video.channel}`}
                     >
                       {/* Small thumbnail */}
