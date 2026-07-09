@@ -1,0 +1,55 @@
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: apps/web/**/*
+
+backend:
+  - changed-files:
+      - any-glob-to-any-file: apps/api/**/*
+
+scheduler:
+  - changed-files:
+      - any-glob-to-any-file: services/scheduler/**/*
+
+ai-agents:
+  - changed-files:
+      - any-glob-to-any-file: packages/ai/**/*
+
+prompts:
+  - changed-files:
+      - any-glob-to-any-file: prompts/**/*
+
+database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - packages/database/**/*
+          - packages/config/core/supabase.py
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: docs/**/*
+
+infrastructure:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docker-compose.yml
+          - Dockerfile
+          - infrastructure/**/*
+          - .dockerignore
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file: tests/**/*
+
+ci-cd:
+  - changed-files:
+      - any-glob-to-any-file: .github/**/*
+
+security:
+  - changed-files:
+      - any-glob-to-any-file:
+          - scripts/owasp-check.sh
+          - scripts/sql-injection-audit.sh
+          - scripts/zap-pentest.sh
+          - scripts/run-pentest.sh
+          - scripts/attack-scenarios.py
+          - scripts/soc2-*.sh
