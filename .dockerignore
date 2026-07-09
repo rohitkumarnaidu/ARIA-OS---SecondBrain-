@@ -1,0 +1,74 @@
+# Build context exclusion — all 3 services use context: .
+# Keeps the Docker build context small and fast
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+docs/
+*.md
+README*
+CONTRIBUTING*
+CHANGELOG*
+CODE_OF_CONDUCT*
+SECURITY*
+
+# Dependencies — each service installs its own
+node_modules/
+apps/web/node_modules/
+apps/admin/node_modules/
+apps/mobile/node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.python-version
+.venv/
+venv/
+
+# Test artifacts
+tests/
+__tests__/
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Dev/CI configs
+.github/
+.storybook/
+.vscode/
+.idea/
+*.swo
+*.swn
+
+# Infrastructure
+infrastructure/
+analytics/
+monitoring/
+
+# Environment — each service has its own .env
+.env
+.env.*
+!.env.example
+
+# Build outputs
+.next/
+apps/web/.next/
+dist/
+build/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
