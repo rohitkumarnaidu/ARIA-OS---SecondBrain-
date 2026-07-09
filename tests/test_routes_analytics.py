@@ -22,14 +22,23 @@ class TestAnalyticsRoutes:
         def side_effect(table):
             m = MagicMock()
             if table == "tasks":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"count": 5}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"count": 5}])
+                )
             elif table == "habit_logs":
-                m.select.return_value.eq.return_value.eq.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"count": 3}])
+                m.select.return_value.eq.return_value.eq.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"count": 3}]
+                )
             elif table == "sleep_logs":
-                m.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(data=[{"sleep_score": 7.5, "duration_hours": 8}])
+                m.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = (
+                    MagicMock(data=[{"sleep_score": 7.5, "duration_hours": 8}])
+                )
             elif table == "time_entries":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"duration_minutes": 120, "is_deep_work": True}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"duration_minutes": 120, "is_deep_work": True}])
+                )
             return m
+
         mock_client.from_ = MagicMock(side_effect=side_effect)
 
         from app.api.analytics import get_daily_summary
@@ -52,10 +61,15 @@ class TestAnalyticsRoutes:
         def side_effect(table):
             m = MagicMock()
             if table == "sleep_logs":
-                m.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(data=[])
+                m.select.return_value.eq.return_value.eq.return_value.limit.return_value.execute.return_value = (
+                    MagicMock(data=[])
+                )
             else:
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[])
+                )
             return m
+
         mock_client.from_ = MagicMock(side_effect=side_effect)
 
         from app.api.analytics import get_daily_summary
@@ -76,14 +90,23 @@ class TestAnalyticsRoutes:
         def side_effect(table):
             m = MagicMock()
             if table == "tasks":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"status": "completed"}, {"status": "pending"}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"status": "completed"}, {"status": "pending"}])
+                )
             elif table == "habit_logs":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"completed": True}, {"completed": False}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"completed": True}, {"completed": False}])
+                )
             elif table == "sleep_logs":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"sleep_score": 8.0}, {"sleep_score": 6.0}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"sleep_score": 8.0}, {"sleep_score": 6.0}])
+                )
             elif table == "time_entries":
-                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[{"duration_minutes": 60, "is_deep_work": True}])
+                m.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = (
+                    MagicMock(data=[{"duration_minutes": 60, "is_deep_work": True}])
+                )
             return m
+
         mock_client.from_ = MagicMock(side_effect=side_effect)
 
         from app.api.analytics import get_weekly_trends
@@ -106,8 +129,11 @@ class TestAnalyticsRoutes:
 
         def side_effect(table):
             m = MagicMock()
-            m.from_.return_value.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(data=[])
+            m.from_.return_value.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value = MagicMock(
+                data=[]
+            )
             return m
+
         mock_client.from_ = MagicMock(side_effect=side_effect)
 
         from app.api.analytics import get_weekly_trends
@@ -130,20 +156,35 @@ class TestAnalyticsRoutes:
         def side_effect(table):
             m = MagicMock()
             if table == "tasks":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"status": "completed", "priority": "high"}, {"status": "pending", "priority": "medium"}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"status": "completed", "priority": "high"}, {"status": "pending", "priority": "medium"}]
+                )
             elif table == "habits":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"is_active": True, "current_streak": 5, "best_streak": 10, "consistency_percentage": 80}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"is_active": True, "current_streak": 5, "best_streak": 10, "consistency_percentage": 80}]
+                )
             elif table == "sleep_logs":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"duration_hours": 8, "sleep_score": 7.5, "sleep_debt": 1.0}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"duration_hours": 8, "sleep_score": 7.5, "sleep_debt": 1.0}]
+                )
             elif table == "time_entries":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"duration_minutes": 120, "is_deep_work": True}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"duration_minutes": 120, "is_deep_work": True}]
+                )
             elif table == "projects":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"status": "completed"}, {"status": "in_progress"}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"status": "completed"}, {"status": "in_progress"}]
+                )
             elif table == "ideas":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"status": "raw"}, {"status": "building"}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"status": "raw"}, {"status": "building"}]
+                )
             elif table == "income_entries":
-                m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"amount": 500, "effective_hourly_rate": 50.0}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"amount": 500, "effective_hourly_rate": 50.0}]
+                )
             return m
+
         mock_client.from_ = MagicMock(side_effect=side_effect)
 
         from app.api.analytics import get_aggregated_stats
@@ -163,7 +204,10 @@ class TestAnalyticsRoutes:
         """POST /patterns should return pattern data."""
         mock_user = MagicMock(user=MagicMock(id="test-user"))
         mock_auth.return_value = mock_user
-        mock_detect.return_value = {"patterns": [{"name": "procrastination"}], "summary": "You tend to delay hard tasks"}
+        mock_detect.return_value = {
+            "patterns": [{"name": "procrastination"}],
+            "summary": "You tend to delay hard tasks",
+        }
 
         from app.api.analytics import detect_patterns_endpoint
         from database.schemas.orchestrator import PatternRequest

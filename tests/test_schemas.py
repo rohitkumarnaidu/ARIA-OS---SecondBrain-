@@ -71,7 +71,14 @@ class TestChatSchemas:
         from database.schemas.chat import ChatMessage, ChatSessionResponse
 
         msgs = [
-            ChatMessage(id="m-1", user_id="u-1", conversation_id="c-1", role="user", content="Hi", created_at="2026-06-01T12:00:00Z"),
+            ChatMessage(
+                id="m-1",
+                user_id="u-1",
+                conversation_id="c-1",
+                role="user",
+                content="Hi",
+                created_at="2026-06-01T12:00:00Z",
+            ),
         ]
         resp = ChatSessionResponse(conversation_id="c-1", messages=msgs, ai_response="Hello!")
         assert resp.conversation_id == "c-1"

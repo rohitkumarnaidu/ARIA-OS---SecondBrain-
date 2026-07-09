@@ -210,6 +210,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "test.md", self.SAMPLE_VALID_PROMPT)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -224,6 +225,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "system", "bad.md", self.SAMPLE_MISSING_FIELDS)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -238,6 +240,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "bad.md", self.SAMPLE_INVALID_STATUS)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -252,6 +255,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "nofm.md", self.SAMPLE_NO_FRONTMATTER)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -266,6 +270,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "nd.md", self.SAMPLE_NON_DICT_FRONTMATTER)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -280,6 +285,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "st.md", self.SAMPLE_STRING_TOKENS)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -296,6 +302,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "good.md", self.SAMPLE_VALID_PROMPT)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -313,6 +320,7 @@ Bad YAML syntax.
         self._write_prompt_any(tmp_path, "agents", "good.md", self.SAMPLE_VALID_PROMPT)
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
@@ -325,6 +333,7 @@ Bad YAML syntax.
 
     def test_module_import(self):
         import scripts.validate_prompts
+
         assert callable(scripts.validate_prompts.validate_all)
 
     def test_readme_only_skipped(self, tmp_path):
@@ -333,9 +342,11 @@ Bad YAML syntax.
         readme.write_text("# Readme", encoding="utf-8")
         original_cwd = Path.cwd()
         import os
+
         os.chdir(tmp_path)
         try:
             import glob
+
             files = sorted(glob.glob("prompts/**/*.md", recursive=True))
             non_readme = [f for f in files if not f.endswith("README.md")]
             assert len(non_readme) == 0
@@ -357,10 +368,12 @@ Bad YAML syntax.
         bad_file = prompts_dir / "bad_yaml.md"
         bad_file.write_text("---\nversion: 1.0\nstatus: [unbalanced\n---\nBody")
         import os
+
         original = Path.cwd()
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
+
             with pytest.raises(SystemExit) as exc:
                 validate_all()
             assert exc.value.code == 1
@@ -373,10 +386,12 @@ Bad YAML syntax.
         bad_file = prompts_dir / "bad_fm.md"
         bad_file.write_text("---\n[not a dict]\n---\nBody")
         import os
+
         original = Path.cwd()
         os.chdir(tmp_path)
         try:
             from scripts.validate_prompts import validate_all
+
             with pytest.raises(SystemExit) as exc:
                 validate_all()
             assert exc.value.code == 1
@@ -384,9 +399,13 @@ Bad YAML syntax.
             os.chdir(original)
 
     def test_main_block(self):
-        import subprocess, sys
+        import subprocess
+        import sys
+
         result = subprocess.run(
             [sys.executable, "-m", "scripts.validate_prompts"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert "OK" in result.stdout or "FAIL" in result.stdout

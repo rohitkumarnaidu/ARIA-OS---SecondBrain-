@@ -26,7 +26,8 @@ class TestPromptRoutes:
         mock_entry_m.frontmatter = {"version": "1.5.0"}
         mock_entry_m.body = "You are a memory agent.\n\nConsolidate."
         mock_prompts.get.side_effect = lambda n: {
-            "briefing_agent": mock_entry_b, "memory_agent": mock_entry_m,
+            "briefing_agent": mock_entry_b,
+            "memory_agent": mock_entry_m,
         }.get(n)
         from app.api.prompts import list_prompts
 
@@ -123,7 +124,9 @@ class TestPromptRoutes:
         current_user = MagicMock()
         req = PromptRenderRequest(variables={"name": "Alice", "day": "Monday"})
         result = await render_prompt(
-            name="context_assembly", req=req, current_user=current_user,
+            name="context_assembly",
+            req=req,
+            current_user=current_user,
         )
         assert result.name == "context_assembly"
         assert "Alice" in result.rendered
@@ -140,7 +143,9 @@ class TestPromptRoutes:
         req = PromptRenderRequest(variables={"name": "Alice"})
         with pytest.raises(HTTPException) as exc:
             await render_prompt(
-                name="nonexistent", req=req, current_user=current_user,
+                name="nonexistent",
+                req=req,
+                current_user=current_user,
             )
         assert exc.value.status_code == 404
 
@@ -244,6 +249,7 @@ class TestPromptRoutes:
     @pytest.mark.asyncio
     async def test_get_prompt_history_git_timeout(self, mock_prompts, mock_subprocess_run):
         import subprocess
+
         project_root = Path(__file__).resolve().parent.parent
         mock_entry = MagicMock()
         mock_entry.name = "briefing_agent"
@@ -253,7 +259,8 @@ class TestPromptRoutes:
         mock_entry.body = "You are a briefing agent."
         mock_prompts.get.return_value = mock_entry
         mock_subprocess_run.side_effect = subprocess.TimeoutExpired(
-            cmd=["git", "log"], timeout=10,
+            cmd=["git", "log"],
+            timeout=10,
         )
         from app.api.prompts import get_prompt_history
         from fastapi import HTTPException

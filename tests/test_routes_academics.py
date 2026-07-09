@@ -18,9 +18,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "name": "Math", "code": "MTH101", "semester": "1"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "name": "Math", "code": "MTH101", "semester": "1"}]
+        )
 
         from app.api.academics import list_subjects
 
@@ -37,9 +37,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.academics import list_subjects
 
@@ -55,8 +55,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "name": "Physics", "user_id": "test-user"}], error=None)
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "name": "Physics", "user_id": "test-user"}], error=None
+        )
 
         from app.api.academics import create_subject
         from database.schemas.academic import SubjectCreate
@@ -74,8 +75,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(error=MagicMock(message="Insert failed"))
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            error=MagicMock(message="Insert failed")
+        )
 
         from app.api.academics import create_subject
         from database.schemas.academic import SubjectCreate
@@ -95,8 +97,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=None)
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=None)
+        )
 
         from app.api.academics import delete_subject
 
@@ -112,9 +115,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "subject_id": "subj-1", "exam_type": "Midterm", "marks_obtained": 85, "max_marks": 100}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "subject_id": "subj-1", "exam_type": "Midterm", "marks_obtained": 85, "max_marks": 100}]
+        )
 
         from app.api.academics import list_marks
 
@@ -131,13 +134,16 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "subject_id": "subj-1", "marks_obtained": 90, "user_id": "test-user"}], error=None)
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "subject_id": "subj-1", "marks_obtained": 90, "user_id": "test-user"}], error=None
+        )
 
         from app.api.academics import create_mark
         from database.schemas.academic import MarkCreate
 
-        mark = MarkCreate(subject_id="subj-1", exam_type="Midterm", marks_obtained=90.0, max_marks=100.0, date="2026-06-24")
+        mark = MarkCreate(
+            subject_id="subj-1", exam_type="Midterm", marks_obtained=90.0, max_marks=100.0, date="2026-06-24"
+        )
         result = await create_mark(mark, current_user=mock_user)
         assert result["marks_obtained"] == 90
 
@@ -150,8 +156,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=None)
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=None)
+        )
 
         from app.api.academics import delete_mark
 
@@ -167,12 +174,26 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[
-                {"id": "1", "completion_rate": 80, "courses_active": 3, "habits_streak": 5, "focus_minutes": 120, "sleep_score": 7.5},
-                {"id": "2", "completion_rate": 70, "courses_active": 3, "habits_streak": 4, "focus_minutes": 90, "sleep_score": 6.5},
-            ])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[
+                {
+                    "id": "1",
+                    "completion_rate": 80,
+                    "courses_active": 3,
+                    "habits_streak": 5,
+                    "focus_minutes": 120,
+                    "sleep_score": 7.5,
+                },
+                {
+                    "id": "2",
+                    "completion_rate": 70,
+                    "courses_active": 3,
+                    "habits_streak": 4,
+                    "focus_minutes": 90,
+                    "sleep_score": 6.5,
+                },
+            ]
+        )
 
         from app.api.academics import learning_stats
 
@@ -190,9 +211,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.limit.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.academics import learning_stats
 
@@ -210,9 +231,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .gte.return_value.order.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "date": "2026-06-01", "completion_rate": 75}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.gte.return_value.order.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "date": "2026-06-01", "completion_rate": 75}]
+        )
 
         from app.api.academics import learning_timeline
 
@@ -229,8 +250,9 @@ class TestAcademicsRoutes:
         mock_auth.return_value = mock_user
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .gte.return_value.order.return_value.execute.side_effect = Exception("DB down")
+        mock_client.from_.return_value.select.return_value.eq.return_value.gte.return_value.order.return_value.execute.side_effect = Exception(
+            "DB down"
+        )
 
         from app.api.academics import learning_timeline
 

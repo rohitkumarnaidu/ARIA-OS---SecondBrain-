@@ -15,8 +15,7 @@ class TestMonitoringRoutes:
         mock_uuid.return_value = "tok-uuid"
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value \
-            .data = [{"id": "tok-uuid"}]
+        mock_client.from_.return_value.insert.return_value.execute.return_value.data = [{"id": "tok-uuid"}]
         from app.api.monitoring import record_token_usage
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -38,8 +37,7 @@ class TestMonitoringRoutes:
         mock_uuid.return_value = "tok-uuid"
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.side_effect = \
-            Exception("DB error")
+        mock_client.from_.return_value.insert.return_value.execute.side_effect = Exception("DB error")
         from app.api.monitoring import record_token_usage
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -52,12 +50,11 @@ class TestMonitoringRoutes:
     async def test_token_usage_summary_with_data(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.return_value.data = [
-                {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500},
-                {"agent": "briefing", "total_tokens": 2000, "duration_ms": 1500},
-                {"agent": "memory", "total_tokens": 500, "duration_ms": 200},
-            ]
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.return_value.data = [
+            {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500},
+            {"agent": "briefing", "total_tokens": 2000, "duration_ms": 1500},
+            {"agent": "memory", "total_tokens": 500, "duration_ms": 200},
+        ]
         from app.api.monitoring import token_usage_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -73,8 +70,7 @@ class TestMonitoringRoutes:
     async def test_token_usage_summary_empty(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.return_value.data = []
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.return_value.data = []
         from app.api.monitoring import token_usage_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -84,13 +80,41 @@ class TestMonitoringRoutes:
         assert result["by_agent"] == {}
         assert result["avg_duration_ms"] == 0
 
+    def test_compute_cost_ollama_returns_zero(self):
+        from app.api.monitoring import _compute_cost
+
+        assert _compute_cost("ollama/mistral:7b", 1000, 500) == 0.0
+
+    def test_compute_cost_opus_model(self):
+        from app.api.monitoring import _compute_cost
+
+        cost = _compute_cost("claude-opus-4", 1_000_000, 500_000)
+        assert cost == (15 + 37.5)
+
+    def test_compute_cost_sonnet_model(self):
+        from app.api.monitoring import _compute_cost
+
+        cost = _compute_cost("claude-sonnet-4-20250514", 1_000_000, 500_000)
+        assert cost == (3 + 7.5)
+
+    def test_compute_cost_haiku_model(self):
+        from app.api.monitoring import _compute_cost
+
+        cost = _compute_cost("claude-haiku-3", 1_000_000, 500_000)
+        assert cost == (0.25 + 0.625)
+
+    def test_compute_cost_unknown_model_uses_default(self):
+        from app.api.monitoring import _compute_cost
+
+        cost = _compute_cost("unknown-model", 1_000_000, 500_000)
+        assert cost == (1_500_000 / 1_000_000 * 3)
+
     @patch("app.api.monitoring.get_supabase_client")
     @pytest.mark.asyncio
     async def test_token_usage_summary_db_error(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.side_effect = Exception("DB error")
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.side_effect = Exception("DB error")
         from app.api.monitoring import token_usage_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))

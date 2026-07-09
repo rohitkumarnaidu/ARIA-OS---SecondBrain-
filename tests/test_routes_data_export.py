@@ -24,8 +24,9 @@ class TestDataExportRoutes:
 
         def side_effect(table):
             m = MagicMock()
-            m.select.return_value.eq.return_value.execute.return_value = \
-                MagicMock(data=[{"id": "1", "user_id": "test-user", "title": "Test " + table}])
+            m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                data=[{"id": "1", "user_id": "test-user", "title": "Test " + table}]
+            )
             return m
 
         mock_client.from_ = MagicMock(side_effect=side_effect)
@@ -51,8 +52,7 @@ class TestDataExportRoutes:
 
         def side_effect(table):
             m = MagicMock()
-            m.select.return_value.eq.return_value.execute.return_value = \
-                MagicMock(data=[])
+            m.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
             return m
 
         mock_client.from_ = MagicMock(side_effect=side_effect)
@@ -83,8 +83,9 @@ class TestDataExportRoutes:
             if call_count == 1:
                 m.select.return_value.eq.return_value.execute.side_effect = Exception("DB error")
             else:
-                m.select.return_value.eq.return_value.execute.return_value = \
-                    MagicMock(data=[{"id": "1", "user_id": "test-user"}])
+                m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"id": "1", "user_id": "test-user"}]
+                )
             return m
 
         mock_client.from_ = MagicMock(side_effect=side_effect)
@@ -108,8 +109,9 @@ class TestDataExportRoutes:
 
         def side_effect(table):
             m = MagicMock()
-            m.select.return_value.eq.return_value.execute.return_value = \
-                MagicMock(data=[{"id": "1", "user_id": "test-user"}])
+            m.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                data=[{"id": "1", "user_id": "test-user"}]
+            )
             return m
 
         mock_client.from_ = MagicMock(side_effect=side_effect)

@@ -20,9 +20,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "title": "FastAPI Tutorial", "url": "https://youtube.com/watch?v=abc"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "FastAPI Tutorial", "url": "https://youtube.com/watch?v=abc"}]
+        )
 
         from app.api.videos import list_videos
 
@@ -37,9 +37,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.videos import list_videos
 
@@ -53,8 +53,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "title": "New Video", "user_id": "test-user"}], error=None)
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "New Video", "user_id": "test-user"}], error=None
+        )
 
         from app.api.videos import create_video
         from database.schemas.video import VideoCreate
@@ -70,8 +71,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(error=MagicMock(message="Insert failed"))
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            error=MagicMock(message="Insert failed")
+        )
 
         from app.api.videos import create_video
         from database.schemas.video import VideoCreate
@@ -89,9 +91,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[{"id": "vid-1", "title": "Updated Title"}], error=None)
+        )
 
         from app.api.videos import update_video
         from database.schemas.video import VideoUpdate
@@ -107,9 +109,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[], error=None)
+        )
 
         from app.api.videos import update_video
         from database.schemas.video import VideoUpdate
@@ -127,9 +129,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(error=MagicMock(message="Update failed"))
+        )
 
         from app.api.videos import update_video
         from database.schemas.video import VideoUpdate
@@ -147,8 +149,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=None)
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=None)
+        )
 
         from app.api.videos import delete_video
 
@@ -162,8 +165,9 @@ class TestVideosRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=MagicMock(message="Delete failed"))
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=MagicMock(message="Delete failed"))
+        )
 
         from app.api.videos import delete_video
         from fastapi import HTTPException

@@ -20,9 +20,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "title": "Learn Rust", "category": "programming"}])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "title": "Learn Rust", "category": "programming"}]
+        )
 
         from app.api.roadmap import list_milestones
 
@@ -37,9 +37,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .order.return_value.range.return_value.execute.return_value = \
-            MagicMock(data=[])
+        mock_client.from_.return_value.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
 
         from app.api.roadmap import list_milestones
 
@@ -53,9 +53,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[{"id": "ms-1", "title": "Learn Docker", "category": "devops"}])
+        )
 
         from app.api.roadmap import get_milestone
 
@@ -69,9 +69,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.select.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[])
+        )
 
         from app.api.roadmap import get_milestone
         from fastapi import HTTPException
@@ -87,8 +87,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(data=[{"id": "1", "skill": "Kubernetes", "category": "devops", "user_id": "test-user"}], error=None)
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            data=[{"id": "1", "skill": "Kubernetes", "category": "devops", "user_id": "test-user"}], error=None
+        )
 
         from app.api.roadmap import create_milestone
         from database.schemas.roadmap import RoadmapMilestoneCreate
@@ -104,8 +105,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.return_value = \
-            MagicMock(error=MagicMock(message="Insert failed"))
+        mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(
+            error=MagicMock(message="Insert failed")
+        )
 
         from app.api.roadmap import create_milestone
         from database.schemas.roadmap import RoadmapMilestoneCreate
@@ -123,9 +125,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[{"id": "ms-1", "skill": "Updated Skill"}], error=None)
+        )
 
         from app.api.roadmap import update_milestone
         from database.schemas.roadmap import RoadmapMilestoneUpdate
@@ -141,9 +143,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(data=[], error=None)
+        )
 
         from app.api.roadmap import update_milestone
         from database.schemas.roadmap import RoadmapMilestoneUpdate
@@ -161,9 +163,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.update.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = \
+        mock_client.from_.return_value.update.return_value.eq.return_value.eq.return_value.execute.return_value = (
             MagicMock(error=MagicMock(message="Update failed"))
+        )
 
         from app.api.roadmap import update_milestone
         from database.schemas.roadmap import RoadmapMilestoneUpdate
@@ -181,8 +183,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=None)
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=None)
+        )
 
         from app.api.roadmap import delete_milestone
 
@@ -196,8 +199,9 @@ class TestRoadmapRoutes:
         current_user = _mock_user()
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
-        mock_client.from_.return_value.delete.return_value.eq.return_value\
-            .eq.return_value.execute.return_value = MagicMock(error=MagicMock(message="Delete failed"))
+        mock_client.from_.return_value.delete.return_value.eq.return_value.eq.return_value.execute.return_value = (
+            MagicMock(error=MagicMock(message="Delete failed"))
+        )
 
         from app.api.roadmap import delete_milestone
         from fastapi import HTTPException

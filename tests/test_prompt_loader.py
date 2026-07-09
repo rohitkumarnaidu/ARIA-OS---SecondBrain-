@@ -85,6 +85,7 @@ class TestPromptLoader:
 
     def test_get_required_raises_for_missing(self, loader):
         from ai.prompt_loader import PromptLoaderError
+
         with pytest.raises(PromptLoaderError):
             loader.get_required("nonexistent_prompt")
 
@@ -125,6 +126,7 @@ class TestPromptLoader:
     def test_gate_loaded_once(self):
         """Ensure PromptLoader singleton is already populated (gate import)."""
         from ai.prompt_loader import prompts
+
         assert prompts.count_prompts()["system"] >= 1
 
 
@@ -167,7 +169,8 @@ class TestPromptEntry:
     def test_validate_invalid_status(self):
         entry = PromptEntry(
             {"version": "1.0", "status": "invalid", "model": "m", "max_tokens": 100, "temperature": 0.5},
-            "body", Path("test.md"),
+            "body",
+            Path("test.md"),
         )
         errors = entry.validate()
         assert any("Invalid status" in e for e in errors)
@@ -175,7 +178,8 @@ class TestPromptEntry:
     def test_validate_max_tokens_not_number(self):
         entry = PromptEntry(
             {"version": "1.0", "status": "active", "model": "m", "max_tokens": "not-a-number", "temperature": 0.5},
-            "body", Path("test.md"),
+            "body",
+            Path("test.md"),
         )
         errors = entry.validate()
         assert any("max_tokens must be a number" in e for e in errors)
@@ -183,13 +187,15 @@ class TestPromptEntry:
     def test_validate_temperature_not_number(self):
         entry = PromptEntry(
             {"version": "1.0", "status": "active", "model": "m", "max_tokens": 100, "temperature": "hot"},
-            "body", Path("test.md"),
+            "body",
+            Path("test.md"),
         )
         errors = entry.validate()
         assert any("temperature must be a number" in e for e in errors)
 
     def test_parse_no_frontmatter(self):
         from ai.prompt_loader import PromptLoader
+
         loader = PromptLoader(prompts_dir=Path("."))
         content = "# Just a body\nNo frontmatter here."
         frontmatter, body = loader._parse_frontmatter(content)
@@ -204,6 +210,7 @@ class TestPromptEntry:
         bad = tmp_path / "bad.md"
         bad.write_text("---\nversion: 1.0\n---\nBody")
         from ai.prompt_loader import PromptLoader
+
         loader = PromptLoader(prompts_dir=tmp_path)
         all_errors = loader.validate_all()
         assert len(all_errors) > 0

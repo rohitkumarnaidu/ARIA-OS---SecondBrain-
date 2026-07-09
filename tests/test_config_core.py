@@ -1,9 +1,9 @@
 """Tests for config core modules: api_key_auth, auth, supabase, config."""
+
 import pytest
 import hashlib
 from datetime import datetime, timedelta, timezone
-from unittest.mock import patch, MagicMock, AsyncMock, PropertyMock
-
+from unittest.mock import patch, MagicMock, AsyncMock
 
 # ===========================================================================
 # api_key_auth — authenticate_with_api_key
@@ -49,6 +49,7 @@ class TestApiKeyAuth:
         # The source code does user.id = user_id on the result, so mock must
         # return an object that supports attribute assignment, not a raw dict.
         from types import SimpleNamespace
+
         mock_user_obj = SimpleNamespace(id="old-id", email="test@example.com")
         supabase = self._mock_supabase(api_key_row=key_row, user_row=mock_user_obj)
 
@@ -309,6 +310,7 @@ class TestSupabaseClient:
             mock_create.return_value = mock_client
 
             import config.core.supabase as sb_mod
+
             sb_mod._supabase_client = None
 
             from config.core.supabase import get_supabase_client
@@ -324,6 +326,7 @@ class TestSupabaseClient:
             mock_create.return_value = mock_client
 
             import config.core.supabase as sb_mod
+
             sb_mod._supabase_client = None
             sb_mod._supabase_client = mock_client
 
@@ -341,6 +344,7 @@ class TestSupabaseClient:
             mock_settings.supabase_key = ""
 
             import config.core.supabase as sb_mod
+
             sb_mod._supabase_client = None
 
             from config.core.supabase import get_supabase_client
@@ -354,6 +358,7 @@ class TestSupabaseClient:
             mock_settings.supabase_key = "valid-key"
 
             import config.core.supabase as sb_mod
+
             sb_mod._supabase_client = None
 
             from config.core.supabase import get_supabase_client
@@ -446,10 +451,11 @@ class TestSettings:
     @pytest.mark.asyncio
     async def test_verify_supabase_token_calls_auth(self):
         from config.core.auth import _verify_supabase_token
-        from config.core.supabase import get_supabase_client
         import hashlib
+
         cache_key = hashlib.md5(f"verify_token:('test-token',):{sorted([])}".encode()).hexdigest()
         from shared.utils.cache import cache
+
         await cache.delete(cache_key)
 
         mock_supabase = MagicMock()
@@ -460,6 +466,7 @@ class TestSettings:
             result = await _verify_supabase_token("test-token")
             assert result.id == "user-1"
             mock_supabase.auth.get_user.assert_called_once_with("test-token")
+
 
 # ===========================================================================
 # auth — refresh_jwt_token (100% coverage gap closure)
@@ -490,9 +497,7 @@ class TestRefreshJwtToken:
         assert isinstance(result["expires_in"], int)
         assert result["expires_in"] > 0
 
-        decoded_access = pyjwt.decode(
-            result["access_token"], settings.jwt_secret, algorithms=[settings.jwt_algorithm]
-        )
+        decoded_access = pyjwt.decode(result["access_token"], settings.jwt_secret, algorithms=[settings.jwt_algorithm])
         assert decoded_access["sub"] == "user-1"
         assert decoded_access["type"] == "access"
         decoded_refresh = pyjwt.decode(

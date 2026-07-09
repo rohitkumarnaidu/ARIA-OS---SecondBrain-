@@ -3,7 +3,7 @@
 import importlib.util
 from pathlib import Path
 import pytest
-from unittest.mock import patch, MagicMock, PropertyMock
+from unittest.mock import patch, MagicMock
 
 API_MAIN = str(Path(__file__).resolve().parent.parent / "apps" / "api" / "main.py")
 
@@ -31,6 +31,7 @@ class TestHealthEndpoints:
 
     def _client(self):
         from fastapi.testclient import TestClient
+
         return TestClient(self._load_app())
 
     def test_health_returns_200(self):
@@ -44,6 +45,7 @@ class TestHealthEndpoints:
 
     def test_health_ready_returns_dependencies(self):
         from config.core.config import settings
+
         original_value = settings.use_local_ai
         settings.use_local_ai = False
         try:

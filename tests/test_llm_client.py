@@ -1,10 +1,8 @@
 """Tests for LLM Client — retry logic, fallback, circuit breaker, JSON parsing."""
 
-import time
-import json
 import httpx
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 
 @pytest.mark.agent
@@ -382,11 +380,11 @@ class TestJSONParsingEdgeCases:
         assert result["valid"] == "data"
 
     def test_empty_json_object(self, client):
-        result = client._extract_json('{}')
+        result = client._extract_json("{}")
         assert result == {}
 
     def test_markdown_code_block_no_language(self, client):
-        text = "```\n{\"key\": \"value\"}\n```"
+        text = '```\n{"key": "value"}\n```'
         result = client._extract_json(text)
         assert result is not None
         assert result["key"] == "value"
@@ -414,18 +412,18 @@ class TestJSONParsingEdgeCases:
         assert result["items"][0]["id"] == 1
 
     def test_extract_empty_square_brackets(self, client):
-        result = client._extract_json('[]')
+        result = client._extract_json("[]")
         assert result == {"items": []}
 
     def test_extract_non_json_with_brackets(self, client):
-        result = client._extract_json('This {has brackets} but is not json')
+        result = client._extract_json("This {has brackets} but is not json")
         assert result is None
 
     def test_extract_with_escaped_quotes(self, client):
         text = '{"key": "value with \\"escaped\\" quotes"}'
         result = client._extract_json(text)
         assert result is not None
-        assert 'escaped' in result["key"]
+        assert "escaped" in result["key"]
 
 
 @pytest.mark.agent
@@ -443,9 +441,11 @@ class TestCallOllama:
             c.ollama_timeout = 30
             c.use_local = True
             c.ollama_circuit = MagicMock()
+
             # circuit.call must actually await the wrapped function
             async def circuit_call(fn, *a, **kw):
                 return await fn(*a, **kw)
+
             c.ollama_circuit.call = AsyncMock(side_effect=circuit_call)
             return c
 
@@ -498,8 +498,10 @@ class TestCallClaude:
             c.claude_timeout = 60
             c.use_local = False
             c.claude_circuit = MagicMock()
+
             async def circuit_call(fn, *a, **kw):
                 return await fn(*a, **kw)
+
             c.claude_circuit.call = AsyncMock(side_effect=circuit_call)
             return c
 
@@ -568,7 +570,7 @@ class TestLLMClientCircuitBreakerTransitions:
 
     @pytest.mark.asyncio
     async def test_circuit_transitions_closed_to_open(self):
-        from shared.utils.retry import CircuitBreaker, CircuitBreakerOpenError
+        from shared.utils.retry import CircuitBreaker
         import httpx
 
         cb = CircuitBreaker(failure_threshold=2, recovery_timeout=60, expected_exception=(httpx.RequestError,))
@@ -661,26 +663,31 @@ class TestLLMErrorClasses:
 
     def test_llm_error_base(self):
         from ai.client import LLMError
+
         err = LLMError("base error")
         assert str(err) == "base error"
 
     def test_llm_timeout_error(self):
         from ai.client import LLMTimeoutError
+
         err = LLMTimeoutError("timed out")
         assert isinstance(err, Exception)
 
     def test_llm_rate_limit_error(self):
         from ai.client import LLMRateLimitError
+
         err = LLMRateLimitError("rate limited", retry_after=120)
         assert err.retry_after == 120
 
     def test_llm_provider_unavailable_error(self):
         from ai.client import LLMProviderUnavailableError
+
         err = LLMProviderUnavailableError("down")
         assert isinstance(err, Exception)
 
     def test_rate_limit_error_default_retry_after(self):
         from ai.client import LLMRateLimitError
+
         err = LLMRateLimitError("limited")
         assert err.retry_after == 60
 
@@ -726,3 +733,30 @@ class TestLLMClientEdgeCases:
         client.generate = AsyncMock(return_value="some random text")
         result = await client.generate_json("test")
         assert result["parse_error"] is True
+
+    @pytest.mark.asyncio
+    async def test_record_usage_httpx_error(self, client):
+        client._api_base = "http://localhost:8000"
+        with patch("httpx.AsyncClient.post", side_effect=Exception("Connection refused")):
+            await client._record_usage(
+                agent="test_agent",
+                model="ollama/mistral:7b",
+                provider="ollama",
+                prompt_tokens=100,
+                completion_tokens=50,
+                duration_ms=500,
+            )
+
+    @pytest.mark.asyncio
+    async def test_record_usage_zero_tokens_skips(self, client):
+        client._api_base = "http://localhost:8000"
+        with patch("httpx.AsyncClient.post") as mock_post:
+            await client._record_usage(
+                agent="test_agent",
+                model="ollama/mistral:7b",
+                provider="ollama",
+                prompt_tokens=0,
+                completion_tokens=0,
+                duration_ms=0,
+            )
+            mock_post.assert_not_called()

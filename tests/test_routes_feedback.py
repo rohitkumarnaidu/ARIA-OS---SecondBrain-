@@ -34,8 +34,7 @@ class TestFeedbackRoutes:
         mock_uuid.return_value = "fb-uuid"
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.insert.return_value.execute.side_effect = \
-            Exception("DB error")
+        mock_client.from_.return_value.insert.return_value.execute.side_effect = Exception("DB error")
         from app.api.feedback import submit_feedback
         from database.schemas.feedback import FeedbackCreate
         from fastapi import HTTPException
@@ -51,13 +50,12 @@ class TestFeedbackRoutes:
     async def test_feedback_summary_with_data(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.return_value.data = [
-                {"id": "1", "rating": 5, "source": "tasks"},
-                {"id": "2", "rating": 4, "source": "tasks"},
-                {"id": "3", "rating": 1, "source": "habits"},
-                {"id": "4", "rating": 3, "source": "goals"},
-            ]
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.return_value.data = [
+            {"id": "1", "rating": 5, "source": "tasks"},
+            {"id": "2", "rating": 4, "source": "tasks"},
+            {"id": "3", "rating": 1, "source": "habits"},
+            {"id": "4", "rating": 3, "source": "goals"},
+        ]
         from app.api.feedback import feedback_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -73,8 +71,7 @@ class TestFeedbackRoutes:
     async def test_feedback_summary_empty(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.return_value.data = []
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.return_value.data = []
         from app.api.feedback import feedback_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
@@ -89,8 +86,7 @@ class TestFeedbackRoutes:
     async def test_feedback_summary_db_error(self, mock_supabase_cli):
         mock_client = MagicMock()
         mock_supabase_cli.return_value = mock_client
-        mock_client.from_.return_value.select.return_value.eq.return_value \
-            .execute.side_effect = Exception("DB error")
+        mock_client.from_.return_value.select.return_value.eq.return_value.execute.side_effect = Exception("DB error")
         from app.api.feedback import feedback_summary
 
         current_user = MagicMock(user=MagicMock(id="test-user"))
