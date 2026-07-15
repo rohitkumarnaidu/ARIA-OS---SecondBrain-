@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.source="https://github.com/secondbrain-os/secondb
 LABEL org.opencontainers.image.vendor="Second Brain OS"
 
 # ---- Stage 1: Dependencies ----
-FROM python:3.10-slim AS deps
+FROM python:3.14-slim AS deps
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,7 +27,7 @@ COPY apps/api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---- Stage 2: Builder ----
-FROM python:3.10-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /app
 
 COPY --from=deps /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
@@ -36,7 +36,7 @@ COPY . .
 RUN python -m compileall apps/api/ packages/
 
 # ---- Stage 3: Production ----
-FROM python:3.10-slim AS production
+FROM python:3.14-slim AS production
 WORKDIR /app
 
 COPY --from=labels /dev/null /dev/null
@@ -60,7 +60,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
 CMD ["gunicorn", "apps.api.main:app", "--worker-class", "uvicorn.workers.UvicornWorker", "--workers", "4", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keep-alive", "5", "--max-requests", "1000", "--max-requests-jitter", "100"]
 
 # ---- Stage 4: Development (hot-reload) ----
-FROM python:3.10-slim AS development
+FROM python:3.14-slim AS development
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
