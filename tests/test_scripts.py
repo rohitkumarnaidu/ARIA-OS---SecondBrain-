@@ -1,8 +1,6 @@
 """Tests for utility scripts: validate_migrations, gen_sdb_full, validate_skills_schema."""
 import pytest
-import sys
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 # ── validate_migrations.py ──
