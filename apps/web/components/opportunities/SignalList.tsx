@@ -34,6 +34,27 @@ const scoreBadgeColor = (score: number) => {
   return { bg: 'rgba(245, 158, 11, 0.15)', text: 'var(--accent-warning)' }
 }
 
+function deadlineBadge(deadline?: string) {
+  if (!deadline) return null
+  const now = Date.now()
+  const deadlineMs = new Date(deadline).getTime()
+  const hoursLeft = (deadlineMs - now) / 3600000
+  if (hoursLeft <= 0 || hoursLeft > 48) return null
+
+  const urgent = hoursLeft < 24
+  return (
+    <span
+      className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+      style={{
+        backgroundColor: urgent ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+        color: urgent ? '#EF4444' : '#F59E0B',
+      }}
+    >
+      {Math.round(hoursLeft)}h
+    </span>
+  )
+}
+
 function SignalItem({
   signal,
   onViewDetail,
@@ -65,6 +86,7 @@ function SignalItem({
           >
             {signal.score}%
           </span>
+          {deadlineBadge(signal.deadline)}
         </div>
         <p className="text-xs text-[var(--text-tertiary)] truncate mt-0.5">{signal.organization}</p>
       </div>
