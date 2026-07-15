@@ -1,9 +1,9 @@
-# Software Requirements Specification (SRS) — Second Brain OS
+﻿# Software Requirements Specification (SRS) â€” Second Brain OS
 
 ## Document Control
 | Field | Value |
 |---|---|
-| Document ID | SB-SRS-001 |
+| Document ID | PRD-SRS-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -20,8 +20,8 @@ graph TD
     SRS --> INTERF[Interface Requirements]
     
     FUNC --> F1[15 Core Modules]
-    FUNC --> F2[8 Cron Jobs]
-    FUNC --> F3[8 AI Agents]
+    FUNC --> F2[15 Cron Jobs]
+    FUNC --> F3[11 AI Agents]
     
     NONFUNC --> NF1[Performance - p95 < 500ms]
     NONFUNC --> NF2[Security - RLS + JWT]
@@ -38,15 +38,15 @@ graph TD
 This Software Requirements Specification (SRS) defines the detailed functional and non-functional requirements for Second Brain OS, a personal AI productivity system for BTech CSE students. It is intended for developers, testers, and maintainers of the system.
 
 ### 1.2 Scope
-The system comprises 15 integrated modules, an AI agent (ARIA) with 8 sub-agents, a scheduler with 8 cron jobs, a browser extension, and a mobile-responsive PWA frontend. The system operates on free-tier infrastructure (Vercel, Supabase, Brave Search API, Ollama, Claude API).
+The system comprises 15 integrated modules, an AI agent (ARIA) with 11 agents, a scheduler with 15 cron jobs, a browser extension, and a mobile-responsive PWA frontend. The system operates on free-tier infrastructure (Vercel, Supabase, Brave Search API, Ollama, Claude API).
 
 ### 1.3 Definitions
 
 | Term | Definition |
 |---|---|
-| ARIA | Adaptive Reasoning and Intelligence Assistant — the AI core |
+| ARIA | Adaptive Reasoning and Intelligence Assistant â€” the AI core |
 | Module | A functional area of the system (e.g., Task Manager, Course Tracker) |
-| RLS | Row Level Security — Supabase security policy per user |
+| RLS | Row Level Security â€” Supabase security policy per user |
 | Edge Function | Serverless function running on Supabase for cron-triggered tasks |
 | Zero Miss | Policy where every task is done, rescheduled, or explicitly dropped |
 | Resurface Engine | Algorithm that surfaces saved content related to current activity |
@@ -62,7 +62,7 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 ### 2.2 Product Functions (Summary)
 - 15 integrated modules with CRUD operations
 - ARIA AI agent with context-aware conversation
-- 8 scheduled cron jobs running daily/weekly/15-minutely
+- 15 scheduled cron jobs running daily/weekly/15-minutely
 - Multi-channel notifications (push, email, SMS)
 - PWA with offline capability
 - Browser extension for one-tap saving
@@ -85,7 +85,7 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 
 ---
 
-## 3. Functional Requirements — By Module
+## 3. Functional Requirements â€” By Module
 
 ### 3.1 Module 1: Dashboard & Morning Briefing (FR-DASH)
 
@@ -107,11 +107,11 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 | FR-TASK-02 | System shall auto-assign priority, category, and estimated time via AI on task creation | High |
 | FR-TASK-03 | System shall run a background cron every 15 minutes to detect and auto-reschedule overdue tasks | Critical |
 | FR-TASK-04 | System shall enforce zero-miss policy: every overdue task must be completed, rescheduled, or explicitly dropped | Critical |
-| FR-TASK-05 | System shall support subtask breakdown via AI — user asks ARIA to break complex tasks | Medium |
+| FR-TASK-05 | System shall support subtask breakdown via AI â€” user asks ARIA to break complex tasks | Medium |
 | FR-TASK-06 | System shall support task dependencies with visual dependency graph | Medium |
 | FR-TASK-07 | System shall support recurring tasks (daily, weekly, custom frequency) | High |
-| FR-TASK-08 | System shall adjust task priorities based on sleep score (low sleep → lighter tasks) | High |
-| FR-TASK-09 | System shall escalate missed critical tasks: push notification → email after 30 min → SMS after 1 hour | High |
+| FR-TASK-08 | System shall adjust task priorities based on sleep score (low sleep â†’ lighter tasks) | High |
+| FR-TASK-09 | System shall escalate missed critical tasks: push notification â†’ email after 30 min â†’ SMS after 1 hour | High |
 | FR-TASK-10 | System shall increment missed_count each reschedule and display on task card | Medium |
 
 ### 3.3 Module 3: Course Tracker (FR-COURSE)
@@ -119,7 +119,7 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 | ID | Requirement | Priority |
 |---|---|---|
 | FR-COURSE-01 | System shall support course tracking from Udemy, Coursera, NPTEL, YouTube, and college | Critical |
-| FR-COURSE-02 | System shall require a target completion date for every course — no date = no creation | Critical |
+| FR-COURSE-02 | System shall require a target completion date for every course â€” no date = no creation | Critical |
 | FR-COURSE-03 | System shall display a "why-enrolled" field on every course card | Medium |
 | FR-COURSE-04 | System shall auto-generate daily study tasks linked to course progress | High |
 | FR-COURSE-05 | System shall calculate daily minutes needed to finish by deadline and display it | High |
@@ -160,9 +160,9 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 | FR-IDEA-01 | System shall allow instant idea capture with minimal fields (title + optional description) | High |
 | FR-IDEA-02 | System shall run AI market check: does this idea exist? Who are competitors? | High |
 | FR-IDEA-03 | System shall enrich ideas with similar products, market size, feasibility, and validation suggestions | Medium |
-| FR-IDEA-04 | System shall enforce status pipeline: Raw → Researching → Validating → Building → Archived | High |
+| FR-IDEA-04 | System shall enforce status pipeline: Raw â†’ Researching â†’ Validating â†’ Building â†’ Archived | High |
 | FR-IDEA-05 | System shall generate a 2-week no-money validation plan for any idea | Medium |
-| FR-IDEA-06 | System shall detect patterns in ideas after 6 months — what type of problems user notices | Low |
+| FR-IDEA-06 | System shall detect patterns in ideas after 6 months â€” what type of problems user notices | Low |
 | FR-IDEA-07 | System shall display ai_analysis JSONB data as badges on idea cards | Medium |
 
 ### 3.7 Module 7: Goal & Roadmap System (FR-ROAD)
@@ -210,8 +210,8 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 
 | ID | Requirement | Priority |
 |---|---|---|
-| FR-PROJ-01 | System shall track projects through phases: Planning → Design → Build → Test → Launch → Maintain | High |
-| FR-PROJ-02 | System shall enforce next-action rule — every project must have one clear next action | High |
+| FR-PROJ-01 | System shall track projects through phases: Planning â†’ Design â†’ Build â†’ Test â†’ Launch â†’ Maintain | High |
+| FR-PROJ-02 | System shall enforce next-action rule â€” every project must have one clear next action | High |
 | FR-PROJ-03 | System shall support blocker logging with ARIA suggestions to unblock | Medium |
 | FR-PROJ-04 | System shall integrate with GitHub: link repo, check commit activity weekly, flag inactivity | Medium |
 | FR-PROJ-05 | System shall link projects to income sources for monetization tracking | Medium |
@@ -236,7 +236,7 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 |---|---|---|
 | FR-HAB-01 | System shall allow custom habit creation with name, frequency, and time target | High |
 | FR-HAB-02 | System shall track streaks (current + best) and consistency percentage | High |
-| FR-HAB-03 | System shall link habits to goals — habit completion contributes to goal progress | Medium |
+| FR-HAB-03 | System shall link habits to goals â€” habit completion contributes to goal progress | Medium |
 | FR-HAB-04 | System shall send miss nudge after 2 consecutive missed days | Medium |
 | FR-HAB-05 | System shall generate 30-day consistency report showing kept vs dropped habits | Medium |
 | FR-HAB-06 | System shall run Habit Miss Checker at midnight daily | Medium |
@@ -257,7 +257,7 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 
 | ID | Requirement | Priority |
 |---|---|---|
-| FR-TIME-01 | System shall provide start/stop timer per task — one-click start, one-click stop | High |
+| FR-TIME-01 | System shall provide start/stop timer per task â€” one-click start, one-click stop | High |
 | FR-TIME-02 | System shall implement Pomodoro mode (25 min focus / 5 min break) | Medium |
 | FR-TIME-03 | System shall auto-stop timer after 15 minutes of inactivity | Medium |
 | FR-TIME-04 | System shall track estimate accuracy and correct future estimates | Low |
@@ -320,8 +320,8 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 | Availability | Uptime | Best effort (free tier) |
 | Scalability | Concurrent users | 100 simultaneous (free tier limit) |
 | Security | Data encryption | TLS 1.3 in transit, AES-256 at rest |
-| Security | Row Level Security | All 21 tables with auth.uid() = user_id |
-| Security | API key exposure | Zero — keys in server env only |
+| Security | Row Level Security | All 27 tables with auth.uid() = user_id |
+| Security | API key exposure | Zero â€” keys in server env only |
 | Security | Rate limiting | 20 AI calls/min, 10 uploads/hr, 50 radar searches/day |
 | Privacy | Data training | User data never used for AI model training |
 | Privacy | Income analysis | Done via local Ollama, data never leaves Supabase |
@@ -339,9 +339,9 @@ Second Brain OS is a standalone personal productivity system. It does not integr
 ### 6.1 Actor List
 | Actor | Description |
 |---|---|
-| Student | Primary user — BTech CSE student using the system daily |
-| ARIA | AI agent — internal actor that triggers actions autonomously |
-| System | Cron scheduler — internal actor that runs scheduled jobs |
+| Student | Primary user â€” BTech CSE student using the system daily |
+| ARIA | AI agent â€” internal actor that triggers actions autonomously |
+| System | Cron scheduler â€” internal actor that runs scheduled jobs |
 
 ### 6.2 Key Use Cases
 
