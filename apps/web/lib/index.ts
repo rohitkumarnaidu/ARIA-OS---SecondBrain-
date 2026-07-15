@@ -40,10 +40,12 @@ export {
   timeService,
   chatService,
   automationService,
+  featureFlagService,
   briefingService,
   reviewService,
   memoryService,
   analyticsService,
+  learningService,
 } from './services'
 
 // Types
