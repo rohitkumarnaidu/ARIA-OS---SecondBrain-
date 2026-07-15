@@ -1,10 +1,10 @@
-# Infrastructure Architecture
+﻿# Infrastructure Architecture
 
-> **Document ID**: SB-INFRA-001  
+> **Document ID**: DVO-INF-001  
 > **Version**: 1.0.0  
 > **Status**: Active  
 > **Last Updated**: 2026-06-11  
-> **Classification**: Internal — Engineering Reference  
+> **Classification**: Internal â€” Engineering Reference  
 > **Target Audience**: DevOps Engineers, Backend Developers, SRE Team
 
 ---
@@ -31,29 +31,29 @@
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 graph TD
-    User["👤 User (Browser)"] --> DNS["🌐 DNS (Vercel)"]
-    DNS --> CDN["📡 Global CDN<br/>Vercel Edge — 100 POPs"]
-    CDN --> Edge["⚡ Edge Functions<br/>Auth · Geo · A/B Testing"]
-    Edge --> Next["📄 Next.js 14 App<br/>(Serverless — Node 18)<br/>Vercel"]
+    User["ðŸ‘¤ User (Browser)"] --> DNS["ðŸŒ DNS (Vercel)"]
+    DNS --> CDN["ðŸ“¡ Global CDN<br/>Vercel Edge â€” 100 POPs"]
+    CDN --> Edge["âš¡ Edge Functions<br/>Auth Â· Geo Â· A/B Testing"]
+    Edge --> Next["ðŸ“„ Next.js 14 App<br/>(Serverless â€” Node 18)<br/>Vercel"]
     
-    Next --> API["🖥️ FastAPI Backend<br/>(Railway / Uvicorn)"]
-    Next --> SupaClient["🗄️ Supabase Client<br/>(Direct SSR Queries)"]
+    Next --> API["ðŸ–¥ï¸ FastAPI Backend<br/>(Railway / Uvicorn)"]
+    Next --> SupaClient["ðŸ—„ï¸ Supabase Client<br/>(Direct SSR Queries)"]
 
-    API --> Auth["🔐 Supabase Auth<br/>(Google OAuth + JWT)"]
-    API --> Scheduler["⏰ APScheduler<br/>6 Cron Jobs"]
-    API --> AI["🤖 AI Layer"]
-    API --> Email["📧 Resend API<br/>(Transactional Emails)"]
-    API --> Cache["💨 In-Memory Cache<br/>(TTL: 5 min)"]
-    API --> RateLimiter["🚦 Rate Limiter<br/>(100 req/min)"]
+    API --> Auth["ðŸ” Supabase Auth<br/>(Google OAuth + JWT)"]
+    API --> Scheduler["â° APScheduler<br/>6 Cron Jobs"]
+    API --> AI["ðŸ¤– AI Layer"]
+    API --> Email["ðŸ“§ Resend API<br/>(Transactional Emails)"]
+    API --> Cache["ðŸ’¨ In-Memory Cache<br/>(TTL: 5 min)"]
+    API --> RateLimiter["ðŸš¦ Rate Limiter<br/>(100 req/min)"]
 
     Scheduler --> API
     Scheduler --> AI
 
-    AI --> Ollama["🦙 Ollama (Mistral 7B)<br/>Local · Free · Default"]
-    AI --> Claude["🧠 Claude API (Sonnet 4)<br/>Cloud · $0.015/req · Fallback"]
-    AI --> Circuit["⚡ Circuit Breaker<br/>(5 failures → 60s cooldown)"]
+    AI --> Ollama["ðŸ¦™ Ollama (Mistral 7B)<br/>Local Â· Free Â· Default"]
+    AI --> Claude["ðŸ§  Claude API (Sonnet 4)<br/>Cloud Â· $0.015/req Â· Fallback"]
+    AI --> Circuit["âš¡ Circuit Breaker<br/>(5 failures â†’ 60s cooldown)"]
 
-    subgraph DB_Layer["🗄️ Database Layer"]
+    subgraph DB_Layer["ðŸ—„ï¸ Database Layer"]
         PG["PostgreSQL (Supabase)"]
         RLS["Row-Level Security"]
         Realtime["Realtime Subscriptions"]
@@ -62,15 +62,15 @@ graph TD
     SupaClient --> PG
     API --> PG
 
-    subgraph Storage["💾 Storage"]
-        Supabase_Storage["Supabase Storage<br/>File Uploads · Avatars"]
+    subgraph Storage["ðŸ’¾ Storage"]
+        Supabase_Storage["Supabase Storage<br/>File Uploads Â· Avatars"]
         Cache2["Browser Cache<br/>Service Worker"]
     end
 
     Next --> Storage
     API --> Supabase_Storage
 
-    subgraph Monitoring["📊 Monitoring"]
+    subgraph Monitoring["ðŸ“Š Monitoring"]
         Health["Health Checks<br/>GET /health"]
         Logging["Structured JSON Logging"]
         Tracing["Request ID Tracing"]
@@ -84,75 +84,75 @@ graph TD
 ### 1.1 High-Level Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              INTERNET                                        │
-│                          (DNS → CDN)                                         │
-└───────────────────────┬─────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                         VERCEL EDGE NETWORK                                   │
-│                                                                               │
-│  ┌─────────────────────┐  ┌─────────────────────┐  ┌──────────────────────┐  │
-│  │  Global CDN (POPs)  │  │  Edge Functions      │  │  Image Optimization │  │
-│  │  ~100 locations     │  │  (Auth, Geo, A/B)    │  │  WebP/AVIF pipeline │  │
-│  └──────────┬──────────┘  └──────────┬──────────┘  └──────────────────────┘  │
-│             │                        │                                       │
-│             └──────────┬─────────────┘                                       │
-│                        ▼                                                      │
-│              ┌──────────────────┐                                             │
-│              │  Next.js Server  │                                             │
-│              │  (Node 18)       │                                             │
-│              │  Serverless      │                                             │
-│              │  Functions       │                                             │
-│              └──────────────────┘                                             │
-└───────────────────────────────────┬───────────────────────────────────────────┘
-                                    │
-                    ┌───────────────┼───────────────────┐
-                    │               │                   │
-                    ▼               ▼                   ▼
-┌───────────────────────────┐  ┌──────────────┐  ┌────────────────────┐
-│    RAILWAY (Backend)      │  │   SUPABASE   │  │   ANTHROPIC API    │
-│                           │  │              │  │   (Cloud Fallback) │
-│  ┌─────────────────────┐  │  │ ┌──────────┐ │  │                    │
-│  │ FastAPI Container   │  │  │ │PostgreSQL│ │  │  Claude Sonnet 4   │
-│  │ (Gunicorn + Uvicorn)│──┼──┤ │   15     │ │  │  $0.015/request    │
-│  │ 4 workers, 512MB    │  │  │ │ +PGVector│ │  │                    │
-│  └─────────────────────┘  │  │ └──────────┘ │  └────────────────────┘
-│                           │  │              │
-│  ┌─────────────────────┐  │  │ ┌──────────┐ │
-│  │ APScheduler         │  │  │ │  GoTrue  │ │
-│  │ Container (cron)    │  │  │ │  Auth    │ │
-│  │ 256MB, 6 cron jobs  │  │  │ └──────────┘ │
-│  └─────────────────────┘  │  │              │
-│                           │  │ ┌──────────┐ │
-│                           │  │ │ Storage  │ │
-│                           │  │ │ (S3-compat)││
-│                           │  │ └──────────┘ │
-│                           │  └──────────────┘
-└───────────────────────────┘
-                                    │
-                                    ▼
-                    ┌────────────────────────────┐
-                    │   LOCAL (Developer Machine) │
-                    │                            │
-                    │  ┌────────────────────┐     │
-                    │  │  Ollama            │     │
-                    │  │  Mistral 7B (local)│     │
-                    │  │  ~8GB RAM, CPU/GPU │     │
-                    │  └────────────────────┘     │
-                    └────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                              INTERNET                                        â”‚
+â”‚                          (DNS â†’ CDN)                                         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚
+                        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                         VERCEL EDGE NETWORK                                   â”‚
+â”‚                                                                               â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Global CDN (POPs)  â”‚  â”‚  Edge Functions      â”‚  â”‚  Image Optimization â”‚  â”‚
+â”‚  â”‚  ~100 locations     â”‚  â”‚  (Auth, Geo, A/B)    â”‚  â”‚  WebP/AVIF pipeline â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚             â”‚                        â”‚                                       â”‚
+â”‚             â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                       â”‚
+â”‚                        â–¼                                                      â”‚
+â”‚              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                                             â”‚
+â”‚              â”‚  Next.js Server  â”‚                                             â”‚
+â”‚              â”‚  (Node 18)       â”‚                                             â”‚
+â”‚              â”‚  Serverless      â”‚                                             â”‚
+â”‚              â”‚  Functions       â”‚                                             â”‚
+â”‚              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚               â”‚                   â”‚
+                    â–¼               â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    RAILWAY (Backend)      â”‚  â”‚   SUPABASE   â”‚  â”‚   ANTHROPIC API    â”‚
+â”‚                           â”‚  â”‚              â”‚  â”‚   (Cloud Fallback) â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚  â”‚                    â”‚
+â”‚  â”‚ FastAPI Container   â”‚  â”‚  â”‚ â”‚PostgreSQLâ”‚ â”‚  â”‚  Claude Sonnet 4   â”‚
+â”‚  â”‚ (Gunicorn + Uvicorn)â”‚â”€â”€â”¼â”€â”€â”¤ â”‚   15     â”‚ â”‚  â”‚  $0.015/request    â”‚
+â”‚  â”‚ 4 workers, 512MB    â”‚  â”‚  â”‚ â”‚ +PGVectorâ”‚ â”‚  â”‚                    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â”‚                           â”‚  â”‚              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ APScheduler         â”‚  â”‚  â”‚ â”‚  GoTrue  â”‚ â”‚
+â”‚  â”‚ Container (cron)    â”‚  â”‚  â”‚ â”‚  Auth    â”‚ â”‚
+â”‚  â”‚ 256MB, 6 cron jobs  â”‚  â”‚  â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚              â”‚
+â”‚                           â”‚  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚                           â”‚  â”‚ â”‚ Storage  â”‚ â”‚
+â”‚                           â”‚  â”‚ â”‚ (S3-compat)â”‚â”‚
+â”‚                           â”‚  â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                           â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+                                    â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚   LOCAL (Developer Machine) â”‚
+                    â”‚                            â”‚
+                    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+                    â”‚  â”‚  Ollama            â”‚     â”‚
+                    â”‚  â”‚  Mistral 7B (local)â”‚     â”‚
+                    â”‚  â”‚  ~8GB RAM, CPU/GPU â”‚     â”‚
+                    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2 Traffic Flow
 
 ```
-User → DNS (Vercel) → CDN Edge (static) → Next.js Serverless (SSR/API routes)
-                                                          │
+User â†’ DNS (Vercel) â†’ CDN Edge (static) â†’ Next.js Serverless (SSR/API routes)
+                                                          â”‚
                                                   Railway Load Balancer
-                                                          │
+                                                          â”‚
                                                   FastAPI Container
-                                                          │
+                                                          â”‚
                                                   Supabase PostgreSQL
 ```
 
@@ -175,10 +175,10 @@ User → DNS (Vercel) → CDN Edge (static) → Next.js Serverless (SSR/API rout
 
 | Provider | Service | Purpose | Tier | Monthly Cost | SLA |
 |---|---|---|---|---|---|
-| **Vercel** | Frontend Hosting | Next.js SSR, CDN, Image Optimization, Edge Functions | Pro (Hobby) | $0–$20 | 99.99% |
-| **Railway** | Backend Hosting | FastAPI containers, cron jobs | Starter | $0–$5 | 99.95% |
+| **Vercel** | Frontend Hosting | Next.js SSR, CDN, Image Optimization, Edge Functions | Pro (Hobby) | $0â€“$20 | 99.99% |
+| **Railway** | Backend Hosting | FastAPI containers, cron jobs | Starter | $0â€“$5 | 99.95% |
 | **Supabase** | Database + Auth + Storage | PostgreSQL 15, GoTrue auth, S3-compat storage | Free | $0 | 99.95% |
-| **Anthropic** | AI API | Claude Sonnet 4 (fallback when Ollama unavailable) | Pay-as-you-go | ~$5–$30 | 99.9% |
+| **Anthropic** | AI API | Claude Sonnet 4 (fallback when Ollama unavailable) | Pay-as-you-go | ~$5â€“$30 | 99.9% |
 | **Cloudflare** | DNS (optional) | DNS management, DDoS protection | Free | $0 | 100% DNS |
 | **Docker Hub** | Container Registry | Image hosting for CI/CD | Free | $0 (public) | 99.9% |
 
@@ -208,7 +208,7 @@ User → DNS (Vercel) → CDN Edge (static) → Next.js Serverless (SSR/API rout
 
 | Component | Platform | Type | vCPU | Memory | Storage | Instances |
 |---|---|---|---|---|---|---|
-| **Next.js Frontend** | Vercel | Serverless Functions | 0.5–1 vCPU | 512MB–1GB | Ephemeral | Auto-scaled |
+| **Next.js Frontend** | Vercel | Serverless Functions | 0.5â€“1 vCPU | 512MBâ€“1GB | Ephemeral | Auto-scaled |
 | **FastAPI Backend** | Railway | Docker Container | 1 vCPU | 512MB | 256MB (tmp) | 1 (free), 2+ (pro) |
 | **APScheduler** | Railway | Docker Container | 0.5 vCPU | 256MB | 128MB (tmp) | 1 |
 | **Ollama (Local)** | Dev Machine | Native process | 4+ cores | 8GB+ | ~4GB (models) | 1 |
@@ -262,8 +262,8 @@ gunicorn main:app \
 
 | Setting | Value | Rationale |
 |---|---|---|
-| Workers | 4 | 2 × vCPUs + 1; handles ~200 req/s |
-| Timeout | 120s | AI requests may take 30–60s |
+| Workers | 4 | 2 Ã— vCPUs + 1; handles ~200 req/s |
+| Timeout | 120s | AI requests may take 30â€“60s |
 | Keep-Alive | 5s | Reduces connection overhead |
 | Max Requests | 1000 | Prevents memory leaks |
 | Max Reqs Jitter | 50 | Stagger worker restarts |
@@ -300,9 +300,9 @@ gunicorn main:app \
 ### 4.1 DNS Configuration
 
 ```
-secondbrain-os.com  →  CNAME  →  cname.vercel-dns.com
-api.secondbrain-os.com  →  CNAME  →  railway.app
-supabase.secondbrain-os.com  →  CNAME  →  supabase.co
+secondbrain-os.com  â†’  CNAME  â†’  cname.vercel-dns.com
+api.secondbrain-os.com  â†’  CNAME  â†’  railway.app
+supabase.secondbrain-os.com  â†’  CNAME  â†’  supabase.co
 ```
 
 **DNS Provider Options:**
@@ -318,22 +318,22 @@ Vercel Edge Network handles all CDN routing:
 
 ```
 User Request
-    │
-    ▼
+    â”‚
+    â–¼
 DNS Resolution (Vercel DNS or Cloudflare)
-    │
-    ▼
+    â”‚
+    â–¼
 Nearest POP (100+ locations worldwide)
-    │
-    ├── Static Assets → Served from Edge Cache (Cache-Control: max-age=31536000, immutable)
-    │
-    ├── SSR Pages → Next.js Serverless (timeout: 10s)
-    │
-    ├── API Routes → Next.js Serverless (timeout: 30s)
-    │               │
-    │               └──→ Railway Backend (backend fetch)
-    │
-    └── Edge Functions → Executed at POP (timeout: 5s)
+    â”‚
+    â”œâ”€â”€ Static Assets â†’ Served from Edge Cache (Cache-Control: max-age=31536000, immutable)
+    â”‚
+    â”œâ”€â”€ SSR Pages â†’ Next.js Serverless (timeout: 10s)
+    â”‚
+    â”œâ”€â”€ API Routes â†’ Next.js Serverless (timeout: 30s)
+    â”‚               â”‚
+    â”‚               â””â”€â”€â†’ Railway Backend (backend fetch)
+    â”‚
+    â””â”€â”€ Edge Functions â†’ Executed at POP (timeout: 5s)
 ```
 
 ### 4.3 Load Balancing
@@ -349,24 +349,24 @@ Nearest POP (100+ locations worldwide)
 Current architecture (Docker Compose) uses basic network isolation:
 
 ```
-┌─────────────┐     ┌────────────────┐     ┌────────────────┐
-│  Frontend   │────▶│   Backend      │────▶│   Supabase     │
-│  :3000      │     │   :8000        │     │   :5432        │
-│  (external) │     │   (internal)   │     │   (external)   │
-└─────────────┘     └────────────────┘     └────────────────┘
-                            │
-                            ▼
-                     ┌────────────────┐
-                     │  Scheduler     │
-                     │  :8001         │
-                     │  (internal)    │
-                     └────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Frontend   â”‚â”€â”€â”€â”€â–¶â”‚   Backend      â”‚â”€â”€â”€â”€â–¶â”‚   Supabase     â”‚
+â”‚  :3000      â”‚     â”‚   :8000        â”‚     â”‚   :5432        â”‚
+â”‚  (external) â”‚     â”‚   (internal)   â”‚     â”‚   (external)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚
+                            â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚  Scheduler     â”‚
+                     â”‚  :8001         â”‚
+                     â”‚  (internal)    â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Roadmap for VPC-level isolation:**
 1. Deploy Railway containers in private network (planned Q3 2026)
 2. Supabase db access restricted to Railway IPs only
-3. Vercel → Railway communication over private peering
+3. Vercel â†’ Railway communication over private peering
 
 ### 4.5 CORS Configuration
 
@@ -498,33 +498,33 @@ class DatabaseRouter:
 ### 6.1 AI Architecture
 
 ```
-┌───────────────────────────────────────────────┐
-│             APPLICATION LAYER                   │
-│  FastAPI Container → AI Agent Modules           │
-│  (agents: A01–A14, 15 agents total)            │
-└─────────────────────┬─────────────────────────┘
-                      │
-                      ▼
-┌───────────────────────────────────────────────┐
-│               AI CLIENT LAYER                  │
-│         packages/ai/client.py                  │
-│                                                 │
-│  ┌─────────────────┐  ┌─────────────────────┐  │
-│  │ OllamaClient     │  │ ClaudeClient         │  │
-│  │ (primary)        │  │ (fallback)           │  │
-│  │ mistral:7b       │  │ claude-sonnet-4      │  │
-│  └────────┬─────────┘  └──────────┬──────────┘  │
-└───────────┼───────────────────────┼────────────┘
-            │                       │
-            ▼                       ▼
-┌─────────────────────┐  ┌──────────────────────┐
-│ LOCAL MACHINE       │  │ ANTHROPIC API         │
-│ Ollama Server       │  │ api.anthropic.com     │
-│ localhost:11434     │  │ api-key: $CLAUDE_KEY  │
-│ ~8GB RAM, CPU/GPU   │  │ ~500ms latency        │
-│ ~50ms latency       │  │ ~$0.015/req           │
-│ ~$0.00/req          │  │ 200K context          │
-└─────────────────────┘  └──────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚             APPLICATION LAYER                   â”‚
+â”‚  FastAPI Container â†’ AI Agent Modules           â”‚
+â”‚  (agents: A01â€“A14, 15 agents total)            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                      â”‚
+                      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚               AI CLIENT LAYER                  â”‚
+â”‚         packages/ai/client.py                  â”‚
+â”‚                                                 â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ OllamaClient     â”‚  â”‚ ClaudeClient         â”‚  â”‚
+â”‚  â”‚ (primary)        â”‚  â”‚ (fallback)           â”‚  â”‚
+â”‚  â”‚ mistral:7b       â”‚  â”‚ claude-sonnet-4      â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+            â”‚                       â”‚
+            â–¼                       â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LOCAL MACHINE       â”‚  â”‚ ANTHROPIC API         â”‚
+â”‚ Ollama Server       â”‚  â”‚ api.anthropic.com     â”‚
+â”‚ localhost:11434     â”‚  â”‚ api-key: $CLAUDE_KEY  â”‚
+â”‚ ~8GB RAM, CPU/GPU   â”‚  â”‚ ~500ms latency        â”‚
+â”‚ ~50ms latency       â”‚  â”‚ ~$0.015/req           â”‚
+â”‚ ~$0.00/req          â”‚  â”‚ 200K context          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 6.2 Ollama Local Setup
@@ -669,22 +669,22 @@ class AIClient:
 ### 8.1 Cache Architecture
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                        CACHE LAYERS                            │
-│                                                                │
-│  ┌─────────────────────┐  ┌────────────────────────────────┐  │
-│  │  Browser Cache       │  │  CDN Cache (Vercel Edge)      │  │
-│  │  max-age=1yr (static)│  │  max-age=1yr (immutable)      │  │
-│  │  max-age=5min (pages)│  │  stale-while-revalidate=1d    │  │
-│  └─────────────────────┘  └────────────────────────────────┘  │
-│                                                                │
-│  ┌─────────────────────┐  ┌────────────────────────────────┐  │
-│  │  Application Cache   │  │  Database Cache               │  │
-│  │  (in-memory TTL)     │  │  (PgBouncer + shared_buffers) │  │
-│  │  packages/shared/    │  │  shared_buffers=512MB         │  │
-│  │  utils/cache.py      │  │  effective_cache_size=1.5GB   │  │
-│  └─────────────────────┘  └────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        CACHE LAYERS                            â”‚
+â”‚                                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Browser Cache       â”‚  â”‚  CDN Cache (Vercel Edge)      â”‚  â”‚
+â”‚  â”‚  max-age=1yr (static)â”‚  â”‚  max-age=1yr (immutable)      â”‚  â”‚
+â”‚  â”‚  max-age=5min (pages)â”‚  â”‚  stale-while-revalidate=1d    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Application Cache   â”‚  â”‚  Database Cache               â”‚  â”‚
+â”‚  â”‚  (in-memory TTL)     â”‚  â”‚  (PgBouncer + shared_buffers) â”‚  â”‚
+â”‚  â”‚  packages/shared/    â”‚  â”‚  shared_buffers=512MB         â”‚  â”‚
+â”‚  â”‚  utils/cache.py      â”‚  â”‚  effective_cache_size=1.5GB   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 8.2 In-Memory Cache (Application Layer)
@@ -747,13 +747,13 @@ cache = TTLCache(default_ttl=300)
 
 | Resource | Cache-Control Header | CDN TTL | Vary |
 |---|---|---|---|
-| `_next/static/*` | `public, max-age=31536000, immutable` | 1 year | — |
-| `fonts/*` | `public, max-age=31536000, immutable` | 1 year | — |
+| `_next/static/*` | `public, max-age=31536000, immutable` | 1 year | â€” |
+| `fonts/*` | `public, max-age=31536000, immutable` | 1 year | â€” |
 | `images/*` | `public, max-age=604800, immutable` | 1 week | `Accept` |
-| `favicon.ico` | `public, max-age=86400` | 1 day | — |
-| `robots.txt` | `public, max-age=86400` | 1 day | — |
-| HTML pages | `public, max-age=300, stale-while-revalidate=86400` | 5 min | — |
-| API responses | `no-cache` | 0 | — |
+| `favicon.ico` | `public, max-age=86400` | 1 day | â€” |
+| `robots.txt` | `public, max-age=86400` | 1 day | â€” |
+| HTML pages | `public, max-age=300, stale-while-revalidate=86400` | 5 min | â€” |
+| API responses | `no-cache` | 0 | â€” |
 
 ### 8.4 Database Caching
 
@@ -778,9 +778,9 @@ effective_io_concurrency = 200       # SSD concurrent I/O
 | Component | Tool | Purpose | Status |
 |---|---|---|---|
 | **Application Metrics** | Prometheus + Grafana | CPU, memory, request latency | WIP |
-| **Backend Logs** | Railway Logs + Sentry | Error tracking, structured logs | ✅ Active |
-| **Frontend Monitoring** | Vercel Analytics | Page views, Web Vitals, errors | ✅ Active |
-| **Database Monitoring** | Supabase Dashboard | Connection count, query perf | ✅ Active |
+| **Backend Logs** | Railway Logs + Sentry | Error tracking, structured logs | âœ… Active |
+| **Frontend Monitoring** | Vercel Analytics | Page views, Web Vitals, errors | âœ… Active |
+| **Database Monitoring** | Supabase Dashboard | Connection count, query perf | âœ… Active |
 | **Uptime Monitoring** | Better Uptime (or Upptime) | External health checks | WIP |
 | **AI Observability** | Custom | Token usage, latency, fallback rate | WIP |
 
@@ -861,15 +861,15 @@ gpg --symmetric --cipher-algo AES256 .env.production.backup
 ### 10.4 Runbook Summary
 
 ```
-┌─────────────┬──────────────────────┬─────────────────────────────┐
-│  Incident   │  Immediate Action    │  Recovery Procedure         │
-├─────────────┼──────────────────────┼─────────────────────────────┤
-│ 500 Errors  │ Check Railway logs   │ Rollback last deploy        │
-│ DB Down     │ Check Supabase status│ Restore from PITR backup    │
-│ Slow API    │ Check DB connections  │ Scale workers, optimize SQL │
-│ Auth Issues  │ Check Supabase auth  │ Reset JWT secret, check OAuth│
-│ AI Not Resp │ Check ollama ps      │ Restart Ollama, check logs  │
-└─────────────┴──────────────────────┴─────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Incident   â”‚  Immediate Action    â”‚  Recovery Procedure         â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ 500 Errors  â”‚ Check Railway logs   â”‚ Rollback last deploy        â”‚
+â”‚ DB Down     â”‚ Check Supabase statusâ”‚ Restore from PITR backup    â”‚
+â”‚ Slow API    â”‚ Check DB connections  â”‚ Scale workers, optimize SQL â”‚
+â”‚ Auth Issues  â”‚ Check Supabase auth  â”‚ Reset JWT secret, check OAuthâ”‚
+â”‚ AI Not Resp â”‚ Check ollama ps      â”‚ Restart Ollama, check logs  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -898,11 +898,11 @@ gpg --symmetric --cipher-algo AES256 .env.production.backup
 
 ```
 Monthly Cost Distribution:
-  Frontend (Vercel)     57%  ─███████████████████████████████── $20
-  Backend (Railway)     14%  ─████████── $5
-  AI Fallback (Claude)  29%  ─████████████████─── $10
-  Other                  0%  ── $0
-  ─────────────────────────────────────────────────────
+  Frontend (Vercel)     57%  â”€â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ”€â”€ $20
+  Backend (Railway)     14%  â”€â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ”€â”€ $5
+  AI Fallback (Claude)  29%  â”€â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ”€â”€â”€ $10
+  Other                  0%  â”€â”€ $0
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   Total               100%                            $35
 ```
 
@@ -910,7 +910,7 @@ Monthly Cost Distribution:
 
 | Strategy | Savings | Implementation Complexity | Timeline |
 |---|---|---|---|
-| Use Ollama as default AI | $10–30/mo | Low | ✅ Done |
+| Use Ollama as default AI | $10â€“30/mo | Low | âœ… Done |
 | Cache frequently accessed data | ~$2/mo in API calls | Low | Q3 2026 |
 | Compress images on upload | ~$1/mo in bandwidth | Low | Q3 2026 |
 | Database query optimization | ~$5/mo in compute | Medium | Ongoing |
@@ -927,9 +927,9 @@ Monthly Cost Distribution:
 |---|---|---|---|---|
 | API Response Time (p95) | <500ms | >2s for 5 min | <200ms for 15 min | Add/remove workers |
 | Active Users (concurrent) | <10 | >50 concurrent | <10 for 1 hr | Scale backend instances |
-| DB Connections | 5–15 | >40 | <10 for 30 min | Adjust pool size |
-| CPU Usage (backend) | 10–30% | >70% for 5 min | <30% for 15 min | Scale workers |
-| Memory Usage (backend) | 200–400MB | >450MB | <200MB | Restart worker (rotation) |
+| DB Connections | 5â€“15 | >40 | <10 for 30 min | Adjust pool size |
+| CPU Usage (backend) | 10â€“30% | >70% for 5 min | <30% for 15 min | Scale workers |
+| Memory Usage (backend) | 200â€“400MB | >450MB | <200MB | Restart worker (rotation) |
 | Disk Usage (DB) | 100MB | >400MB | <100MB | Archive old data |
 | Ollama Response Time | 50ms | >500ms for 5 min | <100ms for 10 min | Restart Ollama |
 
@@ -992,11 +992,11 @@ spec:
 
 | Tool | Learning Curve | State Mgmt | Multi-Cloud | Cost |
 |---|---|---|---|---|
-| **Terraform** | Medium | ✅ Remote state | ✅ Yes | Free (OSS) |
-| **Pulumi** | Medium-High | ✅ Managed | ✅ Yes | Free (OSS) |
-| **AWS CDK** | Medium | ✅ CloudFormation | ❌ AWS only | Free |
-| **CloudFormation** | High | ✅ Native | ❌ AWS only | Free |
-| **Ansible** | Low | ❌ Agentless | ✅ Yes | Free |
+| **Terraform** | Medium | âœ… Remote state | âœ… Yes | Free (OSS) |
+| **Pulumi** | Medium-High | âœ… Managed | âœ… Yes | Free (OSS) |
+| **AWS CDK** | Medium | âœ… CloudFormation | âŒ AWS only | Free |
+| **CloudFormation** | High | âœ… Native | âŒ AWS only | Free |
+| **Ansible** | Low | âŒ Agentless | âœ… Yes | Free |
 
 **Decision:** **Terraform** (Pulumi as secondary) due to multi-cloud support, mature ecosystem, and team familiarity.
 
@@ -1004,39 +1004,39 @@ spec:
 
 ```
 infrastructure/
-├── modules/
-│   ├── vercel/
-│   │   ├── main.tf           # Vercel project, domains, env vars
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── railway/
-│   │   ├── main.tf           # Railway project, services, env vars
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── supabase/
-│   │   ├── main.tf           # Supabase project, DB settings, auth
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   └── monitoring/
-│       ├── main.tf            # Sentry, Grafana dashboards
-│       ├── variables.tf
-│       └── outputs.tf
-├── environments/
-│   ├── dev/
-│   │   ├── main.tf
-│   │   ├── terraform.tfvars
-│   │   └── backend.tf
-│   ├── staging/
-│   │   ├── main.tf
-│   │   ├── terraform.tfvars
-│   │   └── backend.tf
-│   └── prod/
-│       ├── main.tf
-│       ├── terraform.tfvars
-│       └── backend.tf
-└── remote-state/
-    ├── main.tf                # S3 + DynamoDB for state locking
-    └── backend.tf
+â”œâ”€â”€ modules/
+â”‚   â”œâ”€â”€ vercel/
+â”‚   â”‚   â”œâ”€â”€ main.tf           # Vercel project, domains, env vars
+â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â”œâ”€â”€ railway/
+â”‚   â”‚   â”œâ”€â”€ main.tf           # Railway project, services, env vars
+â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â”œâ”€â”€ supabase/
+â”‚   â”‚   â”œâ”€â”€ main.tf           # Supabase project, DB settings, auth
+â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â””â”€â”€ monitoring/
+â”‚       â”œâ”€â”€ main.tf            # Sentry, Grafana dashboards
+â”‚       â”œâ”€â”€ variables.tf
+â”‚       â””â”€â”€ outputs.tf
+â”œâ”€â”€ environments/
+â”‚   â”œâ”€â”€ dev/
+â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”œâ”€â”€ terraform.tfvars
+â”‚   â”‚   â””â”€â”€ backend.tf
+â”‚   â”œâ”€â”€ staging/
+â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”œâ”€â”€ terraform.tfvars
+â”‚   â”‚   â””â”€â”€ backend.tf
+â”‚   â””â”€â”€ prod/
+â”‚       â”œâ”€â”€ main.tf
+â”‚       â”œâ”€â”€ terraform.tfvars
+â”‚       â””â”€â”€ backend.tf
+â””â”€â”€ remote-state/
+    â”œâ”€â”€ main.tf                # S3 + DynamoDB for state locking
+    â””â”€â”€ backend.tf
 ```
 
 ### 13.3 IaC Implementation Timeline

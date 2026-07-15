@@ -1,7 +1,7 @@
----
+﻿---
 version: 2.0.0
 status: active
-classification: Internal — Engineering
+classification: Internal â€” Engineering
 author: AI Agent System
 last_updated: 2026-06-11
 review_cycle: monthly
@@ -20,10 +20,10 @@ related_docs:
 
 | Field | Value |
 |---|---|
-| Document ID | SB-DEVOPS-REL-001 |
+| Document ID | DVO-REL-001 |
 | Version | 2.0.0 |
 | Status | Active |
-| Classification | Internal — Engineering |
+| Classification | Internal â€” Engineering |
 | Last Updated | 2026-06-11 |
 | Review Cycle | Monthly |
 | Owner | Engineering Team |
@@ -36,11 +36,11 @@ related_docs:
 This document defines the complete release management process for Second Brain OS. It covers versioning strategy, release workflow, changelog format, release checklist, hotfix process, feature flag strategy, artifact management, scheduling, roles, risk management, and rollback procedures.
 
 **Key Principles:**
-- **Semantic Versioning** — All releases follow SemVer 2.0.0 for clear communication of change impact
-- **Automated where possible** — Tagging, changelog generation, and deployment are CI/CD-driven
-- **Manual where necessary** — Release approval, smoke testing, and post-release monitoring require human judgment
-- **Hotfix bypass** — Critical security/data-loss issues skip the standard cycle
-- **Feature flags** — Decouple deployment from release for safe rollouts
+- **Semantic Versioning** â€” All releases follow SemVer 2.0.0 for clear communication of change impact
+- **Automated where possible** â€” Tagging, changelog generation, and deployment are CI/CD-driven
+- **Manual where necessary** â€” Release approval, smoke testing, and post-release monitoring require human judgment
+- **Hotfix bypass** â€” Critical security/data-loss issues skip the standard cycle
+- **Feature flags** â€” Decouple deployment from release for safe rollouts
 
 **Release Cadence:**
 
@@ -82,10 +82,10 @@ Second Brain OS follows **SemVer 2.0.0** format: `MAJOR.MINOR.PATCH`
 
 ```
 v2.1.3
-↑  ↑  ↑
-│  │  └── PATCH: Bug fixes, hotfixes (backward-compatible)
-│  └───── MINOR: New features, non-breaking changes
-└──────── MAJOR: Breaking changes, architecture rewrites
+â†‘  â†‘  â†‘
+â”‚  â”‚  â””â”€â”€ PATCH: Bug fixes, hotfixes (backward-compatible)
+â”‚  â””â”€â”€â”€â”€â”€ MINOR: New features, non-breaking changes
+â””â”€â”€â”€â”€â”€â”€â”€â”€ MAJOR: Breaking changes, architecture rewrites
 ```
 
 ### 1.2 Increment Rules
@@ -124,15 +124,15 @@ Build metadata is **ignored** in version precedence comparisons.
 
 | Component | Location | Version |
 |---|---|---|
-| Frontend | `apps/web/package.json` → `version` | 1.0.0 |
-| Backend | `apps/api/main.py` → `app.version` | 1.0.0 |
-| Scheduler | `services/scheduler/main.py` → `app.version` | 1.0.0 |
-| Prompts | `prompts/*/frontmatter` → `version` (per-prompt) | 2.1.0 |
-| Docs | `docs/*/frontmatter` → `version` (per-doc) | 1.0.0 — 2.0.0 |
+| Frontend | `apps/web/package.json` â†’ `version` | 1.0.0 |
+| Backend | `apps/api/main.py` â†’ `app.version` | 1.0.0 |
+| Scheduler | `services/scheduler/main.py` â†’ `app.version` | 1.0.0 |
+| Prompts | `prompts/*/frontmatter` â†’ `version` (per-prompt) | 2.1.0 |
+| Docs | `docs/*/frontmatter` â†’ `version` (per-doc) | 1.0.0 â€” 2.0.0 |
 
 ### 1.6 Multi-Component Versioning Strategy
 
-The project uses **independent versioning** — each major component maintains its own version number:
+The project uses **independent versioning** â€” each major component maintains its own version number:
 
 | Component | Version Source | Reasoning |
 |---|---|---|
@@ -156,15 +156,15 @@ git tag -a v2.1.0 -m "Release v2.1.0"
 ### 2.1 Git Branching Model
 
 ```
-        main ──────────────────────●────────────────────●──
+        main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€
                                   /                    /
-        develop ─────●───────────●────●───────────────●──
+        develop â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€
                     /            /    /               /
-        feat/* ────●────●──────/    /               /
+        feat/* â”€â”€â”€â”€â—â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€/    /               /
                             /    /               /
-        fix/* ─────────────●────/───────────────/
+        fix/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€/â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€/
                               /
-        release/* ──────────●────────────────────
+        release/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ```
 
 ### 2.2 Branch Naming Convention
@@ -189,7 +189,7 @@ graph TD
     E -->|Yes| F[Create release branch: release/vX.Y.Z]
     E -->|No| A
     F --> G[Version bump + changelog]
-    G --> H[Release PR → main]
+    G --> H[Release PR â†’ main]
     H --> I[Code Review]
     I --> J{Approved?}
     J -->|Yes| K[Merge to main]
@@ -364,7 +364,7 @@ Versioning: [SemVer 2.0.0](https://semver.org)
 - Rate limiting: added IP-based rate limiting for auth endpoints
 
 ### Deprecated
-- Legacy `/api/analytics` endpoint — use `/api/analytics/v2` going forward
+- Legacy `/api/analytics` endpoint â€” use `/api/analytics/v2` going forward
 
 ## [2.0.0] - 2026-05-15
 
@@ -391,12 +391,12 @@ Versioning: [SemVer 2.0.0](https://semver.org)
 
 | Category | Usage | Icon (optional) |
 |---|---|---|
-| **Added** | New features, modules, endpoints, pages | ✨ |
-| **Changed** | Behavior changes, UI redesigns, dependency updates | 🔄 |
-| **Deprecated** | Features scheduled for removal | ⚠️ |
-| **Removed** | Features removed in this release | 🗑️ |
-| **Fixed** | Bug fixes, performance patches | 🐛 |
-| **Security** | Vulnerability fixes, security improvements | 🔒 |
+| **Added** | New features, modules, endpoints, pages | âœ¨ |
+| **Changed** | Behavior changes, UI redesigns, dependency updates | ðŸ”„ |
+| **Deprecated** | Features scheduled for removal | âš ï¸ |
+| **Removed** | Features removed in this release | ðŸ—‘ï¸ |
+| **Fixed** | Bug fixes, performance patches | ðŸ› |
+| **Security** | Vulnerability fixes, security improvements | ðŸ”’ |
 
 ### 3.3 Changelog Automation
 
@@ -480,7 +480,7 @@ docs(api): add opportunity radar endpoint reference
 **Release Preparation:**
 - [ ] Version strings updated across all components
 - [ ] Release branch created (`release/vX.Y.Z`)
-- [ ] Release PR created from `release/vX.Y.Z` → `main`
+- [ ] Release PR created from `release/vX.Y.Z` â†’ `main`
 - [ ] Release PR approved by at least 1 reviewer
 
 **Deployment:**
@@ -518,15 +518,15 @@ Hotfixes bypass the standard release cycle for **critical** issues only:
 
 | Severity | Issue Type | Hotfix? | SLA |
 |---|---|---|---|
-| **P0 — Critical** | SQL injection vulnerability | **Yes** | < 1 hour |
-| **P0 — Critical** | Auth bypass (any user can access any data) | **Yes** | < 1 hour |
-| **P0 — Critical** | Data loss (tasks disappearing) | **Yes** | < 2 hours |
-| **P0 — Critical** | Service unavailable (500 on all routes) | **Yes** | < 2 hours |
-| **P1 — High** | Major feature broken for all users | **Yes** | < 4 hours |
-| **P1 — High** | Rate limiting prevents normal usage | **Yes** | < 4 hours |
-| **P2 — Medium** | UI bug affecting one module | **No** | Next patch |
-| **P3 — Low** | Cosmetic issue, typo | **No** | Next release |
-| — | Feature request, enhancement | **No** | Next minor |
+| **P0 â€” Critical** | SQL injection vulnerability | **Yes** | < 1 hour |
+| **P0 â€” Critical** | Auth bypass (any user can access any data) | **Yes** | < 1 hour |
+| **P0 â€” Critical** | Data loss (tasks disappearing) | **Yes** | < 2 hours |
+| **P0 â€” Critical** | Service unavailable (500 on all routes) | **Yes** | < 2 hours |
+| **P1 â€” High** | Major feature broken for all users | **Yes** | < 4 hours |
+| **P1 â€” High** | Rate limiting prevents normal usage | **Yes** | < 4 hours |
+| **P2 â€” Medium** | UI bug affecting one module | **No** | Next patch |
+| **P3 â€” Low** | Cosmetic issue, typo | **No** | Next release |
+| â€” | Feature request, enhancement | **No** | Next minor |
 
 ### 5.2 Hotfix Workflow
 
@@ -556,8 +556,8 @@ git checkout -b hotfix/v2.0.1
 # 2. Apply fix and bump PATCH version
 # Edit: fix the bug
 # Update version strings:
-#   apps/web/package.json → "version": "2.0.1"
-#   apps/api/main.py → app.version = "2.0.1"
+#   apps/web/package.json â†’ "version": "2.0.1"
+#   apps/api/main.py â†’ app.version = "2.0.1"
 
 # 3. Commit with conventional commit format
 git add apps/web/package.json apps/api/main.py
@@ -578,7 +578,7 @@ gh pr create \
   --body "## Hotfix v2.0.1
 
 **Issue:** Auth token refresh race condition (#123)
-**Severity:** P1 — High
+**Severity:** P1 â€” High
 
 ### Changes
 - Added mutex lock around token refresh operation
@@ -587,7 +587,7 @@ gh pr create \
 ### Testing
 - [x] Verified no more race condition in dev
 - [x] All existing auth tests pass
-- [x] Manual smoke test: login → navigate → refresh → still logged in" \
+- [x] Manual smoke test: login â†’ navigate â†’ refresh â†’ still logged in" \
   --label hotfix \
   --label security
 
@@ -736,48 +736,48 @@ flags.register(FeatureFlag(
 ### 6.2 Flag Lifecycle
 
 ```
-INCEPTION → DEVELOPMENT → BETA → GENERAL → RETIRED
-    │           │            │        │           │
-    │           │            │        │           └── Flag code removed
-    │           │            │        │
-    │           │            │        └── 100% rollout
-    │           │            │
-    │           │            └── % rollout / user-specific
-    │           │
-    │           └── Code behind flag, disabled
-    │
-    └── Idea phase, not yet coded
+INCEPTION â†’ DEVELOPMENT â†’ BETA â†’ GENERAL â†’ RETIRED
+    â”‚           â”‚            â”‚        â”‚           â”‚
+    â”‚           â”‚            â”‚        â”‚           â””â”€â”€ Flag code removed
+    â”‚           â”‚            â”‚        â”‚
+    â”‚           â”‚            â”‚        â””â”€â”€ 100% rollout
+    â”‚           â”‚            â”‚
+    â”‚           â”‚            â””â”€â”€ % rollout / user-specific
+    â”‚           â”‚
+    â”‚           â””â”€â”€ Code behind flag, disabled
+    â”‚
+    â””â”€â”€ Idea phase, not yet coded
 ```
 
 ### 6.3 Rollout Strategy
 
 ```yaml
 Rollout Stages:
-  Stage 1 — Development:
+  Stage 1 â€” Development:
     enabled: false
     access: Developers only (local dev)
     duration: Until feature complete
     validation: Unit tests pass
 
-  Stage 2 — Internal Alpha:
+  Stage 2 â€” Internal Alpha:
     enabled: true
     users: [developer accounts, project lead]
     duration: 1-3 days
     validation: Smoke test all flows, no crashes
 
-  Stage 3 — Beta:
+  Stage 3 â€” Beta:
     enabled: true
     rollout_percentage: 10
     users: [opt-in beta testers]
     duration: 1 week
     validation: Bug reports, usage metrics, error rate < 1%
 
-  Stage 4 — Gradual Rollout:
-    rollout_percentage: 25 → 50 → 75 → 100
+  Stage 4 â€” Gradual Rollout:
+    rollout_percentage: 25 â†’ 50 â†’ 75 â†’ 100
     duration: 1-2 weeks (3-5 days per step)
     validation: Error rate steady, no support tickets, performance stable
 
-  Stage 5 — General Availability:
+  Stage 5 â€” General Availability:
     enabled: true
     rollout_percentage: 100
     next: Remove flag code in next release
@@ -787,18 +787,18 @@ Rollout Stages:
 
 ```
 {module}_{feature}_{variant}
-    ↑         ↑         ↑
-    │         │         └── Optional variant (v2, experimental, legacy)
-    │         └── Feature name (snake_case)
-    └── Module (briefing, tasks, auth, etc.)
+    â†‘         â†‘         â†‘
+    â”‚         â”‚         â””â”€â”€ Optional variant (v2, experimental, legacy)
+    â”‚         â””â”€â”€ Feature name (snake_case)
+    â””â”€â”€ Module (briefing, tasks, auth, etc.)
 ```
 
 **Examples:**
-- `briefing_ai_v2` — AI briefing version 2
-- `tasks_calendar_view` — Calendar view for tasks
-- `auth_biometric` — Biometric authentication
-- `dashboard_bento_layout` — Bento-box dashboard layout
-- `sleep_agent_recommendations` — AI sleep recommendations
+- `briefing_ai_v2` â€” AI briefing version 2
+- `tasks_calendar_view` â€” Calendar view for tasks
+- `auth_biometric` â€” Biometric authentication
+- `dashboard_bento_layout` â€” Bento-box dashboard layout
+- `sleep_agent_recommendations` â€” AI sleep recommendations
 
 ### 6.5 Flag Removal Process
 
@@ -841,38 +841,38 @@ git commit -m "chore: remove feature flag for sleep_agent"
 ```markdown
 ## v2.1.0 (2026-06-11)
 
-### 📦 Links
+### ðŸ“¦ Links
 - **Frontend:** [app.secondbrainos.com](https://app.secondbrainos.com)
 - **API:** [api.secondbrainos.com](https://api.secondbrainos.com)
 - **Status:** [status.secondbrainos.com](https://status.secondbrainos.com)
 
-### ✨ What's New
-- **Opportunity Radar** — Automated scanning for fellowships, hackathons, and internships
-- **Sleep Agent** — AI-powered wind-down routines and sleep analysis
-- **Nudge Agent** — Smart reminders for course progress and habit streaks
-- **PromptLoader v2** — YAML frontmatter validation for all AI prompts
+### âœ¨ What's New
+- **Opportunity Radar** â€” Automated scanning for fellowships, hackathons, and internships
+- **Sleep Agent** â€” AI-powered wind-down routines and sleep analysis
+- **Nudge Agent** â€” Smart reminders for course progress and habit streaks
+- **PromptLoader v2** â€” YAML frontmatter validation for all AI prompts
 
-### 🐛 Bug Fixes
+### ðŸ› Bug Fixes
 - Fixed task rescheduling respecting user's preferred time window
 - Fixed habit streak calculation during daylight saving time transitions
 - Fixed auth token refresh race condition
 
-### 🔒 Security
+### ðŸ”’ Security
 - Upgraded jose to 5.2.3 (JWT vulnerability fix)
 - Added IP-based rate limiting for auth endpoints
 - Additional XSS sanitization in resource URL fields
 
-### ⚠️ Breaking Changes
+### âš ï¸ Breaking Changes
 - None. This release is backward-compatible.
 
-### 📋 Changelog
+### ðŸ“‹ Changelog
 See [CHANGELOG.md](https://github.com/org/repo/blob/v2.1.0/CHANGELOG.md)
 
-### 🔧 Migration Notes
+### ðŸ”§ Migration Notes
 - Run `python scripts/validate_prompts.py` after deploying
 - No database migrations required
 
-### 👥 Contributors
+### ðŸ‘¥ Contributors
 - @developer
 
 **Full Changelog:** https://github.com/org/repo/compare/v2.0.0...v2.1.0
@@ -893,7 +893,7 @@ See [CHANGELOG.md](https://github.com/org/repo/blob/v2.1.0/CHANGELOG.md)
 | October | v2.4.0 | Minor | Collaboration features (shared projects) |
 | November | v2.5.0 | Minor | Analytics dashboard, export improvements |
 | December | v2.6.0 | Minor | Year-in-review, holiday prep mode |
-| Q1 2027 | v3.0.0 | Major | TBD — based on user feedback |
+| Q1 2027 | v3.0.0 | Major | TBD â€” based on user feedback |
 
 ### 8.2 Release Windows
 
@@ -905,7 +905,7 @@ See [CHANGELOG.md](https://github.com/org/repo/blob/v2.1.0/CHANGELOG.md)
 | Thursday | Release PR review, merge | 14:00 UTC |
 | Thursday | Production deployment | 16:00 UTC |
 | Friday | Post-release monitoring | All day |
-| Weekend | No deployments (except hotfixes) | — |
+| Weekend | No deployments (except hotfixes) | â€” |
 
 ### 8.3 Blackout Periods
 
@@ -943,10 +943,10 @@ No releases during:
 
 | Component | Method | Time |
 |---|---|---|
-| Frontend (Vercel) | Vercel Dashboard → Deployments → Rollback | 1-2 minutes |
-| Backend (Railway) | Railway Dashboard → Deployments → Previous → Redeploy | 2-5 minutes |
+| Frontend (Vercel) | Vercel Dashboard â†’ Deployments â†’ Rollback | 1-2 minutes |
+| Backend (Railway) | Railway Dashboard â†’ Deployments â†’ Previous â†’ Redeploy | 2-5 minutes |
 | Database | Supabase backup restore | 10-30 minutes |
-| Feature flag | Disable flag → redeploy | 5 minutes |
+| Feature flag | Disable flag â†’ redeploy | 5 minutes |
 
 ### 10.3 Frontend Rollback
 
@@ -956,9 +956,9 @@ vercel rollback --scope=personal
 
 # Or via Dashboard
 # 1. Go to https://vercel.com/dashboard
-# 2. Select project → Deployments
+# 2. Select project â†’ Deployments
 # 3. Find the previous working deployment
-# 4. Click "..." → Rollback to this deployment
+# 4. Click "..." â†’ Rollback to this deployment
 ```
 
 ### 10.4 Backend Rollback
@@ -966,9 +966,9 @@ vercel rollback --scope=personal
 ```bash
 # Via Railway Dashboard
 # 1. Go to https://railway.app/dashboard
-# 2. Select project → Deployments
+# 2. Select project â†’ Deployments
 # 3. Find the previous working deployment
-# 4. Click "..." → Redeploy
+# 4. Click "..." â†’ Redeploy
 
 # Or via git revert + push
 git revert HEAD
@@ -979,7 +979,7 @@ git push origin main
 
 ```sql
 -- Supabase backup restore
--- 1. Go to Supabase Dashboard → Database → Backups
+-- 1. Go to Supabase Dashboard â†’ Database â†’ Backups
 -- 2. Select backup point before deployment
 -- 3. Click "Restore" (triggers a new project with restored data)
 ```
@@ -1040,12 +1040,12 @@ After rollback, verify:
 
 ### 12.2 Promotion Checklist
 
-**Develop → Staging** (automatic on push):
+**Develop â†’ Staging** (automatic on push):
 - [ ] All feature PRs merged
 - [ ] CI passes for develop branch
 - [ ] No merge conflicts
 
-**Staging → Production** (release process):
+**Staging â†’ Production** (release process):
 - [ ] Release branch created and tested
 - [ ] Release PR approved
 - [ ] Smoke test on staging
@@ -1067,14 +1067,14 @@ After rollback, verify:
 ### 13.2 Release Announcement Template
 
 ```markdown
-# Release v2.1.0 — Now Live! 🚀
+# Release v2.1.0 â€” Now Live! ðŸš€
 
 Second Brain OS v2.1.0 is now deployed to production.
 
 ## What's New
-- **Opportunity Radar** — AI scans for fellowships, hackathons, internships
-- **Sleep Agent** — Personalized wind-down routines
-- **Nudge Agent** — Smart reminders for courses and habits
+- **Opportunity Radar** â€” AI scans for fellowships, hackathons, internships
+- **Sleep Agent** â€” Personalized wind-down routines
+- **Nudge Agent** â€” Smart reminders for courses and habits
 
 ## Fixes
 - Task scheduling now respects your preferred time window
@@ -1280,7 +1280,7 @@ git checkout develop && git merge main && git push
 | Quality Assurance | `docs/qa/29_QA.md` |
 | Runbooks | `docs/operations/39_Runbooks.md` |
 | Incident Response | `docs/operations/40_IncidentResponse.md` |
-| Change Management | `docs/operations/49_ChangeManagement.md` |
+| Change Management | `docs/governance/02_ChangeManagement.md` |
 | Technical Debt | `docs/operations/50_TechnicalDebt.md` |
 
 ---

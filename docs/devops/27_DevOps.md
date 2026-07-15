@@ -1,13 +1,13 @@
-# DevOps Practices
+﻿# DevOps Practices
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| **Document ID** | SB-DEVOPS-PRACTICES-001 |
+| **Document ID** | DVO-DVO-001 |
 | **Version** | 2.0.0 |
 | **Status** | Active |
-| **Classification** | Internal — Engineering |
+| **Classification** | Internal â€” Engineering |
 | **Author** | DevOps Team |
 | **Last Updated** | 2026-06-11 |
 | **Review Cycle** | Monthly |
@@ -69,38 +69,38 @@
 ### 2.1 Core Principles
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                   DevOps Principles                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. THE THREE WAYS (Gene Kim / Phoenix Project)             │
-│     ├── First Way:  Flow (Development → Operations)         │
-│     ├── Second Way: Feedback (Operations → Development)     │
-│     └── Third Way:  Continuous Learning & Experimentation   │
-│                                                             │
-│  2. CALMS Framework                                         │
-│     ├── Culture: Collaboration, shared responsibility       │
-│     ├── Automation: Everything that can be automated, is    │
-│     ├── Lean: Minimize waste, maximize value delivery       │
-│     ├── Measurement: Data-driven decisions                  │
-│     └── Sharing: Knowledge sharing across teams             │
-│                                                             │
-│  3. 12-Factor App Compliance                                │
-│     ├── Codebase: One codebase tracked in revision control  │
-│     ├── Dependencies: Explicitly declared and isolated      │
-│     ├── Config: Stored in environment variables             │
-│     ├── Backing services: Treated as attached resources     │
-│     ├── Build, release, run: Strictly separated stages      │
-│     ├── Processes: Stateless and share-nothing              │
-│     ├── Port binding: Export services via port binding      │
-│     ├── Concurrency: Scale out via the process model        │
-│     ├── Disposability: Fast startup and graceful shutdown   │
-│     ├── Dev/prod parity: Keep environments as similar as    │
-│         possible                                            │
-│     ├── Logs: Treat logs as event streams                   │
-│     └── Admin processes: Run as one-off processes           │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   DevOps Principles                          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  1. THE THREE WAYS (Gene Kim / Phoenix Project)             â”‚
+â”‚     â”œâ”€â”€ First Way:  Flow (Development â†’ Operations)         â”‚
+â”‚     â”œâ”€â”€ Second Way: Feedback (Operations â†’ Development)     â”‚
+â”‚     â””â”€â”€ Third Way:  Continuous Learning & Experimentation   â”‚
+â”‚                                                             â”‚
+â”‚  2. CALMS Framework                                         â”‚
+â”‚     â”œâ”€â”€ Culture: Collaboration, shared responsibility       â”‚
+â”‚     â”œâ”€â”€ Automation: Everything that can be automated, is    â”‚
+â”‚     â”œâ”€â”€ Lean: Minimize waste, maximize value delivery       â”‚
+â”‚     â”œâ”€â”€ Measurement: Data-driven decisions                  â”‚
+â”‚     â””â”€â”€ Sharing: Knowledge sharing across teams             â”‚
+â”‚                                                             â”‚
+â”‚  3. 12-Factor App Compliance                                â”‚
+â”‚     â”œâ”€â”€ Codebase: One codebase tracked in revision control  â”‚
+â”‚     â”œâ”€â”€ Dependencies: Explicitly declared and isolated      â”‚
+â”‚     â”œâ”€â”€ Config: Stored in environment variables             â”‚
+â”‚     â”œâ”€â”€ Backing services: Treated as attached resources     â”‚
+â”‚     â”œâ”€â”€ Build, release, run: Strictly separated stages      â”‚
+â”‚     â”œâ”€â”€ Processes: Stateless and share-nothing              â”‚
+â”‚     â”œâ”€â”€ Port binding: Export services via port binding      â”‚
+â”‚     â”œâ”€â”€ Concurrency: Scale out via the process model        â”‚
+â”‚     â”œâ”€â”€ Disposability: Fast startup and graceful shutdown   â”‚
+â”‚     â”œâ”€â”€ Dev/prod parity: Keep environments as similar as    â”‚
+â”‚         possible                                            â”‚
+â”‚     â”œâ”€â”€ Logs: Treat logs as event streams                   â”‚
+â”‚     â””â”€â”€ Admin processes: Run as one-off processes           â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.2 DevOps Decision Framework
@@ -108,11 +108,11 @@
 When making DevOps decisions, apply this hierarchy:
 
 ```
-1. Security  → Never compromise on security
-2. Reliability → Systems must be dependable
-3. Performance → Meet or exceed SLOs
-4. Cost      → Optimize within budget constraints
-5. Velocity  → Ship features quickly (within above constraints)
+1. Security  â†’ Never compromise on security
+2. Reliability â†’ Systems must be dependable
+3. Performance â†’ Meet or exceed SLOs
+4. Cost      â†’ Optimize within budget constraints
+5. Velocity  â†’ Ship features quickly (within above constraints)
 ```
 
 ---
@@ -143,24 +143,24 @@ graph LR
 
 ### 3.2 Pipeline Stages Detail
 
-#### Stage 1: Source — Code Commit
+#### Stage 1: Source â€” Code Commit
 
 | Trigger | Action | Concurrency |
 |---|---|---|
 | PR to `develop` | Run CI (lint, test, build) | Same branch cancels previous |
 | PR to `main` | Run CI + security audit | Same branch cancels previous |
-| Push to `develop` | Run CI → auto-deploy to staging | Serial (deploy in order) |
-| Push to `main` | Run CI → auto-deploy to production | Serial (deploy in order) |
-| Push to `hotfix/*` | Run CI + expedited review → deploy | Highest priority |
+| Push to `develop` | Run CI â†’ auto-deploy to staging | Serial (deploy in order) |
+| Push to `main` | Run CI â†’ auto-deploy to production | Serial (deploy in order) |
+| Push to `hotfix/*` | Run CI + expedited review â†’ deploy | Highest priority |
 
-#### Stage 2: Build — Dependency Installation & Compilation
+#### Stage 2: Build â€” Dependency Installation & Compilation
 
 ```
 Frontend Build:
   1. Checkout code (actions/checkout@v4)
   2. Setup Node 18 (actions/setup-node@v4)
   3. Cache restore: ~/.npm, node_modules
-  4. npm ci (clean install — fails if lockfile mismatch)
+  4. npm ci (clean install â€” fails if lockfile mismatch)
   5. npm run build (Next.js production build)
   6. Cache save: .next/
 
@@ -172,7 +172,7 @@ Backend Build:
   5. python -m py_compile main.py (syntax + import check)
 ```
 
-#### Stage 3: Test — Quality Gates
+#### Stage 3: Test â€” Quality Gates
 
 ```yaml
 quality_gates:
@@ -229,31 +229,31 @@ quality_gates:
 ### 4.1 Branch Hierarchy
 
 ```
-main ───────────────────────────────────────────────────────────
-  │                        ↑                          ↑
-  │                        │                          │
-  │              ┌─────────┴──────────┐    ┌──────────┴──────────┐
-  │              │  release/vX.Y.Z    │    │  hotfix/vX.Y.Z      │
-  │              │  (from develop)    │    │  (from main)        │
-  │              └────────────────────┘    └─────────────────────┘
-  │
-develop ─────────────────────────────────────────────────────────
-  │           ↑              ↑              ↑
-  │           │              │              │
-  │   ┌───────┴───┐  ┌──────┴──────┐  ┌────┴────┐
-  │   │ feat/*    │  │ fix/*       │  │ chore/*  │
-  │   │ Features  │  │ Bug fixes   │  │ Housekeep │
-  │   └───────────┘  └─────────────┘  └──────────┘
+main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  â”‚                        â†‘                          â†‘
+  â”‚                        â”‚                          â”‚
+  â”‚              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚              â”‚  release/vX.Y.Z    â”‚    â”‚  hotfix/vX.Y.Z      â”‚
+  â”‚              â”‚  (from develop)    â”‚    â”‚  (from main)        â”‚
+  â”‚              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  â”‚
+develop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  â”‚           â†‘              â†‘              â†‘
+  â”‚           â”‚              â”‚              â”‚
+  â”‚   â”Œâ”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”
+  â”‚   â”‚ feat/*    â”‚  â”‚ fix/*       â”‚  â”‚ chore/*  â”‚
+  â”‚   â”‚ Features  â”‚  â”‚ Bug fixes   â”‚  â”‚ Housekeep â”‚
+  â”‚   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4.2 Branch Naming Convention
 
 ```
 {type}/{description}
-  ↑        ↑
-  │        └── kebab-case description (e.g., add-opportunity-radar)
-  │
-  └── Type: feat / fix / chore / docs / refactor / test / hotfix
+  â†‘        â†‘
+  â”‚        â””â”€â”€ kebab-case description (e.g., add-opportunity-radar)
+  â”‚
+  â””â”€â”€ Type: feat / fix / chore / docs / refactor / test / hotfix
 ```
 
 **Examples:**
@@ -269,11 +269,11 @@ develop ────────────────────────
 
 | Branch | Requires PR | Required Reviewers | CI Must Pass | Linear History | No Direct Push |
 |---|---|---|---|---|---|
-| `main` | ✅ | 1 | ✅ | ✅ | ✅ |
-| `develop` | ✅ | 1 | ✅ | ❌ | ✅ |
-| `release/*` | ✅ | 1 | ✅ | ❌ | ❌ |
-| `hotfix/*` | ✅ | 1 (expedited) | ✅ | ❌ | ❌ |
-| `feat/*` | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `main` | âœ… | 1 | âœ… | âœ… | âœ… |
+| `develop` | âœ… | 1 | âœ… | âŒ | âœ… |
+| `release/*` | âœ… | 1 | âœ… | âŒ | âŒ |
+| `hotfix/*` | âœ… | 1 (expedited) | âœ… | âŒ | âŒ |
+| `feat/*` | âŒ | âŒ | âŒ | âŒ | âŒ |
 
 ### 4.4 Commit Message Convention
 
@@ -303,34 +303,34 @@ perf(api): add Redis caching for briefing endpoint
 
 ```
                       Time
-                       │
-    ┌──────────────────┼──────────────────┐
-    │  FEATURE BRANCH  │  MAIN BRANCH     │
-    │                  │                  │
-    │  git checkout    │  v2.0.0 (tag)    │◄── Production
-    │  -b feat/radar   │      │           │
-    │                  │      │           │
-    │  (work, work)    │  ┌───┴──────┐    │
-    │                  │  │  Merge   │    │
-    │  git commit -m   │  │  Release │    │
-    │  "feat(radar):   │  │   PR     │    │
-    │   add scanning"  │  └───┬──────┘    │
-    │                  │      │           │
-    │  git push        │  ┌───┴──────┐    │
-    │                  │  │  Tag &   │    │
-    │  Open PR ────────┼──┤  Deploy  │    │
-    │  (to develop)    │  └──────────┘    │
-    │                  │                  │
-    │  ┌──────────┐    │                  │
-    │  │  Review  │    │                  │
-    │  │  + CI    │    │                  │
-    │  └────┬─────┘    │                  │
-    │       │          │                  │
-    │  Merge to        │                  │
-    │  develop ────────┼──► develop updated │
-    │                  │                  │
-    └──────────────────┼──────────────────┘
-                       │
+                       â”‚
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚  FEATURE BRANCH  â”‚  MAIN BRANCH     â”‚
+    â”‚                  â”‚                  â”‚
+    â”‚  git checkout    â”‚  v2.0.0 (tag)    â”‚â—„â”€â”€ Production
+    â”‚  -b feat/radar   â”‚      â”‚           â”‚
+    â”‚                  â”‚      â”‚           â”‚
+    â”‚  (work, work)    â”‚  â”Œâ”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”    â”‚
+    â”‚                  â”‚  â”‚  Merge   â”‚    â”‚
+    â”‚  git commit -m   â”‚  â”‚  Release â”‚    â”‚
+    â”‚  "feat(radar):   â”‚  â”‚   PR     â”‚    â”‚
+    â”‚   add scanning"  â”‚  â””â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜    â”‚
+    â”‚                  â”‚      â”‚           â”‚
+    â”‚  git push        â”‚  â”Œâ”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”    â”‚
+    â”‚                  â”‚  â”‚  Tag &   â”‚    â”‚
+    â”‚  Open PR â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”¤  Deploy  â”‚    â”‚
+    â”‚  (to develop)    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+    â”‚                  â”‚                  â”‚
+    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚                  â”‚
+    â”‚  â”‚  Review  â”‚    â”‚                  â”‚
+    â”‚  â”‚  + CI    â”‚    â”‚                  â”‚
+    â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜    â”‚                  â”‚
+    â”‚       â”‚          â”‚                  â”‚
+    â”‚  Merge to        â”‚                  â”‚
+    â”‚  develop â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â–º develop updated â”‚
+    â”‚                  â”‚                  â”‚
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                       â”‚
 ```
 
 ---
@@ -341,25 +341,25 @@ perf(api): add Redis caching for briefing endpoint
 
 ```
 Layer 1: Developer's IDE (Pre-commit)
-  ├── Linting on save (ESLint, Ruff)
-  ├── Type checking on save (TypeScript, mypy planned)
-  └── Pre-commit hooks (format + lint)
+  â”œâ”€â”€ Linting on save (ESLint, Ruff)
+  â”œâ”€â”€ Type checking on save (TypeScript, mypy planned)
+  â””â”€â”€ Pre-commit hooks (format + lint)
 
 Layer 2: Pull Request (CI)
-  ├── Full lint suite (ESLint, Ruff)
-  ├── Type checking (TypeScript, mypy planned)
-  ├── Unit tests with coverage
-  └── Security audit (npm audit, safety)
+  â”œâ”€â”€ Full lint suite (ESLint, Ruff)
+  â”œâ”€â”€ Type checking (TypeScript, mypy planned)
+  â”œâ”€â”€ Unit tests with coverage
+  â””â”€â”€ Security audit (npm audit, safety)
 
 Layer 3: Staging Deployment
-  ├── Integration tests
-  ├── Smoke tests
-  └── Performance regression checks
+  â”œâ”€â”€ Integration tests
+  â”œâ”€â”€ Smoke tests
+  â””â”€â”€ Performance regression checks
 
 Layer 4: Production Deployment
-  ├── Canary analysis (planned)
-  ├── Error rate monitoring
-  └── User impact analysis
+  â”œâ”€â”€ Canary analysis (planned)
+  â”œâ”€â”€ Error rate monitoring
+  â””â”€â”€ User impact analysis
 ```
 
 ### 5.2 Frontend Code Quality Tools
@@ -426,17 +426,17 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = [
-    "F",    # Pyflakes — errors
-    "E",    # Pycodestyle — errors
-    "W",    # Pycodestyle — warnings
-    "I",    # Isort — import ordering
+    "F",    # Pyflakes â€” errors
+    "E",    # Pycodestyle â€” errors
+    "W",    # Pycodestyle â€” warnings
+    "I",    # Isort â€” import ordering
     "N",    # PEP8 naming conventions
-    "D",    # Pydocstyle — docstrings (planned)
-    "UP",   # Pyupgrade — modern syntax
-    "B",    # Bugbear — bug detection
-    "SIM",  # Simplify — code simplification
+    "D",    # Pydocstyle â€” docstrings (planned)
+    "UP",   # Pyupgrade â€” modern syntax
+    "B",    # Bugbear â€” bug detection
+    "SIM",  # Simplify â€” code simplification
     "ARG",  # Unused arguments
-    "PTH",  # Pathlib — path handling
+    "PTH",  # Pathlib â€” path handling
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -536,20 +536,20 @@ repos:
 ### 6.1 Test Pyramid
 
 ```
-                    ╱─────────────────────╲
-                   ╱    E2E Tests (5%)     ╲
-                  ╱   Playwright / Cypress   ╲
-                 ╱    Critical user paths     ╲
-                ╱───────────────────────────────╲
-               ╲     Integration Tests (25%)     ╱
-                ╲   API route tests, Supabase    ╱
-                 ╲  Auth flows, migration tests  ╱
-                  ╲──────────────────────────────╱
-                   ╲                          ╱
-                    ╲  Unit Tests (70%)      ╱
-                     ╲ Utils, hooks, models  ╱
-                      ╲ Components, helpers  ╱
-                       ╲────────────────────╱
+                    â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+                   â•±    E2E Tests (5%)     â•²
+                  â•±   Playwright / Cypress   â•²
+                 â•±    Critical user paths     â•²
+                â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+               â•²     Integration Tests (25%)     â•±
+                â•²   API route tests, Supabase    â•±
+                 â•²  Auth flows, migration tests  â•±
+                  â•²â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•±
+                   â•²                          â•±
+                    â•²  Unit Tests (70%)      â•±
+                     â•² Utils, hooks, models  â•±
+                      â•² Components, helpers  â•±
+                       â•²â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•±
 ```
 
 ### 6.2 Frontend Testing
@@ -687,31 +687,31 @@ jobs:
 ```
 Frontend caching layers:
   Layer 1: ~/.npm (global npm cache)
-    └── Cache key: npm cache + package-lock.json hash
-    └── Restore: Full restore on miss, keys prefix on partial
-    └── Save: After successful npm ci
+    â””â”€â”€ Cache key: npm cache + package-lock.json hash
+    â””â”€â”€ Restore: Full restore on miss, keys prefix on partial
+    â””â”€â”€ Save: After successful npm ci
   Layer 2: node_modules
-    └── Cache key: package-lock.json hash
-    └── Restore: On cache hit, skip npm ci entirely
-    └── Save: After successful npm ci
+    â””â”€â”€ Cache key: package-lock.json hash
+    â””â”€â”€ Restore: On cache hit, skip npm ci entirely
+    â””â”€â”€ Save: After successful npm ci
   Layer 3: .next/cache
-    └── Cache key: next.config.js hash + package-lock.json hash
-    └── Restore: Speeds up subsequent builds
-    └── Save: After successful build
+    â””â”€â”€ Cache key: next.config.js hash + package-lock.json hash
+    â””â”€â”€ Restore: Speeds up subsequent builds
+    â””â”€â”€ Save: After successful build
 
 Backend caching layers:
   Layer 1: ~/.cache/pip
-    └── Cache key: requirements.txt hash
-    └── Restore: Skip pip install on full cache hit
-    └── Save: After successful pip install
+    â””â”€â”€ Cache key: requirements.txt hash
+    â””â”€â”€ Restore: Skip pip install on full cache hit
+    â””â”€â”€ Save: After successful pip install
 ```
 
 ### 7.3 Docker Image Tagging Strategy
 
 ```yaml
 image_tags:
-  - "{version}"            # v2.1.0 — semantic version
-  - "{short_sha}"          # a1b2c3d — git commit SHA
+  - "{version}"            # v2.1.0 â€” semantic version
+  - "{short_sha}"          # a1b2c3d â€” git commit SHA
   - "{branch}"             # main, develop, feat-radar
   - "latest"               # Latest stable from main
   - "staging"              # Latest from develop
@@ -740,14 +740,14 @@ examples:
 ### 8.2 Environment Parity Checklist
 
 ```
-□ Same Python/Node versions across all environments
-□ Same dependency versions (lockfile enforced)
-□ Same database schema (migrations applied)
-□ Same configuration structure (values differ)
-□ Same build process (same Dockerfile)
-□ Same deployment process (same CI/CD pipeline)
-□ Same monitoring stack (alert thresholds differ)
-□ Same logging format (log levels differ)
+â–¡ Same Python/Node versions across all environments
+â–¡ Same dependency versions (lockfile enforced)
+â–¡ Same database schema (migrations applied)
+â–¡ Same configuration structure (values differ)
+â–¡ Same build process (same Dockerfile)
+â–¡ Same deployment process (same CI/CD pipeline)
+â–¡ Same monitoring stack (alert thresholds differ)
+â–¡ Same logging format (log levels differ)
 ```
 
 ### 8.3 Environment Provisioning
@@ -795,20 +795,20 @@ Each layer overrides the one below it.
 
 ```
 Production (Priority):
-  ├── Railway Dashboard (encrypted env vars)
-  ├── Vercel Dashboard (encrypted env vars)
-  └── GitHub Actions Secrets (for CI)
+  â”œâ”€â”€ Railway Dashboard (encrypted env vars)
+  â”œâ”€â”€ Vercel Dashboard (encrypted env vars)
+  â””â”€â”€ GitHub Actions Secrets (for CI)
 
 Staging:
-  ├── Railway Dashboard (staging project)
-  ├── Vercel Dashboard (staging/preview scope)
-  └── GitHub Actions Secrets
+  â”œâ”€â”€ Railway Dashboard (staging project)
+  â”œâ”€â”€ Vercel Dashboard (staging/preview scope)
+  â””â”€â”€ GitHub Actions Secrets
 
 Local Development:
-  └── .env.local (gitignored, never committed)
+  â””â”€â”€ .env.local (gitignored, never committed)
 
 Documentation:
-  └── .env.example (placeholder values, committed)
+  â””â”€â”€ .env.example (placeholder values, committed)
 ```
 
 ### 9.4 Secret Rotation Runbook
@@ -823,7 +823,7 @@ IMPACT: All existing sessions invalidated (users must re-login)
 STEPS:
   1. Generate new secret:
      openssl rand -hex 32
-     → Output: a1b2c3d4e5f6...
+     â†’ Output: a1b2c3d4e5f6...
 
   2. Update Railway production:
      railway variables set JWT_SECRET=a1b2c3d4e5f6... --service backend
@@ -853,23 +853,23 @@ STEPS:
 ### 10.1 Three Pillars of Observability
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Observability Stack                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────┐  ┌──────────────┐  ┌───────────────┐  │
-│  │     LOGS         │  │   METRICS    │  │    TRACES     │  │
-│  │                   │  │              │  │               │  │
-│  │ • Structured JSON │  │ • Request    │  │ • Request path│  │
-│  │ • Centralized     │  │   rate       │  │ • Service deps│  │
-│  │ • Searchable      │  │ • Error rate │  │ • Latency     │  │
-│  │ • Multi-level     │  │ • Latency    │  │   breakdown   │  │
-│  │                   │  │ • Resource   │  │ • DB queries  │  │
-│  │ Level: DEBUG,     │  │   usage      │  │ • AI calls    │  │
-│  │ INFO, WARN, ERROR │  │ • Up time    │  │               │  │
-│  └─────────────────┘  └──────────────┘  └───────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    Observability Stack                       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚     LOGS         â”‚  â”‚   METRICS    â”‚  â”‚    TRACES     â”‚  â”‚
+â”‚  â”‚                   â”‚  â”‚              â”‚  â”‚               â”‚  â”‚
+â”‚  â”‚ â€¢ Structured JSON â”‚  â”‚ â€¢ Request    â”‚  â”‚ â€¢ Request pathâ”‚  â”‚
+â”‚  â”‚ â€¢ Centralized     â”‚  â”‚   rate       â”‚  â”‚ â€¢ Service depsâ”‚  â”‚
+â”‚  â”‚ â€¢ Searchable      â”‚  â”‚ â€¢ Error rate â”‚  â”‚ â€¢ Latency     â”‚  â”‚
+â”‚  â”‚ â€¢ Multi-level     â”‚  â”‚ â€¢ Latency    â”‚  â”‚   breakdown   â”‚  â”‚
+â”‚  â”‚                   â”‚  â”‚ â€¢ Resource   â”‚  â”‚ â€¢ DB queries  â”‚  â”‚
+â”‚  â”‚ Level: DEBUG,     â”‚  â”‚   usage      â”‚  â”‚ â€¢ AI calls    â”‚  â”‚
+â”‚  â”‚ INFO, WARN, ERROR â”‚  â”‚ â€¢ Up time    â”‚  â”‚               â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 10.2 Current Monitoring Stack
@@ -1042,43 +1042,43 @@ DASHBOARD_SECTIONS = {
 
 ```
 INCIDENT DETECTED
-      │
-      ▼
-┌─────────────────┐
-│ 1. DETECT        │  Automated: Monitoring alert, CI failure
-│                   │  Manual: User report, manual observation
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ 2. TRIAGE        │  Determine severity (P0-P4)
-│                   │  Assign owner
-│                   │  Create incident ticket
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ 3. RESPOND       │  Apply mitigation (rollback, fix, scale)
-│                   │  Communicate status (internal + users)
-│                   │  Update incident log
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ 4. RESOLVE       │  Verify fix in production
-│                   │  Confirm monitoring is green
-│                   │  Close incident ticket
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ 5. RCA           │  Root cause analysis
-│                   │  Document lessons learned
-│                   │  Create action items
-└────────┬────────┘
-         ▼
-┌─────────────────┐
-│ 6. PREVENT       │  Implement preventive measures
-│                   │  Add monitoring/alerting
-│                   │  Update runbooks
-│                   │  Schedule follow-up review
-└─────────────────┘
+      â”‚
+      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 1. DETECT        â”‚  Automated: Monitoring alert, CI failure
+â”‚                   â”‚  Manual: User report, manual observation
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 2. TRIAGE        â”‚  Determine severity (P0-P4)
+â”‚                   â”‚  Assign owner
+â”‚                   â”‚  Create incident ticket
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 3. RESPOND       â”‚  Apply mitigation (rollback, fix, scale)
+â”‚                   â”‚  Communicate status (internal + users)
+â”‚                   â”‚  Update incident log
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 4. RESOLVE       â”‚  Verify fix in production
+â”‚                   â”‚  Confirm monitoring is green
+â”‚                   â”‚  Close incident ticket
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 5. RCA           â”‚  Root cause analysis
+â”‚                   â”‚  Document lessons learned
+â”‚                   â”‚  Create action items
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 6. PREVENT       â”‚  Implement preventive measures
+â”‚                   â”‚  Add monitoring/alerting
+â”‚                   â”‚  Update runbooks
+â”‚                   â”‚  Schedule follow-up review
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.3 Incident Template
@@ -1139,20 +1139,20 @@ incident:
 ```
 DevOps <-> Incident Response Integration:
 
-CI/CD Pipeline → GitHub Issues
-  ├── CI failure auto-creates issue
-  ├── Security vulnerability creates P1 issue
-  └── Deployment failure creates P2 issue
+CI/CD Pipeline â†’ GitHub Issues
+  â”œâ”€â”€ CI failure auto-creates issue
+  â”œâ”€â”€ Security vulnerability creates P1 issue
+  â””â”€â”€ Deployment failure creates P2 issue
 
-Monitoring → Alerting → Incident
-  ├── Error rate spike → Email alert
-  ├── 5 consecutive health check failures → P0 incident
-  └── Rate limit violation surge → P2 issue
+Monitoring â†’ Alerting â†’ Incident
+  â”œâ”€â”€ Error rate spike â†’ Email alert
+  â”œâ”€â”€ 5 consecutive health check failures â†’ P0 incident
+  â””â”€â”€ Rate limit violation surge â†’ P2 issue
 
-Rollback → Incident Resolution
-  ├── Automated rollback triggered
-  ├── Incident auto-updated with rollback details
-  └── RCA scheduled after stabilization
+Rollback â†’ Incident Resolution
+  â”œâ”€â”€ Automated rollback triggered
+  â”œâ”€â”€ Incident auto-updated with rollback details
+  â””â”€â”€ RCA scheduled after stabilization
 ```
 
 ---
@@ -1163,55 +1163,55 @@ Rollback → Incident Resolution
 
 | Level | State | Tools | Status |
 |---|---|---|---|
-| 1 — Manual | All resources provisioned via dashboards | None | ✅ Current |
-| 2 — Scripted | Resources provisioned via CLI scripts | Shell scripts, Supabase CLI | 🟡 Partial |
-| 3 — Declarative | Resources defined in Terraform | Terraform, OpenTofu | ⏳ Q3 2026 |
-| 4 — Automated | CI/CD manages infrastructure | Terraform Cloud | ⏳ Q1 2027 |
-| 5 — GitOps | Infrastructure changes via PRs | ArgoCD, Crossplane | ⏳ 2027+ |
+| 1 â€” Manual | All resources provisioned via dashboards | None | âœ… Current |
+| 2 â€” Scripted | Resources provisioned via CLI scripts | Shell scripts, Supabase CLI | ðŸŸ¡ Partial |
+| 3 â€” Declarative | Resources defined in Terraform | Terraform, OpenTofu | â³ Q3 2026 |
+| 4 â€” Automated | CI/CD manages infrastructure | Terraform Cloud | â³ Q1 2027 |
+| 5 â€” GitOps | Infrastructure changes via PRs | ArgoCD, Crossplane | â³ 2027+ |
 
 ### 12.2 Planned Terraform Structure
 
 ```
 infrastructure/
-├── terraform/
-│   ├── environments/
-│   │   ├── production/
-│   │   │   ├── main.tf
-│   │   │   ├── variables.tf
-│   │   │   └── terraform.tfvars
-│   │   └── staging/
-│   │       ├── main.tf
-│   │       ├── variables.tf
-│   │       └── terraform.tfvars
-│   ├── modules/
-│   │   ├── frontend/
-│   │   │   ├── main.tf
-│   │   │   ├── variables.tf
-│   │   │   └── outputs.tf
-│   │   ├── backend/
-│   │   │   ├── main.tf
-│   │   │   ├── variables.tf
-│   │   │   └── outputs.tf
-│   │   ├── database/
-│   │   │   ├── main.tf
-│   │   │   ├── variables.tf
-│   │   │   └── outputs.tf
-│   │   └── monitoring/
-│   │       ├── main.tf
-│   │       └── variables.tf
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
-├── docker/
-│   ├── backend.Dockerfile
-│   ├── frontend.Dockerfile
-│   └── docker-compose.yml
-└── kubernetes/ (future)
-    ├── backend-deployment.yaml
-    ├── backend-service.yaml
-    ├── frontend-deployment.yaml
-    ├── frontend-service.yaml
-    └── ingress.yaml
+â”œâ”€â”€ terraform/
+â”‚   â”œâ”€â”€ environments/
+â”‚   â”‚   â”œâ”€â”€ production/
+â”‚   â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â”‚   â””â”€â”€ terraform.tfvars
+â”‚   â”‚   â””â”€â”€ staging/
+â”‚   â”‚       â”œâ”€â”€ main.tf
+â”‚   â”‚       â”œâ”€â”€ variables.tf
+â”‚   â”‚       â””â”€â”€ terraform.tfvars
+â”‚   â”œâ”€â”€ modules/
+â”‚   â”‚   â”œâ”€â”€ frontend/
+â”‚   â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â”‚   â”œâ”€â”€ backend/
+â”‚   â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â”‚   â”œâ”€â”€ database/
+â”‚   â”‚   â”‚   â”œâ”€â”€ main.tf
+â”‚   â”‚   â”‚   â”œâ”€â”€ variables.tf
+â”‚   â”‚   â”‚   â””â”€â”€ outputs.tf
+â”‚   â”‚   â””â”€â”€ monitoring/
+â”‚   â”‚       â”œâ”€â”€ main.tf
+â”‚   â”‚       â””â”€â”€ variables.tf
+â”‚   â”œâ”€â”€ main.tf
+â”‚   â”œâ”€â”€ variables.tf
+â”‚   â””â”€â”€ outputs.tf
+â”œâ”€â”€ docker/
+â”‚   â”œâ”€â”€ backend.Dockerfile
+â”‚   â”œâ”€â”€ frontend.Dockerfile
+â”‚   â””â”€â”€ docker-compose.yml
+â””â”€â”€ kubernetes/ (future)
+    â”œâ”€â”€ backend-deployment.yaml
+    â”œâ”€â”€ backend-service.yaml
+    â”œâ”€â”€ frontend-deployment.yaml
+    â”œâ”€â”€ frontend-service.yaml
+    â””â”€â”€ ingress.yaml
 ```
 
 ### 12.3 State Management
@@ -1237,33 +1237,33 @@ terraform {
 
 ```
 Application Containers:
-  ├── Backend (FastAPI)
-  │   ├── Base: python:3.10-slim
-  │   ├── Port: 8000
-  │   └── Health: /api/health
-  │
-  ├── Frontend (Next.js) — Optional
-  │   ├── Base: node:18-alpine
-  │   ├── Port: 3000
-  │   └── Note: Typically deployed via Vercel serverless
-  │
-  ├── Scheduler (APScheduler)
-  │   ├── Base: python:3.10-slim
-  │   └── Command: python main.py
-  │
-  └── Ollama (AI)
-      ├── Base: ollama/ollama:latest
-      ├── Port: 11434
-      └── Volume: model storage
+  â”œâ”€â”€ Backend (FastAPI)
+  â”‚   â”œâ”€â”€ Base: python:3.10-slim
+  â”‚   â”œâ”€â”€ Port: 8000
+  â”‚   â””â”€â”€ Health: /api/health
+  â”‚
+  â”œâ”€â”€ Frontend (Next.js) â€” Optional
+  â”‚   â”œâ”€â”€ Base: node:18-alpine
+  â”‚   â”œâ”€â”€ Port: 3000
+  â”‚   â””â”€â”€ Note: Typically deployed via Vercel serverless
+  â”‚
+  â”œâ”€â”€ Scheduler (APScheduler)
+  â”‚   â”œâ”€â”€ Base: python:3.10-slim
+  â”‚   â””â”€â”€ Command: python main.py
+  â”‚
+  â””â”€â”€ Ollama (AI)
+      â”œâ”€â”€ Base: ollama/ollama:latest
+      â”œâ”€â”€ Port: 11434
+      â””â”€â”€ Volume: model storage
 
 Supporting Containers (local dev):
-  └── Docker Compose orchestrates all services
+  â””â”€â”€ Docker Compose orchestrates all services
 ```
 
 ### 13.2 Image Optimization
 
 ```dockerfile
-# apps/api/Dockerfile — Multi-stage build
+# apps/api/Dockerfile â€” Multi-stage build
 
 # Stage 1: Dependencies
 FROM python:3.10-slim AS deps
@@ -1300,21 +1300,21 @@ CMD ["uvicorn", "apps.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ```
 Image Scanning:
-  └── Trivy / Grype scan in CI (planned)
-  └── Base image vulnerabilities checked weekly
+  â””â”€â”€ Trivy / Grype scan in CI (planned)
+  â””â”€â”€ Base image vulnerabilities checked weekly
 
 Image Hardening:
-  └── Non-root user in container
-  └── Minimal base image (slim variants)
-  └── No shell or package manager in runtime
-  └── Read-only root filesystem (where possible)
-  └── No sensitive data in image layers
+  â””â”€â”€ Non-root user in container
+  â””â”€â”€ Minimal base image (slim variants)
+  â””â”€â”€ No shell or package manager in runtime
+  â””â”€â”€ Read-only root filesystem (where possible)
+  â””â”€â”€ No sensitive data in image layers
 
 Runtime Security:
-  └── Resource limits (CPU, memory)
-  └── Read-only volumes for config
-  └── Seccomp profile (planned)
-  └── AppArmor profile (planned)
+  â””â”€â”€ Resource limits (CPU, memory)
+  â””â”€â”€ Read-only volumes for config
+  â””â”€â”€ Seccomp profile (planned)
+  â””â”€â”€ AppArmor profile (planned)
 ```
 
 ---
@@ -1324,26 +1324,26 @@ Runtime Security:
 ### 14.1 Migration Workflow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                   Migration Lifecycle                        │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  DEV ──────► STAGING ──────► PRODUCTION                     │
-│   │              │                │                          │
-│   ▼              ▼                ▼                          │
-│  ┌──────┐    ┌──────┐        ┌──────┐                       │
-│  │Apply │    │Apply │        │Apply │                       │
-│  │+ Test│    │+ Test│        │+ Test│                       │
-│  └──────┘    └──────┘        └──────┘                       │
-│                                                             │
-│  Requirements:                                              │
-│  ├── Every migration has a revert script                    │
-│  ├── Migrations are sequential (001, 002, ...)              │
-│  ├── Migrations are idempotent (IF NOT EXISTS)              │
-│  ├── Backward-compatible (old code works with new schema)   │
-│  └── Zero-downtime (no long-running locks)                  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   Migration Lifecycle                        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  DEV â”€â”€â”€â”€â”€â”€â–º STAGING â”€â”€â”€â”€â”€â”€â–º PRODUCTION                     â”‚
+â”‚   â”‚              â”‚                â”‚                          â”‚
+â”‚   â–¼              â–¼                â–¼                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”        â”Œâ”€â”€â”€â”€â”€â”€â”                       â”‚
+â”‚  â”‚Apply â”‚    â”‚Apply â”‚        â”‚Apply â”‚                       â”‚
+â”‚  â”‚+ Testâ”‚    â”‚+ Testâ”‚        â”‚+ Testâ”‚                       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”˜        â””â”€â”€â”€â”€â”€â”€â”˜                       â”‚
+â”‚                                                             â”‚
+â”‚  Requirements:                                              â”‚
+â”‚  â”œâ”€â”€ Every migration has a revert script                    â”‚
+â”‚  â”œâ”€â”€ Migrations are sequential (001, 002, ...)              â”‚
+â”‚  â”œâ”€â”€ Migrations are idempotent (IF NOT EXISTS)              â”‚
+â”‚  â”œâ”€â”€ Backward-compatible (old code works with new schema)   â”‚
+â”‚  â””â”€â”€ Zero-downtime (no long-running locks)                  â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 14.2 Migration Automation Script
@@ -1372,7 +1372,7 @@ apply_migration() {
     local file="$1"
     echo "Applying: $(basename "$file")"
     psql "$SUPABASE_URL" -f "$file"
-    echo "  ✓ Applied"
+    echo "  âœ“ Applied"
 }
 
 revert_migration() {
@@ -1384,7 +1384,7 @@ revert_migration() {
     fi
     echo "Reverting migration: $num"
     psql "$SUPABASE_URL" -f "$revert_file"
-    echo "  ✓ Reverted"
+    echo "  âœ“ Reverted"
 }
 
 show_status() {
@@ -1394,7 +1394,7 @@ show_status() {
         local num=$(echo "$basename" | cut -d'_' -f1)
         local applied=$(psql "$SUPABASE_URL" -t -c "SELECT EXISTS(SELECT 1 FROM _migrations WHERE version='$num');" 2>/dev/null || echo "f")
         if [ "$applied" = "t" ]; then
-            echo "  [✓] $basename"
+            echo "  [âœ“] $basename"
         else
             echo "  [ ] $basename"
         fi
@@ -1430,15 +1430,15 @@ esac
 ### 14.3 Database DevOps Checklist
 
 ```
-□ Migration files follow naming convention: {NNN}_{description}.sql
-□ Every migration has a revert script in migrations/revert/
-□ Migrations are tested against staging DB before production
-□ Migration tracking table (_migrations) exists in all environments
-□ Schema changes are backward-compatible for at least 1 release cycle
-□ Additive changes (new columns, new tables) preferred over destructive
-□ Column drops happen in a separate release after ensuring no references
-□ Long-running migrations are avoided (use batching for large tables)
-□ Database backups verified monthly with test restore
+â–¡ Migration files follow naming convention: {NNN}_{description}.sql
+â–¡ Every migration has a revert script in migrations/revert/
+â–¡ Migrations are tested against staging DB before production
+â–¡ Migration tracking table (_migrations) exists in all environments
+â–¡ Schema changes are backward-compatible for at least 1 release cycle
+â–¡ Additive changes (new columns, new tables) preferred over destructive
+â–¡ Column drops happen in a separate release after ensuring no references
+â–¡ Long-running migrations are avoided (use batching for large tables)
+â–¡ Database backups verified monthly with test restore
 ```
 
 ---
@@ -1555,31 +1555,31 @@ jobs:
 ### 16.2 Cost Optimization Strategy
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  Cost Optimization Levers                    │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. Right-sizing: Select appropriate instance tiers         │
-│     └── Starter tier sufficient for single-developer usage   │
-│                                                             │
-│  2. Autoscaling: Scale based on demand (planned)            │
-│     └── Railway + Kubernetes HPA                            │
-│                                                             │
-│  3. Caching: Reduce redundant computation                   │
-│     └── API response caching (in-memory TTL)                │
-│     └── AI response caching (planned)                       │
-│                                                             │
-│  4. AI cost control:                                        │
-│     └── Default to Ollama (local, free)                     │
-│     └── Claude fallback for complex requests only           │
-│     └── Token budget enforcement per prompt                 │
-│                                                             │
-│  5. Database optimization:                                  │
-│     └── Index frequently queried columns                    │
-│     └── Archive old data (planned)                         │
-│     └── Connection pooling                                  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                  Cost Optimization Levers                    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  1. Right-sizing: Select appropriate instance tiers         â”‚
+â”‚     â””â”€â”€ Starter tier sufficient for single-developer usage   â”‚
+â”‚                                                             â”‚
+â”‚  2. Autoscaling: Scale based on demand (planned)            â”‚
+â”‚     â””â”€â”€ Railway + Kubernetes HPA                            â”‚
+â”‚                                                             â”‚
+â”‚  3. Caching: Reduce redundant computation                   â”‚
+â”‚     â””â”€â”€ API response caching (in-memory TTL)                â”‚
+â”‚     â””â”€â”€ AI response caching (planned)                       â”‚
+â”‚                                                             â”‚
+â”‚  4. AI cost control:                                        â”‚
+â”‚     â””â”€â”€ Default to Ollama (local, free)                     â”‚
+â”‚     â””â”€â”€ Claude fallback for complex requests only           â”‚
+â”‚     â””â”€â”€ Token budget enforcement per prompt                 â”‚
+â”‚                                                             â”‚
+â”‚  5. Database optimization:                                  â”‚
+â”‚     â””â”€â”€ Index frequently queried columns                    â”‚
+â”‚     â””â”€â”€ Archive old data (planned)                         â”‚
+â”‚     â””â”€â”€ Connection pooling                                  â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 16.3 Cost Monitoring
@@ -1810,7 +1810,7 @@ Q2 2027:
 set -euo pipefail
 
 echo "=========================================="
-echo "  Setting up Second Brain OS — Dev"
+echo "  Setting up Second Brain OS â€” Dev"
 echo "=========================================="
 
 # Check prerequisites
@@ -1826,7 +1826,7 @@ fi
 # Set up environment file
 if [ ! -f .env.local ]; then
     cp .env.example .env.local
-    echo "  Created .env.local — edit with your values"
+    echo "  Created .env.local â€” edit with your values"
 fi
 
 # Install frontend
@@ -1868,36 +1868,36 @@ echo "=========================================="
 ### 20.1 DevOps Culture Principles
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  DevOps Team Culture                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. Shared Ownership                                        │
-│     ├── Everyone is responsible for quality, security, ops  │
-│     └── No "throw over the wall" mentality                  │
-│                                                             │
-│  2. Blameless Post-Mortems                                  │
-│     ├── Incidents are system failures, not people failures  │
-│     └── Focus on learning and improvement                   │
-│                                                             │
-│  3. Continuous Improvement                                  │
-│     ├── Regular retrospectives (every 2 weeks)              │
-│     ├── Experiment with new tools and processes             │
-│     └── Measure what matters and act on data                │
-│                                                             │
-│  4. Automate Everything                                      │
-│     ├── If you do it twice, automate it                     │
-│     └── Manual processes are sources of error               │
-│                                                             │
-│  5. Observability by Default                                 │
-│     ├── Every service exposes health + metrics + logs       │
-│     └── Dashboards before, not after, deployment            │
-│                                                             │
-│  6. Security is Everyone's Job                               │
-│     ├── Security checks in every stage of pipeline          │
-│     └── No security decisions made in isolation             │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                  DevOps Team Culture                         â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  1. Shared Ownership                                        â”‚
+â”‚     â”œâ”€â”€ Everyone is responsible for quality, security, ops  â”‚
+â”‚     â””â”€â”€ No "throw over the wall" mentality                  â”‚
+â”‚                                                             â”‚
+â”‚  2. Blameless Post-Mortems                                  â”‚
+â”‚     â”œâ”€â”€ Incidents are system failures, not people failures  â”‚
+â”‚     â””â”€â”€ Focus on learning and improvement                   â”‚
+â”‚                                                             â”‚
+â”‚  3. Continuous Improvement                                  â”‚
+â”‚     â”œâ”€â”€ Regular retrospectives (every 2 weeks)              â”‚
+â”‚     â”œâ”€â”€ Experiment with new tools and processes             â”‚
+â”‚     â””â”€â”€ Measure what matters and act on data                â”‚
+â”‚                                                             â”‚
+â”‚  4. Automate Everything                                      â”‚
+â”‚     â”œâ”€â”€ If you do it twice, automate it                     â”‚
+â”‚     â””â”€â”€ Manual processes are sources of error               â”‚
+â”‚                                                             â”‚
+â”‚  5. Observability by Default                                 â”‚
+â”‚     â”œâ”€â”€ Every service exposes health + metrics + logs       â”‚
+â”‚     â””â”€â”€ Dashboards before, not after, deployment            â”‚
+â”‚                                                             â”‚
+â”‚  6. Security is Everyone's Job                               â”‚
+â”‚     â”œâ”€â”€ Security checks in every stage of pipeline          â”‚
+â”‚     â””â”€â”€ No security decisions made in isolation             â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 20.2 DevOps Ceremonies
