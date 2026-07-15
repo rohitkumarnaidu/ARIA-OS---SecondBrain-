@@ -357,17 +357,17 @@ export default function AcademicsPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Name <span className="text-accent-error">*</span></label>
-                  <input type="text" value={newSubject.name} onChange={e => setNewSubject({ ...newSubject, name: e.target.value })} className="input" placeholder="e.g., Data Structures" />
+                  <label htmlFor="academics-subject-name" className="block text-sm font-medium text-text-primary mb-2">Name <span className="text-accent-error">*</span></label>
+                  <input id="academics-subject-name" type="text" value={newSubject.name} onChange={e => setNewSubject({ ...newSubject, name: e.target.value })} className="input" placeholder="e.g., Data Structures" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Code</label>
-                    <input type="text" value={newSubject.code} onChange={e => setNewSubject({ ...newSubject, code: e.target.value })} className="input" placeholder="CS201" />
+                    <label htmlFor="academics-subject-code" className="block text-sm font-medium text-text-primary mb-2">Code</label>
+                    <input id="academics-subject-code" type="text" value={newSubject.code} onChange={e => setNewSubject({ ...newSubject, code: e.target.value })} className="input" placeholder="CS201" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Credits</label>
-                    <input type="number" value={newSubject.credits} onChange={e => setNewSubject({ ...newSubject, credits: parseInt(e.target.value) || 3 })} className="input" min={1} />
+                    <label htmlFor="academics-subject-credits" className="block text-sm font-medium text-text-primary mb-2">Credits</label>
+                    <input id="academics-subject-credits" type="number" value={newSubject.credits} onChange={e => setNewSubject({ ...newSubject, credits: parseInt(e.target.value) || 3 })} className="input" min={1} />
                   </div>
                 </div>
               </div>
@@ -405,15 +405,15 @@ export default function AcademicsPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Subject</label>
-                  <select value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="input">
+                  <label htmlFor="academics-mark-subject" className="block text-sm font-medium text-text-primary mb-2">Subject</label>
+                  <select id="academics-mark-subject" value={selectedSubject} onChange={e => setSelectedSubject(e.target.value)} className="input">
                     {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Type</label>
-                    <select value={newMark.exam_type} onChange={e => setNewMark({ ...newMark, exam_type: e.target.value })} className="input">
+                    <label htmlFor="academics-mark-type" className="block text-sm font-medium text-text-primary mb-2">Type</label>
+                    <select id="academics-mark-type" value={newMark.exam_type} onChange={e => setNewMark({ ...newMark, exam_type: e.target.value })} className="input">
                       <option value="assignment">Assignment</option>
                       <option value="midterm">Midterm</option>
                       <option value="final">Final</option>
@@ -421,12 +421,12 @@ export default function AcademicsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Marks</label>
-                    <input type="number" value={newMark.marks_obtained} onChange={e => setNewMark({ ...newMark, marks_obtained: parseFloat(e.target.value) || 0 })} className="input" />
+                    <label htmlFor="academics-mark-obtained" className="block text-sm font-medium text-text-primary mb-2">Marks</label>
+                    <input id="academics-mark-obtained" type="number" value={newMark.marks_obtained} onChange={e => setNewMark({ ...newMark, marks_obtained: parseFloat(e.target.value) || 0 })} className="input" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Max</label>
-                    <input type="number" value={newMark.max_marks} onChange={e => setNewMark({ ...newMark, max_marks: parseFloat(e.target.value) || 100 })} className="input" />
+                    <label htmlFor="academics-mark-max" className="block text-sm font-medium text-text-primary mb-2">Max</label>
+                    <input id="academics-mark-max" type="number" value={newMark.max_marks} onChange={e => setNewMark({ ...newMark, max_marks: parseFloat(e.target.value) || 100 })} className="input" />
                   </div>
                 </div>
               </div>
