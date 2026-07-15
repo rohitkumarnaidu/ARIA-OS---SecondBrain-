@@ -106,6 +106,7 @@ def mock_supabase(mocker):
 
     for mod in _AGENT_MODULES:
         mocker.patch(f"{mod}.get_supabase_client", return_value=client)
+    mocker.patch("shared.utils.upsert.get_supabase_client", return_value=client)
     return client
 
 
@@ -1939,7 +1940,7 @@ class TestSkillAgent:
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}])
         mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}])
         mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[])
-        from ai.agents.skill_agent import assess_user_skill, algorithmic_fallback_assessment
+        from ai.agents.skill_agent import assess_user_skill
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await assess_user_skill("us1", "user-1")
         assert result.get("gap_analysis") is not None
