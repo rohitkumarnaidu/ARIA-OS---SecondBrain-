@@ -1,9 +1,5 @@
 """Tests for scripts/validate_skills_schema.py — schema validator."""
 
-import sys
-from pathlib import Path
-from unittest.mock import patch, MagicMock, mock_open
-import pytest
 
 
 class TestSchemaValidator:
