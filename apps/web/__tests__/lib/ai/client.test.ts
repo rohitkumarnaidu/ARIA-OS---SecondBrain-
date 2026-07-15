@@ -134,7 +134,7 @@ describe('AIStreamClient', () => {
 
     await client.sendMessage('hello', 'thread-123', onChunk, onDone, onError)
     const parsed = JSON.parse(capturedBody)
-    expect(parsed.thread_id).toBe('thread-123')
+    expect(parsed.conversation_id).toBe('thread-123')
     expect(parsed.message).toBe('hello')
   })
 
