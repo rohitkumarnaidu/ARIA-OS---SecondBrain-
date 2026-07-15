@@ -1,4 +1,13 @@
-# Part V — Notifications Experience
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF05-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part V â€” Notifications Experience
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
 > Related: `NotificationSystem.md` (backend delivery, 25+ types), `InformationArchitecture.md` (notification IA), `09-Settings.md` (notification settings).
@@ -31,29 +40,29 @@ flowchart TD
 ### Notification Dropdown Layout
 
 ```
-┌──────────────────────────────────────────────┐
-│  Notifications                    [Mark read] │
-│  ┌─────┬──────┬──────┬──────┐                │
-│  │ All │ Unread│ AI   │System│                │
-│  │     │ (5)  │      │      │                │
-│  └─────┴──────┴──────┴──────┘                │
-│                                              │
-│  TODAY                                       │
-│  ┌────────────────────────────────────────┐  │
-│  │ 🔵 🔥 Google STEP — 92% match!        │  │
-│  │    2m ago · @opportunity_agent          │  │
-│  └────────────────────────────────────────┘  │
-│  ┌────────────────────────────────────────┐  │
-│  │ ⚪ 📋 Task: Submit DBMS assignment     │  │
-│  │    15m ago · Due in 2h                  │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  YESTERDAY                                   │
-│  ┌────────────────────────────────────────┐  │
-│  │ ⚪ 📊 Weekly review is ready            │  │
-│  │    8h ago · @weekly_review_agent        │  │
-│  └────────────────────────────────────────┘  │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Notifications                    [Mark read] â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”                â”‚
+â”‚  â”‚ All â”‚ Unreadâ”‚ AI   â”‚Systemâ”‚                â”‚
+â”‚  â”‚     â”‚ (5)  â”‚      â”‚      â”‚                â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”˜                â”‚
+â”‚                                              â”‚
+â”‚  TODAY                                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ”µ ðŸ”¥ Google STEP â€” 92% match!        â”‚  â”‚
+â”‚  â”‚    2m ago Â· @opportunity_agent          â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ âšª ðŸ“‹ Task: Submit DBMS assignment     â”‚  â”‚
+â”‚  â”‚    15m ago Â· Due in 2h                  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  YESTERDAY                                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ âšª ðŸ“Š Weekly review is ready            â”‚  â”‚
+â”‚  â”‚    8h ago Â· @weekly_review_agent        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -72,7 +81,7 @@ flowchart TD
 | Type | Trigger | Message | Action |
 |---|---|---|---|
 | Sync Conflict | Data conflict on sync | "Changes conflict with another device" | Review / Keep theirs / Keep mine |
-| Storage Warning | 80% storage used | "Storage almost full" | Open Settings → Data |
+| Storage Warning | 80% storage used | "Storage almost full" | Open Settings â†’ Data |
 | Auth Expired | Token expired | "Session expired" | Re-authenticate |
 | Version Update | New feature available | "New update available" | View changelog |
 | Backup Complete | Automated backup | "Backup complete" | View backup |
@@ -106,10 +115,10 @@ flowchart TD
 
 | Type | Score | Message | Action |
 |---|---|---|---|
-| Hot Match | > 80% | "🔥 Google STEP internship — 92% match!" | View → Apply |
+| Hot Match | > 80% | "ðŸ”¥ Google STEP internship â€” 92% match!" | View â†’ Apply |
 | Warm Match | 60-80% | "New hackathon matching your skills" | View |
 | Cool Match | < 60% | "1 new opportunity in your area" | View |
-| Application Update | Any | "Application status → Interviewing" | View |
+| Application Update | Any | "Application status â†’ Interviewing" | View |
 | Deadline Approaching | Any | "Application deadline in 3 days" | View |
 
 ### 5.4 Project Notifications
@@ -122,7 +131,7 @@ flowchart TD
 
 | Type | Trigger | Message | Action |
 |---|---|---|---|
-| Blocker Detected | Project blocker logged | "Blocker on ML Project" | View → Resolve |
+| Blocker Detected | Project blocker logged | "Blocker on ML Project" | View â†’ Resolve |
 | Milestone Due | Milestone due in 3 days | "Milestone due in 3 days" | View |
 | Phase Complete | Phase marked complete | "Phase 2 complete!" | View summary |
 | New Suggestion | AI finds resource | "Found tutorial for your project" | View resource |
@@ -137,10 +146,10 @@ flowchart TD
 
 | Type | Trigger | Message | Action |
 |---|---|---|---|
-| Course at Risk | Progress < 50% at 75% time | "NPTEL ML is behind schedule" | View → Adjust |
+| Course at Risk | Progress < 50% at 75% time | "NPTEL ML is behind schedule" | View â†’ Adjust |
 | Daily Study Time | 6 PM daily | "Time for your daily study session" | View course |
-| Streak Milestone | 7-day study streak | "7-day study streak! 🔥" | Celebrate |
-| Course Complete | 100% progress | "NPTEL ML complete!" | View → Next |
+| Streak Milestone | 7-day study streak | "7-day study streak! ðŸ”¥" | Celebrate |
+| Course Complete | 100% progress | "NPTEL ML complete!" | View â†’ Next |
 | Gap Detected | Skill gap identified | "You're missing [skill] for [goal]" | View roadmap |
 
 ### 5.6 Success Notifications
@@ -156,9 +165,9 @@ flowchart TD
 |---|---|---|
 | Task Created | Task saved | "Task created" |
 | Goal Milestone | Milestone reached | "Milestone: [name] reached!" |
-| Habit Streak | 30-day streak | "30-day habit streak! 🔥" |
-| Income Logged | Income recorded | "Income logged: ₹X,XXX" |
-| Project Complete | Project archived | "Project [name] complete! 🎉" |
+| Habit Streak | 30-day streak | "30-day habit streak! ðŸ”¥" |
+| Income Logged | Income recorded | "Income logged: â‚¹X,XXX" |
+| Project Complete | Project archived | "Project [name] complete! ðŸŽ‰" |
 | Data Synced | Background sync | "All changes synced" |
 
 ### 5.7 Warning Notifications
@@ -200,11 +209,11 @@ flowchart TD
 
 | State | Icon | Treatment |
 |---|---|---|
-| **Unread** | 🔵 (blue dot) | Bold title + full color |
-| **Read** | ⚪ (gray dot) | Normal weight + dimmed text |
-| **Grouped** | 🔵 (count badge) | "3 new opportunities" summary |
-| **Expired** | ⌛ (clock) | Grayed + faded (after 7 days) |
-| **Dismissed** | — | Slide-out animation + undo toast (5s) |
-| **Snoozed** | 🔔 (bell off) | Clock icon + "Resume at [time]" |
-| **Actioned** | ✅ (check) | Green check + action timestamp |
-| **Failed** | ❌ (error) | Red warning + retry button |
+| **Unread** | ðŸ”µ (blue dot) | Bold title + full color |
+| **Read** | âšª (gray dot) | Normal weight + dimmed text |
+| **Grouped** | ðŸ”µ (count badge) | "3 new opportunities" summary |
+| **Expired** | âŒ› (clock) | Grayed + faded (after 7 days) |
+| **Dismissed** | â€” | Slide-out animation + undo toast (5s) |
+| **Snoozed** | ðŸ”” (bell off) | Clock icon + "Resume at [time]" |
+| **Actioned** | âœ… (check) | Green check + action timestamp |
+| **Failed** | âŒ (error) | Red warning + retry button |

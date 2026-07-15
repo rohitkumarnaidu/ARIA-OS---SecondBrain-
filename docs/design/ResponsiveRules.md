@@ -1,10 +1,10 @@
-# Responsive Design Rules — Second Brain OS (ARIA)
+﻿# Responsive Design Rules â€” Second Brain OS (ARIA)
 
-> **Document ID:** SB-RESP-001  
+> **Document ID:DSG-RSP-001 SB-RESP-001  
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Engineering & Design  
+> **Classification:** Internal â€” Engineering & Design  
 > **Owner:** Frontend Engineering Team
 
 ---
@@ -56,14 +56,14 @@ graph TD
 
 ### 1.1 Core Principles
 
-ARIA OS is designed **mobile-first** in spirit but **desktop-primary** in practice — recognizing that its core audience (BTech CSE students) spends most of their time on laptops but needs mobile access between classes, during commutes, and late-night study sessions.
+ARIA OS is designed **mobile-first** in spirit but **desktop-primary** in practice â€” recognizing that its core audience (BTech CSE students) spends most of their time on laptops but needs mobile access between classes, during commutes, and late-night study sessions.
 
 | Principle | Definition | Impact |
 |---|---|---|
 | **Content-first, chrome-second** | Navigation and chrome recede on smaller screens; content takes priority | Bottom nav replaces sidebar on mobile; full-screen modals on mobile |
 | **Progressive enhancement** | Start with the essential mobile layout, add features and density as viewport grows | Mobile gets core CRUD; desktop gets advanced filtering, drag-reorder, multi-select |
-| **One codebase, three experiences** | Same React components, different layout compositions per breakpoint group | No separate mobile/desktop code paths — CSS and layout props handle adaptation |
-| **Touch-first mobile, precision desktop** | Touch targets ≥44px on mobile; keyboard shortcuts + hover states on desktop | Buttons grow on mobile; tooltips work on desktop hover |
+| **One codebase, three experiences** | Same React components, different layout compositions per breakpoint group | No separate mobile/desktop code paths â€” CSS and layout props handle adaptation |
+| **Touch-first mobile, precision desktop** | Touch targets â‰¥44px on mobile; keyboard shortcuts + hover states on desktop | Buttons grow on mobile; tooltips work on desktop hover |
 | **Performance parity** | Mobile gets optimized bundles, reduced animations, and data-efficient rendering | Dynamic imports, reduced motion, paginated lists on mobile |
 
 ### 1.2 Design Approach
@@ -75,7 +75,7 @@ ARIA OS is designed **mobile-first** in spirit but **desktop-primary** in practi
 function useBreakpoint() {
   // Returns 'mobile' | 'tablet' | 'desktop' | 'wide'
   // Used for fundamentally different layout components
-  // NOT for visibility — use Tailwind responsive classes for show/hide
+  // NOT for visibility â€” use Tailwind responsive classes for show/hide
 }
 
 // CSS prefers media queries for layout, container queries for component adaptation
@@ -162,12 +162,12 @@ module.exports = {
 ### 3.1 CSS Grid Breakpoint Behavior
 
 ```css
-/* Base page layout — 3 zones */
+/* Base page layout â€” 3 zones */
 .page-layout {
   display: grid;
   grid-template-rows: auto 1fr auto;  /* header, main, bottom-nav (mobile only) */
   min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport height — handles mobile browser chrome */
+  min-height: 100dvh; /* Dynamic viewport height â€” handles mobile browser chrome */
 }
 
 /* Desktop: sidebar + main content */
@@ -256,7 +256,7 @@ module.exports = {
 
 ```css
 /* Component-level responsive behavior based on available width */
-/* Requires @container support — use with @tailwindcss/container-queries */
+/* Requires @container support â€” use with @tailwindcss/container-queries */
 
 .task-card {
   container-type: inline-size;
@@ -359,7 +359,7 @@ module.exports = {
 ### 4.3 Bottom Navigation Bar
 
 ```typescript
-// Mobile bottom navigation — always visible on mobile and tablet portrait
+// Mobile bottom navigation â€” always visible on mobile and tablet portrait
 // Contains: Dashboard, Tasks, Habits, Courses, More (overflow menu)
 
 const BOTTOM_NAV_ITEMS = [
@@ -474,7 +474,7 @@ Each dashboard section has a defined `grid-area` and responds differently to bre
 | Section | Priority | Mobile Behavior | Desktop Behavior |
 |---|---|---|---|
 | **Greeting** | Always visible | Compact: "Hey [Name]" + date | Full: "Good morning, [Name]. Here's your day." + weather/quote |
-| **Quick Stats** | Always visible | 2×2 grid of metrics (tasks due, streak, score, courses) | 4-in-a-row metrics with labels |
+| **Quick Stats** | Always visible | 2Ã—2 grid of metrics (tasks due, streak, score, courses) | 4-in-a-row metrics with labels |
 | **Tasks Today** | High | 3 tasks, no actions beyond checkbox | 5+ tasks with priority, drag, quick-actions |
 | **Habit Streak** | Medium | Compact: 7-day mini-calendar | Full: 30-day streak calendar with stats |
 | **Focus Score** | Medium | Single number + trend arrow | Full chart + comparison to average |
@@ -555,17 +555,17 @@ All type sizes use `clamp()` for smooth scaling across breakpoints. This elimina
 
 ```css
 :root {
-  /* Fluid type scale — mobile to desktop */
-  --fs-display-xl: clamp(2rem, 5vw + 0.5rem, 3rem);       /* 32px → 48px */
-  --fs-display-l:  clamp(1.75rem, 4vw + 0.5rem, 2.5rem);  /* 28px → 40px */
-  --fs-display-m:  clamp(1.5rem, 3vw + 0.5rem, 2rem);     /* 24px → 32px */
-  --fs-heading-l:  clamp(1.25rem, 2vw + 0.5rem, 1.5rem);  /* 20px → 24px */
-  --fs-heading-m:  clamp(1.125rem, 1.5vw + 0.25rem, 1.25rem); /* 18px → 20px */
-  --fs-heading-s:  clamp(1rem, 1vw + 0.25rem, 1.125rem);  /* 16px → 18px */
-  --fs-body-l:     clamp(0.9375rem, 0.5vw + 0.75rem, 1rem); /* 15px → 16px */
-  --fs-body-m:     clamp(0.8125rem, 0.25vw + 0.75rem, 0.875rem); /* 13px → 14px */
-  --fs-body-s:     clamp(0.75rem, 0.25vw + 0.625rem, 0.8125rem); /* 12px → 13px */
-  --fs-code:       clamp(0.75rem, 0.25vw + 0.625rem, 0.8125rem); /* 12px → 13px */
+  /* Fluid type scale â€” mobile to desktop */
+  --fs-display-xl: clamp(2rem, 5vw + 0.5rem, 3rem);       /* 32px â†’ 48px */
+  --fs-display-l:  clamp(1.75rem, 4vw + 0.5rem, 2.5rem);  /* 28px â†’ 40px */
+  --fs-display-m:  clamp(1.5rem, 3vw + 0.5rem, 2rem);     /* 24px â†’ 32px */
+  --fs-heading-l:  clamp(1.25rem, 2vw + 0.5rem, 1.5rem);  /* 20px â†’ 24px */
+  --fs-heading-m:  clamp(1.125rem, 1.5vw + 0.25rem, 1.25rem); /* 18px â†’ 20px */
+  --fs-heading-s:  clamp(1rem, 1vw + 0.25rem, 1.125rem);  /* 16px â†’ 18px */
+  --fs-body-l:     clamp(0.9375rem, 0.5vw + 0.75rem, 1rem); /* 15px â†’ 16px */
+  --fs-body-m:     clamp(0.8125rem, 0.25vw + 0.75rem, 0.875rem); /* 13px â†’ 14px */
+  --fs-body-s:     clamp(0.75rem, 0.25vw + 0.625rem, 0.8125rem); /* 12px â†’ 13px */
+  --fs-code:       clamp(0.75rem, 0.25vw + 0.625rem, 0.8125rem); /* 12px â†’ 13px */
 }
 
 /* No breakpoint-specific overrides needed for most text */
@@ -601,7 +601,7 @@ All type sizes use `clamp()` for smooth scaling across breakpoints. This elimina
 
 ```css
 /* When users increase system font size on mobile, respect it */
-/* Never set font-size in px for body text — use rem or clamp */
+/* Never set font-size in px for body text â€” use rem or clamp */
 
 html {
   font-size: 100%; /* Respects browser/OS base font size */
@@ -626,15 +626,15 @@ html {
 | Element | Mobile (320-639px) | Tablet (640-1023px) | Desktop (1024px+) |
 |---|---|---|---|
 | Primary buttons | 48px height | 44px height | 40px height |
-| Icon buttons | 44×44px hit area | 40×40px hit area | 36×36px hit area |
-| Navigation items | 48×48px (bottom nav) | 64×64px (sidebar icons) | 40px (vertical) |
+| Icon buttons | 44Ã—44px hit area | 40Ã—40px hit area | 36Ã—36px hit area |
+| Navigation items | 48Ã—48px (bottom nav) | 64Ã—64px (sidebar icons) | 40px (vertical) |
 | Form inputs | 48px height | 44px height | 40px height |
-| Checkboxes / Radios | 24×24px | 20×20px | 18×18px |
-| Toggle switches | 48×24px | 44×22px | 40×20px |
+| Checkboxes / Radios | 24Ã—24px | 20Ã—20px | 18Ã—18px |
+| Toggle switches | 48Ã—24px | 44Ã—22px | 40Ã—20px |
 | Link targets | 44px min height (with padding) | 40px | Natural (text height) |
 | Filter chips | 32px height | 32px height | 28px height |
-| Slider handles | 44×44px hit area | 40×40px hit area | 24×24px + padding |
-| Bottom sheet handle | 32×4px (visual), 44px touch | 32×4px | N/A |
+| Slider handles | 44Ã—44px hit area | 40Ã—40px hit area | 24Ã—24px + padding |
+| Bottom sheet handle | 32Ã—4px (visual), 44px touch | 32Ã—4px | N/A |
 
 ### 8.2 Spacing Between Touch Targets
 
@@ -698,10 +698,10 @@ Every piece of UI content is assigned a priority level that determines its visib
 
 | Priority | Label | Mobile | Tablet | Desktop | Wide |
 |---|---|---|---|---|---|
-| **P0 — Critical** | Always visible | ✅ | ✅ | ✅ | ✅ |
-| **P1 — Important** | Visible on tablet+ | ❌ | ✅ | ✅ | ✅ |
-| **P2 — Standard** | Visible on desktop+ | ❌ | ❌ | ✅ | ✅ |
-| **P3 — Extra** | Visible only on wide | ❌ | ❌ | ❌ | ✅ |
+| **P0 â€” Critical** | Always visible | âœ… | âœ… | âœ… | âœ… |
+| **P1 â€” Important** | Visible on tablet+ | âŒ | âœ… | âœ… | âœ… |
+| **P2 â€” Standard** | Visible on desktop+ | âŒ | âŒ | âœ… | âœ… |
+| **P3 â€” Extra** | Visible only on wide | âŒ | âŒ | âŒ | âœ… |
 
 ### 9.2 Priority Assignment by Module
 
@@ -727,19 +727,19 @@ Every piece of UI content is assigned a priority level that determines its visib
 function PrioritizedContent({ item }: Props) {
   return (
     <div className="card">
-      {/* P0 — Always visible */}
+      {/* P0 â€” Always visible */}
       <h3 className="card-title">{item.title}</h3>
 
-      {/* P1 — Hidden on mobile */}
+      {/* P1 â€” Hidden on mobile */}
       <p className="hidden tablet:block">{item.description}</p>
 
-      {/* P2 — Hidden on mobile + tablet */}
+      {/* P2 â€” Hidden on mobile + tablet */}
       <div className="hidden desktop:flex">
         <PriorityBadge priority={item.priority} />
         <DueDate date={item.dueDate} />
       </div>
 
-      {/* P3 — Wide only */}
+      {/* P3 â€” Wide only */}
       <div className="hidden wide:block">
         <MetadataSection item={item} />
       </div>
@@ -766,7 +766,7 @@ function PrioritizedContent({ item }: Props) {
 
 ```css
 /* Tailwind responsive prefixes used for show/hide */
-/* Standard Tailwind approach — no custom classes needed for basic visibility */
+/* Standard Tailwind approach â€” no custom classes needed for basic visibility */
 
 /* Hide on mobile, show on tablet+ */
 .hidden-mobile { display: none; }
@@ -787,18 +787,18 @@ function PrioritizedContent({ item }: Props) {
 
 | Element | Mobile | Tablet | Desktop | Wide |
 |---|---|---|---|---|
-| Bottom navigation | ✅ | ✅ (portrait only) | ❌ | ❌ |
-| Desktop sidebar (expanded) | ❌ | ❌ | ✅ | ✅ |
-| Desktop sidebar (collapsed) | ❌ | ✅ | Optional | ❌ |
-| Dashboard greeting full | ❌ | ❌ | ✅ | ✅ |
-| Dashboard greeting compact | ✅ | ✅ | ❌ | ❌ |
-| Page breadcrumbs | ❌ | ❌ | ✅ | ✅ |
-| Table of contents | ❌ | ❌ | ✅ | ✅ |
-| Floating action button | ✅ | ✅ | ❌ | ❌ |
-| Quick search (Ctrl+K) | ❌ (button instead) | ❌ | ✅ | ✅ |
+| Bottom navigation | âœ… | âœ… (portrait only) | âŒ | âŒ |
+| Desktop sidebar (expanded) | âŒ | âŒ | âœ… | âœ… |
+| Desktop sidebar (collapsed) | âŒ | âœ… | Optional | âŒ |
+| Dashboard greeting full | âŒ | âŒ | âœ… | âœ… |
+| Dashboard greeting compact | âœ… | âœ… | âŒ | âŒ |
+| Page breadcrumbs | âŒ | âŒ | âœ… | âœ… |
+| Table of contents | âŒ | âŒ | âœ… | âœ… |
+| Floating action button | âœ… | âœ… | âŒ | âŒ |
+| Quick search (Ctrl+K) | âŒ (button instead) | âŒ | âœ… | âœ… |
 | Module-specific filters | In modal/overlay | In sidebar | Inline | Inline |
-| Data export buttons | ❌ | ❌ | ✅ | ✅ |
-| Drag handle (reorder) | ❌ (long-press instead) | ❌ | ✅ | ✅ |
+| Data export buttons | âŒ | âŒ | âœ… | âœ… |
+| Drag handle (reorder) | âŒ (long-press instead) | âŒ | âœ… | âœ… |
 
 ### 10.3 Content Toggle Patterns
 
@@ -846,10 +846,10 @@ function FilterPanel() {
 
 | Method | Mobile | Tablet | Desktop | Wide |
 |---|---|---|---|---|
-| **Horizontal scroll** | ✅ (with sticky first column) | ✅ | ❌ (fits) | ❌ |
-| **Collapsible rows** | ❌ | ✅ (alternative) | ❌ | ❌ |
-| **Card view** | ✅ (primary) | ❌ | ❌ | ❌ |
-| **Full table** | ❌ | ❌ | ✅ | ✅ |
+| **Horizontal scroll** | âœ… (with sticky first column) | âœ… | âŒ (fits) | âŒ |
+| **Collapsible rows** | âŒ | âœ… (alternative) | âŒ | âŒ |
+| **Card view** | âœ… (primary) | âŒ | âŒ | âŒ |
+| **Full table** | âŒ | âŒ | âœ… | âœ… |
 
 ### 11.2 Card View (Mobile)
 
@@ -909,16 +909,16 @@ function ResponsiveTable({ data, columns }) {
 
 | Column | Priority | Mobile (card) | Tablet (scroll) | Desktop (full) |
 |---|---|---|---|---|
-| Name / Title | P0 | ✅ Card header | ✅ Sticky first col | ✅ |
-| Status | P0 | ✅ Badge | ✅ | ✅ |
-| Priority | P1 | ✅ Detail row | ✅ | ✅ |
-| Due date | P1 | ✅ Detail row | ✅ | ✅ |
-| Category / Tags | P2 | ❌ | ✅ | ✅ |
-| Assigned to | P2 | ❌ | ✅ | ✅ |
-| Created date | P3 | ❌ | ❌ | ✅ |
-| Last modified | P3 | ❌ | ❌ | ✅ |
-| Progress % | P2 | ❌ (visual bar) | ✅ | ✅ |
-| Actions | P0 | ✅ Card footer | ✅ Last col | ✅ Last col |
+| Name / Title | P0 | âœ… Card header | âœ… Sticky first col | âœ… |
+| Status | P0 | âœ… Badge | âœ… | âœ… |
+| Priority | P1 | âœ… Detail row | âœ… | âœ… |
+| Due date | P1 | âœ… Detail row | âœ… | âœ… |
+| Category / Tags | P2 | âŒ | âœ… | âœ… |
+| Assigned to | P2 | âŒ | âœ… | âœ… |
+| Created date | P3 | âŒ | âŒ | âœ… |
+| Last modified | P3 | âŒ | âŒ | âœ… |
+| Progress % | P2 | âŒ (visual bar) | âœ… | âœ… |
+| Actions | P0 | âœ… Card footer | âœ… Last col | âœ… Last col |
 
 ### 11.4 Scrollable Table Pattern
 
@@ -1034,7 +1034,7 @@ function ResponsiveTable({ data, columns }) {
 
 ```typescript
 // On mobile, field groups that are side-by-side on desktop stack vertically
-// E.g., "First Name" + "Last Name" → two lines on mobile, one row on desktop
+// E.g., "First Name" + "Last Name" â†’ two lines on mobile, one row on desktop
 
 <fieldset className="form-group">
   <div className="form-field">
@@ -1091,7 +1091,7 @@ function ResponsiveModal({ isOpen, onClose, children }) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop — same on all breakpoints */}
+          {/* Backdrop â€” same on all breakpoints */}
           <motion.div
             className="modal-backdrop"
             initial={{ opacity: 0 }}
@@ -1154,17 +1154,17 @@ function ResponsiveModal({ isOpen, onClose, children }) {
 
 | Device Category | Device | OS | Screen | Browser | Orientation |
 |---|---|---|---|---|---|
-| **Small phone** | iPhone SE (3rd gen) | iOS 18 | 375×667px | Safari, Chrome | Portrait / Landscape |
-| **Standard phone** | iPhone 15 | iOS 18 | 393×852px | Safari, Chrome | Portrait / Landscape |
-| **Large phone** | iPhone 15 Pro Max | iOS 18 | 430×932px | Safari, Chrome | Portrait / Landscape |
-| **Small Android** | Google Pixel 6a | Android 14 | 412×915px | Chrome, Firefox | Portrait / Landscape |
-| **Large Android** | Samsung Galaxy S24+ | Android 14 | 412×896px | Chrome, Samsung Internet | Portrait / Landscape |
-| **Foldable** | Samsung Galaxy Z Fold 5 | Android 14 | 904×1812px (unfolded) | Chrome | Portrait / Landscape |
-| **Small tablet** | iPad Mini (6th gen) | iPadOS 18 | 744×1133px | Safari | Portrait / Landscape |
-| **Large tablet** | iPad Air (M2) | iPadOS 18 | 820×1180px | Safari, Chrome | Portrait / Landscape |
-| **Small laptop** | MacBook Air 13" | macOS 15 | 1280×832px | Safari, Chrome, Firefox | Landscape |
-| **Standard laptop** | MacBook Pro 14" | macOS 15 | 1512×982px | Safari, Chrome, Firefox | Landscape |
-| **External display** | 27" monitor | macOS / Windows | 2560×1440px | Chrome, Firefox, Edge | Landscape |
+| **Small phone** | iPhone SE (3rd gen) | iOS 18 | 375Ã—667px | Safari, Chrome | Portrait / Landscape |
+| **Standard phone** | iPhone 15 | iOS 18 | 393Ã—852px | Safari, Chrome | Portrait / Landscape |
+| **Large phone** | iPhone 15 Pro Max | iOS 18 | 430Ã—932px | Safari, Chrome | Portrait / Landscape |
+| **Small Android** | Google Pixel 6a | Android 14 | 412Ã—915px | Chrome, Firefox | Portrait / Landscape |
+| **Large Android** | Samsung Galaxy S24+ | Android 14 | 412Ã—896px | Chrome, Samsung Internet | Portrait / Landscape |
+| **Foldable** | Samsung Galaxy Z Fold 5 | Android 14 | 904Ã—1812px (unfolded) | Chrome | Portrait / Landscape |
+| **Small tablet** | iPad Mini (6th gen) | iPadOS 18 | 744Ã—1133px | Safari | Portrait / Landscape |
+| **Large tablet** | iPad Air (M2) | iPadOS 18 | 820Ã—1180px | Safari, Chrome | Portrait / Landscape |
+| **Small laptop** | MacBook Air 13" | macOS 15 | 1280Ã—832px | Safari, Chrome, Firefox | Landscape |
+| **Standard laptop** | MacBook Pro 14" | macOS 15 | 1512Ã—982px | Safari, Chrome, Firefox | Landscape |
+| **External display** | 27" monitor | macOS / Windows | 2560Ã—1440px | Chrome, Firefox, Edge | Landscape |
 
 ### 14.2 Browser Testing Matrix
 
@@ -1195,7 +1195,7 @@ function ResponsiveModal({ isOpen, onClose, children }) {
 - [ ] All navigation links are reachable on all breakpoints
 
 ## Touch & Interaction
-- [ ] All touch targets ≥44px on mobile (verify with dev tools)
+- [ ] All touch targets â‰¥44px on mobile (verify with dev tools)
 - [ ] Minimum 4px gap between interactive elements on mobile
 - [ ] Swipe gestures work on mobile (task complete, pull-to-refresh)
 - [ ] Long-press actions work on mobile
@@ -1239,7 +1239,7 @@ function ResponsiveModal({ isOpen, onClose, children }) {
 - [ ] No layout shifts during responsive breakpoint changes
 - [ ] Animations don't cause jank on mobile devices
 - [ ] Images load appropriately sized for breakpoint
-- [ ] Largest Contentful Paint (LCP) ≤ 2.5s on mobile 3G
+- [ ] Largest Contentful Paint (LCP) â‰¤ 2.5s on mobile 3G
 ```
 
 ### 14.4 Automated Responsive Testing
@@ -1256,7 +1256,7 @@ describe('Responsive layout', () => {
   ];
 
   viewports.forEach(({ width, height, name }) => {
-    it(`renders dashboard correctly at ${name} (${width}×${height})`, () => {
+    it(`renders dashboard correctly at ${name} (${width}Ã—${height})`, () => {
       cy.viewport(width, height);
       cy.visit('/dashboard');
       cy.contains('Good morning').should('be.visible');
@@ -1295,29 +1295,29 @@ npx playwright test --grep "@responsive"
 
 ```
 User opens ARIA OS
-       │
-       ▼
+       â”‚
+       â–¼
 Viewport width?
-       │
-       ├── < 640px ────────────── MOBILE ─── Single column, bottom nav,
-       │                                            full-width inputs,
-       │                                            cards instead of tables,
-       │                                            sheet modals
-       │
-       ├── 640px - 1023px ────── TABLET ─── 2-column grid, collapsed sidebar,
-       │                                            hybrid nav, scrollable tables,
-       │                                            centered dialogs
-       │
-       ├── 1024px - 1511px ──── DESKTOP ── 3-column grid, expanded sidebar,
-       │                                            full tables, inline filters,
-       │                                            centered modals
-       │
-       └── 1512px+ ────────────── WIDE ──── 4-column grid, max-width 1600px,
+       â”‚
+       â”œâ”€â”€ < 640px â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ MOBILE â”€â”€â”€ Single column, bottom nav,
+       â”‚                                            full-width inputs,
+       â”‚                                            cards instead of tables,
+       â”‚                                            sheet modals
+       â”‚
+       â”œâ”€â”€ 640px - 1023px â”€â”€â”€â”€â”€â”€ TABLET â”€â”€â”€ 2-column grid, collapsed sidebar,
+       â”‚                                            hybrid nav, scrollable tables,
+       â”‚                                            centered dialogs
+       â”‚
+       â”œâ”€â”€ 1024px - 1511px â”€â”€â”€â”€ DESKTOP â”€â”€ 3-column grid, expanded sidebar,
+       â”‚                                            full tables, inline filters,
+       â”‚                                            centered modals
+       â”‚
+       â””â”€â”€ 1512px+ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ WIDE â”€â”€â”€â”€ 4-column grid, max-width 1600px,
                                                     expanded details, full metadata,
                                                     second-level nav
 ```
 
-## Appendix B: Quick Reference — CSS Snippets
+## Appendix B: Quick Reference â€” CSS Snippets
 
 ```css
 /* Mobile-first base */
@@ -1353,4 +1353,4 @@ Viewport width?
 
 > **Maintenance:** This document is updated per release cycle when new layouts or components are added. Every new component must define its responsive behavior at all 4 breakpoint groups. Component reviews must reference this document.
 >
-> **Related documents:** `docs/design/10_DesignSystem.md` (component tokens), `docs/design/Accessibility.md` (touch targets, zoom), `docs/design/MotionSystem.md` (responsive animation behavior).
+> **Related documents:** `docs/design/10_DesignSystem.md` (component tokens), `docs/design/FrontendAccessibilityGuide.md` (touch targets, zoom), `docs/design/MotionSystem.md` (responsive animation behavior).

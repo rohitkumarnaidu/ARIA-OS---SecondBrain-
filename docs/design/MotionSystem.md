@@ -1,10 +1,10 @@
-# Motion System — Second Brain OS (ARIA)
+﻿# Motion System â€” Second Brain OS (ARIA)
 
-> **Document ID:** SB-MOTION-001  
+> **Document ID:DSG-MSY-001 SB-MOTION-001  
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Engineering & Design  
+> **Classification:** Internal â€” Engineering & Design  
 > **Owner:** Design Engineering Team
 
 ---
@@ -30,7 +30,7 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
 graph TD
-    subgraph Principles["🎯 Motion Principles"]
+    subgraph Principles["ðŸŽ¯ Motion Principles"]
         P1["Purposeful"]
         P2["Fast & Responsive"]
         P3["Natural"]
@@ -38,7 +38,7 @@ graph TD
         P5["Respectful"]
         P6["Hierarchical"]
     end
-    subgraph Durations["⏱️ Duration Tokens"]
+    subgraph Durations["â±ï¸ Duration Tokens"]
         D1["Micro: 80-150ms"]
         D2["Feedback: 150-300ms"]
         D3["Nav: 200-400ms"]
@@ -46,16 +46,16 @@ graph TD
         D5["Deco: 2000-4000ms"]
         D6["Celebration: 500-2000ms"]
     end
-    subgraph Easings["〰️ Easing Curves"]
+    subgraph Easings["ã€°ï¸ Easing Curves"]
         E1["Ease-out: Entries"]
         E2["Ease-in: Exits"]
         E3["Custom: Navigation"]
         E4["Spring: Celebrations"]
         E5["Linear: Data viz"]
     end
-    subgraph Patterns["🧩 Motion Patterns"]
+    subgraph Patterns["ðŸ§© Motion Patterns"]
         PT1["Page Transitions<br/>Staggered fade + slide"]
-        PT2["Micro-interactions<br/>Press scale 0.97→1"]
+        PT2["Micro-interactions<br/>Press scale 0.97â†’1"]
         PT3["List animations<br/>Stagger children"]
         PT4["Reduced motion<br/>`prefers-reduced-motion`"]
     end
@@ -70,13 +70,13 @@ graph TD
 
 ### 1.1 Philosophy
 
-Motion in ARIA OS serves three purposes: **orientation**, **feedback**, and **delight** — in that order. Every animation must answer "where am I, what just happened, and what should I do next?" before it adds visual flair.
+Motion in ARIA OS serves three purposes: **orientation**, **feedback**, and **delight** â€” in that order. Every animation must answer "where am I, what just happened, and what should I do next?" before it adds visual flair.
 
 ### 1.2 Core Principles
 
 | Principle | Definition | Application |
 |---|---|---|
-| **Purposeful** | Every animation has a reason — never animate for decoration alone | Page transitions orient; button presses confirm; loading states reassure |
+| **Purposeful** | Every animation has a reason â€” never animate for decoration alone | Page transitions orient; button presses confirm; loading states reassure |
 | **Fast & Responsive** | Animations complete within 100-300ms for micro-interactions | Users should never wait for an animation to finish before interacting |
 | **Natural** | Easing curves mimic physical motion (ease-out for entries, ease-in for exits) | No linear animations unless data-driven (progress bars) |
 | **Consistent** | Same interaction = same animation, everywhere in the product | Button press = 100ms scale, never varies by context |
@@ -164,12 +164,12 @@ Motion in ARIA OS serves three purposes: **orientation**, **feedback**, and **de
 
 ### 3.1 Route Change Architecture
 
-> **Implementation:** See MotionArchitecture.md §7 for the production `PageTransition` wrapper that uses  
+> **Implementation:** See MotionArchitecture.md Â§7 for the production `PageTransition` wrapper that uses  
 > centralized presets (`fadeUp`/`fadeOut`) and `useReducedMotionContext()`. The example below is conceptual.
 
 ```typescript
 // Page transitions use an AnimatePresence wrapper at the layout level
-// Route changes: old page exits → new page enters (parallel when possible)
+// Route changes: old page exits â†’ new page enters (parallel when possible)
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -197,12 +197,12 @@ function PageTransition({ children }: { children: React.ReactNode }) {
 
 | Navigation Action | Entry Animation | Exit Animation | Duration | Easing |
 |---|---|---|---|---|
-| **Sidebar link click** | Fade up (y: 12 → 0) | Fade up (y: 0 → -8) | 250ms | ease-in-out |
-| **Tab switch** | Crossfade (opacity 0 → 1) | Crossfade (opacity 1 → 0) | 200ms | ease-in-out |
-| **Back/forward browser** | Slide from left/right (x: ±30 → 0) | Slide to opposite (x: 0 → ∓30) | 300ms | ease-out-fast |
-| **Deep link (external)** | Scale in (0.98 → 1) + fade | Instant | 300ms | ease-in-out |
-| **Command palette > navigate** | Instant (no transition) | Instant | 0ms | — |
-| **Modal route** | Scale up (0.95 → 1) + fade (0 → 1) | Scale down + fade | 250ms | ease-spring |
+| **Sidebar link click** | Fade up (y: 12 â†’ 0) | Fade up (y: 0 â†’ -8) | 250ms | ease-in-out |
+| **Tab switch** | Crossfade (opacity 0 â†’ 1) | Crossfade (opacity 1 â†’ 0) | 200ms | ease-in-out |
+| **Back/forward browser** | Slide from left/right (x: Â±30 â†’ 0) | Slide to opposite (x: 0 â†’ âˆ“30) | 300ms | ease-out-fast |
+| **Deep link (external)** | Scale in (0.98 â†’ 1) + fade | Instant | 300ms | ease-in-out |
+| **Command palette > navigate** | Instant (no transition) | Instant | 0ms | â€” |
+| **Modal route** | Scale up (0.95 â†’ 1) + fade (0 â†’ 1) | Scale down + fade | 250ms | ease-spring |
 
 ### 3.3 Layout Shift Animations
 
@@ -231,8 +231,8 @@ function FilterableList() {
 
 | Element | Open | Close | Width | Duration |
 |---|---|---|---|---|
-| Desktop sidebar | Slide from left | Slide to left | 240px → 64px (collapsed) | 250ms |
-| Mobile bottom nav | Instant (already visible) | — | — | — |
+| Desktop sidebar | Slide from left | Slide to left | 240px â†’ 64px (collapsed) | 250ms |
+| Mobile bottom nav | Instant (already visible) | â€” | â€” | â€” |
 | Right panel (detail view) | Slide from right | Slide to right | 400px (overlay on mobile) | 300ms |
 | Search overlay | Fade + scale | Fade + scale | Full-screen | 200ms |
 
@@ -243,7 +243,7 @@ function FilterableList() {
 ### 4.1 Button Interactions
 
 ```typescript
-// Button press states — consistent across ALL button variants
+// Button press states â€” consistent across ALL button variants
 const buttonVariants = {
   rest: { scale: 1 },
   hover: { scale: 1.02, transition: { duration: 0.1, ease: 'easeOut' } },
@@ -251,7 +251,7 @@ const buttonVariants = {
   disabled: { opacity: 0.5, scale: 1 },
 };
 
-// Primary button — additional glow effect on hover
+// Primary button â€” additional glow effect on hover
 const primaryVariants = {
   ...buttonVariants,
   hover: {
@@ -323,7 +323,7 @@ const checkboxVariants = {
 ### 4.5 Form Validation
 
 ```typescript
-// Input error shake — 3 oscillations, fast
+// Input error shake â€” 3 oscillations, fast
 const shakeAnimation = {
   x: [0, -4, 4, -4, 4, 0],
   transition: { duration: 0.3, ease: 'easeInOut' },
@@ -397,11 +397,11 @@ const skeletonVariants = {
 | Content Type | Skeleton Pattern | Elements |
 |---|---|---|
 | Task list | 5 rows, 72px each | Title bar (60% width), date bar (30% width), priority dot |
-| Dashboard | 4 cards in 2×2 grid | Header bar, metric circle, 2 data lines |
-| Habit grid | 7×12 grid cells | 84 cells, 32×32px each, with pulse delay stagger |
+| Dashboard | 4 cards in 2Ã—2 grid | Header bar, metric circle, 2 data lines |
+| Habit grid | 7Ã—12 grid cells | 84 cells, 32Ã—32px each, with pulse delay stagger |
 | Chat message | 3 alternating bubbles | Avatar circle, name bar, message body (40-70% width) |
-| Data table | 8 rows × 6 columns | Varying column widths matching content |
-| Briefing page | Full-page skeleton | Title, 3 section headers, paragraph blocks (80% → 60% → 90% width) |
+| Data table | 8 rows Ã— 6 columns | Varying column widths matching content |
+| Briefing page | Full-page skeleton | Title, 3 section headers, paragraph blocks (80% â†’ 60% â†’ 90% width) |
 
 ### 5.2 Glow Pulse Animation (Decorative)
 
@@ -442,9 +442,9 @@ const aiGenerationVariants = {
 | Type | Visual | Animation | Usage |
 |---|---|---|---|
 | **Linear determinate** | Gradient bar, 4px height | Width transitions smoothly (`transition: width 300ms ease-out`) | Form progress, file upload |
-| **Linear indeterminate** | Gradient bar with moving highlight | Highlight sweeps L→R over 1.5s, repeats | AI generation, sync |
+| **Linear indeterminate** | Gradient bar with moving highlight | Highlight sweeps Lâ†’R over 1.5s, repeats | AI generation, sync |
 | **Circular determinate** | Ring with stroke-dashoffset | Rotates with arc growth | Task completion %, quiz score |
-| **Circular indeterminate** | Spinning ring with gradient | Continuous 360° rotation, 1s/rev | Loading button, page load |
+| **Circular indeterminate** | Spinning ring with gradient | Continuous 360Â° rotation, 1s/rev | Loading button, page load |
 | **Dot steps** | 3-5 dots, accent-primary | Sequential scale + opacity, staggered 200ms | Wizard/multi-step forms |
 | **Skeleton pulse** | Background shimmer | `background-position` slide, 1.5s cycle | Content placeholders |
 
@@ -452,8 +452,8 @@ const aiGenerationVariants = {
 
 ```typescript
 // Page load animation sequence (total: 500ms max)
-// 1. Skeleton appears immediately (0ms) — gives user instant feedback
-// 2. API response received — skeleton fades out (200ms)
+// 1. Skeleton appears immediately (0ms) â€” gives user instant feedback
+// 2. API response received â€” skeleton fades out (200ms)
 // 3. Content fades in with stagger (300ms total)
 
 const pageLoadSequence = {
@@ -473,7 +473,7 @@ const pageLoadSequence = {
 ### 6.1 Toast / Snackbar
 
 ```typescript
-// Toast — slides from top-right, auto-dismisses after 4s
+// Toast â€” slides from top-right, auto-dismisses after 4s
 const toastVariants = {
   hidden: { opacity: 0, x: 50, scale: 0.95 },
   visible: {
@@ -490,7 +490,7 @@ const toastVariants = {
   },
 };
 
-// Snackbar — slides from bottom-center (mobile) or bottom-left (desktop)
+// Snackbar â€” slides from bottom-center (mobile) or bottom-left (desktop)
 const snackbarVariants = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -509,7 +509,7 @@ const snackbarVariants = {
 ### 6.2 Modal / Dialog
 
 ```typescript
-// Modal — scale + fade with backdrop
+// Modal â€” scale + fade with backdrop
 const backdropVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 0.6, transition: { duration: 0.15 } },
@@ -558,9 +558,9 @@ const popoverVariants = {
 
 ```typescript
 // Used for: habit streak milestones, goal completion, 100 tasks completed
-// Confetti particles — 50-80 small squares, neon accent colors
-// Central burst — expanding ring from completion point
-// Banner text — scale in with spring, then settle
+// Confetti particles â€” 50-80 small squares, neon accent colors
+// Central burst â€” expanding ring from completion point
+// Banner text â€” scale in with spring, then settle
 
 const celebrationBanner = {
   hidden: { scale: 0, opacity: 0, rotate: -5 },
@@ -596,7 +596,7 @@ const confettiParticle = (i: number) => ({
 ### 7.1 Staggered Reveals
 
 ```typescript
-// Container — orchestrates the stagger
+// Container â€” orchestrates the stagger
 const listContainerVariants = {
   hidden: {},
   visible: {
@@ -607,7 +607,7 @@ const listContainerVariants = {
   },
 };
 
-// Child item — individual entry animation
+// Child item â€” individual entry animation
 const listItemVariants = {
   hidden: { opacity: 0, y: 12, scale: 0.98 },
   visible: {
@@ -637,7 +637,7 @@ const itemAddVariants = {
 ### 7.3 Item Remove/Archive Animation
 
 ```typescript
-// When an item is removed — collapses and fades out
+// When an item is removed â€” collapses and fades out
 const itemRemoveVariants = {
   exit: {
     opacity: 0,
@@ -671,7 +671,7 @@ const reorderItem = {
 ### 7.5 Empty State Transition
 
 ```typescript
-// When list transitions from empty → has items (or vice versa)
+// When list transitions from empty â†’ has items (or vice versa)
 const emptyStateVariants = {
   hidden: { opacity: 0, scale: 0.9 },
   visible: {
@@ -722,8 +722,8 @@ const hintIconVariants = (direction: 'left' | 'right', progress: number) => ({
 ```typescript
 // Pull-to-refresh for lists (tasks, habits, opportunities)
 const pullToRefresh = {
-  refreshThreshold: 80,  // px — triggers refresh
-  maxPullDistance: 120,  // px — limit
+  refreshThreshold: 80,  // px â€” triggers refresh
+  maxPullDistance: 120,  // px â€” limit
   spinnerVariants: {
     idle: { rotate: 0 },
     pulling: (progress: number) => ({
@@ -861,9 +861,9 @@ const streakCellVariants = {
 
 | Metric | Target | Enforcement |
 |---|---|---|
-| JS execution per animation frame | ≤ 5ms | Performance profiling in CI |
+| JS execution per animation frame | â‰¤ 5ms | Performance profiling in CI |
 | Frame rate | 60fps (16.7ms per frame) | DevTools FPS meter, `requestAnimationFrame` checks |
-| Animation init latency | ≤ 50ms from interaction to first frame | Interaction readiness checks |
+| Animation init latency | â‰¤ 50ms from interaction to first frame | Interaction readiness checks |
 | Layout thrashing events | 0 per animation sequence | Layout boundary checks in review |
 | GPU memory for animations | < 50MB | Memory profiling |
 | CSS `will-change` declarations | < 10 per page | Lint rule to flag overuse |
@@ -881,15 +881,15 @@ const streakCellVariants = {
 
 ### 10.3 Motion Provider (Production Architecture)
 
-See **MotionArchitecture.md §6** for the full implementation. The production `MotionProvider` wraps `MotionConfig` with:
+See **MotionArchitecture.md Â§6** for the full implementation. The production `MotionProvider` wraps `MotionConfig` with:
 
-1. **Device tier detection** — `navigator.deviceMemory` + `hardwareConcurrency`
-2. **OS preference + device tier resolution** — combines both into `Full` / `Reduced` / `Minimal` / `Accessibility`
-3. **Context-based API** — `useReducedMotionContext()` and `useMotionContext()` available to all components
-4. **No `features` array** — Framer Motion's tree-shaking exports `motion` features by default
+1. **Device tier detection** â€” `navigator.deviceMemory` + `hardwareConcurrency`
+2. **OS preference + device tier resolution** â€” combines both into `Full` / `Reduced` / `Minimal` / `Accessibility`
+3. **Context-based API** â€” `useReducedMotionContext()` and `useMotionContext()` available to all components
+4. **No `features` array** â€” Framer Motion's tree-shaking exports `motion` features by default
 
 ```typescript
-// Simplified reference — see MotionArchitecture.md §6 for complete code
+// Simplified reference â€” see MotionArchitecture.md Â§6 for complete code
 import { MotionConfig } from 'framer-motion';
 
 function MotionProvider({ children }) {
@@ -946,11 +946,11 @@ function AnimatedSection({ children, className }: Props) {
 
 ### 11.2 Preset Animation Variants (Conceptual Reference)
 
-> **The definitive preset library lives in `animation-presets.ts` defined by MotionArchitecture.md §4 (V1-V35).**  
-> The examples below are conceptual — always import from the centralized preset module, not from this doc.
+> **The definitive preset library lives in `animation-presets.ts` defined by MotionArchitecture.md Â§4 (V1-V35).**  
+> The examples below are conceptual â€” always import from the centralized preset module, not from this doc.
 
 ```typescript
-// Import from centralized presets (MotionArchitecture.md §4)
+// Import from centralized presets (MotionArchitecture.md Â§4)
 import { fadeUp, fadeOut, buttonPress, cardHover, staggerContainer, staggerItem } from '@/packages/ui/animation-presets';
 ```
 
@@ -1026,12 +1026,12 @@ import { LayoutGroup, motion } from 'framer-motion';
 
 ### 12.1 System-Level Detection
 
-> **Production implementation:** Use `useReducedMotionContext()` from `MotionProvider` (MotionArchitecture.md §6)  
+> **Production implementation:** Use `useReducedMotionContext()` from `MotionProvider` (MotionArchitecture.md Â§6)  
 > which combines OS preference + device tier detection. The Framer Motion `useReducedMotion()` hook below is  
 > available but our custom context provides richer tier information (`Full`/`Reduced`/`Minimal`/`Accessibility`).
 
 ```typescript
-// Production: use MotionProvider context (MotionArchitecture.md §6)
+// Production: use MotionProvider context (MotionArchitecture.md Â§6)
 import { useReducedMotionContext } from '@/packages/ui/MotionProvider';
 const isReduced = useReducedMotionContext();
 
@@ -1090,7 +1090,7 @@ cy.visit('/', {
 
 ### 13.1 Development Tools
 
-> For the complete audit script and CI checks, see **MotionArchitecture.md §13** (Motion Dev Tooling).
+> For the complete audit script and CI checks, see **MotionArchitecture.md Â§13** (Motion Dev Tooling).
 
 | Tool | Use Case | Setup |
 |---|---|---|
@@ -1123,7 +1123,7 @@ console.profileEnd();
 | Janky animation | Visible stutter, dropped frames | Animating `width`/`height`/`top`/`left` | Switch to `scaleX`/`scaleY`/`translateX`/`translateY` |
 | Element flashes at start | `opacity: 1` before animation starts | Missing `initial` prop | Add `initial={{ opacity: 0 }}` |
 | Animation on wrong element | Motion applied to parent instead of child | Incorrect variant targeting | Verify `variants` prop on correct element |
-| Infinite loop | Component re-renders forever | Animation triggers state update → re-render → animation | Use `useMemo` for variants, remove animation triggers from dependency arrays |
+| Infinite loop | Component re-renders forever | Animation triggers state update â†’ re-render â†’ animation | Use `useMemo` for variants, remove animation triggers from dependency arrays |
 | Layout shift after animation | Content jumps when animation ends | No `layout` prop on animated element | Add `layout` prop or specify final dimensions |
 | Reduced motion not working | Animations still play | `useReducedMotion()` not implemented in component | Add hook and conditionally return static variants |
 
@@ -1133,7 +1133,7 @@ console.profileEnd();
 - [ ] All animations use `opacity` and `transform` only
 - [ ] No layout thrashing (batched read/write operations)
 - [ ] GPU compositing confirmed (DevTools layer borders)
-- [ ] JS execution per frame ≤ 5ms
+- [ ] JS execution per frame â‰¤ 5ms
 - [ ] No `will-change` on non-animating elements
 - [ ] Reduced motion degrades gracefully
 - [ ] Animations don't re-trigger on parent re-render
@@ -1163,21 +1163,21 @@ console.profileEnd();
 
 | What | Pattern | Duration | Easing |
 |---|---|---|---|
-| Button press | scale → 0.96 | 80ms | ease-out-fast |
+| Button press | scale â†’ 0.96 | 80ms | ease-out-fast |
 | Card hover | scale 1.01, y -2 | 200ms | ease-in-out |
-| Modal entry | scale 0.95 → 1 + fade | 250ms | spring |
-| Toast in | x: 50 → 0 + fade | 300ms | spring |
-| Page change | y: 12 → 0 + fade | 250ms | ease-in-out |
+| Modal entry | scale 0.95 â†’ 1 + fade | 250ms | spring |
+| Toast in | x: 50 â†’ 0 + fade | 300ms | spring |
+| Page change | y: 12 â†’ 0 + fade | 250ms | ease-in-out |
 | List stagger | 50ms delay per item | 250ms/item | ease-in-out |
-| Toggle on | spring x: 0 → 20 | 300ms | spring |
-| Skeleton pulse | opacity 0.6 → 0.9 | 1.5s loop | ease-in-out |
+| Toggle on | spring x: 0 â†’ 20 | 300ms | spring |
+| Skeleton pulse | opacity 0.6 â†’ 0.9 | 1.5s loop | ease-in-out |
 | Glow pulse | box-shadow intensity | 3s loop | ease-in-out |
-| Streak fill | scale 0 → 1 | 300ms | ease-in-out |
-| Error shake | x oscillate ±4 | 300ms | ease-in-out |
+| Streak fill | scale 0 â†’ 1 | 300ms | ease-in-out |
+| Error shake | x oscillate Â±4 | 300ms | ease-in-out |
 | Celebration | spring scale + confetti | 1-2s | spring |
 
 ---
 
 > **Maintenance:** This document is updated per release cycle. New animated components must reference animation variants from the presets library. Deviations require motion design review.
 >
-> **Related documents:** `docs/design/Accessibility.md` (reduced motion), `docs/design/10_DesignSystem.md` (component tokens), `docs/design/Branding.md` (brand motion personality).
+> **Related documents:** `docs/design/FrontendAccessibilityGuide.md` (reduced motion), `docs/design/10_DesignSystem.md` (component tokens), `docs/design/Branding.md` (brand motion personality).

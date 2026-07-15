@@ -2771,9 +2771,12 @@ Key user stories from `docs/product/06_UserStories.md` mapped to journey section
 
 | Field | Value |
 |---|---|
-| Document ID | SB-UJA-001 |
-| Version | 2.1.0 |
+| Document ID | DSG-UJA-001 |
+| Version | 1.0.0 |
 | Status | Active |
+| Last Updated | 2026-06-11 |
+| Classification | Internal — Design Reference |
+| Target Audience | Designers, Product Managers, UX Researchers |
 | Last Updated | 2026-06-11 |
 | Classification | Internal — Architecture Reference |
 | Target Audience | AI Agents (Claude, Cursor, Copilot), UX Designers, Product Managers, Frontend Engineers, AI Engineers |
