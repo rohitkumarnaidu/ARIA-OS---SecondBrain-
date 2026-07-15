@@ -1,0 +1,389 @@
+# =============================================================================
+# Second Brain OS — Alert Rules (Prometheus-Compatible Format)
+# =============================================================================
+# This file defines alert rules for Prometheus-style monitoring systems.
+# It can be used with:
+#   - Prometheus + Alertmanager
+#   - Grafana Alerting (as a reference for rule creation)
+#   - Mimir / Cortex / Thanos Ruler
+#
+# To use with Prometheus:
+#   1. Save as rules.yml in your Prometheus rules directory
+#   2. Add to prometheus.yml: rule_files: ['rules.yml']
+#   3. Configure alertmanager.yml for notification routing
+#
+# Labels convention:
+#   severity: critical | warning | info
+#   team: backend | ai | infra
+#   service: api | scheduler | frontend
+#
+# Version: 1.0.0
+# Last Updated: 2026-07-11
+# =============================================================================
+
+groups:
+  # ────────────────────────────────────────────────────────────────────────────────
+  # Group: secondbrain-api
+  # Covers all FastAPI backend endpoints and middleware
+  # ────────────────────────────────────────────────────────────────────────────────
+  - name: secondbrain-api
+    interval: 30s
+    rules:
+
+      # ── P0: API is down or unreachable ──────────────────────────────────────────
+      - alert: APIDown
+        expr: probe_success{job="api-health"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+          service: api
+        annotations:
+          summary: "API endpoint is down"
+          description: "Health check probe has failed for {{ $value | humanizeDuration }}. Endpoint: {{ $labels.instance }}."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-001: API Down"
+          dashboard: "https://grafana.example.com/d/api-overview"
+
+      # ── P0: Database connection lost ────────────────────────────────────────────
+      - alert: DatabaseConnectionFailed
+        expr: supabase_status{status="ok"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: backend
+          service: api
+        annotations:
+          summary: "Supabase database connection failed"
+          description: "Readiness probe reports supabase status is not ok."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-002: DB Connection Failed"
+
+      # ── P0: Auth service broken (401 spike) ─────────────────────────────────────
+      - alert: AuthBroken
+        expr: rate(http_requests_total{status="401",service="api"}[5m]) / rate(http_requests_total{service="api"}[5m]) > 0.2
+        for: 3m
+        labels:
+          severity: critical
+          team: backend
+          service: api
+        annotations:
+          summary: "Authentication failure rate exceeds 20%"
+          description: "401 errors are {{ $value | humanizePercentage }} of total requests (threshold: 20%). JWT or auth provider may be misconfigured."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-003: Auth Broken"
+
+      # ── P1: High HTTP error rate (> 5%) ────────────────────────────────────────
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5..",service="api"}[5m]) / rate(http_requests_total{service="api"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "High HTTP 5xx error rate ({{ $value | humanizePercentage }})"
+          description: "Error rate is {{ $value | humanizePercentage }} of total requests (threshold: 5%) for the past 5 minutes. Check for recent deployments or upstream failures."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-004: High Error Rate"
+
+      # ── P2: p95 latency exceeds 2 seconds ──────────────────────────────────────
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{service="api"}[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "p95 latency exceeds 2 seconds (current: {{ $value }}s)"
+          description: "The 95th percentile response time is {{ $value }}s (threshold: 2s). Check for slow AI calls, DB queries, or resource contention."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-006: p95 Latency > 2s"
+
+      # ── P2: p50 latency exceeds 500ms ──────────────────────────────────────────
+      - alert: ElevatedLatency
+        expr: histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{service="api"}[5m])) by (le)) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "p50 latency exceeds 500ms (current: {{ $value }}s)"
+          description: "The 50th percentile response time is {{ $value }}s (threshold: 500ms) for 10+ minutes."
+
+      # ── P1: AI provider failover active ────────────────────────────────────────
+      - alert: AIProviderFailoverActive
+        expr: ai_provider_status{provider="ollama"} == 0
+        for: 1m
+        labels:
+          severity: warning
+          team: ai
+          service: api
+        annotations:
+          summary: "Ollama unavailable — AI failover to Claude is active"
+          description: "Ollama has been unreachable for {{ $value | humanizeDuration }}. Claude API fallback is handling AI requests. Check Ollama service."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-005: AI Provider Failover"
+
+      # ── P1: Circuit breaker open ───────────────────────────────────────────────
+      - alert: CircuitBreakerOpen
+        expr: circuit_breaker_state{state="open"} == 1
+        for: 0s
+        labels:
+          severity: warning
+          team: ai
+          service: api
+        annotations:
+          summary: "Circuit breaker OPEN for provider {{ $labels.provider }}"
+          description: "Provider {{ $labels.provider }} circuit breaker is OPEN after {{ $labels.failures }} consecutive failures. Cooldown will auto-reset in 60s."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-007: Circuit Breaker Open"
+
+      # ── P1: Health check returns degraded ──────────────────────────────────────
+      - alert: HealthCheckDegraded
+        expr: health_status{check="ready"} == 0
+        for: 30s
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "Readiness health check is DEGRADED"
+          description: "One or more dependencies (DB, AI, cache) are unhealthy. Check /health/ready for details."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-008: Health Check Fails"
+
+      # ── P2: Rate limit threshold exceeded ──────────────────────────────────────
+      - alert: RateLimitExceeded
+        expr: rate(http_requests_total{status="429",service="api"}[5m]) / rate(http_requests_total{service="api"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "Rate-limited requests exceed 10% ({{ $value | humanizePercentage }})"
+          description: "429 responses are {{ $value | humanizePercentage }} of total requests (threshold: 10%). Check for abusive traffic or adjust rate limits."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-009: Rate Limit Threshold"
+
+      # ── P2: High 4xx rate (excluding 429) ─────────────────────────────────────
+      - alert: HighClientErrorRate
+        expr: rate(http_requests_total{status=~"4[0-9][0-9]",status!~"429",service="api"}[5m]) / rate(http_requests_total{service="api"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "Client error rate exceeds 10% ({{ $value | humanizePercentage }})"
+          description: "4xx errors (excluding 429) are {{ $value | humanizePercentage }} of total requests. Check for API contract changes or invalid client requests."
+
+      # ── P2: Endpoint returning all 500s ────────────────────────────────────────
+      - alert: EndpointDown
+        expr: rate(http_requests_total{status=~"5..",service="api"}[1m]) / rate(http_requests_total{service="api"}[1m]) == 1
+        for: 1m
+        labels:
+          severity: warning
+          team: backend
+          service: api
+        annotations:
+          summary: "Endpoint {{ $labels.endpoint }} is returning 100% errors"
+          description: "All requests to {{ $labels.endpoint }} in the last minute returned 5xx."
+
+      # ── P3: Request rate anomaly (10x normal) ──────────────────────────────────
+      - alert: RequestRateAnomaly
+        expr: rate(http_requests_total{service="api"}[5m]) / avg_over_time(rate(http_requests_total{service="api"}[5m])[7d:5m]) > 10
+        for: 5m
+        labels:
+          severity: info
+          team: backend
+          service: api
+        annotations:
+          summary: "Request rate spike detected ({{ $value }}x normal)"
+          description: "Current request rate is {{ $value }}x the 7-day average. Investigate traffic source."
+
+  # ────────────────────────────────────────────────────────────────────────────────
+  # Group: secondbrain-ai
+  # Covers AI provider health, token usage, and agent performance
+  # ────────────────────────────────────────────────────────────────────────────────
+  - name: secondbrain-ai
+    interval: 1m
+    rules:
+
+      # ── P1: AI agent failure rate exceeds 10% ──────────────────────────────────
+      - alert: AgentFailureRateHigh
+        expr: rate(agent_activity_failures_total{service="scheduler"}[15m]) / rate(agent_activity_total{service="scheduler"}[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+          service: scheduler
+        annotations:
+          summary: "AI agent failure rate > 10% over 15 minutes"
+          description: "Agent failure rate is {{ $value | humanizePercentage }}. Check agent logs and AI provider status."
+
+      # ── P3: Token usage spike ──────────────────────────────────────────────────
+      - alert: TokenUsageSpike
+        expr: sum(increase(token_usage_total_tokens{service="api"}[1h])) > (avg_over_time(sum(increase(token_usage_total_tokens{service="api"}[1h]))[7d:1h]) * 2)
+        for: 2h
+        labels:
+          severity: info
+          team: ai
+          service: api
+        annotations:
+          summary: "Token usage spike detected (200% of 7-day average)"
+          description: "Token usage in the last hour is 2x the 7-day hourly average. Review agent usage patterns."
+
+      # ── P3: AI agent p99 latency > 60s ────────────────────────────────────────
+      - alert: AgentResponseTimeExceeded
+        expr: agent_duration_seconds{quantile="0.99",service="api"} > 60
+        for: 5m
+        labels:
+          severity: info
+          team: ai
+          service: api
+        annotations:
+          summary: "AI agent p99 latency exceeds 60s ({{ $value }}s)"
+          description: "Agent {{ $labels.agent }} p99 response time is {{ $value }}s (threshold: 60s)."
+
+      # ── Both AI providers unavailable ──────────────────────────────────────────
+      - alert: AllAIProvidersUnavailable
+        expr: ai_provider_status{provider=~"ollama|claude"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: ai
+          service: api
+        annotations:
+          summary: "All AI providers unavailable"
+          description: "Both Ollama and Claude API are unreachable. AI features are completely degraded."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-005: AI Provider Failover"
+
+  # ────────────────────────────────────────────────────────────────────────────────
+  # Group: secondbrain-scheduler
+  # Covers APScheduler health and cron job execution
+  # ────────────────────────────────────────────────────────────────────────────────
+  - name: secondbrain-scheduler
+    interval: 1m
+    rules:
+
+      # ── P0: Scheduler is down ──────────────────────────────────────────────────
+      - alert: SchedulerDown
+        expr: up{job="scheduler-health"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: backend
+          service: scheduler
+        annotations:
+          summary: "Scheduler service is unreachable"
+          description: "Scheduler health endpoint at {{ $labels.instance }} has been unreachable for 2+ minutes."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-001: Scheduler Down"
+
+      # ── P2: Scheduler job failing repeatedly ──────────────────────────────────
+      - alert: SchedulerJobFailing
+        expr: scheduler_job_failures_total{job=~".+"} > 3
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: scheduler
+        annotations:
+          summary: "Scheduler job '{{ $labels.job }}' has failed {{ $value }} times"
+          description: "Job {{ $labels.job }} has accumulated {{ $value }} consecutive failures. Check scheduler logs for error details."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-010: Scheduler Job Fails"
+
+      # ── P2: Scheduler job missed its scheduled run ─────────────────────────────
+      - alert: SchedulerJobMissed
+        expr: scheduler_job_missed_total{job=~".+"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: backend
+          service: scheduler
+        annotations:
+          summary: "Scheduler job '{{ $labels.job }}' missed its scheduled run"
+          description: "APScheduler detected a missed execution for job {{ $labels.job }}."
+          runbook: "See docs/operations/monitoring-guide.md — ALR-011: Scheduler Job Missed"
+
+      # ── Scheduler circuit breaker open ─────────────────────────────────────────
+      - alert: SchedulerCircuitBreakerOpen
+        expr: scheduler_open_circuits_count > 0
+        for: 0s
+        labels:
+          severity: warning
+          team: backend
+          service: scheduler
+        annotations:
+          summary: "Scheduler has {{ $value }} open circuit(s)"
+          description: "The scheduler is tracking {{ $value }} open circuit(s). Check scheduler health endpoint for details."
+
+  # ────────────────────────────────────────────────────────────────────────────────
+  # Group: secondbrain-system
+  # Covers system-level resources and infrastructure
+  # ────────────────────────────────────────────────────────────────────────────────
+  - name: secondbrain-system
+    interval: 5m
+    rules:
+
+      # ── P3: High memory usage (> 80%) ──────────────────────────────────────────
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes{service="api"} / process_virtual_memory_bytes{service="api"} > 0.8
+        for: 10m
+        labels:
+          severity: info
+          team: infra
+          service: api
+        annotations:
+          summary: "API process memory usage exceeds 80%"
+          description: "Memory usage is {{ $value | humanizePercentage }} (threshold: 80%). Consider increasing memory limits or investigating leaks."
+
+      # ── P3: Sentry event quota approaching limit ────────────────────────────────
+      - alert: SentryQuotaApproaching
+        expr: sentry_events_used / 5000 > 0.8
+        for: 1h
+        labels:
+          severity: info
+          team: backend
+          service: api
+        annotations:
+          summary: "Sentry monthly event quota at {{ $value | humanizePercentage }}"
+          description: "Sentry has used {{ $value | humanizePercentage }} of the 5000 free-tier event quota. Review error frequency or upgrade plan."
+
+      # ── P3: Oldest outstanding error not resolved ──────────────────────────────
+      - alert: StaleErrorsPresent
+        expr: sentry_unresolved_errors_count > 50
+        for: 24h
+        labels:
+          severity: info
+          team: backend
+          service: api
+        annotations:
+          summary: "{{ $value }} unresolved Sentry errors older than 24h"
+          description: "There are {{ $value }} unresolved errors in Sentry. Review and triage during next sprint."
+
+  # ────────────────────────────────────────────────────────────────────────────────
+  # Group: secondbrain-frontend
+  # Covers frontend performance and availability
+  # ────────────────────────────────────────────────────────────────────────────────
+  - name: secondbrain-frontend
+    interval: 5m
+    rules:
+
+      # ── P3: Lighthouse performance score dropped ───────────────────────────────
+      - alert: LighthousePerformanceRegression
+        expr: lighthouse_performance_score < 80
+        for: 1h
+        labels:
+          severity: info
+          team: frontend
+          service: frontend
+        annotations:
+          summary: "Lighthouse performance score is {{ $value }} (target: 90+)"
+          description: "Frontend performance score on {{ $labels.branch }} is {{ $value }}. Run Lighthouse audit and address issues."
+
+      # ── P3: Frontend JavaScript error rate elevated ────────────────────────────
+      - alert: FrontendJSErrorRate
+        expr: rate(frontend_js_errors_total[5m]) > 0.01
+        for: 10m
+        labels:
+          severity: info
+          team: frontend
+          service: frontend
+        annotations:
+          summary: "Frontend JS error rate > 1%"
+          description: "JavaScript errors occurring at rate {{ $value | humanizePercentage }} per page view."
