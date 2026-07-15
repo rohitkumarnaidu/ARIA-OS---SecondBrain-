@@ -1,3 +1,14 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | QA-E2E-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+---
+
 # End-to-End Testing Strategy
 
 ## 1. E2E Testing Philosophy

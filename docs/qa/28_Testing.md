@@ -1,16 +1,17 @@
-# Testing Strategy — Second Brain OS
+﻿# Testing Strategy â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | QA-TEST-STRAT-001 |
-| Version | 3.0.0 |
+| Document ID | QA-TST-001 |
+| Version | 4.0.0 |
 | Status | Active |
-| Last Updated | 2026-06-11 |
-| Classification | Internal — Engineering |
+| Last Updated | 2026-07-10 |
+| Classification | Internal â€” Engineering |
 | Owner | QA Lead |
 | Approving Body | Engineering Leadership |
+| Related Docs | [Design System Testing](../design/10_DesignSystem.md#14-testing-components) |
 
 ---
 
@@ -31,6 +32,20 @@
 13. [Testing Documentation Standards](#13-testing-documentation-standards)
 14. [Test-Driven Development Guidelines](#14-test-driven-development-guidelines)
 15. [Appendices](#15-appendices)
+16. [Unit Testing Deep Dive](#16-unit-testing-deep-dive)
+17. [QA Process Overview](#17-qa-process-overview)
+18. [QA Role in Development Cycle](#18-qa-role-in-development-cycle)
+19. [Test Planning](#19-test-planning)
+20. [Test Case Management](#20-test-case-management)
+21. [Bug Reporting](#21-bug-reporting)
+22. [Bug Triage Process](#22-bug-triage-process)
+23. [QA Metrics](#23-qa-metrics)
+24. [QA Handover Checklist](#24-qa-handover-checklist)
+25. [Go/No-Go Criteria for Release](#25-gono-go-criteria-for-release)
+26. [QA Signoff Process](#26-qa-signoff-process)
+27. [User Acceptance Testing (UAT)](#27-user-acceptance-testing-uat)
+28. [QA Process Improvement Cadence](#28-qa-process-improvement-cadence)
+29. [Appendices (QA)](#29-appendices-qa)
 
 ---
 
@@ -57,7 +72,7 @@ graph TD
 | Unit Tests | 60% | Validate pure logic, utilities, AI prompt rendering, store reducers | Developer |
 | Integration Tests | 25% | Verify API endpoints, database interactions, agent orchestration flows | Developer + QA |
 | End-to-End Tests | 10% | Critical user journeys across the full stack | QA |
-| **Total** | **100%** | — | — |
+| **Total** | **100%** | â€” | â€” |
 
 ### 1.3 Testing Principles
 
@@ -73,14 +88,14 @@ graph TD
 
 | Component | Unit | Integration | E2E | Performance | Security |
 |---|---|---|---|---|---|
-| AI Agents (8 agents) | ✅ | ✅ | — | ✅ | — |
-| API Endpoints (53 endpoints) | — | ✅ | ✅ | ✅ | ✅ |
-| Frontend Pages (14 pages) | ✅ | ✅ | ✅ | ✅ | — |
-| Zustand Stores | ✅ | ✅ | — | — | — |
-| Shared Utilities | ✅ | — | — | — | — |
-| Scheduler (6 jobs) | ✅ | ✅ | — | ✅ | — |
-| Database / RLS | — | ✅ | — | ✅ | ✅ |
-| Prompt Files (12 prompts) | ✅ | — | — | — | — |
+| AI Agents (11 agents) | âœ… | âœ… | â€” | âœ… | â€” |
+| API Endpoints (53 endpoints) | â€” | âœ… | âœ… | âœ… | âœ… |
+| Frontend Pages (14 pages) | âœ… | âœ… | âœ… | âœ… | â€” |
+| Zustand Stores | âœ… | âœ… | â€” | â€” | â€” |
+| Shared Utilities | âœ… | â€” | â€” | â€” | â€” |
+| Scheduler (15 jobs) | âœ… | âœ… | â€” | âœ… | â€” |
+| Database / RLS | â€” | âœ… | â€” | âœ… | âœ… |
+| Prompt Files (22 prompts) | âœ… | â€” | â€” | â€” | â€” |
 
 ### 1.5 Definitions
 
@@ -111,7 +126,7 @@ Static analysis catches issues before tests even run. These are enforced as pre-
 | mypy | `mypy packages/` | Type checking | `mypy.ini` |
 | Bandit | `bandit -r packages/` | Security linting | `bandit.yaml` |
 | pyright | `pyright packages/` | Additional type checking | `pyproject.toml` |
-| vulture | `vulture packages/` | Dead code detection | — |
+| vulture | `vulture packages/` | Dead code detection | â€” |
 
 #### 2.1.2 TypeScript/JavaScript (Frontend)
 
@@ -126,7 +141,7 @@ Static analysis catches issues before tests even run. These are enforced as pre-
 
 | Tool | Command | Purpose |
 |---|---|---|
-| validate_prompts.py | `python scripts/validate_prompts.py` | Validates YAML frontmatter on all 12 prompt files |
+| validate_prompts.py | `python scripts/validate_prompts.py` | Validates YAML frontmatter on all 22 prompt files |
 
 ### 2.2 Unit Tests (60%)
 
@@ -139,29 +154,29 @@ Every Python module must have a corresponding test module. Unit tests run in <10
 **Directory structure:**
 ```
 tests/
-├── conftest.py                          # Shared fixtures, pytest configuration
-├── test_prompt_loader.py                # 16 tests — PromptLoader loading, parsing, validation
-├── test_agent_prompts.py                # 14 tests — per-agent content checks, frontmatter validation
-├── unit/
-│   ├── ai/
-│   │   ├── test_briefing_agent.py       # BriefingAgent — data assembly, prompt construction, output parsing
-│   │   ├── test_memory_agent.py         # MemoryAgent — memory extraction, deduplication, archival
-│   │   ├── test_learning_agent.py       # LearningAgent — pattern detection, trend calculation
-│   │   ├── test_opportunity_agent.py    # OpportunityAgent — matching algorithm, scoring
-│   │   ├── test_task_agent.py           # TaskAgent — breakdown, prioritisation, dependency detection
-│   │   ├── test_weekly_review_agent.py  # WeeklyReviewAgent — aggregation, insight generation
-│   │   ├── test_sleep_agent.py          # SleepAgent — wind-down message generation, score calculation
-│   │   ├── test_nudge_agent.py          # NudgeAgent — nudge timing, escalation logic
-│   │   ├── test_prompt_loader.py        # PromptLoader — caching, fallback, frontmatter parsing
-│   │   └── test_llm_client.py           # LLM client — retry, fallback chain, token counting
-│   ├── utils/
-│   │   ├── test_cache.py                # TTL cache — set, get, expire, clear, thread safety
-│   │   ├── test_rate_limiter.py         # Rate limiter — token bucket, burst, IP scoping
-│   │   ├── test_security.py             # Security — JWT generation, input sanitisation, XSS prevention
-│   │   ├── test_logger.py               # Logger — JSON formatting, log levels, structured fields
-│   │   └── test_retry.py                # Retry — exponential backoff, max retries, circuit breaker
-│   └── scheduler/
-│       └── test_crons.py                # Cron jobs — scheduling, job registration, error handling
+â”œâ”€â”€ conftest.py                          # Shared fixtures, pytest configuration
+â”œâ”€â”€ test_prompt_loader.py                # 16 tests â€” PromptLoader loading, parsing, validation
+â”œâ”€â”€ test_agent_prompts.py                # 14 tests â€” per-agent content checks, frontmatter validation
+â”œâ”€â”€ unit/
+â”‚   â”œâ”€â”€ ai/
+â”‚   â”‚   â”œâ”€â”€ test_briefing_agent.py       # BriefingAgent â€” data assembly, prompt construction, output parsing
+â”‚   â”‚   â”œâ”€â”€ test_memory_agent.py         # MemoryAgent â€” memory extraction, deduplication, archival
+â”‚   â”‚   â”œâ”€â”€ test_learning_agent.py       # LearningAgent â€” pattern detection, trend calculation
+â”‚   â”‚   â”œâ”€â”€ test_opportunity_agent.py    # OpportunityAgent â€” matching algorithm, scoring
+â”‚   â”‚   â”œâ”€â”€ test_task_agent.py           # TaskAgent â€” breakdown, prioritisation, dependency detection
+â”‚   â”‚   â”œâ”€â”€ test_weekly_review_agent.py  # WeeklyReviewAgent â€” aggregation, insight generation
+â”‚   â”‚   â”œâ”€â”€ test_sleep_agent.py          # SleepAgent â€” wind-down message generation, score calculation
+â”‚   â”‚   â”œâ”€â”€ test_nudge_agent.py          # NudgeAgent â€” nudge timing, escalation logic
+â”‚   â”‚   â”œâ”€â”€ test_prompt_loader.py        # PromptLoader â€” caching, fallback, frontmatter parsing
+â”‚   â”‚   â””â”€â”€ test_llm_client.py           # LLM client â€” retry, fallback chain, token counting
+â”‚   â”œâ”€â”€ utils/
+â”‚   â”‚   â”œâ”€â”€ test_cache.py                # TTL cache â€” set, get, expire, clear, thread safety
+â”‚   â”‚   â”œâ”€â”€ test_rate_limiter.py         # Rate limiter â€” token bucket, burst, IP scoping
+â”‚   â”‚   â”œâ”€â”€ test_security.py             # Security â€” JWT generation, input sanitisation, XSS prevention
+â”‚   â”‚   â”œâ”€â”€ test_logger.py               # Logger â€” JSON formatting, log levels, structured fields
+â”‚   â”‚   â””â”€â”€ test_retry.py                # Retry â€” exponential backoff, max retries, circuit breaker
+â”‚   â””â”€â”€ scheduler/
+â”‚       â””â”€â”€ test_crons.py                # Cron jobs â€” scheduling, job registration, error handling
 ```
 
 **Unit test template (Python):**
@@ -262,22 +277,22 @@ class TestBriefingAgent:
 **Directory structure:**
 ```
 apps/web/
-└── __tests__/
-    ├── components/
-    │   ├── Button.test.tsx
-    │   ├── Card.test.tsx
-    │   ├── Modal.test.tsx
-    │   ├── Input.test.tsx
-    │   ├── Sidebar.test.tsx
-    │   ├── TaskCard.test.tsx
-    │   ├── HabitCalendar.test.tsx
-    │   └── SleepScore.test.tsx
-    ├── hooks/
-    │   ├── useAuth.test.ts
-    │   └── useLocalStorage.test.ts
-    └── stores/
-        ├── taskStore.test.ts
-        └── userStore.test.ts
+â””â”€â”€ __tests__/
+    â”œâ”€â”€ components/
+    â”‚   â”œâ”€â”€ Button.test.tsx
+    â”‚   â”œâ”€â”€ Card.test.tsx
+    â”‚   â”œâ”€â”€ Modal.test.tsx
+    â”‚   â”œâ”€â”€ Input.test.tsx
+    â”‚   â”œâ”€â”€ Sidebar.test.tsx
+    â”‚   â”œâ”€â”€ TaskCard.test.tsx
+    â”‚   â”œâ”€â”€ HabitCalendar.test.tsx
+    â”‚   â””â”€â”€ SleepScore.test.tsx
+    â”œâ”€â”€ hooks/
+    â”‚   â”œâ”€â”€ useAuth.test.ts
+    â”‚   â””â”€â”€ useLocalStorage.test.ts
+    â””â”€â”€ stores/
+        â”œâ”€â”€ taskStore.test.ts
+        â””â”€â”€ userStore.test.ts
 ```
 
 **Component test template (TypeScript):**
@@ -288,7 +303,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { TaskCard } from '@/components/tasks/task-card'
 import type { Task } from '@/types'
 
-// ── Fixtures ──────────────────────────────────────────────────────────────
+// â”€â”€ Fixtures â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const mockTask: Task = {
   id: 'task-1',
@@ -300,7 +315,7 @@ const mockTask: Task = {
   user_id: 'user-1',
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────
+// â”€â”€ Tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 describe('TaskCard', () => {
   const onComplete = vi.fn()
@@ -447,25 +462,25 @@ Integration tests verify that multiple components work together correctly. They 
 **Directory structure:**
 ```
 tests/integration/
-├── conftest.py                         # Test client, database fixtures, auth headers
-├── test_auth_api.py                    # Login, logout, session refresh, unauthorised access
-├── test_tasks_api.py                   # Task CRUD, filtering, sorting, completion flow
-├── test_courses_api.py                 # Course CRUD, progress tracking, deadline alerts
-├── test_goals_api.py                   # Goal CRUD, milestone management, roadmap editing
-├── test_habits_api.py                  # Habit CRUD, streak calculation, logging
-├── test_sleep_api.py                   # Sleep logging, score calculation, history retrieval
-├── test_income_api.py                  # Income entry CRUD, hourly rate calculations
-├── test_projects_api.py                # Project CRUD, phase transitions, blocker management
-├── test_ideas_api.py                   # Idea pipeline CRUD, status transitions
-├── test_resources_api.py               # Resource CRUD, tag filtering, search
-├── test_opportunities_api.py           # Opportunity CRUD, type filtering, status updates
-├── test_time_api.py                    # Time entry CRUD, Pomodoro cycles, daily stats
-├── test_chat_api.py                    # Chat message send/receive, history retrieval
-├── test_automation_api.py              # Briefing trigger, radar trigger, review trigger
-├── test_daily_briefing_integration.py  # Full briefing generation with real data assembly
-├── test_weekly_review_integration.py   # Full weekly review with aggregation
-├── test_opportunity_radar_integration.py # Real opportunity matching pipeline
-└── test_scheduler_integration.py       # All 6 cron job executions
+â”œâ”€â”€ conftest.py                         # Test client, database fixtures, auth headers
+â”œâ”€â”€ test_auth_api.py                    # Login, logout, session refresh, unauthorised access
+â”œâ”€â”€ test_tasks_api.py                   # Task CRUD, filtering, sorting, completion flow
+â”œâ”€â”€ test_courses_api.py                 # Course CRUD, progress tracking, deadline alerts
+â”œâ”€â”€ test_goals_api.py                   # Goal CRUD, milestone management, roadmap editing
+â”œâ”€â”€ test_habits_api.py                  # Habit CRUD, streak calculation, logging
+â”œâ”€â”€ test_sleep_api.py                   # Sleep logging, score calculation, history retrieval
+â”œâ”€â”€ test_income_api.py                  # Income entry CRUD, hourly rate calculations
+â”œâ”€â”€ test_projects_api.py                # Project CRUD, phase transitions, blocker management
+â”œâ”€â”€ test_ideas_api.py                   # Idea pipeline CRUD, status transitions
+â”œâ”€â”€ test_resources_api.py               # Resource CRUD, tag filtering, search
+â”œâ”€â”€ test_opportunities_api.py           # Opportunity CRUD, type filtering, status updates
+â”œâ”€â”€ test_time_api.py                    # Time entry CRUD, Pomodoro cycles, daily stats
+â”œâ”€â”€ test_chat_api.py                    # Chat message send/receive, history retrieval
+â”œâ”€â”€ test_automation_api.py              # Briefing trigger, radar trigger, review trigger
+â”œâ”€â”€ test_daily_briefing_integration.py  # Full briefing generation with real data assembly
+â”œâ”€â”€ test_weekly_review_integration.py   # Full weekly review with aggregation
+â”œâ”€â”€ test_opportunity_radar_integration.py # Real opportunity matching pipeline
+â””â”€â”€ test_scheduler_integration.py       # All 15 cron job executions
 ```
 
 **Integration test template:**
@@ -702,28 +717,28 @@ E2E tests use Playwright to exercise the full application stack (Frontend -> API
 
 ```
 e2e/
-├── fixtures/
-│   ├── auth.setup.ts              # Login once, reuse session across specs
-│   └── test-data.ts               # Seeded test data templates
-├── specs/
-│   ├── auth.spec.ts               # Login via Google OAuth, logout, session persistence
-│   ├── tasks.spec.ts              # CRUD tasks, filter, sort, complete, dependencies
-│   ├── courses.spec.ts            # Add course, log progress, behind-schedule alert
-│   ├── goals.spec.ts              # Create goal, update progress, roadmap editor
-│   ├── habits.spec.ts             # Add habit, track streak, toggle active
-│   ├── sleep.spec.ts              # Log sleep, view score, history chart
-│   ├── time.spec.ts               # Start/stop timer, pomodoro mode, deep work tracking
-│   ├── income.spec.ts             # Log income, view hourly rate stats
-│   ├── projects.spec.ts           # Create project, update phase, log blocker
-│   ├── ideas.spec.ts              # Capture idea, move through pipeline stages
-│   ├── resources.spec.ts          # Save resource, apply tag filters
-│   ├── opportunities.spec.ts      # Add opportunity, filter by type, update status
-│   ├── chat.spec.ts               # Send message, receive ARIA response, history
-│   ├── academics.spec.ts          # Add subject, log marks, view CGPA
-│   ├── youtube.spec.ts            # Save video, toggle watched status
-│   └── dashboard.spec.ts          # All sections render, data is live
-├── playwright.config.ts           # Global configuration
-└── global-setup.ts                # DB seeding before all tests
+â”œâ”€â”€ fixtures/
+â”‚   â”œâ”€â”€ auth.setup.ts              # Login once, reuse session across specs
+â”‚   â””â”€â”€ test-data.ts               # Seeded test data templates
+â”œâ”€â”€ specs/
+â”‚   â”œâ”€â”€ auth.spec.ts               # Login via Google OAuth, logout, session persistence
+â”‚   â”œâ”€â”€ tasks.spec.ts              # CRUD tasks, filter, sort, complete, dependencies
+â”‚   â”œâ”€â”€ courses.spec.ts            # Add course, log progress, behind-schedule alert
+â”‚   â”œâ”€â”€ goals.spec.ts              # Create goal, update progress, roadmap editor
+â”‚   â”œâ”€â”€ habits.spec.ts             # Add habit, track streak, toggle active
+â”‚   â”œâ”€â”€ sleep.spec.ts              # Log sleep, view score, history chart
+â”‚   â”œâ”€â”€ time.spec.ts               # Start/stop timer, pomodoro mode, deep work tracking
+â”‚   â”œâ”€â”€ income.spec.ts             # Log income, view hourly rate stats
+â”‚   â”œâ”€â”€ projects.spec.ts           # Create project, update phase, log blocker
+â”‚   â”œâ”€â”€ ideas.spec.ts              # Capture idea, move through pipeline stages
+â”‚   â”œâ”€â”€ resources.spec.ts          # Save resource, apply tag filters
+â”‚   â”œâ”€â”€ opportunities.spec.ts      # Add opportunity, filter by type, update status
+â”‚   â”œâ”€â”€ chat.spec.ts               # Send message, receive ARIA response, history
+â”‚   â”œâ”€â”€ academics.spec.ts          # Add subject, log marks, view CGPA
+â”‚   â”œâ”€â”€ youtube.spec.ts            # Save video, toggle watched status
+â”‚   â””â”€â”€ dashboard.spec.ts          # All sections render, data is live
+â”œâ”€â”€ playwright.config.ts           # Global configuration
+â””â”€â”€ global-setup.ts                # DB seeding before all tests
 ```
 
 #### 2.4.2 E2E Test Template
@@ -1913,7 +1928,7 @@ Gate 2: Pull Request (Automated CI)
 +-- All 4 CI jobs pass
 +-- Unit test coverage >= 80% (no regression)
 +-- Integration test coverage >= 75%
-+-- Prompt validation passes (12/12 prompts)
++-- Prompt validation passes (22/22 prompts)
 +-- All 30 prompt tests pass
 +-- Build succeeds (frontend + backend)
 +-- No new lint warnings or type errors
@@ -2648,3 +2663,1722 @@ services/scheduler/tests/       # Scheduler-specific tests
 | Playwright config | `e2e/playwright.config.ts` |
 | Performance benchmarks | `tests/performance/api-benchmark.js` |
 | Prompt validation | `scripts/validate_prompts.py` |
+
+---
+
+## 16. Unit Testing Deep Dive
+
+This section provides detailed patterns and conventions for writing unit tests across the codebase. It consolidates content from the legacy UnitTesting.md into a focused reference for Python and TypeScript testing.
+
+### 16.1 Testing Philosophy
+
+**Test behavior, not implementation.** Unit tests verify **what** the code does, not **how** it does it. A behavior-oriented test suite allows fearless refactoring.
+
+```python
+# âŒ Implementation-coupled test
+def test_task_service_internal():
+    svc = TaskService()
+    svc._tasks = []
+    svc._counter = 0
+    svc._add_to_internal_list("Test")
+    assert svc._counter == 1
+    assert len(svc._tasks) == 1
+
+# âœ… Behavior-oriented test
+def test_creates_task_and_returns_expected_object():
+    svc = TaskService()
+    task = svc.create(title="Test", priority="high")
+    assert task.title == "Test"
+    assert task.priority == "high"
+    assert task.status == "pending"
+```
+
+**FIRST Principles:** Every unit test should be **F**ast, **I**solated, **R**epeatable, **S**elf-validating, and **T**imely.
+
+**Given-When-Then Structure:** Tests follow `test__[scenario]__[expected_behavior]` naming:
+
+```python
+def test__task_with_due_date_before_today__marked_as_overdue():
+    # Given
+    task = Task(title="Overdue", due_date=datetime.now() - timedelta(days=1))
+    # When
+    result = task_service.check_status(task)
+    # Then
+    assert result.status == "overdue"
+```
+
+### 16.2 Python Testing Patterns
+
+**Module-level conftest.py fixtures:**
+
+```python
+# tests/conftest.py
+@pytest.fixture
+def mock_supabase(mocker):
+    mock = mocker.patch("config.core.supabase.SupabaseClient")
+    instance = mock.return_value
+    instance.table.return_value.select.return_value = instance
+    instance.execute.return_value.data = []
+    instance.execute.return_value.error = None
+    return instance
+
+@pytest.fixture
+def mock_llm(mocker):
+    from ai.client import LLMClient
+    mock = mocker.patch.object(LLMClient, "generate_json")
+    mock.return_value = {"status": "ok", "data": []}
+    return mock
+
+@pytest.fixture
+def sample_user_id():
+    return "test-user-001"
+```
+
+**Mocking Strategy:**
+
+| Scenario | Tool | Example |
+|---|---|---|
+| External API calls | `pytest-httpx` / `httpx_mock` | Mocking Claude API responses |
+| Database queries | `pytest-mock` patching supabase | Return deterministic rows |
+| File system reads | `mocker.patch("builtins.open")` | Simulate missing prompt file |
+| Environment variables | `mocker.patch.dict(os.environ)` | Toggle `USE_LOCAL_AI` |
+| Time-dependent logic | `freezegun` / `mocker.patch("datetime.now")` | Freeze time |
+
+**Parametrized Tests:**
+
+```python
+@pytest.mark.parametrize(
+    "priority,expected_score",
+    [
+        ("urgent", 1.0), ("high", 0.8), ("medium", 0.5),
+        ("low", 0.2), (None, 0.5),
+    ],
+)
+def test_priority_scoring(priority, expected_score):
+    score = task_service.calculate_priority_score(priority)
+    assert score == expected_score
+```
+
+**Async Tests:**
+
+```python
+@pytest.mark.asyncio
+async def test_briefing_generates_all_sections():
+    briefing = await briefing_agent.generate_daily_briefing("test-user-001")
+    assert "tasks" in briefing
+    assert "goals" in briefing
+    assert isinstance(briefing["tasks"], list)
+```
+
+### 16.3 TypeScript Testing Patterns
+
+**React Testing Library Query Priority:**
+
+| Query | When to Use | Priority |
+|---|---|---|
+| `getByRole` | Interactive elements (buttons, links, inputs) | Best |
+| `getByLabelText` | Form inputs with labels | Best |
+| `getByPlaceholderText` | Inputs with placeholder only | Good |
+| `getByText` | Non-interactive text elements | Good |
+| `getByTestId` | Only when no semantic query works | Last resort |
+
+**userEvent over fireEvent:**
+
+```typescript
+// âŒ fireEvent â€” does not simulate browser behavior
+fireEvent.click(screen.getByRole('button'))
+
+// âœ… userEvent â€” simulates full browser interaction chain
+const user = userEvent.setup()
+await user.click(screen.getByRole('button'))
+```
+
+**MSW for API Mocks:**
+
+```typescript
+// mocks/handlers.ts
+import { http, HttpResponse } from 'msw'
+
+export const handlers = [
+  http.get('/api/tasks', () =>
+    HttpResponse.json([{ id: '1', title: 'Test task', priority: 'high', status: 'pending' }])
+  ),
+  http.post('/api/tasks', async ({ request }) => {
+    const body = await request.json() as { title: string }
+    return HttpResponse.json(
+      { id: 'new-1', title: body.title, priority: 'medium', status: 'pending' },
+      { status: 201 }
+    )
+  }),
+]
+```
+
+### 16.4 Test Data Factories
+
+**Python (Factory Boy):**
+
+```python
+class TaskFactory(factory.DictFactory):
+    class Meta:
+        model = dict
+    id = factory.LazyFunction(lambda: str(uuid.uuid4()))
+    title = factory.Sequence(lambda n: f"Test Task {n}")
+    priority = factory.Iterator(["low", "medium", "high", "urgent"])
+    status = factory.Iterator(["pending", "in_progress", "completed"])
+    user_id = "test-user-001"
+```
+
+**TypeScript (test-data-bot):**
+
+```typescript
+export const taskFactory = build<Task>('Task', {
+  fields: {
+    id: fake((f) => f.string.uuid()),
+    title: sequence((n) => `Test Task ${n}`),
+    priority: oneOf('low', 'medium', 'high', 'urgent'),
+    status: oneOf('pending', 'in_progress', 'completed'),
+    userId: perBuild(() => 'test-user-001'),
+  },
+})
+```
+
+### 16.5 PromptLoader Unit Tests
+
+```python
+def test_parses_valid_frontmatter(loader):
+    entry = loader.get_agent("valid_agent")
+    assert entry.frontmatter["version"] == "2.1.0"
+    assert entry.frontmatter["status"] == "active"
+    assert entry.frontmatter["max_tokens"] == 4096
+    assert len(entry.body) > 0
+
+def test_missing_file_returns_none(loader):
+    entry = loader.get_agent("nonexistent_agent")
+    assert entry is None  # graceful fallback
+
+def test_render_with_kwargs(loader):
+    entry = loader.get_template("context_assembly")
+    rendered = entry.render(user_name="John", task_count=5)
+    assert "John" in rendered
+    assert "5" in rendered
+```
+
+### 16.6 Agent Module Unit Tests
+
+```python
+@pytest.fixture
+def mock_llm_json(mocker):
+    mock = mocker.patch("ai.client.LLMClient.generate_json")
+    mock.return_value = {
+        "greeting": "Good morning!",
+        "task_summary": {"total_pending": 3},
+        "focus_section": ["Complete project report"],
+    }
+    return mock
+
+@pytest.mark.asyncio
+async def test_briefing_returns_expected_structure(mock_llm_json):
+    briefing = await briefing_agent.generate_daily_briefing("test-user")
+    assert "greeting" in briefing
+    assert "focus_section" in briefing
+```
+
+---
+
+## 17. QA Process Overview
+
+### 17.1 Purpose
+
+This section defines the Quality Assurance processes for Second Brain OS. It covers the entire QA lifecycle from test planning through post-release monitoring, ensuring that every release meets the quality bar defined in the project's quality policy.
+
+### 17.2 QA Philosophy
+
+Second Brain OS follows a **shift-left** QA philosophy: quality is built in from the earliest stages of development, not tested in at the end. The QA team is involved from the planning phase, working alongside developers, product managers, and designers to ensure quality is a shared responsibility.
+
+### 17.3 Quality Objectives
+
+| Objective | Target | Measurement |
+|---|---|---|
+| **Defect prevention** | 80% of defects caught before code review | Pre-commit check pass rate |
+| **Early detection** | 90% of defects found in development/QA phase | Phase-based defect distribution |
+| **Production stability** | Zero P0/P1 production incidents per release | Incident count post-release |
+| **Test coverage** | >= 80% statement coverage across the codebase | Coverage reports |
+| **Test reliability** | < 5% flaky test rate | Flaky test registry |
+| **Release confidence** | QA signoff confidence score >= 4/5 | QA signoff checklist |
+| **Time to market** | QA cycle <= 30% of total sprint duration | Sprint velocity metrics |
+
+### 17.4 QA Process Flow
+
+```
+                    +-----------------------+
+                    |   Sprint Planning     |
+                    |   QA Involvement:     |
+                    |   - Risk assessment   |
+                    |   - Test estimation   |
+                    |   - Test plan draft   |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    |   Design / Dev Phase  |
+                    |   QA Involvement:     |
+                    |   - Test case writing |
+                    |   - Automation setup  |
+                    |   - Dev sandbox tests |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    |   Testing Phase       |
+                    |   QA Activities:      |
+                    |   - Functional testing |
+                    |   - Regression testing|
+                    |   - Performance tests  |
+                    |   - Security tests     |
+                    |   - Accessibility audit|
+                    |   - Bug reporting      |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    |   Release Phase       |
+                    |   QA Activities:      |
+                    |   - QA signoff        |
+                    |   - Go/No-Go decision |
+                    |   - Release notes QA  |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    |   Post-Release Phase  |
+                    |   QA Activities:      |
+                    |   - Production monitoring|
+                    |   - Bug triage        |
+                    |   - Retrospective     |
+                    |   - Metrics review    |
+                    +-----------------------+
+```
+
+### 17.5 QA Role Definitions
+
+| Role | Responsibility | Involving Phase |
+|---|---|---|
+| **QA Lead** | Overall QA strategy, process enforcement, metrics tracking, signoff authority | All phases |
+| **QA Engineer (Manual)** | Test case writing, manual testing, exploratory testing, bug reporting | Testing phase |
+| **QA Engineer (Automation)** | Test framework maintenance, CI integration, automated test development | Development + Testing |
+| **QA Analyst** | Test planning, requirements review, test data management, UAT coordination | Planning + Post-release |
+| **Developer (QA support)** | Unit/integration testing, code quality gates, bug fixing | Development |
+| **Product Manager** | Acceptance criteria definition, UAT signoff | Planning + Release |
+| **Engineering Lead** | Architecture review, performance benchmark approval | Design + Release |
+
+---
+
+## 18. QA Role in Development Cycle
+
+### 18.1 Phase-by-Phase QA Involvement
+
+#### 18.1.1 Planning Phase
+
+**QA Activities:**
+- Participate in sprint planning and backlog grooming
+- Review user stories and acceptance criteria for testability
+- Perform risk assessment for the sprint scope
+- Provide test effort estimation (in story points)
+- Identify test data requirements
+- Flag dependencies (test environments, API keys, mock data)
+
+**Deliverables:**
+- Test plan draft (for significant features)
+- Risk assessment matrix
+- Test effort estimate (added to story points)
+
+**Acceptance Criteria Review Checklist:**
+- [ ] Acceptance criteria are specific and measurable
+- [ ] Edge cases and error states are described
+- [ ] Performance expectations are defined (if applicable)
+- [ ] Accessibility requirements are stated
+- [ ] Test data prerequisites are identified
+- [ ] Success/failure criteria are unambiguous
+- [ ] Acceptance criteria are testable (not subjective)
+
+#### 18.1.2 Design Phase
+
+**QA Activities:**
+- Review design docs and mockups for testability
+- Identify integration points and dependencies
+- Define test strategy for new features
+- Plan automation approach
+- Set up test environments and test data
+- Write initial test cases
+
+**Deliverables:**
+- Test strategy document (for complex features)
+- Environment setup instructions
+- Test data requirements
+
+**Design Review Checklist:**
+- [ ] All states are designed (loading, empty, error, edge cases)
+- [ ] Error messages are user-friendly and actionable
+- [ ] All interactive elements have accessible labels
+- [ ] Mobile responsive breakpoints are defined
+- [ ] API contracts are documented and reviewable
+- [ ] Database schema changes are backwards-compatible or have migration plan
+
+#### 18.1.3 Development Phase
+
+**QA Activities:**
+- Write detailed test cases (manual + automated)
+- Develop automated test scripts
+- Perform dev sandbox testing (smoke tests on feature branches)
+- Report blocking issues early
+- Review unit tests written by developers
+- Verify test environment readiness
+
+**Deliverables:**
+- Test cases in test management system
+- Automated test scripts (pytest, Vitest, Playwright)
+- Early bug reports (blocking issues)
+
+**Developer-QA Collaboration Checkpoints:**
+| Checkpoint | Timing | Participants | Focus |
+|---|---|---|---|
+| Feature kickoff | Start of development | Dev + QA | Acceptance criteria walkthrough |
+| Mid-sprint sync | Mid-development | Dev + QA | Progress check, early issue identification |
+| Code review | PR submission | Dev + QA reviewer | Test quality, edge case coverage |
+| Dev handover | Feature complete | Dev -> QA | Demo, test data handoff, known issues |
+
+#### 18.1.4 Testing Phase
+
+**QA Activities:**
+- Execute manual test cases
+- Execute automated test suites
+- Perform exploratory testing
+- Conduct regression testing
+- Execute performance benchmarks
+- Run security scans
+- Perform accessibility audits
+- Report and verify bugs
+- Track test execution progress
+
+**Deliverables:**
+- Test execution report (pass/fail/pending counts)
+- Bug reports (with severity and priority)
+- Test coverage report
+- Performance benchmark results
+- Security scan results
+- Accessibility audit report
+
+**Testing Entry Criteria:**
+- [ ] Feature code is merged to main branch
+- [ ] All unit tests pass (>= 80% coverage)
+- [ ] Integration tests pass (>= 75% coverage)
+- [ ] Build succeeds (no compilation errors)
+- [ ] Test environment is ready and seeded with data
+- [ ] Test data is available and valid
+- [ ] No P0/P1 open bugs in the feature being tested
+
+**Testing Exit Criteria:**
+- [ ] All planned test cases executed (100%)
+- [ ] No P0/P1 open bugs
+- [ ] P2/P3 bugs documented and triaged
+- [ ] Regression suite passes (100%)
+- [ ] Performance benchmarks within targets
+- [ ] Security scan shows no high/critical findings
+- [ ] Accessibility audit has no violations
+- [ ] Test execution report reviewed and approved
+
+#### 18.1.5 Release Phase
+
+**QA Activities:**
+- Final QA signoff
+- Go/No-Go decision support
+- Release notes QA (verify accuracy and completeness)
+- Coordinate UAT (if applicable)
+- Prepare rollback plan validation
+
+**Deliverables:**
+- QA signoff document
+- Release readiness report
+- Known issues list (for release notes)
+- Rollback validation checklist
+
+#### 18.1.6 Post-Release Phase
+
+**QA Activities:**
+- Production monitoring (first 48 hours)
+- Verify production deployment
+- Monitor Sentry errors and performance metrics
+- Conduct sprint retrospective (QA perspective)
+- Review QA metrics
+- Update test debt register
+- Improve test processes
+
+**Deliverables:**
+- Post-release QA report
+- Sprint QA retrospective notes
+- Updated test debt register
+- Process improvement action items
+
+### 18.2 QA Effort Distribution Per Sprint
+
+| Activity | Percentage of QA Time |
+|---|---|
+| Test planning and preparation | 15% |
+| Test case writing and review | 20% |
+| Manual testing and exploratory testing | 25% |
+| Automated test development and maintenance | 20% |
+| Bug reporting, triage, and verification | 10% |
+| Meetings, retrospectives, process improvement | 10% |
+
+### 18.3 Communication Channels
+
+| Channel | Purpose | Frequency |
+|---|---|---|
+| Daily standup (QA + Dev) | Blockers, progress, test results | Daily |
+| Sprint planning | Test estimation, risk assessment | Every sprint start |
+| Sprint review | Demo, test results show | Every sprint end |
+| Bug triage meeting | Prioritise and assign bugs | Weekly (or daily during release) |
+| QA sync (internal) | Process improvement, knowledge sharing | Weekly |
+| Release readiness meeting | Go/No-Go decision | Before every release |
+| Post-release review | Lessons learned, metrics | After every release |
+
+---
+
+## 19. Test Planning
+
+### 19.1 Test Plan Template
+
+```markdown
+# Test Plan: <Feature/Release Name>
+
+## Document Information
+| Field | Value |
+|---|---|
+| Test Plan ID | TP-<YYYY>-<NNN> |
+| Feature/Release | <Name> |
+| Version | <x.y> |
+| Author | <Name> |
+| Reviewers | <Name(s)> |
+| Approved By | <Name> |
+| Date | <YYYY-MM-DD> |
+| Status | Draft / Review / Approved |
+
+## 1. Introduction
+<Brief description of the feature or release being tested>
+
+## 2. Scope
+### 2.1 In Scope
+- <List of features, modules, or areas to be tested>
+- <Specific test types to be executed>
+
+### 2.2 Out of Scope
+- <List of features, modules, or areas NOT to be tested>
+- <Rationale for exclusion>
+
+## 3. Test Objectives
+- <Primary test objectives>
+- <Quality risks to be mitigated>
+
+## 4. Test Strategy
+### 4.1 Testing Levels
+| Level | Approach | Automation? | Owner |
+|---|---|---|---|
+| Unit | pytest/Vitest, mock external deps | Yes (100%) | Developer |
+| Integration | FastAPI TestClient, real DB | Yes (80%) | Developer + QA |
+| E2E | Playwright, browser automation | Yes (key flows) | QA |
+| Manual | Exploratory, usability | No | QA |
+| Performance | k6 load tests | Yes | QA |
+| Security | OWASP ZAP, dependency scan | Yes | QA |
+| Accessibility | axe-core, manual keyboard | Partial | QA |
+
+### 4.2 Test Environment
+| Environment | Configuration | Access |
+|---|---|---|
+| Local Dev | <config details> | Developer machine |
+| CI (PR) | <GitHub Actions config> | Automated |
+| Staging | <staging URL> | QA team |
+| Production | <production URL> | Read-only monitoring |
+
+## 5. Test Deliverables
+- [ ] Test cases (manual)
+- [ ] Automated test scripts
+- [ ] Test data setup scripts
+- [ ] Bug reports
+- [ ] Test execution report
+- [ ] Coverage report
+- [ ] Performance benchmark report
+- [ ] Security scan report
+- [ ] Accessibility audit report
+- [ ] QA signoff document
+
+## 6. Test Schedule
+| Activity | Start Date | End Date | Duration |
+|---|---|---|---|
+| Test planning | <date> | <date> | <days> |
+| Test case writing | <date> | <date> | <days> |
+| Automation development | <date> | <date> | <days> |
+| Test execution (manual) | <date> | <date> | <days> |
+| Regression testing | <date> | <date> | <days> |
+| UAT | <date> | <date> | <days> |
+| QA signoff | <date> | <date> | <days> |
+
+## 7. Resources
+### 7.1 Team
+| Role | Name | Allocation |
+|---|---|---|
+| QA Lead | <name> | 100% |
+| QA Engineer | <name> | 100% |
+| Developer (support) | <name> | 20% |
+
+### 7.2 Tools
+- Test management: <tool>
+- Automation: <Framework>
+- Bug tracking: <tool>
+- Performance: <tool>
+
+## 8. Risk Assessment
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| <Risk description> | H/M/L | H/M/L | <Mitigation strategy> |
+
+## 9. Assumptions and Dependencies
+- <Assumption 1>
+- <Dependency 1>
+
+## 10. Approval
+| Role | Name | Date | Signature |
+|---|---|---|---|
+| QA Lead | | | |
+| Engineering Lead | | | |
+| Product Manager | | | |
+```
+
+### 19.2 Risk-Based Testing Approach
+
+Second Brain OS uses **risk-based testing** to prioritise test effort where it matters most. Each feature or change is assigned a risk level, and the testing depth is adjusted accordingly.
+
+#### 19.2.1 Risk Level Classification
+
+| Risk Level | Definition | Examples | Testing Depth |
+|---|---|---|---|
+| **Critical** | Failure causes data loss, security breach, or complete system outage | Auth system, database RLS, payment/income calculations, AI system prompts | Full: all test levels, all edge cases, performance + security + a11y |
+| **High** | Failure breaks a major feature or affects many users | Task/Course CRUD, briefing generation, scheduler jobs | Deep: integration + E2E + performance, all core scenarios |
+| **Medium** | Failure breaks a minor feature or affects few users | Specific UI components, individual API filters/sorts | Standard: unit + integration, key scenarios |
+| **Low** | Failure causes cosmetic issue or very minor inconvenience | UI colour, layout on uncommon screen sizes, non-critical tooltips | Light: unit tests, visual check |
+
+#### 19.2.2 Risk Scoring Matrix
+
+```
+Risk Score = Likelihood x Impact
+
+Likelihood: 1 (Rare) to 5 (Almost Certain)
+Impact:     1 (Negligible) to 5 (Catastrophic)
+
+Risk Score Range:
+  1-4:   Low risk
+  5-9:   Medium risk
+  10-16: High risk
+  17-25: Critical risk
+```
+
+#### 19.2.3 Risk Assessment Template
+
+```markdown
+## Risk Assessment: <Feature Name>
+
+| ID | Risk Description | Likelihood (1-5) | Impact (1-5) | Risk Score | Mitigation | Owner |
+|---|---|---|---|---|---|---|
+| R-001 | RLS policy failure exposes other user data | 2 | 5 | 10 (High) | Automated RLS tests, code review, security scan | Dev + QA |
+| R-002 | LLM timeout causes briefing to fail | 4 | 3 | 12 (High) | Graceful fallback to algorithmic briefing | Dev |
+| R-003 | Supabase outage blocks task operations | 1 | 4 | 4 (Low) | Offline-first pattern, retry queue | Dev |
+| R-004 | XSS vulnerability in task title field | 2 | 4 | 8 (Medium) | Input sanitisation, security tests | Dev + QA |
+| R-005 | Performance degradation on dashboard load | 3 | 3 | 9 (Medium) | Performance benchmark, caching | Dev + QA |
+| R-006 | Database migration fails in production | 2 | 5 | 10 (High) | Migration dry-run in CI, rollback script | Dev |
+```
+
+### 19.3 Test Estimation
+
+#### 19.3.1 Estimation Factors
+
+| Factor | Multiplier | Explanation |
+|---|---|---|
+| **Base effort** | 1x per test case | Average 30min to write, 10min to execute manually |
+| **Complexity factor** | 1x (simple) to 3x (complex) | Number of user roles, states, data permutations |
+| **Automation factor** | 1.5x-3x for test automation | Writing automated test takes 1.5-3x longer than manual |
+| **Environment factor** | 1x (stable) to 2x (unstable) | Time lost to environment issues, data setup |
+| **Integration factor** | 1x (isolated) to 2x (many integrations) | Number of external dependencies to mock/set up |
+| **Regression factor** | 0.2x per regression pass | Each regression pass is ~20% of initial test effort |
+
+#### 19.3.2 Estimation Templates
+
+```markdown
+## Test Effort Estimation
+
+### By Test Type
+| Test Type | Estimated Tests | Time per Test | Total Time |
+|---|---|---|---|
+| Unit tests | 50 | 20 min | 16.7 hrs |
+| Integration tests | 20 | 45 min | 15 hrs |
+| E2E tests (automated) | 10 | 60 min | 10 hrs |
+| Manual exploratory | â€” | â€” | 8 hrs |
+| Performance tests | 3 scenarios | 2 hrs | 6 hrs |
+| Security scans | 1 run | 2 hrs | 2 hrs |
+| Regression suite | Full suite | â€” | 4 hrs |
+| **Total** | **80+** | â€” | **~62 hrs** |
+
+### By Sprint Velocity (Historical)
+| Sprint Complexity | Typical Test Effort | QA Team Size |
+|---|---|---|
+| Low (mainly bug fixes) | 20-30 hrs | 1 QA |
+| Medium (2-3 features) | 40-60 hrs | 1 QA |
+| High (major release) | 80-120 hrs | 2 QA |
+| Critical (platform-wide) | 120+ hrs | 2-3 QA + dev support |
+```
+
+---
+
+## 20. Test Case Management
+
+### 20.1 Test Case Format
+
+#### 20.1.1 Standard Test Case Template
+
+```markdown
+## Test Case: <TC-ID>
+
+| Field | Value |
+|---|---|
+| **Test Case ID** | TC-<Module>-<NNN> |
+| **Title** | <Concise description of what is tested> |
+| **Feature/Module** | <e.g., Tasks, Goals, Briefing> |
+| **Test Type** | Functional / Integration / E2E / Performance / Security / Accessibility |
+| **Priority** | P0 / P1 / P2 / P3 |
+| **Automated?** | Yes / No |
+| **Automation ID** | <test function name, if automated> |
+| **Author** | <Name> |
+| **Created Date** | <YYYY-MM-DD> |
+| **Last Updated** | <YYYY-MM-DD> |
+
+### Preconditions
+1. <Condition 1: e.g., User is logged in>
+2. <Condition 2: e.g., Test task with ID "task-001" exists>
+3. <Condition 3: e.g., Test database is seeded>
+
+### Test Data
+| Field | Value |
+|---|---|
+| User ID | `e2e-user-001` |
+| Task ID | `e2e-task-001` |
+| API Base URL | `http://localhost:8000` |
+
+### Test Steps
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Navigate to `/tasks` | Task list page loads within 2 seconds |
+| 2 | Click "Create Task" button | Create task modal opens |
+| 3 | Enter task title "QA Test Task" | Title field shows "QA Test Task" |
+| 4 | Select priority "High" | Priority dropdown shows "High" |
+| 5 | Set due date to tomorrow | Date picker shows correct date |
+| 6 | Click "Save" button | Task appears in the list with status "pending" |
+| 7 | Click the checkbox next to the task | Task is marked as completed (strikethrough) |
+| 8 | Verify task status in API response | GET /api/tasks/{id} returns status: "completed" |
+
+### Expected Result
+<Overall expected outcome>
+
+### Postconditions
+1. <Cleanup action if needed>
+2. <Any state reset>
+
+### Notes
+- <Additional information for the tester>
+- <Known limitations or edge cases>
+
+### Test Execution History
+| Date | Tester | Result | Bug ID | Notes |
+|---|---|---|---|---|
+| 2026-06-10 | QA-01 | Pass | â€” | â€” |
+| 2026-06-08 | QA-01 | Fail | BUG-042 | Due date not saving correctly |
+```
+
+#### 20.1.2 Test Case ID Convention
+
+| Module Prefix | Module Name |
+|---|---|
+| TC-AUTH | Authentication |
+| TC-TSK | Tasks |
+| TC-CRS | Courses |
+| TC-GLS | Goals |
+| TC-HBT | Habits |
+| TC-SLP | Sleep |
+| TC-INC | Income |
+| TC-PRJ | Projects |
+| TC-IDS | Ideas |
+| TC-RSR | Resources |
+| TC-OPP | Opportunities |
+| TC-TIM | Time |
+| TC-CHT | Chat |
+| TC-AUT | Automation |
+| TC-BRF | Daily Briefing |
+| TC-WRV | Weekly Review |
+| TC-AG | AI Agents |
+| TC-SEC | Security |
+| TC-PRF | Performance |
+| TC-A11Y | Accessibility |
+| TC-DB | Database |
+
+### 20.2 Test Case Priority Definitions
+
+| Priority | Definition | Time to Fix | Example |
+|---|---|---|---|
+| **P0 â€” Critical** | Blocking user journey, feature cannot be used | Immediate | Login fails, task creation fails |
+| **P1 â€” High** | Major feature partially broken, workaround painful | Within 24 hours | Filter doesn't work, wrong data displayed |
+| **P2 â€” Medium** | Feature works but has a minor issue | Within sprint | UI misalignment, missing tooltip |
+| **P3 â€” Low** | Cosmetic or nice-to-have improvement | Next sprint or later | Slightly off colour, non-standard wording |
+
+### 20.3 Test Case Lifecycle
+
+```
++----------+      +---------+      +---------+      +----------+
+| Draft    | ---> | Review  | ---> | Active  | ---> | Deprecated|
++----------+      +---------+      +---------+      +----------+
+     |                 |               |  |
+     |                 |               |  +---> Pass
+     v                 v               v
+ +-------+         +-------+      +-------+
+ | Reject|         | Reject|      | Fail  |
+ +-------+         +-------+      +-------+
+                                      |
+                                      v
+                                 +----------+
+                                 | Bug      |
+                                 | Reported |
+                                 +----------+
+```
+
+| Status | Definition |
+|---|---|
+| **Draft** | Test case written but not yet reviewed |
+| **Review** | Test case under peer review |
+| **Active** | Test case approved and available for execution |
+| **Deprecated** | Test case no longer relevant (feature changed/removed) |
+| **Pass** | Last execution passed |
+| **Fail** | Last execution failed (linked to a bug) |
+
+### 20.4 Test Case Management Tools
+
+| Tool | Purpose | Location |
+|---|---|---|
+| **GitHub Issues** | Bug tracking, test debt tracking | `github.com/.../issues` |
+| **Markdown files** | Test case storage (version-controlled) | `tests/test-cases/` |
+| **pytest/Vitest** | Automated test cases | `tests/`, `apps/web/__tests__/` |
+| **Playwright** | E2E test cases | `e2e/specs/` |
+| **Allure Framework** | Test execution reporting | CI artifacts |
+
+### 20.5 Test Case Review Checklist
+
+- [ ] Test case ID follows naming convention
+- [ ] Title is clear and descriptive
+- [ ] Preconditions are complete and accurate
+- [ ] Test data is specified (not vague like "valid data")
+- [ ] Steps are numbered and unambiguous
+- [ ] Expected results are specific and verifiable
+- [ ] Edge cases are covered (empty state, error state, boundary values)
+- [ ] Priority is correctly assigned
+- [ ] No duplicate test cases exist
+- [ ] Test case can be executed independently (no hidden dependencies)
+
+---
+
+## 21. Bug Reporting
+
+### 21.1 Bug Report Template
+
+```markdown
+## Bug Report: <BUG-ID>
+
+| Field | Value |
+|---|---|
+| **Bug ID** | BUG-<NNN> |
+| **Title** | <Concise, descriptive title> |
+| **Reported By** | <Name> |
+| **Reported Date** | <YYYY-MM-DD> |
+| **Feature/Module** | <e.g., Tasks, Goals, Briefing> |
+| **Environment** | Local / CI / Staging / Production |
+| **Browser/OS** | <e.g., Chrome 124, Windows 11> |
+| **Severity** | Critical / Major / Minor / Trivial |
+| **Priority** | P0 / P1 / P2 / P3 |
+| **Status** | New / Assigned / In Progress / Fixed / Verified / Closed / Reopened |
+| **Assigned To** | <Developer name> |
+
+### Description
+<Clear, concise description of the bug.>
+
+### Steps to Reproduce
+1. <Step 1>
+2. <Step 2>
+3. <Step 3>
+
+### Expected Result
+<What should happen>
+
+### Actual Result
+<What actually happened>
+
+### Screenshots / Video
+<!-- Attach screenshot or screen recording here -->
+
+### Logs / Error Messages
+```
+<Error logs>
+```
+
+### Additional Context
+- Related to PR #<NNN>
+- Regression from version <X.Y.Z>
+
+### Impact
+<Who is affected and how>
+
+### Fix Verification
+| Check | Pass/Fail | Notes |
+|---|---|---|
+| Fix verified on staging | | |
+| No regression on related features | | |
+```
+
+### 21.2 Bug Report Guidelines
+
+#### 21.2.1 Title Guidelines
+
+| Good Examples | Bad Examples |
+|---|---|
+| "Task creation fails when due date is in the past" | "Task bug" |
+| "Briefing agent returns empty sleep section for new users" | "Briefing not working" |
+| "API returns 500 when creating goal with empty milestones" | "Server error" |
+
+#### 21.2.2 Steps to Reproduce Guidelines
+
+- Number each step sequentially
+- Be specific: include exact URLs, button labels, and data values
+- Start from a known state
+- Include the minimum steps needed to reproduce
+
+#### 21.2.3 Screenshot/Video Guidelines
+
+- Capture the entire browser viewport
+- Annotate screenshots to highlight the issue
+- For dynamic issues, record short screen recording (max 30 seconds)
+- Include browser devtools console in the screenshot if there are errors
+
+### 21.3 Bug Lifecycle
+
+```
++---------+      +----------+      +-----------+      +-------+      +----------+
+|  New    | ---> | Assigned | ---> | In Progress| ---> | Fixed | ---> | Verified |
++---------+      +----------+      +-----------+      +-------+      +----------+
+     |                |                  |                 |              |
+     v                v                  v                 v              v
++---------+      +----------+      +-----------+      +-------+      +----------+
+|Duplicate|      | Won't Fix|      | Need More |      | Cannot |      | Reopened |
+|         |      |          |      | Info      |      | Reproduce|    |          |
++---------+      +----------+      +-----------+      +-------+      +----------+
+```
+
+| Status | Definition | Responsibility |
+|---|---|---|
+| **New** | Bug reported, awaiting triage | Reporter |
+| **Assigned** | Developer assigned to investigate | QA Lead (during triage) |
+| **In Progress** | Developer is working on the fix | Developer |
+| **Fixed** | Fix is implemented and pushed | Developer |
+| **Verified** | QA has verified the fix on staging | QA |
+| **Closed** | Bug is resolved and accepted | QA |
+| **Reopened** | Bug reappears after being marked fixed | QA |
+| **Duplicate** | Bug already reported in another ticket | Triage team |
+| **Won't Fix** | Bug accepted as known limitation | Engineering Lead |
+| **Need More Info** | Insufficient information to reproduce | QA |
+| **Cannot Reproduce** | QA could not reproduce the issue | QA |
+
+### 21.4 Bug Prioritisation Matrix
+
+```
+                      Impact
+              High              Low
+
+      +------------------+------------------+
+High  |    CRITICAL      |     MAJOR        |
+      |    P0 / P1       |     P1 / P2      |
+Likeli+------------------+------------------+
+hood  |    MAJOR         |     MINOR        |
+Low   |    P1 / P2       |     P2 / P3      |
+      +------------------+------------------+
+```
+
+---
+
+## 22. Bug Triage Process
+
+### 22.1 Triage Meeting
+
+#### 22.1.1 Cadence
+
+| Phase | Frequency | Duration | Participants |
+|---|---|---|---|
+| Active development | Twice weekly (Mon + Thu) | 30 min | QA Lead, Engineering Lead, PM |
+| Release week | Daily | 15 min | QA Lead, Engineering Lead, Dev team |
+| Post-release | Once weekly | 30 min | QA Lead, Engineering Lead |
+
+#### 22.1.2 Meeting Agenda
+
+1. **Review new bugs** (5 min) â€” Go through new bugs submitted since last triage
+2. **Severity/Priority assignment** (10 min) â€” Assign severity and priority for each new bug
+3. **Assignment** (5 min) â€” Assign bugs to developers
+4. **Progress review** (5 min) â€” Check status of in-progress bug fixes
+5. **Verification queue** (3 min) â€” Review bugs awaiting QA verification
+6. **Deferred review** (2 min) â€” Review deferred bugs, decide if they need re-prioritisation
+
+### 22.2 Severity Definitions
+
+| Severity | Definition | Response Time | Fix Time | Example |
+|---|---|---|---|---|
+| **Critical** | System crash, data loss, security breach, complete feature unusable | Immediate | < 4 hours | Auth broken, data revealed to wrong user, API returns 500 |
+| **Major** | Major feature broken, no workaround, affects many users | < 2 hours | < 24 hours | Task creation fails, briefing doesn't generate |
+| **Minor** | Feature partially broken, workaround exists, affects few users | < 8 hours | < 1 week | Filter returns wrong count, UI misalignment |
+| **Trivial** | Cosmetic issue, enhancement, affects edge case users | < 1 week | Next sprint | Typo in tooltip, colour slightly off |
+
+### 22.3 Priority Definitions
+
+| Priority | Definition | Action | Example |
+|---|---|---|---|
+| **P0 â€” Critical** | Blocking release, must fix immediately | Stop all other work, deploy hotfix | Login broken, data loss, security vulnerability |
+| **P1 â€” High** | Major feature broken, must fix before next release | Fix in current sprint, consider hotfix | Task CRUD broken, briefing fails |
+| **P2 â€” Medium** | Important but not blocking release | Fix in current or next sprint | Filter not working, UI inconsistency |
+| **P3 â€” Low** | Nice-to-have fix | Fix when time permits, add to backlog | Cosmetic issue, minor text improvement |
+
+### 22.4 Triage Decision Rules
+
+| Condition | Decision |
+|---|---|
+| Bug affects critical user journey (auth, task CRUD) | Severity = Critical, Priority = P0 |
+| Bug affects major feature but workaround exists | Severity = Major, Priority = P1 |
+| Bug affects only non-critical path | Severity = Minor, Priority = P2 |
+| Bug is cosmetic with no functional impact | Severity = Trivial, Priority = P3 |
+| Bug is a duplicate of an existing report | Close as Duplicate, link to original |
+| Bug is by design (works as intended) | Close as Won't Fix, document rationale |
+| Bug cannot be reproduced after 3 attempts | Close as Cannot Reproduce |
+| Bug is in a deprecated feature | Close as Won't Fix, document deprecation status |
+| Bug severity/priority escalated by customer | Automatically bump to Major/P1 for investigation |
+
+### 22.5 Bug Triage Dashboard
+
+```markdown
+## Bug Triage Dashboard â€” Sprint <N>
+
+### Summary
+| Metric | Value |
+|---|---|
+| Total open bugs | <N> |
+| New this week | <N> |
+| Fixed this week | <N> |
+| Verified this week | <N> |
+| Deferred | <N> |
+
+### By Priority
+| Priority | Count | Trend |
+|---|---|---|
+| P0 | <N> | â€” |
+| P1 | <N> | â€” |
+| P2 | <N> | â€” |
+| P3 | <N> | â€” |
+
+### By Module
+| Module | Count | Top Bug |
+|---|---|---|
+| Tasks | <N> | BUG-<NNN> |
+| Briefing | <N> | BUG-<NNN> |
+| Auth | <N> | BUG-<NNN> |
+```
+
+---
+
+## 23. QA Metrics
+
+### 23.1 Core QA Metrics
+
+#### 23.1.1 Test Coverage
+
+| Metric | Calculation | Target | Reporting |
+|---|---|---|---|
+| **Statement coverage** | `(statements executed / total statements) x 100` | >= 80% | CI coverage report |
+| **Branch coverage** | `(branches executed / total branches) x 100` | >= 75% | CI coverage report |
+| **Function coverage** | `(functions called / total functions) x 100` | >= 85% | CI coverage report |
+| **Line coverage** | `(lines executed / total lines) x 100` | >= 80% | CI coverage report |
+| **Requirements coverage** | `(requirements tested / total requirements) x 100` | >= 95% | Test management tool |
+| **Automation coverage** | `(automated tests / total tests) x 100` | >= 80% | CI + test management |
+
+#### 23.1.2 Defect Metrics
+
+| Metric | Calculation | Target | Reporting |
+|---|---|---|---|
+| **Defect Density** | `(total defects / total KLOC) x 100` | < 5 per KLOC | Per release |
+| **Defect Removal Efficiency (DRE)** | `(defects found before release / total defects) x 100` | >= 85% | Per release |
+| **Escape Defect Rate** | `(production defects / total defects) x 100` | < 5% | Per release |
+| **Reopen Rate** | `(reopened defects / total closed defects) x 100` | < 5% | Per sprint |
+| **Mean Time to Detect (MTTD)** | Average time from introduction to detection | < 24 hours | Per sprint |
+| **Mean Time to Resolve (MTTR)** | Average time from report to fix | P0: < 4h, P1: < 24h | Per priority |
+| **Bug Age** | Average days a bug remains open | < 7 days | Per sprint |
+
+#### 23.1.3 Test Execution Metrics
+
+| Metric | Calculation | Target | Reporting |
+|---|---|---|---|
+| **Test Execution Rate** | `(tests executed / total planned tests) x 100` | 100% | Per sprint |
+| **Test Pass Rate** | `(passed tests / total executed tests) x 100` | >= 95% | Per sprint |
+| **Test Failure Rate** | `(failed tests / total executed tests) x 100` | < 5% | Per sprint |
+| **Flaky Test Rate** | `(flaky tests / total automated tests) x 100` | < 5% | Per sprint |
+| **Automation Stability** | `(stable automated tests / total automated tests) x 100` | >= 95% | Per sprint |
+
+#### 23.1.4 Sprint Quality Metrics
+
+| Metric | Calculation | Target | Reporting |
+|---|---|---|---|
+| **Sprint Velocity (Quality)** | Completed story points - rework story points | Continuous | Per sprint |
+| **Rework Ratio** | `(rework effort / total effort) x 100` | < 10% | Per sprint |
+| **First-Time Pass Rate (FTPR)** | `(features passing QA on first attempt / total features) x 100` | >= 80% | Per sprint |
+| **QA Cycle Time** | Average days from QA start to QA signoff | < 5 days | Per release |
+
+### 23.2 Metrics Review Cadence
+
+| Frequency | Meeting | Attendees | Agenda |
+|---|---|---|---|
+| **Weekly** | QA Metrics Review | QA team | Review sprint metrics, identify trends |
+| **Sprint end** | Sprint Retrospective | Full team | Review quality metrics for the sprint |
+| **Release end** | Release Retrospective | Engineering + Product | Review release quality metrics |
+| **Monthly** | QA Process Improvement | QA Lead + Eng Lead | Deep dive into metrics trends |
+| **Quarterly** | Quality Review Board | All leads | Strategic quality review |
+
+### 23.3 Metric Collection Methods
+
+| Metric | Collection Method | Tool | Frequency |
+|---|---|---|---|
+| Test coverage | CI pipeline automated | pytest-cov, @vitest/coverage-v8 | Every PR |
+| Defect counts | Bug tracker queries | GitHub Issues API | Real-time |
+| Test execution | CI report parsing | Allure, Playwright report | Every CI run |
+| Sprint metrics | Jira/GitHub Project queries | GitHub Projects API | Per sprint |
+| Performance | Benchmark runs | k6, Lighthouse CI | Per release |
+| Flaky tests | CI history analysis | Custom script | Daily |
+
+### 23.4 Metric-Driven Actions
+
+| Metric Below Target | Action | Owner | Deadline |
+|---|---|---|---|
+| Coverage < 80% for any module | Write additional tests targeting uncovered code | Developer + QA | 1 sprint |
+| Flaky rate > 5% | Quarantine flaky tests, create fix tickets | QA Lead | 1 week |
+| Escape defect rate > 5% | Analyse root cause, add test gaps | QA + Dev | 1 sprint |
+| DRE < 85% | Strengthen review process, add testing in earlier phases | QA Lead | Immediate |
+| FTPR < 80% | Improve acceptance criteria, increase dev sandbox testing | PM + Dev | 1 sprint |
+| QA cycle time > 5 days | Identify bottlenecks, parallelise testing | QA Lead | 1 sprint |
+
+---
+
+## 24. QA Handover Checklist
+
+### 24.1 Pre-Handover Checklist (Developer to QA)
+
+```markdown
+## QA Handover Checklist
+
+### Feature Information
+| Field | Value |
+|---|---|
+| Feature Name | <Name> |
+| PR / Branch | <link> |
+| Developer | <Name> |
+| Handover Date | <YYYY-MM-DD> |
+| Target Release | <Version> |
+
+### Code Completeness
+- [ ] All acceptance criteria implemented
+- [ ] Code reviewed and approved (minimum 1 reviewer)
+- [ ] PR merged to main branch
+- [ ] No P0/P1 bugs remaining
+- [ ] Feature flagged (if applicable, with flag name)
+
+### Test Readiness
+- [ ] Unit tests written and passing (coverage >= 80%)
+- [ ] Integration tests written and passing (coverage >= 75%)
+- [ ] No failing tests related to this feature
+- [ ] All CI checks passing
+
+### Test Data
+- [ ] Test data requirements documented
+- [ ] Seed scripts updated (if needed)
+- [ ] Test user accounts available
+- [ ] Test environment configured
+
+### Documentation
+- [ ] API documentation updated (OpenAPI/Swagger)
+- [ ] README updated (if applicable)
+- [ ] Known limitations documented
+- [ ] Configuration changes documented
+
+### Demo / Walkthrough
+- [ ] Developer demo conducted (15 min)
+- [ ] Key user flows demonstrated
+- [ ] Edge cases and error states shown
+- [ ] Known issues and workarounds discussed
+
+### Developer Signoff
+| Item | Confirmed |
+|---|---|
+| I confirm this feature is complete and ready for QA | [ ] |
+| I confirm all tests are passing | [ ] |
+| I confirm test data is available | [ ] |
+| I confirm documentation is updated | [ ] |
+| **Developer Signature:** | <Name + Date> |
+```
+
+### 24.2 Post-Handover Checklist (QA)
+
+```markdown
+## QA Acceptance Checklist
+
+### Environment Verification
+- [ ] Test environment is accessible and healthy
+- [ ] Feature is deployed to test environment
+- [ ] Test data is seeded correctly
+- [ ] Feature flag is enabled (if applicable)
+
+### Smoke Testing
+- [ ] Basic user flow works (happy path)
+- [ ] No console errors on main pages
+- [ ] API returns correct responses (200/201)
+- [ ] UI renders without layout issues
+
+### Full Testing
+- [ ] All functional test cases executed
+- [ ] All edge cases tested (empty, error, boundary)
+- [ ] Negative testing completed (invalid input, unauthorised access)
+- [ ] Cross-browser testing completed (Chrome, Firefox, Safari)
+- [ ] Mobile responsive testing completed (375px, 412px, 820px)
+- [ ] Performance benchmarks verified (if applicable)
+- [ ] Accessibility checks passed (axe-core + manual)
+- [ ] Security checks passed (if applicable)
+
+### Regression
+- [ ] Regression smoke suite passes
+- [ ] No regressions in related features
+- [ ] No new bugs introduced
+
+### Bug Reporting
+- [ ] All found bugs reported with clear steps
+- [ ] Severity and priority assigned
+- [ ] Critical/major bugs communicated to developer immediately
+
+### QA Signoff
+| Item | Confirmed |
+|---|---|
+| I confirm all planned tests are executed | [ ] |
+| I confirm no P0/P1 open bugs | [ ] |
+| I confirm regression suite passes | [ ] |
+| I confirm performance/security/a11y are acceptable | [ ] |
+| **QA Signature:** | <Name + Date> |
+```
+
+---
+
+## 25. Go/No-Go Criteria for Release
+
+### 25.1 Release Readiness Assessment
+
+```markdown
+## Release Readiness Assessment
+
+### Release Information
+| Field | Value |
+|---|---|
+| Release Version | <x.y.z> |
+| Release Date | <YYYY-MM-DD> |
+| Release Type | Major / Minor / Patch / Hotfix |
+| Release Manager | <Name> |
+| QA Lead | <Name> |
+
+### Mandatory Criteria (ALL must be met for Go decision)
+
+#### Code Quality
+- [ ] All CI checks pass (frontend, backend, prompts, security)
+- [ ] No P0/P1 open bugs
+- [ ] All P2 bugs have a documented workaround or deferral approval
+- [ ] Code coverage >= 80% (no regression from previous release)
+- [ ] All unit tests pass (100%)
+- [ ] All integration tests pass (100%)
+
+#### Testing
+- [ ] All planned test cases executed (100%)
+- [ ] Full regression suite passed (100%)
+- [ ] E2E tests pass on chromium, firefox, and mobile Safari
+- [ ] UAT completed and signed off (if applicable)
+- [ ] Performance benchmarks within targets
+- [ ] Lighthouse score >= 90 (Perf, A11y, Best Practices, SEO)
+
+#### Security
+- [ ] Security scan passed (no high/critical findings)
+- [ ] Dependency audit passed (no high severity vulnerabilities)
+- [ ] Secrets scan passed (no credentials in code)
+- [ ] RLS policies reviewed and verified
+
+#### Operations
+- [ ] Database migrations tested and reviewed
+- [ ] Rollback plan documented and tested
+- [ ] Monitoring and alerting configured for new features
+- [ ] Runbook updated for new operational procedures
+- [ ] Release notes drafted and reviewed
+
+#### Documentation
+- [ ] API documentation updated
+- [ ] User-facing documentation updated
+- [ ] CHANGELOG.md updated
+- [ ] Known issues documented in release notes
+
+### Advisory Criteria (recommended but not blocking)
+- [ ] All P3 bugs resolved (deferral acceptable)
+- [ ] Accessibility audit shows zero violations (known issues documented)
+- [ ] Manual exploratory testing complete
+- [ ] Visual regression tests pass
+- [ ] Load testing complete (if applicable for release type)
+- [ ] Third-party integrations verified
+
+### Go/No-Go Decision
+| Decision | Criteria | Value |
+|---|---|---|
+| **Go** | All mandatory criteria met | [ ] |
+| **Conditional Go** | Mandatory criteria met, advisory items deferred with plan | [ ] |
+| **No-Go** | Any mandatory criterion not met | [ ] |
+
+#### Approvals
+| Role | Name | Date | Signature |
+|---|---|---|---|
+| QA Lead | | | |
+| Engineering Lead | | | |
+| Product Manager | | | |
+| Release Manager | | | |
+```
+
+### 25.2 Emergency Release (Hotfix) Criteria
+
+For emergency hotfix releases that bypass the standard process:
+
+**Mandatory Criteria (HOTFIX)**
+- [ ] Fix is minimal and targeted (no scope creep)
+- [ ] Fix has been code reviewed by at least 1 engineer
+- [ ] Unit tests pass for the affected module
+- [ ] Rollback plan is documented and ready
+- [ ] Monitoring is in place to detect regression
+- [ ] Communication sent to stakeholders
+
+**Bypassed Criteria (HOTFIX â€” Accepted Risk):**
+- Full regression suite, Performance benchmarks, Security scan, Accessibility audit, UAT
+
+**Post-Hotfix Actions**
+- [ ] Full regression run within 24 hours of deployment
+- [ ] Security scan within 24 hours
+- [ ] Root cause analysis completed within 48 hours
+- [ ] Permanent fix plan documented within 48 hours
+
+### 25.3 Rollback Criteria
+
+| Trigger | Detection Method | Action |
+|---|---|---|
+| Error rate increases by >5% from baseline | Sentry / monitoring dashboard | Immediate rollback |
+| API p95 response time exceeds 2s for any critical endpoint | Prometheus / Grafana | Immediate rollback |
+| P0/P1 bug reported by users | Customer support / Sentry | Evaluate rollback |
+| Database migration fails | Migration logs | Automatic rollback |
+| Security vulnerability discovered | Automated scan / report | Immediate rollback |
+| Lighthouse score drops >10 points | Automated check | Evaluate rollback |
+
+---
+
+## 26. QA Signoff Process
+
+### 26.1 Signoff Levels
+
+| Level | Signoff Authority | When Required |
+|---|---|---|
+| **Level 1 â€” Feature Signoff** | QA Engineer assigned to the feature | When a feature passes all its test cases |
+| **Level 2 â€” Sprint Signoff** | QA Lead | At the end of each sprint |
+| **Level 3 â€” Release Signoff** | QA Lead + Engineering Lead | Before every production release |
+| **Level 4 â€” Emergency Signoff** | QA Lead + CTO | For hotfix/emergency releases |
+
+### 26.2 Signoff Document
+
+```markdown
+## QA Signoff Certificate
+
+### Release/Feature Information
+| Field | Value |
+|---|---|
+| Product | Second Brain OS â€” ARIA OS |
+| Release/Feature | <Name or Version> |
+| Signoff Level | Level 1 / Level 2 / Level 3 / Level 4 |
+| Date | <YYYY-MM-DD> |
+| QA Lead | <Name> |
+
+### Signoff Checklist
+
+#### Test Execution
+- [ ] All test cases executed (count: <N> passed, <N> failed, <N> blocked)
+- [ ] All failed tests have associated bug reports
+- [ ] All blocked tests have documented reasons
+- [ ] No outstanding P0/P1 bugs
+- [ ] All P2 bugs have documented workarounds or deferral approved
+
+#### Quality Metrics
+- [ ] Test coverage >= 80% (current: <N>%)
+- [ ] Test pass rate >= 95% (current: <N>%)
+- [ ] Flaky test rate < 5% (current: <N>%)
+- [ ] No coverage regression from previous release
+
+#### Non-Functional Testing
+- [ ] Performance benchmarks within targets
+- [ ] Security scan passed (no high/critical findings)
+- [ ] Accessibility audit completed (violations documented)
+- [ ] Cross-browser testing completed (Chrome, Firefox, Safari)
+- [ ] Mobile responsive testing completed
+
+#### Regression
+- [ ] Full regression suite passed
+- [ ] No regressions in critical user journeys
+- [ ] No regressions in AI agent functionality
+
+#### Documentation
+- [ ] Release notes reviewed (QA perspective)
+- [ ] Known issues documented
+- [ ] CHANGELOG.md updated
+
+### Signoff Decision
+| Decision | Description |
+|---|---|
+| **Approved** | All criteria met, release can proceed |
+| **Approved with Conditions** | Minor criteria not met, conditions documented |
+| **Not Approved** | Critical criteria not met, release blocked |
+
+### Signatures
+| Role | Name | Date | Signature |
+|---|---|---|---|
+| QA Engineer | | | |
+| QA Lead | | | |
+| Engineering Lead | | | |
+| Product Manager | | | |
+```
+
+### 26.3 Signoff Verification Process
+
+**Step 1: Pre-Signoff Review**
+- QA Lead reviews all test execution results
+- QA Lead verifies bug dashboard (no P0/P1, P2s deferred with approval)
+- QA Lead reviews metrics dashboard against targets
+
+**Step 2: Signoff Meeting**
+- Present signoff certificate to Engineering Lead and PM
+- Review risk assessment and mitigation plan
+- Discuss any conditional approvals
+- Obtain signatures (or block if not approved)
+
+**Step 3: Signoff Communication**
+- Post signoff decision to release communication channel
+- Update release tracking document with signoff status
+- If approved, proceed with release
+- If not approved, document blocking issues and schedule follow-up
+
+**Step 4: Post-Release Verification**
+- Monitor production for 48 hours post-release
+- Verify no critical issues emerged
+- Update signoff certificate with post-release verification status
+
+---
+
+## 27. User Acceptance Testing (UAT)
+
+### 27.1 When UAT is Required
+
+| Release Type | UAT Required | UAT Scope |
+|---|---|---|
+| Major release (new features, breaking changes) | Yes | Full UAT (all new features + key existing flows) |
+| Minor release (enhancements, non-breaking) | Conditional | New features only |
+| Patch release (bug fixes only) | No | â€” |
+| Emergency hotfix | No | â€” |
+
+### 27.2 UAT Test Plan Template
+
+```markdown
+## UAT Test Plan
+
+### Release Information
+| Field | Value |
+|---|---|
+| Release Version | <x.y.z> |
+| UAT Period | <Start> to <End> |
+| UAT Environment URL | <URL> |
+| UAT Coordinator | <Name> |
+| Participants | <List of users or roles> |
+
+### Test Scenarios
+| Scenario ID | User Role | Description | Business Priority |
+|---|---|---|---|
+| UAT-001 | Student | Create and manage daily tasks | Critical |
+| UAT-002 | Student | View and act on daily briefing | High |
+| UAT-003 | Student | Track course progress | Medium |
+| UAT-004 | Student | Log sleep and view sleep score | Medium |
+| UAT-005 | Student | Use Pomodoro timer | Low |
+
+### Success Criteria
+- [ ] All critical scenarios pass (P0)
+- [ ] >= 90% of high-priority scenarios pass
+- [ ] >= 80% of medium-priority scenarios pass
+- [ ] No P0/P1 bugs found that were missed in QA
+- [ ] All participants confirm readiness for production
+
+### Participant Instructions
+1. Access the UAT environment at <URL>
+2. Login with your assigned test account
+3. Execute the scenarios in the UAT test plan
+4. Report any issues using the UAT Feedback Form
+5. Mark each scenario as Pass, Fail, or Unable to Test
+6. Complete all scenarios by the UAT end date
+```
+
+### 27.3 UAT Feedback Template
+
+```markdown
+## UAT Feedback
+
+| Field | Value |
+|---|---|
+| **Feedback ID** | UAT-FB-<NNN> |
+| **Submitted By** | <Participant Name> |
+| **Date** | <YYYY-MM-DD> |
+| **Scenario ID** | UAT-<NNN> |
+| **Type** | Bug / Enhancement / Question / Other |
+
+### Description
+<Clear description of the issue or suggestion>
+
+### Steps to Reproduce (for bugs)
+1. <Step 1>
+2. <Step 2>
+3. <Step 3>
+
+### Expected Behaviour
+<What did you expect to happen?>
+
+### Actual Behaviour
+<What actually happened?>
+
+### Severity (for bugs)
+- [ ] Critical â€” Cannot proceed with this scenario
+- [ ] Major â€” Scenario works but with difficulty
+- [ ] Minor â€” Minor issue, easy to work around
+- [ ] Enhancement â€” Suggestion for improvement
+```
+
+### 27.4 UAT Signoff
+
+```markdown
+## UAT Signoff Certificate
+
+| Field | Value |
+|---|---|
+| Release Version | <x.y.z> |
+| UAT Period | <Start> to <End> |
+| Participants | <Count> |
+| Scenarios Planned | <Count> |
+| Scenarios Passed | <Count> |
+| Scenarios Failed | <Count> |
+| Bugs Found | <Count> (P0: <N>, P1: <N>, P2: <N>, P3: <N>) |
+
+### UAT Results Summary
+<Brief summary of UAT execution and results>
+
+### Decision
+- [ ] **Approved** â€” UAT passed, system is ready for production
+- [ ] **Conditionally Approved** â€” UAT passed with conditions (see below)
+- [ ] **Not Approved** â€” UAT failed, issues must be resolved
+
+### Signatures
+| Role | Name | Date | Signature |
+|---|---|---|---|
+| UAT Coordinator | | | |
+| User Representative | | | |
+| QA Lead | | | |
+| Product Manager | | | |
+```
+
+---
+
+## 28. QA Process Improvement Cadence
+
+### 28.1 Improvement Cycle
+
+```
+                    +-----------------------+
+                    |   Sprint Retro        |
+                    |   (End of Sprint)     |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    | Identify Improvements |
+                    | - Pain points         |
+                    | - Bottlenecks         |
+                    | - Tool gaps           |
+                    | - Process gaps        |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    | Prioritise Actions    |
+                    | - Impact vs Effort    |
+                    | - Quick wins first    |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    | Implement Changes     |
+                    | - Update docs         |
+                    | - Configure tools     |
+                    | - Train team          |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    | Measure Impact        |
+                    | - Next sprint metrics |
+                    | - Compare to baseline |
+                    +----------+------------+
+                               |
+                    +----------v------------+
+                    | Repeat (Continuous)   |
+                    +-----------------------+
+```
+
+### 28.2 Improvement Categories
+
+| Category | Examples | Owner |
+|---|---|---|
+| **Process** | Test planning, bug triage, handover process | QA Lead |
+| **Automation** | Test framework, CI pipeline, reporting | QA Automation |
+| **Tools** | Test management, bug tracking, monitoring | QA Lead + DevOps |
+| **Skills** | Training, knowledge sharing, certifications | All QA |
+| **Metrics** | New metrics, better collection, dashboards | QA Lead |
+| **Culture** | Quality awareness, shift-left mindset | Engineering Lead |
+
+### 28.3 Improvement Action Items Template
+
+```markdown
+## QA Process Improvement â€” Action Items
+
+### Sprint <N> Retrospective â€” <Date>
+
+| ID | Category | Issue | Proposed Action | Impact | Effort | Owner | Target Sprint | Status |
+|---|---|---|---|---|---|---|---|---|
+| IMP-001 | Process | Test handover takes too long | Create handover checklist template | High | Low | QA Lead | S13 | In Progress |
+| IMP-002 | Automation | E2E tests flaky on Firefox | Investigate and fix timing issues | Medium | Medium | QA Auto | S13 | Not Started |
+| IMP-003 | Tools | No visual regression testing | Evaluate Percy vs Chromatic | Medium | Medium | QA Lead | S14 | Backlog |
+| IMP-004 | Metrics | No flaky test tracking | Create flaky test registry script | High | Low | QA Auto | S13 | Completed |
+| IMP-005 | Skills | Team unfamiliar with Playwright | Schedule 1-hour workshop | Medium | Low | QA Lead | S13 | In Progress |
+```
+
+### 28.4 Retrospective Format (QA Section)
+
+```markdown
+## Sprint Retrospective â€” QA Section
+
+### Sprint <N> â€” <Date>
+
+#### What went well?
+- <Achievement 1>
+- <Achievement 2>
+
+#### What could be improved?
+- <Improvement opportunity 1>
+- <Improvement opportunity 2>
+
+#### Action Items (START / STOP / CONTINUE)
+| Action | Type | Owner | ETA |
+|---|---|---|---|
+| <Description> | START / STOP / CONTINUE | <Name> | <Date> |
+
+#### Metrics Check
+| Metric | Target | Actual | Status |
+|---|---|---|---|
+| Test coverage | >= 80% | <N>% | ðŸŸ¢ / ðŸŸ¡ / ðŸ”´ |
+| Test pass rate | >= 95% | <N>% | ðŸŸ¢ / ðŸŸ¡ / ðŸ”´ |
+| Flaky rate | < 5% | <N>% | ðŸŸ¢ / ðŸŸ¡ / ðŸ”´ |
+| QA cycle time | < 5 days | <N> days | ðŸŸ¢ / ðŸŸ¡ / ðŸ”´ |
+```
+
+---
+
+## 29. Appendices (QA)
+
+### Appendix A: Bug Reporting Quick Reference
+
+```
+BUG REPORT QUICK CHECKLIST:
+
+[ ] Clear, descriptive title
+[ ] Environment details (Local/CI/Staging/Production)
+[ ] Browser and OS
+[ ] Steps to reproduce (numbered)
+[ ] Expected result
+[ ] Actual result
+[ ] Screenshot or video
+[ ] Error logs (if available)
+[ ] Severity assigned (Critical/Major/Minor/Trivial)
+[ ] Priority assigned (P0/P1/P2/P3)
+
+SEVERITY vs PRIORITY:
+  Severity = Technical impact (how bad is the bug?)
+  Priority = Business impact (how urgent is the fix?)
+```
+
+### Appendix B: Test Estimation Quick Reference
+
+```
+TEST ESTIMATION:
+
+Unit test:    20-30 min per test (write + execute)
+Integration:  30-60 min per test (including data setup)
+E2E:          45-90 min per test (including browser automation setup)
+Manual test:  10-20 min per test execution (once written)
+Exploratory:  2-4 hours per feature (structured)
+Regression:   20% of initial test effort per pass
+Performance:  1-2 hours per scenario (including analysis)
+Security:     1-4 hours per scan (tool-dependent)
+
+MULTIPLIERS:
+  Complex feature: 2x
+  Many integrations: 1.5x
+  New automation framework: 3x initial
+  Flaky environment: 1.5x
+```
+
+### Appendix C: QA Acronyms
+
+| Acronym | Full Form |
+|---|---|
+| DRE | Defect Removal Efficiency |
+| E2E | End-to-End |
+| FTPR | First-Time Pass Rate |
+| KLOC | Thousand Lines of Code |
+| MTTD | Mean Time to Detect |
+| MTTR | Mean Time to Resolve |
+| RLS | Row-Level Security |
+| SAST | Static Application Security Testing |
+| SCA | Software Composition Analysis |
+| UAT | User Acceptance Testing |
+| WCAG | Web Content Accessibility Guidelines |
+
+### Appendix D: Related Documents (QA Processes)
+
+| Document | Location |
+|---|---|
+| Deployment Guide | `docs/devops/26_Deployment.md` |
+| Security Standards | `docs/security/24_Security.md` |
+| Accessibility Standards | `docs/design/FrontendAccessibilityGuide.md` |
+| Runbooks | `docs/operations/39_Runbooks.md` |
+| Incident Response | `docs/operations/40_IncidentResponse.md` |
+| SLA Definitions | `docs/operations/43_SLA.md` |
+| Definition of Done | `docs/operations/DefinitionOfDone.md` |
