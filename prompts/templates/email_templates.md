@@ -5,6 +5,7 @@ description: Enterprise email notification templates for ARIA system events — 
 model: none
 max_tokens: 0
 temperature: 0.0
+tags: [email, notification, template]
 last_updated: 2026-06-11
 approved_by: architecture-review
 classification: internal

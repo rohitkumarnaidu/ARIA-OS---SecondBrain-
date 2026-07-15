@@ -5,6 +5,7 @@ description: Enterprise context assembly template for AI agent orchestration —
 model: all
 max_tokens: 8192
 temperature: 0.0
+tags: [context-assembly, template]
 last_updated: 2026-06-11
 approved_by: architecture-review
 classification: internal
