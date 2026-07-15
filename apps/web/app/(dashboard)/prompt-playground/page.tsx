@@ -240,10 +240,11 @@ export default function PromptPlaygroundPage() {
               </div>
               <div className="p-4 space-y-3">
                 <div>
-                  <label className="text-xs text-text-tertiary mb-1 block">
+                  <label htmlFor="render-vars" className="text-xs text-text-tertiary mb-1 block">
                     Variables <span className="text-text-tertiary">(JSON, optional)</span>
                   </label>
                   <input
+                    id="render-vars"
                     type="text"
                     value={renderVars}
                     onChange={(e) => setRenderVars(e.target.value)}
@@ -261,8 +262,8 @@ export default function PromptPlaygroundPage() {
                 </button>
                 {renderedOutput && (
                   <div>
-                    <label className="text-xs text-text-tertiary mb-1 block">Rendered Output</label>
-                    <pre className="p-3 rounded-lg bg-background-elevated text-sm text-text-primary font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap max-h-[30vh] overflow-y-auto">
+                    <span className="text-xs text-text-tertiary mb-1 block" id="rendered-output-label">Rendered Output</span>
+                    <pre className="p-3 rounded-lg bg-background-elevated text-sm text-text-primary font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap max-h-[30vh] overflow-y-auto" aria-labelledby="rendered-output-label">
                       {renderedOutput}
                     </pre>
                   </div>
