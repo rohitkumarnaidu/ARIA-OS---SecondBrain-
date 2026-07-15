@@ -9,6 +9,7 @@ import type { SleepLog } from '@/lib/types'
 import { Moon, Sun, Trash2, Clock, Battery, AlertCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/Button'
+import { WindDownPanel } from '@/components/sleep/WindDownPanel'
 import { createLogger } from '@/lib/utils/logger'
 
 export default function SleepPage() {
@@ -108,6 +109,8 @@ export default function SleepPage() {
           Log Sleep
         </Button>
       </motion.div>
+
+      <WindDownPanel />
 
       {error && (
         <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
@@ -221,10 +224,10 @@ export default function SleepPage() {
               </div>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div><label className="block text-text-secondary text-sm mb-1">Bedtime</label><input type="time" value={newSleep.bedtime} onChange={e => setNewSleep({ ...newSleep, bedtime: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
-                  <div><label className="block text-text-secondary text-sm mb-1">Wake Time</label><input type="time" value={newSleep.wake_time} onChange={e => setNewSleep({ ...newSleep, wake_time: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
+                  <div><label htmlFor="sleep-bedtime" className="block text-text-secondary text-sm mb-1">Bedtime</label><input id="sleep-bedtime" type="time" value={newSleep.bedtime} onChange={e => setNewSleep({ ...newSleep, bedtime: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
+                  <div><label htmlFor="sleep-waketime" className="block text-text-secondary text-sm mb-1">Wake Time</label><input id="sleep-waketime" type="time" value={newSleep.wake_time} onChange={e => setNewSleep({ ...newSleep, wake_time: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" /></div>
                 </div>
-                <div><label className="block text-text-secondary text-sm mb-1">Quality Rating</label>
+                <div><span className="block text-text-secondary text-sm mb-1" id="sleep-quality-label">Quality Rating</span>
                   <div className="flex gap-2 mt-2">
                     {[1,2,3,4,5].map(n => (<button key={n} onClick={() => setNewSleep({ ...newSleep, quality_rating: n })} className={`flex-1 py-2 rounded-lg ${newSleep.quality_rating === n ? 'bg-accent-primary text-white' : 'bg-background-elevated text-text-secondary'}`}>{n}</button>))}
                   </div>
