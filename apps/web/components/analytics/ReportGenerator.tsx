@@ -117,9 +117,9 @@ export function ReportGenerator({ onExport }: ReportGeneratorProps) {
 
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-2 block">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-2 block">
             Date Range
-          </label>
+          </span>
           <div className="flex items-center gap-2 mb-2">
             {PRESETS.map((p) => (
               <button
@@ -167,9 +167,9 @@ export function ReportGenerator({ onExport }: ReportGeneratorProps) {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-2 block">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-2 block">
             Metrics
-          </label>
+          </span>
           <div className="flex flex-wrap gap-2">
             {METRICS.map((m) => (
               <button
