@@ -1,12 +1,12 @@
-# Contributing to Second Brain OS (ARIA OS)
+﻿# Contributing to Second Brain OS (ARIA OS)
 
 | Field | Value |
 |---|---|
-| Document ID | SB-CONTRIB-001 |
+| Document ID | OPS-CON-001 |
 | Version | 2.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Public — Contributor Guide |
+| Classification | Public â€” Contributor Guide |
 | Owner | Engineering Lead |
 
 ---
@@ -14,40 +14,40 @@
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 flowchart LR
-    Fork["🍴 Fork Repository"] --> Clone2["📥 Clone Fork Locally"]
-    Clone2 --> Branch["🌿 Create Feature Branch<br/>feature/ · fix/ · docs/"]
-    Branch --> Setup["🔧 Setup Dev Environment<br/>make install"]
-    Setup --> Code["💻 Write Code + Tests"]
-    Code --> Lint["🧹 Run Linters<br/>make lint"]
-    Lint --> Validate["✅ Validate Prompts<br/>make validate-prompts"]
-    Validate --> Test["🧪 Run Tests<br/>make test"]
+    Fork["ðŸ´ Fork Repository"] --> Clone2["ðŸ“¥ Clone Fork Locally"]
+    Clone2 --> Branch["ðŸŒ¿ Create Feature Branch<br/>feature/ Â· fix/ Â· docs/"]
+    Branch --> Setup["ðŸ”§ Setup Dev Environment<br/>make install"]
+    Setup --> Code["ðŸ’» Write Code + Tests"]
+    Code --> Lint["ðŸ§¹ Run Linters<br/>make lint"]
+    Lint --> Validate["âœ… Validate Prompts<br/>make validate-prompts"]
+    Validate --> Test["ðŸ§ª Run Tests<br/>make test"]
     Test --> AllPassing{"All Passing?"}
     AllPassing -->|No| Code
-    AllPassing -->|Yes| Commit["📝 Commit Changes<br/>Conventional Commit Format"]
-    Commit --> Push["📤 Push to Fork"]
-    Push --> PR["🔄 Open Pull Request"]
-    PR --> CI["⚙️ CI Pipeline<br/>5 Jobs Running"]
+    AllPassing -->|Yes| Commit["ðŸ“ Commit Changes<br/>Conventional Commit Format"]
+    Commit --> Push["ðŸ“¤ Push to Fork"]
+    Push --> PR["ðŸ”„ Open Pull Request"]
+    PR --> CI["âš™ï¸ CI Pipeline<br/>5 Jobs Running"]
     CI --> CIGreen{"CI Green?"}
     CIGreen -->|No| Code
-    CIGreen -->|Yes| Review["👀 Code Review<br/>30-Item Checklist"]
+    CIGreen -->|Yes| Review["ðŸ‘€ Code Review<br/>30-Item Checklist"]
     Review --> Approved{"Approved?"}
     Approved -->|Changes Requested| Code
-    Approved -->|Yes| Merge["🔀 Squash & Merge"]
-    Merge --> Deploy2["🚀 Auto-Deploy to Production"]
-    Deploy2 --> Monitor2["📊 Monitor for Issues"]
-    Monitor2 --> Celebrate["🎉 Contribution Complete"]
+    Approved -->|Yes| Merge["ðŸ”€ Squash & Merge"]
+    Merge --> Deploy2["ðŸš€ Auto-Deploy to Production"]
+    Deploy2 --> Monitor2["ðŸ“Š Monitor for Issues"]
+    Monitor2 --> Celebrate["ðŸŽ‰ Contribution Complete"]
 ```
 
 ## 1. Welcome & Community Values
 
-Welcome to the SecondBrain OS contributor community! We're building a personal AI productivity system designed specifically for BTech CSE students — combining tasks, courses, goals, habits, sleep, income, projects, and more into a single intelligent system with a local-first AI assistant (ARIA).
+Welcome to the SecondBrain OS contributor community! We're building a personal AI productivity system designed specifically for BTech CSE students â€” combining tasks, courses, goals, habits, sleep, income, projects, and more into a single intelligent system with a local-first AI assistant (ARIA).
 
 **Our community values:**
 - **Student-first:** Every feature we build serves the real needs of Indian BTech CSE students
 - **Privacy by design:** Local-first AI (Ollama), no external analytics, user-owned data
 - **Quality over speed:** Well-tested, documented, and reviewed code before merging
 - **Inclusive collaboration:** Respectful, constructive, and supportive communication
-- **Graceful degradation:** Every feature must work without AI — AI is a value-add, not a requirement
+- **Graceful degradation:** Every feature must work without AI â€” AI is a value-add, not a requirement
 
 We believe great software is built by diverse teams with varied perspectives. Whether you're a first-time contributor or an experienced developer, you are welcome here.
 
@@ -55,7 +55,7 @@ We believe great software is built by diverse teams with varied perspectives. Wh
 
 ## 2. Code of Conduct
 
-All contributors must adhere to our [Code of Conduct](../CODE_OF_CONDUCT.md).
+All contributors must adhere to our [Code of Conduct](../../CODE_OF_CONDUCT.md).
 
 Key expectations:
 - Use welcoming and inclusive language
@@ -132,12 +132,12 @@ You need **3 terminals** for full-stack development:
 cd apps/api
 venv\Scripts\Activate.ps1
 uvicorn main:app --reload --port 8000
-# → http://localhost:8000/docs (Swagger UI)
+# â†’ http://localhost:8000/docs (Swagger UI)
 
 # Terminal 2: Frontend (Next.js)
 cd apps/web
 npm run dev
-# → http://localhost:3000
+# â†’ http://localhost:3000
 
 # Terminal 3: Scheduler (optional, for cron jobs)
 cd services/scheduler
@@ -209,7 +209,7 @@ ollama serve
 ### 4.4 Supabase Setup
 
 1. Create a free project at https://supabase.com
-2. Copy your project URL and anon key from Settings → API
+2. Copy your project URL and anon key from Settings â†’ API
 3. Run migrations:
 ```bash
 supabase db push
@@ -322,15 +322,15 @@ We follow **Conventional Commits** specification. This enables automated changel
 
 | Type | Description | Emoji Convention |
 |---|---|---|
-| `feat` | New feature | ✨ |
-| `fix` | Bug fix | 🐛 |
-| `docs` | Documentation only | 📝 |
-| `style` | Formatting, whitespace | 💄 |
-| `refactor` | Code restructuring | ♻️ |
-| `test` | Tests only | ✅ |
-| `chore` | Build, CI, deps | 🔧 |
-| `perf` | Performance improvement | ⚡️ |
-| `prompt` | Prompt file changes | 🤖 |
+| `feat` | New feature | âœ¨ |
+| `fix` | Bug fix | ðŸ› |
+| `docs` | Documentation only | ðŸ“ |
+| `style` | Formatting, whitespace | ðŸ’„ |
+| `refactor` | Code restructuring | â™»ï¸ |
+| `test` | Tests only | âœ… |
+| `chore` | Build, CI, deps | ðŸ”§ |
+| `perf` | Performance improvement | âš¡ï¸ |
+| `prompt` | Prompt file changes | ðŸ¤– |
 
 ### 6.3 Scopes
 
@@ -475,11 +475,11 @@ Closes #
 ### 7.4 PR Lifecycle
 
 ```
-Create PR → CI Checks (auto) → Code Review → Changes Requested (loop)
-                                                     ↓
+Create PR â†’ CI Checks (auto) â†’ Code Review â†’ Changes Requested (loop)
+                                                     â†“
                                             All Approved
-                                                     ↓
-                                              Merge → Delete Branch
+                                                     â†“
+                                              Merge â†’ Delete Branch
 ```
 
 ### 7.5 Merge Requirements
@@ -539,11 +539,11 @@ gh pr review --request-reviewer @username
 ### 8.4 Code Review Etiquette
 
 **For reviewers:**
-- Be specific: "The `try/catch` block on line 42 swallows the error — consider re-raising" not "This needs fixing"
+- Be specific: "The `try/catch` block on line 42 swallows the error â€” consider re-raising" not "This needs fixing"
 - Be kind: Assume good intent, use "we" language
 - Acknowledge good code: "Nice use of the factory pattern here"
 - Distinguish between blockers and suggestions: Use `BLOCKING:` prefix for must-fix items
-- Review at most 400 lines per hour — if a PR is too large, request splitting
+- Review at most 400 lines per hour â€” if a PR is too large, request splitting
 
 **For authors:**
 - Respond to all comments within 24 hours
@@ -567,17 +567,17 @@ See `AGENTS.md` Section 4.2 for full details.
 - Maximum line length: 100 characters
 - Docstrings for all public functions (Google style)
 - Keep functions under 50 lines where possible
-- Import order: stdlib → third-party → local
+- Import order: stdlib â†’ third-party â†’ local
 
 ### 9.2 TypeScript/React (Frontend)
 
 See `AGENTS.md` Section 4.1 for full details.
 
 **Key rules:**
-- NEVER use `any` — use `unknown` and narrow with type guards
+- NEVER use `any` â€” use `unknown` and narrow with type guards
 - PascalCase for components, camelCase for functions and hooks
 - File names: kebab-case for components (`task-card.tsx`)
-- Import order: React/Next → External → Internal hooks → Relative
+- Import order: React/Next â†’ External â†’ Internal hooks â†’ Relative
 - Tailwind CSS only (no custom CSS files)
 - Prefer `const` over `let`, never use `var`
 - All data structures must have defined interfaces in `packages/types/`
@@ -788,7 +788,7 @@ When creating a feature request in GitHub Issues, use this template:
 | `database` | Schema / query / migration |
 | `performance` | Performance optimization |
 | `security` | Security concern |
-| `P0` | Blocking — highest priority |
+| `P0` | Blocking â€” highest priority |
 | `P1` | High priority |
 | `P2` | Medium priority |
 | `P3` | Low priority |
@@ -805,11 +805,11 @@ When creating a feature request in GitHub Issues, use this template:
 
 ### 13.1 Communication Guidelines
 
-- **Questions → GitHub Discussions** (search first before posting)
-- **Bugs → GitHub Issues** (with reproduction steps)
-- **Feature ideas → GitHub Issues** (with RICE estimate)
-- **Security vulnerabilities → SECURITY.md** (private disclosure)
-- **Real-time help → Discord** (use appropriate channel)
+- **Questions â†’ GitHub Discussions** (search first before posting)
+- **Bugs â†’ GitHub Issues** (with reproduction steps)
+- **Feature ideas â†’ GitHub Issues** (with RICE estimate)
+- **Security vulnerabilities â†’ SECURITY.md** (private disclosure)
+- **Real-time help â†’ Discord** (use appropriate channel)
 - Keep discussions public when possible (don't DM maintainers directly)
 
 ---
@@ -869,7 +869,7 @@ Thanks to these wonderful people ([emoji key](https://allcontributors.org/docs/e
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 ```
 
-Contributions recognized include: code (`💻`), documentation (`📖`), design (`🎨`), testing (`⚠️`), bug reports (`🐛`), ideas (`🤔`), and community management (`🤝`).
+Contributions recognized include: code (`ðŸ’»`), documentation (`ðŸ“–`), design (`ðŸŽ¨`), testing (`âš ï¸`), bug reports (`ðŸ›`), ideas (`ðŸ¤”`), and community management (`ðŸ¤`).
 
 ---
 
@@ -886,21 +886,21 @@ Contributions recognized include: code (`💻`), documentation (`📖`), design 
 ### 16.2 From PR to Release
 
 ```
-PR Merged → Main branch (CI verifies)
-                ↓
-         ← Bi-weekly cut →
-                ↓
+PR Merged â†’ Main branch (CI verifies)
+                â†“
+         â† Bi-weekly cut â†’
+                â†“
     Staging deployment (3 day soak)
-                ↓
+                â†“
    Production release (tagged version)
-                ↓
+                â†“
           Changelog updated
 ```
 
 ### 16.3 What This Means for Contributors
 
 - Your PR merged today will be in the next bi-weekly release
-- Hotfixes (SEV-1 bugs) can be expedited — tag with `hotfix` label
+- Hotfixes (SEV-1 bugs) can be expedited â€” tag with `hotfix` label
 - Major features are scheduled per quarterly roadmap
 - You'll be notified when your contribution is released
 
