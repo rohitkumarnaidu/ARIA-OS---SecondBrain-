@@ -1,4 +1,4 @@
-# Skills System — Enterprise Architecture
+﻿# Skills System â€” Enterprise Architecture
 
 ---
 
@@ -6,11 +6,11 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLS-ARCH-001 |
+| Document ID | AI-SKL-002 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Classification | Internal — Architecture Reference |
+| Classification | Internal â€” Architecture Reference |
 | Target Audience | AI Agents, Developers, Product Managers, Architects |
 
 ---
@@ -94,12 +94,12 @@ flowchart LR
 
 ### 1.1 Purpose
 
-The Skills System is the foundational intelligence layer of Second Brain OS (ARIA OS). It transforms raw user activity data into a structured, evolving, and actionable representation of human capability. Skills are not static labels — they are living entities with states, evidence, dependencies, market value, and projected growth trajectories.
+The Skills System is the foundational intelligence layer of Second Brain OS (ARIA OS). It transforms raw user activity data into a structured, evolving, and actionable representation of human capability. Skills are not static labels â€” they are living entities with states, evidence, dependencies, market value, and projected growth trajectories.
 
 This system serves as the single source of truth for everything a user knows, is learning, or needs to learn, across every domain of their professional and personal development. It unifies two fundamental concepts:
 
-- **User Skills** — What the user knows (technical, professional, business competencies)
-- **Agent Capabilities** — What ARIA can do (briefing, opportunity matching, task analysis)
+- **User Skills** â€” What the user knows (technical, professional, business competencies)
+- **Agent Capabilities** â€” What ARIA can do (briefing, opportunity matching, task analysis)
 
 Both share the same data model, taxonomy, lifecycle, and governance, enabling consistent intelligence across human and AI capabilities.
 
@@ -107,7 +107,7 @@ Both share the same data model, taxonomy, lifecycle, and governance, enabling co
 
 | Dimension | Value |
 |---|---|
-| User Retention | Skill progression creates stickiness — users stay to grow their skill trees |
+| User Retention | Skill progression creates stickiness â€” users stay to grow their skill trees |
 | Monetization | Skill-to-income mapping enables coaching upsells, certification validation, and marketplace fees |
 | Competitive Moat | No existing productivity OS has a first-class skill graph with market intelligence |
 | Data Network Effects | Aggregated skill data (anonymized) powers market intelligence no competitor can replicate |
@@ -142,11 +142,11 @@ Both share the same data model, taxonomy, lifecycle, and governance, enabling co
 
 | Phase | Timeline | Capabilities |
 |---|---|---|
-| Phase 1 — Foundation | Q3 2026 | Skill CRUD, basic levels, evidence tracking, tree view |
-| Phase 2 — Intelligence | Q4 2026 | Market intelligence, income mapping, AI recommendations |
-| Phase 3 — Ecosystem | Q1 2027 | Open taxonomy, third-party plugins, employer verification |
-| Phase 4 — Autonomous | Q2 2027 | ARIA proactively identifies, recommends, and executes skill acquisition plans |
-| Phase 5 — Universal | H2 2027 | Cross-platform skill passport, blockchain verification, DAO-governed taxonomy |
+| Phase 1 â€” Foundation | Q3 2026 | Skill CRUD, basic levels, evidence tracking, tree view |
+| Phase 2 â€” Intelligence | Q4 2026 | Market intelligence, income mapping, AI recommendations |
+| Phase 3 â€” Ecosystem | Q1 2027 | Open taxonomy, third-party plugins, employer verification |
+| Phase 4 â€” Autonomous | Q2 2027 | ARIA proactively identifies, recommends, and executes skill acquisition plans |
+| Phase 5 â€” Universal | H2 2027 | Cross-platform skill passport, blockchain verification, DAO-governed taxonomy |
 
 ---
 
@@ -173,13 +173,13 @@ A **skill** is a structured representation of a user's demonstrated or aspiratio
 
 This system recognizes two fundamental skill types that share the same core data model:
 
-**User Skills** — What the USER knows (e.g., React, Python, Product Management)
+**User Skills** â€” What the USER knows (e.g., React, Python, Product Management)
 - Evidence-backed
 - Level-assessed
 - Market-mapped
 - Income-tracked
 
-**Agent Capabilities** — What ARIA can DO (e.g., briefing, opportunity matching, task breakdown)
+**Agent Capabilities** â€” What ARIA can DO (e.g., briefing, opportunity matching, task breakdown)
 - Prompt-defined
 - Executable via triggers
 - Improvement-tracked
@@ -190,37 +190,37 @@ Both types share the same taxonomy, versioning, and lifecycle systems, but diffe
 ### 2.3 Skill Lifecycle
 
 ```
-                  ┌─────────┐
-                  │ Concept │ (not yet created)
-                  └────┬────┘
-                       │ User/AI creates skill
-                       ▼
-                  ┌──────────┐
-                  │  Active  │ ◄──────────────┐
-                  └────┬─────┘                │
-                       │                      │
-              ┌────────┼─────────┐            │
-              ▼        ▼         ▼            │
-         ┌────────┐┌────────┐┌────────┐      │
-         │Learning││Practic-││Advanced│      │
-         │        ││ing     ││        │      │
-         └────────┘└────────┘└────────┘      │
-              │        │         │            │
-              └────────┼─────────┘            │
-                       ▼                      │
-                  ┌──────────┐                │
-                  │  Expert  │                │
-                  └────┬─────┘                │
-                       │                      │
-                       ▼                      │
-                  ┌──────────┐                │
-                  │ Archived │                │
-                  └────┬─────┘                │
-                       │                      │
-                       ▼                      │
-                  ┌────────────┐              │
-                  │ Deprecated │──────────────┘
-                  └────────────┘  (reactivate)
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â”‚ Concept â”‚ (not yet created)
+                  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
+                       â”‚ User/AI creates skill
+                       â–¼
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â”‚  Active  â”‚ â—„â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜                â”‚
+                       â”‚                      â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”            â”‚
+              â–¼        â–¼         â–¼            â”‚
+         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+         â”‚Learningâ”‚â”‚Practic-â”‚â”‚Advancedâ”‚      â”‚
+         â”‚        â”‚â”‚ing     â”‚â”‚        â”‚      â”‚
+         â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+              â”‚        â”‚         â”‚            â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜            â”‚
+                       â–¼                      â”‚
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                â”‚
+                  â”‚  Expert  â”‚                â”‚
+                  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜                â”‚
+                       â”‚                      â”‚
+                       â–¼                      â”‚
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                â”‚
+                  â”‚ Archived â”‚                â”‚
+                  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜                â”‚
+                       â”‚                      â”‚
+                       â–¼                      â”‚
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”              â”‚
+                  â”‚ Deprecated â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  (reactivate)
 ```
 
 ### 2.4 Skill Ownership
@@ -247,14 +247,14 @@ Both types share the same taxonomy, versioning, and lifecycle systems, but diffe
 
 ```
 Skill Domain (e.g., Engineering)
-└── Category (e.g., Frontend Development)
-    └── Subcategory (e.g., React Ecosystem)
-        └── Skill (e.g., React.js)
-            └── Sub-skill (e.g., React Hooks, Context API)
-                └── Concept (e.g., useState, useEffect)
+â””â”€â”€ Category (e.g., Frontend Development)
+    â””â”€â”€ Subcategory (e.g., React Ecosystem)
+        â””â”€â”€ Skill (e.g., React.js)
+            â””â”€â”€ Sub-skill (e.g., React Hooks, Context API)
+                â””â”€â”€ Concept (e.g., useState, useEffect)
 ```
 
-The hierarchy supports unlimited depth and branching, allowing both high-level domain mastery and granular concept tracking. A skill can belong to multiple categories (cross-listing) — for example, Python is both a Backend skill and a Data Science skill.
+The hierarchy supports unlimited depth and branching, allowing both high-level domain mastery and granular concept tracking. A skill can belong to multiple categories (cross-listing) â€” for example, Python is both a Backend skill and a Data Science skill.
 
 ---
 
@@ -262,259 +262,259 @@ The hierarchy supports unlimited depth and branching, allowing both high-level d
 
 ### 3.1 Taxonomy Design Principles
 
-1. **Extensible** — New categories can be added at any level without breaking existing data
-2. **Cross-Domain** — A skill can belong to multiple categories (e.g., Python is Backend and Data)
-3. **Hierarchical** — Skills form trees with parent-child relationships
-4. **Tag-Based** — Every skill supports unlimited tags for non-hierarchical grouping
-5. **Versioned** — Taxonomy itself is versioned to support evolution without data loss
-6. **Open** — Users can extend any branch with custom skills
-7. **Mappable** — Every skill can be mapped to external taxonomies (ESCO, O*NET, Lightcast, etc.)
+1. **Extensible** â€” New categories can be added at any level without breaking existing data
+2. **Cross-Domain** â€” A skill can belong to multiple categories (e.g., Python is Backend and Data)
+3. **Hierarchical** â€” Skills form trees with parent-child relationships
+4. **Tag-Based** â€” Every skill supports unlimited tags for non-hierarchical grouping
+5. **Versioned** â€” Taxonomy itself is versioned to support evolution without data loss
+6. **Open** â€” Users can extend any branch with custom skills
+7. **Mappable** â€” Every skill can be mapped to external taxonomies (ESCO, O*NET, Lightcast, etc.)
 
 ### 3.2 Full Taxonomy Tree
 
 ```
 SKILL UNIVERSE
-│
-├── 1. TECHNICAL SKILLS
-│   ├── 1.1 Frontend Development
-│   │   ├── 1.1.1 Core Web (HTML, CSS, JavaScript, DOM API)
-│   │   ├── 1.1.2 Frameworks (React, Vue, Angular, Svelte, Solid)
-│   │   ├── 1.1.3 State Management (Redux, Zustand, Pinia, Jotai)
-│   │   ├── 1.1.4 Styling (Tailwind, CSS Modules, Styled Components, Sass)
-│   │   ├── 1.1.5 Testing (Jest, Vitest, Cypress, Playwright)
-│   │   ├── 1.1.6 Build Tools (Webpack, Vite, Turbopack, esbuild)
-│   │   ├── 1.1.7 Performance (Core Web Vitals, Lighthouse, RUM)
-│   │   ├── 1.1.8 Accessibility (WCAG, ARIA, Screen Readers)
-│   │   ├── 1.1.9 Animation (Framer Motion, GSAP, Lottie, CSS Animations)
-│   │   ├── 1.1.10 Mobile Web (PWA, Responsive Design, Touch Events)
-│   │   └── 1.1.11 WebGL/3D (Three.js, WebGL, Canvas, D3.js)
-│   │
-│   ├── 1.2 Backend Development
-│   │   ├── 1.2.1 Languages (Python, JavaScript/Node, Go, Rust, Java, C#, PHP)
-│   │   ├── 1.2.2 Frameworks (FastAPI, Express, Next.js API, Django, Spring Boot, Laravel)
-│   │   ├── 1.2.3 API Design (REST, GraphQL, gRPC, WebSocket, Webhook)
-│   │   ├── 1.2.4 Authentication (OAuth, JWT, SAML, SSO, MFA)
-│   │   ├── 1.2.5 Authorization (RBAC, ABAC, Policy Engines)
-│   │   ├── 1.2.6 Database Access (ORM, Query Builders, Raw SQL)
-│   │   ├── 1.2.7 Caching (Redis, Memcached, CDN, HTTP Cache)
-│   │   ├── 1.2.8 Queues & Messaging (RabbitMQ, Kafka, Celery, SQS)
-│   │   ├── 1.2.9 Search (Elasticsearch, Meilisearch, Algolia, Typesense)
-│   │   ├── 1.2.10 File Storage (S3, GCS, MinIO, CDN)
-│   │   ├── 1.2.11 Background Jobs (Cron, Celery, Bull, Sidekiq)
-│   │   └── 1.2.12 Web Servers (Nginx, Caddy, Traefik, Apache)
-│   │
-│   ├── 1.3 Mobile Development
-│   │   ├── 1.3.1 iOS (Swift, SwiftUI, UIKit, Xcode)
-│   │   ├── 1.3.2 Android (Kotlin, Jetpack Compose, XML Layouts)
-│   │   ├── 1.3.3 Cross-Platform (React Native, Flutter, Kotlin Multiplatform)
-│   │   ├── 1.3.4 Mobile APIs (Camera, Location, Sensors, Biometrics)
-│   │   ├── 1.3.5 App Store (Distribution, Review Process, ASO)
-│   │   ├── 1.3.6 Push Notifications (FCM, APNs, Local)
-│   │   ├── 1.3.7 Offline-First (Sync Engines, Local DB, Conflict Resolution)
-│   │   └── 1.3.8 Mobile Performance (Profiling, Memory, Battery, Network)
-│   │
-│   ├── 1.4 DevOps & Infrastructure
-│   │   ├── 1.4.1 CI/CD (GitHub Actions, GitLab CI, Jenkins, ArgoCD)
-│   │   ├── 1.4.2 Containerization (Docker, Podman, Container Security)
-│   │   ├── 1.4.3 Orchestration (Kubernetes, Nomad, Docker Swarm)
-│   │   ├── 1.4.4 Infrastructure as Code (Terraform, Pulumi, Ansible, CloudFormation)
-│   │   ├── 1.4.5 Monitoring (Prometheus, Grafana, Datadog, Sentry)
-│   │   ├── 1.4.6 Logging (ELK, Loki, Fluentd, OpenTelemetry)
-│   │   ├── 1.4.7 Networking (DNS, Load Balancers, Firewalls, VPN, CDN)
-│   │   ├── 1.4.8 Linux Administration (Shell, Systemd, Filesystem, Security)
-│   │   ├── 1.4.9 SRE (SLIs, SLOs, Error Budgets, Incident Response)
-│   │   └── 1.4.10 Chaos Engineering (Litmus, Gremlin, GameDays)
-│   │
-│   ├── 1.5 Cloud Platforms
-│   │   ├── 1.5.1 AWS (EC2, Lambda, S3, RDS, DynamoDB, ECS, EKS, IAM)
-│   │   ├── 1.5.2 GCP (Compute Engine, Cloud Functions, GKE, BigQuery, Cloud Run)
-│   │   ├── 1.5.3 Azure (VMs, Functions, AKS, Cosmos DB, DevOps)
-│   │   ├── 1.5.4 Cloud Architecture (Well-Architected Framework, Cost Optimization)
-│   │   ├── 1.5.5 Serverless (Lambda, Cloudflare Workers, Vercel Edge)
-│   │   ├── 1.5.6 Multi-Cloud (Cross-cloud Strategy, Migration, Federation)
-│   │   └── 1.5.7 Edge Computing (CloudFront, Cloudflare, Fastly, Edge Functions)
-│   │
-│   ├── 1.6 Data Engineering
-│   │   ├── 1.6.1 ETL/ELT (Airbyte, Fivetran, dbt, Airflow)
-│   │   ├── 1.6.2 Data Warehousing (Snowflake, BigQuery, Redshift, ClickHouse)
-│   │   ├── 1.6.3 Data Lakes (S3/ADLS, Delta Lake, Iceberg, Hudi)
-│   │   ├── 1.6.4 Stream Processing (Kafka, Flink, Spark Streaming)
-│   │   ├── 1.6.5 Data Modeling (Kimball, Inmon, Data Vault)
-│   │   ├── 1.6.6 SQL (PostgreSQL, MySQL, Advanced Queries, Optimization)
-│   │   ├── 1.6.7 NoSQL (MongoDB, DynamoDB, Cassandra, Redis)
-│   │   ├── 1.6.8 Vector Databases (Pinecone, Qdrant, Weaviate, Chroma)
-│   │   └── 1.6.9 Data Governance (Cataloging, Lineage, PII Masking, Compliance)
-│   │
-│   ├── 1.7 Security Engineering
-│   │   ├── 1.7.1 Application Security (OWASP Top 10, SAST, DAST, SCA)
-│   │   ├── 1.7.2 Cloud Security (CSPM, CWPP, IAM Policies, Secrets Management)
-│   │   ├── 1.7.3 Network Security (Firewalls, IDS/IPS, Zero Trust)
-│   │   ├── 1.7.4 Identity & Access (SSO, MFA, Directory Services, Federation)
-│   │   ├── 1.7.5 Cryptography (Encryption, Hashing, PKI, TLS)
-│   │   ├── 1.7.6 Security Operations (SIEM, SOAR, Threat Hunting, Incident Response)
-│   │   ├── 1.7.7 Compliance & Audit (SOC 2, ISO 27001, PCI DSS, HIPAA)
-│   │   ├── 1.7.8 Penetration Testing (Web, Mobile, Network, Social Engineering)
-│   │   └── 1.7.9 DevSecOps (Shift Left, Pipeline Security, Policy as Code)
-│   │
-│   ├── 1.8 Artificial Intelligence
-│   │   ├── 1.8.1 Machine Learning (Supervised, Unsupervised, Reinforcement)
-│   │   ├── 1.8.2 Deep Learning (CNNs, RNNs, Transformers, GANs, Diffusion)
-│   │   ├── 1.8.3 NLP (LLMs, Tokenization, Embeddings, RAG, Fine-tuning)
-│   │   ├── 1.8.4 Computer Vision (Object Detection, Segmentation, OCR, Video)
-│   │   ├── 1.8.5 MLOps (Model Serving, Monitoring, A/B Testing, Feature Stores)
-│   │   ├── 1.8.6 Prompt Engineering (Chain-of-Thought, Few-Shot, Structured Outputs)
-│   │   ├── 1.8.7 AI Safety (Alignment, Red Teaming, Guardrails, Evaluation)
-│   │   ├── 1.8.8 Model Optimization (Quantization, Pruning, Distillation, ONNX)
-│   │   ├── 1.8.9 Data Science (Statistics, Experimentation, A/B Testing, Visualization)
-│   │   └── 1.8.10 AI Agents (Frameworks, Tools, Memory, Planning, Multi-Agent)
-│   │
-│   ├── 1.9 Agent Engineering
-│   │   ├── 1.9.1 Agent Frameworks (LangChain, CrewAI, AutoGen, Swarms)
-│   │   ├── 1.9.2 Tool Building (Function Calling, API Tools, Custom Tools)
-│   │   ├── 1.9.3 Memory Systems (Short-term, Long-term, Episodic, Semantic)
-│   │   ├── 1.9.4 Agent Orchestration (Planning, Decomposition, Execution, Validation)
-│   │   ├── 1.9.5 Multi-Agent Systems (Agent Communication, Consensus, Role Assignment)
-│   │   ├── 1.9.6 Agent Observability (Tracing, Logging, Evaluation, Cost Tracking)
-│   │   ├── 1.9.7 RAG Systems (Retrieval, Chunking, Re-ranking, Hybrid Search)
-│   │   ├── 1.9.8 Prompt Management (Versioning, Testing, Optimization, Registry)
-│   │   ├── 1.9.9 Agent Security (Prompt Injection, Data Leakage, Access Control)
-│   │   └── 1.9.10 Agent Evaluation (Benchmarks, Human Eval, Automated Scoring)
-│   │
-│   ├── 1.10 Data Science & Analytics
-│   │   ├── 1.10.1 Statistical Analysis (Hypothesis Testing, Regression, Bayesian)
-│   │   ├── 1.10.2 Data Visualization (Matplotlib, D3.js, Tableau, Streamlit)
-│   │   ├── 1.10.3 Experimentation (A/B Testing, Multi-armed Bandit, Factorial)
-│   │   ├── 1.10.4 Time Series (Forecasting, Anomaly Detection, Seasonality)
-│   │   ├── 1.10.5 Product Analytics (Funnel, Cohort, Retention, Attribution)
-│   │   └── 1.10.6 Business Intelligence (Dashboards, KPIs, Reporting, OLAP)
-│   │
-│   ├── 1.11 Blockchain & Web3
-│   │   ├── 1.11.1 Smart Contracts (Solidity, Rust, Move, Vyper)
-│   │   ├── 1.11.2 DApp Development (Ethers.js, Wagmi, Rainbow Kit)
-│   │   ├── 1.11.3 DeFi (Lending, DEX, Yield, Liquidity Pools)
-│   │   ├── 1.11.4 NFTs (ERC-721, ERC-1155, Metadata, Marketplace)
-│   │   ├── 1.11.5 DAOs (Governance, Treasury, Voting, Proposals)
-│   │   ├── 1.11.6 Layer 2 (Rollups, Sidechains, State Channels)
-│   │   └── 1.11.7 Cryptography (Hashing, Signatures, ZK-Proofs, Merkle Trees)
-│   │
-│   └── 1.12 Emerging & Cross-Cutting
-│       ├── 1.12.1 System Design (Distributed Systems, Scalability, Fault Tolerance)
-│       ├── 1.12.2 Software Architecture (Patterns, Microservices, Event-Driven)
-│       ├── 1.12.3 API Design & Development
-│       ├── 1.12.4 Database Design & Optimization
-│       ├── 1.12.5 Testing Strategy (Unit, Integration, E2E, Performance)
-│       ├── 1.12.6 Code Review & Quality
-│       ├── 1.12.7 Documentation (Technical Writing, API Docs, Architecture)
-│       └── 1.12.8 Developer Experience (CLI Tools, Dev Environments, DX Design)
-│
-├── 2. PROFESSIONAL SKILLS
-│   ├── 2.1 Leadership
-│   │   ├── 2.1.1 Team Management (1-on-1s, Performance Reviews, Career Growth)
-│   │   ├── 2.1.2 Technical Leadership (Architecture Decisions, Mentoring, Code Standards)
-│   │   ├── 2.1.3 Strategic Thinking (Roadmapping, OKRs, Vision Setting)
-│   │   ├── 2.1.4 Conflict Resolution (Mediation, Difficult Conversations)
-│   │   ├── 2.1.5 Decision Making (Data-Driven, Trade-off Analysis, Risk Assessment)
-│   │   ├── 2.1.6 Delegation (Task Assignment, Trust Building, Escalation)
-│   │   └── 2.1.7 Executive Communication (Board Updates, Investor Relations, Public Speaking)
-│   │
-│   ├── 2.2 Communication
-│   │   ├── 2.2.1 Written Communication (Technical Writing, Proposals, Reports)
-│   │   ├── 2.2.2 Verbal Communication (Presentations, Meetings, Facilitation)
-│   │   ├── 2.2.3 Cross-Functional Communication (Bridging Teams, Stakeholder Mgmt)
-│   │   ├── 2.2.4 Remote Communication (Async, Documentation-First, Video)
-│   │   └── 2.2.5 Persuasion & Negotiation (Influence, Stakeholder Alignment)
-│   │
-│   ├── 2.3 Product Thinking
-│   │   ├── 2.3.1 Product Strategy (Vision, Roadmap, Market Fit)
-│   │   ├── 2.3.2 User Research (Interviews, Surveys, Usability Testing)
-│   │   ├── 2.3.3 Product Discovery (Problem Definition, Solution Validation)
-│   │   ├── 2.3.4 Metrics & Analytics (North Stars, Usage Metrics, Retention)
-│   │   ├── 2.3.5 Prioritization (RICE, ICE, Opportunity Scoring, Weighted)
-│   │   └── 2.3.6 Go-to-Market (Launch Strategy, Positioning, Messaging)
-│   │
-│   ├── 2.4 Project Management
-│   │   ├── 2.4.1 Agile/Scrum (Sprints, Ceremonies, Estimation, Velocity)
-│   │   ├── 2.4.2 Kanban (WIP Limits, Flow, Cycle Time, Throughput)
-│   │   ├── 2.4.3 Risk Management (Identification, Mitigation, Contingency)
-│   │   ├── 2.4.4 Stakeholder Management (Communication, Expectation Setting)
-│   │   ├── 2.4.5 Resource Planning (Capacity, Allocation, Hiring)
-│   │   └── 2.4.6 Delivery Management (Milestones, Dependencies, Launch)
-│   │
-│   ├── 2.5 Design
-│   │   ├── 2.5.1 UI Design (Visual Design, Typography, Color, Layout)
-│   │   ├── 2.5.2 UX Design (Interaction Design, Information Architecture, User Flows)
-│   │   ├── 2.5.3 Design Systems (Components, Tokens, Documentation, Governance)
-│   │   ├── 2.5.4 Prototyping (Figma, Framer, Interactive Prototypes)
-│   │   ├── 2.5.5 Design Research (User Testing, Heatmaps, Analytics)
-│   │   └── 2.5.6 Motion Design (Animation, Micro-interactions, Transitions)
-│   │
-│   └── 2.6 Engineering Management
-│       ├── 2.6.1 Hiring (Interviewing, Inclusivity, Onboarding)
-│       ├── 2.6.2 Team Building (Culture, Psychological Safety, Growth)
-│       ├── 2.6.3 Technical Strategy (Platform Vision, Architecture, Tech Debt)
-│       ├── 2.6.4 Process Improvement (Retrospectives, Metrics, Automation)
-│       └── 2.6.5 Budget & Planning (Headcount, Tools, Infrastructure)
-│
-├── 3. BUSINESS SKILLS
-│   ├── 3.1 Startup Building
-│   │   ├── 3.1.1 Idea Validation (Problem-Solution Fit, Market Research)
-│   │   ├── 3.1.2 Lean Methodology (MVP, Build-Measure-Learn, Pivot)
-│   │   ├── 3.1.3 Business Modeling (Revenue Models, Unit Economics, Pricing)
-│   │   ├── 3.1.4 Fundraising (Pitch Decks, Investor Relations, Cap Table)
-│   │   ├── 3.1.5 Legal & IP (Incorporation, Contracts, IP Protection)
-│   │   ├── 3.1.6 Growth Hacking (SEO, Viral Loops, Community Building)
-│   │   └── 3.1.7 Product-Market Fit (Measurement, Iteration, Scaling)
-│   │
-│   ├── 3.2 Marketing
-│   │   ├── 3.2.1 Digital Marketing (SEO, SEM, Social Media, Email)
-│   │   ├── 3.2.2 Content Marketing (Blog, Video, Podcast, Newsletter)
-│   │   ├── 3.2.3 Brand Strategy (Positioning, Voice, Identity, Storytelling)
-│   │   ├── 3.2.4 Growth Marketing (Acquisition, Activation, Retention, Referral)
-│   │   ├── 3.2.5 Analytics & Attribution (Cohorts, LTV, CAC, ROAS)
-│   │   └── 3.2.6 Community Building (Forums, Events, Ambassador Programs)
-│   │
-│   ├── 3.3 Sales
-│   │   ├── 3.3.1 B2B Sales (Enterprise Sales, Procurement, Contracts)
-│   │   ├── 3.3.2 B2C Sales (Conversion Optimization, Funnel Management)
-│   │   ├── 3.3.3 SaaS Sales (Subscription, Upsells, Churn Reduction)
-│   │   ├── 3.3.4 Sales Operations (CRM, Pipeline, Forecasting)
-│   │   └── 3.3.5 Negotiation (Pricing, Terms, Partnerships)
-│   │
-│   ├── 3.4 Finance
-│   │   ├── 3.4.1 Financial Modeling (Projections, Scenarios, Valuations)
-│   │   ├── 3.4.2 Accounting (Bookkeeping, GAAP, Tax, Audit)
-│   │   ├── 3.4.3 Budgeting & Forecasting (Annual Planning, Variance)
-│   │   ├── 3.4.4 Investment Analysis (ROI, IRR, DCF, Comparables)
-│   │   └── 3.4.5 Personal Finance (Investing, Taxes, Retirement, Insurance)
-│   │
-│   ├── 3.5 Consulting
-│   │   ├── 3.5.1 Client Management (Engagement, Scoping, Delivery)
-│   │   ├── 3.5.2 Proposal Writing (Solutions, Pricing, Statements of Work)
-│   │   ├── 3.5.3 Industry Analysis (Market Sizing, Competitive Research)
-│   │   └── 3.5.4 Presentation (Executive Briefings, Deck Design)
-│   │
-│   └── 3.6 Entrepreneurship
-│       ├── 3.6.1 Opportunity Recognition
-│       ├── 3.6.2 Resource Acquisition (Team, Capital, Partnerships)
-│       ├── 3.6.3 Execution & Operations
-│       ├── 3.6.4 Resilience & Adaptability
-│       └── 3.6.5 Exit Strategy (Acquisition, IPO, Merger)
-│
-├── 4. CREATIVE & MEDIA SKILLS
-│   ├── 4.1 Content Creation (Writing, Video, Audio, Photography)
-│   ├── 4.2 Design (Graphic Design, Brand Identity, Illustration)
-│   ├── 4.3 Music Production (Composition, Recording, Mixing, Mastering)
-│   ├── 4.4 Game Development (Unity, Unreal, Godot, Game Design)
-│   └── 4.5 3D & VFX (Blender, Maya, Houdini, After Effects)
-│
-└── 5. USER-DEFINED SKILLS (Unlimited Custom Categories)
-    ├── 5.1 Custom Technical (Any language, framework, tool not in catalog)
-    ├── 5.2 Custom Professional (Any professional capability)
-    ├── 5.3 Custom Business (Any business or domain expertise)
-    ├── 5.4 Custom Academic (Research, Teaching, Tutoring, Subjects)
-    ├── 5.5 Custom Hobby (Gaming, Sports, Cooking, Travel, Fitness)
-    ├── 5.6 Custom Language (Human languages with proficiency levels)
-    └── 5.7 Custom Domain (Industry-specific: Healthcare, Legal, Education, etc.)
+â”‚
+â”œâ”€â”€ 1. TECHNICAL SKILLS
+â”‚   â”œâ”€â”€ 1.1 Frontend Development
+â”‚   â”‚   â”œâ”€â”€ 1.1.1 Core Web (HTML, CSS, JavaScript, DOM API)
+â”‚   â”‚   â”œâ”€â”€ 1.1.2 Frameworks (React, Vue, Angular, Svelte, Solid)
+â”‚   â”‚   â”œâ”€â”€ 1.1.3 State Management (Redux, Zustand, Pinia, Jotai)
+â”‚   â”‚   â”œâ”€â”€ 1.1.4 Styling (Tailwind, CSS Modules, Styled Components, Sass)
+â”‚   â”‚   â”œâ”€â”€ 1.1.5 Testing (Jest, Vitest, Cypress, Playwright)
+â”‚   â”‚   â”œâ”€â”€ 1.1.6 Build Tools (Webpack, Vite, Turbopack, esbuild)
+â”‚   â”‚   â”œâ”€â”€ 1.1.7 Performance (Core Web Vitals, Lighthouse, RUM)
+â”‚   â”‚   â”œâ”€â”€ 1.1.8 Accessibility (WCAG, ARIA, Screen Readers)
+â”‚   â”‚   â”œâ”€â”€ 1.1.9 Animation (Framer Motion, GSAP, Lottie, CSS Animations)
+â”‚   â”‚   â”œâ”€â”€ 1.1.10 Mobile Web (PWA, Responsive Design, Touch Events)
+â”‚   â”‚   â””â”€â”€ 1.1.11 WebGL/3D (Three.js, WebGL, Canvas, D3.js)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.2 Backend Development
+â”‚   â”‚   â”œâ”€â”€ 1.2.1 Languages (Python, JavaScript/Node, Go, Rust, Java, C#, PHP)
+â”‚   â”‚   â”œâ”€â”€ 1.2.2 Frameworks (FastAPI, Express, Next.js API, Django, Spring Boot, Laravel)
+â”‚   â”‚   â”œâ”€â”€ 1.2.3 API Design (REST, GraphQL, gRPC, WebSocket, Webhook)
+â”‚   â”‚   â”œâ”€â”€ 1.2.4 Authentication (OAuth, JWT, SAML, SSO, MFA)
+â”‚   â”‚   â”œâ”€â”€ 1.2.5 Authorization (RBAC, ABAC, Policy Engines)
+â”‚   â”‚   â”œâ”€â”€ 1.2.6 Database Access (ORM, Query Builders, Raw SQL)
+â”‚   â”‚   â”œâ”€â”€ 1.2.7 Caching (Redis, Memcached, CDN, HTTP Cache)
+â”‚   â”‚   â”œâ”€â”€ 1.2.8 Queues & Messaging (RabbitMQ, Kafka, Celery, SQS)
+â”‚   â”‚   â”œâ”€â”€ 1.2.9 Search (Elasticsearch, Meilisearch, Algolia, Typesense)
+â”‚   â”‚   â”œâ”€â”€ 1.2.10 File Storage (S3, GCS, MinIO, CDN)
+â”‚   â”‚   â”œâ”€â”€ 1.2.11 Background Jobs (Cron, Celery, Bull, Sidekiq)
+â”‚   â”‚   â””â”€â”€ 1.2.12 Web Servers (Nginx, Caddy, Traefik, Apache)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.3 Mobile Development
+â”‚   â”‚   â”œâ”€â”€ 1.3.1 iOS (Swift, SwiftUI, UIKit, Xcode)
+â”‚   â”‚   â”œâ”€â”€ 1.3.2 Android (Kotlin, Jetpack Compose, XML Layouts)
+â”‚   â”‚   â”œâ”€â”€ 1.3.3 Cross-Platform (React Native, Flutter, Kotlin Multiplatform)
+â”‚   â”‚   â”œâ”€â”€ 1.3.4 Mobile APIs (Camera, Location, Sensors, Biometrics)
+â”‚   â”‚   â”œâ”€â”€ 1.3.5 App Store (Distribution, Review Process, ASO)
+â”‚   â”‚   â”œâ”€â”€ 1.3.6 Push Notifications (FCM, APNs, Local)
+â”‚   â”‚   â”œâ”€â”€ 1.3.7 Offline-First (Sync Engines, Local DB, Conflict Resolution)
+â”‚   â”‚   â””â”€â”€ 1.3.8 Mobile Performance (Profiling, Memory, Battery, Network)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.4 DevOps & Infrastructure
+â”‚   â”‚   â”œâ”€â”€ 1.4.1 CI/CD (GitHub Actions, GitLab CI, Jenkins, ArgoCD)
+â”‚   â”‚   â”œâ”€â”€ 1.4.2 Containerization (Docker, Podman, Container Security)
+â”‚   â”‚   â”œâ”€â”€ 1.4.3 Orchestration (Kubernetes, Nomad, Docker Swarm)
+â”‚   â”‚   â”œâ”€â”€ 1.4.4 Infrastructure as Code (Terraform, Pulumi, Ansible, CloudFormation)
+â”‚   â”‚   â”œâ”€â”€ 1.4.5 Monitoring (Prometheus, Grafana, Datadog, Sentry)
+â”‚   â”‚   â”œâ”€â”€ 1.4.6 Logging (ELK, Loki, Fluentd, OpenTelemetry)
+â”‚   â”‚   â”œâ”€â”€ 1.4.7 Networking (DNS, Load Balancers, Firewalls, VPN, CDN)
+â”‚   â”‚   â”œâ”€â”€ 1.4.8 Linux Administration (Shell, Systemd, Filesystem, Security)
+â”‚   â”‚   â”œâ”€â”€ 1.4.9 SRE (SLIs, SLOs, Error Budgets, Incident Response)
+â”‚   â”‚   â””â”€â”€ 1.4.10 Chaos Engineering (Litmus, Gremlin, GameDays)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.5 Cloud Platforms
+â”‚   â”‚   â”œâ”€â”€ 1.5.1 AWS (EC2, Lambda, S3, RDS, DynamoDB, ECS, EKS, IAM)
+â”‚   â”‚   â”œâ”€â”€ 1.5.2 GCP (Compute Engine, Cloud Functions, GKE, BigQuery, Cloud Run)
+â”‚   â”‚   â”œâ”€â”€ 1.5.3 Azure (VMs, Functions, AKS, Cosmos DB, DevOps)
+â”‚   â”‚   â”œâ”€â”€ 1.5.4 Cloud Architecture (Well-Architected Framework, Cost Optimization)
+â”‚   â”‚   â”œâ”€â”€ 1.5.5 Serverless (Lambda, Cloudflare Workers, Vercel Edge)
+â”‚   â”‚   â”œâ”€â”€ 1.5.6 Multi-Cloud (Cross-cloud Strategy, Migration, Federation)
+â”‚   â”‚   â””â”€â”€ 1.5.7 Edge Computing (CloudFront, Cloudflare, Fastly, Edge Functions)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.6 Data Engineering
+â”‚   â”‚   â”œâ”€â”€ 1.6.1 ETL/ELT (Airbyte, Fivetran, dbt, Airflow)
+â”‚   â”‚   â”œâ”€â”€ 1.6.2 Data Warehousing (Snowflake, BigQuery, Redshift, ClickHouse)
+â”‚   â”‚   â”œâ”€â”€ 1.6.3 Data Lakes (S3/ADLS, Delta Lake, Iceberg, Hudi)
+â”‚   â”‚   â”œâ”€â”€ 1.6.4 Stream Processing (Kafka, Flink, Spark Streaming)
+â”‚   â”‚   â”œâ”€â”€ 1.6.5 Data Modeling (Kimball, Inmon, Data Vault)
+â”‚   â”‚   â”œâ”€â”€ 1.6.6 SQL (PostgreSQL, MySQL, Advanced Queries, Optimization)
+â”‚   â”‚   â”œâ”€â”€ 1.6.7 NoSQL (MongoDB, DynamoDB, Cassandra, Redis)
+â”‚   â”‚   â”œâ”€â”€ 1.6.8 Vector Databases (Pinecone, Qdrant, Weaviate, Chroma)
+â”‚   â”‚   â””â”€â”€ 1.6.9 Data Governance (Cataloging, Lineage, PII Masking, Compliance)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.7 Security Engineering
+â”‚   â”‚   â”œâ”€â”€ 1.7.1 Application Security (OWASP Top 10, SAST, DAST, SCA)
+â”‚   â”‚   â”œâ”€â”€ 1.7.2 Cloud Security (CSPM, CWPP, IAM Policies, Secrets Management)
+â”‚   â”‚   â”œâ”€â”€ 1.7.3 Network Security (Firewalls, IDS/IPS, Zero Trust)
+â”‚   â”‚   â”œâ”€â”€ 1.7.4 Identity & Access (SSO, MFA, Directory Services, Federation)
+â”‚   â”‚   â”œâ”€â”€ 1.7.5 Cryptography (Encryption, Hashing, PKI, TLS)
+â”‚   â”‚   â”œâ”€â”€ 1.7.6 Security Operations (SIEM, SOAR, Threat Hunting, Incident Response)
+â”‚   â”‚   â”œâ”€â”€ 1.7.7 Compliance & Audit (SOC 2, ISO 27001, PCI DSS, HIPAA)
+â”‚   â”‚   â”œâ”€â”€ 1.7.8 Penetration Testing (Web, Mobile, Network, Social Engineering)
+â”‚   â”‚   â””â”€â”€ 1.7.9 DevSecOps (Shift Left, Pipeline Security, Policy as Code)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.8 Artificial Intelligence
+â”‚   â”‚   â”œâ”€â”€ 1.8.1 Machine Learning (Supervised, Unsupervised, Reinforcement)
+â”‚   â”‚   â”œâ”€â”€ 1.8.2 Deep Learning (CNNs, RNNs, Transformers, GANs, Diffusion)
+â”‚   â”‚   â”œâ”€â”€ 1.8.3 NLP (LLMs, Tokenization, Embeddings, RAG, Fine-tuning)
+â”‚   â”‚   â”œâ”€â”€ 1.8.4 Computer Vision (Object Detection, Segmentation, OCR, Video)
+â”‚   â”‚   â”œâ”€â”€ 1.8.5 MLOps (Model Serving, Monitoring, A/B Testing, Feature Stores)
+â”‚   â”‚   â”œâ”€â”€ 1.8.6 Prompt Engineering (Chain-of-Thought, Few-Shot, Structured Outputs)
+â”‚   â”‚   â”œâ”€â”€ 1.8.7 AI Safety (Alignment, Red Teaming, Guardrails, Evaluation)
+â”‚   â”‚   â”œâ”€â”€ 1.8.8 Model Optimization (Quantization, Pruning, Distillation, ONNX)
+â”‚   â”‚   â”œâ”€â”€ 1.8.9 Data Science (Statistics, Experimentation, A/B Testing, Visualization)
+â”‚   â”‚   â””â”€â”€ 1.8.10 AI Agents (Frameworks, Tools, Memory, Planning, Multi-Agent)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.9 Agent Engineering
+â”‚   â”‚   â”œâ”€â”€ 1.9.1 Agent Frameworks (LangChain, CrewAI, AutoGen, Swarms)
+â”‚   â”‚   â”œâ”€â”€ 1.9.2 Tool Building (Function Calling, API Tools, Custom Tools)
+â”‚   â”‚   â”œâ”€â”€ 1.9.3 Memory Systems (Short-term, Long-term, Episodic, Semantic)
+â”‚   â”‚   â”œâ”€â”€ 1.9.4 Agent Orchestration (Planning, Decomposition, Execution, Validation)
+â”‚   â”‚   â”œâ”€â”€ 1.9.5 Multi-Agent Systems (Agent Communication, Consensus, Role Assignment)
+â”‚   â”‚   â”œâ”€â”€ 1.9.6 Agent Observability (Tracing, Logging, Evaluation, Cost Tracking)
+â”‚   â”‚   â”œâ”€â”€ 1.9.7 RAG Systems (Retrieval, Chunking, Re-ranking, Hybrid Search)
+â”‚   â”‚   â”œâ”€â”€ 1.9.8 Prompt Management (Versioning, Testing, Optimization, Registry)
+â”‚   â”‚   â”œâ”€â”€ 1.9.9 Agent Security (Prompt Injection, Data Leakage, Access Control)
+â”‚   â”‚   â””â”€â”€ 1.9.10 Agent Evaluation (Benchmarks, Human Eval, Automated Scoring)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.10 Data Science & Analytics
+â”‚   â”‚   â”œâ”€â”€ 1.10.1 Statistical Analysis (Hypothesis Testing, Regression, Bayesian)
+â”‚   â”‚   â”œâ”€â”€ 1.10.2 Data Visualization (Matplotlib, D3.js, Tableau, Streamlit)
+â”‚   â”‚   â”œâ”€â”€ 1.10.3 Experimentation (A/B Testing, Multi-armed Bandit, Factorial)
+â”‚   â”‚   â”œâ”€â”€ 1.10.4 Time Series (Forecasting, Anomaly Detection, Seasonality)
+â”‚   â”‚   â”œâ”€â”€ 1.10.5 Product Analytics (Funnel, Cohort, Retention, Attribution)
+â”‚   â”‚   â””â”€â”€ 1.10.6 Business Intelligence (Dashboards, KPIs, Reporting, OLAP)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 1.11 Blockchain & Web3
+â”‚   â”‚   â”œâ”€â”€ 1.11.1 Smart Contracts (Solidity, Rust, Move, Vyper)
+â”‚   â”‚   â”œâ”€â”€ 1.11.2 DApp Development (Ethers.js, Wagmi, Rainbow Kit)
+â”‚   â”‚   â”œâ”€â”€ 1.11.3 DeFi (Lending, DEX, Yield, Liquidity Pools)
+â”‚   â”‚   â”œâ”€â”€ 1.11.4 NFTs (ERC-721, ERC-1155, Metadata, Marketplace)
+â”‚   â”‚   â”œâ”€â”€ 1.11.5 DAOs (Governance, Treasury, Voting, Proposals)
+â”‚   â”‚   â”œâ”€â”€ 1.11.6 Layer 2 (Rollups, Sidechains, State Channels)
+â”‚   â”‚   â””â”€â”€ 1.11.7 Cryptography (Hashing, Signatures, ZK-Proofs, Merkle Trees)
+â”‚   â”‚
+â”‚   â””â”€â”€ 1.12 Emerging & Cross-Cutting
+â”‚       â”œâ”€â”€ 1.12.1 System Design (Distributed Systems, Scalability, Fault Tolerance)
+â”‚       â”œâ”€â”€ 1.12.2 Software Architecture (Patterns, Microservices, Event-Driven)
+â”‚       â”œâ”€â”€ 1.12.3 API Design & Development
+â”‚       â”œâ”€â”€ 1.12.4 Database Design & Optimization
+â”‚       â”œâ”€â”€ 1.12.5 Testing Strategy (Unit, Integration, E2E, Performance)
+â”‚       â”œâ”€â”€ 1.12.6 Code Review & Quality
+â”‚       â”œâ”€â”€ 1.12.7 Documentation (Technical Writing, API Docs, Architecture)
+â”‚       â””â”€â”€ 1.12.8 Developer Experience (CLI Tools, Dev Environments, DX Design)
+â”‚
+â”œâ”€â”€ 2. PROFESSIONAL SKILLS
+â”‚   â”œâ”€â”€ 2.1 Leadership
+â”‚   â”‚   â”œâ”€â”€ 2.1.1 Team Management (1-on-1s, Performance Reviews, Career Growth)
+â”‚   â”‚   â”œâ”€â”€ 2.1.2 Technical Leadership (Architecture Decisions, Mentoring, Code Standards)
+â”‚   â”‚   â”œâ”€â”€ 2.1.3 Strategic Thinking (Roadmapping, OKRs, Vision Setting)
+â”‚   â”‚   â”œâ”€â”€ 2.1.4 Conflict Resolution (Mediation, Difficult Conversations)
+â”‚   â”‚   â”œâ”€â”€ 2.1.5 Decision Making (Data-Driven, Trade-off Analysis, Risk Assessment)
+â”‚   â”‚   â”œâ”€â”€ 2.1.6 Delegation (Task Assignment, Trust Building, Escalation)
+â”‚   â”‚   â””â”€â”€ 2.1.7 Executive Communication (Board Updates, Investor Relations, Public Speaking)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 2.2 Communication
+â”‚   â”‚   â”œâ”€â”€ 2.2.1 Written Communication (Technical Writing, Proposals, Reports)
+â”‚   â”‚   â”œâ”€â”€ 2.2.2 Verbal Communication (Presentations, Meetings, Facilitation)
+â”‚   â”‚   â”œâ”€â”€ 2.2.3 Cross-Functional Communication (Bridging Teams, Stakeholder Mgmt)
+â”‚   â”‚   â”œâ”€â”€ 2.2.4 Remote Communication (Async, Documentation-First, Video)
+â”‚   â”‚   â””â”€â”€ 2.2.5 Persuasion & Negotiation (Influence, Stakeholder Alignment)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 2.3 Product Thinking
+â”‚   â”‚   â”œâ”€â”€ 2.3.1 Product Strategy (Vision, Roadmap, Market Fit)
+â”‚   â”‚   â”œâ”€â”€ 2.3.2 User Research (Interviews, Surveys, Usability Testing)
+â”‚   â”‚   â”œâ”€â”€ 2.3.3 Product Discovery (Problem Definition, Solution Validation)
+â”‚   â”‚   â”œâ”€â”€ 2.3.4 Metrics & Analytics (North Stars, Usage Metrics, Retention)
+â”‚   â”‚   â”œâ”€â”€ 2.3.5 Prioritization (RICE, ICE, Opportunity Scoring, Weighted)
+â”‚   â”‚   â””â”€â”€ 2.3.6 Go-to-Market (Launch Strategy, Positioning, Messaging)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 2.4 Project Management
+â”‚   â”‚   â”œâ”€â”€ 2.4.1 Agile/Scrum (Sprints, Ceremonies, Estimation, Velocity)
+â”‚   â”‚   â”œâ”€â”€ 2.4.2 Kanban (WIP Limits, Flow, Cycle Time, Throughput)
+â”‚   â”‚   â”œâ”€â”€ 2.4.3 Risk Management (Identification, Mitigation, Contingency)
+â”‚   â”‚   â”œâ”€â”€ 2.4.4 Stakeholder Management (Communication, Expectation Setting)
+â”‚   â”‚   â”œâ”€â”€ 2.4.5 Resource Planning (Capacity, Allocation, Hiring)
+â”‚   â”‚   â””â”€â”€ 2.4.6 Delivery Management (Milestones, Dependencies, Launch)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 2.5 Design
+â”‚   â”‚   â”œâ”€â”€ 2.5.1 UI Design (Visual Design, Typography, Color, Layout)
+â”‚   â”‚   â”œâ”€â”€ 2.5.2 UX Design (Interaction Design, Information Architecture, User Flows)
+â”‚   â”‚   â”œâ”€â”€ 2.5.3 Design Systems (Components, Tokens, Documentation, Governance)
+â”‚   â”‚   â”œâ”€â”€ 2.5.4 Prototyping (Figma, Framer, Interactive Prototypes)
+â”‚   â”‚   â”œâ”€â”€ 2.5.5 Design Research (User Testing, Heatmaps, Analytics)
+â”‚   â”‚   â””â”€â”€ 2.5.6 Motion Design (Animation, Micro-interactions, Transitions)
+â”‚   â”‚
+â”‚   â””â”€â”€ 2.6 Engineering Management
+â”‚       â”œâ”€â”€ 2.6.1 Hiring (Interviewing, Inclusivity, Onboarding)
+â”‚       â”œâ”€â”€ 2.6.2 Team Building (Culture, Psychological Safety, Growth)
+â”‚       â”œâ”€â”€ 2.6.3 Technical Strategy (Platform Vision, Architecture, Tech Debt)
+â”‚       â”œâ”€â”€ 2.6.4 Process Improvement (Retrospectives, Metrics, Automation)
+â”‚       â””â”€â”€ 2.6.5 Budget & Planning (Headcount, Tools, Infrastructure)
+â”‚
+â”œâ”€â”€ 3. BUSINESS SKILLS
+â”‚   â”œâ”€â”€ 3.1 Startup Building
+â”‚   â”‚   â”œâ”€â”€ 3.1.1 Idea Validation (Problem-Solution Fit, Market Research)
+â”‚   â”‚   â”œâ”€â”€ 3.1.2 Lean Methodology (MVP, Build-Measure-Learn, Pivot)
+â”‚   â”‚   â”œâ”€â”€ 3.1.3 Business Modeling (Revenue Models, Unit Economics, Pricing)
+â”‚   â”‚   â”œâ”€â”€ 3.1.4 Fundraising (Pitch Decks, Investor Relations, Cap Table)
+â”‚   â”‚   â”œâ”€â”€ 3.1.5 Legal & IP (Incorporation, Contracts, IP Protection)
+â”‚   â”‚   â”œâ”€â”€ 3.1.6 Growth Hacking (SEO, Viral Loops, Community Building)
+â”‚   â”‚   â””â”€â”€ 3.1.7 Product-Market Fit (Measurement, Iteration, Scaling)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 3.2 Marketing
+â”‚   â”‚   â”œâ”€â”€ 3.2.1 Digital Marketing (SEO, SEM, Social Media, Email)
+â”‚   â”‚   â”œâ”€â”€ 3.2.2 Content Marketing (Blog, Video, Podcast, Newsletter)
+â”‚   â”‚   â”œâ”€â”€ 3.2.3 Brand Strategy (Positioning, Voice, Identity, Storytelling)
+â”‚   â”‚   â”œâ”€â”€ 3.2.4 Growth Marketing (Acquisition, Activation, Retention, Referral)
+â”‚   â”‚   â”œâ”€â”€ 3.2.5 Analytics & Attribution (Cohorts, LTV, CAC, ROAS)
+â”‚   â”‚   â””â”€â”€ 3.2.6 Community Building (Forums, Events, Ambassador Programs)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 3.3 Sales
+â”‚   â”‚   â”œâ”€â”€ 3.3.1 B2B Sales (Enterprise Sales, Procurement, Contracts)
+â”‚   â”‚   â”œâ”€â”€ 3.3.2 B2C Sales (Conversion Optimization, Funnel Management)
+â”‚   â”‚   â”œâ”€â”€ 3.3.3 SaaS Sales (Subscription, Upsells, Churn Reduction)
+â”‚   â”‚   â”œâ”€â”€ 3.3.4 Sales Operations (CRM, Pipeline, Forecasting)
+â”‚   â”‚   â””â”€â”€ 3.3.5 Negotiation (Pricing, Terms, Partnerships)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 3.4 Finance
+â”‚   â”‚   â”œâ”€â”€ 3.4.1 Financial Modeling (Projections, Scenarios, Valuations)
+â”‚   â”‚   â”œâ”€â”€ 3.4.2 Accounting (Bookkeeping, GAAP, Tax, Audit)
+â”‚   â”‚   â”œâ”€â”€ 3.4.3 Budgeting & Forecasting (Annual Planning, Variance)
+â”‚   â”‚   â”œâ”€â”€ 3.4.4 Investment Analysis (ROI, IRR, DCF, Comparables)
+â”‚   â”‚   â””â”€â”€ 3.4.5 Personal Finance (Investing, Taxes, Retirement, Insurance)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ 3.5 Consulting
+â”‚   â”‚   â”œâ”€â”€ 3.5.1 Client Management (Engagement, Scoping, Delivery)
+â”‚   â”‚   â”œâ”€â”€ 3.5.2 Proposal Writing (Solutions, Pricing, Statements of Work)
+â”‚   â”‚   â”œâ”€â”€ 3.5.3 Industry Analysis (Market Sizing, Competitive Research)
+â”‚   â”‚   â””â”€â”€ 3.5.4 Presentation (Executive Briefings, Deck Design)
+â”‚   â”‚
+â”‚   â””â”€â”€ 3.6 Entrepreneurship
+â”‚       â”œâ”€â”€ 3.6.1 Opportunity Recognition
+â”‚       â”œâ”€â”€ 3.6.2 Resource Acquisition (Team, Capital, Partnerships)
+â”‚       â”œâ”€â”€ 3.6.3 Execution & Operations
+â”‚       â”œâ”€â”€ 3.6.4 Resilience & Adaptability
+â”‚       â””â”€â”€ 3.6.5 Exit Strategy (Acquisition, IPO, Merger)
+â”‚
+â”œâ”€â”€ 4. CREATIVE & MEDIA SKILLS
+â”‚   â”œâ”€â”€ 4.1 Content Creation (Writing, Video, Audio, Photography)
+â”‚   â”œâ”€â”€ 4.2 Design (Graphic Design, Brand Identity, Illustration)
+â”‚   â”œâ”€â”€ 4.3 Music Production (Composition, Recording, Mixing, Mastering)
+â”‚   â”œâ”€â”€ 4.4 Game Development (Unity, Unreal, Godot, Game Design)
+â”‚   â””â”€â”€ 4.5 3D & VFX (Blender, Maya, Houdini, After Effects)
+â”‚
+â””â”€â”€ 5. USER-DEFINED SKILLS (Unlimited Custom Categories)
+    â”œâ”€â”€ 5.1 Custom Technical (Any language, framework, tool not in catalog)
+    â”œâ”€â”€ 5.2 Custom Professional (Any professional capability)
+    â”œâ”€â”€ 5.3 Custom Business (Any business or domain expertise)
+    â”œâ”€â”€ 5.4 Custom Academic (Research, Teaching, Tutoring, Subjects)
+    â”œâ”€â”€ 5.5 Custom Hobby (Gaming, Sports, Cooking, Travel, Fitness)
+    â”œâ”€â”€ 5.6 Custom Language (Human languages with proficiency levels)
+    â””â”€â”€ 5.7 Custom Domain (Industry-specific: Healthcare, Legal, Education, etc.)
 ```
 
 ### 3.3 Taxonomy Versioning
@@ -560,7 +560,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Frontend Developer, UI Engineer, Web Developer, Full-Stack Developer, Creative Developer |
 | Related Projects | Portfolio site, SaaS frontend, Design system, Browser extension, PWA |
 | Related Certifications | Meta Frontend Developer, Google UX Design, FreeCodeCamp Responsive Web Design |
-| Market Demand | Very High — consistently among top 5 most in-demand technical domains |
+| Market Demand | Very High â€” consistently among top 5 most in-demand technical domains |
 | Median Salary Range | $80K-$160K (depending on level and location) |
 | Key Libraries | React, Vue, Angular, Next.js, Tailwind, Framer Motion, Three.js |
 
@@ -575,7 +575,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Backend Developer, API Engineer, Systems Engineer, Software Architect |
 | Related Projects | API service, authentication system, data pipeline, real-time service |
 | Related Certifications | AWS Certified Developer, Spring Professional, MongoDB Associate |
-| Market Demand | Very High — fundamental to all digital products |
+| Market Demand | Very High â€” fundamental to all digital products |
 | Median Salary Range | $90K-$180K |
 | Key Libraries | FastAPI, Express, Django, Spring Boot, Redis, PostgreSQL, Kafka |
 
@@ -590,7 +590,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | iOS Developer, Android Developer, React Native Developer, Mobile Architect |
 | Related Projects | Fitness app, social media clone, e-commerce app, utility tool |
 | Related Certifications | Meta iOS Developer, Meta Android Developer, Google Associate Android Developer |
-| Market Demand | High — stable demand with continued mobile-first growth |
+| Market Demand | High â€” stable demand with continued mobile-first growth |
 | Median Salary Range | $90K-$170K |
 | Key Libraries | SwiftUI, Jetpack Compose, React Native, Flutter, Firebase, Apollo |
 
@@ -605,7 +605,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | DevOps Engineer, SRE, Platform Engineer, Infrastructure Engineer, Cloud Engineer |
 | Related Projects | CI/CD pipeline setup, Kubernetes cluster, monitoring stack, migration automation |
 | Related Certifications | AWS DevOps Engineer, CKA/CKAD, Terraform Associate, Docker Certified |
-| Market Demand | Very High — critical for all production systems |
+| Market Demand | Very High â€” critical for all production systems |
 | Median Salary Range | $100K-$200K |
 | Key Tools | Docker, Kubernetes, Terraform, GitHub Actions, Prometheus, Grafana |
 
@@ -620,7 +620,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Cloud Architect, Cloud Engineer, Solutions Architect, Platform Engineer |
 | Related Projects | Serverless app, multi-region deployment, cost optimization analysis |
 | Related Certifications | AWS Solutions Architect, GCP Professional Architect, Azure Solutions Architect |
-| Market Demand | Very High — cloud adoption continues across all industries |
+| Market Demand | Very High â€” cloud adoption continues across all industries |
 | Median Salary Range | $110K-$200K |
 | Key Platforms | AWS, GCP, Azure, Cloudflare, Vercel, Netlify |
 
@@ -635,7 +635,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Data Engineer, Analytics Engineer, Data Architect, Database Administrator |
 | Related Projects | Data pipeline, warehouse migration, streaming analytics, data catalog |
 | Related Certifications | GCP Data Engineer, AWS Data Analytics, dbt Certification, Snowflake Pro |
-| Market Demand | Very High — data-driven decision making requires robust data infrastructure |
+| Market Demand | Very High â€” data-driven decision making requires robust data infrastructure |
 | Median Salary Range | $100K-$190K |
 | Key Tools | Airflow, dbt, Spark, Kafka, Snowflake, BigQuery, Airbyte |
 
@@ -650,7 +650,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Security Engineer, Penetration Tester, Security Architect, CISO |
 | Related Projects | Security audit, CTF participation, bug bounty, security tool development |
 | Related Certifications | CISSP, CEH, OSCP, Security+, AWS Security Specialty |
-| Market Demand | Very High — cybersecurity skills gap continues to widen |
+| Market Demand | Very High â€” cybersecurity skills gap continues to widen |
 | Median Salary Range | $100K-$200K+ |
 | Key Domains | AppSec, Cloud Security, Network Security, IAM, Cryptography, Compliance |
 
@@ -665,7 +665,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | ML Engineer, AI Engineer, Data Scientist, NLP Engineer, Computer Vision Engineer |
 | Related Projects | LLM chatbot, image classifier, RAG system, recommendation engine, fine-tuned model |
 | Related Certifications | TensorFlow Developer, AWS ML Specialty, GCP ML Engineer, Deep Learning Specialization |
-| Market Demand | Extremely High — fastest growing technical domain |
+| Market Demand | Extremely High â€” fastest growing technical domain |
 | Median Salary Range | $120K-$250K+ |
 | Key Libraries | PyTorch, TensorFlow, LangChain, Hugging Face, vLLM, Weights & Biases |
 
@@ -679,8 +679,8 @@ Changes to the taxonomy follow semver conventions:
 | Typical Use Cases | Customer support agents, research assistants, automation workflows, multi-agent systems |
 | Related Careers | AI Agent Engineer, LLM Engineer, Prompt Engineer, AI Architect |
 | Related Projects | Research agent, customer support bot, automation pipeline, multi-agent system |
-| Related Certifications | (Emerging — few exist yet, expect 2-3 by 2027) |
-| Market Demand | Very High — rapidly growing as agent frameworks mature |
+| Related Certifications | (Emerging â€” few exist yet, expect 2-3 by 2027) |
+| Market Demand | Very High â€” rapidly growing as agent frameworks mature |
 | Median Salary Range | $130K-$250K+ |
 | Key Frameworks | LangChain, CrewAI, AutoGen, Swarms, Semantic Kernel, Haystack |
 
@@ -695,7 +695,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Data Scientist, Data Analyst, BI Engineer, Growth Analyst, Product Analyst |
 | Related Projects | Sales forecasting, user segmentation, churn analysis, experimentation platform |
 | Related Certifications | Google Data Analytics, IBM Data Science, Microsoft Data Analyst |
-| Market Demand | High — every organization needs data insights |
+| Market Demand | High â€” every organization needs data insights |
 | Median Salary Range | $80K-$160K |
 | Key Tools | Python, R, SQL, Tableau, Streamlit, Jupyter, dbt |
 
@@ -710,7 +710,7 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Engineering Manager, Tech Lead, Director of Engineering, CTO |
 | Related Projects | Team scaling initiative, mentoring program, technical strategy document |
 | Related Certifications | PMP, Certified Manager, Leadership Development Programs |
-| Market Demand | High — leadership skills are always in demand at senior levels |
+| Market Demand | High â€” leadership skills are always in demand at senior levels |
 | Median Salary Range | $130K-$250K+ |
 | Key Competencies | Team Management, Mentoring, Strategic Planning, Conflict Resolution |
 
@@ -725,8 +725,8 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Founder, Co-Founder, Product Manager, Growth Lead |
 | Related Projects | MVP launch, Y Combinator application, pitch deck, customer discovery |
 | Related Certifications | Y Combinator Startup School, Harvard CS50 Business, Startup School by OpenAI |
-| Market Demand | Moderate — highly specialized but extremely valuable |
-| Income Potential | Unlimited (equity-based) — highest upside of any category |
+| Market Demand | Moderate â€” highly specialized but extremely valuable |
+| Income Potential | Unlimited (equity-based) â€” highest upside of any category |
 | Note | Startup skills cross multiple categories: technical building + business strategy + fundraising |
 
 ### 4.13 Category: Creative & Media
@@ -740,8 +740,8 @@ Changes to the taxonomy follow semver conventions:
 | Related Careers | Content Creator, Graphic Designer, Video Editor, Game Developer, Musician |
 | Related Projects | YouTube channel, podcast, mobile game, design portfolio, music album |
 | Related Certifications | Adobe Certified Professional, Unity Certified, Pro Tools Certification |
-| Market Demand | High — creator economy continues to grow |
-| Income Potential | Moderate to High — wide range based on platform and audience |
+| Market Demand | High â€” creator economy continues to grow |
+| Income Potential | Moderate to High â€” wide range based on platform and audience |
 
 ### 4.14 User-Defined Categories
 
@@ -771,7 +771,7 @@ Users can submit categories for inclusion in the global taxonomy, which go throu
 
 The skill level system is a standardized 6-level framework (L0-L5) that provides consistent, cross-domain proficiency assessment. Every skill, regardless of domain, uses this framework.
 
-### 5.2 Level 0 — Unknown
+### 5.2 Level 0 â€” Unknown
 
 | Dimension | Description |
 |---|---|
@@ -783,9 +783,9 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 | Assessment | Would score 0% on any test. Cannot answer basic "what is" questions. |
 | UI Indicator | Gray circle, no fill |
 | Score Range | 0 |
-| Confidence | N/A — no data to be confident about |
+| Confidence | N/A â€” no data to be confident about |
 
-### 5.3 Level 1 — Beginner
+### 5.3 Level 1 â€” Beginner
 
 | Dimension | Description |
 |---|---|
@@ -805,7 +805,7 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 - Built a tutorial project (to-do app, hello world, etc.)
 - Attended a workshop or bootcamp
 
-### 5.4 Level 2 — Basic
+### 5.4 Level 2 â€” Basic
 
 | Dimension | Description |
 |---|---|
@@ -825,7 +825,7 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 - Used the skill in a real (non-tutorial) context
 - Can explain concepts to other beginners
 
-### 5.5 Level 3 — Intermediate
+### 5.5 Level 3 â€” Intermediate
 
 | Dimension | Description |
 |---|---|
@@ -846,7 +846,7 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 - Can give a technical talk or workshop
 - Mentored junior developers in this skill
 
-### 5.6 Level 4 — Advanced
+### 5.6 Level 4 â€” Advanced
 
 | Dimension | Description |
 |---|---|
@@ -867,7 +867,7 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 - Significant open-source maintainership
 - Led major technical decisions in this domain
 
-### 5.7 Level 5 — Expert
+### 5.7 Level 5 â€” Expert
 
 | Dimension | Description |
 |---|---|
@@ -876,7 +876,7 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 | Knowledge | Mastery-level understanding. Contributes to the skill's evolution. Recognized authority. Knows everything including esoteric edge cases. |
 | Practical | Can solve any problem in the domain. Creates new patterns, tools, or frameworks. Sets industry direction. |
 | Evidence | Industry recognition. Invention or creation of tools/frameworks. Book authorship. Years of leadership. |
-| Assessment | Cannot be assessed by standard tests — only peer review and impact assessment. |
+| Assessment | Cannot be assessed by standard tests â€” only peer review and impact assessment. |
 | UI Indicator | 5/5 filled, full color with glow effect |
 | Score Range | 81-100 |
 
@@ -903,12 +903,12 @@ The skill level system is a standardized 6-level framework (L0-L5) that provides
 
 | Signal | L1 | L2 | L3 | L4 | L5 |
 |---|---|---|---|---|---|
-| Tutorials completed | 1+ | 3+ | — | — | — |
-| Real projects | — | 1-2 | 3+ | 10+ | 20+ |
-| Production experience | — | — | Some | Regular | Extensive |
-| Can teach others | — | Concepts | Basics | Mentoring | Authoritative |
-| Published content | — | — | Tutorial | Articles | Books/Keynotes |
-| OSS contributions | — | Minor | Regular | Maintainer | Creator |
+| Tutorials completed | 1+ | 3+ | â€” | â€” | â€” |
+| Real projects | â€” | 1-2 | 3+ | 10+ | 20+ |
+| Production experience | â€” | â€” | Some | Regular | Extensive |
+| Can teach others | â€” | Concepts | Basics | Mentoring | Authoritative |
+| Published content | â€” | â€” | Tutorial | Articles | Books/Keynotes |
+| OSS contributions | â€” | Minor | Regular | Maintainer | Creator |
 | Years of use | <3mo | 3-6mo | 6-18mo | 2-4yr | 5+yr |
 | Independence | Guided | Supported | Independent | Architect | Visionary |
 
@@ -933,7 +933,7 @@ The core L0-L5 numeric framework remains consistent for cross-domain comparison,
 |---|---|---|---|
 | Planned | planned | User intends to learn this skill. May have a start date and learning resources identified. | No |
 | Learning | learning | Actively studying or training. Following a course, curriculum, or self-study plan. | No |
-| Practicing | practicing | Applied learning — using the skill in projects, exercises, or real scenarios. | No |
+| Practicing | practicing | Applied learning â€” using the skill in projects, exercises, or real scenarios. | No |
 | Active | active | Regularly used skill. User can perform tasks independently. Current in their toolkit. | Yes |
 | Advanced | advanced | Deep expertise actively maintained. User can teach, architect, and lead in this skill. | No |
 | Expert | expert | Mastery level. User is a recognized authority. Contributes to the skill's evolution. | No |
@@ -988,7 +988,7 @@ The state machine enforces these invariants:
 
 ### 7.1 User Skill Inventory
 
-Every user maintains a personal skill inventory — the complete list of skills they have claimed, demonstrated, or been assigned. Each entry includes:
+Every user maintains a personal skill inventory â€” the complete list of skills they have claimed, demonstrated, or been assigned. Each entry includes:
 
 | Field | Type | Description |
 |---|---|---|
@@ -1056,16 +1056,16 @@ Where:
 
 The system supports multiple views into the user skill inventory:
 
-1. **All Skills** — Complete flat list of every skill with state and level
-2. **By Category** — Grouped by taxonomy category
-3. **By State** — Filtered by lifecycle state
-4. **By Level** — Filtered by proficiency level
-5. **Active Skills** — subset with state in (active, advanced, expert)
-6. **Learning Queue** — Skills in planned or learning state
-7. **Archived Skills** — Historical skills no longer active
-8. **Derived Skills** — Skills inferred from combinations of evidence
-9. **Auto-Detected** — Skills ARIA found automatically
-10. **Highest Confidence** — Sorted by confidence score descending
+1. **All Skills** â€” Complete flat list of every skill with state and level
+2. **By Category** â€” Grouped by taxonomy category
+3. **By State** â€” Filtered by lifecycle state
+4. **By Level** â€” Filtered by proficiency level
+5. **Active Skills** â€” subset with state in (active, advanced, expert)
+6. **Learning Queue** â€” Skills in planned or learning state
+7. **Archived Skills** â€” Historical skills no longer active
+8. **Derived Skills** â€” Skills inferred from combinations of evidence
+9. **Auto-Detected** â€” Skills ARIA found automatically
+10. **Highest Confidence** â€” Sorted by confidence score descending
 
 ---
 
@@ -1123,12 +1123,12 @@ For each target skill, the system calculates:
 ```
 Career Target: "Senior AI Engineer"
     Skills Required:
-    ├── Python (current: L3, target: L5, gap: 2)
-    ├── Deep Learning (current: L2, target: L4, gap: 2)
-    ├── MLOps (current: L1, target: L3, gap: 2)
-    ├── System Design (current: L2, target: L4, gap: 2)
-    ├── Leadership (current: L2, target: L3, gap: 1)
-    └── Communication (current: L3, target: L4, gap: 1)
+    â”œâ”€â”€ Python (current: L3, target: L5, gap: 2)
+    â”œâ”€â”€ Deep Learning (current: L2, target: L4, gap: 2)
+    â”œâ”€â”€ MLOps (current: L1, target: L3, gap: 2)
+    â”œâ”€â”€ System Design (current: L2, target: L4, gap: 2)
+    â”œâ”€â”€ Leadership (current: L2, target: L3, gap: 1)
+    â””â”€â”€ Communication (current: L3, target: L4, gap: 1)
 
     Career Readiness: 52% overall
     Priority Skills: Python (HIGH), Deep Learning (HIGH), MLOps (MED)
@@ -1181,201 +1181,201 @@ Skill trees are hierarchical representations of skill relationships. They enable
 
 ```
 Frontend Development
-│
-├── Foundation
-│   ├── HTML5 (Semantic HTML, Accessibility, SEO)
-│   ├── CSS3 (Flexbox, Grid, Animations, Preprocessors)
-│   └── JavaScript (ES6+, DOM API, Async, Modules)
-│
-├── Framework (pick one primary)
-│   ├── React.js
-│   │   ├── Components (Class, Functional, Hooks)
-│   │   ├── State (useState, useReducer, Context, Redux)
-│   │   ├── Side Effects (useEffect, useLayoutEffect, Custom Hooks)
-│   │   ├── Performance (memo, useMemo, useCallback, Suspense)
-│   │   ├── Routing (React Router, TanStack Router)
-│   │   └── Testing (Jest, React Testing Library, Cypress)
-│   │
-│   ├── Vue.js (Composition API, Pinia, Vue Router, Vitest)
-│   │
-│   └── Angular (Components, Services, RxJS, Jasmine)
-│
-├── Build & Deploy
-│   ├── Build Tools (Vite, Webpack, esbuild, Turbopack)
-│   ├── Linting & Formatting (ESLint, Prettier)
-│   ├── TypeScript (Types, Generics, Advanced Patterns)
-│   └── Deployment (Vercel, Netlify, Cloudflare Pages)
-│
-├── Performance
-│   ├── Core Web Vitals (LCP, FID, CLS)
-│   ├── Bundle Optimization (Code Splitting, Tree Shaking)
-│   ├── Rendering (CSR, SSR, SSG, ISR, Streaming)
-│   └── Monitoring (Lighthouse, RUM, Web Vitals API)
-│
-├── Accessibility (WCAG, ARIA, Keyboard Navigation, Screen Readers)
-│
-├── Design Integration
-│   ├── Design Systems (Components, Tokens, Documentation)
-│   ├── Figma/Design Handoff
-│   ├── Responsive Design
-│   └── Animation (Framer Motion, GSAP, CSS Animations)
-│
-└── Advanced
-    ├── WebGL/Three.js
-    ├── Web Workers & Offloading
-    ├── WebAssembly
-    ├── PWA (Service Workers, Cache, Offline)
-    └── Micro Frontends (Module Federation, Isolation)
+â”‚
+â”œâ”€â”€ Foundation
+â”‚   â”œâ”€â”€ HTML5 (Semantic HTML, Accessibility, SEO)
+â”‚   â”œâ”€â”€ CSS3 (Flexbox, Grid, Animations, Preprocessors)
+â”‚   â””â”€â”€ JavaScript (ES6+, DOM API, Async, Modules)
+â”‚
+â”œâ”€â”€ Framework (pick one primary)
+â”‚   â”œâ”€â”€ React.js
+â”‚   â”‚   â”œâ”€â”€ Components (Class, Functional, Hooks)
+â”‚   â”‚   â”œâ”€â”€ State (useState, useReducer, Context, Redux)
+â”‚   â”‚   â”œâ”€â”€ Side Effects (useEffect, useLayoutEffect, Custom Hooks)
+â”‚   â”‚   â”œâ”€â”€ Performance (memo, useMemo, useCallback, Suspense)
+â”‚   â”‚   â”œâ”€â”€ Routing (React Router, TanStack Router)
+â”‚   â”‚   â””â”€â”€ Testing (Jest, React Testing Library, Cypress)
+â”‚   â”‚
+â”‚   â”œâ”€â”€ Vue.js (Composition API, Pinia, Vue Router, Vitest)
+â”‚   â”‚
+â”‚   â””â”€â”€ Angular (Components, Services, RxJS, Jasmine)
+â”‚
+â”œâ”€â”€ Build & Deploy
+â”‚   â”œâ”€â”€ Build Tools (Vite, Webpack, esbuild, Turbopack)
+â”‚   â”œâ”€â”€ Linting & Formatting (ESLint, Prettier)
+â”‚   â”œâ”€â”€ TypeScript (Types, Generics, Advanced Patterns)
+â”‚   â””â”€â”€ Deployment (Vercel, Netlify, Cloudflare Pages)
+â”‚
+â”œâ”€â”€ Performance
+â”‚   â”œâ”€â”€ Core Web Vitals (LCP, FID, CLS)
+â”‚   â”œâ”€â”€ Bundle Optimization (Code Splitting, Tree Shaking)
+â”‚   â”œâ”€â”€ Rendering (CSR, SSR, SSG, ISR, Streaming)
+â”‚   â””â”€â”€ Monitoring (Lighthouse, RUM, Web Vitals API)
+â”‚
+â”œâ”€â”€ Accessibility (WCAG, ARIA, Keyboard Navigation, Screen Readers)
+â”‚
+â”œâ”€â”€ Design Integration
+â”‚   â”œâ”€â”€ Design Systems (Components, Tokens, Documentation)
+â”‚   â”œâ”€â”€ Figma/Design Handoff
+â”‚   â”œâ”€â”€ Responsive Design
+â”‚   â””â”€â”€ Animation (Framer Motion, GSAP, CSS Animations)
+â”‚
+â””â”€â”€ Advanced
+    â”œâ”€â”€ WebGL/Three.js
+    â”œâ”€â”€ Web Workers & Offloading
+    â”œâ”€â”€ WebAssembly
+    â”œâ”€â”€ PWA (Service Workers, Cache, Offline)
+    â””â”€â”€ Micro Frontends (Module Federation, Isolation)
 ```
 
 ### 9.4 Example: AI/ML Skill Tree
 
 ```
 Artificial Intelligence
-│
-├── Mathematics Foundation
-│   ├── Linear Algebra (Vectors, Matrices, Eigenvalues)
-│   ├── Calculus (Derivatives, Gradients, Optimization)
-│   ├── Probability (Distributions, Bayes, Statistical Tests)
-│   └── Statistics (Hypothesis Testing, Regression, ANOVA)
-│
-├── Programming Foundation
-│   ├── Python (NumPy, Pandas, Scikit-learn)
-│   ├── R (Statistical Computing, ggplot2)
-│   ├── SQL (Data Querying, Window Functions)
-│   └── CUDA (GPU Programming, Optimization)
-│
-├── Machine Learning
-│   ├── Supervised Learning (Regression, SVM, Random Forest, XGBoost)
-│   ├── Unsupervised Learning (K-Means, PCA, t-SNE, DBSCAN)
-│   ├── Feature Engineering (Selection, Extraction, Encoding)
-│   ├── Model Evaluation (Cross-Validation, Metrics, Bias-Variance)
-│   └── Hyperparameter Tuning (Grid Search, Bayesian, Optuna)
-│
-├── Deep Learning
-│   ├── Neural Networks (Architectures, Activation, Backprop)
-│   ├── CNNs (Image Classification, Object Detection, Segmentation)
-│   ├── RNNs/LSTMs (Sequence Modeling, Time Series)
-│   ├── Transformers (Attention, BERT, GPT, ViT)
-│   ├── GANs (Generation, Style Transfer, Super Resolution)
-│   └── Diffusion Models (Image Generation, Denoising)
-│
-├── NLP & LLMs
-│   ├── Text Processing (Tokenization, Embeddings, Vectorization)
-│   ├── Language Models (Pre-training, Fine-tuning, RLHF)
-│   ├── RAG (Retrieval, Chunking, Re-ranking, Generation)
-│   ├── Prompt Engineering (Chain-of-Thought, Few-Shot, Structured)
-│   ├── Model Serving (vLLM, TGI, Triton, ONNX)
-│   └── Evaluation (BLEU, ROUGE, HELM, Human Eval)
-│
-├── MLOps
-│   ├── Experiment Tracking (MLflow, Weights & Biases, Neptune)
-│   ├── Model Registry (Versioning, Staging, Production)
-│   ├── CI/CD for ML (Data Validation, Model Testing, Deployment)
-│   ├── Monitoring (Drift Detection, Performance Alerts)
-│   └── Feature Store (Feast, Tecton, SageMaker Feature Store)
-│
-└── AI Agents
-    ├── Agent Frameworks (LangChain, CrewAI, AutoGen, Swarms)
-    ├── Tool Use (Function Calling, API Integration, Custom Tools)
-    ├── Memory (Short-term, Long-term, Episodic, Vector Memory)
-    ├── Planning (ReAct, Plan-and-Execute, Tree-of-Thought)
-    ├── Multi-Agent (Communication, Delegation, Consensus)
-    ├── Evaluation (Benchmarks, Traces, Scoring)
-    └── Safety (Guardrails, Red Teaming, Alignment)
+â”‚
+â”œâ”€â”€ Mathematics Foundation
+â”‚   â”œâ”€â”€ Linear Algebra (Vectors, Matrices, Eigenvalues)
+â”‚   â”œâ”€â”€ Calculus (Derivatives, Gradients, Optimization)
+â”‚   â”œâ”€â”€ Probability (Distributions, Bayes, Statistical Tests)
+â”‚   â””â”€â”€ Statistics (Hypothesis Testing, Regression, ANOVA)
+â”‚
+â”œâ”€â”€ Programming Foundation
+â”‚   â”œâ”€â”€ Python (NumPy, Pandas, Scikit-learn)
+â”‚   â”œâ”€â”€ R (Statistical Computing, ggplot2)
+â”‚   â”œâ”€â”€ SQL (Data Querying, Window Functions)
+â”‚   â””â”€â”€ CUDA (GPU Programming, Optimization)
+â”‚
+â”œâ”€â”€ Machine Learning
+â”‚   â”œâ”€â”€ Supervised Learning (Regression, SVM, Random Forest, XGBoost)
+â”‚   â”œâ”€â”€ Unsupervised Learning (K-Means, PCA, t-SNE, DBSCAN)
+â”‚   â”œâ”€â”€ Feature Engineering (Selection, Extraction, Encoding)
+â”‚   â”œâ”€â”€ Model Evaluation (Cross-Validation, Metrics, Bias-Variance)
+â”‚   â””â”€â”€ Hyperparameter Tuning (Grid Search, Bayesian, Optuna)
+â”‚
+â”œâ”€â”€ Deep Learning
+â”‚   â”œâ”€â”€ Neural Networks (Architectures, Activation, Backprop)
+â”‚   â”œâ”€â”€ CNNs (Image Classification, Object Detection, Segmentation)
+â”‚   â”œâ”€â”€ RNNs/LSTMs (Sequence Modeling, Time Series)
+â”‚   â”œâ”€â”€ Transformers (Attention, BERT, GPT, ViT)
+â”‚   â”œâ”€â”€ GANs (Generation, Style Transfer, Super Resolution)
+â”‚   â””â”€â”€ Diffusion Models (Image Generation, Denoising)
+â”‚
+â”œâ”€â”€ NLP & LLMs
+â”‚   â”œâ”€â”€ Text Processing (Tokenization, Embeddings, Vectorization)
+â”‚   â”œâ”€â”€ Language Models (Pre-training, Fine-tuning, RLHF)
+â”‚   â”œâ”€â”€ RAG (Retrieval, Chunking, Re-ranking, Generation)
+â”‚   â”œâ”€â”€ Prompt Engineering (Chain-of-Thought, Few-Shot, Structured)
+â”‚   â”œâ”€â”€ Model Serving (vLLM, TGI, Triton, ONNX)
+â”‚   â””â”€â”€ Evaluation (BLEU, ROUGE, HELM, Human Eval)
+â”‚
+â”œâ”€â”€ MLOps
+â”‚   â”œâ”€â”€ Experiment Tracking (MLflow, Weights & Biases, Neptune)
+â”‚   â”œâ”€â”€ Model Registry (Versioning, Staging, Production)
+â”‚   â”œâ”€â”€ CI/CD for ML (Data Validation, Model Testing, Deployment)
+â”‚   â”œâ”€â”€ Monitoring (Drift Detection, Performance Alerts)
+â”‚   â””â”€â”€ Feature Store (Feast, Tecton, SageMaker Feature Store)
+â”‚
+â””â”€â”€ AI Agents
+    â”œâ”€â”€ Agent Frameworks (LangChain, CrewAI, AutoGen, Swarms)
+    â”œâ”€â”€ Tool Use (Function Calling, API Integration, Custom Tools)
+    â”œâ”€â”€ Memory (Short-term, Long-term, Episodic, Vector Memory)
+    â”œâ”€â”€ Planning (ReAct, Plan-and-Execute, Tree-of-Thought)
+    â”œâ”€â”€ Multi-Agent (Communication, Delegation, Consensus)
+    â”œâ”€â”€ Evaluation (Benchmarks, Traces, Scoring)
+    â””â”€â”€ Safety (Guardrails, Red Teaming, Alignment)
 ```
 
 ### 9.5 Example: Agent Engineering Skill Tree
 
 ```
 Agent Engineering
-│
-├── Foundation
-│   ├── LLM Fundamentals (Architecture, Training, Inference)
-│   ├── Prompt Engineering (Zero-Shot, Few-Shot, Chain-of-Thought)
-│   ├── Function Calling (Tool Definitions, JSON Mode, Structured Output)
-│   └── Embeddings & Vector Search (Text Embeddings, Similarity Search)
-│
-├── Agent Frameworks
-│   ├── LangChain (LCEL, Tools, Memory, Callbacks)
-│   ├── CrewAI (Roles, Tasks, Processes, Delegation)
-│   ├── AutoGen (Agent Chat, Multi-Agent, Code Execution)
-│   ├── Swarms (Swarm Intelligence, Hierarchical Agents)
-│   └── Custom Framework (Building from scratch)
-│
-├── Agent Capabilities
-│   ├── Tool Building (API Tools, File Tools, Code Tools, Custom)
-│   ├── Memory Systems (Short-term, Long-term, Episodic, Semantic)
-│   ├── Planning (ReAct, Plan-and-Execute, Reflexion, Tree-of-Thought)
-│   ├── Reasoning (Chain-of-Thought, Self-Consistency, Verification)
-│   └── Learning (In-Context, Fine-tuning, RAG, Interactive)
-│
-├── Multi-Agent Systems
-│   ├── Agent Communication (Message Passing, Shared Memory)
-│   ├── Coordination (Orchestrator, Hierarchical, Peer-to-Peer)
-│   ├── Role Assignment (Specialist, Generalist, Manager)
-│   ├── Consensus & Voting (Majority, Weighted, Debate)
-│   └── Error Recovery (Retry, Delegation, Human-in-the-Loop)
-│
-├── RAG Architecture
-│   ├── Ingestion (Chunking, Embedding, Indexing, Metadata)
-│   ├── Retrieval (Semantic, Hybrid, Multi-Vector, Re-ranking)
-│   ├── Generation (Context Assembly, Citation, Hallucination Guard)
-│   └── Evaluation (Hit Rate, MRR, NDCG, Faithfulness)
-│
-├── Observability
-│   ├── Tracing (LangSmith, LangFuse, OpenAI Trace)
-│   ├── Logging (Token Usage, Latency, Error Rates)
-│   ├── Evaluation (Benchmarks, Human Eval, Automated Scoring)
-│   └── Cost Tracking (Per-Agent, Per-Tool, Per-Run)
-│
-└── Safety & Security
-    ├── Prompt Injection (Detection, Prevention, Mitigation)
-    ├── Data Leakage (PII Redaction, Output Filtering)
-    ├── Access Control (Tool Permissions, Rate Limiting)
-    └── Alignment (Guardrails, Content Filtering, Ethical Constraints)
+â”‚
+â”œâ”€â”€ Foundation
+â”‚   â”œâ”€â”€ LLM Fundamentals (Architecture, Training, Inference)
+â”‚   â”œâ”€â”€ Prompt Engineering (Zero-Shot, Few-Shot, Chain-of-Thought)
+â”‚   â”œâ”€â”€ Function Calling (Tool Definitions, JSON Mode, Structured Output)
+â”‚   â””â”€â”€ Embeddings & Vector Search (Text Embeddings, Similarity Search)
+â”‚
+â”œâ”€â”€ Agent Frameworks
+â”‚   â”œâ”€â”€ LangChain (LCEL, Tools, Memory, Callbacks)
+â”‚   â”œâ”€â”€ CrewAI (Roles, Tasks, Processes, Delegation)
+â”‚   â”œâ”€â”€ AutoGen (Agent Chat, Multi-Agent, Code Execution)
+â”‚   â”œâ”€â”€ Swarms (Swarm Intelligence, Hierarchical Agents)
+â”‚   â””â”€â”€ Custom Framework (Building from scratch)
+â”‚
+â”œâ”€â”€ Agent Capabilities
+â”‚   â”œâ”€â”€ Tool Building (API Tools, File Tools, Code Tools, Custom)
+â”‚   â”œâ”€â”€ Memory Systems (Short-term, Long-term, Episodic, Semantic)
+â”‚   â”œâ”€â”€ Planning (ReAct, Plan-and-Execute, Reflexion, Tree-of-Thought)
+â”‚   â”œâ”€â”€ Reasoning (Chain-of-Thought, Self-Consistency, Verification)
+â”‚   â””â”€â”€ Learning (In-Context, Fine-tuning, RAG, Interactive)
+â”‚
+â”œâ”€â”€ Multi-Agent Systems
+â”‚   â”œâ”€â”€ Agent Communication (Message Passing, Shared Memory)
+â”‚   â”œâ”€â”€ Coordination (Orchestrator, Hierarchical, Peer-to-Peer)
+â”‚   â”œâ”€â”€ Role Assignment (Specialist, Generalist, Manager)
+â”‚   â”œâ”€â”€ Consensus & Voting (Majority, Weighted, Debate)
+â”‚   â””â”€â”€ Error Recovery (Retry, Delegation, Human-in-the-Loop)
+â”‚
+â”œâ”€â”€ RAG Architecture
+â”‚   â”œâ”€â”€ Ingestion (Chunking, Embedding, Indexing, Metadata)
+â”‚   â”œâ”€â”€ Retrieval (Semantic, Hybrid, Multi-Vector, Re-ranking)
+â”‚   â”œâ”€â”€ Generation (Context Assembly, Citation, Hallucination Guard)
+â”‚   â””â”€â”€ Evaluation (Hit Rate, MRR, NDCG, Faithfulness)
+â”‚
+â”œâ”€â”€ Observability
+â”‚   â”œâ”€â”€ Tracing (LangSmith, LangFuse, OpenAI Trace)
+â”‚   â”œâ”€â”€ Logging (Token Usage, Latency, Error Rates)
+â”‚   â”œâ”€â”€ Evaluation (Benchmarks, Human Eval, Automated Scoring)
+â”‚   â””â”€â”€ Cost Tracking (Per-Agent, Per-Tool, Per-Run)
+â”‚
+â””â”€â”€ Safety & Security
+    â”œâ”€â”€ Prompt Injection (Detection, Prevention, Mitigation)
+    â”œâ”€â”€ Data Leakage (PII Redaction, Output Filtering)
+    â”œâ”€â”€ Access Control (Tool Permissions, Rate Limiting)
+    â””â”€â”€ Alignment (Guardrails, Content Filtering, Ethical Constraints)
 ```
 
 ### 9.6 Example: Startup Building Skill Tree
 
 ```
 Startup Building
-│
-├── Ideation & Validation
-│   ├── Problem Discovery (Customer Interviews, Pain Points)
-│   ├── Market Research (TAM, SAM, SOM, Competitive Analysis)
-│   ├── Solution Validation (MVP, Prototype, Smoke Tests)
-│   └── Business Modeling (Revenue Models, Unit Economics)
-│
-├── Building
-│   ├── Technical (Full-Stack Development, DevOps, Architecture)
-│   ├── Design (UI/UX, Brand Identity, Design System)
-│   ├── Product (Roadmap, Prioritization, Metrics)
-│   └── Data (Analytics, Dashboards, Experimentation)
-│
-├── Growth
-│   ├── Marketing (Content, SEO, Social, Email, Paid)
-│   ├── Sales (B2B, B2C, SaaS, Enterprise)
-│   ├── Community Building (Forums, Events, Ambassador Programs)
-│   └── Partnerships (Strategic, Channel, Integration)
-│
-├── Fundraising
-│   ├── Pitch Deck (Story, Metrics, Vision, Ask)
-│   ├── Investor Relations (Network, Updates, Meetings)
-│   ├── Cap Table Management (Equity, Dilution, Vesting)
-│   └── Due Diligence (Legal, Financial, Technical)
-│
-├── Operations
-│   ├── Legal (Incorporation, Contracts, IP, Compliance)
-│   ├── Finance (Accounting, Budgeting, Forecasting)
-│   ├── Hiring (Culture, Interviewing, Onboarding)
-│   └── Processes (OKRs, Reviews, Communication)
-│
-└── Scaling
-    ├── Team Building (Leadership, Culture, Organization)
-    ├── Product-Market Fit (Measurement, Iteration)
-    ├── System Architecture (Scaling, Reliability, Cost)
-    └── Exit Strategy (Acquisition, IPO, Merger)
+â”‚
+â”œâ”€â”€ Ideation & Validation
+â”‚   â”œâ”€â”€ Problem Discovery (Customer Interviews, Pain Points)
+â”‚   â”œâ”€â”€ Market Research (TAM, SAM, SOM, Competitive Analysis)
+â”‚   â”œâ”€â”€ Solution Validation (MVP, Prototype, Smoke Tests)
+â”‚   â””â”€â”€ Business Modeling (Revenue Models, Unit Economics)
+â”‚
+â”œâ”€â”€ Building
+â”‚   â”œâ”€â”€ Technical (Full-Stack Development, DevOps, Architecture)
+â”‚   â”œâ”€â”€ Design (UI/UX, Brand Identity, Design System)
+â”‚   â”œâ”€â”€ Product (Roadmap, Prioritization, Metrics)
+â”‚   â””â”€â”€ Data (Analytics, Dashboards, Experimentation)
+â”‚
+â”œâ”€â”€ Growth
+â”‚   â”œâ”€â”€ Marketing (Content, SEO, Social, Email, Paid)
+â”‚   â”œâ”€â”€ Sales (B2B, B2C, SaaS, Enterprise)
+â”‚   â”œâ”€â”€ Community Building (Forums, Events, Ambassador Programs)
+â”‚   â””â”€â”€ Partnerships (Strategic, Channel, Integration)
+â”‚
+â”œâ”€â”€ Fundraising
+â”‚   â”œâ”€â”€ Pitch Deck (Story, Metrics, Vision, Ask)
+â”‚   â”œâ”€â”€ Investor Relations (Network, Updates, Meetings)
+â”‚   â”œâ”€â”€ Cap Table Management (Equity, Dilution, Vesting)
+â”‚   â””â”€â”€ Due Diligence (Legal, Financial, Technical)
+â”‚
+â”œâ”€â”€ Operations
+â”‚   â”œâ”€â”€ Legal (Incorporation, Contracts, IP, Compliance)
+â”‚   â”œâ”€â”€ Finance (Accounting, Budgeting, Forecasting)
+â”‚   â”œâ”€â”€ Hiring (Culture, Interviewing, Onboarding)
+â”‚   â””â”€â”€ Processes (OKRs, Reviews, Communication)
+â”‚
+â””â”€â”€ Scaling
+    â”œâ”€â”€ Team Building (Leadership, Culture, Organization)
+    â”œâ”€â”€ Product-Market Fit (Measurement, Iteration)
+    â”œâ”€â”€ System Architecture (Scaling, Reliability, Cost)
+    â””â”€â”€ Exit Strategy (Acquisition, IPO, Merger)
 ```
 
 ### 9.7 Tree Storage & Query
@@ -1422,9 +1422,9 @@ Skills have explicit relationships that define prerequisites, recommendations, a
 |---|---|---|---|
 | React.js | JavaScript | HTML, CSS | TypeScript |
 | Next.js | React.js, JavaScript | Node.js | TypeScript, CSS |
-| TypeScript | JavaScript | — | — |
+| TypeScript | JavaScript | â€” | â€” |
 | Redux | React.js | JavaScript | TypeScript |
-| Tailwind CSS | CSS | HTML | — |
+| Tailwind CSS | CSS | HTML | â€” |
 | Vue.js | JavaScript | HTML, CSS | TypeScript |
 | Angular | TypeScript, JavaScript | HTML, CSS | RxJS |
 | Svelte | JavaScript | HTML, CSS | TypeScript |
@@ -1435,10 +1435,10 @@ Skills have explicit relationships that define prerequisites, recommendations, a
 |---|---|---|---|
 | FastAPI | Python | SQL | Pydantic |
 | Django | Python | SQL | HTML, CSS |
-| GraphQL | Any Backend Language | REST APIs | — |
-| PostgreSQL | SQL | — | Database Design |
-| Redis | Backend Experience | — | Caching Concepts |
-| Kafka | Backend Experience | Message Queues | — |
+| GraphQL | Any Backend Language | REST APIs | â€” |
+| PostgreSQL | SQL | â€” | Database Design |
+| Redis | Backend Experience | â€” | Caching Concepts |
+| Kafka | Backend Experience | Message Queues | â€” |
 
 #### AI/ML Dependencies
 
@@ -1448,7 +1448,7 @@ Skills have explicit relationships that define prerequisites, recommendations, a
 | LangChain | Python | LLM Concepts | Prompt Engineering |
 | RAG | LangChain or Similar | Embeddings, Vector DBs | Prompt Engineering |
 | Fine-tuning | Deep Learning | PyTorch/Hugging Face | MLOps |
-| MLOps | ML Workflow | DevOps, Docker | — |
+| MLOps | ML Workflow | DevOps, Docker | â€” |
 
 #### Agent Engineering Dependencies
 
@@ -1456,7 +1456,7 @@ Skills have explicit relationships that define prerequisites, recommendations, a
 |---|---|---|---|
 | LangChain | Python | LLM APIs | Prompt Engineering |
 | CrewAI | LangChain | Agent Concepts | Tool Building |
-| Multi-Agent | Single Agent | Communication Patterns | — |
+| Multi-Agent | Single Agent | Communication Patterns | â€” |
 | RAG Systems | Vector DBs | Embeddings | LangChain |
 | Agent Evaluation | Agent Building | Testing | Observability |
 
@@ -1468,22 +1468,22 @@ The dependency framework enables:
 1. Learning Path Generation
    Input: Target skill (e.g., Next.js)
    Output: Ordered list of prerequisites to learn first
-   └── JavaScript -> React -> Next.js
+   â””â”€â”€ JavaScript -> React -> Next.js
 
 2. Gap Analysis
    Input: Current skills + target skills
    Output: Missing prerequisites sorted by priority
-   └── Missing: TypeScript (recommended before React)
+   â””â”€â”€ Missing: TypeScript (recommended before React)
 
 3. Curriculum Design
    Input: Set of target skills
    Output: Optimal learning sequence minimizing dependencies
-   └── Learn: JavaScript -> TypeScript -> React -> Next.js
+   â””â”€â”€ Learn: JavaScript -> TypeScript -> React -> Next.js
 
 4. Skill Validation
    Input: Claimed skill level
    Output: Check if prerequisites are at adequate levels
-   └── React L4 requires JavaScript at least L3
+   â””â”€â”€ React L4 requires JavaScript at least L3
 ```
 
 ---
@@ -1650,7 +1650,7 @@ The system maps certifications from major providers:
 | Snowflake | SnowPro Core, Advanced | Credential ID |
 | dbt | dbt Developer, Analytics Engineer | Badge URL |
 | TensorFlow | Developer Certificate | Badge URL |
-| OpenAI | (Coming — expected certifications) | Pending |
+| OpenAI | (Coming â€” expected certifications) | Pending |
 
 ### 13.2 Certification Mapping
 
@@ -1691,7 +1691,7 @@ Each certification maps to skills and levels:
 | AWS Certifications | 3 years | Recertification exam |
 | CompTIA Security+ | 3 years | CE credits |
 | CKA/CKAD | 2 years | Recertification exam |
-| OSCP | No expiry | — |
+| OSCP | No expiry | â€” |
 | PMP | 3 years | PDUs |
 
 The system tracks expiry dates and sends renewal reminders 90/60/30 days before expiration.
@@ -1770,23 +1770,23 @@ Each roadmap milestone maps to one or more skills:
 
 ```
 Roadmap: "Frontend Developer" (roadmap.sh)
-├── Month 1-2: HTML & CSS (L1-L2)
-│   ├── HTML5 (Semantic HTML, Forms, SEO)
-│   └── CSS3 (Flexbox, Grid, Responsive, Animations)
-├── Month 3-4: JavaScript (L2-L3)
-│   ├── JavaScript (ES6+, DOM, Async, Modules)
-│   └── TypeScript (Types, Interfaces, Generics)
-├── Month 5-8: Framework (L2-L3)
-│   ├── React.js (Components, State, Effects, Routing)
-│   ├── Next.js (SSR, SSG, API Routes, ISR)
-│   └── State Management (Context, Redux, Zustand)
-├── Month 9-10: Testing & Performance (L2-L3)
-│   ├── Testing (Jest, RTL, Cypress, Playwright)
-│   └── Performance (CWV, Bundle, Lighthouse, Monitoring)
-└── Month 11-12: Advanced (L3-L4)
-    ├── Accessibility (WCAG, ARIA, Screen Readers)
-    ├── Animation (Framer Motion, GSAP)
-    └── Architecture (Design Systems, Micro Frontends)
+â”œâ”€â”€ Month 1-2: HTML & CSS (L1-L2)
+â”‚   â”œâ”€â”€ HTML5 (Semantic HTML, Forms, SEO)
+â”‚   â””â”€â”€ CSS3 (Flexbox, Grid, Responsive, Animations)
+â”œâ”€â”€ Month 3-4: JavaScript (L2-L3)
+â”‚   â”œâ”€â”€ JavaScript (ES6+, DOM, Async, Modules)
+â”‚   â””â”€â”€ TypeScript (Types, Interfaces, Generics)
+â”œâ”€â”€ Month 5-8: Framework (L2-L3)
+â”‚   â”œâ”€â”€ React.js (Components, State, Effects, Routing)
+â”‚   â”œâ”€â”€ Next.js (SSR, SSG, API Routes, ISR)
+â”‚   â””â”€â”€ State Management (Context, Redux, Zustand)
+â”œâ”€â”€ Month 9-10: Testing & Performance (L2-L3)
+â”‚   â”œâ”€â”€ Testing (Jest, RTL, Cypress, Playwright)
+â”‚   â””â”€â”€ Performance (CWV, Bundle, Lighthouse, Monitoring)
+â””â”€â”€ Month 11-12: Advanced (L3-L4)
+    â”œâ”€â”€ Accessibility (WCAG, ARIA, Screen Readers)
+    â”œâ”€â”€ Animation (Framer Motion, GSAP)
+    â””â”€â”€ Architecture (Design Systems, Micro Frontends)
 ```
 
 ### 15.3 Readiness Requirements
@@ -1865,22 +1865,22 @@ For each opportunity, the system identifies:
 
 ```
 Opportunity: "AI Research Intern at DeepMind"
-├── Required Skills:
-│   ├── Python [L3]          ✅ You have L4
-│   ├── Deep Learning [L3]   ✅ You have L3
-│   ├── PyTorch [L2]         ✅ You have L3
-│   └── Research [L2]        ❌ You lack this
-│
-├── Preferred Skills:
-│   ├── NLP [L2]             ✅ You have L2
-│   ├── Transformers [L2]    ✅ You have L2
-│   └── Publications [L1]    ❌ You have 0 publications
-│
-├── Match Score: 78%
-├── Skills You Have: Python, Deep Learning, PyTorch, NLP, Transformers
-├── Skills You Lack: Research Experience, Publications
-├── Growth Skills: Research Methodology, Academic Writing
-└── Recommendations: Start a research blog, apply to smaller research internships first
+â”œâ”€â”€ Required Skills:
+â”‚   â”œâ”€â”€ Python [L3]          âœ… You have L4
+â”‚   â”œâ”€â”€ Deep Learning [L3]   âœ… You have L3
+â”‚   â”œâ”€â”€ PyTorch [L2]         âœ… You have L3
+â”‚   â””â”€â”€ Research [L2]        âŒ You lack this
+â”‚
+â”œâ”€â”€ Preferred Skills:
+â”‚   â”œâ”€â”€ NLP [L2]             âœ… You have L2
+â”‚   â”œâ”€â”€ Transformers [L2]    âœ… You have L2
+â”‚   â””â”€â”€ Publications [L1]    âŒ You have 0 publications
+â”‚
+â”œâ”€â”€ Match Score: 78%
+â”œâ”€â”€ Skills You Have: Python, Deep Learning, PyTorch, NLP, Transformers
+â”œâ”€â”€ Skills You Lack: Research Experience, Publications
+â”œâ”€â”€ Growth Skills: Research Methodology, Academic Writing
+â””â”€â”€ Recommendations: Start a research blog, apply to smaller research internships first
 ```
 
 ---
@@ -2049,22 +2049,22 @@ Normalized: 0-100 scale
 
 ```
 Skill: "Cloud Architecture (AWS)"
-├── L2 (Basic):
-│   ├── Employment: $80K-$110K
-│   ├── Freelance: $50-80/hr
-│   └── Consulting: N/A
-├── L3 (Intermediate):
-│   ├── Employment: $110K-$150K
-│   ├── Freelance: $80-130/hr
-│   └── Consulting: $150-200/hr
-├── L4 (Advanced):
-│   ├── Employment: $150K-$200K
-│   ├── Freelance: $130-200/hr
-│   └── Consulting: $200-350/hr
-└── L5 (Expert):
-    ├── Employment: $200K-$350K+
-    ├── Freelance: $200-350/hr
-    └── Consulting: $350-600/hr
+â”œâ”€â”€ L2 (Basic):
+â”‚   â”œâ”€â”€ Employment: $80K-$110K
+â”‚   â”œâ”€â”€ Freelance: $50-80/hr
+â”‚   â””â”€â”€ Consulting: N/A
+â”œâ”€â”€ L3 (Intermediate):
+â”‚   â”œâ”€â”€ Employment: $110K-$150K
+â”‚   â”œâ”€â”€ Freelance: $80-130/hr
+â”‚   â””â”€â”€ Consulting: $150-200/hr
+â”œâ”€â”€ L4 (Advanced):
+â”‚   â”œâ”€â”€ Employment: $150K-$200K
+â”‚   â”œâ”€â”€ Freelance: $130-200/hr
+â”‚   â””â”€â”€ Consulting: $200-350/hr
+â””â”€â”€ L5 (Expert):
+    â”œâ”€â”€ Employment: $200K-$350K+
+    â”œâ”€â”€ Freelance: $200-350/hr
+    â””â”€â”€ Consulting: $350-600/hr
 ```
 
 ### 18.5 Income Portfolio
@@ -2073,24 +2073,24 @@ Users can view their total income portfolio across all skills:
 
 ```
 Income Portfolio
-├── Primary Skill: Cloud Architecture
-│   ├── Employment: $165,000
-│   └── Skill ROI: +$12,500 per level
-│
-├── Secondary Skill: DevOps
-│   ├── Employment: +$15,000 (premium)
-│   └── Skill ROI: +$4,000 per level
-│
-├── Freelance Skills: React, Node.js
-│   ├── Annual Freelance: $24,000
-│   └── Effective Rate: $95/hr
-│
-├── Content Skills: Python, AI
-│   ├── Course Revenue: $8,000/year
-│   └── Content ROI: $0.50 per hour invested
-│
-└── Total Skills Income: $212,000/year
-    └── Income Diversification Score: 72/100
+â”œâ”€â”€ Primary Skill: Cloud Architecture
+â”‚   â”œâ”€â”€ Employment: $165,000
+â”‚   â””â”€â”€ Skill ROI: +$12,500 per level
+â”‚
+â”œâ”€â”€ Secondary Skill: DevOps
+â”‚   â”œâ”€â”€ Employment: +$15,000 (premium)
+â”‚   â””â”€â”€ Skill ROI: +$4,000 per level
+â”‚
+â”œâ”€â”€ Freelance Skills: React, Node.js
+â”‚   â”œâ”€â”€ Annual Freelance: $24,000
+â”‚   â””â”€â”€ Effective Rate: $95/hr
+â”‚
+â”œâ”€â”€ Content Skills: Python, AI
+â”‚   â”œâ”€â”€ Course Revenue: $8,000/year
+â”‚   â””â”€â”€ Content ROI: $0.50 per hour invested
+â”‚
+â””â”€â”€ Total Skills Income: $212,000/year
+    â””â”€â”€ Income Diversification Score: 72/100
 ```
 
 ### 18.6 Income Diversification Score
@@ -2131,34 +2131,34 @@ The dashboard displays key growth metrics:
 
 ```
 Skill Growth Dashboard
-├── Skills Overview
-│   ├── Total Skills: 24 (Active: 18, Learning: 4, Archived: 2)
-│   ├── Avg Level: L2.7
-│   ├── Skills Added This Month: 2
-│   └── Skills Deprecated: 1
-│
-├── Level Distribution
-│   ├── L0 (Unknown): 12 (skills in taxonomy, not yet started)
-│   ├── L1 (Beginner): 3
-│   ├── L2 (Basic): 7
-│   ├── L3 (Intermediate): 8
-│   ├── L4 (Advanced): 4
-│   └── L5 (Expert): 2
-│
-├── Recent Progress
-│   ├── React.js: L2 -> L3 (completed e-commerce project)
-│   ├── TypeScript: L1 -> L2 (completed course)
-│   └── Docker: L2 -> L3 (deployed production app)
-│
-├── Learning Velocity
-│   ├── This Month: +0.3 avg level gain
-│   ├── This Quarter: +0.8 avg level gain
-│   └── Trend: Steady improvement (up 12% from last quarter)
-│
-└── Alerts
-    ├── Python has no evidence for 60 days (stale)
-    ├── GraphQL demand up 25% this quarter (consider adding)
-    └── Next.js target gap = 2 levels (behind schedule)
+â”œâ”€â”€ Skills Overview
+â”‚   â”œâ”€â”€ Total Skills: 24 (Active: 18, Learning: 4, Archived: 2)
+â”‚   â”œâ”€â”€ Avg Level: L2.7
+â”‚   â”œâ”€â”€ Skills Added This Month: 2
+â”‚   â””â”€â”€ Skills Deprecated: 1
+â”‚
+â”œâ”€â”€ Level Distribution
+â”‚   â”œâ”€â”€ L0 (Unknown): 12 (skills in taxonomy, not yet started)
+â”‚   â”œâ”€â”€ L1 (Beginner): 3
+â”‚   â”œâ”€â”€ L2 (Basic): 7
+â”‚   â”œâ”€â”€ L3 (Intermediate): 8
+â”‚   â”œâ”€â”€ L4 (Advanced): 4
+â”‚   â””â”€â”€ L5 (Expert): 2
+â”‚
+â”œâ”€â”€ Recent Progress
+â”‚   â”œâ”€â”€ React.js: L2 -> L3 (completed e-commerce project)
+â”‚   â”œâ”€â”€ TypeScript: L1 -> L2 (completed course)
+â”‚   â””â”€â”€ Docker: L2 -> L3 (deployed production app)
+â”‚
+â”œâ”€â”€ Learning Velocity
+â”‚   â”œâ”€â”€ This Month: +0.3 avg level gain
+â”‚   â”œâ”€â”€ This Quarter: +0.8 avg level gain
+â”‚   â””â”€â”€ Trend: Steady improvement (up 12% from last quarter)
+â”‚
+â””â”€â”€ Alerts
+    â”œâ”€â”€ Python has no evidence for 60 days (stale)
+    â”œâ”€â”€ GraphQL demand up 25% this quarter (consider adding)
+    â””â”€â”€ Next.js target gap = 2 levels (behind schedule)
 ```
 
 ### 19.4 Learning Velocity
@@ -2171,10 +2171,10 @@ Fast Velocity: 0.4-0.6 levels/month (focused learning)
 Exceptional: 0.7+ levels/month (immersion)
 
 Velocity by Category:
-├── Technical Skills: 0.25 levels/month
-├── Professional Skills: 0.15 levels/month
-├── Business Skills: 0.10 levels/month
-└── Overall: 0.22 levels/month
+â”œâ”€â”€ Technical Skills: 0.25 levels/month
+â”œâ”€â”€ Professional Skills: 0.15 levels/month
+â”œâ”€â”€ Business Skills: 0.10 levels/month
+â””â”€â”€ Overall: 0.22 levels/month
 ```
 
 ### 19.5 Career Readiness Score
@@ -2185,9 +2185,9 @@ Career Readiness = Average(Target_Skill_Readiness) across all career targets
 Where each target skill readiness = min(1.0, current_level / target_level)
 
 Overall Readiness: 62% (Fair)
-├── Career Target "Senior AI Engineer": 52% (Need improvement)
-├── Career Target "Full-Stack Developer": 78% (Good)
-└── Career Target "Tech Lead": 45% (Need significant improvement)
+â”œâ”€â”€ Career Target "Senior AI Engineer": 52% (Need improvement)
+â”œâ”€â”€ Career Target "Full-Stack Developer": 78% (Good)
+â””â”€â”€ Career Target "Tech Lead": 45% (Need significant improvement)
 ```
 
 ### 19.6 Opportunity Match Score
@@ -2196,9 +2196,9 @@ Overall Readiness: 62% (Fair)
 Opportunity Match = Average match score across all surfaced opportunities
 
 Current: 68% average match
-├── High Match (80%+): 3 opportunities
-├── Medium Match (60-79%): 8 opportunities
-└── Low Match (40-59%): 5 opportunities
+â”œâ”€â”€ High Match (80%+): 3 opportunities
+â”œâ”€â”€ Medium Match (60-79%): 8 opportunities
+â””â”€â”€ Low Match (40-59%): 5 opportunities
 ```
 
 ### 19.7 Income Potential Score
@@ -2207,10 +2207,10 @@ Current: 68% average match
 Income Potential = Normalized sum of income forecasts across all monetizable skills
 
 Current: 72/100
-├── Employment Potential: $165,000/yr (primary skills)
-├── Freelance Potential: $24,000/yr (secondary skills)
-├── Content Potential: $8,000/yr (teachable skills)
-└── Product Potential: $12,000/yr (buildable skills)
+â”œâ”€â”€ Employment Potential: $165,000/yr (primary skills)
+â”œâ”€â”€ Freelance Potential: $24,000/yr (secondary skills)
+â”œâ”€â”€ Content Potential: $8,000/yr (teachable skills)
+â””â”€â”€ Product Potential: $12,000/yr (buildable skills)
 ```
 
 ### 19.8 Analytics Data Sources
@@ -2237,91 +2237,91 @@ ARIA provides AI-generated recommendations across five dimensions using the skil
 
 ```
 Recommendation: Learn TypeScript
-├── Reasoning:
-│   ├── Required for target: React (L3 -> L4 requires TypeScript)
-│   ├── Market demand: Very High (Demand Score: 92/100)
-│   ├── Income impact: +$8,000-12,000/yr at current level
-│   └─┬ Time to L3: 2-3 months (based on your learning velocity)
-│
-├── Recommended Resources:
-│   ├── TypeScript Handbook (free, 2 weeks)
-│   └── TypeScript Course on Frontend Masters (paid, 4 weeks)
-│
-└── Success Criteria: Build a TypeScript React project (L3 evidence)
+â”œâ”€â”€ Reasoning:
+â”‚   â”œâ”€â”€ Required for target: React (L3 -> L4 requires TypeScript)
+â”‚   â”œâ”€â”€ Market demand: Very High (Demand Score: 92/100)
+â”‚   â”œâ”€â”€ Income impact: +$8,000-12,000/yr at current level
+â”‚   â””â”€â”¬ Time to L3: 2-3 months (based on your learning velocity)
+â”‚
+â”œâ”€â”€ Recommended Resources:
+â”‚   â”œâ”€â”€ TypeScript Handbook (free, 2 weeks)
+â”‚   â””â”€â”€ TypeScript Course on Frontend Masters (paid, 4 weeks)
+â”‚
+â””â”€â”€ Success Criteria: Build a TypeScript React project (L3 evidence)
 ```
 
 ### 20.3 Skills to Improve
 
 ```
 Recommendation: Improve Python from L3 to L4
-├── Reasoning:
-│   ├── Career impact: Senior AI Engineer target requires L4
-│   ├── Income impact: +$15,000/yr (L3 -> L4 premium)
-│   ├── Evidence gap: You have 4 items but all are projects (no certs)
-│   └─┬ Time to L4: 4-6 months
-│
-├── Improvement Plan:
-│   ├── Month 1-2: Advanced Python concepts (concurrency, metaprogramming)
-│   ├── Month 3-4: Build a production Python service
-│   └── Month 5-6: Contribute to a Python OSS project
-│
-└── Evidence Needed: 2 more quality items (certification + OSS)
+â”œâ”€â”€ Reasoning:
+â”‚   â”œâ”€â”€ Career impact: Senior AI Engineer target requires L4
+â”‚   â”œâ”€â”€ Income impact: +$15,000/yr (L3 -> L4 premium)
+â”‚   â”œâ”€â”€ Evidence gap: You have 4 items but all are projects (no certs)
+â”‚   â””â”€â”¬ Time to L4: 4-6 months
+â”‚
+â”œâ”€â”€ Improvement Plan:
+â”‚   â”œâ”€â”€ Month 1-2: Advanced Python concepts (concurrency, metaprogramming)
+â”‚   â”œâ”€â”€ Month 3-4: Build a production Python service
+â”‚   â””â”€â”€ Month 5-6: Contribute to a Python OSS project
+â”‚
+â””â”€â”€ Evidence Needed: 2 more quality items (certification + OSS)
 ```
 
 ### 20.4 Skills to Drop
 
 ```
 Recommendation: Consider dropping Angular
-├── Reasoning:
-│   ├── No evidence for 8 months (stale)
-│   ├── Not aligned with any current career target
-│   ├── Market: Growth Score = -5 (stable but not growing)
-│   └── Opportunity cost: Time could be spent on React (higher ROI)
-│
-├── Options:
-│   ├── Archive: Keep history, free up mental space
-│   └── Deprecate: Only if you will never use it again
-│
-└── Recommendation: Archive (can reactivate if needed)
+â”œâ”€â”€ Reasoning:
+â”‚   â”œâ”€â”€ No evidence for 8 months (stale)
+â”‚   â”œâ”€â”€ Not aligned with any current career target
+â”‚   â”œâ”€â”€ Market: Growth Score = -5 (stable but not growing)
+â”‚   â””â”€â”€ Opportunity cost: Time could be spent on React (higher ROI)
+â”‚
+â”œâ”€â”€ Options:
+â”‚   â”œâ”€â”€ Archive: Keep history, free up mental space
+â”‚   â””â”€â”€ Deprecate: Only if you will never use it again
+â”‚
+â””â”€â”€ Recommendation: Archive (can reactivate if needed)
 ```
 
 ### 20.5 Emerging Skills
 
 ```
 Recommendation: Watch these emerging skills
-├── High Priority:
-│   ├── Agent Engineering (+35% demand growth this year)
-│   │   └── Relevance: Directly related to your AI Engineer target
-│   │
-│   └── RAG Systems (+40% demand growth this year)
-│       └── Relevance: Complements your existing LangChain skill
-│
-├── Medium Priority:
-│   ├── WebAssembly (+20% demand growth)
-│   └── Edge Computing (+25% demand growth)
-│
-└── Low Priority:
-    └── Quantum Computing (too early for your current career stage)
+â”œâ”€â”€ High Priority:
+â”‚   â”œâ”€â”€ Agent Engineering (+35% demand growth this year)
+â”‚   â”‚   â””â”€â”€ Relevance: Directly related to your AI Engineer target
+â”‚   â”‚
+â”‚   â””â”€â”€ RAG Systems (+40% demand growth this year)
+â”‚       â””â”€â”€ Relevance: Complements your existing LangChain skill
+â”‚
+â”œâ”€â”€ Medium Priority:
+â”‚   â”œâ”€â”€ WebAssembly (+20% demand growth)
+â”‚   â””â”€â”€ Edge Computing (+25% demand growth)
+â”‚
+â””â”€â”€ Low Priority:
+    â””â”€â”€ Quantum Computing (too early for your current career stage)
 ```
 
 ### 20.6 Opportunity Readiness
 
 ```
 Recommendation: You are ready for these opportunities now
-├── Best Match: AI Intern at [Company]
-│   ├── Match: 82%
-│   ├── Skills Match: 7/8 required skills at target level
-│   └── Gap: Research methodology (can learn in 2 weeks)
-│
-├── Coming Soon (1 month prep):
-│   └── ML Engineer at [Company]
-│       ├── Current Match: 65%
-│       └── Prep: Complete MLOps course, build deployment pipeline
-│
-└── Future Goal (6 months prep):
-    └── Senior AI Engineer
-        ├── Current Match: 52%
-        └── Roadmap: Python L4, Deep Learning L4, MLOps L3
+â”œâ”€â”€ Best Match: AI Intern at [Company]
+â”‚   â”œâ”€â”€ Match: 82%
+â”‚   â”œâ”€â”€ Skills Match: 7/8 required skills at target level
+â”‚   â””â”€â”€ Gap: Research methodology (can learn in 2 weeks)
+â”‚
+â”œâ”€â”€ Coming Soon (1 month prep):
+â”‚   â””â”€â”€ ML Engineer at [Company]
+â”‚       â”œâ”€â”€ Current Match: 65%
+â”‚       â””â”€â”€ Prep: Complete MLOps course, build deployment pipeline
+â”‚
+â””â”€â”€ Future Goal (6 months prep):
+    â””â”€â”€ Senior AI Engineer
+        â”œâ”€â”€ Current Match: 52%
+        â””â”€â”€ Roadmap: Python L4, Deep Learning L4, MLOps L3
 ```
 
 ### 20.7 Recommendation Triggers
@@ -2353,7 +2353,7 @@ Recommendation: You are ready for these opportunities now
 
 ### 21.1 Agent Skill Architecture
 
-ARIA possesses its own set of skills — agent capabilities that combine data access, prompt templates, AI models, and decision logic. These share the same taxonomy, versioning, and lifecycle as user skills but are assessed through execution logs and performance metrics rather than evidence.
+ARIA possesses its own set of skills â€” agent capabilities that combine data access, prompt templates, AI models, and decision logic. These share the same taxonomy, versioning, and lifecycle as user skills but are assessed through execution logs and performance metrics rather than evidence.
 
 Each agent capability is defined by:
 
@@ -2562,18 +2562,18 @@ The following agent capabilities are currently defined:
 
 | Skill | User Chat | Cron | API Call | Browser Ext |
 |---|---|---|---|---|
-| Briefing | Yes | Yes | — | — |
-| Task Breakdown | Yes | — | Yes | — |
-| Opportunity Match | — | Yes | — | — |
-| Roadmap Build | Yes | — | — | — |
-| Weekly Review | — | Yes | — | — |
-| Idea Validation | Yes | — | — | Yes |
-| Task Prioritization | Yes | Yes | Yes | — |
-| Course Plan | Yes | — | — | — |
-| Graph Insight | Yes | — | — | — |
-| Sleep Adjust | — | Yes | Yes | — |
-| Habit Protect | — | Yes | — | — |
-| Capture | — | — | — | Yes |
+| Briefing | Yes | Yes | â€” | â€” |
+| Task Breakdown | Yes | â€” | Yes | â€” |
+| Opportunity Match | â€” | Yes | â€” | â€” |
+| Roadmap Build | Yes | â€” | â€” | â€” |
+| Weekly Review | â€” | Yes | â€” | â€” |
+| Idea Validation | Yes | â€” | â€” | Yes |
+| Task Prioritization | Yes | Yes | Yes | â€” |
+| Course Plan | Yes | â€” | â€” | â€” |
+| Graph Insight | Yes | â€” | â€” | â€” |
+| Sleep Adjust | â€” | Yes | Yes | â€” |
+| Habit Protect | â€” | Yes | â€” | â€” |
+| Capture | â€” | â€” | â€” | Yes |
 
 ### 21.4 Agent Capability Improvement Loop
 
@@ -2581,23 +2581,23 @@ Each agent capability improves over time through a feedback loop:
 
 ```
 Skill Executes
-    │
-    ▼
+    â”‚
+    â–¼
 User responds (or doesn't)
-    │
-    ▼
+    â”‚
+    â–¼
 Outcome measured:
   - Was recommendation followed?
   - Was output accurate?
   - Did user engage?
-    │
-    ▼
+    â”‚
+    â–¼
 Parameters adjusted:
   - Prompt weights (if LLM-based)
   - Scoring thresholds
   - Algorithmic parameters
-    │
-    ▼
+    â”‚
+    â–¼
 Next execution improved
 ```
 
@@ -2714,7 +2714,7 @@ Every skill entity maintains a version history to track changes over time. This 
 | Skill Definition | Yes | Per change | Indefinite |
 | User Skill Entry | Yes | Per state/level change | Indefinite |
 | Taxonomy | Yes | Per release | 10 years |
-| Evidence | No (immutable by nature) | — | — |
+| Evidence | No (immutable by nature) | â€” | â€” |
 | Assessment | Yes | Per assessment | 5 years |
 | Certification Mapping | Yes | Per change | Indefinite |
 
@@ -2742,13 +2742,13 @@ The change log provides a human-readable history:
 
 ```
 Change Log: React.js (skill:react)
-├── 2026-06-01: Level L2 -> L3 (Evidence: Completed e-commerce project)
-├── 2026-05-15: State Learning -> Practicing (Evidence: Started building)
-├── 2026-04-01: Skill added (Source: User manual)
-│
-├── 2026-03-10: Taxonomy update: moved to Frontend > Frameworks (v1.2.0)
-├── 2026-02-01: Evidence added: Meta Frontend Certification (Quality: 0.8)
-└── 2026-01-15: Evidence added: Portfolio website (Quality: 0.5)
+â”œâ”€â”€ 2026-06-01: Level L2 -> L3 (Evidence: Completed e-commerce project)
+â”œâ”€â”€ 2026-05-15: State Learning -> Practicing (Evidence: Started building)
+â”œâ”€â”€ 2026-04-01: Skill added (Source: User manual)
+â”‚
+â”œâ”€â”€ 2026-03-10: Taxonomy update: moved to Frontend > Frameworks (v1.2.0)
+â”œâ”€â”€ 2026-02-01: Evidence added: Meta Frontend Certification (Quality: 0.8)
+â””â”€â”€ 2026-01-15: Evidence added: Portfolio website (Quality: 0.5)
 ```
 
 ### 23.5 Upgrade Paths
@@ -3269,7 +3269,7 @@ The Skills System operates under a multi-tier governance model designed for orga
 | Add new integration | Engineering | Steering Committee | Security | IT admin |
 | Modify data retention policy | Data Governance Council | Legal | Security | All users |
 | Approve new certification mapping | Taxanomy Working Group | Data Governance Council | SMEs | Users |
-| Override AI recommendation threshold | User (personal) | None | — | — |
+| Override AI recommendation threshold | User (personal) | None | â€” | â€” |
 | Enterprise-wide setting change | Org Admin | Steering Committee | IT, Security | All org users |
 
 ### 29.3 Enterprise Compliance Mapping
@@ -3337,36 +3337,36 @@ The system actively monitors and flags skill inflation (users claiming higher le
 The Skills System must integrate with existing enterprise tooling to be viable in organizational deployments.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    ENTERPRISE ECOSYSTEM                       │
-│                                                              │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐         │
-│  │  HRIS   │  │   LMS   │  │   ATS   │  │   SSO   │         │
-│  │(Workday)│  │(Corner- │  │(Green-  │  │(Okta,   │         │
-│  │ BambooHR│  │ stone,  │  │ house,  │  │ Azure   │         │
-│  │ Rippling│  │Docebo)  │  │ Lever)  │  │ AD, One)│         │
-│  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘         │
-│       │            │            │            │              │
-│       └────────────┼────────────┼────────────┘              │
-│                    ▼            ▼                           │
-│  ┌─────────────────────────────────────────────┐           │
-│  │           SKILLS SYSTEM API GATEWAY          │           │
-│  │  (SCIM v2, REST, Webhook, Event Bus)        │           │
-│  └───────────────┬─────────────────────────────┘           │
-│                  │                                         │
-│  ┌───────────────▼─────────────────────────────┐           │
-│  │           SKILLS ENGINE                      │           │
-│  │  Taxonomy | Inventory | Assessment | Market   │           │
-│  │  Recommendations | Analytics | Graph         │           │
-│  └─────────────────────────────────────────────┘           │
-│                                                              │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐         │
-│  │  IDP    │  │  Slack  │  │ Email   │  │ Mobile  │         │
-│  │(Portal) │  │ Notifs  │  │(Resend) │  │ (React  │         │
-│  │         │  │         │  │         │  │ Native) │         │
-│  └─────────┘  └─────────┘  └─────────┘  └─────────┘         │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    ENTERPRISE ECOSYSTEM                       â”‚
+â”‚                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”‚
+â”‚  â”‚  HRIS   â”‚  â”‚   LMS   â”‚  â”‚   ATS   â”‚  â”‚   SSO   â”‚         â”‚
+â”‚  â”‚(Workday)â”‚  â”‚(Corner- â”‚  â”‚(Green-  â”‚  â”‚(Okta,   â”‚         â”‚
+â”‚  â”‚ BambooHRâ”‚  â”‚ stone,  â”‚  â”‚ house,  â”‚  â”‚ Azure   â”‚         â”‚
+â”‚  â”‚ Ripplingâ”‚  â”‚Docebo)  â”‚  â”‚ Lever)  â”‚  â”‚ AD, One)â”‚         â”‚
+â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜         â”‚
+â”‚       â”‚            â”‚            â”‚            â”‚              â”‚
+â”‚       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜              â”‚
+â”‚                    â–¼            â–¼                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”           â”‚
+â”‚  â”‚           SKILLS SYSTEM API GATEWAY          â”‚           â”‚
+â”‚  â”‚  (SCIM v2, REST, Webhook, Event Bus)        â”‚           â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜           â”‚
+â”‚                  â”‚                                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”           â”‚
+â”‚  â”‚           SKILLS ENGINE                      â”‚           â”‚
+â”‚  â”‚  Taxonomy | Inventory | Assessment | Market   â”‚           â”‚
+â”‚  â”‚  Recommendations | Analytics | Graph         â”‚           â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜           â”‚
+â”‚                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”‚
+â”‚  â”‚  IDP    â”‚  â”‚  Slack  â”‚  â”‚ Email   â”‚  â”‚ Mobile  â”‚         â”‚
+â”‚  â”‚(Portal) â”‚  â”‚ Notifs  â”‚  â”‚(Resend) â”‚  â”‚ (React  â”‚         â”‚
+â”‚  â”‚         â”‚  â”‚         â”‚  â”‚         â”‚  â”‚ Native) â”‚         â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â”‚
+â”‚                                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 30.2 HRIS Integration (Workday, BambooHR, Rippling)
@@ -3594,28 +3594,28 @@ Enterprise skill system adoption requires deliberate change management. The fram
 
 ```
 Phase 1: Pilot (4 weeks)
-├── Select: 1-2 departments, 20-50 users
-├── Activities: Executive sponsor identified, pilot team trained
-├── Success Criteria: >70% adoption, >3 skills added per user
-└── Decision Gate: Go/No-go for Phase 2 based on pilot results
+â”œâ”€â”€ Select: 1-2 departments, 20-50 users
+â”œâ”€â”€ Activities: Executive sponsor identified, pilot team trained
+â”œâ”€â”€ Success Criteria: >70% adoption, >3 skills added per user
+â””â”€â”€ Decision Gate: Go/No-go for Phase 2 based on pilot results
 
 Phase 2: Department Rollout (8 weeks)
-├── Scale: 3-5 departments, 100-500 users
-├── Activities: Department-level training, integration setup, feedback loops
-├── Success Criteria: >60% adoption across departments, <5% support tickets
-└── Decision Gate: Process adjustments based on departmental feedback
+â”œâ”€â”€ Scale: 3-5 departments, 100-500 users
+â”œâ”€â”€ Activities: Department-level training, integration setup, feedback loops
+â”œâ”€â”€ Success Criteria: >60% adoption across departments, <5% support tickets
+â””â”€â”€ Decision Gate: Process adjustments based on departmental feedback
 
 Phase 3: Organization-Wide (12 weeks)
-├── Scale: All departments, all users
-├── Activities: Full training program, integration rollout, communications
-├── Success Criteria: >80% adoption, measurable skill growth
-└── Decision Gate: Full deployment validated
+â”œâ”€â”€ Scale: All departments, all users
+â”œâ”€â”€ Activities: Full training program, integration rollout, communications
+â”œâ”€â”€ Success Criteria: >80% adoption, measurable skill growth
+â””â”€â”€ Decision Gate: Full deployment validated
 
 Phase 4: Optimization (Ongoing)
-├── Scale: Continuous improvement
-├── Activities: Quarterly reviews, feature updates, advanced training
-├── Success Criteria: Continuous KPI improvement
-└── Decision Gate: Annual strategic review
+â”œâ”€â”€ Scale: Continuous improvement
+â”œâ”€â”€ Activities: Quarterly reviews, feature updates, advanced training
+â”œâ”€â”€ Success Criteria: Continuous KPI improvement
+â””â”€â”€ Decision Gate: Annual strategic review
 ```
 
 ### 33.3 Executive Sponsorship Requirements
