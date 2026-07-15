@@ -1,4 +1,4 @@
-# Information Architecture — Second Brain OS
+﻿# Information Architecture â€” Second Brain OS
 
 > **Single source of truth for navigation, search, dashboard, AI integration, cross-module relationships, and platform IA.**
 > Enterprise-grade design by a Principal Information Architect, Enterprise UX Architect, Product Systems Architect, SaaS Navigation Expert, AI Product Architect, and Knowledge Management Architect.
@@ -9,12 +9,12 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-IA-001 |
+| Document ID | DSG-INF-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
 | Supersedes | Navigation/IA fragments across `08_UIUX.md`, `10_DesignSystem.md`, `ProductArchitecture.md`, `Enterprise_Frontend_Discovery_Report_v3.md` |
-| Classification | Internal — Architecture Reference |
+| Classification | Internal â€” Architecture Reference |
 | Target Audience | AI Agents (Claude, Cursor, Copilot), Frontend Engineers, UX Designers, Product Managers |
 
 ---
@@ -106,14 +106,14 @@
     - 15.5 AI Suggestions
     - 15.6 AI Context System
 16. [Cross-Module Relationships](#16-cross-module-relationships)
-    - 16.1 Task ↔ Roadmap
-    - 16.2 Roadmap ↔ Skills
-    - 16.3 Skills ↔ Opportunities
-    - 16.4 Learning ↔ Projects
-    - 16.5 Projects ↔ Income
-    - 16.6 Analytics ↔ All Modules
-    - 16.7 Memory ↔ All Modules
-    - 16.8 AI ↔ All Modules
+    - 16.1 Task â†” Roadmap
+    - 16.2 Roadmap â†” Skills
+    - 16.3 Skills â†” Opportunities
+    - 16.4 Learning â†” Projects
+    - 16.5 Projects â†” Income
+    - 16.6 Analytics â†” All Modules
+    - 16.7 Memory â†” All Modules
+    - 16.8 AI â†” All Modules
 17. [Information Hierarchy](#17-information-hierarchy)
     - 17.1 Level 1 Information
     - 17.2 Level 2 Information
@@ -137,11 +137,11 @@ Second Brain OS is an AI-augmented personal productivity system comprising **20 
 
 | Tenet | Application |
 |---|---|
-| **Progressive Disclosure** | Every screen reveals complexity on demand — never more than 7±2 primary choices at any level |
-| **Consistent Mental Model** | Every module follows the same information pattern: List → Detail → Actions → Related |
-| **Keyboard Runtime** | Every action reachable without mouse — `R+[letter]` routing, `/commands`, keyboard-only navigation |
+| **Progressive Disclosure** | Every screen reveals complexity on demand â€” never more than 7Â±2 primary choices at any level |
+| **Consistent Mental Model** | Every module follows the same information pattern: List â†’ Detail â†’ Actions â†’ Related |
+| **Keyboard Runtime** | Every action reachable without mouse â€” `R+[letter]` routing, `/commands`, keyboard-only navigation |
 | **Cross-Module Interoperability** | Every module can reference, link to, and pull context from every other module |
-| **AI as Discovery Layer** | AI is not a module — it's a pervasive discovery and action layer across all modules |
+| **AI as Discovery Layer** | AI is not a module â€” it's a pervasive discovery and action layer across all modules |
 | **Content Before Container** | Information architecture is data-model driven, not UI-layout driven |
 
 ### Key Numbers
@@ -167,7 +167,7 @@ Second Brain OS is an AI-augmented personal productivity system comprising **20 
 | 15 vs 16 modules | Standardized to **20 modules** (adding YouTube Vault, Browser Extension, Voice Layer) |
 | 4 vs 6 sidebar groups | Adopted **6-group model** (Core, Learn, Build, Earn, Well-Being, System) |
 | Chat vs ARIA | Branded as **"AI Chat"** for now; rebrand-ready to "ARIA" later |
-| 5 vs 8 agents live | Reference **AGENTS.md** count (8 live) for implementation status |
+| 5 vs 11 agents live | Reference **AGENTS.md** count (11 live) for implementation status |
 
 ---
 
@@ -175,7 +175,7 @@ Second Brain OS is an AI-augmented personal productivity system comprising **20 
 
 ### P1: Progressive Disclosure
 
-Every screen shows only as much information as the user needs at that moment. Navigation never exceeds **7±2 items** at any single level. Details, filters, and advanced actions are revealed through expand/collapse, hover, focus, or explicit user request.
+Every screen shows only as much information as the user needs at that moment. Navigation never exceeds **7Â±2 items** at any single level. Details, filters, and advanced actions are revealed through expand/collapse, hover, focus, or explicit user request.
 
 **Application:** The sidebar shows 6 groups (not 20 modules). Modules within a group expand on hover or click. All 20 modules are one click away but only 6 are visually simultaneous.
 
@@ -207,7 +207,7 @@ Every user-facing action is reachable without a mouse. The system provides:
 - **Tab/Arrow navigation:** Complete keyboard traversal of all interactive elements
 - **Standard shortcuts:** `Cmd+K` (search), `N` (new), `Escape` (back/close)
 
-**Enterprise rationale:** Power users (100+ actions/day) save 3-5 seconds per navigation action. At 50 navigations/day, that's ~3 minutes/day saved — 18 hours/year.
+**Enterprise rationale:** Power users (100+ actions/day) save 3-5 seconds per navigation action. At 50 navigations/day, that's ~3 minutes/day saved â€” 18 hours/year.
 
 ### P4: Cross-Module Interoperability
 
@@ -221,11 +221,11 @@ No module is an island. Every module exposes:
 
 ### P5: AI-Enhanced Discovery
 
-AI is not a separate module to visit — it's a layer across all modules. The user discovers information through:
+AI is not a separate module to visit â€” it's a layer across all modules. The user discovers information through:
 - **Proactive suggestions** ("You have 3 tasks due today")
 - **Natural language search** ("show me react projects from last month")
 - **Contextual recommendations** ("Based on your learning, you might enjoy this opportunity")
-- **Predictive navigation** ("You usually check tasks next — open them?")
+- **Predictive navigation** ("You usually check tasks next â€” open them?")
 
 ### P6: Context Preservation
 
@@ -244,11 +244,11 @@ The same content model serves all platforms. Navigation transforms at breakpoint
 - **768-1024px:** Collapsed sidebar (64px icons) + overlay drawer
 - **>1024px:** Expanded sidebar (240px), collapsible
 
-Content renders identically — only navigation chrome changes.
+Content renders identically â€” only navigation chrome changes.
 
 ### P8: Content Before Container
 
-Navigation structure derives from the data model, not from visual design decisions. The domain model (13 domains, 20 modules) defines what goes where. Visual hierarchy (size, color, position) reinforces the data hierarchy — it does not create it.
+Navigation structure derives from the data model, not from visual design decisions. The domain model (13 domains, 20 modules) defines what goes where. Visual hierarchy (size, color, position) reinforces the data hierarchy â€” it does not create it.
 
 **Enterprise rationale:** When navigation is data-model-driven, adding a module is a config change, not a redesign.
 
@@ -279,26 +279,26 @@ The complete system comprises **20 modules** organized into **6 navigation group
 
 | # | Module | Nav Group | Route | Two-Key | Status |
 |---|---|---|---|---|---|
-| 1 | Dashboard | Core | `/dashboard` | `R+D` | ✅ Live |
-| 2 | Tasks | Core | `/tasks` | `R+T` | ✅ Live |
-| 3 | AI Chat | Core | `/chat` | `R+K` | ✅ Live |
-| 4 | Courses | Learn | `/courses` | `R+C` | ✅ Live |
-| 5 | YouTube Vault | Learn | `/youtube` | `R+Y` | ⚠️ Design |
-| 6 | Resource Library | Learn | `/resources` | `R+L` | ✅ Live |
-| 7 | Goals | Build | `/goals` | `R+G` | ✅ Live |
-| 8 | Roadmap Engine | Build | `/roadmap` | `R+M` | ⚠️ Design |
-| 9 | Idea Vault | Build | `/ideas` | `R+I` | ✅ Live |
-| 10 | Projects | Build | `/projects` | `R+P` | ✅ Live |
-| 11 | Opportunity Radar | Earn | `/opportunities` | `R+O` | ✅ Live |
-| 12 | Income Tracker | Earn | `/income` | `R+E` | ✅ Live |
-| 13 | Habit Engine | Well-Being | `/habits` | `R+H` | ✅ Live |
-| 14 | Sleep Monitor | Well-Being | `/sleep` | `R+S` | ✅ Live |
-| 15 | Time Tracker | System | `/time` | `R+N` | ✅ Live |
-| 16 | Weekly Review | System | `/review` | `R+W` | ✅ Live |
-| 17 | Analytics | System | `/analytics` | `R+A` | ⚠️ Design |
-| 18 | Automation | System | `/automation` | `R+V` | ✅ Live |
-| 19 | Browser Extension | System | (config page) | `R+B` | ⚠️ Design |
-| 20 | Settings | System | `/settings` | `R+F` | ✅ Live |
+| 1 | Dashboard | Core | `/dashboard` | `R+D` | âœ… Live |
+| 2 | Tasks | Core | `/tasks` | `R+T` | âœ… Live |
+| 3 | AI Chat | Core | `/chat` | `R+K` | âœ… Live |
+| 4 | Courses | Learn | `/courses` | `R+C` | âœ… Live |
+| 5 | YouTube Vault | Learn | `/youtube` | `R+Y` | âš ï¸ Design |
+| 6 | Resource Library | Learn | `/resources` | `R+L` | âœ… Live |
+| 7 | Goals | Build | `/goals` | `R+G` | âœ… Live |
+| 8 | Roadmap Engine | Build | `/roadmap` | `R+M` | âš ï¸ Design |
+| 9 | Idea Vault | Build | `/ideas` | `R+I` | âœ… Live |
+| 10 | Projects | Build | `/projects` | `R+P` | âœ… Live |
+| 11 | Opportunity Radar | Earn | `/opportunities` | `R+O` | âœ… Live |
+| 12 | Income Tracker | Earn | `/income` | `R+E` | âœ… Live |
+| 13 | Habit Engine | Well-Being | `/habits` | `R+H` | âœ… Live |
+| 14 | Sleep Monitor | Well-Being | `/sleep` | `R+S` | âœ… Live |
+| 15 | Time Tracker | System | `/time` | `R+N` | âœ… Live |
+| 16 | Weekly Review | System | `/review` | `R+W` | âœ… Live |
+| 17 | Analytics | System | `/analytics` | `R+A` | âš ï¸ Design |
+| 18 | Automation | System | `/automation` | `R+V` | âœ… Live |
+| 19 | Browser Extension | System | (config page) | `R+B` | âš ï¸ Design |
+| 20 | Settings | System | `/settings` | `R+F` | âœ… Live |
 
 ### 3.2 Navigation Group Definitions
 
@@ -317,10 +317,10 @@ Each module occupies one of 4 information levels (see [Section 17](#17-informati
 
 | Level | Modules | Navigation Treatment |
 |---|---|---|
-| L1 — Command Center | Dashboard, AI Chat | Always one click away (sidebar top, bottom nav, Cmd+K) |
-| L2 — Daily Drivers | Tasks, Courses, Goals, Projects | Sidebar priority, module tabs |
-| L3 — Knowledge Assets | Resources, YouTube, Ideas, Opportunities | Sidebar, nested views |
-| L4 — Tracking & System | Habits, Sleep, Income, Time, Review, Analytics, Automation, Browser Extension, Settings | Sidebar bottom, system group |
+| L1 â€” Command Center | Dashboard, AI Chat | Always one click away (sidebar top, bottom nav, Cmd+K) |
+| L2 â€” Daily Drivers | Tasks, Courses, Goals, Projects | Sidebar priority, module tabs |
+| L3 â€” Knowledge Assets | Resources, YouTube, Ideas, Opportunities | Sidebar, nested views |
+| L4 â€” Tracking & System | Habits, Sleep, Income, Time, Review, Analytics, Automation, Browser Extension, Settings | Sidebar bottom, system group |
 
 ---
 
@@ -333,7 +333,7 @@ Second Brain OS adopts a **hybrid navigational model** combining the best patter
 | Pattern | Source | Application |
 |---|---|---|
 | Two-Key Routing | Linear | `R+letter` jumps to any module instantly |
-| Collapsible Sidebar | Stripe | 240px expanded → 64px collapsed; never hidden |
+| Collapsible Sidebar | Stripe | 240px expanded â†’ 64px collapsed; never hidden |
 | Command Palette | Vercel | `Cmd+K` for universal search and actions |
 | Contextual Tabs | PostHog | Module-level sub-navigation |
 | Notification Center | Linear | Bell icon with contextual preview |
@@ -360,7 +360,7 @@ graph TD
     L4[Layer 4: COMMAND NAVIGATION<br/>invoked on demand] --> L4_C[Command palette<br/>Cmd+K universal]
     L4 --> L4_Q[Quick actions<br/>/commands within module]
     L4 --> L4_V[Voice commands<br/>microphone button]
-    L4 --> L4_N[Notification deep links<br/>click notification → target]
+    L4 --> L4_N[Notification deep links<br/>click notification â†’ target]
 
     style L1 fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
     style L2 fill:#0A0B0F,stroke:#818CF8,color:#F1F5F9,stroke-width:2px
@@ -402,34 +402,34 @@ graph TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Logo[Logo: Second Brain OS] --> Search[🔍 Search Cmd+K]
-    Search --> Core[◉ CORE]
-    Core --> D[◉ Dashboard R+D]
-    Core --> T[☐ Tasks R+T]
-    Core --> AC[💬 AI Chat R+K]
-    Core --> Learn[📚 LEARN]
-    Learn --> C[📚 Courses R+C]
-    Learn --> Y[🎬 YouTube Vault R+Y]
-    Learn --> R[📖 Resources R+L]
-    Learn --> Build[🎯 BUILD]
-    Build --> G[🎯 Goals R+G]
-    Build --> RM[🗺️ Roadmap R+M]
-    Build --> I[💡 Ideas R+I]
-    Build --> P[📋 Projects R+P]
-    Build --> Earn[🔭 EARN]
-    Earn --> O[🔭 Opportunities R+O]
-    Earn --> IE[💰 Income R+E]
-    Earn --> WB[🔄 WELL-BEING]
-    WB --> H[🔄 Habits R+H]
-    WB --> S[🌙 Sleep R+S]
-    WB --> Sys[⏱ SYSTEM]
-    Sys --> Tk[⏱ Time R+N]
-    Sys --> WR[📊 Weekly Review R+W]
-    Sys --> An[📈 Analytics R+A]
-    Sys --> Au[⚡ Automation R+V]
-    Sys --> BE[🌐 Browser Extension R+B]
-    Sys --> Set[⚙️ Settings R+F]
-    Sys --> User[User Avatar · User Name · Free Plan]
+    Logo[Logo: Second Brain OS] --> Search[ðŸ” Search Cmd+K]
+    Search --> Core[â—‰ CORE]
+    Core --> D[â—‰ Dashboard R+D]
+    Core --> T[â˜ Tasks R+T]
+    Core --> AC[ðŸ’¬ AI Chat R+K]
+    Core --> Learn[ðŸ“š LEARN]
+    Learn --> C[ðŸ“š Courses R+C]
+    Learn --> Y[ðŸŽ¬ YouTube Vault R+Y]
+    Learn --> R[ðŸ“– Resources R+L]
+    Learn --> Build[ðŸŽ¯ BUILD]
+    Build --> G[ðŸŽ¯ Goals R+G]
+    Build --> RM[ðŸ—ºï¸ Roadmap R+M]
+    Build --> I[ðŸ’¡ Ideas R+I]
+    Build --> P[ðŸ“‹ Projects R+P]
+    Build --> Earn[ðŸ”­ EARN]
+    Earn --> O[ðŸ”­ Opportunities R+O]
+    Earn --> IE[ðŸ’° Income R+E]
+    Earn --> WB[ðŸ”„ WELL-BEING]
+    WB --> H[ðŸ”„ Habits R+H]
+    WB --> S[ðŸŒ™ Sleep R+S]
+    WB --> Sys[â± SYSTEM]
+    Sys --> Tk[â± Time R+N]
+    Sys --> WR[ðŸ“Š Weekly Review R+W]
+    Sys --> An[ðŸ“ˆ Analytics R+A]
+    Sys --> Au[âš¡ Automation R+V]
+    Sys --> BE[ðŸŒ Browser Extension R+B]
+    Sys --> Set[âš™ï¸ Settings R+F]
+    Sys --> User[User Avatar Â· User Name Â· Free Plan]
 
     style Logo fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
     style Core fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -468,11 +468,11 @@ graph TD
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph LR
     subgraph TopNavbar[Top Navbar]
-        Back[← Back] --- Name[Module Name]
-        Name --- Search[🔍 Search]
-        Search --- Bell[🔔 Bell]
-        Bell --- Mic[🎤 Mic]
-        Mic --- Plus[➕ Quick Capture]
+        Back[â† Back] --- Name[Module Name]
+        Name --- Search[ðŸ” Search]
+        Search --- Bell[ðŸ”” Bell]
+        Bell --- Mic[ðŸŽ¤ Mic]
+        Mic --- Plus[âž• Quick Capture]
         Plus --- Avatar[Avatar / User]
     end
     SubTitle[Subtitle / breadcrumb] --- TopNavbar
@@ -500,14 +500,14 @@ graph LR
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Header[Notifications · Mark read] --> Today[🔴 Today 3]
+    Header[Notifications Â· Mark read] --> Today[ðŸ”´ Today 3]
     Today --> N1[Task overdue: Submit report]
     Today --> N2[Goal milestone: 50% reached]
     Today --> N3[Opportunity: 92% match found]
-    Today --> Yesterday[🔴 Yesterday 5]
+    Today --> Yesterday[ðŸ”´ Yesterday 5]
     Yesterday --> Y1[...]
     Yesterday --> Y2[...]
-    Yesterday --> Footer[View all notifications →]
+    Yesterday --> Footer[View all notifications â†’]
 
     style Header fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style Today fill:#1A1D24,stroke:#334155,color:#EF4444
@@ -521,9 +521,9 @@ Every module follows a consistent sub-navigation pattern:
 
 ```
 Module Name         [Tab 1] [Tab 2] [Tab 3]         [Filter] [Sort] [View]
-                                                      ▼
-                                               Status: ● ○ ○
-                                               Priority: ● ○ ○
+                                                      â–¼
+                                               Status: â— â—‹ â—‹
+                                               Priority: â— â—‹ â—‹
                                                Tags: [input]
 ```
 
@@ -532,19 +532,19 @@ Module Name         [Tab 1] [Tab 2] [Tab 3]         [Filter] [Sort] [View]
 | Module | Tab 1 | Tab 2 | Tab 3 | Tab 4 |
 |---|---|---|---|---|
 | Tasks | List | Kanban | Calendar | Timeline |
-| Courses | Grid | Progress | Calendar | — |
-| Goals | Canvas | Grid | Timeline | — |
-| Projects | Kanban | List | Timeline | — |
-| Ideas | Pipeline | Grid | — | — |
-| Resources | Grid | List | Collections | — |
-| Opportunities | List | Pipeline | Sources | — |
-| YouTube | Grid | Queue | Playlists | — |
-| Habits | Grid | Calendar | Streaks | — |
-| Sleep | Dashboard | Logs | Trends | — |
-| Income | Dashboard | Entries | Trends | — |
+| Courses | Grid | Progress | Calendar | â€” |
+| Goals | Canvas | Grid | Timeline | â€” |
+| Projects | Kanban | List | Timeline | â€” |
+| Ideas | Pipeline | Grid | â€” | â€” |
+| Resources | Grid | List | Collections | â€” |
+| Opportunities | List | Pipeline | Sources | â€” |
+| YouTube | Grid | Queue | Playlists | â€” |
+| Habits | Grid | Calendar | Streaks | â€” |
+| Sleep | Dashboard | Logs | Trends | â€” |
+| Income | Dashboard | Entries | Trends | â€” |
 | Time | List | Dashboard | Stats | Calendar |
 | Analytics | Overview | Reports | Metrics | Trends |
-| Roadmap | Timeline | Phases | Resources | — |
+| Roadmap | Timeline | Phases | Resources | â€” |
 
 #### Filter Bar Pattern
 
@@ -576,15 +576,15 @@ graph LR
         Desc[Description...]
         Feed[Activity Feed<br/>Jun 11 - Created<br/>Jun 10 - Priority set]
     end
-    subgraph Side[Related Items Sidebar · 280px]
-        Linked[🔗 Linked to]
+    subgraph Side[Related Items Sidebar Â· 280px]
+        Linked[ðŸ”— Linked to]
         G[Goal: Q2 Career Growth]
         PR[Project: Portfolio Site]
         C[Course: Web Dev Bootcamp]
-        Res[📎 Resources]
+        Res[ðŸ“Ž Resources]
         R1[Design guidelines]
         R2[API docs]
-        Ideas[💡 Related ideas]
+        Ideas[ðŸ’¡ Related ideas]
         I1[Rewrite backend in Rust]
     end
     Main --- Side
@@ -636,10 +636,10 @@ Home > Module > [View] > Item Title
 
 | Level | Format | Example | Behavior |
 |---|---|---|---|
-| L0 — Home | `Home` | `Dashboard` | Always "Dashboard" (or "Home" on mobile) |
-| L1 — Module | `Module Name` | `Tasks` | Links to module list view |
-| L2 — Sub-view | `[View Name]` | `Kanban` | Links to specific tab within module |
-| L3 — Item | `Item Title` | `Complete project proposal` | Current page, not linked (truncated at 30 chars) |
+| L0 â€” Home | `Home` | `Dashboard` | Always "Dashboard" (or "Home" on mobile) |
+| L1 â€” Module | `Module Name` | `Tasks` | Links to module list view |
+| L2 â€” Sub-view | `[View Name]` | `Kanban` | Links to specific tab within module |
+| L3 â€” Item | `Item Title` | `Complete project proposal` | Current page, not linked (truncated at 30 chars) |
 
 #### Breadcrumb Examples
 
@@ -668,26 +668,26 @@ The `+` button in the top navbar always creates a new item. The type depends on 
 
 | Context | Action | Result |
 |---|---|---|
-| Anywhere (default) | Click `+` | Show module picker (grid of 20 module icons) → create in chosen module |
+| Anywhere (default) | Click `+` | Show module picker (grid of 20 module icons) â†’ create in chosen module |
 | Tasks page | Click `+` | New task (skip picker) |
 | Courses page | Click `+` | New course |
 | Any detail page | Click `+` | New item in same module |
-| Text selected anywhere | Click `+` | "Add selection to..." → knowledge, task, idea |
-| URL in clipboard | Click `+` | "Add link to..." → resources, ideas |
+| Text selected anywhere | Click `+` | "Add selection to..." â†’ knowledge, task, idea |
+| URL in clipboard | Click `+` | "Add link to..." â†’ resources, ideas |
 
 #### Quick Capture Modal
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Header[Quick Capture · Esc] --> Input[What's on your mind?]
+    Header[Quick Capture Â· Esc] --> Input[What's on your mind?]
     Input --> AI[AI Classification]
     AI --> Task[Task]
     AI --> Course[Course]
     AI --> Idea[Idea]
     AI --> Note[Note]
-    AI --> Form[Title: ________<br/>Module: Tasks ▼<br/>Priority: Medium ▼<br/>Tags: input + Add tag]
-    Form --> Actions[Cancel · Create →]
+    AI --> Form[Title: ________<br/>Module: Tasks â–¼<br/>Priority: Medium â–¼<br/>Tags: input + Add tag]
+    Form --> Actions[Cancel Â· Create â†’]
 
     style Header fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
     style Input fill:#13151A,stroke:#6366F1,color:#94A3B8
@@ -723,7 +723,7 @@ The complete Two-Key routing table:
 | `R+B` | Browser Extension | **B**rowser |
 | `R+F` | Settings | (pre)**F**erences |
 
-**Implementation:** Single-key `R` enters "Routing mode" — a small HUD appears at the bottom of the screen showing the route grid. Pressing the second letter within 1.5 seconds navigates to the target module. Pressing `Escape` or waiting exits routing mode without navigation.
+**Implementation:** Single-key `R` enters "Routing mode" â€” a small HUD appears at the bottom of the screen showing the route grid. Pressing the second letter within 1.5 seconds navigates to the target module. Pressing `Escape` or waiting exits routing mode without navigation.
 
 ---
 
@@ -736,18 +736,18 @@ The Dashboard is organized into **8 zones** arranged in a responsive bento-grid 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Z1[ZONE 1: ARIA GREETING + STATUS<br/>Good morning. You have 4 tasks today. 1 is overdue.] --> Z2[ZONE 2: KPI STRIP<br/>Tasks ▼5% · Streak 🔥3d · Study 📚45m · Goals 🎯80% · Inc 💰$500 · Opps 🔭3]
+    Z1[ZONE 1: ARIA GREETING + STATUS<br/>Good morning. You have 4 tasks today. 1 is overdue.] --> Z2[ZONE 2: KPI STRIP<br/>Tasks â–¼5% Â· Streak ðŸ”¥3d Â· Study ðŸ“š45m Â· Goals ðŸŽ¯80% Â· Inc ðŸ’°$500 Â· Opps ðŸ”­3]
     Z2 --> Z3[ZONE 3: TODAY'S FOCUS]
     Z2 --> Z4[ZONE 4: COURSE TARGET]
-    Z3 --> T1[Priority task 1 ☐✓]
-    Z3 --> T2[Priority task 2 ☐✓]
-    Z3 --> T3[Priority task 3 ☐✓]
+    Z3 --> T1[Priority task 1 â˜âœ“]
+    Z3 --> T2[Priority task 2 â˜âœ“]
+    Z3 --> T3[Priority task 3 â˜âœ“]
     Z3 --> TA[+ Add task]
-    Z4 --> CT[DSA: 45/60 min today<br/>████████░░░ 75%<br/>Ahead by 2 sessions<br/>Next: Graph algorithms]
-    Z3 --> Z5[ZONE 5: TOMORROW PREVIEW<br/>1 deadline · 2 tasks previewed]
-    Z5 --> Z6[ZONE 6: ACTIVITY HEATMAP<br/>GitHub-style grid · 6-month view]
-    Z5 --> Z7[ZONE 7: OPPORTUNITIES<br/>Senior Dev @ Google 92% · Hackathon 85% · Scholarship 78%]
-    Z6 --> Z8[ZONE 8: RECENT ACTIVITY<br/>2h ago Completed task · 3h ago Added resource<br/>5h ago Logged study · Yesterday New idea]
+    Z4 --> CT[DSA: 45/60 min today<br/>â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘ 75%<br/>Ahead by 2 sessions<br/>Next: Graph algorithms]
+    Z3 --> Z5[ZONE 5: TOMORROW PREVIEW<br/>1 deadline Â· 2 tasks previewed]
+    Z5 --> Z6[ZONE 6: ACTIVITY HEATMAP<br/>GitHub-style grid Â· 6-month view]
+    Z5 --> Z7[ZONE 7: OPPORTUNITIES<br/>Senior Dev @ Google 92% Â· Hackathon 85% Â· Scholarship 78%]
+    Z6 --> Z8[ZONE 8: RECENT ACTIVITY<br/>2h ago Completed task Â· 3h ago Added resource<br/>5h ago Logged study Â· Yesterday New idea]
 
     style Z1 fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
     style Z2 fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -836,7 +836,7 @@ interface DashboardWidget<T> {
 |---|---|---|
 | Sidebar | Click "Dashboard" or `R+D` | Dashboard loads in default state |
 | Logo | Click app logo | Dashboard loads (regardless of current page) |
-| Command Palette | `Cmd+K` → type "Dashboard" | Navigate to Dashboard |
+| Command Palette | `Cmd+K` â†’ type "Dashboard" | Navigate to Dashboard |
 | Notification | Click notification with dashboard context | Dashboard loads with highlighted zone |
 | Time-based | 6 AM auto-navigation (configurable) | Dashboard loads with morning state |
 
@@ -872,7 +872,7 @@ The Dashboard renders differently based on these context variables:
 
 #### Dashboard as Navigation Hub
 
-The Dashboard is not just a start page — it's the **navigation hub** that surfaces cross-module context. Every item on the Dashboard is clickable and navigates to the relevant module's detail view. The Dashboard serves as a **preview of the entire system state** in one glance.
+The Dashboard is not just a start page â€” it's the **navigation hub** that surfaces cross-module context. Every item on the Dashboard is clickable and navigates to the relevant module's detail view. The Dashboard serves as a **preview of the entire system state** in one glance.
 
 ---
 
@@ -899,21 +899,21 @@ The system provides **7 search scopes**, each with specific intent and behavior:
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Search[🔍 Search tasks, courses, projects... · Esc ⌘K] --> Recent[RECENT]
-    Recent --> R1[📋 Complete proposal — Tasks · 2h ago]
-    Recent --> R2[📚 Web Dev Bootcamp — Courses · yesterday]
-    Recent --> R3[🎯 Q2 Career Growth — Goals · yesterday]
-    Recent --> R4[💡 Rewrite backend — Ideas · 2d ago]
-    Recent --> R5[📖 React Patterns — Resources · 3d ago]
+    Search[ðŸ” Search tasks, courses, projects... Â· Esc âŒ˜K] --> Recent[RECENT]
+    Recent --> R1[ðŸ“‹ Complete proposal â€” Tasks Â· 2h ago]
+    Recent --> R2[ðŸ“š Web Dev Bootcamp â€” Courses Â· yesterday]
+    Recent --> R3[ðŸŽ¯ Q2 Career Growth â€” Goals Â· yesterday]
+    Recent --> R4[ðŸ’¡ Rewrite backend â€” Ideas Â· 2d ago]
+    Recent --> R5[ðŸ“– React Patterns â€” Resources Â· 3d ago]
     Search --> Results[RESULTS grouped by module]
-    Results --> T3[📋 TASKS 3<br/>Complete proposal · High · Due Jun 15<br/>Complete API docs · Medium · Due Jun 20<br/>Complete user testing · Low · Due Jun 25]
-    Results --> C2[📚 COURSES 2<br/>Web Dev Bootcamp · 75% · DSA module<br/>React Masterclass · 30% · Hooks module]
-    Results --> G1[🎯 GOALS 1<br/>Q2 Career Growth · 80% · On track]
+    Results --> T3[ðŸ“‹ TASKS 3<br/>Complete proposal Â· High Â· Due Jun 15<br/>Complete API docs Â· Medium Â· Due Jun 20<br/>Complete user testing Â· Low Â· Due Jun 25]
+    Results --> C2[ðŸ“š COURSES 2<br/>Web Dev Bootcamp Â· 75% Â· DSA module<br/>React Masterclass Â· 30% Â· Hooks module]
+    Results --> G1[ðŸŽ¯ GOALS 1<br/>Q2 Career Growth Â· 80% Â· On track]
     Search --> Actions[ACTIONS /commands]
-    Actions --> A1[/new task · Create a new task]
-    Actions --> A2[/new course · Create a new course]
-    Actions --> A3[/briefing · Generate daily briefing]
-    Actions --> A4[/review · Generate weekly review]
+    Actions --> A1[/new task Â· Create a new task]
+    Actions --> A2[/new course Â· Create a new course]
+    Actions --> A3[/briefing Â· Generate daily briefing]
+    Actions --> A4[/review Â· Generate weekly review]
 
     style Search fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
     style Recent fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -1005,11 +1005,11 @@ flowchart LR
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    AI[🤖 AI Answer<br/>Based on your knowledge base, here's what I found:] --> R1["1. Design system audit — Tasks (due Jun 15)"]
-    AI --> R2["2. Component library — Project (active)"]
-    AI --> R3["3. Figma design tokens — Resource (saved yesterday)"]
-    AI --> R4["4. Design system presentation — Idea (in brainstorming)"]
-    AI --> FA[View all 4 results · Ask follow-up]
+    AI[ðŸ¤– AI Answer<br/>Based on your knowledge base, here's what I found:] --> R1["1. Design system audit â€” Tasks (due Jun 15)"]
+    AI --> R2["2. Component library â€” Project (active)"]
+    AI --> R3["3. Figma design tokens â€” Resource (saved yesterday)"]
+    AI --> R4["4. Design system presentation â€” Idea (in brainstorming)"]
+    AI --> FA[View all 4 results Â· Ask follow-up]
     style AI fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style FA fill:#1A1D24,stroke:#6366F1,color:#818CF8
 ```
@@ -1067,8 +1067,8 @@ Results are grouped by module, with each group showing top 3 matches (+ "View al
 
 ```
 Priority order:
-1. AI Answer (if applicable) — rendered as rich card
-2. Exact title match (any module) — highlighted
+1. AI Answer (if applicable) â€” rendered as rich card
+2. Exact title match (any module) â€” highlighted
 3. Tasks (by recency + relevance)
 4. Courses (by recency + relevance)
 5. Resources (by recency + relevance)
@@ -1086,8 +1086,8 @@ graph LR
     subgraph ResultCard[Search Result Card]
         Icon[Module Icon] --- Title[Title]
         Title --- Snippet[Snippet with highlighted match...]
-        Snippet --- Meta[Tags · Status · Date · Priority]
-        Meta --- Actions[Open · Edit · Copy link · Share]
+        Snippet --- Meta[Tags Â· Status Â· Date Â· Priority]
+        Meta --- Actions[Open Â· Edit Â· Copy link Â· Share]
     end
     style ResultCard fill:#13151A,stroke:#6366F1,color:#F1F5F9
 ```
@@ -1097,7 +1097,7 @@ graph LR
 #### Ranking Formula
 
 ```
-Final Score = (FTS_Score × 0.4) + (Semantic_Score × 0.3) + (Recency_Boost × 0.15) + (Personalization_Boost × 0.15)
+Final Score = (FTS_Score Ã— 0.4) + (Semantic_Score Ã— 0.3) + (Recency_Boost Ã— 0.15) + (Personalization_Boost Ã— 0.15)
 ```
 
 #### Ranking Factors
@@ -1218,8 +1218,8 @@ Commands to create new content:
 | `/new resource` | Resources | Title, URL (from clipboard) |
 | `/new habit` | Habits | Title, frequency (daily) |
 | `/new opportunity` | Opportunities | Title, source |
-| `/capture` | Auto-detect | Free text → AI classifies |
-| `/capture link` | Resources | URL → auto-fetches metadata |
+| `/capture` | Auto-detect | Free text â†’ AI classifies |
+| `/capture link` | Resources | URL â†’ auto-fetches metadata |
 | `/capture note` | Knowledge | Quick note |
 | `/capture task` | Tasks | Quick task (title only) |
 
@@ -1256,33 +1256,33 @@ Notifications escalate through priority levels over time if unacknowledged:
 
 ```
 Task overdue notification flow:
-  Day 0 (due date) → P2 (Medium): In-app badge
-  Day 1 (1 day overdue) → P1 (High): In-app + push
-  Day 3 (3 days overdue) → P0 (Critical): Push + sound + dashboard banner
-  Day 7 (1 week overdue) → P0 + escalated: Email notification + AI prompt in chat
+  Day 0 (due date) â†’ P2 (Medium): In-app badge
+  Day 1 (1 day overdue) â†’ P1 (High): In-app + push
+  Day 3 (3 days overdue) â†’ P0 (Critical): Push + sound + dashboard banner
+  Day 7 (1 week overdue) â†’ P0 + escalated: Email notification + AI prompt in chat
 
 Opportunity deadline approaching:
-  7 days before → P2 (Medium): In-app suggestion
-  3 days before → P1 (High): Push notification
-  1 day before → P0 (Critical): Push + sound + dashboard alert
-  Day of → P0 + escalation: Email + AI chat reminder
+  7 days before â†’ P2 (Medium): In-app suggestion
+  3 days before â†’ P1 (High): Push notification
+  1 day before â†’ P0 (Critical): Push + sound + dashboard alert
+  Day of â†’ P0 + escalation: Email + AI chat reminder
 ```
 
 #### Escalation Matrix
 
 | Notification Type | Initial P | Escalation Schedule | Max P | Max Channel |
 |---|---|---|---|---|
-| Task overdue | P2 | D+1 → P1, D+3 → P0 | P0 | Push + Email |
-| Task due today | P1 | — | P1 | Push |
-| Learning gap | P3 | 3 days → P2, 7 days → P1 | P1 | Push |
-| Opportunity match 90%+ | P1 | 3 days → P0 | P0 | Push + Email |
-| Opportunity match 70-90% | P2 | 7 days → P1 | P1 | Push |
-| Goal at risk | P1 | 7 days → P0 | P0 | Push + Email |
-| Goal milestone | P3 | — | P3 | In-app only |
-| Habit missed 1 day | P3 | 3 days → P2, 7 days → P1 | P1 | Push |
+| Task overdue | P2 | D+1 â†’ P1, D+3 â†’ P0 | P0 | Push + Email |
+| Task due today | P1 | â€” | P1 | Push |
+| Learning gap | P3 | 3 days â†’ P2, 7 days â†’ P1 | P1 | Push |
+| Opportunity match 90%+ | P1 | 3 days â†’ P0 | P0 | Push + Email |
+| Opportunity match 70-90% | P2 | 7 days â†’ P1 | P1 | Push |
+| Goal at risk | P1 | 7 days â†’ P0 | P0 | Push + Email |
+| Goal milestone | P3 | â€” | P3 | In-app only |
+| Habit missed 1 day | P3 | 3 days â†’ P2, 7 days â†’ P1 | P1 | Push |
 | System error | P0 | Immediate | P0 | Push + Email + Dashboard banner |
-| Briefing ready | P2 | — | P2 | Push (morning only) |
-| Review ready | P3 | — | P3 | In-app (push if enabled) |
+| Briefing ready | P2 | â€” | P2 | Push (morning only) |
+| Review ready | P3 | â€” | P3 | In-app (push if enabled) |
 
 ### 9.4 AI Notifications
 
@@ -1290,12 +1290,12 @@ AI-generated notifications have special handling:
 
 | Notification Type | Trigger | Content | Priority |
 |---|---|---|---|
-| Daily Briefing Ready | 7 AM cron | "Your briefing is ready — 4 tasks, 2 goals, 1 opportunity" | P2 |
-| Weekly Review Ready | Sun 8 PM | "Your weekly review is ready — productivity +15%" | P3 |
-| AI Suggestion | Contextual | "I noticed you've been studying DSA — want to review graphs?" | P2 |
+| Daily Briefing Ready | 7 AM cron | "Your briefing is ready â€” 4 tasks, 2 goals, 1 opportunity" | P2 |
+| Weekly Review Ready | Sun 8 PM | "Your weekly review is ready â€” productivity +15%" | P3 |
+| AI Suggestion | Contextual | "I noticed you've been studying DSA â€” want to review graphs?" | P2 |
 | Nudge | 6 PM | "You haven't studied today. 30 min would maintain your streak!" | P2 |
 | Sleep Reminder | 9:30 PM | "Wind-down time. You studied 2h today. Good work." | P2 |
-| Opportunity Match | Daily scan | "New: Senior Dev @ Google — 92% match based on your profile" | P1 |
+| Opportunity Match | Daily scan | "New: Senior Dev @ Google â€” 92% match based on your profile" | P1 |
 
 ### 9.5 System Notifications
 
@@ -1314,9 +1314,9 @@ AI-generated notifications have special handling:
 
 | Notification | Match % | Priority | Action |
 |---|---|---|---|
-| New high match | ≥90% | P1 | Open opportunity detail |
+| New high match | â‰¥90% | P1 | Open opportunity detail |
 | New good match | 70-89% | P2 | Show in opportunities list |
-| Deadline approaching | ≤3 days | P1 | Open application page |
+| Deadline approaching | â‰¤3 days | P1 | Open application page |
 | Application update | Status change | P2 | Open application tracker |
 | New source found | New source detected | P3 | Configure source |
 
@@ -1325,7 +1325,7 @@ AI-generated notifications have special handling:
 | Notification | Trigger | Priority | Action |
 |---|---|---|---|
 | Study reminder | No study in 24h | P2 | Open course |
-| Course deadline | ≤7 days | P1 | Open course progress |
+| Course deadline | â‰¤7 days | P1 | Open course progress |
 | Knowledge gap detected | AI analysis | P2 | Open gap details |
 | Streak at risk | Missed 1 day | P3 | Open habit log |
 | Streak milestone | 7/30/100 day streak | P3 | Celebrate modal |
@@ -1376,18 +1376,18 @@ graph TD
 
 | Content Type | Icon | Fields | View Type | Relationships |
 |---|---|---|---|---|
-| Article | 📄 | Title, URL, summary, read status | Card/Detail | Links to courses, projects |
-| Documentation | 📘 | Title, URL, version, section | Card/Detail | Links to tasks, projects |
-| Code Snippet | 💻 | Title, code, language, source | Code/Detail | Links to projects, tasks |
-| Design File | 🎨 | Title, URL, tool, format | Preview/Detail | Links to projects |
-| Tool/Software | 🔧 | Title, URL, purpose, alternative | Card/Detail | Links to courses, projects |
-| Collection | 📁 | Title, description, items | Grid/Detail | Groups related resources |
-| Raw Idea | 💡 | Title, description, tags | Card/Detail | Can become project, task |
-| Validating Idea | 🔍 | Title, research notes, feasibility | Card/Detail | Moves to project |
-| YouTube Video | 🎬 | Title, channel, duration, transcript | Card/Detail | Links to courses |
-| Playlist | ▶️ | Title, video count, source | Grid/Detail | Groups videos |
-| Quick Note | 📝 | Content, tags | Note/Detail | Links to any entity |
-| Rich Document | 📖 | Title, markdown body, links | Document/Detail | Links to any entity |
+| Article | ðŸ“„ | Title, URL, summary, read status | Card/Detail | Links to courses, projects |
+| Documentation | ðŸ“˜ | Title, URL, version, section | Card/Detail | Links to tasks, projects |
+| Code Snippet | ðŸ’» | Title, code, language, source | Code/Detail | Links to projects, tasks |
+| Design File | ðŸŽ¨ | Title, URL, tool, format | Preview/Detail | Links to projects |
+| Tool/Software | ðŸ”§ | Title, URL, purpose, alternative | Card/Detail | Links to courses, projects |
+| Collection | ðŸ“ | Title, description, items | Grid/Detail | Groups related resources |
+| Raw Idea | ðŸ’¡ | Title, description, tags | Card/Detail | Can become project, task |
+| Validating Idea | ðŸ” | Title, research notes, feasibility | Card/Detail | Moves to project |
+| YouTube Video | ðŸŽ¬ | Title, channel, duration, transcript | Card/Detail | Links to courses |
+| Playlist | â–¶ï¸ | Title, video count, source | Grid/Detail | Groups videos |
+| Quick Note | ðŸ“ | Content, tags | Note/Detail | Links to any entity |
+| Rich Document | ðŸ“– | Title, markdown body, links | Document/Detail | Links to any entity |
 
 ### 10.2 Knowledge Structure
 
@@ -1404,7 +1404,7 @@ graph TD
     T1 --> T1C[Collections<br/>grouped view]
     T1 --> T1D[Detail view<br/>resource + metadata + related]
     
-    T2 --> T2P[Raw → Validating →<br/>Building → Built]
+    T2 --> T2P[Raw â†’ Validating â†’<br/>Building â†’ Built]
     T2 --> T2D[Detail view<br/>idea + feasibility + related]
     
     T3 --> T3P[Playlists<br/>grouped view]
@@ -1515,14 +1515,14 @@ flowchart TD
     FM --> AT[Auto-tag based on<br/>content analysis]
     
     TC --> AI[AI intent detection]
-    AI --> T["I should... → task"]
-    AI --> Id["What if... → idea"]
-    AI --> R["Good to know... → resource"]
+    AI --> T["I should... â†’ task"]
+    AI --> Id["What if... â†’ idea"]
+    AI --> R["Good to know... â†’ resource"]
     
     FU --> DT[Detect type from<br/>extension + MIME]
-    DT --> PDF[PDF → Document]
-    DT --> CD[.py, .js → Code]
-    DT --> DS[.fig, .sketch → Design]
+    DT --> PDF[PDF â†’ Document]
+    DT --> CD[.py, .js â†’ Code]
+    DT --> DS[.fig, .sketch â†’ Design]
 
     style NC fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
     style URL fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -1548,13 +1548,13 @@ flowchart TD
 Knowledge items display their relationships in a **mini graph** on the detail page:
 
 ```
-[Current Item] ─── references ───► [Linked Item 1]
-    │                                    │
-    ├── used_in ─────► [Task A]          ├── references ──► [Linked Item 3]
-    │                  [Task B]          │
-    ├── inspired ────► [Project X]       └── related ────► [Linked Item 4]
-    │
-    └── source_for ──► [Course Y]
+[Current Item] â”€â”€â”€ references â”€â”€â”€â–º [Linked Item 1]
+    â”‚                                    â”‚
+    â”œâ”€â”€ used_in â”€â”€â”€â”€â”€â–º [Task A]          â”œâ”€â”€ references â”€â”€â–º [Linked Item 3]
+    â”‚                  [Task B]          â”‚
+    â”œâ”€â”€ inspired â”€â”€â”€â”€â–º [Project X]       â””â”€â”€ related â”€â”€â”€â”€â–º [Linked Item 4]
+    â”‚
+    â””â”€â”€ source_for â”€â”€â–º [Course Y]
 ```
 
 Users can click any node to navigate, or open the full knowledge graph visualization.
@@ -1582,7 +1582,7 @@ The Knowledge module's default view is a **smart grid** showing:
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    KB[Knowledge Base · +New · Filter · Sort] --> Tabs[📄 Resources 42 · 📚 Courses linked 12 · 💡 Ideas 8 · 🎬 YouTube 15 · 📝 Notes 23]
+    KB[Knowledge Base Â· +New Â· Filter Â· Sort] --> Tabs[ðŸ“„ Resources 42 Â· ðŸ“š Courses linked 12 Â· ðŸ’¡ Ideas 8 Â· ðŸŽ¬ YouTube 15 Â· ðŸ“ Notes 23]
     Tabs --> Recent[RECENTLY ADDED]
     Recent --> I1[Item 1]
     Recent --> I2[Item 2]
@@ -1627,9 +1627,9 @@ graph TD
     TP --> T3[Topic 3: Graphs]
     T1 --> ST11[Subtopic: Two pointers]
     T1 --> ST12[Subtopic: Sliding window]
-    COURSE --> PT[Progress Tracking<br/>Total: N · Completed: M · M/N%<br/>Time: X hrs · Last studied]
-    COURSE --> LR[Linked Resources<br/>Course materials · External links<br/>Practice problems → Tasks]
-    COURSE --> LA[Learning Analytics<br/>Study sessions · Quiz scores<br/>Concept mastery: 0-100%]
+    COURSE --> PT[Progress Tracking<br/>Total: N Â· Completed: M Â· M/N%<br/>Time: X hrs Â· Last studied]
+    COURSE --> LR[Linked Resources<br/>Course materials Â· External links<br/>Practice problems â†’ Tasks]
+    COURSE --> LA[Learning Analytics<br/>Study sessions Â· Quiz scores<br/>Concept mastery: 0-100%]
     style COURSE fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
 ```
 
@@ -1638,9 +1638,9 @@ graph TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    CM[Courses Module] --> T1[Tab 1: Grid<br/>Card grid · progress bars · deadlines]
-    CM --> T2[Tab 2: Progress<br/>Detailed progress · streak counter<br/>weekly study time chart]
-    CM --> T3[Tab 3: Calendar<br/>Upcoming deadlines · study sessions<br/>gap days highlighted]
+    CM[Courses Module] --> T1[Tab 1: Grid<br/>Card grid Â· progress bars Â· deadlines]
+    CM --> T2[Tab 2: Progress<br/>Detailed progress Â· streak counter<br/>weekly study time chart]
+    CM --> T3[Tab 3: Calendar<br/>Upcoming deadlines Â· study sessions<br/>gap days highlighted]
     CM --> DV[Detail View<br/>Single course]
     DV --> H[Header: title, provider, progress, deadline]
     DV --> TL[Topics list<br/>with completion checkboxes]
@@ -1691,9 +1691,9 @@ flowchart LR
 | Discovery Method | Trigger | Behavior |
 |---|---|---|
 | AI recommendation | `/ai suggest path` | Generates learning path from current skills |
-| Skill-based | View skill → "Learning paths for this skill" | Shows paths containing this skill |
-| Manual browse | Learning tab → Paths | Browse all available paths |
-| Goal-linked | Career goal → "Suggested learning path" | Path auto-generated from goal |
+| Skill-based | View skill â†’ "Learning paths for this skill" | Shows paths containing this skill |
+| Manual browse | Learning tab â†’ Paths | Browse all available paths |
+| Goal-linked | Career goal â†’ "Suggested learning path" | Path auto-generated from goal |
 
 ### 11.3 Skills Mapping
 
@@ -1724,13 +1724,13 @@ Skills are displayed as a **radar chart** (strengths) and **tree map** (breadth)
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    SR[SKILL RADAR] --> PY[Python ████████ 72]
-    SR --> RE[React ████████████████████ 88]
-    SR --> DK[Docker ██████ 65]
-    SR --> SQL[SQL ████ 40]
-    SR --> AWS[AWS ██████ 50]
+    SR[SKILL RADAR] --> PY[Python â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 72]
+    SR --> RE[React â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 88]
+    SR --> DK[Docker â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 65]
+    SR --> SQL[SQL â–ˆâ–ˆâ–ˆâ–ˆ 40]
+    SR --> AWS[AWS â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 50]
     SR --> SS["Your strongest skills: React (88), Python (72), Docker (65)"]
-    SR --> AC[View skill details · AI learning plan]
+    SR --> AC[View skill details Â· AI learning plan]
     style SR fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style PY fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style RE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
@@ -1743,8 +1743,8 @@ graph TD
 
 | Relationship | Source | Target | Direction |
 |---|---|---|---|
-| `prerequisite` | Course A | Course B | A → B (A must be done first) |
-| `builds_upon` | Course/Topic | Project | Skills → apply in project |
+| `prerequisite` | Course A | Course B | A â†’ B (A must be done first) |
+| `builds_upon` | Course/Topic | Project | Skills â†’ apply in project |
 | `reinforces` | Resource | Course | Supplementary material |
 | `assesses` | Task (quiz/practice) | Course topic | Practice tests understanding |
 | `prepares_for` | Course | Certification | Leads to credential |
@@ -1771,7 +1771,7 @@ graph TD
 | Dashboard Z6 | Dashboard | Study heatmap |
 | `/ai nudge` | Command | Course progress reminder |
 | Nudge notification | 6 PM cron | "You haven't studied today" |
-| Skill gap alert | Weekly analysis | "You're weak in DBMS — here's a course" |
+| Skill gap alert | Weekly analysis | "You're weak in DBMS â€” here's a course" |
 | Course recommendation | AI analysis | "Based on goals, try this course" |
 | Path suggestion | `/ai suggest path` | Generated learning path |
 
@@ -1799,11 +1799,11 @@ graph TD
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 flowchart LR
-    SM[Skill Match × 0.40] --> MS[Match Score]
-    IM[Interest Match × 0.20] --> MS
-    GA[Goal Alignment × 0.20] --> MS
-    TM[Timing × 0.10] --> MS
-    LC[Location × 0.10] --> MS
+    SM[Skill Match Ã— 0.40] --> MS[Match Score]
+    IM[Interest Match Ã— 0.20] --> MS
+    GA[Goal Alignment Ã— 0.20] --> MS
+    TM[Timing Ã— 0.10] --> MS
+    LC[Location Ã— 0.10] --> MS
     style MS fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9,stroke-width:2px
     style SM fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style IM fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -1824,9 +1824,9 @@ flowchart LR
 
 | Score | Label | Color | Notification | Action |
 |---|---|---|---|---|
-| ≥90% | Exceptional | Green | P1 — Immediate push | "Apply now" CTA |
-| 70-89% | Strong | Blue | P2 — In-app notification | "View details" CTA |
-| 50-69% | Moderate | Yellow | P3 — Digest only | "Review" CTA |
+| â‰¥90% | Exceptional | Green | P1 â€” Immediate push | "Apply now" CTA |
+| 70-89% | Strong | Blue | P2 â€” In-app notification | "View details" CTA |
+| 50-69% | Moderate | Yellow | P3 â€” Digest only | "Review" CTA |
 | <50% | Weak | Gray | No notification | "Improve match" suggestions |
 
 ### 12.3 Filtering Logic
@@ -1860,12 +1860,12 @@ flowchart LR
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    OP[OPPORTUNITIES FOR YOU] --> EM[🔥 EXCEPTIONAL MATCHES 2]
-    EM --> G1["💼 Senior Developer @ Google · Match 92%<br/>Remote · $150-200K · Due Jul 15<br/>Why: React 88 + Python 72 match"]
-    EM --> H1["🏆 Hackathon: AI Buildathon · Match 88%<br/>Online · Jun 20-22 · Prize $10K<br/>Why: AI/ML is top interest"]
-    OP --> SM[💪 STRONG MATCHES 5]
-    SM --> FE["💼 Frontend Engineer @ Startup · Match 82%<br/>..."]
-    OP --> NF["+ New opportunities found: 7 · View all →"]
+    OP[OPPORTUNITIES FOR YOU] --> EM[ðŸ”¥ EXCEPTIONAL MATCHES 2]
+    EM --> G1["ðŸ’¼ Senior Developer @ Google Â· Match 92%<br/>Remote Â· $150-200K Â· Due Jul 15<br/>Why: React 88 + Python 72 match"]
+    EM --> H1["ðŸ† Hackathon: AI Buildathon Â· Match 88%<br/>Online Â· Jun 20-22 Â· Prize $10K<br/>Why: AI/ML is top interest"]
+    OP --> SM[ðŸ’ª STRONG MATCHES 5]
+    SM --> FE["ðŸ’¼ Frontend Engineer @ Startup Â· Match 82%<br/>..."]
+    OP --> NF["+ New opportunities found: 7 Â· View all â†’"]
     style OP fill:#0A0B0F,stroke:#00FFA3,color:#F1F5F9
     style EM fill:#13151A,stroke:#EF4444,color:#F1F5F9
     style SM fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -1918,10 +1918,10 @@ graph TD
     AM --> T3[Tab 3: Metrics<br/>All metrics explorer]
     AM --> T4[Tab 4: Trends<br/>Trend detection]
     
-    T1 --> T1P[Productivity trend · 7d line chart]
-    T1 --> T1L[Learning velocity · 7d bar chart]
-    T1 --> T1H[Habit compliance · 7d percentage]
-    T1 --> T1C[Career pipeline · funnel chart]
+    T1 --> T1P[Productivity trend Â· 7d line chart]
+    T1 --> T1L[Learning velocity Â· 7d bar chart]
+    T1 --> T1H[Habit compliance Â· 7d percentage]
+    T1 --> T1C[Career pipeline Â· funnel chart]
     
     T2 --> T2L[List of generated reports]
     T2 --> T2F[Filter by type]
@@ -1994,12 +1994,12 @@ interface Metric {
 | Milestone | Metric crosses threshold | "You've completed 100 tasks!" | On milestone |
 | Comparison | User vs. historical self | "You're 20% more productive than last month" | Weekly |
 | Correlation | Two metrics moving together | "When you sleep more, you're more productive" | Monthly |
-| Recommendation | AI-generated from metric analysis | "Try studying in the morning — your focus score is higher" | Weekly |
+| Recommendation | AI-generated from metric analysis | "Try studying in the morning â€” your focus score is higher" | Weekly |
 
 #### Insight Presentation
 
 Insights appear in context across the system:
-- **Dashboard Z1 greeting:** "You completed 5 tasks yesterday — 25% above your average"
+- **Dashboard Z1 greeting:** "You completed 5 tasks yesterday â€” 25% above your average"
 - **Weekly Review:** Full analysis with all insight types
 - **AI Chat:** "Did you know your productivity peaks on Tuesdays?"
 - **Module detail:** "Your React skill has grown from 60 to 88 this quarter"
@@ -2028,8 +2028,8 @@ graph TD
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| Display name | Text | — | User's display name |
-| Email | Text | — | Account email |
+| Display name | Text | â€” | User's display name |
+| Email | Text | â€” | Account email |
 | Avatar | Image upload | Initials | Profile picture |
 | Timezone | Select | Auto-detected | Timezone for all dates/times |
 | Date format | Select | `MM/DD/YYYY` or `DD/MM/YYYY` | Date display preference |
@@ -2062,16 +2062,16 @@ graph TD
 | Email notifications | Toggle | Off | Enable email notifications |
 | Quiet hours start | Time | 22:00 | Don't notify after this time |
 | Quiet hours end | Time | 08:00 | Resume notifying after this time |
-| Per-category toggles | Toggle group | — | Enable/disable specific categories (see 9.1) |
-| Per-channel toggles | Toggle group | — | In-app, push, email per category |
+| Per-category toggles | Toggle group | â€” | Enable/disable specific categories (see 9.1) |
+| Per-channel toggles | Toggle group | â€” | In-app, push, email per category |
 | Digest frequency | Select | Daily | How often to send email digest |
 
 ### 14.5 Privacy Settings
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| Data export | Button | — | Export all user data (JSON/CSV) |
-| Data deletion | Button (danger) | — | Delete all user data |
+| Data export | Button | â€” | Export all user data (JSON/CSV) |
+| Data deletion | Button (danger) | â€” | Delete all user data |
 | AI data usage | Toggle | On | Allow AI to use data for learning |
 | Analytics tracking | Toggle | On | Allow behavior analytics |
 | Share anonymized data | Toggle | Off | Share aggregate usage data |
@@ -2094,14 +2094,14 @@ graph TD
 |---|---|---|---|
 | Data sync | Toggle | On | Background sync |
 | Auto-backup | Toggle | On | Scheduled data backup |
-| Storage used | Display | — | Current storage usage |
-| Cache size | Display | — | Current cache usage |
-| Clear cache | Button | — | Clear local cache |
-| Last sync | Display | — | Last successful sync |
-| Sync now | Button | — | Force immediate sync |
-| Keyboard shortcuts | Button | — | View/edit shortcut reference |
-| Export data | Button | — | Download all data |
-| Import data | Button | — | Upload data from export |
+| Storage used | Display | â€” | Current storage usage |
+| Cache size | Display | â€” | Current cache usage |
+| Clear cache | Button | â€” | Clear local cache |
+| Last sync | Display | â€” | Last successful sync |
+| Sync now | Button | â€” | Force immediate sync |
+| Keyboard shortcuts | Button | â€” | View/edit shortcut reference |
+| Export data | Button | â€” | Download all data |
+| Import data | Button | â€” | Upload data from export |
 
 ---
 
@@ -2109,14 +2109,14 @@ graph TD
 
 ### 15.1 AI Entry Points
 
-AI is not a single destination — it's a **pervasive layer** accessible from every screen:
+AI is not a single destination â€” it's a **pervasive layer** accessible from every screen:
 
 | Entry Point | Location | Trigger | Behavior |
 |---|---|---|---|
-| AI Chat (module) | Sidebar → Core | Navigate to `/chat` | Full conversational AI interface |
-| Floating Quick Ask | All pages (bottom-right) | Click `💬` icon, `Cmd+Shift+M` | Mini chat overlay (context-aware) |
-| Inline AI button | Detail views | Click `✨` icon | Context-specific AI action (summarize, explain, suggest) |
-| Command Palette | Global | `Cmd+K` → `/ai` commands | Execute AI actions without navigation |
+| AI Chat (module) | Sidebar â†’ Core | Navigate to `/chat` | Full conversational AI interface |
+| Floating Quick Ask | All pages (bottom-right) | Click `ðŸ’¬` icon, `Cmd+Shift+M` | Mini chat overlay (context-aware) |
+| Inline AI button | Detail views | Click `âœ¨` icon | Context-specific AI action (summarize, explain, suggest) |
+| Command Palette | Global | `Cmd+K` â†’ `/ai` commands | Execute AI actions without navigation |
 | Dashboard Greeting | Dashboard Z1 | Daily briefing card | AI-generated morning greeting |
 | AI Suggestions | Contextual | Automatically appears | "I noticed you... want to..." |
 | Search AI Answer | Search results | Complex query | AI-generated answer above search results |
@@ -2181,9 +2181,9 @@ flowchart LR
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    AIC[AI Chat] --> CL[Conversation List<br/>Left sidebar · 280px]
-    AIC --> AC[Active Chat<br/>Center · main area]
-    AIC --> CP[Context Panel<br/>Right sidebar · 320px]
+    AIC[AI Chat] --> CL[Conversation List<br/>Left sidebar Â· 280px]
+    AIC --> AC[Active Chat<br/>Center Â· main area]
+    AIC --> CP[Context Panel<br/>Right sidebar Â· 320px]
     
     CL --> TD[Today's conversations]
     CL --> PV[Previous conversations]
@@ -2209,13 +2209,13 @@ graph TD
 
 | Type | Trigger | Example | Display |
 |---|---|---|---|
-| Task suggestion | Dashboard load | "You have 3 hours free today — want to tackle 'Design audit'?" | Dashboard Z3 card |
-| Learning recommendation | Course completion | "You finished React — next try Next.js" | Course detail + notification |
-| Opportunity suggestion | Skill improvement | "Your Python improved to 75 — new opportunities available" | Opportunity badge |
-| Content suggestion | Knowledge base scan | "You saved 3 articles about Docker — want to create a collection?" | Knowledge module prompt |
-| Habit suggestion | Habit pattern analysis | "You meditate better after exercise — try scheduling them together" | Habit module prompt |
-| Schedule suggestion | Time analysis | "Your focus peaks at 10 AM — block 2h for deep work" | Time module prompt |
-| Memory insight | After task completion | "You've completed 10 tasks this week — that's 20% above your average" | Dashboard + AI Chat |
+| Task suggestion | Dashboard load | "You have 3 hours free today â€” want to tackle 'Design audit'?" | Dashboard Z3 card |
+| Learning recommendation | Course completion | "You finished React â€” next try Next.js" | Course detail + notification |
+| Opportunity suggestion | Skill improvement | "Your Python improved to 75 â€” new opportunities available" | Opportunity badge |
+| Content suggestion | Knowledge base scan | "You saved 3 articles about Docker â€” want to create a collection?" | Knowledge module prompt |
+| Habit suggestion | Habit pattern analysis | "You meditate better after exercise â€” try scheduling them together" | Habit module prompt |
+| Schedule suggestion | Time analysis | "Your focus peaks at 10 AM â€” block 2h for deep work" | Time module prompt |
+| Memory insight | After task completion | "You've completed 10 tasks this week â€” that's 20% above your average" | Dashboard + AI Chat |
 
 ### 15.5 AI Suggestions
 
@@ -2224,14 +2224,14 @@ graph TD
 Suggestions appear as **non-intrusive, dismissible cards** with a consistent format:
 
 ```
-┌────────────────────────────────────────────────┐
-│  🤖 Did you know?                         [x]   │
-│                                                  │
-│  You've been studying consistently for 7 days!  │
-│  Your learning streak is at its longest ever.   │
-│                                                  │
-│  [Show streak details]  [Share]  [Dismiss]       │
-└────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ðŸ¤– Did you know?                         [x]   â”‚
+â”‚                                                  â”‚
+â”‚  You've been studying consistently for 7 days!  â”‚
+â”‚  Your learning streak is at its longest ever.   â”‚
+â”‚                                                  â”‚
+â”‚  [Show streak details]  [Share]  [Dismiss]       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 #### Suggestion Rules
@@ -2304,98 +2304,98 @@ interface AIContext {
 
 ## 16. Cross-Module Relationships
 
-### 16.1 Task ↔ Roadmap
+### 16.1 Task â†” Roadmap
 
 | Direction | Relationship | UI Pattern | Data Field |
 |---|---|---|---|
-| Task → Roadmap | Task belongs to a roadmap phase | Phase badge on task card | `task.roadmap_phase_id` |
-| Roadmap → Task | Phase progress = linked tasks completed | Phase progress bar counts tasks | `roadmap_phase.completed_tasks` |
-| Task → Roadmap | Completing a task may trigger phase completion | Phase completion animation | Event: `task.completed` → check phase |
-| Roadmap → Task | Roadmap generates tasks for each phase | "Generate tasks" button on phase | AI: Planner Agent creates tasks |
+| Task â†’ Roadmap | Task belongs to a roadmap phase | Phase badge on task card | `task.roadmap_phase_id` |
+| Roadmap â†’ Task | Phase progress = linked tasks completed | Phase progress bar counts tasks | `roadmap_phase.completed_tasks` |
+| Task â†’ Roadmap | Completing a task may trigger phase completion | Phase completion animation | Event: `task.completed` â†’ check phase |
+| Roadmap â†’ Task | Roadmap generates tasks for each phase | "Generate tasks" button on phase | AI: Planner Agent creates tasks |
 
-**Navigation path:** Task detail → Click roadmap phase badge → Roadmap module, phase view
-**Navigation path:** Roadmap phase → Click "View tasks" → Tasks module, filtered by phase
+**Navigation path:** Task detail â†’ Click roadmap phase badge â†’ Roadmap module, phase view
+**Navigation path:** Roadmap phase â†’ Click "View tasks" â†’ Tasks module, filtered by phase
 
-### 16.2 Roadmap ↔ Skills
-
-| Direction | Relationship | UI Pattern | Data Field |
-|---|---|---|---|
-| Roadmap → Skills | Each roadmap phase requires skills | Skill requirement badges on phase | `roadmap_phase.required_skills[]` |
-| Skills → Roadmap | Skill level determines phase readiness | "Prerequisites met" checklist | Compare skill level vs phase requirement |
-| Roadmap → Skills | Completing a phase improves related skills | Skill level up notification | Event: `roadmap.phase_completed` → update skill |
-
-**Navigation path:** Roadmap phase → Click skill badge → Skill detail view
-**Navigation path:** Skill detail → "Roadmaps that use this skill" → Filtered roadmap list
-
-### 16.3 Skills ↔ Opportunities
+### 16.2 Roadmap â†” Skills
 
 | Direction | Relationship | UI Pattern | Data Field |
 |---|---|---|---|
-| Skills → Opportunities | Match score partly based on skill overlap | Match score breakdown shows skill contribution | `opportunity.match_skill_contribution` |
-| Opportunities → Skills | Opportunity requirements show missing skills | "You're missing: X, Y — learn them" on opportunity | `opportunity.required_skills[]` |
-| Opportunity → Skills | Applying for an opportunity updates skill intent | "Applying" status increases skill weight | User action: apply |
+| Roadmap â†’ Skills | Each roadmap phase requires skills | Skill requirement badges on phase | `roadmap_phase.required_skills[]` |
+| Skills â†’ Roadmap | Skill level determines phase readiness | "Prerequisites met" checklist | Compare skill level vs phase requirement |
+| Roadmap â†’ Skills | Completing a phase improves related skills | Skill level up notification | Event: `roadmap.phase_completed` â†’ update skill |
 
-**Navigation path:** Opportunity detail → Click skill → Skill detail view
-**Navigation path:** Skill detail → "Matching opportunities" → Filtered opportunity list
+**Navigation path:** Roadmap phase â†’ Click skill badge â†’ Skill detail view
+**Navigation path:** Skill detail â†’ "Roadmaps that use this skill" â†’ Filtered roadmap list
 
-### 16.4 Learning ↔ Projects
-
-| Direction | Relationship | UI Pattern | Data Field |
-|---|---|---|---|
-| Learning → Projects | Course projects become projects | "Create project from course" button | `project.source_course_id` |
-| Projects → Learning | Project requires learning new skills | "You'll need to learn X for this" prompt | AI detection of skill gap |
-| Learning → Projects | Course knowledge applied in project | "Use what you learned" suggestion on project | Related resources from course |
-| Projects → Learning | Project completion demonstrates skill mastery | Skill level updated on project completion | Event: `project.completed` |
-
-**Navigation path:** Course detail → "Related projects" → Filtered project list
-**Navigation path:** Project detail → "Source course" badge → Course detail
-
-### 16.5 Projects ↔ Income
+### 16.3 Skills â†” Opportunities
 
 | Direction | Relationship | UI Pattern | Data Field |
 |---|---|---|---|
-| Projects → Income | Project generates income | Income entry linked to project | `income_entry.project_id` |
-| Income → Projects | Income source for future projects | "Budget available" indicator | `project.budget` |
-| Projects → Income | Time spent on income-generating projects | Hourly rate calculation | `project.total_hours` vs `income.total` |
+| Skills â†’ Opportunities | Match score partly based on skill overlap | Match score breakdown shows skill contribution | `opportunity.match_skill_contribution` |
+| Opportunities â†’ Skills | Opportunity requirements show missing skills | "You're missing: X, Y â€” learn them" on opportunity | `opportunity.required_skills[]` |
+| Opportunity â†’ Skills | Applying for an opportunity updates skill intent | "Applying" status increases skill weight | User action: apply |
 
-**Navigation path:** Project detail → "Income from this" → Income module, filtered
-**Navigation path:** Income entry → "Source project" → Project detail
+**Navigation path:** Opportunity detail â†’ Click skill â†’ Skill detail view
+**Navigation path:** Skill detail â†’ "Matching opportunities" â†’ Filtered opportunity list
 
-### 16.6 Analytics ↔ All Modules
-
-| Direction | Relationship | UI Pattern | Data Field |
-|---|---|---|---|
-| Analytics → All | Every module publishes events to Analytics | Automatic (no user action) | `analytics.event_log` |
-| Analytics → All | Analytics provides metrics for dashboard widgets | Dashboard KPI, trend arrows | `analytics.metrics` |
-| All → Analytics | Every module has a metrics section in analytics | Analytics module → select module | Module-specific metrics |
-
-**Navigation path:** Dashboard → Click metric → Analytics module, metric detail
-**Navigation path:** Analytics module → Module selector → Metrics per module
-
-### 16.7 Memory ↔ All Modules
+### 16.4 Learning â†” Projects
 
 | Direction | Relationship | UI Pattern | Data Field |
 |---|---|---|---|
-| Memory ← All | Every user action may create a memory | Automatic (background) | `memory.memories` |
-| Memory → All | Memories provide context for AI across modules | AI suggestions reference memories | Memory retrieval in context building |
-| Memory → All | Users can view/edit memories from module context | "What AI remembers" in any module | Memory viewer |
+| Learning â†’ Projects | Course projects become projects | "Create project from course" button | `project.source_course_id` |
+| Projects â†’ Learning | Project requires learning new skills | "You'll need to learn X for this" prompt | AI detection of skill gap |
+| Learning â†’ Projects | Course knowledge applied in project | "Use what you learned" suggestion on project | Related resources from course |
+| Projects â†’ Learning | Project completion demonstrates skill mastery | Skill level updated on project completion | Event: `project.completed` |
 
-**Navigation path:** Any module → Context menu → "What AI knows about this" → Memory viewer
-**Navigation path:** Memory viewer → Click reference → Source module
+**Navigation path:** Course detail â†’ "Related projects" â†’ Filtered project list
+**Navigation path:** Project detail â†’ "Source course" badge â†’ Course detail
 
-### 16.8 AI ↔ All Modules
+### 16.5 Projects â†” Income
 
 | Direction | Relationship | UI Pattern | Data Field |
 |---|---|---|---|
-| AI → All | AI generates insights across all modules | AI suggestions, briefings, reviews | `ai.generated_content` |
-| AI ← All | All modules provide context for AI | Natural, automatic | Context building (15.6) |
-| AI → All | AI can create content in any module | "Create task" from AI chat | `ai.agent_completed` event |
-| AI → All | AI triggers actions across modules | Briefing creates tasks, review nudges | Agent actions |
+| Projects â†’ Income | Project generates income | Income entry linked to project | `income_entry.project_id` |
+| Income â†’ Projects | Income source for future projects | "Budget available" indicator | `project.budget` |
+| Projects â†’ Income | Time spent on income-generating projects | Hourly rate calculation | `project.total_hours` vs `income.total` |
 
-**Navigation path:** AI Chat → "Create task from this" → Tasks module, new task pre-filled
-**Navigation path:** AI Chat → "Show me my projects" → Projects module
-**Navigation path:** AI Chat → "Set a goal" → Goals module, new goal pre-filled
-**Navigation path:** Any module → ✨ AI action → AI response in context
+**Navigation path:** Project detail â†’ "Income from this" â†’ Income module, filtered
+**Navigation path:** Income entry â†’ "Source project" â†’ Project detail
+
+### 16.6 Analytics â†” All Modules
+
+| Direction | Relationship | UI Pattern | Data Field |
+|---|---|---|---|
+| Analytics â†’ All | Every module publishes events to Analytics | Automatic (no user action) | `analytics.event_log` |
+| Analytics â†’ All | Analytics provides metrics for dashboard widgets | Dashboard KPI, trend arrows | `analytics.metrics` |
+| All â†’ Analytics | Every module has a metrics section in analytics | Analytics module â†’ select module | Module-specific metrics |
+
+**Navigation path:** Dashboard â†’ Click metric â†’ Analytics module, metric detail
+**Navigation path:** Analytics module â†’ Module selector â†’ Metrics per module
+
+### 16.7 Memory â†” All Modules
+
+| Direction | Relationship | UI Pattern | Data Field |
+|---|---|---|---|
+| Memory â† All | Every user action may create a memory | Automatic (background) | `memory.memories` |
+| Memory â†’ All | Memories provide context for AI across modules | AI suggestions reference memories | Memory retrieval in context building |
+| Memory â†’ All | Users can view/edit memories from module context | "What AI remembers" in any module | Memory viewer |
+
+**Navigation path:** Any module â†’ Context menu â†’ "What AI knows about this" â†’ Memory viewer
+**Navigation path:** Memory viewer â†’ Click reference â†’ Source module
+
+### 16.8 AI â†” All Modules
+
+| Direction | Relationship | UI Pattern | Data Field |
+|---|---|---|---|
+| AI â†’ All | AI generates insights across all modules | AI suggestions, briefings, reviews | `ai.generated_content` |
+| AI â† All | All modules provide context for AI | Natural, automatic | Context building (15.6) |
+| AI â†’ All | AI can create content in any module | "Create task" from AI chat | `ai.agent_completed` event |
+| AI â†’ All | AI triggers actions across modules | Briefing creates tasks, review nudges | Agent actions |
+
+**Navigation path:** AI Chat â†’ "Create task from this" â†’ Tasks module, new task pre-filled
+**Navigation path:** AI Chat â†’ "Show me my projects" â†’ Projects module
+**Navigation path:** AI Chat â†’ "Set a goal" â†’ Goals module, new goal pre-filled
+**Navigation path:** Any module â†’ âœ¨ AI action â†’ AI response in context
 
 ---
 
@@ -2469,9 +2469,9 @@ interface AIContext {
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    SB[Status Bar] --> CH[Compact Header<br/>← Module Name · 🔍 · +]
-    CH --> CT[Content Area<br/>scrollable · single column<br/>Full-width cards · Bottom sheets<br/>Swipe gestures]
-    CT --> BT[Bottom Tab Bar<br/>🏠 Home · 📋 Tasks · ➕ New · 💬 Chat · ⚙️ More]
+    SB[Status Bar] --> CH[Compact Header<br/>â† Module Name Â· ðŸ” Â· +]
+    CH --> CT[Content Area<br/>scrollable Â· single column<br/>Full-width cards Â· Bottom sheets<br/>Swipe gestures]
+    CT --> BT[Bottom Tab Bar<br/>ðŸ  Home Â· ðŸ“‹ Tasks Â· âž• New Â· ðŸ’¬ Chat Â· âš™ï¸ More]
     style SB fill:#0A0B0F,stroke:#334155,color:#94A3B8
     style CH fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style CT fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -2482,11 +2482,11 @@ graph TD
 
 | Tab | Icon | Label | Destination | Badge |
 |---|---|---|---|---|
-| Home | 🏠 | Home | Dashboard | — |
-| Tasks | 📋 | Tasks | Tasks module | Overdue count |
-| New | ➕ | New | Quick capture (FAB action) | — |
-| Chat | 💬 | Chat | AI Chat | Unread count |
-| More | ⚙️ | More | Module grid (all 20 modules) | Settings indicator |
+| Home | ðŸ  | Home | Dashboard | â€” |
+| Tasks | ðŸ“‹ | Tasks | Tasks module | Overdue count |
+| New | âž• | New | Quick capture (FAB action) | â€” |
+| Chat | ðŸ’¬ | Chat | AI Chat | Unread count |
+| More | âš™ï¸ | More | Module grid (all 20 modules) | Settings indicator |
 
 ### 18.3 Mobile-Specific Patterns
 
@@ -2509,13 +2509,13 @@ Pulls in from left on swipe or hamburger tap:
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    U[Avatar · User Name · Free Plan] --> S[🔍 Search]
-    S --> CORE[◉ CORE]
-    CORE --> D[◉ Dashboard R+D]
-    CORE --> T[☐ Tasks R+T]
-    CORE --> AC[💬 AI Chat R+K]
+    U[Avatar Â· User Name Â· Free Plan] --> S[ðŸ” Search]
+    S --> CORE[â—‰ CORE]
+    CORE --> D[â—‰ Dashboard R+D]
+    CORE --> T[â˜ Tasks R+T]
+    CORE --> AC[ðŸ’¬ AI Chat R+K]
     CORE --> LEARN[LEARN / BUILD / EARN<br/>same as desktop sidebar]
-    LEARN --> SYS[SYSTEM<br/>time · review · analytics<br/>automation · extension · settings]
+    LEARN --> SYS[SYSTEM<br/>time Â· review Â· analytics<br/>automation Â· extension Â· settings]
     SYS --> SETTINGS[Settings]
     style CORE fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style LEARN fill:#13151A,stroke:#818CF8,color:#F1F5F9
@@ -2533,20 +2533,20 @@ graph TD
 graph LR
     subgraph Tablet[Tablet Layout]
         SB2[Status Bar]
-        NAVI[Nav Icons<br/>64px · ◉ Dashboard · ☐ Tasks<br/>💬 Chat · 📚 Courses · 🎬 YouTube<br/>📖 Resources · 🎯 Goals · ...]
-        HEADER[Header · Module Name · 🔍 · 🔔 · 🎤 · ➕ · Avatar]
+        NAVI[Nav Icons<br/>64px Â· â—‰ Dashboard Â· â˜ Tasks<br/>ðŸ’¬ Chat Â· ðŸ“š Courses Â· ðŸŽ¬ YouTube<br/>ðŸ“– Resources Â· ðŸŽ¯ Goals Â· ...]
+        HEADER[Header Â· Module Name Â· ðŸ” Â· ðŸ”” Â· ðŸŽ¤ Â· âž• Â· Avatar]
         SPLIT[Split Pane Content]
     end
     SB2 --> HEADER
     NAVI --> SPLIT
     HEADER --> SPLIT
-    subgraph ListPane[List · 30%]
+    subgraph ListPane[List Â· 30%]
         L1[Item 1]
-        L2[Item 2 ▶]
+        L2[Item 2 â–¶]
         L3[Item 3]
         L4[...]
     end
-    subgraph DetailPane[Detail · 70%]
+    subgraph DetailPane[Detail Â· 70%]
         DT[Title, content<br/>actions, related]
     end
     SPLIT --> ListPane
@@ -2563,7 +2563,7 @@ graph LR
 |---|---|---|
 | Split pane | List (30%) + Detail (70%) | Efficient content browsing |
 | Collapsed sidebar | 64px icon bar, overlay on tap | Space-efficient navigation |
-| Hover preview | Hover list item → preview in detail pane | Quick content scanning |
+| Hover preview | Hover list item â†’ preview in detail pane | Quick content scanning |
 | Drag and drop | Move items between columns | Organization |
 | Floating quick actions | Bottom-right FAB | Accessible actions |
 | Keyboard shortcut HUD | Long-press Cmd key | Shortcut discovery |
@@ -2578,32 +2578,32 @@ graph LR
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 graph TD
-    Menu[Menu Bar · File · Edit · View · Go · AI · Help] --> Main
+    Menu[Menu Bar Â· File Â· Edit Â· View Â· Go Â· AI Â· Help] --> Main
     subgraph Main[Desktop Layout]
-        SB3[Sidebar · 240px<br/>CORE: ◉ Dashboard · ☐ Tasks · 💬 Chat<br/>LEARN: 📚 Courses · 🎬 YouTube · 📖 Resources<br/>BUILD: 🎯 Goals · 🗺️ Roadmap · 💡 Ideas · 📋 Projects]
-        HDR[Header · Module Name · 🔍 · 🔔 · 🎤 · ➕ · User ▼]
+        SB3[Sidebar Â· 240px<br/>CORE: â—‰ Dashboard Â· â˜ Tasks Â· ðŸ’¬ Chat<br/>LEARN: ðŸ“š Courses Â· ðŸŽ¬ YouTube Â· ðŸ“– Resources<br/>BUILD: ðŸŽ¯ Goals Â· ðŸ—ºï¸ Roadmap Â· ðŸ’¡ Ideas Â· ðŸ“‹ Projects]
+        HDR[Header Â· Module Name Â· ðŸ” Â· ðŸ”” Â· ðŸŽ¤ Â· âž• Â· User â–¼]
         Pane[Split Pane]
     end
     SB3 --> HDR
     HDR --> Pane
-    subgraph List3[List · sortable · filterable]
-        T1[☐ Complete proposal · High]
-        T2[☐ Write API docs · Med]
-        T3[☐ Fix login bug · Urg]
-        T4[☐ Design system audit · Low]
-        T5[☐ Update dependencies · Med]
+    subgraph List3[List Â· sortable Â· filterable]
+        T1[â˜ Complete proposal Â· High]
+        T2[â˜ Write API docs Â· Med]
+        T3[â˜ Fix login bug Â· Urg]
+        T4[â˜ Design system audit Â· Low]
+        T5[â˜ Update dependencies Â· Med]
     end
     subgraph Detail3[Detail]
         TitleD[Title: Complete proposal<br/>Status: In Progress<br/>Priority: High<br/>Due: Jun 15]
         DescD[Description...]
     end
-    subgraph Related3[Related Sidebar · 320px]
-        Linked[Linked to:<br/>• Goal: Q2 Career Growth<br/>• Project: Portfolio Site<br/>• Course: Web Dev Bootcamp]
+    subgraph Related3[Related Sidebar Â· 320px]
+        Linked[Linked to:<br/>â€¢ Goal: Q2 Career Growth<br/>â€¢ Project: Portfolio Site<br/>â€¢ Course: Web Dev Bootcamp]
     end
     Pane --> List3
     Pane --> Detail3
     Pane --> Related3
-    Main --> StatusB[Status Bar · User · Notifications 3 · Sync ✅]
+    Main --> StatusB[Status Bar Â· User Â· Notifications 3 Â· Sync âœ…]
     style Main fill:#0A0B0F,stroke:#6366F1,color:#F1F5F9
     style SB3 fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style List3 fill:#1A1D24,stroke:#334155,color:#F1F5F9
@@ -2763,12 +2763,12 @@ Skip links are visually hidden (position absolute, off-screen) until focused.
 | Element | Normal | Focus | Hover | Disabled |
 |---|---|---|---|---|
 | Navigation link text | `#F1F5F9` | `#6366F1` | `#818CF8` | `#475569` |
-| Navigation background | `#13151A` | — | `#1A1D24` | — |
-| Active indicator | `#6366F1` | Same | Same | — |
-| Badge (unread) | `#EF4444` | — | — | — |
-| Badge text | `#FFFFFF` | — | — | — |
-| Contrast ratio (normal text) | ≥7:1 | ≥7:1 | ≥7:1 | ≥3:1 |
-| Contrast ratio (large text) | ≥4.5:1 | ≥4.5:1 | ≥4.5:1 | ≥3:1 |
+| Navigation background | `#13151A` | â€” | `#1A1D24` | â€” |
+| Active indicator | `#6366F1` | Same | Same | â€” |
+| Badge (unread) | `#EF4444` | â€” | â€” | â€” |
+| Badge text | `#FFFFFF` | â€” | â€” | â€” |
+| Contrast ratio (normal text) | â‰¥7:1 | â‰¥7:1 | â‰¥7:1 | â‰¥3:1 |
+| Contrast ratio (large text) | â‰¥4.5:1 | â‰¥4.5:1 | â‰¥4.5:1 | â‰¥3:1 |
 
 ---
 
@@ -2776,7 +2776,7 @@ Skip links are visually hidden (position absolute, off-screen) until focused.
 
 ### 22.1 Module Registry Pattern
 
-New modules are added through a **module registry** — no hardcoded navigation:
+New modules are added through a **module registry** â€” no hardcoded navigation:
 
 ```typescript
 interface ModuleRegistration {
@@ -2846,18 +2846,18 @@ export const journalModule: ModuleRegistration = {
 
 ### 22.3 Extension Slots
 
-The system has **6 extension slots** — one per navigation group — plus unlimited sub-slots within groups:
+The system has **6 extension slots** â€” one per navigation group â€” plus unlimited sub-slots within groups:
 
 ```
-CORE        → Slot 1 (1 module)
-LEARN       → Slot 2 (1 module) + YouTube (existing)
-BUILD       → Slot 3 (1 module) + Ideas + Goals + Roadmap + Projects (existing)
-EARN        → Slot 4 (1 module) + Income (existing)
-WELL-BEING  → Slot 5 (1 module) + Journal example + Sleep (existing)
-SYSTEM      → Slot 6 (1 module) + Time + Review + Analytics + Automation + Extension + Settings (existing)
+CORE        â†’ Slot 1 (1 module)
+LEARN       â†’ Slot 2 (1 module) + YouTube (existing)
+BUILD       â†’ Slot 3 (1 module) + Ideas + Goals + Roadmap + Projects (existing)
+EARN        â†’ Slot 4 (1 module) + Income (existing)
+WELL-BEING  â†’ Slot 5 (1 module) + Journal example + Sleep (existing)
+SYSTEM      â†’ Slot 6 (1 module) + Time + Review + Analytics + Automation + Extension + Settings (existing)
 ```
 
-**Each group can expand to 7±2 items** before requiring a new group split.
+**Each group can expand to 7Â±2 items** before requiring a new group split.
 
 ### 22.4 Expansion Without Redesign
 
@@ -2896,10 +2896,10 @@ graph LR
         B9[Playbooks]
     end
     subgraph After[AFTER]
-        BC[BUILD CORE · 4 items]
+        BC[BUILD CORE Â· 4 items]
         BC1[Goals]
         BC2[Roadmap]
-        BE[BUILD EXTENDED · 5 items]
+        BE[BUILD EXTENDED Â· 5 items]
         BE1[Projects]
         BE2[Ideas]
         BE3[Journal]
@@ -3044,7 +3044,7 @@ flowchart TD
 | Wayfinding | The set of navigation patterns that help users understand where they are and how to get elsewhere |
 | Progressive Disclosure | Revealing complexity on demand rather than all at once |
 | Hybrid Search | Search combining full-text (BM25) and semantic (vector embedding) ranking |
-| RRF | Reciprocal Rank Fusion — algorithm for merging FTS and semantic search results |
+| RRF | Reciprocal Rank Fusion â€” algorithm for merging FTS and semantic search results |
 | Agent | An AI subsystem that performs specific tasks (15 agents, 8 live) |
 | Module Registry | The configuration system that registers all modules and their properties |
 | Navigation Layer | One of 4 levels (Global, Module, Context, Command) in the navigation model |

@@ -30,7 +30,7 @@ amendment_history:
 
 | Field | Value |
 |---|---|
-| Document ID | SB-OBS-REF-001 |
+| Document ID | DSG-OBS-001 |
 | Version | 3.0.0 |
 | Status | Active |
 | Classification | Internal — Engineering Standards |
@@ -3092,7 +3092,7 @@ if (process.env.NODE_ENV === "development") {
 - [x] Create AI observability module (lib/ai/observability.ts)
 - [x] Create fallback tracking (lib/ai/fallback.ts)
 - [x] Create cost tracking
-- [ ] Integrate trackAICall into all 8 agent modules
+- [ ] Integrate trackAICall into all 11 agent modules
 - [ ] Integrate withFallbackChain into all agent calls
 - [ ] Set up AI cost alerts
 - [ ] Create AI observability dashboard

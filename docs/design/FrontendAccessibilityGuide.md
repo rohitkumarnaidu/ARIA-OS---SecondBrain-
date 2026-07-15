@@ -32,7 +32,7 @@ changelog:
 
 | Field | Value |
 |---|---|
-| Document ID | SB-A11Y-REF-001 |
+| Document ID | DSG-A11Y-001 |
 | Version | 3.0.0 |
 | Status | **Active** |
 | Classification | Internal — Engineering Standards |
@@ -68,6 +68,7 @@ changelog:
 | UI/UX Guidelines | `C:\PROJECTS\My SecondBrain\ARIA OS - SecondBrain\docs\design\08_UIUX.md` |
 | Tailwind Config | `C:\PROJECTS\My SecondBrain\ARIA OS - SecondBrain\apps\web\tailwind.config.js` |
 | Test Strategy | `C:\PROJECTS\My SecondBrain\ARIA OS - SecondBrain\docs\qa\28_Testing.md` |
+| Accessibility Overview | `C:\PROJECTS\My SecondBrain\ARIA OS - SecondBrain\docs\design\Accessibility.md` |
 | QA Plan | `C:\PROJECTS\My SecondBrain\ARIA OS - SecondBrain\docs\qa\29_QA.md` |
 
 ---

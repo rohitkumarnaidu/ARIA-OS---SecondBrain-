@@ -1,4 +1,4 @@
-# Figma Governance — Second Brain OS (ARIA)
+﻿# Figma Governance â€” Second Brain OS (ARIA)
 
 > **The design-to-code constitution for Antigravity (design system), Stitch (component library), and every Figma file across the Second Brain OS ecosystem.**
 >
@@ -12,37 +12,37 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-FIGMA-GOV-001 |
+| Document ID | DSG-FIG-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Design & Engineering |
+| Classification | Internal â€” Design & Engineering |
 | Target Audience | Design Team, Engineering Team, AI Agents, Design System Contributors, Design Reviewers |
-| Companion Docs | Design.md (design blueprint), DesignStrategy.md (strategic foundation), DesignSystemResearch.md (token research), MotionArchitecture.md (motion engineering), 35_DesignTokens.md (token reference), 10_DesignSystem.md (component catalog) |
+| Companion Docs | Design.md (design blueprint), DesignStrategy.md (strategic foundation), DesignSystemResearch.md (token research), MotionArchitecture.md (motion engineering), 35_DesignTokens.md (token reference), 10_DesignSystem.md (component catalog), FrontendAccessibilityGuide.md (a11y) |
 
 ---
 
 ## Table of Contents
 
-**Part I — Governance & Structure**
+**Part I â€” Governance & Structure**
 1. [Executive Governance Strategy](#1-executive-governance-strategy)
 2. [Figma Workspace Structure](#2-figma-workspace-structure)
 3. [Naming Convention Standards](#3-naming-convention-standards)
 
-**Part II — Layout & Grid**
+**Part II â€” Layout & Grid**
 4. [Auto Layout Standards](#4-auto-layout-standards)
 5. [Grid Standards](#5-grid-standards)
 
-**Part III — Tokens & Components**
+**Part III â€” Tokens & Components**
 6. [Design Token Governance](#6-design-token-governance)
 7. [Component Governance](#7-component-governance)
 8. [Variant Governance](#8-variant-governance)
 
-**Part IV — Quality & Compliance**
+**Part IV â€” Quality & Compliance**
 9. [Accessibility Governance](#9-accessibility-governance)
 10. [Asset Governance](#10-asset-governance)
 
-**Part V — Process & Future**
+**Part V â€” Process & Future**
 11. [Documentation Standards](#11-documentation-standards)
 12. [Design Review Process](#12-design-review-process)
 13. [Version Control Process](#13-version-control-process)
@@ -69,21 +69,21 @@ init: {
 }
 %%
 graph LR
-  subgraph Design["🖌️ Design Layer"]
+  subgraph Design["ðŸ–Œï¸ Design Layer"]
     F[Figma Design System<br/>Antigravity] --> T[Design Tokens<br/>Colors, Spacing, Typography]
   end
 
-  subgraph Code["💻 Code Layer"]
+  subgraph Code["ðŸ’» Code Layer"]
     T --> S[Stitch Component Library<br/>React + Tailwind]
     S --> P[Page Composition<br/>Next.js Pages]
   end
 
-  subgraph Review["✅ Review Layer"]
+  subgraph Review["âœ… Review Layer"]
     P --> DR[Design Review<br/>Accessibility + Visual]
     DR --> PR[Pull Request Review<br/>Code + Token Compliance]
   end
 
-  subgraph Deploy["🚀 Deploy Layer"]
+  subgraph Deploy["ðŸš€ Deploy Layer"]
     PR --> CI[CI/CD Pipeline<br/>Build + Test + Lint]
     CI --> D[Production Deploy<br/>Vercel + Railway]
   end
@@ -98,7 +98,7 @@ graph LR
 
 ---
 
-# Part I — Governance & Structure
+# Part I â€” Governance & Structure
 
 ---
 
@@ -109,34 +109,34 @@ graph LR
 Second Brain OS uses a **Centralized Library + Federated Consumption** governance model:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    DESIGN SYSTEM COUNCIL                          │
-│          Principal Design Director + Figma Architect              │
-│              + Frontend Architect + A11y Specialist               │
-│         Approves: breaking changes, new components, tokens,       │
-│                   naming conventions, accessibility standards     │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-          ┌────────────────┼────────────────┐
-          ▼                ▼                ▼
-┌─────────────────┐ ┌──────────────┐ ┌────────────────┐
-│  Antigravity     │ │  Stitch       │ │  Module Teams   │
-│  (Design System) │ │  (Components)  │ │  (Consumers)    │
-│                  │ │               │ │                 │
-│  Library owner   │ │  Code owner   │ │  Use libraries  │
-│  Creates tokens,  │ │  Implements   │ │  via Tokens     │
-│  foundations,    │ │  components   │ │  Studio + npm   │
-│  component specs  │ │  from specs   │ │                  │
-└─────────────────┘ └──────────────┘ └────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    DESIGN SYSTEM COUNCIL                          â”‚
+â”‚          Principal Design Director + Figma Architect              â”‚
+â”‚              + Frontend Architect + A11y Specialist               â”‚
+â”‚         Approves: breaking changes, new components, tokens,       â”‚
+â”‚                   naming conventions, accessibility standards     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â–¼                â–¼                â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Antigravity     â”‚ â”‚  Stitch       â”‚ â”‚  Module Teams   â”‚
+â”‚  (Design System) â”‚ â”‚  (Components)  â”‚ â”‚  (Consumers)    â”‚
+â”‚                  â”‚ â”‚               â”‚ â”‚                 â”‚
+â”‚  Library owner   â”‚ â”‚  Code owner   â”‚ â”‚  Use libraries  â”‚
+â”‚  Creates tokens,  â”‚ â”‚  Implements   â”‚ â”‚  via Tokens     â”‚
+â”‚  foundations,    â”‚ â”‚  components   â”‚ â”‚  Studio + npm   â”‚
+â”‚  component specs  â”‚ â”‚  from specs   â”‚ â”‚                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2 Governance Levels
 
 | Level | Scope | Authority | Review Cadence |
 |---|---|---|---|
-| **L1 — Strategic** | Cross-system decisions: token architecture, naming conventions, accessibility policy | Design System Council (DSG Council) | Quarterly |
-| **L2 — Tactical** | Component additions, variant changes, deprecations, minor token additions | Design Systems Lead + Figma Architect | Bi-weekly (sprint-aligned) |
-| **L3 — Operational** | Bug fixes, style alignment, asset updates, documentation improvements | Individual designers (self-service with checklist) | Continuous / daily standup |
+| **L1 â€” Strategic** | Cross-system decisions: token architecture, naming conventions, accessibility policy | Design System Council (DSG Council) | Quarterly |
+| **L2 â€” Tactical** | Component additions, variant changes, deprecations, minor token additions | Design Systems Lead + Figma Architect | Bi-weekly (sprint-aligned) |
+| **L3 â€” Operational** | Bug fixes, style alignment, asset updates, documentation improvements | Individual designers (self-service with checklist) | Continuous / daily standup |
 
 ### 1.3 Decision Rights Matrix
 
@@ -144,12 +144,12 @@ Second Brain OS uses a **Centralized Library + Federated Consumption** governanc
 |---|---|---|---|---|
 | New color token | DSG Council | A11y Specialist | DSG Council | All teams |
 | New component | Design Lead | Figma Architect + FE Architect | DSG Council | Module teams |
-| Variant addition | Component owner | Design Lead + FE Lead | Design Systems Lead | — |
+| Variant addition | Component owner | Design Lead + FE Lead | Design Systems Lead | â€” |
 | Breaking change | Any | DSG Council | DSG Council | All teams + changelog |
 | Token value change | Design Systems Lead | A11y Specialist | Design Systems Lead | All teams |
 | Deprecation | Component owner | Design Systems Lead | DSG Council | All teams + migration guide |
 | Naming change | Figma Architect | DSG Council | DSG Council | All teams |
-| Access grant | Team lead | Workspace admin | Figma Architect | — |
+| Access grant | Team lead | Workspace admin | Figma Architect | â€” |
 
 ### 1.4 Quality Gates
 
@@ -157,12 +157,12 @@ Every component must pass these gates before reaching Stable status:
 
 | Gate | Requirement | Verification |
 |---|---|---|
-| **G1 — Token Audit** | No hardcoded values; every fill, stroke, effect, and text style uses a token | Manual + Plugin scan |
-| **G2 — Auto Layout** | Auto Layout enabled on all frames; responsive constraints per breakpoint | Manual inspection |
-| **G3 — Variant Coverage** | All required states (default, hover, active, focus, disabled, loading, error) exist | Checklist verification |
-| **G4 — A11y Scan** | Color contrast ≥ 4.5:1 (AA), touch targets ≥ 44px, focus indicators visible | a11y plugin |
-| **G5 — Handoff Ready** | Dev Mode annotations, inspect layer naming, export settings, component description | Design Lead review |
-| **G6 — Coded Match** | Dev Handoff includes comparison screenshot; code parity approved by FE engineer | Pair review |
+| **G1 â€” Token Audit** | No hardcoded values; every fill, stroke, effect, and text style uses a token | Manual + Plugin scan |
+| **G2 â€” Auto Layout** | Auto Layout enabled on all frames; responsive constraints per breakpoint | Manual inspection |
+| **G3 â€” Variant Coverage** | All required states (default, hover, active, focus, disabled, loading, error) exist | Checklist verification |
+| **G4 â€” A11y Scan** | Color contrast â‰¥ 4.5:1 (AA), touch targets â‰¥ 44px, focus indicators visible | a11y plugin |
+| **G5 â€” Handoff Ready** | Dev Mode annotations, inspect layer naming, export settings, component description | Design Lead review |
+| **G6 â€” Coded Match** | Dev Handoff includes comparison screenshot; code parity approved by FE engineer | Pair review |
 
 ### 1.5 AI Agent Roles in Figma Governance
 
@@ -193,84 +193,84 @@ Every component must pass these gates before reaching Stable status:
 
 ```
 Second Brain OS (Organization)
-│
-├── Antigravity (Team)                    # Design system team
-│   ├── Design Tokens (Project)
-│   │   ├── Tokens.json                   # Tokens Studio source
-│   │   ├── Token Documentation           # Figma file with token visualization
-│   │   └── Theme Swatches                # Dark / Light / High Contrast swatch files
-│   │
-│   ├── Foundations (Project)
-│   │   ├── 01_Color                      # Color system: primitives, semantic aliases, charts
-│   │   ├── 02_Typography                 # Font families, type scale, text styles
-│   │   ├── 03_Spacing                    # 4px base grid, spacing scale, layout patterns
-│   │   ├── 04_Iconography               # Icon grid, lucide library, custom icons
-│   │   ├── 05_Elevation                 # Shadows, z-index, depth system
-│   │   ├── 06_Motion                    # Duration, easing, animation presets
-│   │   └── 07_Grid                      # Grid templates, breakpoints, responsive rules
-│   │
-│   ├── Antigravity Library (Project)    # SHARED LIBRARY — published to all teams
-│   │   ├── Atoms                        # Button, Input, Card, Badge, Tooltip, etc.
-│   │   ├── Molecules                    # FormField, InputGroup, SearchBar, TabBar, etc.
-│   │   ├── Organisms                    # Sidebar, Navbar, DataTable, KanbanBoard, etc.
-│   │   ├── Patterns                     # Empty states, loading skeletons, error pages
-│   │   └── Templates                    # Page-level layout shells (dashboard, modal, etc.)
-│   │
-│   └── Sandbox (Project)                # Experimental / WIP components
-│       ├── Proposals                    # Component proposals with specs
-│       ├── In_Review                    # Components under DSG review
-│       └── Archive                      # Deprecated or rejected experiments
-│
-├── Stitch (Team)                         # Component engineering team
-│   ├── Component Specs (Project)         # Handoff files for each component
-│   │   ├── Atoms_Specs                  # 1:1 with Antigravity Atoms
-│   │   ├── Molecules_Specs              # 1:1 with Antigravity Molecules
-│   │   └── Organisms_Specs              # 1:1 with Antigravity Organisms
-│   │
-│   ├── Component Audit (Project)        # Design vs. code comparison
-│   │   ├── Implemented                    # Green — coded match verified
-│   │   ├── In_Progress                    # Yellow — in active development
-│   │   └── Gap                            # Red — no code equivalent
-│   │
-│   └── Migration (Project)              # Breaking change migration planning
-│       ├── Current → Target              # Side-by-side comparison
-│       └── Migration Guide               # Step-by-step update instructions
-│
-├── Modules (Team)                         # Feature teams (consumers)
-│   ├── 01_Application_Shell             # Sidebar, Navbar, responsive shell
-│   ├── 02_Dashboard                     # Dashboard page, KPI strip, bento grid
-│   ├── 03_Tasks_Courses                 # Task list, course grid, kanban
-│   ├── 04_Goals_Habits                  # Goals with roadmap, habit calendar
-│   ├── 05_Ideas_Projects                # Idea pipeline, project phases
-│   ├── 06_Sleep_Income_Time             # Sleep tracker, income log, pomodoro
-│   ├── 07_Resources_Opportunities       # Resource library, radar view
-│   ├── 08_Chat_Automation_Youtube       # AI chat, cron triggers, video library
-│   └── 09_Academics                     # Academic module, semester view
-│
-└── Design Ops (Team)                      # Design operations
-    ├── Design Review (Project)            # Review files, feedback, annotations
-    ├── Design Sprint (Project)            # Current sprint design work
-    ├── Assets (Project)                   # Shared imagery, illustrations, video
-    └── Archive (Project)                  # Historical design files
+â”‚
+â”œâ”€â”€ Antigravity (Team)                    # Design system team
+â”‚   â”œâ”€â”€ Design Tokens (Project)
+â”‚   â”‚   â”œâ”€â”€ Tokens.json                   # Tokens Studio source
+â”‚   â”‚   â”œâ”€â”€ Token Documentation           # Figma file with token visualization
+â”‚   â”‚   â””â”€â”€ Theme Swatches                # Dark / Light / High Contrast swatch files
+â”‚   â”‚
+â”‚   â”œâ”€â”€ Foundations (Project)
+â”‚   â”‚   â”œâ”€â”€ 01_Color                      # Color system: primitives, semantic aliases, charts
+â”‚   â”‚   â”œâ”€â”€ 02_Typography                 # Font families, type scale, text styles
+â”‚   â”‚   â”œâ”€â”€ 03_Spacing                    # 4px base grid, spacing scale, layout patterns
+â”‚   â”‚   â”œâ”€â”€ 04_Iconography               # Icon grid, lucide library, custom icons
+â”‚   â”‚   â”œâ”€â”€ 05_Elevation                 # Shadows, z-index, depth system
+â”‚   â”‚   â”œâ”€â”€ 06_Motion                    # Duration, easing, animation presets
+â”‚   â”‚   â””â”€â”€ 07_Grid                      # Grid templates, breakpoints, responsive rules
+â”‚   â”‚
+â”‚   â”œâ”€â”€ Antigravity Library (Project)    # SHARED LIBRARY â€” published to all teams
+â”‚   â”‚   â”œâ”€â”€ Atoms                        # Button, Input, Card, Badge, Tooltip, etc.
+â”‚   â”‚   â”œâ”€â”€ Molecules                    # FormField, InputGroup, SearchBar, TabBar, etc.
+â”‚   â”‚   â”œâ”€â”€ Organisms                    # Sidebar, Navbar, DataTable, KanbanBoard, etc.
+â”‚   â”‚   â”œâ”€â”€ Patterns                     # Empty states, loading skeletons, error pages
+â”‚   â”‚   â””â”€â”€ Templates                    # Page-level layout shells (dashboard, modal, etc.)
+â”‚   â”‚
+â”‚   â””â”€â”€ Sandbox (Project)                # Experimental / WIP components
+â”‚       â”œâ”€â”€ Proposals                    # Component proposals with specs
+â”‚       â”œâ”€â”€ In_Review                    # Components under DSG review
+â”‚       â””â”€â”€ Archive                      # Deprecated or rejected experiments
+â”‚
+â”œâ”€â”€ Stitch (Team)                         # Component engineering team
+â”‚   â”œâ”€â”€ Component Specs (Project)         # Handoff files for each component
+â”‚   â”‚   â”œâ”€â”€ Atoms_Specs                  # 1:1 with Antigravity Atoms
+â”‚   â”‚   â”œâ”€â”€ Molecules_Specs              # 1:1 with Antigravity Molecules
+â”‚   â”‚   â””â”€â”€ Organisms_Specs              # 1:1 with Antigravity Organisms
+â”‚   â”‚
+â”‚   â”œâ”€â”€ Component Audit (Project)        # Design vs. code comparison
+â”‚   â”‚   â”œâ”€â”€ Implemented                    # Green â€” coded match verified
+â”‚   â”‚   â”œâ”€â”€ In_Progress                    # Yellow â€” in active development
+â”‚   â”‚   â””â”€â”€ Gap                            # Red â€” no code equivalent
+â”‚   â”‚
+â”‚   â””â”€â”€ Migration (Project)              # Breaking change migration planning
+â”‚       â”œâ”€â”€ Current â†’ Target              # Side-by-side comparison
+â”‚       â””â”€â”€ Migration Guide               # Step-by-step update instructions
+â”‚
+â”œâ”€â”€ Modules (Team)                         # Feature teams (consumers)
+â”‚   â”œâ”€â”€ 01_Application_Shell             # Sidebar, Navbar, responsive shell
+â”‚   â”œâ”€â”€ 02_Dashboard                     # Dashboard page, KPI strip, bento grid
+â”‚   â”œâ”€â”€ 03_Tasks_Courses                 # Task list, course grid, kanban
+â”‚   â”œâ”€â”€ 04_Goals_Habits                  # Goals with roadmap, habit calendar
+â”‚   â”œâ”€â”€ 05_Ideas_Projects                # Idea pipeline, project phases
+â”‚   â”œâ”€â”€ 06_Sleep_Income_Time             # Sleep tracker, income log, pomodoro
+â”‚   â”œâ”€â”€ 07_Resources_Opportunities       # Resource library, radar view
+â”‚   â”œâ”€â”€ 08_Chat_Automation_Youtube       # AI chat, cron triggers, video library
+â”‚   â””â”€â”€ 09_Academics                     # Academic module, semester view
+â”‚
+â””â”€â”€ Design Ops (Team)                      # Design operations
+    â”œâ”€â”€ Design Review (Project)            # Review files, feedback, annotations
+    â”œâ”€â”€ Design Sprint (Project)            # Current sprint design work
+    â”œâ”€â”€ Assets (Project)                   # Shared imagery, illustrations, video
+    â””â”€â”€ Archive (Project)                  # Historical design files
 ```
 
 ### 2.2 Library Linking Topology
 
 ```
 Antigravity Library (Published)
-│
-├── Enables → Modules (all 9 project files)
-│   └── Module files use components from the published library
-│       (never detach instances in module files)
-│
-├── Enables → Stitch Component Specs
-│   └── Spec files reference library components when showing expected behavior
-│
-├── Enables → Antigravity Sandbox
-│   └── Proposals draft new components using existing library primitives
-│
-└── Depends on → Tokens Studio JSON
-    └── All components reference tokens from the Tokens Studio source
+â”‚
+â”œâ”€â”€ Enables â†’ Modules (all 9 project files)
+â”‚   â””â”€â”€ Module files use components from the published library
+â”‚       (never detach instances in module files)
+â”‚
+â”œâ”€â”€ Enables â†’ Stitch Component Specs
+â”‚   â””â”€â”€ Spec files reference library components when showing expected behavior
+â”‚
+â”œâ”€â”€ Enables â†’ Antigravity Sandbox
+â”‚   â””â”€â”€ Proposals draft new components using existing library primitives
+â”‚
+â””â”€â”€ Depends on â†’ Tokens Studio JSON
+    â””â”€â”€ All components reference tokens from the Tokens Studio source
 ```
 
 ### 2.3 File Structure Standards
@@ -280,11 +280,11 @@ Each Figma file MUST follow this page structure:
 ```
 Page 1: Cover / Changelog
 Page 2: Component Index (overview grid of all components in file)
-Page 3: [Component Name] — Overview
-Page 4: [Component Name] — States / Variants
-Page 5: [Component Name] — Specs (auto layout, sizing, spacing)
-Page 6: [Component Name] — Do / Don't
-Page N: [Next Component] — ...
+Page 3: [Component Name] â€” Overview
+Page 4: [Component Name] â€” States / Variants
+Page 5: [Component Name] â€” Specs (auto layout, sizing, spacing)
+Page 6: [Component Name] â€” Do / Don't
+Page N: [Next Component] â€” ...
 Final Page: Dev Handoff
 ```
 
@@ -292,14 +292,14 @@ Final Page: Dev Handoff
 
 | Suffix | Purpose | When to Use |
 |---|---|---|
-| `Cover / Changelog` | Version history, file metadata, change log | Every file — MUST be page 1 |
+| `Cover / Changelog` | Version history, file metadata, change log | Every file â€” MUST be page 1 |
 | `Index` | Component overview grid with names and thumbnails | Every library file |
-| `— Overview` | Component specification: anatomy, tokens, behavior | Per component |
-| `— States` | State machine matrix: default, hover, active, focus, disabled, loading, error, empty | Per component with states |
-| `— Variants` | Variant matrix: sizes, styles, themes, breakpoints | Per component with variants |
-| `— Specs` | Auto layout, padding, gap, sizing, responsive rules | Per component |
-| `— Do / Don't` | Usage guidance, anti-patterns, context rules | Per component |
-| `— Dev Handoff` | Export settings, code snippets, implementation notes | Per component |
+| `â€” Overview` | Component specification: anatomy, tokens, behavior | Per component |
+| `â€” States` | State machine matrix: default, hover, active, focus, disabled, loading, error, empty | Per component with states |
+| `â€” Variants` | Variant matrix: sizes, styles, themes, breakpoints | Per component with variants |
+| `â€” Specs` | Auto layout, padding, gap, sizing, responsive rules | Per component |
+| `â€” Do / Don't` | Usage guidance, anti-patterns, context rules | Per component |
+| `â€” Dev Handoff` | Export settings, code snippets, implementation notes | Per component |
 
 ---
 
@@ -309,7 +309,7 @@ Final Page: Dev Handoff
 
 | Construct | Convention | Example | Rule |
 |---|---|---|---|
-| Pages | PascalCase | `Button — States` | Page names in file navigator |
+| Pages | PascalCase | `Button â€” States` | Page names in file navigator |
 | Frames | kebab-case + purpose suffix | `button-default`, `input-group-horizontal` | No PascalCase for frames |
 | Components | PascalCase | `Button`, `InputField`, `DataTable` | Published component names |
 | Variant Properties | camelCase | `size`, `variantStyle`, `hasIcon` | Property names in component set |
@@ -353,7 +353,7 @@ Every frame MUST include a suffix that describes its purpose:
 
 | Level | Convention | Example |
 |---|---|---|
-| **Domain** | Optional — only for module-specific components | `TaskCard`, `HabitCalendar` |
+| **Domain** | Optional â€” only for module-specific components | `TaskCard`, `HabitCalendar` |
 | **Component** | PascalCase, noun | `Button`, `InputField`, `DataTable` |
 | **Variant** | camelCase property, kebab-case value | size=md, variantStyle=primary |
 | **State** | camelCase property, kebab-case value | state=hover, state=disabled |
@@ -393,7 +393,7 @@ All layers within a component MUST be named using the pattern:
 
 ### 3.5 Naming Anti-Patterns
 
-| ❌ Anti-Pattern | Why | ✅ Correct |
+| âŒ Anti-Pattern | Why | âœ… Correct |
 |---|---|---|
 | `Rectangle 1`, `Rectangle 2` | Auto-generated, meaningless | `Container`, `Background` |
 | `Frame 2394` | No semantic meaning | `card-container` |
@@ -405,7 +405,7 @@ All layers within a component MUST be named using the pattern:
 
 ---
 
-# Part II — Layout & Grid
+# Part II â€” Layout & Grid
 
 ---
 
@@ -452,9 +452,9 @@ All layers within a component MUST be named using the pattern:
 | **Button** | Horizontal: `spacing-4` (16px), Vertical: `spacing-2` (8px) | `spacing-3` / `spacing-1.5` | `spacing-5` / `spacing-3` |
 | **Input** | Horizontal: `spacing-3` (12px), Vertical: `spacing-2` (8px) | `spacing-2` / `spacing-1.5` | `spacing-4` / `spacing-3` |
 | **Table cell** | `spacing-3` (12px) | `spacing-2` (8px) | `spacing-4` (16px) |
-| **Badge** | Horizontal: `spacing-2` (8px), Vertical: `spacing-0.5` (2px) | — | — |
-| **Tooltip** | `spacing-2` (8px) | — | — |
-| **Dropdown item** | Horizontal: `spacing-3` (12px), Vertical: `spacing-2` (8px) | — | — |
+| **Badge** | Horizontal: `spacing-2` (8px), Vertical: `spacing-0.5` (2px) | â€” | â€” |
+| **Tooltip** | `spacing-2` (8px) | â€” | â€” |
+| **Dropdown item** | Horizontal: `spacing-3` (12px), Vertical: `spacing-2` (8px) | â€” | â€” |
 | **Section** | `spacing-6` (24px) | `spacing-4` (16px) | `spacing-8` (32px) |
 
 ### 4.4 Gap Rules
@@ -462,14 +462,14 @@ All layers within a component MUST be named using the pattern:
 | Context | Stack (Vertical) | Inline (Horizontal) | Grid |
 |---|---|---|---|
 | **Component internals** | `spacing-2` (8px) | `spacing-2` (8px) | `spacing-4` (16px) |
-| **Form stack** | `spacing-5` (20px) | `spacing-3` (12px) | — |
+| **Form stack** | `spacing-5` (20px) | `spacing-3` (12px) | â€” |
 | **Card grid** | `spacing-6` (24px) | `spacing-6` (24px) | `spacing-6` (24px) |
-| **List items** | `spacing-2` (8px) | — | — |
-| **Icon + text** | — | `spacing-2` (8px) | — |
-| **Button group** | `spacing-3` (12px) | `spacing-3` (12px) | — |
-| **Modal sections** | `spacing-6` (24px) | — | — |
-| **KPI strip** | — | `spacing-6` (24px) | — |
-| **Navigation items** | `spacing-1` (4px) | — | — |
+| **List items** | `spacing-2` (8px) | â€” | â€” |
+| **Icon + text** | â€” | `spacing-2` (8px) | â€” |
+| **Button group** | `spacing-3` (12px) | `spacing-3` (12px) | â€” |
+| **Modal sections** | `spacing-6` (24px) | â€” | â€” |
+| **KPI strip** | â€” | `spacing-6` (24px) | â€” |
+| **Navigation items** | `spacing-1` (4px) | â€” | â€” |
 
 ### 4.5 Alignment Rules by Component Type
 
@@ -478,7 +478,7 @@ All layers within a component MUST be named using the pattern:
 | **Button** | Center | Center | Center |
 | **Input** | Left | Center | Left |
 | **Card** | Left | Top | Left |
-| **Card — interactive** | Left | Top | Left |
+| **Card â€” interactive** | Left | Top | Left |
 | **Modal** | Left | Top | Left |
 | **Badge** | Center | Center | Center |
 | **Tooltip** | Left | Center | Left |
@@ -522,7 +522,7 @@ All layers within a component MUST be named using the pattern:
 
 Every component must define resize behavior for all three breakpoints:
 
-| Component | Mobile (<768px) | Tablet (768-1023px) | Desktop (≥1024px) |
+| Component | Mobile (<768px) | Tablet (768-1023px) | Desktop (â‰¥1024px) |
 |---|---|---|---|
 | Button | Fill container | Hug | Hug |
 | Card | Fill, stacked | Fill, 2-col | Fill, 3-col |
@@ -578,16 +578,16 @@ Every component must define resize behavior for all three breakpoints:
 ### 5.2 Desktop Grid (12-Column)
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Margin (32px)                                                   │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │  Gutter (24px)                                              │  │
-│  │  ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐                    │  │
-│  │  │ 1│ 2│ 3│ 4│ 5│ 6│ 7│ 8│ 9│10│11│12│                    │  │
-│  │  │  │  │  │  │  │  │  │  │  │  │  │  │                    │  │
-│  │  └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘                    │  │
-│  └────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Margin (32px)                                                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Gutter (24px)                                              â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”                    â”‚  â”‚
+â”‚  â”‚  â”‚ 1â”‚ 2â”‚ 3â”‚ 4â”‚ 5â”‚ 6â”‚ 7â”‚ 8â”‚ 9â”‚10â”‚11â”‚12â”‚                    â”‚  â”‚
+â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚                    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”˜                    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Column span patterns (Desktop):**
@@ -597,23 +597,23 @@ Every component must define resize behavior for all three breakpoints:
 | 12-col | Full width page sections | Page headers, KPI strips, notification bars |
 | 8-col + 4-col | Main content + sidebar | Task list + filters, course grid + detail |
 | 6-col + 6-col | Split layout | Editor + preview, form + help sidebar |
-| 4-col × 3 | Three-column grid | Card grids, stat cards |
-| 3-col × 4 | Four-column grid | Dense card layouts, metrics |
-| 2-col × 6 | Six-column grid | Compact stats, badge groups |
+| 4-col Ã— 3 | Three-column grid | Card grids, stat cards |
+| 3-col Ã— 4 | Four-column grid | Dense card layouts, metrics |
+| 2-col Ã— 6 | Six-column grid | Compact stats, badge groups |
 
 ### 5.3 Tablet Grid (8-Column)
 
 ```
-┌──────────────────────────────────────────────────┐
-│  Margin (24px)                                   │
-│  ┌────────────────────────────────────────────┐  │
-│  │  Gutter (24px)                             │  │
-│  │  ┌──┬──┬──┬──┬──┬──┬──┬──┐               │  │
-│  │  │ 1│ 2│ 3│ 4│ 5│ 6│ 7│ 8│               │  │
-│  │  │  │  │  │  │  │  │  │  │               │  │
-│  │  └──┴──┴──┴──┴──┴──┴──┴──┘               │  │
-│  └────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Margin (24px)                                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Gutter (24px)                             â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”               â”‚  â”‚
+â”‚  â”‚  â”‚ 1â”‚ 2â”‚ 3â”‚ 4â”‚ 5â”‚ 6â”‚ 7â”‚ 8â”‚               â”‚  â”‚
+â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚  â”‚               â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”˜               â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Column span patterns (Tablet):**
@@ -622,21 +622,21 @@ Every component must define resize behavior for all three breakpoints:
 |---|---|---|
 | 8-col | Full width | Page headers, forms, tables |
 | 6-col + 2-col | Main + sidebar (collapsed) | Dashboard with secondary panel |
-| 4-col × 2 | Two-column grid | Card grids, stat pairs |
-| 2-col × 4 | Four-column compact | Dense stat grids |
+| 4-col Ã— 2 | Two-column grid | Card grids, stat pairs |
+| 2-col Ã— 4 | Four-column compact | Dense stat grids |
 
 ### 5.4 Mobile Grid (4-Column)
 
 ```
-┌──────────────────────────────┐
-│  Margin (16px)               │
-│  ┌────────────────────────┐  │
-│  │  Gutter (16px)         │  │
-│  │  ┌──┬──┬──┬──┐        │  │
-│  │  │ 1│ 2│ 3│ 4│        │  │
-│  │  └──┴──┴──┴──┘        │  │
-│  └────────────────────────┘  │
-└──────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Margin (16px)               â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Gutter (16px)         â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”¬â”€â”€â”¬â”€â”€â”¬â”€â”€â”        â”‚  â”‚
+â”‚  â”‚  â”‚ 1â”‚ 2â”‚ 3â”‚ 4â”‚        â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”´â”€â”€â”´â”€â”€â”´â”€â”€â”˜        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Column span patterns (Mobile):**
@@ -644,7 +644,7 @@ Every component must define resize behavior for all three breakpoints:
 | Span | Usage | Example |
 |---|---|---|
 | 4-col | Full width | Single column stacks, forms, detail views |
-| 2-col × 2 | Two-column compact | Stat pairs, small cards |
+| 2-col Ã— 2 | Two-column compact | Stat pairs, small cards |
 | 3-col + 1-col | Content + narrow sidebar | Filter controls |
 
 ### 5.5 Grid Transformation Rules
@@ -665,23 +665,23 @@ Every component must define resize behavior for all three breakpoints:
 Dashboard and analytics screens use a **CSS Grid auto-fill bento** system rather than a fixed column grid:
 
 ```
-Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
-┌──────┬──────┬──────┐   ┌──────────┬──────────┐   ┌──────────────┐
-│ KPI   │ KPI   │ KPI  │   │ KPI       │ KPI       │   │ KPI           │
-│ strip │ strip │ strip│   │ strip s  │ strip s  │   │ strip s      │
-├──────┼──────┼──────┤   ├──────────┴──────────┤   ├──────────────┤
-│ Card  │ Card  │ Card │   │ Card 1     │ Card 2   │   │ Card 1        │
-│ 1     │ 2     │ 3    │   ├──────────┼──────────┤   ├──────────────┤
-├──────┴──┬───┴──────┤   │ Card 3    │ Card 4    │   │ Card 2        │
-│ Insight  │ Activity │   ├──────────┴──────────┤   ├──────────────┤
-│ panel    │ heatmap  │   │ Insight panel (full) │   │ Card 3        │
-├─────────┴──────────┤   ├──────────────────────┤   ├──────────────┤
-│ AI suggestions (full) │   │ Activity heatmap     │   │ Card 4        │
-└────────────────────┘   └──────────────────────┘   ├──────────────┤
-                                                    │ Insight panel │
-                                                    ├──────────────┤
-                                                    │ Activity      │
-                                                    └──────────────┘
+Desktop (â‰¥1024px):       Tablet (768-1023px):     Mobile (<768px):
+â”Œâ”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ KPI   â”‚ KPI   â”‚ KPI  â”‚   â”‚ KPI       â”‚ KPI       â”‚   â”‚ KPI           â”‚
+â”‚ strip â”‚ strip â”‚ stripâ”‚   â”‚ strip s  â”‚ strip s  â”‚   â”‚ strip s      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Card  â”‚ Card  â”‚ Card â”‚   â”‚ Card 1     â”‚ Card 2   â”‚   â”‚ Card 1        â”‚
+â”‚ 1     â”‚ 2     â”‚ 3    â”‚   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”¬â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”¤   â”‚ Card 3    â”‚ Card 4    â”‚   â”‚ Card 2        â”‚
+â”‚ Insight  â”‚ Activity â”‚   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ panel    â”‚ heatmap  â”‚   â”‚ Insight panel (full) â”‚   â”‚ Card 3        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ AI suggestions (full) â”‚   â”‚ Activity heatmap     â”‚   â”‚ Card 4        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+                                                    â”‚ Insight panel â”‚
+                                                    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+                                                    â”‚ Activity      â”‚
+                                                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 5.7 Liquid Layout Rules
@@ -690,42 +690,42 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 |---|---|
 | **LK1** | Content area fills available width, never exceeds 1440px |
 | **LK2** | Backgrounds extend full viewport width regardless of content max-width |
-| **LK3** | Sidebar width is fixed (240px expanded, 64px collapsed) — does not scale |
-| **LK4** | Cards in a grid use `minmax(280px, 1fr)` — never fixed card widths |
+| **LK3** | Sidebar width is fixed (240px expanded, 64px collapsed) â€” does not scale |
+| **LK4** | Cards in a grid use `minmax(280px, 1fr)` â€” never fixed card widths |
 | **LK5** | Cards stretch to fill their column, never leave gaps at row bottoms |
-| **LK6** | Bento grid cards can span 1×1, 2×1, 1×2, or 2×2 using CSS grid placement |
-| **LK7** | No horizontal scroll at any breakpoint — content must reflow |
+| **LK6** | Bento grid cards can span 1Ã—1, 2Ã—1, 1Ã—2, or 2Ã—2 using CSS grid placement |
+| **LK7** | No horizontal scroll at any breakpoint â€” content must reflow |
 | **LK8** | Tables >12 columns on desktop collapse lower-priority columns on tablet |
 
 ---
 
-# Part III — Tokens & Components
+# Part III â€” Tokens & Components
 
 ---
 
 ## 6. Design Token Governance
 
-### 6.1 Token Architecture — 3-Tier System
+### 6.1 Token Architecture â€” 3-Tier System
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  TIER 1: PRIMITIVE TOKENS                                        │
-│  Raw values — color hex, font size px, spacing px, radius px    │
-│  Named by category + index (e.g., color-blue-500, spacing-4)     │
-│  One source of truth — never override in lower tiers              │
-├──────────────────────────────────────────────────────────────────┤
-│  TIER 2: SEMANTIC TOKENS                                         │
-│  Abstract purpose — references primitive tokens                  │
-│  Named by purpose (e.g., color-bg-card, color-text-primary)       │
-│  Theme-aware — dark/light/high-contrast map to different          │
-│  primitive values                                                │
-├──────────────────────────────────────────────────────────────────┤
-│  TIER 3: COMPONENT TOKENS                                        │
-│  Component-scoped — references semantic tokens                   │
-│  Named by component + part + property (e.g., button-bg-primary)   │
-│  Component-level overrides only when necessary for brand-specific│
-│  values that deviate from the semantic system                     │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  TIER 1: PRIMITIVE TOKENS                                        â”‚
+â”‚  Raw values â€” color hex, font size px, spacing px, radius px    â”‚
+â”‚  Named by category + index (e.g., color-blue-500, spacing-4)     â”‚
+â”‚  One source of truth â€” never override in lower tiers              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TIER 2: SEMANTIC TOKENS                                         â”‚
+â”‚  Abstract purpose â€” references primitive tokens                  â”‚
+â”‚  Named by purpose (e.g., color-bg-card, color-text-primary)       â”‚
+â”‚  Theme-aware â€” dark/light/high-contrast map to different          â”‚
+â”‚  primitive values                                                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TIER 3: COMPONENT TOKENS                                        â”‚
+â”‚  Component-scoped â€” references semantic tokens                   â”‚
+â”‚  Named by component + part + property (e.g., button-bg-primary)   â”‚
+â”‚  Component-level overrides only when necessary for brand-specificâ”‚
+â”‚  values that deviate from the semantic system                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 6.2 Token Categories
@@ -738,9 +738,9 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 | **Border Radius** | `radius-{name}` | `radius-{usage}` | `{component}-radius-{part}` | `border-radius/` |
 | **Shadow** | `shadow-{name}` | `elevation-{level}` | `{component}-shadow-{part}` | `box-shadow/` |
 | **Motion** | `duration-{name}`, `easing-{name}` | `motion-{usage}` | `{component}-motion-{part}` | `motion/` |
-| **Breakpoint** | `bp-{device}` | — | — | `breakpoint/` |
-| **Z-Index** | `z-{layer}` | `z-{usage}` | — | `z-index/` |
-| **Opacity** | `opacity-{value}` | `opacity-{usage}` | — | `opacity/` |
+| **Breakpoint** | `bp-{device}` | â€” | â€” | `breakpoint/` |
+| **Z-Index** | `z-{layer}` | `z-{usage}` | â€” | `z-index/` |
+| **Opacity** | `opacity-{value}` | `opacity-{usage}` | â€” | `opacity/` |
 
 ### 6.3 Color Token System
 
@@ -748,26 +748,26 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 
 | Hue Family | Token Pattern | Values (Scale) | Usage |
 |---|---|---|---|
-| **Neutral** | `color-neutral-{50..950}` | 12 values: #F8FAFC → #0F172A | Backgrounds, text, borders |
-| **Indigo** | `color-indigo-{50..950}` | 12 values: #EEF2FF → #1E1B4B | Primary accent |
-| **Emerald** | `color-emerald-{50..950}` | 12 values: #ECFDF5 → #022C22 | Success / secondary accent |
-| **Amber** | `color-amber-{50..950}` | 12 values: #FFFBEB → #451A03 | Warning |
-| **Rose** | `color-rose-{50..950}` | 12 values: #FFF1F2 → #4C0519 | Error / danger |
-| **Cyan** | `color-cyan-{50..950}` | 12 values: #ECFEFF → #164E63 | Info / neon accent |
-| **Slate** | `color-slate-{50..950}` | 12 values: #F8FAFC → #020617 | Data viz, secondary text |
+| **Neutral** | `color-neutral-{50..950}` | 12 values: #F8FAFC â†’ #0F172A | Backgrounds, text, borders |
+| **Indigo** | `color-indigo-{50..950}` | 12 values: #EEF2FF â†’ #1E1B4B | Primary accent |
+| **Emerald** | `color-emerald-{50..950}` | 12 values: #ECFDF5 â†’ #022C22 | Success / secondary accent |
+| **Amber** | `color-amber-{50..950}` | 12 values: #FFFBEB â†’ #451A03 | Warning |
+| **Rose** | `color-rose-{50..950}` | 12 values: #FFF1F2 â†’ #4C0519 | Error / danger |
+| **Cyan** | `color-cyan-{50..950}` | 12 values: #ECFEFF â†’ #164E63 | Info / neon accent |
+| **Slate** | `color-slate-{50..950}` | 12 values: #F8FAFC â†’ #020617 | Data viz, secondary text |
 
 **Scale semantics:**
-- `50` → Lightest (backgrounds, hover highlights)
-- `100` → Surface fills
-- `200` → Subtle borders
-- `300` → Default borders
-- `400` → Muted text, disabled
-- `500` → Base color (primary brand)
-- `600` → Hover states
-- `700` → Active states
-- `800` → Pressed states
-- `900` → Darkest backgrounds
-- `950` → Deepest (near black)
+- `50` â†’ Lightest (backgrounds, hover highlights)
+- `100` â†’ Surface fills
+- `200` â†’ Subtle borders
+- `300` â†’ Default borders
+- `400` â†’ Muted text, disabled
+- `500` â†’ Base color (primary brand)
+- `600` â†’ Hover states
+- `700` â†’ Active states
+- `800` â†’ Pressed states
+- `900` â†’ Darkest backgrounds
+- `950` â†’ Deepest (near black)
 
 #### 6.3.2 Semantic Color Tokens
 
@@ -793,13 +793,13 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 | `color-accent-info` | `cyan-500` | `cyan-500` | `cyan-600` | Info badges |
 | `color-accent-neon` | `emerald-400` | `emerald-500` | `emerald-400` | Decorative highlights |
 | `color-accent-cyber` | `rose-400` | `rose-500` | `rose-400` | Urgent indicators |
-| `color-priority-urgent` | `rose-500` | `rose-600` | `rose-600` | Priority level — urgent |
-| `color-priority-high` | `amber-500` | `amber-600` | `amber-600` | Priority level — high |
-| `color-priority-medium` | `amber-400` | `amber-500` | `amber-500` | Priority level — medium |
-| `color-priority-low` | `emerald-400` | `emerald-500` | `emerald-500` | Priority level — low |
-| `color-glass-light` | `neutral-0 / 3%` | `neutral-900 / 3%` | — | Subtle glass |
-| `color-glass-medium` | `neutral-0 / 8%` | `neutral-900 / 8%` | — | Card glass |
-| `color-glass-heavy` | `neutral-0 / 15%` | `neutral-900 / 15%` | — | Highlighted glass |
+| `color-priority-urgent` | `rose-500` | `rose-600` | `rose-600` | Priority level â€” urgent |
+| `color-priority-high` | `amber-500` | `amber-600` | `amber-600` | Priority level â€” high |
+| `color-priority-medium` | `amber-400` | `amber-500` | `amber-500` | Priority level â€” medium |
+| `color-priority-low` | `emerald-400` | `emerald-500` | `emerald-500` | Priority level â€” low |
+| `color-glass-light` | `neutral-0 / 3%` | `neutral-900 / 3%` | â€” | Subtle glass |
+| `color-glass-medium` | `neutral-0 / 8%` | `neutral-900 / 8%` | â€” | Card glass |
+| `color-glass-heavy` | `neutral-0 / 15%` | `neutral-900 / 15%` | â€” | Highlighted glass |
 | `color-surface-primary` | `neutral-0` | `neutral-900` | `neutral-0` | Inverted surfaces |
 | `color-surface-secondary` | `neutral-100` | `neutral-800` | `neutral-0` | Secondary surfaces |
 
@@ -942,16 +942,16 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 | `shadow-lg` | `0 8px 24px rgba(0,0,0,0.22)` | 3 (overlay) | Modals, dialogs |
 | `shadow-xl` | `0 12px 40px rgba(0,0,0,0.26)` | 4 (top) | Tooltips, popovers |
 | `shadow-2xl` | `0 20px 60px rgba(0,0,0,0.30)` | 5 (peak) | Command palette, high-priority overlays |
-| `shadow-glow-sm` | `0 0 20px rgba(99,102,241,0.15)` | — | Subtle accent glow |
-| `shadow-glow` | `0 0 30px rgba(99,102,241,0.25)` | — | Accent glow (interactive) |
-| `shadow-glow-lg` | `0 0 50px rgba(99,102,241,0.35)` | — | Strong accent glow |
-| `shadow-neon-sm` | `0 0 15px rgba(0,255,163,0.2)` | — | Success/neon glow |
-| `shadow-neon` | `0 0 25px rgba(0,255,163,0.3)` | — | Strong neon glow |
-| `shadow-cyber-sm` | `0 0 15px rgba(255,51,102,0.2)` | — | Urgent/cyber glow |
-| `shadow-cyber` | `0 0 25px rgba(255,51,102,0.3)` | — | Strong cyber glow |
-| `shadow-focus` | `0 0 0 2px rgba(99,102,241,0.8)` | — | Focus ring |
-| `shadow-focus-error` | `0 0 0 2px rgba(239,68,68,0.8)` | — | Error focus ring |
-| `shadow-inner` | `inset 0 1px 0 rgba(255,255,255,0.05)` | — | Inner edge highlight |
+| `shadow-glow-sm` | `0 0 20px rgba(99,102,241,0.15)` | â€” | Subtle accent glow |
+| `shadow-glow` | `0 0 30px rgba(99,102,241,0.25)` | â€” | Accent glow (interactive) |
+| `shadow-glow-lg` | `0 0 50px rgba(99,102,241,0.35)` | â€” | Strong accent glow |
+| `shadow-neon-sm` | `0 0 15px rgba(0,255,163,0.2)` | â€” | Success/neon glow |
+| `shadow-neon` | `0 0 25px rgba(0,255,163,0.3)` | â€” | Strong neon glow |
+| `shadow-cyber-sm` | `0 0 15px rgba(255,51,102,0.2)` | â€” | Urgent/cyber glow |
+| `shadow-cyber` | `0 0 25px rgba(255,51,102,0.3)` | â€” | Strong cyber glow |
+| `shadow-focus` | `0 0 0 2px rgba(99,102,241,0.8)` | â€” | Focus ring |
+| `shadow-focus-error` | `0 0 0 2px rgba(239,68,68,0.8)` | â€” | Error focus ring |
+| `shadow-inner` | `inset 0 1px 0 rgba(255,255,255,0.05)` | â€” | Inner edge highlight |
 
 ### 6.8 Motion Token System
 
@@ -972,11 +972,11 @@ Desktop (≥1024px):       Tablet (768-1023px):     Mobile (<768px):
 | Token | Value (cubic-bezier) | Usage |
 |---|---|---|
 | `easing-default` | `0.4, 0, 0.2, 1` | Standard UI motion (Material-inspired) |
-| `easing-enter` | `0.05, 0.7, 0.1, 1.0` | Elements entering — decelerate (ease-out) |
-| `easing-exit` | `0.4, 0.0, 1.0, 1.0` | Elements leaving — accelerate (ease-in) |
-| `easing-spring` | Spring(180, 15) | Overshoot effects — buttons, bouncy cards |
-| `easing-emphasis` | `0.2, 0, 0, 1` | Expressive motion — hero, celebrations |
-| `easing-sharp` | `0.4, 0, 0.6, 1` | Reactive feedback — press, dismiss |
+| `easing-enter` | `0.05, 0.7, 0.1, 1.0` | Elements entering â€” decelerate (ease-out) |
+| `easing-exit` | `0.4, 0.0, 1.0, 1.0` | Elements leaving â€” accelerate (ease-in) |
+| `easing-spring` | Spring(180, 15) | Overshoot effects â€” buttons, bouncy cards |
+| `easing-emphasis` | `0.2, 0, 0, 1` | Expressive motion â€” hero, celebrations |
+| `easing-sharp` | `0.4, 0, 0.6, 1` | Reactive feedback â€” press, dismiss |
 
 #### 6.8.3 Stagger Tokens
 
@@ -1121,28 +1121,28 @@ Every Figma variable references its Tokens Studio source token:
 
 ```
 Tokens Studio (Figma)
-  │
-  ├── Export → tokens.json
-  │
-  ├── Push → GitHub (sb-design-tokens repo)
-  │   ├── tokens.json
-  │   ├── themes/dark.json
-  │   ├── themes/light.json
-  │   ├── themes/high-contrast.json
-  │   └── $metadata.json
-  │
-  ├── GitHub Action → Build:
-  │   ├── apps/web/tailwind.config.js (theme extension)
-  │   ├── apps/web/app/globals.css (CSS custom properties)
-  │   └── packages/types/tokens.ts (TypeScript constants)
-  │
-  └── Pull → Tokens Studio pulls from GitHub
+  â”‚
+  â”œâ”€â”€ Export â†’ tokens.json
+  â”‚
+  â”œâ”€â”€ Push â†’ GitHub (sb-design-tokens repo)
+  â”‚   â”œâ”€â”€ tokens.json
+  â”‚   â”œâ”€â”€ themes/dark.json
+  â”‚   â”œâ”€â”€ themes/light.json
+  â”‚   â”œâ”€â”€ themes/high-contrast.json
+  â”‚   â””â”€â”€ $metadata.json
+  â”‚
+  â”œâ”€â”€ GitHub Action â†’ Build:
+  â”‚   â”œâ”€â”€ apps/web/tailwind.config.js (theme extension)
+  â”‚   â”œâ”€â”€ apps/web/app/globals.css (CSS custom properties)
+  â”‚   â””â”€â”€ packages/types/tokens.ts (TypeScript constants)
+  â”‚
+  â””â”€â”€ Pull â†’ Tokens Studio pulls from GitHub
       (Designers get latest tokens from main branch)
 ```
 
 ### 6.13 Token Anti-Patterns
 
-| ❌ Anti-Pattern | Why | ✅ Correct |
+| âŒ Anti-Pattern | Why | âœ… Correct |
 |---|---|---|
 | `color-blue-500` used directly in component | Loses theme support | `$bg-card` or `$text-primary` |
 | Same value typed in 5 places | Drift risk | Single token reference |
@@ -1159,148 +1159,148 @@ Tokens Studio (Figma)
 ### 7.1 Atomic Design Hierarchy
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  PAGES (18)                                                       │
-│  Dashboard, Tasks, Courses, Goals, Habits, Sleep, Income,         │
-│  Projects, Ideas, Resources, Opportunities, Time, Chat,           │
-│  Automation, Youtube, Academics, Login, Root                      │
-├──────────────────────────────────────────────────────────────────┤
-│  ORGANISMS (11)                                                    │
-│  Sidebar, Navbar, DataTable, KanbanBoard, RoadmapCanvas,          │
-│  Heatmap, MessageList, CommandPalette, Calendar, ActivityFeed,    │
-│  FloatingActionButton                                             │
-├──────────────────────────────────────────────────────────────────┤
-│  MOLECULES (15)                                                    │
-│  FormField, InputGroup, ButtonGroup, TabBar, Pagination,          │
-│  Breadcrumbs, SearchBar, DropdownMenu, ToastNotification,         │
-│  ModalHeader, ModalFooter, ProgressWithLabel, StatCard,           │
-│  CardHeader, CardFooter                                           │
-├──────────────────────────────────────────────────────────────────┤
-│  ATOMS (14)                                                        │
-│  Button, Card, Input, Textarea, Select, Checkbox, Radio, Toggle,  │
-│  Badge, Tooltip, Avatar, Spinner, Progress, Skeleton, Divider,    │
-│  Tag                                                              │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  PAGES (18)                                                       â”‚
+â”‚  Dashboard, Tasks, Courses, Goals, Habits, Sleep, Income,         â”‚
+â”‚  Projects, Ideas, Resources, Opportunities, Time, Chat,           â”‚
+â”‚  Automation, Youtube, Academics, Login, Root                      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  ORGANISMS (11)                                                    â”‚
+â”‚  Sidebar, Navbar, DataTable, KanbanBoard, RoadmapCanvas,          â”‚
+â”‚  Heatmap, MessageList, CommandPalette, Calendar, ActivityFeed,    â”‚
+â”‚  FloatingActionButton                                             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  MOLECULES (15)                                                    â”‚
+â”‚  FormField, InputGroup, ButtonGroup, TabBar, Pagination,          â”‚
+â”‚  Breadcrumbs, SearchBar, DropdownMenu, ToastNotification,         â”‚
+â”‚  ModalHeader, ModalFooter, ProgressWithLabel, StatCard,           â”‚
+â”‚  CardHeader, CardFooter                                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  ATOMS (14)                                                        â”‚
+â”‚  Button, Card, Input, Textarea, Select, Checkbox, Radio, Toggle,  â”‚
+â”‚  Badge, Tooltip, Avatar, Spinner, Progress, Skeleton, Divider,    â”‚
+â”‚  Tag                                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.2 Component Implementation Status
 
 | Component | Atomic Level | Figma Status | Code Status | Priority | Notes |
 |---|---|---|---|---|---|
-| Button | Atom | ✅ Complete | ✅ Implemented | — | Two competing code implementations |
-| Card | Atom | ✅ Complete | ✅ Implemented | — | Code missing variant prop |
-| Input | Atom | ✅ Complete | ✅ Implemented | — | Two competing code implementations |
-| Textarea | Atom | 🔲 Planned | ❌ Missing | P1 | Essential for forms |
-| Select | Atom | ✅ Complete | ✅ Implemented | — | Only in UI.tsx |
-| Checkbox | Atom | 🔲 Planned | ❌ Missing | P0 | Used in task filters |
-| Radio | Atom | 🔲 Planned | ❌ Missing | P2 | Low current usage |
-| Toggle | Atom | 🔲 Planned | ❌ Missing | P2 | Low current usage |
-| Badge | Atom | 🔲 Planned | ❌ Missing | P1 | CSS class exists, no component |
-| Tooltip | Atom | 🔲 Planned | ❌ Missing | P1 | Required for truncation |
-| Avatar | Atom | 🔲 Planned | ❌ Missing | P2 | Inline in Navbar currently |
-| Spinner | Atom | 🔲 Planned | ❌ Missing | P1 | CSS class exists, no component |
-| Progress | Atom | 🔲 Planned | ❌ Missing | P1 | CSS class exists, no component |
-| Skeleton | Atom | ✅ Complete | ✅ Implemented | — | In UI.tsx |
-| Divider | Atom | 🔲 Planned | ❌ Missing | P2 | `<hr>` used inline |
-| Tag | Atom | 🔲 Planned | ❌ Missing | P2 | Low current usage |
-| FormField | Molecule | 🔲 Planned | ❌ Missing | P0 | Critical for forms |
-| InputGroup | Molecule | 🔲 Planned | ❌ Missing | P1 | Needed for search + icon |
-| ButtonGroup | Molecule | 🔲 Planned | ❌ Missing | P2 | Currently inline |
-| TabBar | Molecule | 🔲 Planned | ❌ Missing | P1 | Inline filters exist |
-| Pagination | Molecule | 🔲 Planned | ❌ Missing | P2 | No pagination yet |
-| Breadcrumbs | Molecule | 🔲 Planned | ❌ Missing | P2 | Not needed yet |
-| SearchBar | Molecule | 🔲 Planned | ❌ Missing | P1 | Inline in Navbar |
-| DropdownMenu | Molecule | 🔲 Planned | ❌ Missing | P1 | Inline in Navbar |
-| ToastNotification | Molecule | 🔲 Planned | ❌ Missing | P1 | react-hot-toast used |
-| ModalHeader | Molecule | 🔲 Planned | ❌ Missing | P1 | Inline in Modal usage |
-| ModalFooter | Molecule | 🔲 Planned | ❌ Missing | P1 | Inline in Modal usage |
-| ProgressWithLabel | Molecule | 🔲 Planned | ❌ Missing | P1 | Not implemented |
-| StatCard | Molecule | 🔲 Planned | ❌ Missing | P1 | Not implemented |
-| CardHeader | Molecule | ✅ Complete | ✅ Implemented | — | In Card.tsx |
-| CardTitle | Molecule | ✅ Complete | ✅ Implemented | — | In Card.tsx |
-| CardFooter | Molecule | 🔲 Planned | ❌ Missing | P2 | Not implemented |
-| Sidebar | Organism | ✅ Complete | ✅ Implemented | — | Self-contained |
-| Navbar | Organism | ✅ Complete | ✅ Implemented | — | Self-contained |
-| DataTable | Organism | 🔲 Planned | ❌ Missing | P0 | Required for tables |
-| KanbanBoard | Organism | 🔲 Planned | ❌ Missing | P1 | Task board view |
-| RoadmapCanvas | Organism | 🔲 Planned | ✅ Partial | P2 | React Flow edition |
-| Heatmap | Organism | 🔲 Planned | ❌ Missing | P2 | Dashboard enhancement |
-| MessageList | Organism | 🔲 Planned | ❌ Missing | P1 | Chat module |
-| CommandPalette | Organism | 🔲 Planned | ❌ Missing | P1 | Cmd+K search |
-| Calendar | Organism | 🔲 Planned | ❌ Missing | P2 | Course schedule |
-| ActivityFeed | Organism | 🔲 Planned | ❌ Missing | P2 | Analytics |
-| FloatingActionButton | Organism | 🔲 Planned | ❌ Missing | P2 | Quick capture |
-| OfflineBanner | Organism | ✅ Complete | ✅ Implemented | — | Special-purpose |
-| ThreeBackground | Special | ✅ Complete | ✅ Implemented | — | Login page only |
+| Button | Atom | âœ… Complete | âœ… Implemented | â€” | Two competing code implementations |
+| Card | Atom | âœ… Complete | âœ… Implemented | â€” | Code missing variant prop |
+| Input | Atom | âœ… Complete | âœ… Implemented | â€” | Two competing code implementations |
+| Textarea | Atom | ðŸ”² Planned | âŒ Missing | P1 | Essential for forms |
+| Select | Atom | âœ… Complete | âœ… Implemented | â€” | Only in UI.tsx |
+| Checkbox | Atom | ðŸ”² Planned | âŒ Missing | P0 | Used in task filters |
+| Radio | Atom | ðŸ”² Planned | âŒ Missing | P2 | Low current usage |
+| Toggle | Atom | ðŸ”² Planned | âŒ Missing | P2 | Low current usage |
+| Badge | Atom | ðŸ”² Planned | âŒ Missing | P1 | CSS class exists, no component |
+| Tooltip | Atom | ðŸ”² Planned | âŒ Missing | P1 | Required for truncation |
+| Avatar | Atom | ðŸ”² Planned | âŒ Missing | P2 | Inline in Navbar currently |
+| Spinner | Atom | ðŸ”² Planned | âŒ Missing | P1 | CSS class exists, no component |
+| Progress | Atom | ðŸ”² Planned | âŒ Missing | P1 | CSS class exists, no component |
+| Skeleton | Atom | âœ… Complete | âœ… Implemented | â€” | In UI.tsx |
+| Divider | Atom | ðŸ”² Planned | âŒ Missing | P2 | `<hr>` used inline |
+| Tag | Atom | ðŸ”² Planned | âŒ Missing | P2 | Low current usage |
+| FormField | Molecule | ðŸ”² Planned | âŒ Missing | P0 | Critical for forms |
+| InputGroup | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Needed for search + icon |
+| ButtonGroup | Molecule | ðŸ”² Planned | âŒ Missing | P2 | Currently inline |
+| TabBar | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Inline filters exist |
+| Pagination | Molecule | ðŸ”² Planned | âŒ Missing | P2 | No pagination yet |
+| Breadcrumbs | Molecule | ðŸ”² Planned | âŒ Missing | P2 | Not needed yet |
+| SearchBar | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Inline in Navbar |
+| DropdownMenu | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Inline in Navbar |
+| ToastNotification | Molecule | ðŸ”² Planned | âŒ Missing | P1 | react-hot-toast used |
+| ModalHeader | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Inline in Modal usage |
+| ModalFooter | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Inline in Modal usage |
+| ProgressWithLabel | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Not implemented |
+| StatCard | Molecule | ðŸ”² Planned | âŒ Missing | P1 | Not implemented |
+| CardHeader | Molecule | âœ… Complete | âœ… Implemented | â€” | In Card.tsx |
+| CardTitle | Molecule | âœ… Complete | âœ… Implemented | â€” | In Card.tsx |
+| CardFooter | Molecule | ðŸ”² Planned | âŒ Missing | P2 | Not implemented |
+| Sidebar | Organism | âœ… Complete | âœ… Implemented | â€” | Self-contained |
+| Navbar | Organism | âœ… Complete | âœ… Implemented | â€” | Self-contained |
+| DataTable | Organism | ðŸ”² Planned | âŒ Missing | P0 | Required for tables |
+| KanbanBoard | Organism | ðŸ”² Planned | âŒ Missing | P1 | Task board view |
+| RoadmapCanvas | Organism | ðŸ”² Planned | âœ… Partial | P2 | React Flow edition |
+| Heatmap | Organism | ðŸ”² Planned | âŒ Missing | P2 | Dashboard enhancement |
+| MessageList | Organism | ðŸ”² Planned | âŒ Missing | P1 | Chat module |
+| CommandPalette | Organism | ðŸ”² Planned | âŒ Missing | P1 | Cmd+K search |
+| Calendar | Organism | ðŸ”² Planned | âŒ Missing | P2 | Course schedule |
+| ActivityFeed | Organism | ðŸ”² Planned | âŒ Missing | P2 | Analytics |
+| FloatingActionButton | Organism | ðŸ”² Planned | âŒ Missing | P2 | Quick capture |
+| OfflineBanner | Organism | âœ… Complete | âœ… Implemented | â€” | Special-purpose |
+| ThreeBackground | Special | âœ… Complete | âœ… Implemented | â€” | Login page only |
 
 ### 7.3 Component Maturity Model
 
 | Stage | Label | Criteria | Figma Status | Code Status | Governance |
 |---|---|---|---|---|---|
-| **0 — Planned** | `plnd` | Spec document approved, no design work | Not started | Not started | Proposal in Sandbox |
-| **1 — Alpha** | `alpha` | Core interaction designed, primary state only | Design in Sandbox | Proof of concept | Internal testing only |
-| **2 — Beta** | `beta` | All states designed, token-clean, reviewed | In Antigravity Library | Feature branch | Limited consumption |
-| **3 — Stable** | `stable` | All variants, responsive, accessibility-verified, coded match | Published library component | Main branch | Full consumption allowed |
-| **4 — Deprecated** | `depr` | Replacement exists, migration guide published | Moved to Archive | Migration warning | No new usage |
+| **0 â€” Planned** | `plnd` | Spec document approved, no design work | Not started | Not started | Proposal in Sandbox |
+| **1 â€” Alpha** | `alpha` | Core interaction designed, primary state only | Design in Sandbox | Proof of concept | Internal testing only |
+| **2 â€” Beta** | `beta` | All states designed, token-clean, reviewed | In Antigravity Library | Feature branch | Limited consumption |
+| **3 â€” Stable** | `stable` | All variants, responsive, accessibility-verified, coded match | Published library component | Main branch | Full consumption allowed |
+| **4 â€” Deprecated** | `depr` | Replacement exists, migration guide published | Moved to Archive | Migration warning | No new usage |
 
 ### 7.4 Component Specification Template
 
 Every component in Figma MUST have a spec page following this template:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  COMPONENT SPEC: [Component Name]                                │
-│  Status: [stable | beta | alpha | planned]                      │
-│  Version: [semver]                                              │
-│  Last Updated: [date]                                           │
-│                                                                 │
-│  ┌─ DESCRIPTION ─────────────────────────────────────────────┐  │
-│  │  One-paragraph description of what this component does      │  │
-│  │  and when to use it.                                       │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ ANATOMY ─────────────────────────────────────────────────┐  │
-│  │  [Layer diagram with numbered parts]                      │  │
-│  │  1. Container — $bg-elevated, $radius-card, $shadow-sm    │  │
-│  │  2. Label — $text-label, $font-body                       │  │
-│  │  3. Icon — 20×20, $opacity-icon                          │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ PROPS TABLE ────────────────────────────────────────────┐  │
-│  │  | Prop | Type | Default | Values | Description |        │  │
-│  │  |------|------|---------|--------|-------------|        │  │
-│  │  | variant | variant | primary | primary/secondary/... |  │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ STATES ──────────────────────────────────────────────────┐  │
-│  │  [Matrix of required states with screenshots]             │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ TOKENS USED ───────────────────────────────────────────┐  │
-│  │  $bg-elevated, $text-primary, $radius-md, $spacing-3    │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ CODE REFERENCE ─────────────────────────────────────────┐  │
-│  │  Stitch component: apps/web/components/[Name].tsx        │  │
-│  │  Radix primitive: @radix-ui/react-[primitive]            │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ ACCESSIBILITY ──────────────────────────────────────────┐  │
-│  │  WCAG criteria met, keyboard interactions, aria patterns  │  │
-│  └───────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  COMPONENT SPEC: [Component Name]                                â”‚
+â”‚  Status: [stable | beta | alpha | planned]                      â”‚
+â”‚  Version: [semver]                                              â”‚
+â”‚  Last Updated: [date]                                           â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ DESCRIPTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  One-paragraph description of what this component does      â”‚  â”‚
+â”‚  â”‚  and when to use it.                                       â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ ANATOMY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  [Layer diagram with numbered parts]                      â”‚  â”‚
+â”‚  â”‚  1. Container â€” $bg-elevated, $radius-card, $shadow-sm    â”‚  â”‚
+â”‚  â”‚  2. Label â€” $text-label, $font-body                       â”‚  â”‚
+â”‚  â”‚  3. Icon â€” 20Ã—20, $opacity-icon                          â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ PROPS TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  | Prop | Type | Default | Values | Description |        â”‚  â”‚
+â”‚  â”‚  |------|------|---------|--------|-------------|        â”‚  â”‚
+â”‚  â”‚  | variant | variant | primary | primary/secondary/... |  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ STATES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  [Matrix of required states with screenshots]             â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ TOKENS USED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  $bg-elevated, $text-primary, $radius-md, $spacing-3    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ CODE REFERENCE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Stitch component: apps/web/components/[Name].tsx        â”‚  â”‚
+â”‚  â”‚  Radix primitive: @radix-ui/react-[primitive]            â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                 â”‚
+â”‚  â”Œâ”€ ACCESSIBILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  WCAG criteria met, keyboard interactions, aria patterns  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.5 Component Gap Action Plan
 
 | Priority | Component | Action | Target Sprint | Assignee |
 |---|---|---|---|---|
-| P0 | FormField | Design + spec → code | Sprint 1 | DSG + Stitch |
-| P0 | DataTable | Research + design → spec → code | Sprint 2-3 | DSG + Stitch |
-| P0 | Checkbox | Quick design → code | Sprint 1 | Stitch |
+| P0 | FormField | Design + spec â†’ code | Sprint 1 | DSG + Stitch |
+| P0 | DataTable | Research + design â†’ spec â†’ code | Sprint 2-3 | DSG + Stitch |
+| P0 | Checkbox | Quick design â†’ code | Sprint 1 | Stitch |
 | P1 | Textarea, Badge, Tooltip, Spinner, Progress | Design batch | Sprint 1-2 | DSG |
 | P1 | SearchBar, DropdownMenu, TabBar, ToastNotification | Convert inline code to components | Sprint 2 | Stitch |
-| P1 | CommandPalette, MessageList, KanbanBoard | Design → spec → code | Sprint 3-4 | Full team |
+| P1 | CommandPalette, MessageList, KanbanBoard | Design â†’ spec â†’ code | Sprint 3-4 | Full team |
 | P2 | Radio, Toggle, Avatar, Divider, Tag, Calendar, Heatmap | Research first | Sprint 4+ | DSG |
 
 ---
@@ -1324,17 +1324,17 @@ Component Set Properties:
 
 | Component | Property 1 | Property 2 | Property 3 | Property 4 | Property 5 | Total Variants |
 |---|---|---|---|---|---|---|
-| **Button** | type: `primary`, `secondary`, `ghost`, `danger` | size: `sm`, `md`, `lg` | state: `default`, `hover`, `active`, `focus`, `disabled`, `loading` | isIconOnly | — | 4 × 3 × 6 × 2 = 144 |
-| **Input** | type: `text`, `password`, `email`, `search`, `number` | size: `sm`, `md`, `lg` | state: `default`, `hover`, `focus`, `error`, `disabled`, `readOnly` | | — | 5 × 3 × 6 = 90 |
-| **Card** | variant: `default`, `interactive`, `highlighted`, `compact`, `glass`, `bento` | padding: `sm`, `md`, `lg` | state: `default`, `hover` (interactive only) | — | — | 6 × 3 + 1 hover = 19 |
-| **Badge** | variant: `primary`, `success`, `warning`, `error`, `info`, `neutral` | size: `sm`, `md`, `lg` | — | isDot, isRemovable | — | 6 × 3 × 2 × 2 = 72 |
-| **Modal** | size: `sm`, `md`, `lg`, `xl`, `full` | — | state: `open`, `closed` | — | — | 5 × 2 = 10 |
-| **Tooltip** | position: `top`, `bottom`, `left`, `right` | — | state: `hidden`, `visible` | — | — | 4 × 2 = 8 |
-| **Toggle** | size: `sm`, `md` | — | state: `off`, `on`, `disabled-off`, `disabled-on` | isLabeled | — | 2 × 4 × 2 = 16 |
-| **Checkbox** | size: `sm`, `md` | — | state: `unchecked`, `checked`, `indeterminate`, `disabled-unchecked`, `disabled-checked`, `error` | isLabeled | — | 2 × 6 × 2 = 24 |
-| **Select** | size: `sm`, `md`, `lg` | — | state: `default`, `hover`, `focus`, `error`, `disabled`, `open` | — | — | 3 × 6 = 18 |
-| **TabBar** | variant: `underline`, `pill`, `enclosed` | size: `sm`, `md` | state: `default`, `hover`, `active`, `focus` | — | — | 3 × 2 × 4 = 24 |
-| **DropdownMenu** | size: `sm`, `md` | — | state: `closed`, `open` | isDangerItem | — | 2 × 2 × 2 = 8 |
+| **Button** | type: `primary`, `secondary`, `ghost`, `danger` | size: `sm`, `md`, `lg` | state: `default`, `hover`, `active`, `focus`, `disabled`, `loading` | isIconOnly | â€” | 4 Ã— 3 Ã— 6 Ã— 2 = 144 |
+| **Input** | type: `text`, `password`, `email`, `search`, `number` | size: `sm`, `md`, `lg` | state: `default`, `hover`, `focus`, `error`, `disabled`, `readOnly` | | â€” | 5 Ã— 3 Ã— 6 = 90 |
+| **Card** | variant: `default`, `interactive`, `highlighted`, `compact`, `glass`, `bento` | padding: `sm`, `md`, `lg` | state: `default`, `hover` (interactive only) | â€” | â€” | 6 Ã— 3 + 1 hover = 19 |
+| **Badge** | variant: `primary`, `success`, `warning`, `error`, `info`, `neutral` | size: `sm`, `md`, `lg` | â€” | isDot, isRemovable | â€” | 6 Ã— 3 Ã— 2 Ã— 2 = 72 |
+| **Modal** | size: `sm`, `md`, `lg`, `xl`, `full` | â€” | state: `open`, `closed` | â€” | â€” | 5 Ã— 2 = 10 |
+| **Tooltip** | position: `top`, `bottom`, `left`, `right` | â€” | state: `hidden`, `visible` | â€” | â€” | 4 Ã— 2 = 8 |
+| **Toggle** | size: `sm`, `md` | â€” | state: `off`, `on`, `disabled-off`, `disabled-on` | isLabeled | â€” | 2 Ã— 4 Ã— 2 = 16 |
+| **Checkbox** | size: `sm`, `md` | â€” | state: `unchecked`, `checked`, `indeterminate`, `disabled-unchecked`, `disabled-checked`, `error` | isLabeled | â€” | 2 Ã— 6 Ã— 2 = 24 |
+| **Select** | size: `sm`, `md`, `lg` | â€” | state: `default`, `hover`, `focus`, `error`, `disabled`, `open` | â€” | â€” | 3 Ã— 6 = 18 |
+| **TabBar** | variant: `underline`, `pill`, `enclosed` | size: `sm`, `md` | state: `default`, `hover`, `active`, `focus` | â€” | â€” | 3 Ã— 2 Ã— 4 = 24 |
+| **DropdownMenu** | size: `sm`, `md` | â€” | state: `closed`, `open` | isDangerItem | â€” | 2 Ã— 2 Ã— 2 = 8 |
 
 ### 8.3 State Variant Requirements
 
@@ -1342,16 +1342,16 @@ Every interactive component MUST implement these states:
 
 | State | Visual Change | Token Changes | Required |
 |---|---|---|---|
-| **Default** | Base appearance | — | ✅ Required |
-| **Hover** | Background lighten, border accent, cursor | `bg-elevated`, `border-focus` | ✅ Required (interactive) |
-| **Active / Pressed** | Scale down (0.97), background darker | `bg-elevated-dark`, scale transform | ✅ Required (interactive) |
-| **Focus** | Focus ring (2px outline offset 2px) | `shadow-focus`, `border-focus` | ✅ Required (keyboard) |
-| **Disabled** | Reduced opacity, no events | `opacity-medium`, `text-disabled` | ✅ Required |
-| **Loading** | Spinner replaces icon/text, no interaction | Pulse animation, pointer-events none | ⚠️ Conditional |
-| **Error** | Red border, error icon, error message | `border-error`, `text-error` | ⚠️ Conditional (inputs) |
-| **Empty** | Placeholder content, muted text | `text-tertiary` | ⚠️ Conditional (data) |
-| **Read Only** | No border, no interaction, static | Text-only with muted bg | ⚠️ Conditional (inputs) |
-| **Selected** | Highlighted background, accent border | `bg-accent-primary / 10%` | ⚠️ Conditional (lists) |
+| **Default** | Base appearance | â€” | âœ… Required |
+| **Hover** | Background lighten, border accent, cursor | `bg-elevated`, `border-focus` | âœ… Required (interactive) |
+| **Active / Pressed** | Scale down (0.97), background darker | `bg-elevated-dark`, scale transform | âœ… Required (interactive) |
+| **Focus** | Focus ring (2px outline offset 2px) | `shadow-focus`, `border-focus` | âœ… Required (keyboard) |
+| **Disabled** | Reduced opacity, no events | `opacity-medium`, `text-disabled` | âœ… Required |
+| **Loading** | Spinner replaces icon/text, no interaction | Pulse animation, pointer-events none | âš ï¸ Conditional |
+| **Error** | Red border, error icon, error message | `border-error`, `text-error` | âš ï¸ Conditional (inputs) |
+| **Empty** | Placeholder content, muted text | `text-tertiary` | âš ï¸ Conditional (data) |
+| **Read Only** | No border, no interaction, static | Text-only with muted bg | âš ï¸ Conditional (inputs) |
+| **Selected** | Highlighted background, accent border | `bg-accent-primary / 10%` | âš ï¸ Conditional (lists) |
 
 ### 8.4 Theme Variants
 
@@ -1359,13 +1359,13 @@ Every component MUST support **Dark** theme. **Light** and **High Contrast** are
 
 | Theme | Target | Timeline | Enforcement |
 |---|---|---|---|
-| **Dark** | All components — Stable | v1.0 | Required for all states |
-| **Light** | Atoms + Molecules — Stable; Organisms — Beta | v1.1 | Token swap only |
-| **High Contrast** | All atoms — Beta | v1.2 | Manual a11y review |
-| **Custom (Accent)** | Tokens only — no component variants | v1.0 | Accent color token swap |
+| **Dark** | All components â€” Stable | v1.0 | Required for all states |
+| **Light** | Atoms + Molecules â€” Stable; Organisms â€” Beta | v1.1 | Token swap only |
+| **High Contrast** | All atoms â€” Beta | v1.2 | Manual a11y review |
+| **Custom (Accent)** | Tokens only â€” no component variants | v1.0 | Accent color token swap |
 
 **Theme implementation approach:**
-- Themes use token-level switching only — no component variant duplication for theme
+- Themes use token-level switching only â€” no component variant duplication for theme
 - Dark remains the default theme; components are designed dark-first
 - Light theme derived by changing semantic token values (same component structure)
 - High Contrast theme uses increased contrast ratios with solid borders instead of glass
@@ -1408,15 +1408,15 @@ Components that change structure across breakpoints use **breakpoint variants**:
 |---|---|
 | **V1** | Maximum 6 properties per component set. Beyond 6, split into sub-components. |
 | **V2** | Boolean properties must use `is` prefix. Avoid swapped boolean names (use `isDisabled`, never `isEnabled`). |
-| **V3** | Properties are ordered by importance: type → size → state → boolean modifiers. |
+| **V3** | Properties are ordered by importance: type â†’ size â†’ state â†’ boolean modifiers. |
 | **V4** | Property values are kebab-case text, never numbers or abbreviations. |
 | **V5** | If two components share >70% of their variant matrix, consider merging. |
 | **V6** | No component variant should exceed 200 instances. Split into logical sub-components if needed. |
-| **V7** | Disabled states are created via boolean override, not as separate component variants — unless the disabled visual differs structurally (not just opacity). |
+| **V7** | Disabled states are created via boolean override, not as separate component variants â€” unless the disabled visual differs structurally (not just opacity). |
 
 ---
 
-# Part IV — Quality & Compliance
+# Part IV â€” Quality & Compliance
 
 ---
 
@@ -1426,70 +1426,70 @@ Components that change structure across breakpoints use **breakpoint variants**:
 
 | Standard | Target | Verification Method | Timeline |
 |---|---|---|---|
-| WCAG 2.2 Level AA | All components — Stable | Manual audit + axe-core scan | v1.0 |
+| WCAG 2.2 Level AA | All components â€” Stable | Manual audit + axe-core scan | v1.0 |
 | WCAG 2.2 Level AAA | High Contrast theme tokens | Color contrast ratio check | v1.2 |
-| Section 508 | All components — Beta | VPAT documentation | v1.1 |
-| EN 301 549 | All components — Beta | EU accessibility conformity | v1.2 |
+| Section 508 | All components â€” Beta | VPAT documentation | v1.1 |
+| EN 301 549 | All components â€” Beta | EU accessibility conformity | v1.2 |
 
 ### 9.2 Color Contrast Requirements
 
 | Token Category | Dark Theme | Light Theme | High Contrast | WCAG Level |
 |---|---|---|---|---|
-| `text-primary` on `bg-page` | ≥ 13.5:1 | ≥ 14.5:1 | ≥ 15:1 | AAA |
-| `text-primary` on `bg-card` | ≥ 12.5:1 | ≥ 13.5:1 | ≥ 15:1 | AAA |
-| `text-secondary` on `bg-page` | ≥ 7.0:1 | ≥ 7.5:1 | ≥ 10:1 | AAA |
-| `text-secondary` on `bg-card` | ≥ 6.5:1 | ≥ 7.0:1 | ≥ 10:1 | AA |
-| `accent-primary` on `bg-page` | ≥ 6.0:1 | ≥ 6.8:1 | ≥ 7.5:1 | AA |
-| `accent-primary` on `bg-card` | ≥ 5.5:1 | ≥ 6.2:1 | ≥ 7.5:1 | AA |
-| `text-error` on `bg-page` | ≥ 5.5:1 | ≥ 6.0:1 | ≥ 7.0:1 | AA |
-| `accent-neon` on `bg-page` | ≥ 4.5:1 | ≥ 4.8:1 | ≥ 7.0:1 | AA (large text) |
-| Disabled text on any bg | ≥ 3.0:1 | ≥ 3.0:1 | ≥ 4.5:1 | AA (non-text) |
+| `text-primary` on `bg-page` | â‰¥ 13.5:1 | â‰¥ 14.5:1 | â‰¥ 15:1 | AAA |
+| `text-primary` on `bg-card` | â‰¥ 12.5:1 | â‰¥ 13.5:1 | â‰¥ 15:1 | AAA |
+| `text-secondary` on `bg-page` | â‰¥ 7.0:1 | â‰¥ 7.5:1 | â‰¥ 10:1 | AAA |
+| `text-secondary` on `bg-card` | â‰¥ 6.5:1 | â‰¥ 7.0:1 | â‰¥ 10:1 | AA |
+| `accent-primary` on `bg-page` | â‰¥ 6.0:1 | â‰¥ 6.8:1 | â‰¥ 7.5:1 | AA |
+| `accent-primary` on `bg-card` | â‰¥ 5.5:1 | â‰¥ 6.2:1 | â‰¥ 7.5:1 | AA |
+| `text-error` on `bg-page` | â‰¥ 5.5:1 | â‰¥ 6.0:1 | â‰¥ 7.0:1 | AA |
+| `accent-neon` on `bg-page` | â‰¥ 4.5:1 | â‰¥ 4.8:1 | â‰¥ 7.0:1 | AA (large text) |
+| Disabled text on any bg | â‰¥ 3.0:1 | â‰¥ 3.0:1 | â‰¥ 4.5:1 | AA (non-text) |
 
 **Token contrast verification protocol:**
 1. Every new color token submission must include contrast ratio against all four surface backgrounds (page, card, elevated, input)
 2. If any contrast falls below 3.0:1, the token can only be used for decorative purposes (not information-bearing)
 3. Auto-generated report in CI compares every semantic token against every background token
-4. High Contrast theme must pass all ratios at ≥ 7:1 for text, ≥ 4.5:1 for non-text
+4. High Contrast theme must pass all ratios at â‰¥ 7:1 for text, â‰¥ 4.5:1 for non-text
 
 ### 9.3 Touch Target Requirements
 
 | Context | Minimum Target Size | Applied Token | Verification |
 |---|---|---|---|
-| All interactive elements | 44 × 44px | `spacing-11` (44px) | Automated layout scan |
-| Mobile (<768px) | 44 × 44px | `min-h-touch`, `min-w-touch` | Responsive checker |
-| Tablet (768-1023px) | 44 × 44px | `min-h-touch`, `min-w-touch` | Responsive checker |
-| Desktop (≥1024px) | 44 × 36px | `min-h-button` | Manual review |
-| Icon buttons | 44 × 44px | `w-11 h-11` | Automated |
-| Inline links | 44 × 24px (min height) | `py-2` | Manual (focus area) |
-| Form controls | 44 × 44px | `min-h-input` | Automated |
-| Bottom nav (mobile) | 56 × 44px | `h-14` | Responsive checker |
-| Slider / handles | 44 × 44px | `w-11 h-11` | Manual review |
+| All interactive elements | 44 Ã— 44px | `spacing-11` (44px) | Automated layout scan |
+| Mobile (<768px) | 44 Ã— 44px | `min-h-touch`, `min-w-touch` | Responsive checker |
+| Tablet (768-1023px) | 44 Ã— 44px | `min-h-touch`, `min-w-touch` | Responsive checker |
+| Desktop (â‰¥1024px) | 44 Ã— 36px | `min-h-button` | Manual review |
+| Icon buttons | 44 Ã— 44px | `w-11 h-11` | Automated |
+| Inline links | 44 Ã— 24px (min height) | `py-2` | Manual (focus area) |
+| Form controls | 44 Ã— 44px | `min-h-input` | Automated |
+| Bottom nav (mobile) | 56 Ã— 44px | `h-14` | Responsive checker |
+| Slider / handles | 44 Ã— 44px | `w-11 h-11` | Manual review |
 
-**Touch target rule:** No interactive element may have a tappable area smaller than 44×44 CSS pixels. If the visual element is smaller, expand the hit area via `::before` pseudo-element or transparent padding.
+**Touch target rule:** No interactive element may have a tappable area smaller than 44Ã—44 CSS pixels. If the visual element is smaller, expand the hit area via `::before` pseudo-element or transparent padding.
 
 ### 9.4 Keyboard Navigation Requirements
 
 | Interaction | Pattern | WCAG Criterion | Verification |
 |---|---|---|---|
-| Tab order | Logical DOM order — follows visual layout | 2.4.3 Focus Order | Manual + tab test |
+| Tab order | Logical DOM order â€” follows visual layout | 2.4.3 Focus Order | Manual + tab test |
 | Focus indicator | 2px ring, offset 2px, never removed | 2.4.7 Focus Visible | CSS audit |
 | Skip link | First focusable element on page | 2.4.1 Bypass Blocks | Manual |
-| Escape | Closes dropdowns, modals, popovers | — | Integration test |
-| Enter / Space | Activates buttons, links, toggles | — | Automation |
-| Arrow keys | Within listboxes, tab bars, tree views | — | Integration test |
+| Escape | Closes dropdowns, modals, popovers | â€” | Integration test |
+| Enter / Space | Activates buttons, links, toggles | â€” | Automation |
+| Arrow keys | Within listboxes, tab bars, tree views | â€” | Integration test |
 | Tab (within modal) | Traps focus in open modal | 1.4.11 Focus Trap | Automated |
-| Cmd+K | Opens command palette | — | Manual |
-| Esc (modal) | Closes modal without confirmation | — | Integration test |
-| Arrow (dropdown) | Navigates dropdown options | — | Integration test |
+| Cmd+K | Opens command palette | â€” | Manual |
+| Esc (modal) | Closes modal without confirmation | â€” | Integration test |
+| Arrow (dropdown) | Navigates dropdown options | â€” | Integration test |
 
 **Focus management rules:**
 
 | Rule | Description |
 |---|---|
-| **FK1** | Every interactive element must have a visible focus ring — never use `outline: none` without a replacement |
-| **FK2** | Focus ring color: `$color-border-focus` (indigo 500) — consistent across all components |
+| **FK1** | Every interactive element must have a visible focus ring â€” never use `outline: none` without a replacement |
+| **FK2** | Focus ring color: `$color-border-focus` (indigo 500) â€” consistent across all components |
 | **FK3** | Focus ring width: 2px, offset: 2px, style: `outline-offset: 2px` |
-| **FK4** | `:focus-visible` for keyboard-initiated focus — separate from `:focus` for mouse clicks |
+| **FK4** | `:focus-visible` for keyboard-initiated focus â€” separate from `:focus` for mouse clicks |
 | **FK5** | Modal opens: focus first focusable element. Modal closes: return focus to trigger element |
 | **FK6** | Custom interactive elements (not native HTML) must use `tabindex="0"`, `role`, and keyboard event handlers |
 | **FK7** | Never tab to disabled elements (`tabindex="-1"`) |
@@ -1498,19 +1498,19 @@ Components that change structure across breakpoints use **breakpoint variants**:
 
 Every animated component MUST respect operating system reduced motion preferences. Components must provide a static alternative for every animation.
 
-#### Animation → Static Replacement Table
+#### Animation â†’ Static Replacement Table
 
 | Animation | Motion Variant | Reduced Motion Replacement |
 |---|---|---|
-| Entry fade-in | `opacity 0→1, translateY: 20px→0` | `opacity 1` (instant appear) |
-| Exit fade-out | `opacity 1→0` | `opacity 0` (instant disappear) |
+| Entry fade-in | `opacity 0â†’1, translateY: 20pxâ†’0` | `opacity 1` (instant appear) |
+| Exit fade-out | `opacity 1â†’0` | `opacity 0` (instant disappear) |
 | Stagger entrance | Items appear with 50ms delay each | All items appear simultaneously |
-| Scale press | `scale: 1→0.97` | No scale change |
-| Slide (sidebar) | `translateX: -240→0, 250ms` | Instant position change |
-| Slide (modal) | `translateY: 20→0, 200ms` | Instant appear |
-| Parallax | Background moves slower than foreground | No parallax — static background |
+| Scale press | `scale: 1â†’0.97` | No scale change |
+| Slide (sidebar) | `translateX: -240â†’0, 250ms` | Instant position change |
+| Slide (modal) | `translateY: 20â†’0, 200ms` | Instant appear |
+| Parallax | Background moves slower than foreground | No parallax â€” static background |
 | Pulse glow | Box-shadow oscillates | Static shadow (no animation) |
-| Floating (decorative) | `translateY` oscillates -10px to 10px | No float — fixed position |
+| Floating (decorative) | `translateY` oscillates -10px to 10px | No float â€” fixed position |
 | Scanline overlay | `translateY` animates | Static overlay image |
 | Progress fill | Width animates from 0% to target | Instant width change |
 | Character (Rive) | Full animation | Static poster frame |
@@ -1543,15 +1543,15 @@ function AnimatedComponent() {
 | Toggle | `role="switch"` | `aria-checked`, `aria-labelledby` | Space to toggle |
 | Select / Dropdown | `role="combobox"` | `aria-expanded`, `aria-controls`, `aria-activedescendant` | Enter to open, arrow to navigate, Enter to select, Escape to close |
 | Listbox | `role="listbox"` | `aria-multiselectable` (if applicable) | Arrow keys |
-| Option | `role="option"` | `aria-selected` | — |
+| Option | `role="option"` | `aria-selected` | â€” |
 | Modal | `role="dialog"` or `role="alertdialog"` | `aria-modal="true"`, `aria-labelledby` (title), `aria-describedby` (description) | Tab trap, Escape to close |
 | Tab | `role="tab"` on tab, `role="tabpanel"` on panel | `aria-selected`, `aria-controls`, `aria-labelledby` | Arrow keys to switch tabs |
 | Tooltip | `role="tooltip"` | `aria-describedby` on trigger element | Hover or focus to show, Escape to dismiss |
 | Alert / Toast | `role="alert"` | `aria-live="polite"` or `"assertive"` | Auto-dismiss, focus if persistent |
-| Progress bar | `role="progressbar"` | `aria-valuenow`, `aria-valuemin`, `aria-valuemax` | — |
-| Badge | No role (decorative) | `aria-label` if meaningful | — |
-| Avatar | No role (decorative) or `role="img"` | `aria-label` for user name | — |
-| Skeleton | `role="status"` or `aria-hidden="true"` | `aria-label="Loading..."` | — |
+| Progress bar | `role="progressbar"` | `aria-valuenow`, `aria-valuemin`, `aria-valuemax` | â€” |
+| Badge | No role (decorative) | `aria-label` if meaningful | â€” |
+| Avatar | No role (decorative) or `role="img"` | `aria-label` for user name | â€” |
+| Skeleton | `role="status"` or `aria-hidden="true"` | `aria-label="Loading..."` | â€” |
 | Navigation | `role="navigation"` or `<nav>` | `aria-label="Main navigation"` | Tab through items |
 
 ### 9.7 Accessibility Review Checklist
@@ -1559,10 +1559,10 @@ function AnimatedComponent() {
 Every component review must verify:
 
 ```
-[ ] Color contrast ≥ 4.5:1 for all text (AA)
-[ ] Color contrast ≥ 3.0:1 for non-text elements (AA)
+[ ] Color contrast â‰¥ 4.5:1 for all text (AA)
+[ ] Color contrast â‰¥ 3.0:1 for non-text elements (AA)
 [ ] Focus indicator visible on all interactive elements
-[ ] Touch targets ≥ 44×44px
+[ ] Touch targets â‰¥ 44Ã—44px
 [ ] All interactive elements keyboard-accessible
 [ ] Modal focus trap works correctly
 [ ] Reduced motion respected
@@ -1586,8 +1586,8 @@ Every component review must verify:
 |---|---|
 | **IS1** | **Library:** lucide-react only. No duplicative icon sets. No custom SVG icons unless lucide has no equivalent. |
 | **IS2** | **Naming:** lucide naming convention (snake_case). New custom icons follow same convention. |
-| **IS3** | **Grid:** Icons sit on a transparent 24×24px grid. 16px and 20px variant grids also supported. |
-| **IS4** | **Sizing in components:** sm = 16×16, md = 20×20 (default), lg = 24×24, xl = 32×32. |
+| **IS3** | **Grid:** Icons sit on a transparent 24Ã—24px grid. 16px and 20px variant grids also supported. |
+| **IS4** | **Sizing in components:** sm = 16Ã—16, md = 20Ã—20 (default), lg = 24Ã—24, xl = 32Ã—32. |
 | **IS5** | **Stroke width:** lucide default (2px). Do not change stroke width. |
 | **IS6** | **Color:** Icons inherit color from adjacent text. Use icon color only to communicate meaning (status, state, interaction). |
 | **IS7** | **Color rule:** A standalone colored icon (without text) must be self-explanatory contextually. |
@@ -1599,28 +1599,28 @@ Every component review must verify:
 
 | Context | Size | Token |
 |---|---|---|
-| Inline with text (body) | 16×16 | `size-sm` |
-| Button / list item | 20×20 | `size-md` |
-| Navbar icons | 20×20 | `size-md` |
-| Sidebar icons | 20×20 | `size-md` |
-| Feature / empty states | 48×64 (icon + container) | Custom |
-| Hero / landing | 64×64+ | Custom |
-| Data viz / chart markers | 12×12 | Custom dot |
-| Badge dot | 8×8 | Custom dot |
+| Inline with text (body) | 16Ã—16 | `size-sm` |
+| Button / list item | 20Ã—20 | `size-md` |
+| Navbar icons | 20Ã—20 | `size-md` |
+| Sidebar icons | 20Ã—20 | `size-md` |
+| Feature / empty states | 48Ã—64 (icon + container) | Custom |
+| Hero / landing | 64Ã—64+ | Custom |
+| Data viz / chart markers | 12Ã—12 | Custom dot |
+| Badge dot | 8Ã—8 | Custom dot |
 
 ### 10.2 Illustration Governance
 
 | Tier | Usage | Style | File Format |
 |---|---|---|---|
-| **Tier 1 — Empty States** | Shown when module has no data (e.g., "No tasks yet") | Cyberpunk-themed illustrations with neon accents, dark backgrounds, 3D isometric elements | `.svg` (vectors) |
-| **Tier 2 — Onboarding** | Tutorial steps, feature introductions, first-time user flows | Character-driven scenes with product UI shown in-context | `.svg` (vectors) |
-| **Tier 3 — Decorative** | Landing page hero, login page background, brand moments | Abstract cyberpunk tech patterns, grid lines, particle systems | CSS / Three.js (runtime) |
+| **Tier 1 â€” Empty States** | Shown when module has no data (e.g., "No tasks yet") | Cyberpunk-themed illustrations with neon accents, dark backgrounds, 3D isometric elements | `.svg` (vectors) |
+| **Tier 2 â€” Onboarding** | Tutorial steps, feature introductions, first-time user flows | Character-driven scenes with product UI shown in-context | `.svg` (vectors) |
+| **Tier 3 â€” Decorative** | Landing page hero, login page background, brand moments | Abstract cyberpunk tech patterns, grid lines, particle systems | CSS / Three.js (runtime) |
 
 **Illustration rules:**
 | Rule | Description |
 |---|---|
 | **IL1** | All empty state illustrations must include a 48-64px clear space around the focal element |
-| **IL2** | Color palette for illustrations must derive from the token system — no standalone colors |
+| **IL2** | Color palette for illustrations must derive from the token system â€” no standalone colors |
 | **IL3** | Empty state illustrations must have `role="img"` and `aria-label` describing the visual |
 | **IL4** | Decorative Tier 3 illustrations must have `aria-hidden="true"` |
 | **IL5** | All SVGs must be optimized (no editor metadata, no unused groups, path-simplified) |
@@ -1637,12 +1637,12 @@ Every component review must verify:
 **Animation rules:**
 | Rule | Description |
 |---|---|
-| **AN1** | No animation violates reduced motion preferences — every animation has a static fallback |
+| **AN1** | No animation violates reduced motion preferences â€” every animation has a static fallback |
 | **AN2** | Framer Motion for UI animations only. GSAP for scroll-driven animation. Rive for complex character/celebration. Never two libraries animating the same element. |
 | **AN3** | Maximum cumulative stagger delay: 500ms |
-| **AN4** | Entry duration ≤ 300ms. Exit duration ≤ 200ms. |
-| **AN5** | No animation of `width`, `height`, `top`, `left`, `margin`, or `padding` — use transforms only |
-| **AN6** | All animation values reference motion tokens — no hardcoded durations or easings |
+| **AN4** | Entry duration â‰¤ 300ms. Exit duration â‰¤ 200ms. |
+| **AN5** | No animation of `width`, `height`, `top`, `left`, `margin`, or `padding` â€” use transforms only |
+| **AN6** | All animation values reference motion tokens â€” no hardcoded durations or easings |
 
 ### 10.4 Image Governance
 
@@ -1651,14 +1651,14 @@ Every component review must verify:
 | **IMG1** | All user-uploaded images must have a fallback background color matching the container |
 | **IMG2** | Avatar images use aspect ratio 1:1 (square) with `rounded-full` |
 | **IMG3** | Thumbnail images use aspect ratio 16:9, with fallback placeholder |
-| **IMG4** | All `<img>` tags must include `alt` text — empty `alt=""` for decorative images |
+| **IMG4** | All `<img>` tags must include `alt` text â€” empty `alt=""` for decorative images |
 | **IMG5** | Image loading: use `loading="lazy"` for below-fold images, `loading="eager"` for hero images |
 | **IMG6** | Image performance: maximum asset size 200KB before compression |
 | **IMG7** | Image format: SVG for illustrations, WebP for photos (with PNG fallback for older browsers) |
 
 ---
 
-# Part V — Process & Future
+# Part V â€” Process & Future
 
 ---
 
@@ -1669,44 +1669,44 @@ Every component review must verify:
 Every Figma component MUST have a corresponding spec page with the following sections:
 
 ```
-┌─ COMPONENT NAME ──────────────────────────────────────────┐
-│  Status: [Stable / Beta / Alpha / Deprecated]              │
-│  Version: 1.0.0                                            │
-│  Library: Antigravity / Stitch / Modules                   │
-│  Design Lead: [Name]                                       │
-│  Engineer Lead: [Name]                                     │
-│  Last Updated: 2026-06-11                                  │
-├────────────────────────────────────────────────────────────┤
-│  1. DESCRIPTION                                            │
-│  One paragraph. What it does. When to use it. When not to. │
-├────────────────────────────────────────────────────────────┤
-│  2. ANATOMY                                               │
-│  Labeled diagram with numbered parts                       │
-│  1. Container — bg-elevated, radius-card, shadow-sm        │
-│  2. Label — $font-label, $text-primary, $spacing-2         │
-│  3. Icon — 20×20, $opacity-icon                           │
-├────────────────────────────────────────────────────────────┤
-│  3. PROPS TABLE                                           │
-│  | Prop | Type | Required | Default | Values |             │
-├────────────────────────────────────────────────────────────┤
-│  4. STATES MATRIX                                         │
-│  4×4 grid: rows = states, cols = variants                 │
-├────────────────────────────────────────────────────────────┤
-│  5. AUTO LAYOUT SPEC                                      │
-│  Padding: $spacing-4 / Gap: $spacing-2 / Direction: H     │
-│  Sizing: width=FILL, height=HUG                           │
-├────────────────────────────────────────────────────────────┤
-│  6. ACCESSIBILITY                                         │
-│  WCAG criteria met. ARIA pattern. Keyboard nav.           │
-├────────────────────────────────────────────────────────────┤
-│  7. DO / DON'T                                            │
-│  3+ visual examples of correct and incorrect usage        │
-├────────────────────────────────────────────────────────────┤
-│  8. CODE REFERENCE                                        │
-│  Stitch: components/ui/Button.tsx                         │
-│  Radix: @radix-ui/react-slot                             │
-│  Package export: @secondbrain/ui/button                   │
-└────────────────────────────────────────────────────────────┘
+â”Œâ”€ COMPONENT NAME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Status: [Stable / Beta / Alpha / Deprecated]              â”‚
+â”‚  Version: 1.0.0                                            â”‚
+â”‚  Library: Antigravity / Stitch / Modules                   â”‚
+â”‚  Design Lead: [Name]                                       â”‚
+â”‚  Engineer Lead: [Name]                                     â”‚
+â”‚  Last Updated: 2026-06-11                                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  1. DESCRIPTION                                            â”‚
+â”‚  One paragraph. What it does. When to use it. When not to. â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  2. ANATOMY                                               â”‚
+â”‚  Labeled diagram with numbered parts                       â”‚
+â”‚  1. Container â€” bg-elevated, radius-card, shadow-sm        â”‚
+â”‚  2. Label â€” $font-label, $text-primary, $spacing-2         â”‚
+â”‚  3. Icon â€” 20Ã—20, $opacity-icon                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  3. PROPS TABLE                                           â”‚
+â”‚  | Prop | Type | Required | Default | Values |             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  4. STATES MATRIX                                         â”‚
+â”‚  4Ã—4 grid: rows = states, cols = variants                 â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  5. AUTO LAYOUT SPEC                                      â”‚
+â”‚  Padding: $spacing-4 / Gap: $spacing-2 / Direction: H     â”‚
+â”‚  Sizing: width=FILL, height=HUG                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  6. ACCESSIBILITY                                         â”‚
+â”‚  WCAG criteria met. ARIA pattern. Keyboard nav.           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  7. DO / DON'T                                            â”‚
+â”‚  3+ visual examples of correct and incorrect usage        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  8. CODE REFERENCE                                        â”‚
+â”‚  Stitch: components/ui/Button.tsx                         â”‚
+â”‚  Radix: @radix-ui/react-slot                             â”‚
+â”‚  Package export: @secondbrain/ui/button                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.2 Usage Documentation
@@ -1728,47 +1728,47 @@ Every component must document:
 Each component spec in Figma must include engineering handoff data:
 
 ```
-┌─ DEV HANDOFF ─────────────────────────────────────────────┐
-│  IMPORTS:                                                  │
-│  import { Button } from '@/components/ui/button'           │
-│  import { cva } from 'class-variance-authority'            │
-│                                                            │
-│  PROPS:                                                    │
-│  interface ButtonProps extends React.ButtonHTMLAttributes  │
-│    variant: 'primary' | 'secondary' | 'ghost' | 'danger'   │
-│    size: 'sm' | 'md' | 'lg'                                │
-│    isLoading?: boolean                                      │
-│    isIconOnly?: boolean                                     │
-│                                                            │
-│  VARIANT DEFINITION:                                       │
-│  const buttonVariants = cva({                               │
-│    base: 'inline-flex items-center justify-center ...',    │
-│    variants: {                                             │
-│      variant: {                                            │
-│        primary: 'bg-accent-primary text-white ...',       │
-│        secondary: 'bg-background-elevated ...',           │
-│        ghost: 'bg-transparent ...',                       │
-│        danger: 'bg-accent-error text-white ...',           │
-│      },                                                    │
-│      size: {                                               │
-│        sm: 'h-9 px-3 text-sm',                            │
-│        md: 'h-11 px-4 text-sm',                           │
-│        lg: 'h-13 px-5 text-base',                         │
-│      },                                                    │
-│    },                                                      │
-│    defaultVariants: { variant: 'primary', size: 'md' },   │
-│  })                                                        │
-│                                                            │
-│  TOKENS:                                                   │
-│  · bg-accent-primary → $color-accent-primary              │
-│  · text-white → $color-text-inverse                        │
-│  · h-11 → $spacing-button-height                           │
-│                                                            │
-│  ANATOMY → CSS:                                            │
-│  Container → `<button className={buttonVariants(...)}>`    │
-│  Icon → `<Icon size={size === 'sm' ? 16 : 20} />`         │
-│  Label → `<span>{children}</span>`                       │
-└────────────────────────────────────────────────────────────┘
+â”Œâ”€ DEV HANDOFF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  IMPORTS:                                                  â”‚
+â”‚  import { Button } from '@/components/ui/button'           â”‚
+â”‚  import { cva } from 'class-variance-authority'            â”‚
+â”‚                                                            â”‚
+â”‚  PROPS:                                                    â”‚
+â”‚  interface ButtonProps extends React.ButtonHTMLAttributes  â”‚
+â”‚    variant: 'primary' | 'secondary' | 'ghost' | 'danger'   â”‚
+â”‚    size: 'sm' | 'md' | 'lg'                                â”‚
+â”‚    isLoading?: boolean                                      â”‚
+â”‚    isIconOnly?: boolean                                     â”‚
+â”‚                                                            â”‚
+â”‚  VARIANT DEFINITION:                                       â”‚
+â”‚  const buttonVariants = cva({                               â”‚
+â”‚    base: 'inline-flex items-center justify-center ...',    â”‚
+â”‚    variants: {                                             â”‚
+â”‚      variant: {                                            â”‚
+â”‚        primary: 'bg-accent-primary text-white ...',       â”‚
+â”‚        secondary: 'bg-background-elevated ...',           â”‚
+â”‚        ghost: 'bg-transparent ...',                       â”‚
+â”‚        danger: 'bg-accent-error text-white ...',           â”‚
+â”‚      },                                                    â”‚
+â”‚      size: {                                               â”‚
+â”‚        sm: 'h-9 px-3 text-sm',                            â”‚
+â”‚        md: 'h-11 px-4 text-sm',                           â”‚
+â”‚        lg: 'h-13 px-5 text-base',                         â”‚
+â”‚      },                                                    â”‚
+â”‚    },                                                      â”‚
+â”‚    defaultVariants: { variant: 'primary', size: 'md' },   â”‚
+â”‚  })                                                        â”‚
+â”‚                                                            â”‚
+â”‚  TOKENS:                                                   â”‚
+â”‚  Â· bg-accent-primary â†’ $color-accent-primary              â”‚
+â”‚  Â· text-white â†’ $color-text-inverse                        â”‚
+â”‚  Â· h-11 â†’ $spacing-button-height                           â”‚
+â”‚                                                            â”‚
+â”‚  ANATOMY â†’ CSS:                                            â”‚
+â”‚  Container â†’ `<button className={buttonVariants(...)}>`    â”‚
+â”‚  Icon â†’ `<Icon size={size === 'sm' ? 16 : 20} />`         â”‚
+â”‚  Label â†’ `<span>{children}</span>`                       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1778,15 +1778,15 @@ Each component spec in Figma must include engineering handoff data:
 ### 12.1 Review Stages
 
 ```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ SELF-     │ →  │ PEER     │ →  │ DESIGN   │ →  │ DESIGN   │
-│ REVIEW    │    │ REVIEW   │    │ LEAD     │    │ DIRECTOR │
-│           │    │           │    │ REVIEW   │    │ REVIEW   │
-│ Author    │    │ 1-2 peers│    │ DSG Lead │    │ (major   │
-│ only      │    │           │    │ only     │    │ changes) │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘
-     │               │               │               │
-     ▼               ▼               ▼               ▼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ SELF-     â”‚ â†’  â”‚ PEER     â”‚ â†’  â”‚ DESIGN   â”‚ â†’  â”‚ DESIGN   â”‚
+â”‚ REVIEW    â”‚    â”‚ REVIEW   â”‚    â”‚ LEAD     â”‚    â”‚ DIRECTOR â”‚
+â”‚           â”‚    â”‚           â”‚    â”‚ REVIEW   â”‚    â”‚ REVIEW   â”‚
+â”‚ Author    â”‚    â”‚ 1-2 peersâ”‚    â”‚ DSG Lead â”‚    â”‚ (major   â”‚
+â”‚ only      â”‚    â”‚           â”‚    â”‚ only     â”‚    â”‚ changes) â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚               â”‚               â”‚               â”‚
+     â–¼               â–¼               â–¼               â–¼
   10 min          30 min          30 min          45 min
   Pre-check       Feedback        Approval        Strategic signoff
 ```
@@ -1797,17 +1797,17 @@ Before submitting for peer review, every designer must verify:
 
 ```
 [ ] Component uses Auto Layout on all frames
-[ ] No hardcoded values — every fill, stroke, effect, and text style references a token
+[ ] No hardcoded values â€” every fill, stroke, effect, and text style references a token
 [ ] Component set properties correctly named (type/size/state/is*)
 [ ] All required states exist (default, hover, active, focus, disabled)
-[ ] Variant matrix is complete — no missing combinations
+[ ] Variant matrix is complete â€” no missing combinations
 [ ] Naming follows Section 3 conventions
 [ ] Layer names are semantic (not "Rectangle 1", "Frame 2394")
 [ ] Export settings configured (SVG for icons, PNG for images)
 [ ] Dev Mode annotations added
 [ ] Reduced motion alternative considered
 [ ] Color contrast passes WCAG AA at minimum
-[ ] Touch targets ≥ 44×44px
+[ ] Touch targets â‰¥ 44Ã—44px
 [ ] Keyboard interaction pattern documented
 [ ] Component description written (purpose, when to use, when not to)
 ```
@@ -1820,8 +1820,8 @@ Before submitting for peer review, every designer must verify:
 | **Governance** | Token usage verified (zero hardcoded values) | / |
 | **Governance** | Auto Layout compliance | / |
 | **Accessibility** | Focus indicators visible | / |
-| **Accessibility** | Color contrast ≥ 4.5:1 | / |
-| **Accessibility** | Touch targets ≥ 44px | / |
+| **Accessibility** | Color contrast â‰¥ 4.5:1 | / |
+| **Accessibility** | Touch targets â‰¥ 44px | / |
 | **Variants** | All required states present | / |
 | **Variants** | No unnecessary variant explosion | / |
 | **Responsive** | Mobile + tablet behavior defined | / |
@@ -1883,7 +1883,7 @@ All Figma library components and tokens follow **Semantic Versioning**:
 ```
 MAJOR.MINOR.PATCH
 
-MAJOR: Breaking change — existing components require migration
+MAJOR: Breaking change â€” existing components require migration
   - Removing a component property
   - Changing token values that affect existing usage
   - Renaming exported components
@@ -1907,7 +1907,7 @@ PATCH: Backward-compatible fix
 
 | Action | Version Bump | Process |
 |---|---|---|
-| Fix token value | PATCH | Quick publish — no review needed |
+| Fix token value | PATCH | Quick publish â€” no review needed |
 | Add component variant | PATCH / MINOR | Auto-review by design lead |
 | Add new component | MINOR | Full review cycle (Stage 2-3) |
 | Change existing component prop | MINOR | Full review cycle (Stage 2-3) |
@@ -1919,18 +1919,18 @@ PATCH: Backward-compatible fix
 ### 13.3 Branch Strategy in Figma
 
 ```
-main (Published)       ← Always stable. Published to all consumers.
-  │
-  ├── develop          ← Work in progress. Staged components.
-  │                      Designers merge feature branches here.
-  │
-  ├── feat/component-name  ← Individual component work
-  │
-  ├── fix/token-value       ← Token fixes
-  │
-  ├── release/v{major}.{minor}  ← Release candidates
-  │
-  └── archive/v{prev}     ← Previous versions (read-only)
+main (Published)       â† Always stable. Published to all consumers.
+  â”‚
+  â”œâ”€â”€ develop          â† Work in progress. Staged components.
+  â”‚                      Designers merge feature branches here.
+  â”‚
+  â”œâ”€â”€ feat/component-name  â† Individual component work
+  â”‚
+  â”œâ”€â”€ fix/token-value       â† Token fixes
+  â”‚
+  â”œâ”€â”€ release/v{major}.{minor}  â† Release candidates
+  â”‚
+  â””â”€â”€ archive/v{prev}     â† Previous versions (read-only)
 ```
 
 ### 13.4 Change Log Requirements
@@ -1938,7 +1938,7 @@ main (Published)       ← Always stable. Published to all consumers.
 Every library version publish MUST include a changelog entry:
 
 ```
-## [1.3.0] — 2026-06-11
+## [1.3.0] â€” 2026-06-11
 
 ### Added
 - Button: new `outline` variant (#42)
@@ -1954,7 +1954,7 @@ Every library version publish MUST include a changelog entry:
 - Button: loading state now preserves original width (#39)
 
 ### Deprecated
-- Legacy UI.tsx component variants (Button, Input) — use canonical Button.tsx and Input.tsx
+- Legacy UI.tsx component variants (Button, Input) â€” use canonical Button.tsx and Input.tsx
 
 ### Migration Notes
 - Button `outline` variant: no migration needed (new feature)
@@ -1966,7 +1966,7 @@ Every library version publish MUST include a changelog entry:
 | Rule | Description |
 |---|---|
 | **VC1** | Every MAJOR version creates an archive branch: `archive/v{major}.{minor}` |
-| **VC2** | Archive branches are read-only — no edits permitted |
+| **VC2** | Archive branches are read-only â€” no edits permitted |
 | **VC3** | Current version + 2 previous minor versions are kept for reference |
 | **VC4** | Archive migration guide must be linked from current component documentation |
 | **VC5** | Breaking changes must include a codemod script for automated migration |
@@ -1990,8 +1990,8 @@ Every library version publish MUST include a changelog entry:
 [ ] All modified components re-verified
 [ ] Changelog updated with all changes
 [ ] Migration guide written for breaking changes
-[ ] Token audit passes — zero hardcoded values
-[ ] Accessibility scan — zero violations
+[ ] Token audit passes â€” zero hardcoded values
+[ ] Accessibility scan â€” zero violations
 [ ] Component coverage completeness verified
 [ ] All variants rendered correctly
 [ ] Responsive behavior verified at 3 breakpoints
@@ -2005,35 +2005,35 @@ Every library version publish MUST include a changelog entry:
 
 ```
 1. Feature Complete
-   ├── All components in develop branch
-   ├── All docs written
-   └── Self-review passed
+   â”œâ”€â”€ All components in develop branch
+   â”œâ”€â”€ All docs written
+   â””â”€â”€ Self-review passed
 
 2. Peer Review
-   ├── 1-2 design peers review
-   ├── Feedback incorporated
-   └── Review checklist signed off
+   â”œâ”€â”€ 1-2 design peers review
+   â”œâ”€â”€ Feedback incorporated
+   â””â”€â”€ Review checklist signed off
 
 3. DSG Lead Review
-   ├── Design Systems Lead approval
-   ├── A11y specialist consult (if new tokens)
-   └── Token audit scan
+   â”œâ”€â”€ Design Systems Lead approval
+   â”œâ”€â”€ A11y specialist consult (if new tokens)
+   â””â”€â”€ Token audit scan
 
 4. Release Candidate
-   ├── Create release/v{major}.{minor} branch
-   ├── Run all automated checks
-   └── Fix any regressions
+   â”œâ”€â”€ Create release/v{major}.{minor} branch
+   â”œâ”€â”€ Run all automated checks
+   â””â”€â”€ Fix any regressions
 
 5. Engineering Preview
-   ├── FE engineer reviews spec
-   ├── Code parity check
-   └── Handoff complete
+   â”œâ”€â”€ FE engineer reviews spec
+   â”œâ”€â”€ Code parity check
+   â””â”€â”€ Handoff complete
 
 6. Publish
-   ├── Publish library to Figma
-   ├── Tag version in GitHub
-   ├── Send release notes to team
-   └── Archive previous major version (if applicable)
+   â”œâ”€â”€ Publish library to Figma
+   â”œâ”€â”€ Tag version in GitHub
+   â”œâ”€â”€ Send release notes to team
+   â””â”€â”€ Archive previous major version (if applicable)
 ```
 
 ### 14.4 Breaking Change Policy
@@ -2073,7 +2073,7 @@ Every library version publish MUST include a changelog entry:
 | **C1** | Use case validated: component solves a problem that existing components cannot |
 | **C2** | Frequency justification: component used in 3+ module screens or 2+ user flows |
 | **C3** | Atomic placement: component fits into the existing atomic hierarchy without creating a new level |
-| **C4** | Token compliance: component uses only existing tokens — no new primitive tokens introduced |
+| **C4** | Token compliance: component uses only existing tokens â€” no new primitive tokens introduced |
 | **C5** | Accessibility designed-in: WCAG AA target from day one, not retrofitted |
 | **C6** | Spec complete: component spec template fully populated before any design work |
 
@@ -2101,13 +2101,13 @@ Every library version publish MUST include a changelog entry:
 
 | Gate | Requirement |
 |---|---|
-| **H1** | Token-only approach: themes must be implementable by changing semantic token values — no component variant changes |
+| **H1** | Token-only approach: themes must be implementable by changing semantic token values â€” no component variant changes |
 | **H2** | Accent derivation formula documented: `color-accent-primary` derived from hue shift on base palette |
 | **H3** | Contrast auto-generated: all new theme tokens pass WCAG AA auto-check |
 | **H4** | Accent customization: 12 preset accent colors (v1), custom hue picker (v2+) |
-| **H5** | 3-tier target: Primitive → Semantic → Component — dark always first, other themes derived |
+| **H5** | 3-tier target: Primitive â†’ Semantic â†’ Component â€” dark always first, other themes derived |
 
-### 15.5 Scaling Rules for 100+ → 1,000+ Components
+### 15.5 Scaling Rules for 100+ â†’ 1,000+ Components
 
 | Threshold | Action |
 |---|---|
@@ -2160,7 +2160,7 @@ As AI features grow, the following component patterns must be added to the syste
 
 | Construct | Convention | Example |
 |---|---|---|
-| Pages | PascalCase | `Button — States` |
+| Pages | PascalCase | `Button â€” States` |
 | Frames | kebab-case + suffix | `button-container` |
 | Components | PascalCase | `Button`, `InputField` |
 | Variant properties | camelCase | `size`, `variantStyle` |
@@ -2175,10 +2175,10 @@ As AI features grow, the following component patterns must be added to the syste
 
 | Component | Direction | Padding | Gap | Width | Height |
 |---|---|---|---|---|---|
-| Button | Horizontal | 16×8px | 8px | Hug | 44px |
-| Input | Vertical | 12×8px | 4px | Fill | 44px |
+| Button | Horizontal | 16Ã—8px | 8px | Hug | 44px |
+| Input | Vertical | 12Ã—8px | 4px | Fill | 44px |
 | Card | Vertical | 20px | 12px | Fill | Hug |
-| Badge | Horizontal | 8×2px | 4px | Hug | 22px |
+| Badge | Horizontal | 8Ã—2px | 4px | Hug | 22px |
 | Modal | Vertical | 24px | 24px | Fixed | Hug |
 
 ### Token Categories (9)
@@ -2188,7 +2188,7 @@ As AI features grow, the following component patterns must be added to the syste
 ### Accessibility Minimums
 
 - **Contrast:** 4.5:1 text / 3.0:1 non-text (AA)
-- **Touch target:** 44×44px below 1024px
+- **Touch target:** 44Ã—44px below 1024px
 - **Focus:** 2px offset 2px, indigo (#6366F1)
 - **Motion:** Every animation has a static fallback
 - **Reduced motion:** All animations respect `prefers-reduced-motion`
@@ -2200,8 +2200,8 @@ As AI features grow, the following component patterns must be added to the syste
 | Plugin | Purpose | Required For |
 |---|---|---|
 | **Tokens Studio** | Token management, theme switching, sync | All designers |
-| **A11y — Contrast Checker** | WCAG contrast verification | All designers (pre-publish) |
-| **A11y — Focus Order** | Tab order verification | Component reviewers |
+| **A11y â€” Contrast Checker** | WCAG contrast verification | All designers (pre-publish) |
+| **A11y â€” Focus Order** | Tab order verification | Component reviewers |
 | **Iconify** | lucide-react icon browser | All designers |
 | **Similary** | Component similarity detection | Library health checks |
 | **Design Lint** | Auto-layout, token, naming audit | Pre-publish automation |
@@ -2224,7 +2224,7 @@ As AI features grow, the following component patterns must be added to the syste
 | Component description coverage | 100% of published components | Figma API |
 | Dev Mode annotation coverage | 100% of interactive components | Manual audit |
 | Changelog completeness | Every version has entry | Release checklist |
-| Component ↔ Code parity | 90%+ match (visual diff) | Bi-weekly audit |
+| Component â†” Code parity | 90%+ match (visual diff) | Bi-weekly audit |
 | Library usage (module adoption) | 95%+ of module instances use library | Figma API |
 
 ---
