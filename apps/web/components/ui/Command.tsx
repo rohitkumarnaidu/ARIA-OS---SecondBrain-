@@ -134,12 +134,7 @@ const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"
-          className={cn(
-            'relative z-10 w-full max-w-lg rounded-xl border border-border bg-background-card shadow-2xl',
-            'focus-visible:outline-none',
-            className,
-          )}
-          onKeyDown={handleKeyDown}
+          tabIndex={-1}
           data-slot="command"
           {...props}
         >
@@ -223,6 +218,11 @@ const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
                               )}
                               onClick={() => {
                                 if (!item.disabled) onSelect?.(item)
+                              }}
+                              onKeyDown={(e) => {
+                                if ((e.key === 'Enter' || e.key === ' ') && !item.disabled) {
+                                  e.preventDefault(); onSelect?.(item)
+                                }
                               }}
                               onMouseEnter={() => setActiveIndex(globalIdx)}
                             >
