@@ -1,16 +1,16 @@
-# Frontend Technical Research — Second Brain OS
+﻿# Frontend Technical Research â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| **Document ID** | ENG-FE-RESEARCH-001 |
+| **Document ID** | ENG-FTR-001 |
 | **Status** | Draft v1.0 |
 | **Version** | 1.0.0 |
 | **Author** | ARIA OS Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Approval** | Pending |
-| **Classification** | Internal — Architecture Decision |
+| **Classification** | Internal â€” Architecture Decision |
 | **Supersedes** | `FrontendArchitecture.md`, `StateManagement.md` (partial), `RealtimeArchitecture.md` (frontend), `OfflineFirstArchitecture.md` (frontend), `SearchArchitecture.md` (frontend), `45_PerformanceScalability.md` (frontend) |
 | **Complements** | `DesignSystemResearch.md`, `DesignStrategy.md`, `MotionArchitecture.md`, `docs/qa/28_Testing.md` |
 | **Related ADRs** | ADR-001 through ADR-008 |
@@ -19,18 +19,18 @@
 
 ## Table of Contents
 
-### Part I — Foundation & Stack
+### Part I â€” Foundation & Stack
 1. [Executive Summary](#1-executive-summary)
 2. [Stack Architecture & Upgrade Path](#2-stack-architecture--upgrade-path)
 3. [Monorepo Strategy](#3-monorepo-strategy)
 
-### Part II — Routing & Rendering
+### Part II â€” Routing & Rendering
 4. [Routing Architecture](#4-routing-architecture)
 5. [Rendering Strategy](#5-rendering-strategy)
 6. [Server vs Client Component Decision Tree](#6-server-vs-client-component-decision-tree)
 7. [SEO & Metadata Strategy](#7-seo--metadata-strategy)
 
-### Part III — Data Layer
+### Part III â€” Data Layer
 8. [Server Data Fetching](#8-server-data-fetching)
 9. [Client Data Fetching](#9-client-data-fetching)
 10. [State Management](#10-state-management)
@@ -38,39 +38,39 @@
 12. [Offline-First & PWA Architecture](#12-offline-first--pwa-architecture)
 13. [Search Architecture](#13-search-architecture)
 
-### Part IV — UI & Rendering Performance
+### Part IV â€” UI & Rendering Performance
 14. [Performance Budgets & Core Web Vitals](#14-performance-budgets--core-web-vitals)
 15. [Code Splitting & Lazy Loading](#15-code-splitting--lazy-loading)
 16. [Streaming & Suspense Architecture](#16-streaming--suspense-architecture)
 17. [Image & Asset Strategy](#17-image--asset-strategy)
 
-### Part V — UI Engineering
+### Part V â€” UI Engineering
 18. [Component Architecture](#18-component-architecture)
 19. [Form Architecture](#19-form-architecture)
 20. [Animation Engineering](#20-animation-engineering)
 21. [Chart & Data Visualization](#21-chart--data-visualization)
 
-### Part VI — Cross-Cutting Concerns
+### Part VI â€” Cross-Cutting Concerns
 22. [Accessibility (a11y)](#22-accessibility-a11y)
 23. [Security Architecture](#23-security-architecture)
 24. [Observability & Monitoring](#24-observability--monitoring)
 25. [Testing Strategy](#25-testing-strategy)
 26. [Internationalization (i18n)](#26-internationalization-i18n)
 
-### Part VII — Developer Experience & Governance
+### Part VII â€” Developer Experience & Governance
 27. [Project Structure & Conventions](#27-project-structure--conventions)
 28. [Code Generation & Scaffolding](#28-code-generation--scaffolding)
 29. [Code Quality & Linting](#29-code-quality--linting)
 30. [Bundle & Dependency Governance](#30-bundle--dependency-governance)
 31. [Versioning & Changelog](#31-versioning--changelog)
 
-### Part VIII — Deployment & Operations
+### Part VIII â€” Deployment & Operations
 32. [Build & Deploy Strategy](#32-build--deploy-strategy)
 33. [CI/CD Pipeline](#33-cicd-pipeline)
 34. [Error Tracking & Alerting](#34-error-tracking--alerting)
 
 ### Appendices
-A. Module → Component Map
+A. Module â†’ Component Map
 B. Query Key Factory
 C. Zustand Store Schemas
 D. Realtime Channel Map
@@ -142,7 +142,7 @@ graph LR
     style REVIEW fill:#6366F1,color:#F1F5F9
 ```
 
-## Part I — Foundation & Stack
+## Part I â€” Foundation & Stack
 
 ---
 
@@ -182,24 +182,24 @@ Covers every aspect of the frontend:
 ### 1.4 Document Map
 
 ```
-FrontendTechnicalResearch.md  ← YOU ARE HERE (source of truth)
-├── Supercedes:
-│   ├── FrontendArchitecture.md      (Next.js 14 → 15 upgrade)
-│   ├── StateManagement.md           (Zustand-only → Query+Zustand)
-│   ├── RealtimeArchitecture.md      (frontend sections only)
-│   ├── OfflineFirstArchitecture.md  (full replacement)
-│   ├── SearchArchitecture.md        (frontend sections only)
-│   └── 45_PerformanceScalability.md (frontend sections only)
-├── Complements:
-│   ├── DesignSystemResearch.md      (token/component/theme governance)
-│   ├── DesignStrategy.md            (strategic design direction)
-│   ├── MotionArchitecture.md        (animation engineering spec)
-│   └── docs/qa/28_Testing.md        (broader QA strategy)
-└── Informs:
-    ├── apps/web/package.json        (dependency upgrades)
-    ├── next.config.ts               (new Next.js 15 config)
-    ├── apps/web/app/layout.tsx      (provider architecture)
-    └── apps/web/lib/ pattern files  (store, query, offline, realtime)
+FrontendTechnicalResearch.md  â† YOU ARE HERE (source of truth)
+â”œâ”€â”€ Supercedes:
+â”‚   â”œâ”€â”€ FrontendArchitecture.md      (Next.js 14 â†’ 15 upgrade)
+â”‚   â”œâ”€â”€ StateManagement.md           (Zustand-only â†’ Query+Zustand)
+â”‚   â”œâ”€â”€ RealtimeArchitecture.md      (frontend sections only)
+â”‚   â”œâ”€â”€ OfflineFirstArchitecture.md  (full replacement)
+â”‚   â”œâ”€â”€ SearchArchitecture.md        (frontend sections only)
+â”‚   â””â”€â”€ 45_PerformanceScalability.md (frontend sections only)
+â”œâ”€â”€ Complements:
+â”‚   â”œâ”€â”€ DesignSystemResearch.md      (token/component/theme governance)
+â”‚   â”œâ”€â”€ DesignStrategy.md            (strategic design direction)
+â”‚   â”œâ”€â”€ MotionArchitecture.md        (animation engineering spec)
+â”‚   â””â”€â”€ docs/qa/28_Testing.md        (broader QA strategy)
+â””â”€â”€ Informs:
+    â”œâ”€â”€ apps/web/package.json        (dependency upgrades)
+    â”œâ”€â”€ next.config.ts               (new Next.js 15 config)
+    â”œâ”€â”€ apps/web/app/layout.tsx      (provider architecture)
+    â””â”€â”€ apps/web/lib/ pattern files  (store, query, offline, realtime)
 ```
 
 ### 1.5 Enterprise Priority Weighting
@@ -208,16 +208,16 @@ At enterprise scale, sections are weighted by business impact. This determines d
 
 | Priority | Section | Weight | Reason |
 |---|---|---|---|
-| **P0** | §14 — Performance Budgets | 25% | Core Web Vitals directly impact SEO ranking, user retention, and conversion |
-| **P0** | §22 — Accessibility | 20% | WCAG 2.2 AA is a legal requirement for enterprise, not optional |
-| **P0** | §25 — Testing Strategy | 18% | Regression prevention at scale; CI gates on test coverage |
-| **P0** | §23 — Security | 15% | CSP, XSS, CSRF, dependency auditing — non-negotiable at enterprise |
-| **P1** | §8-12 — Data Layer | 10% | Data integrity and offline capability critical for productivity apps |
-| **P1** | §24 — Observability | 5% | Sentry + PostHog for error tracking and product analytics |
-| **P2** | §26 — i18n | 3% | Future-proofing for localization |
-| **P2** | §32-33 — Deployment | 2% | Vercel + Railway + CI automation |
-| **P3** | §27-31 — Developer Experience | 2% | Productivity enablers, not blockers |
-| **P3** | §18-21 — UI Engineering | <1% | Well-covered by DesignSystemResearch.md |
+| **P0** | Â§14 â€” Performance Budgets | 25% | Core Web Vitals directly impact SEO ranking, user retention, and conversion |
+| **P0** | Â§22 â€” Accessibility | 20% | WCAG 2.2 AA is a legal requirement for enterprise, not optional |
+| **P0** | Â§25 â€” Testing Strategy | 18% | Regression prevention at scale; CI gates on test coverage |
+| **P0** | Â§23 â€” Security | 15% | CSP, XSS, CSRF, dependency auditing â€” non-negotiable at enterprise |
+| **P1** | Â§8-12 â€” Data Layer | 10% | Data integrity and offline capability critical for productivity apps |
+| **P1** | Â§24 â€” Observability | 5% | Sentry + PostHog for error tracking and product analytics |
+| **P2** | Â§26 â€” i18n | 3% | Future-proofing for localization |
+| **P2** | Â§32-33 â€” Deployment | 2% | Vercel + Railway + CI automation |
+| **P3** | Â§27-31 â€” Developer Experience | 2% | Productivity enablers, not blockers |
+| **P3** | Â§18-21 â€” UI Engineering | <1% | Well-covered by DesignSystemResearch.md |
 
 ---
 
@@ -227,7 +227,7 @@ At enterprise scale, sections are weighted by business impact. This determines d
 
 | Library | Current | Target | Breaking Changes | Migrate Complexity |
 |---|---|---|---|---|
-| Next.js | 14.x | **15.x** | `headers()`, `cookies()`, `params`, `searchParams` async; `next.config.js` → `.ts`; removed `next/head` | Medium |
+| Next.js | 14.x | **15.x** | `headers()`, `cookies()`, `params`, `searchParams` async; `next.config.js` â†’ `.ts`; removed `next/head` | Medium |
 | React | 18.x | **19.x** | `use()` hook; `ref` as prop; context changes; `useActionState` | Medium |
 | Tailwind CSS | 3.x | **4.x** | `@theme` CSS-first (replaces `tailwind.config.js`); no `@tailwind` directives; `@import 'tailwindcss'` | High |
 | Framer Motion | 10.x | **motion/react v11+** | Package rename; some APIs shifted to `motion` namespace | Low |
@@ -240,11 +240,11 @@ At enterprise scale, sections are weighted by business impact. This determines d
 | ReactFlow | 11.x | **12.x** | Removed `nodeTypes`/`edgeTypes` auto-injection | Low |
 | GSAP | 3.x | 3.x (latest) | No breaking changes; **now free** (Webflow acquisition) | None |
 
-### 2.2 GSAP Licensing — Critical Analysis
+### 2.2 GSAP Licensing â€” Critical Analysis
 
 **Status as of June 2026:** GSAP is **100% free for all use**, including commercial SaaS and enterprise. Webflow acquired GSAP in Fall 2024 and made the entire library (including previously paid Club plugins like SplitText, MorphSVG, ScrollTrigger) free effective April 2025 under the "Standard No Charge GSAP License" (gsap.com/community/standard-license).
 
-**The only restriction:** Using GSAP in tools that compete with Webflow's visual animation building capabilities (e.g., building a no-code animation builder). Our use — animating a personal productivity SaaS — is a fully **Permitted Use**. No commercial risk.
+**The only restriction:** Using GSAP in tools that compete with Webflow's visual animation building capabilities (e.g., building a no-code animation builder). Our use â€” animating a personal productivity SaaS â€” is a fully **Permitted Use**. No commercial risk.
 
 **Backup plan (hypothetical license change):**
 
@@ -317,7 +317,7 @@ At enterprise scale, sections are weighted by business impact. This determines d
 | Learning Curve | Medium-High | Low | Medium |
 | Migration Effort | Medium (auto-detect) | Low | Medium |
 
-**Decision: Nx** — At enterprise scale, Nx provides:
+**Decision: Nx** â€” At enterprise scale, Nx provides:
 - Project graph visualization for dependency understanding
 - Code generators (`nx g @nx/next:component`) for consistent scaffolding
 - Distributed Task Execution for CI speed at scale
@@ -331,29 +331,29 @@ At enterprise scale, sections are weighted by business impact. This determines d
 
 ```
 SecondBrain OS/
-├── nx.json                      # Nx config: targetDefaults, cache, plugins
-├── project.json                 # Root project config
-├── .nxignore
-├── apps/
-│   ├── web/                     # Next.js 15 (main frontend)
-│   │   ├── project.json         # Nx project config
-│   │   └── ...
-│   ├── api/                     # FastAPI backend (Nx generic executor)
-│   ├── admin/                   # WIP — Admin panel
-│   └── mobile/                  # WIP — React Native
-├── packages/
-│   ├── types/                   # Shared TS types
-│   ├── ui/                      # Shared React components
-│   ├── ai/                      # AI agent system (Python)
-│   ├── config/core/             # FastAPI config
-│   ├── database/schemas/        # Pydantic models
-│   └── shared/utils/            # Cross-cutting utilities
-├── docs/
-├── tests/
-└── tools/                       # Nx generators, scripts
-├── .eslintrc.json
-├── .prettierrc
-└── tsconfig.base.json           # Shared TS config
+â”œâ”€â”€ nx.json                      # Nx config: targetDefaults, cache, plugins
+â”œâ”€â”€ project.json                 # Root project config
+â”œâ”€â”€ .nxignore
+â”œâ”€â”€ apps/
+â”‚   â”œâ”€â”€ web/                     # Next.js 15 (main frontend)
+â”‚   â”‚   â”œâ”€â”€ project.json         # Nx project config
+â”‚   â”‚   â””â”€â”€ ...
+â”‚   â”œâ”€â”€ api/                     # FastAPI backend (Nx generic executor)
+â”‚   â”œâ”€â”€ admin/                   # WIP â€” Admin panel
+â”‚   â””â”€â”€ mobile/                  # WIP â€” React Native
+â”œâ”€â”€ packages/
+â”‚   â”œâ”€â”€ types/                   # Shared TS types
+â”‚   â”œâ”€â”€ ui/                      # Shared React components
+â”‚   â”œâ”€â”€ ai/                      # AI agent system (Python)
+â”‚   â”œâ”€â”€ config/core/             # FastAPI config
+â”‚   â”œâ”€â”€ database/schemas/        # Pydantic models
+â”‚   â””â”€â”€ shared/utils/            # Cross-cutting utilities
+â”œâ”€â”€ docs/
+â”œâ”€â”€ tests/
+â””â”€â”€ tools/                       # Nx generators, scripts
+â”œâ”€â”€ .eslintrc.json
+â”œâ”€â”€ .prettierrc
+â””â”€â”€ tsconfig.base.json           # Shared TS config
 ```
 
 ### 3.3 Nx Configuration
@@ -392,7 +392,7 @@ SecondBrain OS/
     }
   ],
   "defaultBase": "main",
-  "nxCloudAccessToken": "…"  // Nx Cloud for remote caching
+  "nxCloudAccessToken": "â€¦"  // Nx Cloud for remote caching
 }
 ```
 
@@ -426,7 +426,7 @@ pnpm install                  # Install all dependencies
 
 ---
 
-## Part II — Routing & Rendering
+## Part II â€” Routing & Rendering
 
 ---
 
@@ -436,43 +436,43 @@ pnpm install                  # Install all dependencies
 
 ```
 app/
-├── (auth)/                          # Route group — no layout inheritance
-│   ├── login/page.tsx               # /login
-│   └── callback/page.tsx            # /callback (OAuth redirect)
-├── (dashboard)/                     # Route group — shared dashboard layout
-│   ├── layout.tsx                   # Sidebar + navbar + content wrapper
-│   ├── loading.tsx                  # Dashboard shell skeleton
-│   ├── page.tsx                     # /dashboard (default redirect)
-│   ├── tasks/
-│   │   ├── page.tsx                 # /tasks
-│   │   ├── loading.tsx
-│   │   ├── error.tsx
-│   │   └── [id]/page.tsx            # /tasks/:id
-│   ├── courses/
-│   │   ├── page.tsx
-│   │   ├── loading.tsx
-│   │   ├── error.tsx
-│   │   └── [id]/page.tsx            # /courses/:id
-│   ├── goals/page.tsx
-│   ├── habits/page.tsx
-│   ├── sleep/page.tsx
-│   ├── income/page.tsx
-│   ├── projects/[id]/page.tsx
-│   ├── ideas/page.tsx
-│   ├── resources/page.tsx
-│   ├── opportunities/page.tsx
-│   ├── academics/page.tsx
-│   ├── youtube/page.tsx
-│   ├── chat/page.tsx
-│   ├── time/page.tsx
-│   └── automation/page.tsx
-├── layout.tsx                       # Root layout (fonts, metadata, providers)
-├── not-found.tsx
-├── error.tsx
-├── loading.tsx
-├── sitemap.ts
-├── robots.ts
-└── manifest.ts
+â”œâ”€â”€ (auth)/                          # Route group â€” no layout inheritance
+â”‚   â”œâ”€â”€ login/page.tsx               # /login
+â”‚   â””â”€â”€ callback/page.tsx            # /callback (OAuth redirect)
+â”œâ”€â”€ (dashboard)/                     # Route group â€” shared dashboard layout
+â”‚   â”œâ”€â”€ layout.tsx                   # Sidebar + navbar + content wrapper
+â”‚   â”œâ”€â”€ loading.tsx                  # Dashboard shell skeleton
+â”‚   â”œâ”€â”€ page.tsx                     # /dashboard (default redirect)
+â”‚   â”œâ”€â”€ tasks/
+â”‚   â”‚   â”œâ”€â”€ page.tsx                 # /tasks
+â”‚   â”‚   â”œâ”€â”€ loading.tsx
+â”‚   â”‚   â”œâ”€â”€ error.tsx
+â”‚   â”‚   â””â”€â”€ [id]/page.tsx            # /tasks/:id
+â”‚   â”œâ”€â”€ courses/
+â”‚   â”‚   â”œâ”€â”€ page.tsx
+â”‚   â”‚   â”œâ”€â”€ loading.tsx
+â”‚   â”‚   â”œâ”€â”€ error.tsx
+â”‚   â”‚   â””â”€â”€ [id]/page.tsx            # /courses/:id
+â”‚   â”œâ”€â”€ goals/page.tsx
+â”‚   â”œâ”€â”€ habits/page.tsx
+â”‚   â”œâ”€â”€ sleep/page.tsx
+â”‚   â”œâ”€â”€ income/page.tsx
+â”‚   â”œâ”€â”€ projects/[id]/page.tsx
+â”‚   â”œâ”€â”€ ideas/page.tsx
+â”‚   â”œâ”€â”€ resources/page.tsx
+â”‚   â”œâ”€â”€ opportunities/page.tsx
+â”‚   â”œâ”€â”€ academics/page.tsx
+â”‚   â”œâ”€â”€ youtube/page.tsx
+â”‚   â”œâ”€â”€ chat/page.tsx
+â”‚   â”œâ”€â”€ time/page.tsx
+â”‚   â””â”€â”€ automation/page.tsx
+â”œâ”€â”€ layout.tsx                       # Root layout (fonts, metadata, providers)
+â”œâ”€â”€ not-found.tsx
+â”œâ”€â”€ error.tsx
+â”œâ”€â”€ loading.tsx
+â”œâ”€â”€ sitemap.ts
+â”œâ”€â”€ robots.ts
+â””â”€â”€ manifest.ts
 ```
 
 ### 4.2 Route Group Strategy
@@ -538,22 +538,22 @@ export const config = {
 **Parallel route architecture for modals:**
 ```
 app/(dashboard)/
-├── layout.tsx           ← renders children + @modal simultaneously
-├── @modal/
-│   ├── default.tsx      ← null (no modal by default)
-│   └── tasks/[id]/page.tsx
-├── tasks/page.tsx
-└── page.tsx
+â”œâ”€â”€ layout.tsx           â† renders children + @modal simultaneously
+â”œâ”€â”€ @modal/
+â”‚   â”œâ”€â”€ default.tsx      â† null (no modal by default)
+â”‚   â””â”€â”€ tasks/[id]/page.tsx
+â”œâ”€â”€ tasks/page.tsx
+â””â”€â”€ page.tsx
 ```
 
 ### 4.5 Route Design Rules
 
-1. All module routes under `(dashboard)` — consistent layout inheritance
+1. All module routes under `(dashboard)` â€” consistent layout inheritance
 2. Each module gets `page.tsx`, `loading.tsx`, `error.tsx`
-3. Detail views use `[id]/page.tsx` — consistent param pattern
+3. Detail views use `[id]/page.tsx` â€” consistent param pattern
 4. Parallel routes for modals only
-5. Middleware is the **only** auth guard — no scattered checks
-6. App Router metadata API — never use `next/head` (removed in Next.js 15)
+5. Middleware is the **only** auth guard â€” no scattered checks
+6. App Router metadata API â€” never use `next/head` (removed in Next.js 15)
 
 ---
 
@@ -593,7 +593,7 @@ export default function DashboardPage() {
   return (
     <DashboardShell>                                    {/* Static prerendered shell */}
       <Suspense fallback={<BriefingSkeleton />}>
-        <BriefingWidget />                              {/* Dynamic → streams in */}
+        <BriefingWidget />                              {/* Dynamic â†’ streams in */}
       </Suspense>
       <Suspense fallback={<TaskSummarySkeleton />}>
         <TaskSummary />
@@ -617,17 +617,17 @@ const nextConfig: NextConfig = {
 
 ```
 User requests /chat
-        │
-        ▼
+        â”‚
+        â–¼
 Static shell renders instantly (header, input, chat list)
-        │
-        ▼
+        â”‚
+        â–¼
 Suspense boundary shows skeleton
-        │
-        ▼
+        â”‚
+        â–¼
 AI response streams via SSE (Server-Sent Events)
-        │
-        ▼
+        â”‚
+        â–¼
 Suspense resolves, streaming content fills progressively
 ```
 
@@ -650,14 +650,14 @@ Suspense resolves, streaming content fills progressively
 
 ```
 Can the component be fully rendered on the server?
-├── YES → Does it use any hooks? (useState, useEffect, useContext, useSearchParams)
-│   ├── YES → Client Component
-│   └── NO  → Browser-only APIs? (localStorage, window, document)
-│       ├── YES → Client Component
-│       └── NO  → Needs interactivity? (onClick, onChange, onSubmit)
-│           ├── YES → Client Component
-│           └── NO  → Server Component ✅
-└── NO  → Client Component
+â”œâ”€â”€ YES â†’ Does it use any hooks? (useState, useEffect, useContext, useSearchParams)
+â”‚   â”œâ”€â”€ YES â†’ Client Component
+â”‚   â””â”€â”€ NO  â†’ Browser-only APIs? (localStorage, window, document)
+â”‚       â”œâ”€â”€ YES â†’ Client Component
+â”‚       â””â”€â”€ NO  â†’ Needs interactivity? (onClick, onChange, onSubmit)
+â”‚           â”œâ”€â”€ YES â†’ Client Component
+â”‚           â””â”€â”€ NO  â†’ Server Component âœ…
+â””â”€â”€ NO  â†’ Client Component
 ```
 
 ### 6.2 Component Classification
@@ -685,18 +685,18 @@ Can the component be fully rendered on the server?
 Push 'use client' as far down as possible:
 
 ```tsx
-// ✅ GOOD: Server component wraps minimal client island
+// âœ… GOOD: Server component wraps minimal client island
 export default async function TasksPage() {
   const tasks = await fetchTasks()         // Server fetch
   return (
     <div>
       <TaskFilters />                      // Client island only
-      <TaskList tasks={tasks} />           // Server — static HTML
+      <TaskList tasks={tasks} />           // Server â€” static HTML
     </div>
   )
 }
 
-// ❌ BAD: Entire page is client component
+// âŒ BAD: Entire page is client component
 // 'use client'
 // export default function TasksPage() { ... }
 ```
@@ -720,8 +720,8 @@ export default async function TasksPage() {
 ```typescript
 export const metadata: Metadata = {
   title: {
-    template: '%s | ARIA OS — Second Brain',
-    default: 'ARIA OS — Your Second Brain for Productivity',
+    template: '%s | ARIA OS â€” Second Brain',
+    default: 'ARIA OS â€” Your Second Brain for Productivity',
   },
   description: 'Personal AI productivity system for BTech CSE students.',
   keywords: ['productivity', 'AI', 'second brain', 'task management'],
@@ -729,13 +729,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'ARIA OS',
-    title: 'ARIA OS — Your Second Brain',
+    title: 'ARIA OS â€” Your Second Brain',
     description: 'AI-powered productivity system for engineering students.',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ARIA OS — Your Second Brain',
+    title: 'ARIA OS â€” Your Second Brain',
     description: 'AI-powered productivity system for engineering students.',
     images: ['/twitter-image.png'],
   },
@@ -769,7 +769,7 @@ export function softwareAppJsonLd() {
 
 ---
 
-## Part III — Data Layer
+## Part III â€” Data Layer
 
 ---
 
@@ -801,7 +801,7 @@ export async function createClient() {
 ### 8.2 TanStack Query SSR with Hydration
 
 ```typescript
-// app/tasks/page.tsx — Server Component with pre-fetching
+// app/tasks/page.tsx â€” Server Component with pre-fetching
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 
 export default async function TasksPage() {
@@ -1047,24 +1047,24 @@ export function useTasksInfiniteQuery(filters?: TaskFilters) {
 
 ```
 SERVER STATE (Supabase)
-  │ PostgreSQL — authoritative source of truth
-  ▼
+  â”‚ PostgreSQL â€” authoritative source of truth
+  â–¼
 TANSTACK QUERY (Cache Layer)
-  │ Auto-fetches, caches with stale-while-revalidate
-  │ Handles all loading/error states
-  │ Invalidates on mutations automatically
-  ▼
+  â”‚ Auto-fetches, caches with stale-while-revalidate
+  â”‚ Handles all loading/error states
+  â”‚ Invalidates on mutations automatically
+  â–¼
 ZUSTAND (Client State Only)
-  │ UI preferences (theme, sidebar)
-  │ Toast notifications
-  │ Auth session (thin wrapper)
-  │ AI chat buffer
-  │ NOT used for server data
-  ▼
+  â”‚ UI preferences (theme, sidebar)
+  â”‚ Toast notifications
+  â”‚ Auth session (thin wrapper)
+  â”‚ AI chat buffer
+  â”‚ NOT used for server data
+  â–¼
 LOCAL STATE (useState / useReducer)
-  │ Form inputs (via react-hook-form)
-  │ Modal open/close
-  │ Dropdown/toggle state
+  â”‚ Form inputs (via react-hook-form)
+  â”‚ Modal open/close
+  â”‚ Dropdown/toggle state
 ```
 
 ### 10.2 What Belongs Where
@@ -1083,7 +1083,7 @@ LOCAL STATE (useState / useReducer)
 ### 10.3 Zustand Store Patterns
 
 ```typescript
-// stores/preferences.ts — Persisted to localStorage
+// stores/preferences.ts â€” Persisted to localStorage
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -1133,11 +1133,11 @@ export const usePreferences = create<PreferencesState>()(
 | Devtools middleware | Enable only in dev (`NEXT_PUBLIC_DEVTOOLS`) |
 
 ```typescript
-// ✅ CORRECT: Granular selectors
+// âœ… CORRECT: Granular selectors
 const theme = usePreferences((s) => s.theme)
 const addToast = useToastStore((s) => s.addToast)
 
-// ❌ INCORRECT: Whole-store subscription
+// âŒ INCORRECT: Whole-store subscription
 const { theme, setTheme, sidebarCollapsed } = usePreferences()
 ```
 
@@ -1243,10 +1243,10 @@ export function useRealtimeWithFallback(table: string, userId: string, queryKey:
 ### 11.5 Connection Lifecycle
 
 ```
-App opens → Supabase client init → Auth restore → Channels created
-  → WebSocket CONNECTED → SUBSCRIBED → Receives events → TQ invalidates → UI re-renders
-  → WebSocket DISCONNECTED → Auto-reconnect (SDK handles) → 30s polling fallback
-  → RECONNECTED → Polling stops → Realtime resumes
+App opens â†’ Supabase client init â†’ Auth restore â†’ Channels created
+  â†’ WebSocket CONNECTED â†’ SUBSCRIBED â†’ Receives events â†’ TQ invalidates â†’ UI re-renders
+  â†’ WebSocket DISCONNECTED â†’ Auto-reconnect (SDK handles) â†’ 30s polling fallback
+  â†’ RECONNECTED â†’ Polling stops â†’ Realtime resumes
 ```
 
 ---
@@ -1261,7 +1261,7 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'ARIA OS — Your Second Brain',
+    name: 'ARIA OS â€” Your Second Brain',
     short_name: 'ARIA OS',
     description: 'Personal AI productivity system for engineering students.',
     start_url: '/dashboard',
@@ -1284,7 +1284,7 @@ export default function manifest(): MetadataRoute.Manifest {
 
 ### 12.2 Service Worker Strategy (Serwist)
 
-**Decision**: Serwist over Workbox — purpose-built for Next.js 15 App Router with full PPR, edge runtime support, and native next.config.ts integration. Replaces `@serwist/next` (deprecated for Next.js 14+).
+**Decision**: Serwist over Workbox â€” purpose-built for Next.js 15 App Router with full PPR, edge runtime support, and native next.config.ts integration. Replaces `@serwist/next` (deprecated for Next.js 14+).
 
 ```typescript
 // next.config.ts
@@ -1475,7 +1475,7 @@ interface SearchState {
 
 ---
 
-## Part IV — UI & Rendering Performance
+## Part IV â€” UI & Rendering Performance
 
 ---
 
@@ -1524,7 +1524,7 @@ module.exports = {
 | Charts (lazy) | 15KB | recharts (dynamic import) |
 | Icons | 5KB | lucide-react (tree-shaken) |
 | 3D (lazy) | 20KB | @react-three/fiber (dynamic) |
-| App code | — | Route-based splitting |
+| App code | â€” | Route-based splitting |
 | **Total initial** | **< 100KB** | |
 
 ### 14.4 Performance Monitoring Tools
@@ -1538,7 +1538,7 @@ module.exports = {
 | PostHog | Product analytics | posthog.capture |
 
 ```typescript
-// app/layout.tsx — Web Vitals
+// app/layout.tsx â€” Web Vitals
 import { useReportWebVitals } from 'next/web-vitals'
 
 export function WebVitals() {
@@ -1749,7 +1749,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 
 ---
 
-## Part V — UI Engineering
+## Part V â€” UI Engineering
 
 ---
 
@@ -1758,15 +1758,15 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 ### 18.1 Component Hierarchy
 
 ```
-Atoms (primitives)  →  Molecules (composites)  →  Organisms (modules)  →  Templates → Pages
-Button, Input       →  TaskCard, CourseCard     →  TaskList, CourseList → Shell     → DashboardPage
-Select, Card        →  GoalCard, HabitTile      →  GoalRoadmap        → TasksShell → TasksPage
-Modal, Badge        →  StatCard, ChartWidget    →  DashboardSummary                  → ChatPage
-Toast, Skeleton     →  SearchBar, FormField     →  BriefingWidget
-Tooltip, Dropdown   →  DataTable, NavigationItem → ChatMessageList
-Tabs, Avatar        →  Breadcrumb, MetricCard   →  FilterBar, Sidebar
-Tag, Loading        →  TimerDisplay, ProgressBar →  KanbanBoard, AI PromptBar
-Empty State         →  ResourceCard             →  OpportunityFeed, IncomeChart
+Atoms (primitives)  â†’  Molecules (composites)  â†’  Organisms (modules)  â†’  Templates â†’ Pages
+Button, Input       â†’  TaskCard, CourseCard     â†’  TaskList, CourseList â†’ Shell     â†’ DashboardPage
+Select, Card        â†’  GoalCard, HabitTile      â†’  GoalRoadmap        â†’ TasksShell â†’ TasksPage
+Modal, Badge        â†’  StatCard, ChartWidget    â†’  DashboardSummary                  â†’ ChatPage
+Toast, Skeleton     â†’  SearchBar, FormField     â†’  BriefingWidget
+Tooltip, Dropdown   â†’  DataTable, NavigationItem â†’ ChatMessageList
+Tabs, Avatar        â†’  Breadcrumb, MetricCard   â†’  FilterBar, Sidebar
+Tag, Loading        â†’  TimerDisplay, ProgressBar â†’  KanbanBoard, AI PromptBar
+Empty State         â†’  ResourceCard             â†’  OpportunityFeed, IncomeChart
 ```
 
 ### 18.2 Compound Component Pattern (Radix + CVA)
@@ -1816,17 +1816,17 @@ function SelectTrigger({ className, children, ...props }: SelectPrimitive.Select
 
 ```
 components/
-├── ui/                      # Shared UI primitives (button, card, modal, select, toast, skeleton)
-├── layout/                  # sidebar, navbar, dashboard-shell
-├── tasks/                   # task-card, task-list, task-form, task-filters
-├── habits/                  # habit-tile, habit-grid, habit-log
-├── courses/                 # course-card, course-list, course-progress
-├── chat/                    # chat-message, chat-input, chat-stream
-├── canvas/                  # three-background, particle-system
-├── charts/                  # bar-chart, line-chart, pie-chart
-├── animation/               # scroll-reveal, animated-button
-├── search/                  # search-bar, search-results
-└── shared/                  # auth-guard, error-boundary, empty-state, loading-spinner
+â”œâ”€â”€ ui/                      # Shared UI primitives (button, card, modal, select, toast, skeleton)
+â”œâ”€â”€ layout/                  # sidebar, navbar, dashboard-shell
+â”œâ”€â”€ tasks/                   # task-card, task-list, task-form, task-filters
+â”œâ”€â”€ habits/                  # habit-tile, habit-grid, habit-log
+â”œâ”€â”€ courses/                 # course-card, course-list, course-progress
+â”œâ”€â”€ chat/                    # chat-message, chat-input, chat-stream
+â”œâ”€â”€ canvas/                  # three-background, particle-system
+â”œâ”€â”€ charts/                  # bar-chart, line-chart, pie-chart
+â”œâ”€â”€ animation/               # scroll-reveal, animated-button
+â”œâ”€â”€ search/                  # search-bar, search-results
+â””â”€â”€ shared/                  # auth-guard, error-boundary, empty-state, loading-spinner
 ```
 
 ---
@@ -1964,14 +1964,14 @@ export function useScrollReveal(options?: { from?: gsap.TweenVars; trigger?: gsa
 
 ### 20.4 Animation Performance Guidelines
 
-1. **Use CSS transforms** (translate, scale, rotate, opacity) — GPU-composited
-2. **Avoid animating width, height, top, left** — triggers layout recalculation
-3. **will-change on animated elements** — hints browser optimization
-4. **Prefer motion for React-level animations** — smaller bundle
-5. **Reserve GSAP for scroll/timeline** — 10KB+ gzip, load conditionally
-6. **prefers-reduced-motion respected** — CSS media query
-7. **No animation on initial page load** — better perceived performance
-8. **Animate only visible elements** — IntersectionObserver trigger
+1. **Use CSS transforms** (translate, scale, rotate, opacity) â€” GPU-composited
+2. **Avoid animating width, height, top, left** â€” triggers layout recalculation
+3. **will-change on animated elements** â€” hints browser optimization
+4. **Prefer motion for React-level animations** â€” smaller bundle
+5. **Reserve GSAP for scroll/timeline** â€” 10KB+ gzip, load conditionally
+6. **prefers-reduced-motion respected** â€” CSS media query
+7. **No animation on initial page load** â€” better perceived performance
+8. **Animate only visible elements** â€” IntersectionObserver trigger
 
 ```typescript
 export function usePrefersReducedMotion() {
@@ -2030,7 +2030,7 @@ export function TaskChart({ data }: { data: { date: string; completed: number; c
 
 ---
 
-## Part VI — Cross-Cutting Concerns
+## Part VI â€” Cross-Cutting Concerns
 
 ---
 
@@ -2337,7 +2337,7 @@ describe('Button', () => {
 
 ### 25.4 Testing Best Practices
 
-1. No data-testid except as last resort — prefer getByRole, getByText
+1. No data-testid except as last resort â€” prefer getByRole, getByText
 2. Test behavior, not implementation
 3. userEvent over fireEvent for realistic interactions
 4. Mock Supabase at network level (msw)
@@ -2393,7 +2393,7 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
 
 ---
 
-## Part VII — Developer Experience & Governance
+## Part VII â€” Developer Experience & Governance
 
 ---
 
@@ -2418,11 +2418,11 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
 **Rule**: No `index.ts` barrel files for components. Explicit imports only.
 
 ```typescript
-// ❌ BAD: Barrel file
+// âŒ BAD: Barrel file
 // export { Button } from './button'
 // import { Button } from '@/components/ui'
 
-// ✅ GOOD: Direct import
+// âœ… GOOD: Direct import
 import { Button } from '@/components/ui/button'
 ```
 
@@ -2450,10 +2450,10 @@ import type { Task } from '@/types'
 **ALL queries must filter by user_id.** RLS is enabled but explicit filtering prevents bugs.
 
 ```typescript
-// ✅ ALWAYS
+// âœ… ALWAYS
 supabase.from('tasks').select('*').eq('user_id', userId)
 
-// ❌ NEVER
+// âŒ NEVER
 supabase.from('tasks').select('*')
 ```
 
@@ -2467,7 +2467,7 @@ supabase.from('tasks').select('*')
 # Component
 npx nx g @nx/next:component apps/web/components/tasks/TaskCard --style=none
 
-# Page (manual — App Router convention)
+# Page (manual â€” App Router convention)
 # Create app/(dashboard)/module-name/page.tsx
 
 # Library
@@ -2481,15 +2481,15 @@ npx nx g @nx/next:lib apps/web/hooks/useDebounce
 
 Every new module needs:
 
-- [ ] `app/(dashboard)/<module>/page.tsx` — Page component
-- [ ] `app/(dashboard)/<module>/loading.tsx` — Skeleton loading
-- [ ] `app/(dashboard)/<module>/error.tsx` — Error boundary
-- [ ] `components/<module>/` — Module components
-- [ ] `lib/queries/use-<module>.ts` — TanStack Query hooks
-- [ ] `stores/<module>Store.ts` — Zustand (if UI preferences needed)
-- [ ] `hooks/use<Module>Realtime.ts` — Realtime subscription
-- [ ] `types/<module>.ts` — TypeScript interfaces
-- [ ] Update `docs/product/` — Documentation
+- [ ] `app/(dashboard)/<module>/page.tsx` â€” Page component
+- [ ] `app/(dashboard)/<module>/loading.tsx` â€” Skeleton loading
+- [ ] `app/(dashboard)/<module>/error.tsx` â€” Error boundary
+- [ ] `components/<module>/` â€” Module components
+- [ ] `lib/queries/use-<module>.ts` â€” TanStack Query hooks
+- [ ] `stores/<module>Store.ts` â€” Zustand (if UI preferences needed)
+- [ ] `hooks/use<Module>Realtime.ts` â€” Realtime subscription
+- [ ] `types/<module>.ts` â€” TypeScript interfaces
+- [ ] Update `docs/product/` â€” Documentation
 
 ---
 
@@ -2498,7 +2498,7 @@ Every new module needs:
 ### 29.1 ESLint Flat Config (v9+)
 
 ```javascript
-// eslint.config.js (flat config — Next.js 15 default)
+// eslint.config.js (flat config â€” Next.js 15 default)
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { FlatCompat } from '@eslint/eslintrc'
@@ -2607,7 +2607,7 @@ Frontend packages follow semver:
 ```markdown
 # Changelog
 
-## [2.0.0] — 2026-06-11
+## [2.0.0] â€” 2026-06-11
 
 ### Added
 - TanStack Query SSR with HydrationBoundary (ENG-FE-009)
@@ -2624,7 +2624,7 @@ Frontend packages follow semver:
 
 ---
 
-## Part VIII — Deployment & Operations
+## Part VIII â€” Deployment & Operations
 
 ---
 
@@ -2661,8 +2661,8 @@ Frontend packages follow semver:
 
 | Scenario | Action | RTO |
 |---|---|---|
-| Frontend regression | Vercel: Deployments → Rollback | < 2 min |
-| Backend failure | Railway: Deployments → Redeploy previous | < 3 min |
+| Frontend regression | Vercel: Deployments â†’ Rollback | < 2 min |
+| Backend failure | Railway: Deployments â†’ Redeploy previous | < 3 min |
 | Data corruption | Supabase: Point-in-time recovery | < 15 min |
 | DNS/Cert issue | Vercel auto-renew, no action needed | N/A |
 
@@ -2703,13 +2703,13 @@ concurrency:
 
 ### 33.3 Pre-Merge Checklist (Automated in CI)
 
-- [x] `npx nx lint web` — ESLint passes
-- [x] `npx nx run web:type-check` — TypeScript strict mode
-- [x] `npx nx test web` — Vitest passes (80% coverage)
-- [x] `npx nx build web` — Build succeeds
-- [x] `npx bundlesize` — Bundle within budget
-- [x] `python scripts/validate_prompts.py` — Prompts valid
-- [x] `pa11y-ci` — No WCAG AA violations
+- [x] `npx nx lint web` â€” ESLint passes
+- [x] `npx nx run web:type-check` â€” TypeScript strict mode
+- [x] `npx nx test web` â€” Vitest passes (80% coverage)
+- [x] `npx nx build web` â€” Build succeeds
+- [x] `npx bundlesize` â€” Bundle within budget
+- [x] `python scripts/validate_prompts.py` â€” Prompts valid
+- [x] `pa11y-ci` â€” No WCAG AA violations
 
 ---
 
@@ -2811,7 +2811,7 @@ export const queryKeys = {
 ## Appendix C: Zustand Store Schemas
 
 ```typescript
-// stores/preferences.ts — UI preferences (persisted)
+// stores/preferences.ts â€” UI preferences (persisted)
 interface PreferencesState {
   theme: 'cyberpunk-dark' | 'cyberpunk-light' | 'high-contrast'
   sidebarCollapsed: boolean
@@ -2820,7 +2820,7 @@ interface PreferencesState {
   sleepReminderEnabled: boolean
 }
 
-// stores/toast.ts — Toast notifications (ephemeral)
+// stores/toast.ts â€” Toast notifications (ephemeral)
 interface ToastState {
   toasts: Toast[]
   addToast: (t: Omit<Toast, 'id'>) => void
@@ -2860,24 +2860,24 @@ interface ToastState {
 
 ```
 apps/web (Next.js 15)
-├── @supabase/ssr          # Auth + DB
-├── @tanstack/react-query  # Server state
-├── zustand                 # Client state (preferences, toast)
-├── motion/react            # React animations
-├── gsap                    # Scroll/timeline animations
-├── recharts                # Charts (lazy)
-├── @react-three/fiber      # 3D (lazy)
-├── reactflow               # Graphs (lazy)
-├── react-hook-form         # Forms
-├── zod                     # Validation
-├── class-variance-authority # Variants
-├── @radix-ui/*            # Primitives (20+)
-├── lucide-react            # Icons
-├── serwist                 # PWA service worker
-├── dexie                   # IndexedDB offline
-├── next-intl               # i18n
-├── @sentry/nextjs          # Error tracking
-└── posthog-js              # Analytics
+â”œâ”€â”€ @supabase/ssr          # Auth + DB
+â”œâ”€â”€ @tanstack/react-query  # Server state
+â”œâ”€â”€ zustand                 # Client state (preferences, toast)
+â”œâ”€â”€ motion/react            # React animations
+â”œâ”€â”€ gsap                    # Scroll/timeline animations
+â”œâ”€â”€ recharts                # Charts (lazy)
+â”œâ”€â”€ @react-three/fiber      # 3D (lazy)
+â”œâ”€â”€ reactflow               # Graphs (lazy)
+â”œâ”€â”€ react-hook-form         # Forms
+â”œâ”€â”€ zod                     # Validation
+â”œâ”€â”€ class-variance-authority # Variants
+â”œâ”€â”€ @radix-ui/*            # Primitives (20+)
+â”œâ”€â”€ lucide-react            # Icons
+â”œâ”€â”€ serwist                 # PWA service worker
+â”œâ”€â”€ dexie                   # IndexedDB offline
+â”œâ”€â”€ next-intl               # i18n
+â”œâ”€â”€ @sentry/nextjs          # Error tracking
+â””â”€â”€ posthog-js              # Analytics
 ```
 
 ---
@@ -2896,7 +2896,7 @@ apps/web (Next.js 15)
 ### Phase 2: Breaking Upgrades (paired)
 
 - [ ] **Framer Motion v10 motion/react v11**: Update imports (`import { motion } from 'framer-motion'` ` import { motion } from 'motion/react'`)
-- [ ] **Zustand v4 v5**: Update import (`import { create } from 'zustand'` — already correct pattern)
+- [ ] **Zustand v4 v5**: Update import (`import { create } from 'zustand'` â€” already correct pattern)
 - [ ] **ReactFlow v11 v12**: Remove auto-injected nodeTypes/edgeTypes, add manually
 
 ### Phase 3: Major Framework Upgrades (staged)

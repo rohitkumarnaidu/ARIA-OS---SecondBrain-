@@ -1,12 +1,12 @@
-# Frontend Security Guide — Second Brain OS
+﻿# Frontend Security Guide â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-SEC-001 |
+| Document ID | ENG-FSC-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/` — Frontend security patterns |
+| Applies To | `apps/web/` â€” Frontend security patterns |
 
 ---
 
@@ -30,25 +30,25 @@
 ### 1.1 Frontend Security Boundaries
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                      BROWSER (Untrusted)                         │
-│                                                                   │
-│  ❌ Never trust user input                                        │
-│  ❌ Never expose secrets (API keys, JWT secrets)                  │
-│  ❌ Never store sensitive data in plain text                      │
-│  ✅ Validate ALL input client-side AND server-side                │
-│  ✅ Sanitize output for XSS prevention                            │
-│  ✅ Use CSP as defense-in-depth                                   │
-└─────────────────────────────────────────────────────────┬────────┘
-                                                          │
-                                                          ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                   SUPABASE / BACKEND (Trusted)                    │
-│                                                                   │
-│  ✅ RLS policies enforce row-level access                         │
-│  ✅ Server validates all mutations                                │
-│  ✅ Secrets stored server-side only                              │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      BROWSER (Untrusted)                         â”‚
+â”‚                                                                   â”‚
+â”‚  âŒ Never trust user input                                        â”‚
+â”‚  âŒ Never expose secrets (API keys, JWT secrets)                  â”‚
+â”‚  âŒ Never store sensitive data in plain text                      â”‚
+â”‚  âœ… Validate ALL input client-side AND server-side                â”‚
+â”‚  âœ… Sanitize output for XSS prevention                            â”‚
+â”‚  âœ… Use CSP as defense-in-depth                                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                          â”‚
+                                                          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   SUPABASE / BACKEND (Trusted)                    â”‚
+â”‚                                                                   â”‚
+â”‚  âœ… RLS policies enforce row-level access                         â”‚
+â”‚  âœ… Server validates all mutations                                â”‚
+â”‚  âœ… Secrets stored server-side only                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2 Threat Model (Frontend-Specific)
@@ -178,11 +178,11 @@ module.exports = {
 ### 3.1 React's Built-in Protection
 
 ```typescript
-// ✅ SAFE: React auto-escapes JSX expressions
+// âœ… SAFE: React auto-escapes JSX expressions
 <div>{userInput}</div>
 // Result: <div>&lt;script&gt;alert('xss')&lt;/script&gt;</div>
 
-// ✅ SAFE: Props/attributes are escaped
+// âœ… SAFE: Props/attributes are escaped
 <img src={userInput} alt="user" />
 // Even if userInput = "javascript:alert(1)", React renders as string, not executed
 ```
@@ -190,12 +190,12 @@ module.exports = {
 ### 3.2 Danger Zones
 
 ```typescript
-// ❌ CRITICAL: dangerouslySetInnerHTML
+// âŒ CRITICAL: dangerouslySetInnerHTML
 function Unsafe({ html }: { html: string }) {
   return <div dangerouslySetInnerHTML={{ __html: html }} />
 }
 
-// ✅ SAFE ALTERNATIVE: Use DOMPurify for rich text
+// âœ… SAFE ALTERNATIVE: Use DOMPurify for rich text
 import DOMPurify from 'isomorphic-dompurify'
 
 function SafeRichText({ html }: { html: string }) {
@@ -206,11 +206,11 @@ function SafeRichText({ html }: { html: string }) {
   return <div dangerouslySetInnerHTML={{ __html: sanitized }} />
 }
 
-// ❌ CRITICAL: href with user-controlled input
+// âŒ CRITICAL: href with user-controlled input
 <a href={userInput}>Click</a>
 // userInput could be "javascript:alert(1)"
 
-// ✅ SAFE: Validate URL scheme
+// âœ… SAFE: Validate URL scheme
 function safeUrl(url: string) {
   try {
     const parsed = new URL(url)
@@ -254,9 +254,9 @@ headers: [
 
 ```
 Browser Request:
-├── Cookie: sb-session (HttpOnly, SameSite=Lax)
-├── Header: apikey (anon_key)
-└── Header: Authorization: Bearer <access_token>
+â”œâ”€â”€ Cookie: sb-session (HttpOnly, SameSite=Lax)
+â”œâ”€â”€ Header: apikey (anon_key)
+â””â”€â”€ Header: Authorization: Bearer <access_token>
 
 Supabase validates:
 1. Session cookie signature
@@ -267,14 +267,14 @@ Supabase validates:
 ### 4.2 CSRF Prevention Rules
 
 ```typescript
-// ✅ ALWAYS: Include auth headers in API calls
+// âœ… ALWAYS: Include auth headers in API calls
 const { data, error } = await supabase.from('tasks').select('*')
 // Supabase SDK automatically includes anon_key + access_token
 
-// ✅ ALWAYS: Use POST/DELETE/PUT for mutations (not GET)
-// ✅ NEVER: Use URL query params for mutations
+// âœ… ALWAYS: Use POST/DELETE/PUT for mutations (not GET)
+// âœ… NEVER: Use URL query params for mutations
 // Example of what NOT to do:
-// GET /api/tasks/delete?id=1  ← CSRF-vulnerable!
+// GET /api/tasks/delete?id=1  â† CSRF-vulnerable!
 ```
 
 ### 4.3 SameSite Cookie Configuration
@@ -296,43 +296,43 @@ export const supabase = createBrowserClient(
 
 ```
 User logs in via Google OAuth
-        │
-        ▼
+        â”‚
+        â–¼
 Supabase returns:
-├── access_token (JWT, 1 hour expiry)
-├── refresh_token (long-lived)
-└── provider_token (Google, for APIs)
-        │
-        ▼
+â”œâ”€â”€ access_token (JWT, 1 hour expiry)
+â”œâ”€â”€ refresh_token (long-lived)
+â””â”€â”€ provider_token (Google, for APIs)
+        â”‚
+        â–¼
 Stored in:
-├── access_token → Supabase Auth state (in-memory)
-├── refresh_token → HttpOnly cookie (sb-session)
-└── provider_token → In-memory (not persisted)
-        │
-        ▼
+â”œâ”€â”€ access_token â†’ Supabase Auth state (in-memory)
+â”œâ”€â”€ refresh_token â†’ HttpOnly cookie (sb-session)
+â””â”€â”€ provider_token â†’ In-memory (not persisted)
+        â”‚
+        â–¼
 On expiry:
-├── Supabase auto-refreshes using refresh_token
-├── New access_token issued transparently
-└── No user interaction needed
+â”œâ”€â”€ Supabase auto-refreshes using refresh_token
+â”œâ”€â”€ New access_token issued transparently
+â””â”€â”€ No user interaction needed
 ```
 
 ### 5.2 Token Safety Rules
 
 ```typescript
-// ✅ SAFE: Supabase SDK auto-attaches token
+// âœ… SAFE: Supabase SDK auto-attaches token
 const { data } = await supabase.from('tasks').select('*')
 
-// ✅ SAFE: Get token for backend API calls
+// âœ… SAFE: Get token for backend API calls
 const { data: { session } } = await supabase.auth.getSession()
 const token = session?.access_token
 
-// ❌ CRITICAL: NEVER store in localStorage
-localStorage.setItem('auth_token', token)  // ← XSS-vulnerable!
+// âŒ CRITICAL: NEVER store in localStorage
+localStorage.setItem('auth_token', token)  // â† XSS-vulnerable!
 
-// ❌ CRITICAL: NEVER log tokens
-console.log(token)  // ← Would expose in production logs
+// âŒ CRITICAL: NEVER log tokens
+console.log(token)  // â† Would expose in production logs
 
-// ✅ SAFE: Use token only in Authorization header
+// âœ… SAFE: Use token only in Authorization header
 headers: {
   'Authorization': `Bearer ${session.access_token}`,
 }
@@ -341,7 +341,7 @@ headers: {
 ### 5.3 Session Refresh Handling
 
 ```typescript
-// hooks/useAuth.ts — handles session lifecycle
+// hooks/useAuth.ts â€” handles session lifecycle
 export function useAuth() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [loading, setLoading] = useState(true)
@@ -373,38 +373,38 @@ export function useAuth() {
 ### 6.1 Public vs Private Variables
 
 ```bash
-# .env.local (gitignored — NEVER COMMIT)
-# Public variables (NEXT_PUBLIC_ prefix → exposed to browser)
+# .env.local (gitignored â€” NEVER COMMIT)
+# Public variables (NEXT_PUBLIC_ prefix â†’ exposed to browser)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJ...  # Public anon key
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_DEVTOOLS=true
 
-# Private variables (no prefix → server-side only, NEVER in browser)
-SUPABASE_SERVICE_KEY=eyJhbGciOiJ...  # Secret service key — NEVER expose
-CLAUDE_API_KEY=sk-ant-...              # Secret — server-side only
-JWT_SECRET=your-jwt-secret             # Secret — server-side only
+# Private variables (no prefix â†’ server-side only, NEVER in browser)
+SUPABASE_SERVICE_KEY=eyJhbGciOiJ...  # Secret service key â€” NEVER expose
+CLAUDE_API_KEY=sk-ant-...              # Secret â€” server-side only
+JWT_SECRET=your-jwt-secret             # Secret â€” server-side only
 ```
 
 ### 6.2 Environment Variable Rules
 
 ```typescript
-// ✅ SAFE: Public variable (available in browser)
+// âœ… SAFE: Public variable (available in browser)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
-// ❌ CRITICAL: Private variable in client component
+// âŒ CRITICAL: Private variable in client component
 // This will be `undefined` in the browser!
 const apiKey = process.env.SUPABASE_SERVICE_KEY
 
-// ✅ SAFE: Private variables only in:
+// âœ… SAFE: Private variables only in:
 // 1. Server Components (app/page.tsx without 'use client')
 // 2. API routes (app/api/*/route.ts)
 // 3. next.config.js
 // 4. middleware.ts
 
-// ✅ SAFE: Server Component accessing private vars
+// âœ… SAFE: Server Component accessing private vars
 export default async function ServerPage() {
-  const apiKey = process.env.SUPABASE_SERVICE_KEY  // Safe — only runs on server
+  const apiKey = process.env.SUPABASE_SERVICE_KEY  // Safe â€” only runs on server
   // ...
 }
 ```
@@ -438,7 +438,7 @@ updates:
 ### 7.2 npm Audit in CI
 
 ```bash
-# Run in CI — fail on high/critical vulnerabilities
+# Run in CI â€” fail on high/critical vulnerabilities
 npm audit --audit-level=high
 
 # Review and resolve
@@ -477,14 +477,14 @@ npx @socketsecurity/cli scan
 ### 8.1 What NOT to Log
 
 ```typescript
-// ❌ CRITICAL: Never log these
+// âŒ CRITICAL: Never log these
 console.log(session.access_token)       // JWT tokens
 console.log(user.email)                 // PII
 console.log(error.response?.data)       // Raw API errors (may contain tokens)
 console.log(config.supabaseServiceKey)  // API keys
 console.log(localStorage.getItem('draft_task'))  // User data in logs
 
-// ✅ SAFE: Log these instead
+// âœ… SAFE: Log these instead
 console.log('[Auth] User signed in')
 console.log('[Tasks] Fetch completed:', data?.length, 'items')
 console.log('[Error] Task creation failed:', error.code)
@@ -493,24 +493,24 @@ console.log('[Error] Task creation failed:', error.code)
 ### 8.2 localStorage Safety
 
 ```typescript
-// ✅ SAFE to store in localStorage:
+// âœ… SAFE to store in localStorage:
 // - UI preferences (theme, sidebar state)
 // - Form drafts (temporary, no sensitive data)
 // - Non-sensitive cache
 
-// ❌ NEVER store in localStorage:
+// âŒ NEVER store in localStorage:
 // - Auth tokens or sessions
 // - API keys
 // - PII (emails, phone numbers)
 // - Financial data (raw amounts)
 
-// Zustand persist middleware — only persist non-sensitive data
+// Zustand persist middleware â€” only persist non-sensitive data
 export const usePreferences = create(
   persist(
     (set) => ({
-      theme: 'cyberpunk',       // ✅ Safe
-      sidebarCollapsed: false,  // ✅ Safe
-      defaultTaskFilter: 'all', // ✅ Safe
+      theme: 'cyberpunk',       // âœ… Safe
+      sidebarCollapsed: false,  // âœ… Safe
+      defaultTaskFilter: 'all', // âœ… Safe
     }),
     {
       name: 'aria-preferences',
@@ -531,9 +531,9 @@ export const usePreferences = create(
 function UserProfile({ user }: { user: User }) {
   return (
     <div>
-      <Avatar src={user.avatar_url} />  {/* ✅ Display safely */}
-      <h2>{user.name}</h2>              {/* ✅ React-escaped */}
-      {/* {user.email} */}               {/* ⚠️ Display only if necessary */}
+      <Avatar src={user.avatar_url} />  {/* âœ… Display safely */}
+      <h2>{user.name}</h2>              {/* âœ… React-escaped */}
+      {/* {user.email} */}               {/* âš ï¸ Display only if necessary */}
       {/* NEVER display: session tokens, API keys, raw database IDs */}
     </div>
   )
@@ -558,13 +558,13 @@ const securityHeaders = [
   // Enable XSS filter (legacy browsers)
   { key: 'X-XSS-Protection', value: '1; mode=block' },
 
-  // HSTS — force HTTPS
+  // HSTS â€” force HTTPS
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
 
   // Referrer policy
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
 
-  // Permissions policy — restrict browser features
+  // Permissions policy â€” restrict browser features
   { key: 'Permissions-Policy', value: [
     'camera=()',
     'microphone=()',
@@ -628,7 +628,7 @@ curl -I https://your-app.vercel.app
 ### 10.2 CI Security Gates
 
 ```yaml
-# .github/workflows/ci.yml — security job
+# .github/workflows/ci.yml â€” security job
 security:
   runs-on: ubuntu-latest
   steps:
