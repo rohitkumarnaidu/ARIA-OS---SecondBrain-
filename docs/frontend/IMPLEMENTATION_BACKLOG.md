@@ -1,10 +1,53 @@
-# ARIA OS — Enterprise Frontend Implementation Backlog
+﻿# ARIA OS â€” Enterprise Frontend Implementation Backlog
 
-> **Document ID:** FE-BACKLOG-001  
-> **Version:** 1.0.0  
+> **Document ID:FE-IMPL-001 FE-BACKLOG-001  
+> **Version:** 2.0.0  
 > **Status:** Active  
-> **Last Updated:** 2026-06-15  
-> **Classification:** Internal — Execution Reference
+> **Last Updated:** 2026-07-10  
+> **Classification:** Internal â€” Execution Reference  
+> **Target Audience:** Frontend Developers, AI Agents, QA  
+> **Cross-References:** `docs/engineering/FrontendArchitecture.md`, `docs/frontend/RenderingStrategy.md`, `docs/frontend/FolderStructure.md`  
+> **Review Cycle:** Bi-weekly  
+> **SLA Tier:** Tier 2 (Important)  
+> **Approver:** Developer
+
+---
+
+## 1. Executive Summary
+
+This implementation backlog governs all frontend work for ARIA OS across **17 Epics**, **50+ Features**, and **200+ Tasks** spanning a 15-week delivery timeline. It serves as the single source of truth for what needs to be built, in what order, and to what quality standard.
+
+### 1.1 Scope
+
+| Dimension | Detail |
+|---|---|
+| **Epics** | 17 (Foundation through Production Polish) |
+| **Features** | 50+ across 5 delivery waves |
+| **Tasks** | 200+ with acceptance criteria |
+| **Duration** | 15 weeks (June 1 â€” September 15, 2026) |
+| **Peak Agents** | 6 parallel |
+| **Total Agent-Weeks** | 80 |
+
+### 1.2 Design Principles
+
+| Principle | Description |
+|---|---|
+| **Offline-first** | Every read path works offline; mutations queue and replay |
+| **Accessible by default** | WCAG 2.2 AA for all components |
+| **AI-augmented, not AI-dependent** | All features degrade gracefully without AI |
+| **Component-driven** | Atomic design with layered hierarchy |
+| **Performance-budgeted** | LCP <1.5s, FID <50ms, CLS <0.05 |
+| **Observable** | Error tracking, analytics, performance monitoring |
+
+### 1.3 Current State Snapshot
+
+| Metric | Value | As Of |
+|---|---|---|
+| Total Python tests | 2795+ passing | 2026-07-14 |
+| Frontend tests | ~1900+ | 2026-07-14 |
+| Storybook stories | 105+ stories | 2026-07-14 |
+| E2E specs | 22 Playwright specs | 2026-07-14 |
+| Code coverage (Python) | 96%+ | 2026-07-14 |
 
 ---
 
@@ -13,40 +56,40 @@
 | Score | Meaning |
 |-------|---------|
 | **P0** | Blocks all other work / core differentiator |
-| **P1** | High priority — significant user or business impact |
-| **P2** | Medium — enhances experience, not blocking |
-| **P3** | Low — nice to have, post-MVP |
+| **P1** | High priority â€” significant user or business impact |
+| **P2** | Medium â€” enhances experience, not blocking |
+| **P3** | Low â€” nice to have, post-MVP |
 
 ---
 
 ## Dependency Graph
 
 ```
-EPIC 0: Foundation ──────────────────────────────────────┐
-  ├── EPIC 1: Design System Tokens & Theme Engine ───────┤
-  ├── EPIC 2: Responsive Shell Architecture ─────────────┤
-  ├── EPIC 3: Navigation & Command Center ───────────────┤
-  └── EPIC 4: UI Component Library ──────────────────────┤
-                                                          │
-EPIC 5: AI Interaction Platform ──────────────────────────┤
-  ├── EPIC 6: Dashboard v2 ───────────────────────────────┤
-  ├── EPIC 7: Tasks System Enhancement ───────────────────┤
-  ├── EPIC 8: Knowledge Vault ────────────────────────────┤
-  ├── EPIC 9: Analytics Intelligence ─────────────────────┤
-  ├── EPIC 10: Opportunity Radar v2 ──────────────────────┤
-  └── EPIC 11: Settings & System ─────────────────────────┤
-                                                          │
-EPIC 12: Enterprise Workflows ────────────────────────────┘
-  ├── EPIC 13: Deep Work / Focus Mode
-  ├── EPIC 14: Notification Center
-  ├── EPIC 15: Weekly Review System
-  └── EPIC 16: Global Search & Discovery
+EPIC 0: Foundation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”œâ”€â”€ EPIC 1: Design System Tokens & Theme Engine â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 2: Responsive Shell Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 3: Navigation & Command Center â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â””â”€â”€ EPIC 4: UI Component Library â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+                                                          â”‚
+EPIC 5: AI Interaction Platform â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 6: Dashboard v2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 7: Tasks System Enhancement â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 8: Knowledge Vault â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 9: Analytics Intelligence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â”œâ”€â”€ EPIC 10: Opportunity Radar v2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+  â””â”€â”€ EPIC 11: Settings & System â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+                                                          â”‚
+EPIC 12: Enterprise Workflows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  â”œâ”€â”€ EPIC 13: Deep Work / Focus Mode
+  â”œâ”€â”€ EPIC 14: Notification Center
+  â”œâ”€â”€ EPIC 15: Weekly Review System
+  â””â”€â”€ EPIC 16: Global Search & Discovery
 
 EPIC 17: Production Polish
-  ├── Accessibility (WCAG 2.2 AA)
-  ├── Responsive QA (5 breakpoints)
-  ├── Performance Optimization
-  └── Testing Suite
+  â”œâ”€â”€ Accessibility (WCAG 2.2 AA)
+  â”œâ”€â”€ Responsive QA (5 breakpoints)
+  â”œâ”€â”€ Performance Optimization
+  â””â”€â”€ Testing Suite
 ```
 
 ---
@@ -85,6 +128,324 @@ gantt
 
 ---
 
+## 2. Non-Functional Requirements
+
+### 2.1 Performance
+
+| Requirement | Target | Measurement |
+|---|---|---|
+| Page load (initial) | < 2.5s TTI | Lighthouse, Web Vitals |
+| List render (200 items) | < 200ms | React DevTools profiler |
+| Search response | < 300ms (client), < 1s (semantic) | console.time |
+| AI response (first token) | < 5s | SSE client timing |
+| Bundle size (initial JS) | < 120KB gzip | next/bundle-analyzer |
+| Realtime update latency | < 500ms | Supabase Realtime dashboard |
+
+### 2.2 Availability & Reliability
+
+| Requirement | Target | Enforcement |
+|---|---|---|
+| Uptime (frontend) | 99.9% | Vercel status |
+| Offline read availability | 100% of cached entities | IndexedDB + SW |
+| Offline mutation support | All CRUD operations | Mutation queue |
+| Data loss on offline write | 0% | Queue persistence + idempotency keys |
+
+### 2.3 Security
+
+| Requirement | Standard | Verification |
+|---|---|---|
+| Authentication | Supabase SSR with HttpOnly cookies | Middleware enforcement |
+| Authorization | Row-Level Security + user_id filter | RLS policy review |
+| XSS prevention | React auto-escaping + DOMPurify for edge cases | Pen test |
+| CSP headers | restrictive-src policy | Security audit |
+| API key handling | Environment variables only (never in client) | Code review |
+
+### 2.4 Accessibility
+
+| Requirement | Standard | Tools |
+|---|---|---|
+| WCAG version | 2.2 AA | axe-core, Lighthouse |
+| Keyboard navigation | All interactive elements | Manual tab audit |
+| Screen reader | aria-* attributes throughout | NVDA, VoiceOver |
+| Focus management | Visible focus ring, logical tab order | React DevTools |
+| Color contrast | 4.5:1 text, 3:1 large text | Design token audit |
+| Reduced motion | prefers-reduced-motion respected | CSS media query |
+
+### 2.5 Browser Support
+
+| Browser | Min Version | Testing |
+|---|---|---|
+| Chrome | 100+ | Primary development target |
+| Firefox | 100+ | Manual E2E once per sprint |
+| Safari | 15+ | Manual E2E once per sprint |
+| Edge | 100+ | Chromium-based â€” matches Chrome |
+
+---
+
+## 3. Architecture
+
+### 3.1 How the Backlog Maps to Architecture
+
+This backlog implements the architecture defined in `docs/engineering/FrontendArchitecture.md`. Each epic corresponds to a layer in the architecture:
+
+```
+Architecture Layer                  Backlog Epic
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Design System Tokens              â†’ EPIC 0: Foundation
+Layout & App Shell                â†’ EPIC 1: Shell Architecture
+Global Navigation & Search        â†’ EPIC 2: Command Center
+UI Component Library              â†’ EPIC 3: UI Library
+AI Interaction Platform           â†’ EPIC 4: AI Platform
+Module Pages (16)                 â†’ EPIC 5-10 (dashboard, tasks, knowledge, analytics, opportunity, settings)
+Enterprise Workflows              â†’ EPIC 11-12 (focus, notifications, weekly review)
+Observability & Polish            â†’ EPIC 13 (A11y, responsive QA, perf, testing)
+```
+
+### 3.2 State Architecture Alignment
+
+| Backlog Feature | State Pattern | Architecture Reference |
+|---|---|---|
+| Task CRUD | Server state â†’ TanStack Query + local UI filter | FrontendArchitecture.md Â§7 |
+| Theme Engine | Client state â†’ Zustand persist | FrontendArchitecture.md Â§7.3 |
+| Chat streaming | AI state â†’ State machine store | FrontendArchitecture.md Â§7.5 |
+| Offline mutations | Offline state â†’ IndexedDB queue | FrontendArchitecture.md Â§13 |
+| Search/Command | Search state â†’ In-memory store | FrontendArchitecture.md Â§9 |
+
+### 3.3 Component Hierarchy Alignment
+
+| Backlog Feature | Component Layer | Architecture Reference |
+|---|---|---|
+| Button, Card, Input | Layer 1 â€” Atoms (shadcn/ui) | FrontendArchitecture.md Â§6.1 |
+| DataTable, EmptyState | Layer 2 â€” Molecules (shared) | FrontendArchitecture.md Â§6.1 |
+| Sidebar, Navbar | Layer 3 â€” Layout organisms | FrontendArchitecture.md Â§6.1 |
+| TaskCard, CourseCard | Layer 4 â€” Feature components | FrontendArchitecture.md Â§6.1 |
+| Module pages | Layer 5 â€” Route entry points | FrontendArchitecture.md Â§6.1 |
+
+### 3.4 Rendering Strategy by Epic
+
+| Epic | Rendering Mode | When |
+|---|---|---|
+| EPIC 0-1 (Foundation, Shell) | SSR (layout) + CSR (interactive shell) | Phase 1 |
+| EPIC 2-3 (Command, UI Lib) | CSR (client-only components) | Phase 1 |
+| EPIC 4 (AI Platform) | CSR (streaming, state machine) | Phase 2 |
+| EPIC 5-10 (Module pages) | CSR (current), SSR detail routes (Phase 2) | Phase 1-2 |
+| EPIC 11-12 (Workflows) | CSR + SSR islands | Phase 2 |
+| EPIC 13 (Polish) | All modes â€” audit and optimize | Phase 3 |
+
+---
+
+## 4. Performance Targets
+
+### 4.1 Per-Feature Performance Budgets
+
+| Feature | LCP Budget | FID Budget | CLS Budget | Bundle Budget |
+|---|---|---|---|---|
+| Design System / Theme | < 1.0s | < 50ms | < 0.05 | < 10KB |
+| Responsive Shell | < 1.5s | < 50ms | < 0.05 | < 20KB |
+| Command Palette | < 0.5s (open) | < 50ms | < 0.05 | < 15KB |
+| Dashboard v2 | < 2.0s | < 100ms | < 0.05 | < 40KB |
+| Task Kanban | < 1.5s | < 100ms | < 0.05 | < 30KB |
+| Knowledge Graph | < 3.0s | < 200ms | < 0.1 | < 50KB |
+| Analytics Charts | < 2.0s | < 100ms | < 0.05 | < 35KB |
+| AI Chat 3-Panel | < 2.5s | < 100ms | < 0.05 | < 45KB |
+
+### 4.2 Execution Wave Budgets
+
+| Wave | Weeks | Data Volume | Concurrent Users | JS Budget |
+|---|---|---|---|---|
+| Wave 1 (Foundation) | 1-2 | < 50 records/table | 1-10 | < 80KB |
+| Wave 2 (UI Lib) | 3-4 | < 200 records | 1-50 | < 100KB |
+| Wave 3 (AI + Dashboard) | 5-6 | < 1000 records | 1-100 | < 120KB |
+| Wave 4 (Tasks + Knowledge) | 7-8 | < 5000 records | 1-200 | < 140KB |
+| Wave 5 (Analytics + Settings) | 9-10 | < 10000 records | 1-500 | < 150KB |
+| Wave 6 (Workflows) | 11-12 | < 10000 records | 1-500 | < 160KB |
+| Wave 7 (Polish) | 13-15 | < 10000 records | 1-1000 | < 120KB (optimized) |
+
+### 4.3 Lighthouse Targets per Wave
+
+| Wave | Performance | Accessibility | Best Practices | SEO | PWA |
+|---|---|---|---|---|---|
+| Wave 1 | 85+ | 90+ | 90+ | 90+ | 60+ |
+| Wave 2 | 85+ | 95+ | 95+ | 90+ | 70+ |
+| Wave 3 | 90+ | 95+ | 95+ | 95+ | 80+ |
+| Wave 4 | 90+ | 95+ | 95+ | 95+ | 85+ |
+| Wave 5 | 90+ | 95+ | 95+ | 95+ | 85+ |
+| Wave 6 | 90+ | 95+ | 95+ | 95+ | 90+ |
+| Wave 7 | 95+ | 100 | 100 | 100 | 100 |
+
+---
+
+## 5. Edge Cases
+
+### 5.1 Data Edge Cases
+
+| Scenario | Expected Behavior | Affected Features |
+|---|---|---|
+| Empty database (new user) | EmptyState component with CTA | All CRUD modules |
+| 10,000+ tasks | Virtual scrolling, pagination, search | Task list, DataTable |
+| Concurrent edit on same item | Last-write-wins with timestamp | Task detail, inline edit |
+| Delete item referenced elsewhere | Soft delete + cascade UI feedback | Goals â†’ Tasks, Projects â†’ Tasks |
+| Very long title (500+ chars) | Truncation with ellipsis + tooltip | All forms, card displays |
+| Special characters in input | Sanitized, no XSS | All input fields |
+| Duplicate submission (double-click) | Idempotency check, disabled button | All mutations |
+| File upload failure (image) | Fallback to URL input | Resource library, avatar |
+
+### 5.2 Network Edge Cases
+
+| Scenario | Expected Behavior | Affected Features |
+|---|---|---|
+| Slow network (3G) | Skeleton loaders, progressive rendering | All pages |
+| Intermittent connection | Mutation queue, retry with backoff | All CRUD |
+| Offline â†’ Online transition | Queue replay, cache refresh toast | All modules |
+| Supabase outage | Cached data display, read-only mode | All modules |
+| Rate limited (429) | Exponential backoff, user notification | AI chat, search |
+| Auth token expired mid-session | Silent refresh, redirect if refresh fails | All protected routes |
+
+### 5.3 AI Edge Cases
+
+| Scenario | Expected Behavior | Affected Features |
+|---|---|---|
+| Ollama not running | Fallback to Claude API, or graceful degradation | AI chat, all agents |
+| Both AI providers down | Algorithmic fallback (no AI output) | Briefing, radar, nudges |
+| Slow AI response (>15s) | Streaming indicators, cancel button | Chat, briefing generation |
+| AI returns invalid JSON | Retry with stricter prompt, fallback to default | Agent output parsing |
+| Empty AI response | Default template with "No insights available" | Briefing, radar |
+| Offline AI request | "AI unavailable offline" message | Chat, agent requests |
+
+### 5.4 UI / UX Edge Cases
+
+| Scenario | Expected Behavior | Affected Features |
+|---|---|---|
+| Rapid window resize | Debounced breakpoint detection (200ms) | Responsive shell |
+| Browser back/forward | Correct state restoration, no stale data | All pages |
+| Screen reader active | ARIA live regions, announcements | Dynamic content |
+| High contrast mode | All theme combos pass contrast checks | Theme engine |
+| Reduced motion preferred | Animations disabled, instant transitions | All animations |
+| Keyboard-only navigation | Full tab flow, visible focus | All interactive elements |
+
+---
+
+## 6. Risks & Mitigations
+
+| # | Risk | Likelihood | Impact | Mitigation | Owner |
+|---|---|---|---|---|---|
+| R1 | Orphaned dashboard layout not fixed | High | High â€” no Sidebar/Navbar on any page | Phase 1 priority: move pages into (dashboard)/ route group | Developer |
+| R2 | Zustand stores mixing server + client state | High | Medium â€” no caching, excessive re-fetches | Phase 2: migrate to TanStack Query for server data | Developer |
+| R3 | No offline data persistence | Medium | High â€” app breaks without network | Phase 2: IndexedDB + mutation queue | Developer |
+| R4 | No unit/component tests | High | Medium â€” regressions undetected | Phase 1: Vitest setup + first store tests | Developer |
+| R5 | No Sentry/error tracking | Medium | Medium â€” silent failures in production | Phase 2: @sentry/nextjs integration | Developer |
+| R6 | AI provider dependency | Medium | High â€” app feels broken without AI | Graceful degradation: all features have algorithmic fallback | Developer |
+| R7 | Bundle size regression | Medium | Medium â€” slow load times | Phase 2: bundle analyzer CI gate | Developer |
+| R8 | Accessibility gaps discovered late | Medium | High â€” WCAG violations in production | Phase 1: axe-core in CI from day one | Developer |
+| R9 | SVG icon import bloat | Low | Medium â€” large unused icons | Tree-shaking via lucide-react barrel imports | Developer |
+
+### Risk Response Plan
+
+| Risk Level | Response | Trigger | Action |
+|---|---|---|---|
+| High (R1, R2, R4) | Immediate mitigation | Scheduled in current/next wave | Assign owner, track daily, report at standup |
+| Medium (R3, R5, R6, R7, R8) | Scheduled mitigation | Scheduled per wave plan | Add to epic backlog, track weekly |
+| Low (R9) | Accept + monitor | Detected in code review | Fix if bundle analysis shows issue |
+
+---
+
+## 7. Traceability
+
+### 7.1 Requirement â†’ Epic â†’ Feature â†’ Task Mapping
+
+Every task in this backlog traces upward to a feature, epic, and system requirement:
+
+```
+System Requirement â”€â”€â†’ Epic â”€â”€â†’ Feature â”€â”€â†’ Task â”€â”€â†’ Acceptance Criteria
+     (BRD/SRS)        (Theme)   (Sub-theme)  (Unit)     (Verification)
+```
+
+### 7.2 Traceability Matrix
+
+| System Requirement | Epic | Feature(s) | Verification |
+|---|---|---|---|
+| REQ-UI-01: Consistent visual identity | EPIC 0: Foundation | 0.1 Design Tokens, 0.2 Theme Engine | Token audit, ThemeSwitcher test |
+| REQ-UI-02: Responsive across devices | EPIC 1: Shell Architecture | 1.1 Desktop, 1.2 Tablet, 1.3 Mobile, 1.4 Selector | Responsive QA (5 breakpoints) |
+| REQ-NAV-01: Keyboard-driven navigation | EPIC 2: Command Center | 2.1 Command Palette, 2.2 Global Search | Keyboard E2E tests |
+| REQ-UI-03: Reusable component library | EPIC 3: UI Library | 3.1-3.5 all features | Storybook + component tests |
+| REQ-AI-01: ARIA interaction platform | EPIC 4: AI Platform | 4.1 3-Panel, 4.2 Streaming, 4.3 Ghost Hints | AI chat E2E, streaming tests |
+| REQ-DASH-01: Personalized dashboard | EPIC 5: Dashboard v2 | 5.1 Dashboard Redesign, 5.2 Widget System | Dashboard E2E, widget tests |
+| REQ-TASK-01: Full task management | EPIC 6: Tasks Enhancement | 6.1 Kanban, 6.2 Detail, 6.3 Bulk, 6.4 Shortcuts | Task CRUD E2E |
+| REQ-KNOW-01: Knowledge graph visualization | EPIC 7: Knowledge Vault | 7.1 Graph, 7.2 Library, 7.3 Discovery | Knowledge graph E2E |
+| REQ-ANL-01: Analytics and reporting | EPIC 8: Analytics Intelligence | 8.1 Dashboard, 8.2 Report Generator | Analytics E2E |
+| REQ-OPP-01: Opportunity detection | EPIC 9: Opportunity Radar | 9.1 Radar, 9.2 Scoring | Radar E2E |
+| REQ-SET-01: User settings & preferences | EPIC 10: Settings & System | 10.1 Settings Page (6 sections) | Settings form tests |
+| REQ-ENT-01: Enterprise workflows | EPIC 11-12 | 11.1-12.3 all features | Workflow E2E |
+| REQ-QA-01: Quality & accessibility | EPIC 13: Production Polish | 13.1 A11y, 13.2 QA, 13.3 Perf, 13.4 Tests | Lighthouse, axe, Playwright |
+
+### 7.3 Test Coverage by Requirement
+
+| Requirement | Unit Tests | Component Tests | E2E Tests | A11y Tests |
+|---|---|---|---|---|
+| UI consistency (REQ-UI-01) | Theme store tests | ThemeSwitcher render | Theme toggle flow | Contrast check |
+| Keyboard nav (REQ-NAV-01) | Shortcut hook test | Command palette render | Cmd+K open/close | Keyboard tab flow |
+| Task CRUD (REQ-TASK-01) | Task store, query hooks | TaskCard, TaskForm render | Full CRUD flow | Task detail A11y |
+| AI Chat (REQ-AI-01) | Chat store, stream parser | MessageBubble render | Chat flow E2E | Chat A11y |
+| Responsive (REQ-UI-02) | useResponsive hook | ShellSelector render | 5 breakpoint tests | Mobile A11y |
+
+---
+
+## 8. Testing Strategy
+
+### 8.1 Test Layers & Responsibilities
+
+| Layer | Tool | Location | Who Writes | Per-Feature Requirement |
+|---|---|---|---|---|
+| **Unit** | Vitest | `__tests__/unit/` | Developer | All stores, hooks, utilities â€” 90%+ coverage |
+| **Component** | Vitest + RTL | `__tests__/unit/components/` | Developer + QA | All UI component variants + states |
+| **Integration** | Vitest + RTL | `__tests__/integration/features/` | Developer | Feature workflows (create â†’ edit â†’ delete) |
+| **E2E** | Playwright | `e2e/specs/` | QA | Critical paths (login, CRUD, search, nav) |
+| **Accessibility** | axe-core | Integrated in E2E | QA | Every unique page template â€” 0 violations |
+| **Visual** | Storybook + Chromatic | Storybook stories | Developer | Dashboard, Tasks, Chat, Login |
+| **Performance** | Lighthouse CI | CI pipeline | Developer | Lighthouse thresholds enforced per wave |
+
+### 8.2 Per-Epic Test Requirements
+
+| Epic | Unit Tests | Component Tests | E2E Tests | A11y |
+|---|---|---|---|---|
+| EPIC 0 (Foundation) | Theme store, token utils | ThemeSwitcher, font rendering | Theme persistence | Contrast check (7 combos) |
+| EPIC 1 (Shell) | useResponsive, breakpoints | Sidebar, Navbar, MobileNav | Shell responsive switch | Keyboard nav, ARIA landmarks |
+| EPIC 2 (Command) | useCommandCenter, search store | Command palette, SearchBar | Cmd+K open/close/search | Focus trap, aria-* |
+| EPIC 3 (UI Lib) | cn(), format(), validators | Button, Card, Input, Dialog â€” all variants | N/A (component-level) | Aria-* on all 18 primitives |
+| EPIC 4 (AI Platform) | Chat store, stream parser | MessageBubble, ThinkingIndicator | Chat send/receive, streaming | Live region announcements |
+| EPIC 5 (Dashboard) | Aggregate queries (mocked) | KPIStrip, Heatmap, Briefing card | Dashboard load, widget toggle | Data visualization A11y |
+| EPIC 6 (Tasks) | Task queries, optimistic updates | TaskCard, KanbanBoard, TaskForm | Task CRUD, kanban drag | Inline error announcements |
+| EPIC 7 (Knowledge) | Graph layout calculations | KnowledgeGraph, NodeDetail | Graph load, search | Canvas A11y fallbacks |
+| EPIC 8 (Analytics) | Report generation utils | ChartComponent, KPI tiles | Analytics load, export CSV | Chart data A11y |
+| EPIC 9 (Opportunity) | Score calculation | RadarScanner, MatchCard | Radar scan, filter | Color-blind safe scores |
+| EPIC 10-12 | Settings store, focus timer | SettingsForm, FocusMode, NotificationBell | Settings CRUD, focus mode | Form validation A11y |
+| EPIC 13 (Polish) | All utilities final pass | All components audit | Full regression suite | Full WCAG 2.2 AA audit |
+
+### 8.3 Test Data Strategy
+
+| Data Type | Source | Coverage | Refresh |
+|---|---|---|---|
+| Mock Supabase data | vi.fn() mocks | Unit + integration | Per test file |
+| Test user accounts | Supabase seed script | E2E tests | Per CI run |
+| Storybook data | Hardcoded fixtures | Component stories | Per build |
+| Performance test data | Generated (faker) | Load tests | Per benchmark run |
+
+### 8.4 Testing Gates
+
+```
+PR Gate Checklist:
+[ ] git status clean
+[ ] npm run lint â€” 0 errors, 0 warnings
+[ ] npm run type-check â€” 0 errors
+[ ] vitest run â€” all passing
+[ ] vitest --coverage â€” above thresholds (80%+)
+[ ] playwright test â€” critical E2E paths pass
+[ ] lighthouse ci â€” scores above wave targets
+[ ] chromatic â€” no visual regressions (if integrated)
+```
+
+---
+
 ## EPIC 0: Foundation
 
 ### FEATURE 0.1: Design Token Alignment
@@ -94,13 +455,13 @@ gantt
 **Business Criticality:** P0 (blocks everything) | **User Impact:** Low | **Technical Risk:** Low
 
 #### Screens/Components
-- `tailwind.config.js` — align all color primitives with Antigravity OKLCH palette
+- `tailwind.config.js` â€” align all color primitives with Antigravity OKLCH palette
 
 #### Tasks & Acceptance Criteria
 
 | # | Task | AC |
 |---|------|-----|
-| 0.1.1 | Align all color primitives with Antigravity OKLCH palette | All tokens match enterprise theme.css — slate/indigo/emerald/amber/rose scales |
+| 0.1.1 | Align all color primitives with Antigravity OKLCH palette | All tokens match enterprise theme.css â€” slate/indigo/emerald/amber/rose scales |
 | 0.1.2 | Add missing semantic tokens (sidebar, chart colors, glows) | Every enterprise token has a corresponding Tailwind class |
 | 0.1.3 | Add light mode token overrides | `.light` class switches all tokens to light variant |
 | 0.1.4 | Add high contrast token overrides | `.high-contrast` class toggles contrast boost on all surfaces |
@@ -126,7 +487,7 @@ gantt
 
 | # | Task | AC |
 |---|------|-----|
-| 0.2.1 | Create `ThemeContext` with 3-axis theme state (dark/light × normal/high-contrast × 4 accents) | 24 theme combinations possible |
+| 0.2.1 | Create `ThemeContext` with 3-axis theme state (dark/light Ã— normal/high-contrast Ã— 4 accents) | 24 theme combinations possible |
 | 0.2.2 | Implement `ThemeProvider` wrapper component | Wraps entire app, applies theme class to `<html>` |
 | 0.2.3 | Add localStorage persistence | Theme survives page refresh |
 | 0.2.4 | Add Supabase `user_preferences` sync | Theme syncs across logged-in devices |
@@ -156,7 +517,7 @@ gantt
 
 ## EPIC 1: Responsive Shell Architecture
 
-### FEATURE 1.1: Desktop Shell (≥1024px)
+### FEATURE 1.1: Desktop Shell (â‰¥1024px)
 **Depends on:** 0.1, 0.3  
 **Priority:** P0  
 **Effort:** 5 days | **Agents:** 2  
@@ -270,7 +631,7 @@ gantt
 |---|------|-----|
 | 2.1.1 | Build modal overlay with backdrop blur (20px) | Centered, max-w-2xl, max-height 80vh |
 | 2.1.2 | Add search input with AI icon + placeholder | `font-display` 20px, auto-focuses on open |
-| 2.1.3 | Implement keyboard navigation (↑↓↵ Esc) | Arrow keys navigate list, Enter selects, Esc closes |
+| 2.1.3 | Implement keyboard navigation (â†‘â†“â†µ Esc) | Arrow keys navigate list, Enter selects, Esc closes |
 | 2.1.4 | Add 5 result sections: Universal Search, AI Search, Commands, Recent Activity, Navigation | Each section has monospace uppercase header |
 | 2.1.5 | Build result items with icons, type badges, keyboard hint | Uniform item height, hover/active states |
 | 2.1.6 | Add Cmd+K/Ctrl+K global shortcut | Opens/closes toggle, prevents default browser behavior |
@@ -290,7 +651,7 @@ gantt
 
 | # | Task | AC |
 |---|------|-----|
-| 2.2.1 | Add search input in TopNav with ⌘K hint badge | Focuses command center on click |
+| 2.2.1 | Add search input in TopNav with âŒ˜K hint badge | Focuses command center on click |
 | 2.2.2 | Implement fuzzy search client-side (Fuse.js) | Results return in <100ms |
 | 2.2.3 | Add module-scoped search shortcuts (Cmd+Shift+K/P/O) | Scoped to Knowledge/Projects/Opportunities |
 | 2.2.4 | Connect to backend semantic search endpoint with fallback | Falls back to FTS when AI unavailable |
@@ -310,7 +671,7 @@ gantt
 
 | Component | Tasks | AC |
 |-----------|-------|-----|
-| `Button` (upgrade) | Add scale-press (0.96), icon position, group hover | All 5 variants × 3 sizes render correctly |
+| `Button` (upgrade) | Add scale-press (0.96), icon position, group hover | All 5 variants Ã— 3 sizes render correctly |
 | `Card` (upgrade) | Add 4 variants: default/interactive/compact/highlight | 3-part anatomy enforced (header/content/footer) |
 | `Input` (upgrade) | Add 7 states + validation icons + shake on error | Error state has border + icon + message |
 | `Skeleton` (upgrade) | Add 5 variants: text/circle/card/chart/table-row | shimmer animation, configurable width/height |
@@ -354,7 +715,7 @@ gantt
 | `KPIStrip` | Horizontal metric cards with icon + value + trend + mini sparkline | Scrolls horizontally on mobile (CSS snap) |
 | `BentoGrid` | CSS grid with `grid-auto-flow: dense`, 1/2/4 column spans | Items visually weight by priority |
 | `ProgressRing` | SVG-based circular progress (stroke-dasharray) | Configurable size, stroke, color |
-| `ActivityHeatmap` | GitHub-style grid (52 weeks × 7 days) | 5 intensity levels, tooltip on hover |
+| `ActivityHeatmap` | GitHub-style grid (52 weeks Ã— 7 days) | 5 intensity levels, tooltip on hover |
 | `Timeline` | Vertical/horizontal timeline with milestone nodes | Animated connection line (gradient) |
 | `ChartContainer` | Recharts wrapper with consistent dark theming | Dark-themed tooltip, responsive container |
 | `DataTable` (upgrade) | Add column visibility toggle + row expansion + batch actions | Virtual scrolling for 10k+ rows |
@@ -407,12 +768,12 @@ gantt
 **Business Criticality:** P0 | **User Impact:** Very High | **Technical Risk:** High
 
 #### Screens/Components
-- `app/(dashboard)/chat/page.tsx` — rebuild as 3-panel
+- `app/(dashboard)/chat/page.tsx` â€” rebuild as 3-panel
 - `components/chat/ChatPanel.tsx`
 - `components/chat/ConversationList.tsx`
 - `components/chat/ContextPanel.tsx`
 - `components/chat/MessageBubble.tsx`
-- `components/ai/AIDock.tsx` — finalize
+- `components/ai/AIDock.tsx` â€” finalize
 
 #### Tasks & Acceptance Criteria
 
@@ -474,7 +835,7 @@ gantt
 **Business Criticality:** P0 | **User Impact:** Very High | **Technical Risk:** Medium
 
 #### Screens/Components
-- `app/(dashboard)/dashboard/page.tsx` — rebuild
+- `app/(dashboard)/dashboard/page.tsx` â€” rebuild
 - `components/dashboard/KPIStrip.tsx`
 - `components/dashboard/MorningBriefing.tsx`
 - `components/dashboard/TodayFocus.tsx`
@@ -491,13 +852,13 @@ gantt
 | 5.1.1 | Rebuild with 7 content zones (Z1-Z7) | Time-of-day greeting (morning/midday/evening/night) |
 | 5.1.2 | Build KPI Strip (6 metrics with trend arrows + sparklines) | Mobile: snap-scroll with 3 visible at a time |
 | 5.1.3 | Build Morning Briefing banner with gradient | Shows AI greeting + priority highlight |
-| 5.1.4 | Build Today's Focus section with checkboxes | Checked → line-through → optimistic complete |
+| 5.1.4 | Build Today's Focus section with checkboxes | Checked â†’ line-through â†’ optimistic complete |
 | 5.1.5 | Add AI suggested focus block (emerald border, time range) | Shows as card with gradient |
 | 5.1.6 | Build Course Progress (3 cards with rings + status) | Status: On Track (indigo), Needs Attn (amber), Almost Done (emerald) |
 | 5.1.7 | Build Opportunity Feed (top 2 matches with score badges) | Match score 92% = green glow, 85% = neutral |
 | 5.1.8 | Build Active Projects (2 cards with progress bars) | Blocked status shows warning icon |
-| 5.1.9 | Build Activity Heatmap (52×7 GitHub-style grid) | 5 intensity levels, tooltip on hover shows count |
-| 5.1.10 | Build Weekly Velocity (7-day bar chart) — desktop only | Today highlighted with shadow glow |
+| 5.1.9 | Build Activity Heatmap (52Ã—7 GitHub-style grid) | 5 intensity levels, tooltip on hover shows count |
+| 5.1.10 | Build Weekly Velocity (7-day bar chart) â€” desktop only | Today highlighted with shadow glow |
 | 5.1.11 | Build Milestone Timeline (5-point milestone progress) | Gradient connection line |
 
 ---
@@ -577,7 +938,7 @@ gantt
 | # | Task | AC |
 |---|------|-----|
 | 6.3.1 | Add checkbox selection per row with select-all toggle | Shows count of selected items |
-| 6.3.2 | Build floating bulk action bar (complete/delete/move/assign) | Appears when ≥1 item selected |
+| 6.3.2 | Build floating bulk action bar (complete/delete/move/assign) | Appears when â‰¥1 item selected |
 | 6.3.3 | Add confirmation dialog for bulk delete | "Delete N items?" with count |
 
 ---
@@ -592,12 +953,12 @@ gantt
 
 | # | Task | AC |
 |---|------|-----|
-| 6.4.1 | `n` — new task | Opens create modal |
-| 6.4.2 | `j/k` — navigate list | Moves focus up/down |
-| 6.4.3 | `Enter` — open selected task | Navigates to detail |
-| 6.4.4 | `e` — edit task | Opens edit modal |
-| 6.4.5 | `d` — delete task (with confirmation) | Confirms, then deletes |
-| 6.4.6 | `c` — complete task | Optimistic update |
+| 6.4.1 | `n` â€” new task | Opens create modal |
+| 6.4.2 | `j/k` â€” navigate list | Moves focus up/down |
+| 6.4.3 | `Enter` â€” open selected task | Navigates to detail |
+| 6.4.4 | `e` â€” edit task | Opens edit modal |
+| 6.4.5 | `d` â€” delete task (with confirmation) | Confirms, then deletes |
+| 6.4.6 | `c` â€” complete task | Optimistic update |
 
 ---
 
@@ -621,9 +982,9 @@ gantt
 |---|------|-----|
 | 7.1.1 | Build canvas with force-directed layout (d3-force or vis-network) | Nodes repel, edges attract, stable layout |
 | 7.1.2 | Add zoom/pan with grab cursor | Touch-compatible pinch zoom |
-| 7.1.3 | Add node types: notes/resources/ideas with distinct colors | 3 shapes × 3 colors |
-| 7.1.4 | Add click-to-select node → opens detail slide-over | Right panel slides in |
-| 7.1.5 | Add search bar with semantic search → highlights matching nodes | Search results glow on graph |
+| 7.1.3 | Add node types: notes/resources/ideas with distinct colors | 3 shapes Ã— 3 colors |
+| 7.1.4 | Add click-to-select node â†’ opens detail slide-over | Right panel slides in |
+| 7.1.5 | Add search bar with semantic search â†’ highlights matching nodes | Search results glow on graph |
 | 7.1.6 | Add view toggles: Graph, List, Map | Each view preserves state |
 | 7.1.7 | Build NodeDetail: title, description, properties, relationships | Connected entities shown as links |
 | 7.1.8 | Build KnowledgeSearch with filters (type, tag, date range) | Results render as both list + graph highlights |
@@ -679,7 +1040,7 @@ gantt
 | # | Task | AC |
 |---|------|-----|
 | 8.1.1 | Build KPI tile grid (6 metrics with sparklines + trends) | Each tile shows metric + trend badge |
-| 8.1.2 | Build Focus Heatmap (time-of-day × day-of-week) | D3 heatmap or CSS grid |
+| 8.1.2 | Build Focus Heatmap (time-of-day Ã— day-of-week) | D3 heatmap or CSS grid |
 | 8.1.3 | Build Skill Vector radar chart (Recharts RadarChart) | 6 skills plotted, interactive |
 | 8.1.4 | Build Deep Analysis reports list | Timestamped, filterable by type |
 | 8.1.5 | Add AI Intelligence Hub banner with shimmer animation | Shows latest AI insight |
@@ -711,7 +1072,7 @@ gantt
 **Business Criticality:** P1 | **User Impact:** High | **Technical Risk:** High
 
 #### Screens/Components
-- `app/(dashboard)/opportunities/page.tsx` — rebuild
+- `app/(dashboard)/opportunities/page.tsx` â€” rebuild
 - `components/opportunities/RadarScanner.tsx`
 - `components/opportunities/MatchCard.tsx`
 - `components/opportunities/SignalList.tsx`
@@ -722,7 +1083,7 @@ gantt
 | # | Task | AC |
 |---|------|-----|
 | 9.1.1 | Build radar visualization (CSS concentric circles + rotating scan line) | Continuous rotation animation |
-| 9.1.2 | Plot signals as dots positioned by score × category | 4 quadrants: Strategic, Financial, Partnership, Career |
+| 9.1.2 | Plot signals as dots positioned by score Ã— category | 4 quadrants: Strategic, Financial, Partnership, Career |
 | 9.1.3 | Add signal pulse animation on new detection | Green ping effect |
 | 9.1.4 | Build MatchCard with large score badge + drop-shadow | Score 94% has prominent display |
 | 9.1.5 | Build SignalList with type icon + description + action button | Category filter tabs at top |
@@ -742,7 +1103,7 @@ gantt
 |---|------|-----|
 | 9.2.1 | Build score breakdown tooltip (skill match, interest, goal alignment, timing, location) | Hover on badge shows radar or list |
 | 9.2.2 | Add "Refresh Scan" action with spin animation | Spinning animation during scan |
-| 9.2.3 | Add match tier filter pills: ≥90% (exceptional), 70-89% (strong), 50-69% (moderate) | Each pill filters list |
+| 9.2.3 | Add match tier filter pills: â‰¥90% (exceptional), 70-89% (strong), 50-69% (moderate) | Each pill filters list |
 
 ---
 
@@ -763,7 +1124,7 @@ gantt
 | Section | Tasks | AC |
 |---------|-------|-----|
 | User Profile | Avatar upload + name + email display | Supabase profile update |
-| AI & Personalization | AI model selector (Ollama/Claude), temperature slider, briefing time, per-agent toggles | Toggle each of 10 agents on/off |
+| AI & Personalization | AI model selector (Ollama/Claude), temperature slider, briefing time, per-agent toggles | Toggle each of 11 agents on/off |
 | Notifications | Per-category enable/disable (7 categories), priority threshold slider | Changes persist immediately |
 | Privacy & Data | Data export button, AI usage toggle, analytics opt-out, memory visibility | Export downloads JSON |
 | Appearance | Theme picker (7 combos shown as cards), sidebar mode toggle, font size slider, reduced motion toggle, compact mode toggle | Preview updates live |
@@ -812,7 +1173,7 @@ gantt
 |---|------|-----|
 | 11.2.1 | Build slide-over panel from right (380px, backdrop blur) | 0.3s ease slide animation |
 | 11.2.2 | Add 7 collapsible sections (Task, Learning, Opportunity, Goal, Habit, System, AI) | Each section header with count |
-| 11.2.3 | Add 5 priority levels with color coding | P0 (red) → P4 (transparent/low opacity) |
+| 11.2.3 | Add 5 priority levels with color coding | P0 (red) â†’ P4 (transparent/low opacity) |
 | 11.2.4 | Add "Mark all read" and "View all" actions | Badge count updates on mark-read |
 | 11.2.5 | Add real-time subscription (Supabase Realtime) | New notifications appear instantly |
 | 11.2.6 | Build NotificationBadge component | Red dot with count on bell icon |
@@ -908,7 +1269,7 @@ gantt
 | 13.1.3 | Complete focus management (10 interaction patterns) | Tab order matches visual order |
 | 13.1.4 | Add keyboard navigation to all interactive elements | Enter/Space on buttons, Arrow on selects |
 | 13.1.5 | Validate contrast ratios (4.5:1 text, 3:1 large text) | All 7 theme combos pass |
-| 13.1.6 | Enforce 44×44px touch targets on mobile | All interactive elements meet minimum |
+| 13.1.6 | Enforce 44Ã—44px touch targets on mobile | All interactive elements meet minimum |
 | 13.1.7 | Add `prefers-reduced-motion` alternative animations | Animations replaced with instant transitions |
 | 13.1.8 | Add screen reader announcements for dynamic content | `aria-live="polite"` on loading/status changes |
 | 13.1.9 | Add form validation announcements | `aria-describedby` on all error states |
@@ -950,7 +1311,7 @@ gantt
 | 13.3.4 | Add virtual scrolling to all list views (DataTable >100 rows) | >100 rows virtualizes |
 | 13.3.5 | Add debounced search (300ms) | No API call on every keystroke |
 | 13.3.6 | Add CSS containment to cards | `contain: layout style paint` |
-| 13.3.7 | Lighthouse CI enforcement | Perf ≥90, A11y ≥90, Best Practices ≥90 |
+| 13.3.7 | Lighthouse CI enforcement | Perf â‰¥90, A11y â‰¥90, Best Practices â‰¥90 |
 
 ---
 
@@ -964,11 +1325,11 @@ gantt
 
 | Type | Count | Coverage |
 |------|-------|----------|
-| Unit (Vitest) | 100+ | All hooks, stores, utils, helpers ≥80% coverage |
-| Component (RTL) | 50+ | All UI components — all variants + states + events |
+| Unit (Vitest) | 100+ | All hooks, stores, utils, helpers â‰¥80% coverage |
+| Component (RTL) | 50+ | All UI components â€” all variants + states + events |
 | E2E (Playwright) | 15+ | Auth, nav, dashboard CRUD, tasks CRUD, chat, search, responsive, theme, keyboard |
-| A11y (axe) | 20+ | Every unique page template — 0 violations enforced |
-| Visual (Playwright) | 10+ | Dashboard, Tasks, Chat, Login — <1% diff threshold |
+| A11y (axe) | 20+ | Every unique page template â€” 0 violations enforced |
+| Visual (Playwright) | 10+ | Dashboard, Tasks, Chat, Login â€” <1% diff threshold |
 
 ---
 
@@ -991,4 +1352,4 @@ gantt
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2026-06-15 | Developer | Initial backlog — 17 Epics, 50+ Features, 200+ Tasks |
+| 1.0.0 | 2026-06-15 | Developer | Initial backlog â€” 17 Epics, 50+ Features, 200+ Tasks |
