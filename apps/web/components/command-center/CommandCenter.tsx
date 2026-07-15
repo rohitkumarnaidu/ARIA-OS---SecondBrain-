@@ -217,6 +217,7 @@ interface CommandCenterProps {
    CommandCenter Component
    ─────────────────────────────────────────────── */
 
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
   const router = useRouter()
   const [query, setQuery] = useState('')
@@ -430,9 +431,11 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
       className="fixed inset-0 z-modal flex items-start justify-center"
       style={{ background: 'rgba(10,11,15,0.7)', paddingTop: '12vh' }}
       onClick={handleBackdropClick}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
       role="dialog"
       aria-modal="true"
       aria-label="Command center"
+      tabIndex={-1}
     >
       {/* Radial gradient glow behind panel */}
       <div
@@ -832,3 +835,4 @@ export function CommandCenter({ isOpen, onClose }: CommandCenterProps) {
     </div>
   )
 }
+/* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
