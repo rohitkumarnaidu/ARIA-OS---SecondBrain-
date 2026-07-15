@@ -36,6 +36,7 @@ export const SuggestionChips = memo(function SuggestionChips({ suggestions, onSe
       ref={scrollRef}
       role="listbox"
       aria-label="Suggestions"
+      tabIndex={-1}
       className={clsx(
         'flex gap-2 overflow-x-auto scrollbar-none py-1 px-0.5',
         'snap-x snap-mandatory scroll-smooth',
@@ -45,6 +46,7 @@ export const SuggestionChips = memo(function SuggestionChips({ suggestions, onSe
       onMouseDown={() => setIsDragging(true)}
       onMouseUp={() => setIsDragging(false)}
       onMouseLeave={() => setIsDragging(false)}
+      onKeyDown={() => {}}
     >
       {suggestions.map((chip, i) => (
         <motion.button
