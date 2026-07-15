@@ -6,7 +6,7 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-ROADMAP-001 |
+| Document ID | PRD-RMP-001 |
 | Version | 3.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
@@ -279,7 +279,7 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 ### In Scope
 
 - Next.js 14 with App Router, TypeScript, Tailwind CSS
-- Supabase PostgreSQL with 21 tables, proper indexes, foreign keys
+- Supabase PostgreSQL with 27 tables, proper indexes, foreign keys
 - Row-Level Security on every table (auth.uid() = user_id)
 - FastAPI backend with all 13 routers and ~53 endpoints
 - Google OAuth with Supabase Auth
@@ -293,7 +293,7 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 - [ ] User can add courses with progress tracking and deadlines
 - [ ] User can set goals with milestones
 - [ ] Dashboard shows relevant overview data
-- [ ] All 21 tables have RLS enforced
+- [ ] All 27 tables have RLS enforced
 - [ ] API responds within 200ms P95
 - [ ] Deployment is automated via GitHub → Vercel/Railway
 
@@ -429,7 +429,7 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 │  │ T-41  Weekly Review generation (Sunday 8 PM cron)       │ 4h │
 │  │ T-42  Review presentation (narrative + data view)       │ 3h │
 │  │ T-43  Prompt file: weekly_review_agent.md               │ 2h │
-│  │ T-44  Agent test suite (14 agent prompt tests)          │ 1h │
+│  │ T-44  Agent test suite (42 agent prompt tests)          │ 1h │
 │  └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -444,9 +444,9 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 - [ ] Chat can create tasks and update goals via natural language
 - [ ] Daily briefing generates and delivers at 7 AM
 - [ ] Weekly review generates on Sunday 8 PM
-- [ ] All 12 prompt files pass validation
+- [ ] All 22 prompt files pass validation
 - [ ] PromptLoader loads all prompts with 100% frontmatter coverage
-- [ ] All 30 tests pass (16 loader + 14 agent)
+- [ ] All 73 tests pass (31 loader + 42 agent)
 
 ---
 
@@ -520,7 +520,7 @@ Phase 8: Polish & Production             Week 37-40: React Native app
 - [ ] Context engine assembles optimized prompts for all agents
 - [ ] Sleep agent delivers wind-down messages at 9:30 PM
 - [ ] Nudge agent checks course/habit progress and sends reminders at 6 PM
-- [ ] All 8 agent prompt files are validated and loaded via PromptLoader
+- [ ] All agent prompt files are validated and loaded via PromptLoader
 - [ ] 30+ tests pass in CI
 
 ---
@@ -1030,7 +1030,7 @@ With exam buffer and contingency: ~48 weeks
 | **M9: Opportunity Radar** | Week 13 | P4 | Daily opportunity scans | Radar finds ≥3 relevant matches/day |
 | **M10: Context Engine** | Week 14 | P4 | Full context assembly | AI responses include user context |
 | **M11: Sleep + Nudge** | Week 15 | P4 | Automated sleep/nudge agents | Wind-down at 9:30 PM, nudges at 6 PM |
-| **M12: BETA** | Week 15 | End P4 | Advanced AI complete | All 8 agents operational, 30+ tests |
+| **M12: BETA** | Week 15 | End P4 | Advanced AI complete | All 11 agents operational, 30+ tests |
 | **M13: Roadmap Builder** | Week 18 | P5 | Visual + AI roadmap | Drag-drop roadmap, text→roadmap works |
 | **M14: Income + Projects** | Week 22 | P6 | Income/project tracking | Income logged, project phases tracked |
 | **M15: Academics + CGPA** | Week 24 | P6 | Academic planning | CGPA projection within 0.2 of actual |
@@ -1104,7 +1104,7 @@ Jul │ Aug │ Sep │ Oct │ Nov │ Dec │ Jan │ Feb │ Mar │ Apr │ 
 |---|---|
 | **Purpose** | Production readiness validation |
 | **Audience** | 20-50 users (invite-only waitlist) |
-| **Feature set** | Complete feature set: all 15 modules, all 8 agents, roadmap engine, monitoring, PWA offline |
+| **Feature set** | Complete feature set: all 15 modules, all 11 agents, roadmap engine, monitoring, PWA offline |
 | **Quality bar** | Lighthouse >90, all tests passing, security audit complete, 99.9% uptime target |
 | **Known limitations** | No mobile app, no browser extension v2, no community features |
 | **Success criteria** | 30-day retention >60%; NPS >30; zero security incidents |
@@ -1204,7 +1204,7 @@ Any feature can be disabled immediately if:
 | Phase 1 (2 weeks) | Took 3 weeks | +50% | Database schema design + RLS requires dedicated time |
 | Phase 2 (2 weeks) | Took 3 weeks | +50% | Browser extension + AI summary integration is non-trivial |
 | Phase 3 (2 weeks) | Took 4 weeks | +100% | Ollama integration has significant debugging overhead |
-| "All 8 agents in Phase 3" | Split into Phase 3 + 4 | — | Agent prompts need independent iteration cycles |
+| "All 11 agents in Phase 3" | Split into Phase 3 + 4 | — | Agent prompts need independent iteration cycles |
 | Solo development velocity | 15 hrs/week → 10 hrs | -33% | Overestimated available time — exam weeks are real |
 | Feature complexity estimates | -50% to +200% | High variance | CRUD features were overestimated; AI features were underestimated |
 

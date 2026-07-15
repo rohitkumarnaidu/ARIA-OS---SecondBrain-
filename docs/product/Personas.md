@@ -1,10 +1,10 @@
-# Personas — Second Brain OS
+﻿# Personas â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-PERS-001 |
+| Document ID | PRD-PER-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -58,17 +58,17 @@ This document defines the user personas for Second Brain OS. Each persona repres
 ### 2.2 Daily Schedule
 
 ```
- 7:00 AM — Wake up, check phone (20 min scrolling)
- 7:30 AM — Morning routine (skip breakfast most days)
- 8:00 AM — College classes (takes notes in Notion, loses half of them)
- 1:00 PM — Lunch + YouTube (tutorials saved to "Watch Later" — 200+ accumulated)
- 2:00 PM — Self-study (opens VS Code, gets distracted by Twitter/Reddit)
- 4:00 PM — Back to classes or lab sessions
- 6:00 PM — Free time (tells himself he'll study, mostly ends up gaming)
- 8:00 PM — Guilt-study (opens Udemy course from 3 months ago, closes it)
-10:00 PM — Late-night motivation spike (starts new project, never finishes)
-12:00 AM — Scrolling Instagram/Reddit in bed
- 1:30 AM — Sleep (bad quality, phone in hand until sleep)
+ 7:00 AM â€” Wake up, check phone (20 min scrolling)
+ 7:30 AM â€” Morning routine (skip breakfast most days)
+ 8:00 AM â€” College classes (takes notes in Notion, loses half of them)
+ 1:00 PM â€” Lunch + YouTube (tutorials saved to "Watch Later" â€” 200+ accumulated)
+ 2:00 PM â€” Self-study (opens VS Code, gets distracted by Twitter/Reddit)
+ 4:00 PM â€” Back to classes or lab sessions
+ 6:00 PM â€” Free time (tells himself he'll study, mostly ends up gaming)
+ 8:00 PM â€” Guilt-study (opens Udemy course from 3 months ago, closes it)
+10:00 PM â€” Late-night motivation spike (starts new project, never finishes)
+12:00 AM â€” Scrolling Instagram/Reddit in bed
+ 1:30 AM â€” Sleep (bad quality, phone in hand until sleep)
 ```
 
 ### 2.3 Goals
@@ -91,7 +91,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 | Opportunity blindness: missed 2 internship deadlines last semester | 8 | Monthly | Blames himself, promises to check more often |
 | Idea graveyard: 20+ startup ideas in notes app, none started | 7 | Weekly | Re-reads old ideas, feels regret, moves on |
 | Sleep procrastination: knows he needs better sleep, can't stop phone use | 7 | Daily | Tried 5 apps, deleted all within a week |
-| Skill dilution: starts courses, reaches 30-40%, starts new shinier course | 8 | Monthly | "This course is better" — repeats cycle |
+| Skill dilution: starts courses, reaches 30-40%, starts new shinier course | 8 | Monthly | "This course is better" â€” repeats cycle |
 | No income tracking: knows he freelanced Rs. 24,000 total, has no breakdown | 5 | Quarterly | Ballparks it when asked |
 | Accountability: no one checks if he's doing what he planned | 6 | Daily | Tells friends, both forget within a day |
 
@@ -137,7 +137,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 
 ---
 
-## 3. Primary Persona Expanded: Priya Sharma (BTech CSE Student — Variant)
+## 3. Primary Persona Expanded: Priya Sharma (BTech CSE Student â€” Variant)
 
 ### 3.1 Bio
 
@@ -184,7 +184,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 
 ## 4. Secondary Personas
 
-### 4.1 Rahul Verma — Self-Taught Developer (Non-CS Major)
+### 4.1 Rahul Verma â€” Self-Taught Developer (Non-CS Major)
 
 | Attribute | Detail |
 |---|---|
@@ -204,7 +204,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 
 **Pain Points:**
 - No formal CS degree means resume gaps he has to compensate for
-- Freelance income is unpredictable — needs better tracking and forecasting
+- Freelance income is unpredictable â€” needs better tracking and forecasting
 - Juggles 3-4 freelance projects + self-study + bootcamp TA role
 - Networking is harder without college placement infrastructure
 - Does not know which skills to prioritize for his target roles
@@ -213,7 +213,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 **Monthly Tool Spend:** Rs. 600 (Clockify Premium)
 **Willingness to Pay:** Rs. 200-500/month for time savings
 
-### 4.2 Ananya Gupta — Working Professional (CS Graduate, 0-2 Years)
+### 4.2 Ananya Gupta â€” Working Professional (CS Graduate, 0-2 Years)
 
 | Attribute | Detail |
 |---|---|
@@ -221,7 +221,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 | Education | BTech CSE, NIT Trichy (2024 batch) |
 | Current | Associate Software Engineer at Infosys |
 | Location | Mysore (training) + remote |
-| Monthly Income | Rs. 35,000 (training) → Rs. 50,000 (post-training) |
+| Monthly Income | Rs. 35,000 (training) â†’ Rs. 50,000 (post-training) |
 | Setup | Work laptop (Windows) + personal iPad |
 | Skill Level | Low (training phase, learning internal tools) |
 
@@ -232,7 +232,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 - Manage workplace stress and avoid burnout (ongoing)
 
 **Pain Points:**
-- Training is slow and bureaucratic — feels skills are stagnating
+- Training is slow and bureaucratic â€” feels skills are stagnating
 - Studies after work for switching but has no structure
 - Misses the structured semester system of college
 - Office friendships fading, social isolation in new city
@@ -242,7 +242,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 **Monthly Tool Spend:** Rs. 0
 **Willingness to Pay:** Rs. 100-300/month
 
-### 4.3 Kabir Singh — Hobbyist Side Project Builder
+### 4.3 Kabir Singh â€” Hobbyist Side Project Builder
 
 | Attribute | Detail |
 |---|---|
@@ -260,10 +260,10 @@ This document defines the user personas for Second Brain OS. Each persona repres
 - Experiment with AI/ML side projects
 
 **Pain Points:**
-- Projects at 70% completion — always abandons before polish
+- Projects at 70% completion â€” always abandons before polish
 - 15 domain names bought, 0 deployed
 - Subscriptions to 8 SaaS tools he uses for 2 days each
-- Cannot focus on one tech stack — learning fatigue
+- Cannot focus on one tech stack â€” learning fatigue
 - Impulse buys courses, watches 10%, buys next course
 
 **App Ecosystem:** VSCode, Linear, Vercel, Railway, GitHub Copilot, ChatGPT Pro
@@ -301,7 +301,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 - AI that suggests next action without requiring manual triage
 - Limit on number of active tasks to prevent organization-as-procrastination
 
-**Risk:** Tool hoarding — collecting features they don't use
+**Risk:** Tool hoarding â€” collecting features they don't use
 
 ### 6.2 The Crammer (35% of users)
 
@@ -333,7 +333,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 - Quick capture with minimal friction
 - Lightweight version of each module
 
-**Risk:** Feature bloat — adding modules they don't need
+**Risk:** Feature bloat â€” adding modules they don't need
 
 ### 6.4 The Careerist (20% of users)
 
@@ -355,53 +355,53 @@ This document defines the user personas for Second Brain OS. Each persona repres
 
 ## 7. Empathy Maps
 
-### 7.1 Empathy Map — Arjun (Primary Persona)
+### 7.1 Empathy Map â€” Arjun (Primary Persona)
 
 ```
-                          ┌──────────────────────────────┐
-                          │          THINKS               │
-                          │ "I should be studying more"   │
-                          │ "Everyone else is ahead"      │
-                          │ "I need to get organized"     │
-                          │ "One more YouTube tutorial"   │
-                          └──────────────────────────────┘
+                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                          â”‚          THINKS               â”‚
+                          â”‚ "I should be studying more"   â”‚
+                          â”‚ "Everyone else is ahead"      â”‚
+                          â”‚ "I need to get organized"     â”‚
+                          â”‚ "One more YouTube tutorial"   â”‚
+                          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-┌──────────────┐                              ┌──────────────┐
-│    HEARS     │                              │    SEES      │
-│ "Did you     │                              │ Peers getting │
-│  apply yet?" │                              │ internships  │
-│ Parents about │                              │ Friends with  │
-│ placements   │                              │ shipped proj. │
-│ Friends'     │                              │ YouTube: "I  │
-│ internship   │                              │ built X in Y │
-│ stories      │                              │ hours"       │
-│ Teachers:    │                              │ 47 open tabs  │
-│ "Start early"│                              │ Half-finished │
-└──────────────┘                              │ code files    │
-                                              └──────────────┘
-┌──────────────────────────────────────────────────────────┐
-│                       SAYS & DOES                        │
-│ Signs up for courses at 2 AM                              │
-│ Creates elaborate Notion setup, uses for 3 days          │
-│ Says "I'll start tomorrow" — genuinely means it           │
-│ Saves YouTube tutorials but never watches                │
-│ Opens Todoist, feels overwhelmed, closes                 │
-│ "I'm a professional starter" (self-aware joke)            │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    HEARS     â”‚                              â”‚    SEES      â”‚
+â”‚ "Did you     â”‚                              â”‚ Peers getting â”‚
+â”‚  apply yet?" â”‚                              â”‚ internships  â”‚
+â”‚ Parents about â”‚                              â”‚ Friends with  â”‚
+â”‚ placements   â”‚                              â”‚ shipped proj. â”‚
+â”‚ Friends'     â”‚                              â”‚ YouTube: "I  â”‚
+â”‚ internship   â”‚                              â”‚ built X in Y â”‚
+â”‚ stories      â”‚                              â”‚ hours"       â”‚
+â”‚ Teachers:    â”‚                              â”‚ 47 open tabs  â”‚
+â”‚ "Start early"â”‚                              â”‚ Half-finished â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â”‚ code files    â”‚
+                                              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       SAYS & DOES                        â”‚
+â”‚ Signs up for courses at 2 AM                              â”‚
+â”‚ Creates elaborate Notion setup, uses for 3 days          â”‚
+â”‚ Says "I'll start tomorrow" â€” genuinely means it           â”‚
+â”‚ Saves YouTube tutorials but never watches                â”‚
+â”‚ Opens Todoist, feels overwhelmed, closes                 â”‚
+â”‚ "I'm a professional starter" (self-aware joke)            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-┌──────────────────────────────────────────────────────────┐
-│                        FEELS                              │
-│ Overwhelmed by options and information                     │
-│ Guilty about uncompleted courses and tasks                 │
-│ Anxious about placement deadlines creeping up              │
-│ Envious of peers who seem more accomplished               │
-│ Excited at 2 AM when ideating                             │
-│ Hopeful when buying a new course ("this time it's diff'nt")│
-│ Ashamed when asked "what have you built"                  │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        FEELS                              â”‚
+â”‚ Overwhelmed by options and information                     â”‚
+â”‚ Guilty about uncompleted courses and tasks                 â”‚
+â”‚ Anxious about placement deadlines creeping up              â”‚
+â”‚ Envious of peers who seem more accomplished               â”‚
+â”‚ Excited at 2 AM when ideating                             â”‚
+â”‚ Hopeful when buying a new course ("this time it's diff'nt")â”‚
+â”‚ Ashamed when asked "what have you built"                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-### 7.2 Empathy Map — Priya (Variant Primary)
+### 7.2 Empathy Map â€” Priya (Variant Primary)
 
 | Dimension | Content |
 |---|---|
@@ -415,26 +415,26 @@ This document defines the user personas for Second Brain OS. Each persona repres
 
 ## 8. Scenarios and Journeys
 
-### 8.1 Scenario A — Arjun's First Week with Second Brain OS
+### 8.1 Scenario A â€” Arjun's First Week with Second Brain OS
 
 **Day 1:**
-- Signs up via Google OAuth — 30 seconds
+- Signs up via Google OAuth â€” 30 seconds
 - Sets up profile: name, timezone, 3 goals (FAANG internship, learn full-stack, build portfolio)
 - Quick captures his first task: "finish DBMS assignment"
 - ARIA parses it, sets priority high, due tomorrow
-- Sees dashboard with today's briefing — 3 tasks auto-suggested based on goals
-- Closes app after 5 minutes — impressed
+- Sees dashboard with today's briefing â€” 3 tasks auto-suggested based on goals
+- Closes app after 5 minutes â€” impressed
 
 **Day 3:**
 - Morning briefing shows he completed 1 of 3 tasks yesterday
 - Sleep score from manual log: 5.2 hours
 - ARIA suggests: "Your sleep is low. I've reduced deep work tasks today."
-- Open the app 4 times during the day — uses quick capture for 2 ideas
+- Open the app 4 times during the day â€” uses quick capture for 2 ideas
 - Completes 2 tasks
 
 **Day 7:**
 - Weekly review: completed 11 of 18 tasks (61%)
-- Sleep average: 6.1 hours — trend noted
+- Sleep average: 6.1 hours â€” trend noted
 - ARIA: "You're most productive between 10 AM-12 PM. Schedule deep work there."
 - Discovers opportunity radar: found 2 hackathons
 - Applies to 1 hackathon
@@ -447,7 +447,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 - 3 opportunities applied, 1 response received
 - Rating: "It's actually helping. I don't feel as scattered."
 
-### 8.2 Scenario B — Priya's Semester Reset
+### 8.2 Scenario B â€” Priya's Semester Reset
 
 **Trigger:** Start of new semester, Priya wants to be organized from day 1
 
@@ -460,7 +460,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 6. Gets a 12-week learning roadmap aligned with course syllabus
 
 **ARIA Insight at Week 4:**
-"You've logged 28 study hours vs 35 planned (80%). Your sleep has averaged 5.8 hours — 1.2 hours below target. Your habit streak is at 22 days."
+"You've logged 28 study hours vs 35 planned (80%). Your sleep has averaged 5.8 hours â€” 1.2 hours below target. Your habit streak is at 22 days."
 
 ---
 
@@ -474,7 +474,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 | Priya | Screen fatigue from long study sessions | Dark mode by default, high contrast options |
 | Rahul | English as second language | Simple, clear copy. No idioms. Localized currency (Rs.) |
 | Ananya | Vision strain from work + personal screens | Dark theme (#0A0B0F), readable font sizes (14px+) |
-| Kabir | ADHD — attention span challenges | Minimal UI, clear CTAs, one-thing-at-a-time flows |
+| Kabir | ADHD â€” attention span challenges | Minimal UI, clear CTAs, one-thing-at-a-time flows |
 
 ### 9.2 General Accessibility Requirements
 
@@ -520,7 +520,7 @@ This document defines the user personas for Second Brain OS. Each persona repres
 | No login > 7 days | Any | Previously active | Email re-engagement |
 | Task creation stopped 5 days | All habits miss 3 days | Regular | ARIA check-in message |
 | Course progress < 10% after 2 weeks | All courses | Weekly | "Pick one course to finish" |
-| Opportunity radar → no applications | 7 opportunities missed | Careerist | Suggest lower-bar opportunities |
+| Opportunity radar â†’ no applications | 7 opportunities missed | Careerist | Suggest lower-bar opportunities |
 
 ---
 
