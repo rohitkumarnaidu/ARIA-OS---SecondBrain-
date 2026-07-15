@@ -1,4 +1,4 @@
-# Motion Architecture — Second Brain OS (ARIA)
+﻿# Motion Architecture â€” Second Brain OS (ARIA)
 
 > **The engineering constitution for every animation in the system.**
 > Authored by: Motion Design Director, Principal Product Designer, GSAP Expert, Framer Motion Expert, Creative Technologist, Enterprise UX Architect, Frontend Performance Architect.
@@ -10,14 +10,14 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-MOTION-ARCH-001 |
+| Document ID | DSG-MAC-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Engineering & Design |
+| Classification | Internal â€” Engineering & Design |
 | Target Audience | Engineering Team, Design Team, AI Agents, Code Reviewers |
 | Supersedes | Ad-hoc animation patterns across all 17 page files |
-| Companion Docs | MotionSystem.md (design specs), DesignStrategy.md §18 (strategy), Accessibility.md §7 (reduced motion) |
+| Companion Docs | MotionSystem.md (design specs), DesignStrategy.md Â§18 (strategy), FrontendAccessibilityGuide.md Â§7 (reduced motion) |
 
 ---
 
@@ -71,37 +71,37 @@ flowchart LR
 
 ### 1.1 The Gap
 
-MotionSystem.md defines 1159 lines of comprehensive motion design. Zero lines of it exist in production code. Framer Motion is imported on every page, but every page hardcodes its own `initial/animate` values — 17 independent animation systems, none sharing a single variant. CSS custom properties for durations and easings are documented but never defined. `useReducedMotion()` is described as the standard but never used.
+MotionSystem.md defines 1159 lines of comprehensive motion design. Zero lines of it exist in production code. Framer Motion is imported on every page, but every page hardcodes its own `initial/animate` values â€” 17 independent animation systems, none sharing a single variant. CSS custom properties for durations and easings are documented but never defined. `useReducedMotion()` is described as the standard but never used.
 
 **The gap is not in design. The gap is in architecture.**
 
 ### 1.2 The Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  MotionSystem.md (Design)                   │
-│         defines WHAT to animate and WHY                     │
-└───────────────────────────┬─────────────────────────────────┘
-                            │ informs
-┌───────────────────────────▼─────────────────────────────────┐
-│              MotionArchitecture.md (Engineering)             │
-│         defines HOW to build it and WHERE it lives          │
-└──────┬──────────────────┬───────────────────┬───────────────┘
-       │                  │                   │
-       ▼                  ▼                   ▼
-┌──────────┐    ┌────────────────┐   ┌───────────────┐
-│ tokens.ts│    │animation-     │   │ MotionProvider │
-│ (source  │    │presets.ts     │   │ (global root)  │
-│  of      │    │ (shared       │   └───────┬───────┘
-│  truth)  │    │  variants)    │           │
-└────┬─────┘    └───────┬───────┘           │
-     │                  │                   │
-     ▼                  ▼                   ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    Component Layer                            │
-│  Button  Card  Modal  Input  Sidebar  Toast  Dropdown  etc.  │
-│  (each imports presets from animation-presets.ts)            │
-└──────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                  MotionSystem.md (Design)                   â”‚
+â”‚         defines WHAT to animate and WHY                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚ informs
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              MotionArchitecture.md (Engineering)             â”‚
+â”‚         defines HOW to build it and WHERE it lives          â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                  â”‚                   â”‚
+       â–¼                  â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ tokens.tsâ”‚    â”‚animation-     â”‚   â”‚ MotionProvider â”‚
+â”‚ (source  â”‚    â”‚presets.ts     â”‚   â”‚ (global root)  â”‚
+â”‚  of      â”‚    â”‚ (shared       â”‚   â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+â”‚  truth)  â”‚    â”‚  variants)    â”‚           â”‚
+â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜           â”‚
+     â”‚                  â”‚                   â”‚
+     â–¼                  â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    Component Layer                            â”‚
+â”‚  Button  Card  Modal  Input  Sidebar  Toast  Dropdown  etc.  â”‚
+â”‚  (each imports presets from animation-presets.ts)            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.3 Architecture Decisions
@@ -123,13 +123,13 @@ MotionSystem.md defines 1159 lines of comprehensive motion design. Zero lines of
 
 Every animation in the system MUST conform to these rules. Violations block PR merge.
 
-#### AR1 — One Source of Truth
+#### AR1 â€” One Source of Truth
 **All animation parameters live in `tokens.ts`.** No inline duration values, no ad-hoc easing curves, no hardcoded transform values in component files. The single exception is custom-per-animation delays in stagger patterns.
 
 *Violation example:* `transition={{ duration: 0.3 }}` in a page component.
 *Compliant:* `transition={{ duration: tokens.duration.normal }}`.
 
-#### AR2 — One Library Per Concern
+#### AR2 â€” One Library Per Concern
 | Concern | Library | Never Use |
 |---|---|---|
 | UI state transitions (hover, tap, focus, enter/exit) | Framer Motion | GSAP, CSS |
@@ -141,16 +141,16 @@ Every animation in the system MUST conform to these rules. Violations block PR m
 | Decorative loops (glow pulse, shimmer) | CSS `@keyframes` | FM, GSAP |
 | Loading spinners | CSS `@keyframes` | FM, GSAP |
 
-#### AR3 — All Variants Centralized
-**No page-level `const variants = {...}` definitions.** Every animation variant is defined in `packages/ui/animation-presets.ts` and imported by name. Components receive variants as props — they do not own them.
+#### AR3 â€” All Variants Centralized
+**No page-level `const variants = {...}` definitions.** Every animation variant is defined in `packages/ui/animation-presets.ts` and imported by name. Components receive variants as props â€” they do not own them.
 
-#### AR4 — Interruptible By Design
+#### AR4 â€” Interruptible By Design
 Every animation longer than 80ms must be interruptible. If a user triggers a new action while an animation is playing, the current animation terminates immediately and the new animation begins. Framer Motion handles this natively; GSAP animations must call `gsap.killTweensOf(element)` before starting new ones.
 
-#### AR5 — Reduced Motion Is Not Optional
+#### AR5 â€” Reduced Motion Is Not Optional
 Every animated component MUST have a reduced-motion equivalent. The `MotionProvider` context provides `isMotionReduced: boolean`. Components must use this to switch to instant or simplified transitions. This is tested in CI.
 
-#### AR6 — Performance Budgets Are Hard Limits
+#### AR6 â€” Performance Budgets Are Hard Limits
 | Metric | Hard Limit | Soft Warning |
 |---|---|---|
 | FM bundle contribution | 30KB gzip | 25KB |
@@ -160,26 +160,26 @@ Every animated component MUST have a reduced-motion equivalent. The `MotionProvi
 | Concurrent animated elements | 12 | 8 |
 | `will-change` declarations per page | 8 | 5 |
 
-#### AR7 — No Animations On Layout Properties
+#### AR7 â€” No Animations On Layout Properties
 **Never animate `width`, `height`, `top`, `left`, `margin`, or `padding`.** Use `scaleX`/`scaleY` for size changes, `translateX`/`translateY` for position changes, and `transformOrigin` to control the anchor point. Violation of this rule is a hard block.
 
-#### AR8 — Exit Animations Are Faster Than Entry
-Entry animations use ease-out (deceleration). Exit animations use ease-in (acceleration). Exit duration is 60-70% of entry duration. This makes the system feel responsive — users never wait for something to leave.
+#### AR8 â€” Exit Animations Are Faster Than Entry
+Entry animations use ease-out (deceleration). Exit animations use ease-in (acceleration). Exit duration is 60-70% of entry duration. This makes the system feel responsive â€” users never wait for something to leave.
 
-#### AR9 — Stagger Total Never Exceeds 500ms
+#### AR9 â€” Stagger Total Never Exceeds 500ms
 The cumulative stagger delay for any group of elements must not exceed 500ms. This means: if stagger delay per item is 50ms, the maximum items staggered is 10. For lists with 20+ items, use `stagger-fast` (30ms) or apply stagger only to the first visible viewport items.
 
-#### AR10 — Motion Belongs In Components, Not Pages
+#### AR10 â€” Motion Belongs In Components, Not Pages
 Animation code lives at two levels:
-1. **Presets** (`packages/ui/animation-presets.ts`) — shared variant definitions
-2. **Components** (`packages/ui/*.tsx`) — components apply presets via props
+1. **Presets** (`packages/ui/animation-presets.ts`) â€” shared variant definitions
+2. **Components** (`packages/ui/*.tsx`) â€” components apply presets via props
 
-Pages import components. Pages do NOT import `framer-motion` directly. If a page needs a custom animation, the pattern is extracted into a new component or preset — never defined inline.
+Pages import components. Pages do NOT import `framer-motion` directly. If a page needs a custom animation, the pattern is extracted into a new component or preset â€” never defined inline.
 
-#### AR11 — AI Motion Is Not Decorative
+#### AR11 â€” AI Motion Is Not Decorative
 AI motion patterns (thinking, streaming, suggestion) serve a functional purpose: they communicate system state. Every AI motion must answer "is the system working?" and "what stage is it in?" within 500ms of observation. If the animation does not communicate state, it is decorative and must be removed.
 
-#### AR12 — Animation Cleanup On Unmount
+#### AR12 â€” Animation Cleanup On Unmount
 Every animated component must cancel all running animations on unmount. Framer Motion handles this automatically. GSAP must call `ctx.revert()` or `kill()`. Rive must call `reset()`. CSS animations stop automatically when the element is removed from DOM.
 
 ---
@@ -189,17 +189,17 @@ Every animated component must cancel all running animations on unmount. Framer M
 ### 3.1 Token Distribution Model
 
 ```
-┌─────────────────────┐
-│    tokens.ts         │ ← Single source of truth (TypeScript)
-│ (packages/ui/)       │
-└────┬──────┬──────┬──┘
-     │      │      │
-     ▼      ▼      ▼
-┌────────┐ ┌──────────┐ ┌──────────────────────┐
-│ CSS    │ │ Tailwind │ │ TypeScript constants  │
-│ Custom │ │ Config   │ │ (for runtime calc.)   │
-│ Props  │ │ (extend) │ │                      │
-└────────┘ └──────────┘ └──────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    tokens.ts         â”‚ â† Single source of truth (TypeScript)
+â”‚ (packages/ui/)       â”‚
+â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”˜
+     â”‚      â”‚      â”‚
+     â–¼      â–¼      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ CSS    â”‚ â”‚ Tailwind â”‚ â”‚ TypeScript constants  â”‚
+â”‚ Custom â”‚ â”‚ Config   â”‚ â”‚ (for runtime calc.)   â”‚
+â”‚ Props  â”‚ â”‚ (extend) â”‚ â”‚                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 3.2 Token Categories (7 Categories, 40+ Tokens)
@@ -208,25 +208,25 @@ Every animated component must cancel all running animations on unmount. Framer M
 
 | Token Name | Value | MotionSystem.md Ref | Usage |
 |---|---|---|---|
-| `duration.instant` | 0ms | §2.1 | State changes, reduced motion fallback |
-| `duration.fast` | 80ms | §2.1 | Button press, tap feedback, hover transitions |
-| `duration.normal` | 150ms | §2.1 | Toggles, checkboxes, dropdown opens |
-| `duration.slow` | 250ms | §2.1 | Card hover, list item entry, tooltip |
-| `duration.nav` | 300ms | §2.1 | Page transitions, sidebar open/close |
-| `duration.reveal` | 400ms | §2.1 | Content reveals, modal entrances |
-| `duration.decorative` | 3000ms | §2.1 | Glow pulses, ambient loops |
-| `duration.celebration` | 1000ms | §2.1 | Confetti, streak milestones |
+| `duration.instant` | 0ms | Â§2.1 | State changes, reduced motion fallback |
+| `duration.fast` | 80ms | Â§2.1 | Button press, tap feedback, hover transitions |
+| `duration.normal` | 150ms | Â§2.1 | Toggles, checkboxes, dropdown opens |
+| `duration.slow` | 250ms | Â§2.1 | Card hover, list item entry, tooltip |
+| `duration.nav` | 300ms | Â§2.1 | Page transitions, sidebar open/close |
+| `duration.reveal` | 400ms | Â§2.1 | Content reveals, modal entrances |
+| `duration.decorative` | 3000ms | Â§2.1 | Glow pulses, ambient loops |
+| `duration.celebration` | 1000ms | Â§2.1 | Confetti, streak milestones |
 
 #### 3.2.2 Easing Tokens
 
 | Token Name | cubic-bezier() | MotionSystem.md Ref | Usage |
 |---|---|---|---|
-| `easing.out` | (0.0, 0.0, 0.2, 1) | §2.2 | Entries, micro-interactions |
-| `easing.in` | (0.4, 0.0, 1.0, 1) | §2.2 | Exits, dismissals |
-| `easing.inOut` | (0.4, 0.0, 0.2, 1) | §2.2 | Most UI transitions |
-| `easing.spring` | (0.34, 1.56, 0.64, 1) | §2.2 | Celebrations, playful elements |
-| `easing.linear` | (0.0, 0.0, 1.0, 1) | §2.2 | Progress bars, spinners |
-| `easing.emphasis` | (0.2, 0.0, 0.0, 1) | §2.2 | Important content arrival |
+| `easing.out` | (0.0, 0.0, 0.2, 1) | Â§2.2 | Entries, micro-interactions |
+| `easing.in` | (0.4, 0.0, 1.0, 1) | Â§2.2 | Exits, dismissals |
+| `easing.inOut` | (0.4, 0.0, 0.2, 1) | Â§2.2 | Most UI transitions |
+| `easing.spring` | (0.34, 1.56, 0.64, 1) | Â§2.2 | Celebrations, playful elements |
+| `easing.linear` | (0.0, 0.0, 1.0, 1) | Â§2.2 | Progress bars, spinners |
+| `easing.emphasis` | (0.2, 0.0, 0.0, 1) | Â§2.2 | Important content arrival |
 | `easing.gsapOut` | "power2.out" | GSAP | GSAP timeline entries |
 | `easing.gsapIn` | "power2.in" | GSAP | GSAP timeline exits |
 
@@ -284,7 +284,7 @@ Every animated component must cancel all running animations on unmount. Framer M
 ### 3.3 File: `packages/ui/tokens.ts`
 
 ```typescript
-// === MOTION TOKENS — Single Source of Truth ===
+// === MOTION TOKENS â€” Single Source of Truth ===
 // Every animation parameter in the system derives from this file.
 // Do NOT add inline duration/easing values in component files.
 
@@ -362,18 +362,18 @@ export type OpacityToken = keyof typeof tokens.opacity;
 
 ### 3.4 Token Naming Rule
 
-**TR1 — Token names use `.` (dot) notation in TypeScript, `--` (double dash) in CSS, and follow this hierarchy:**
+**TR1 â€” Token names use `.` (dot) notation in TypeScript, `--` (double dash) in CSS, and follow this hierarchy:**
 
 ```
 category.variant
-  Example: duration.fast → --duration-fast
-  Example: easing.inOut → --easing-in-out
-  Example: scale.press → --scale-press
+  Example: duration.fast â†’ --duration-fast
+  Example: easing.inOut â†’ --easing-in-out
+  Example: scale.press â†’ --scale-press
 ```
 
-**TR2 — Every token in `tokens.ts` MUST have a corresponding CSS custom property.** Generated automatically by the build process from `tokens.ts`. CSS custom properties are used for Tailwind config and component-level CSS animations.
+**TR2 â€” Every token in `tokens.ts` MUST have a corresponding CSS custom property.** Generated automatically by the build process from `tokens.ts`. CSS custom properties are used for Tailwind config and component-level CSS animations.
 
-**TR3 — Tokens are READ-ONLY at runtime.** No component should mutate a token value. If a component needs a custom value, define it as a component-scoped constant, not a token override.
+**TR3 â€” Tokens are READ-ONLY at runtime.** No component should mutate a token value. If a component needs a custom value, define it as a component-scoped constant, not a token override.
 
 ### 3.5 Token Usage Rules
 
@@ -414,7 +414,7 @@ const spring = (stiffness: number, damping: number, delay = 0): Transition => ({
   delay,
 });
 
-// === ENTRY PRESETS (V1–V8) ===
+// === ENTRY PRESETS (V1â€“V8) ===
 
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },
@@ -485,7 +485,7 @@ export const scaleSpringIn: Variants = {
   },
 };
 
-// === EXIT PRESETS (V9–V12) ===
+// === EXIT PRESETS (V9â€“V12) ===
 
 export const fadeOut: Variants = {
   hidden: { opacity: 1 },
@@ -519,7 +519,7 @@ export const collapseOut: Variants = {
   },
 };
 
-// === STAGGER PRESETS (V13–V15) ===
+// === STAGGER PRESETS (V13â€“V15) ===
 
 export const staggerContainer: Variants = {
   hidden: {},
@@ -560,7 +560,7 @@ export const staggerItem: Variants = {
   },
 };
 
-// === INTERACTION PRESETS (V16–V19) ===
+// === INTERACTION PRESETS (V16â€“V19) ===
 
 export const buttonPress = {
   whileHover: { scale: tokens.scale.hover, transition: { duration: tokens.duration.fast / 1000 } },
@@ -596,7 +596,7 @@ export const navTabActive = {
   whileTap: { scale: tokens.scale.press },
 };
 
-// === OVERLAY PRESETS (V20–V22) ===
+// === OVERLAY PRESETS (V20â€“V22) ===
 
 export const backdropFade: Variants = {
   hidden: { opacity: 0 },
@@ -636,7 +636,7 @@ export const toastEnter: Variants = {
   },
 };
 
-// === FEEDBACK PRESETS (V23–V26) ===
+// === FEEDBACK PRESETS (V23â€“V26) ===
 
 export const shakeError: Variants = {
   hidden: { x: 0 },
@@ -680,7 +680,7 @@ export const layoutTransition: Transition = {
   ease: tokens.easing.inOut as any,
 };
 
-// === AI PRESETS (V28–V35) — See Section 10 for full definitions ===
+// === AI PRESETS (V28â€“V35) â€” See Section 10 for full definitions ===
 
 export const aiThinking: Variants = { /* defined in AI Motion section */ };
 export const aiStreaming: Variants = { /* defined in AI Motion section */ };
@@ -694,16 +694,16 @@ export const aiRecommendation: Variants = { /* defined in AI Motion section */ }
 
 ### 4.3 Preset Naming Convention
 
-**PN1 — Preset names use camelCase and describe the visual behavior, not the component that uses them.**
+**PN1 â€” Preset names use camelCase and describe the visual behavior, not the component that uses them.**
 
-| ✅ Correct | ❌ Incorrect |
+| âœ… Correct | âŒ Incorrect |
 |---|---|
 | `fadeUp` | `pageSectionEnter` |
 | `cardHover` | `dashboardCardInteraction` |
 | `scaleSpringIn` | `modalAppearanceAnimation` |
 | `toastEnter` | `notificationSlideIn` |
 
-**PN2 — Preset categories are prefixed in comments but not in variable names:**
+**PN2 â€” Preset categories are prefixed in comments but not in variable names:**
 - Entry: `fadeIn`, `fadeUp`, `scaleIn`, `slideRight`, `heroReveal`, `scaleSpringIn`
 - Exit: `fadeOut`, `scaleOut`, `slideOutRight`, `collapseOut`
 - Stagger: `staggerContainer`, `staggerFast`, `staggerCard`, `staggerItem`
@@ -711,14 +711,14 @@ export const aiRecommendation: Variants = { /* defined in AI Motion section */ }
 - Overlay: `backdropFade`, `modalEnter`, `toastEnter`
 - Feedback: `shakeError`, `successPulse`, `skeletonPulse`, `celebrationBanner`
 
-**PN3 — Every preset has a version number (V1–V35+) in comments.** When updating a preset, increment the minor version. When removing a preset, note the deprecation in the comment.
+**PN3 â€” Every preset has a version number (V1â€“V35+) in comments.** When updating a preset, increment the minor version. When removing a preset, note the deprecation in the comment.
 
 ### 4.4 Preset Usage Rule
 
-**PUR1 — Components apply presets via `variants` prop. They never define variants internally.**
+**PUR1 â€” Components apply presets via `variants` prop. They never define variants internally.**
 
 ```typescript
-// ✅ CORRECT: Component imports preset
+// âœ… CORRECT: Component imports preset
 import { buttonPress } from '@/packages/ui/animation-presets';
 
 export function Button({ children }: Props) {
@@ -735,7 +735,7 @@ export function Button({ children }: Props) {
 ```
 
 ```typescript
-// ❌ INCORRECT: Component defines its own variants
+// âŒ INCORRECT: Component defines its own variants
 export function Button({ children }: Props) {
   return (
     <motion.button
@@ -748,9 +748,9 @@ export function Button({ children }: Props) {
 }
 ```
 
-**PUR2 — If a component needs a variant that doesn't exist, create the variant in `animation-presets.ts`.** Do not create component-scoped variants. If the variant is truly component-specific (used in 1 place), add it with a `@internal` JSDoc tag and a note explaining why it shouldn't be shared.
+**PUR2 â€” If a component needs a variant that doesn't exist, create the variant in `animation-presets.ts`.** Do not create component-scoped variants. If the variant is truly component-specific (used in 1 place), add it with a `@internal` JSDoc tag and a note explaining why it shouldn't be shared.
 
-**PUR3 — Stagger presets are applied via container/child pattern:**
+**PUR3 â€” Stagger presets are applied via container/child pattern:**
 
 ```typescript
 import { staggerContainer, staggerItem } from '@/packages/ui/animation-presets';
@@ -774,7 +774,7 @@ function TaskList() {
 
 ### 5.1 Contract Architecture
 
-Every interactive component in the design system has a defined "animation contract" — a spec that maps component states to animation presets. This contract lives in the component's JSDoc block and is enforced during code review.
+Every interactive component in the design system has a defined "animation contract" â€” a spec that maps component states to animation presets. This contract lives in the component's JSDoc block and is enforced during code review.
 
 ### 5.2 Component Contracts
 
@@ -785,11 +785,11 @@ Every interactive component in the design system has a defined "animation contra
  * @motion
  * - Presets: buttonPress
  * - State transitions:
- *   - idle → hover: whileHover (100ms, scale 1.02)
- *   - hover → idle: revert (100ms, scale 1.0)
- *   - idle → active/tap: whileTap (80ms, scale 0.96)
- *   - active → idle: revert (80ms, scale 1.0)
- *   - enabled → disabled: opacity shift (150ms)
+ *   - idle â†’ hover: whileHover (100ms, scale 1.02)
+ *   - hover â†’ idle: revert (100ms, scale 1.0)
+ *   - idle â†’ active/tap: whileTap (80ms, scale 0.96)
+ *   - active â†’ idle: revert (80ms, scale 1.0)
+ *   - enabled â†’ disabled: opacity shift (150ms)
  * - Reduced motion: no scale changes, opacity only
  * - Layout: no layout animations
  * - Loading variant: <motion.button> shows spinner, scales to 1 immediately
@@ -819,8 +819,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: cardHover (interactive cards), staggerItem (in grids)
  * - State transitions:
- *   - idle → hover: whileHover (200ms, scale 1.01, y -2, glow)
- *   - idle → tap: whileTap (100ms, scale 0.99)
+ *   - idle â†’ hover: whileHover (200ms, scale 1.01, y -2, glow)
+ *   - idle â†’ tap: whileTap (100ms, scale 0.99)
  * - Entry: via staggerItem when inside staggerContainer
  * - Exit: collapseOut when removed from list
  * - Reduced motion: no scale/glow, static card
@@ -835,8 +835,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: backdropFade (backdrop), modalEnter (content)
  * - AnimatePresence wraps both backdrop and content
- * - Entry sequence: backdrop fade (150ms) → content scale spring (250ms)
- * - Exit sequence: content scale out (150ms) → backdrop fade (100ms)
+ * - Entry sequence: backdrop fade (150ms) â†’ content scale spring (250ms)
+ * - Exit sequence: content scale out (150ms) â†’ backdrop fade (100ms)
  * - Trigger: isOpen boolean prop
  * - Reduced motion: instant opacity toggle, no scale
  * - Backdrop click dismisses with exit animation
@@ -850,9 +850,9 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: shakeError (validation error), successPulse (valid input)
  * - State transitions:
- *   - idle → error: shakeError (300ms, 3 oscillations)
- *   - error → idle: reset (150ms, border color transition)
- *   - idle → valid: successPulse (400ms, green border flash)
+ *   - idle â†’ error: shakeError (300ms, 3 oscillations)
+ *   - error â†’ idle: reset (150ms, border color transition)
+ *   - idle â†’ valid: successPulse (400ms, green border flash)
  * - Focus state: border color transition (CSS, not FM)
  * - Reduced motion: no shake, instant border color change
  * - Layout: no layout animations
@@ -866,8 +866,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: slideRight (desktop sidebar), none (mobile bottom nav)
  * - State transitions:
- *   - collapsed → expanded: slideRight (300ms, x: -240 → 0)
- *   - expanded → collapsed: slideLeft (250ms, x: 0 → -240)
+ *   - collapsed â†’ expanded: slideRight (300ms, x: -240 â†’ 0)
+ *   - expanded â†’ collapsed: slideLeft (250ms, x: 0 â†’ -240)
  * - Entry: on mount, slide from left (300ms)
  * - Reduced motion: instant width change
  * - Mobile: bottom nav has no animation (always visible)
@@ -883,8 +883,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * - Presets: toastEnter
  * - AnimatePresence wraps toast container
  * - State transitions:
- *   - hidden → visible: toastEnter (spring, 300ms)
- *   - visible → exit: toastEnter.exit (150ms)
+ *   - hidden â†’ visible: toastEnter (spring, 300ms)
+ *   - visible â†’ exit: toastEnter.exit (150ms)
  * - Auto-dismiss: AnimatePresence onTimeout (4s)
  * - Stack: multiple toasts stack with y offset animation
  * - Reduced motion: instant appear/disappear
@@ -899,8 +899,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: scaleIn (content), fadeIn (backdrop)
  * - State transitions:
- *   - closed → open: scaleIn (180ms)
- *   - open → closed: scaleOut (120ms)
+ *   - closed â†’ open: scaleIn (180ms)
+ *   - open â†’ closed: scaleOut (120ms)
  * - Positioning-aware: animates from trigger element
  * - Reduced motion: instant toggle
  * - AnimatePresence for exit
@@ -914,7 +914,7 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
  * @motion
  * - Presets: navTabActive, layoutTransition
  * - State transitions:
- *   - idle → active: navTabActive.hover (100ms)
+ *   - idle â†’ active: navTabActive.hover (100ms)
  *   - active indicator: layoutTransition (300ms, smooth underline slide)
  * - Content transition: crossfade (200ms)
  * - Reduced motion: no scale, instant indicator
@@ -941,8 +941,8 @@ export function Button({ variant = 'primary', loading, disabled, children }: But
 
 ```
 <App>
-  <MotionProvider>     ← Wraps entire app
-    <MotionConfig>     ← Framer Motion global config
+  <MotionProvider>     â† Wraps entire app
+    <MotionConfig>     â† Framer Motion global config
       {children}
     </MotionConfig>
   </MotionProvider>
@@ -1046,7 +1046,7 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 |---|---|
 | PIR1 | `MotionProvider` MUST be at the app root, wrapping all pages |
 | PIR2 | `useReducedMotionContext()` is used in every animated component, not `useReducedMotion()` from Framer Motion directly (to ensure the context is available in tests) |
-| PIR3 | Device tier is detected once on mount and cached — it does not change at runtime |
+| PIR3 | Device tier is detected once on mount and cached â€” it does not change at runtime |
 | PIR4 | The provider exposes `tier` for components to conditionally render complex animations (e.g., confetti only on `full` tier) |
 | PIR5 | `MotionConfig reducedMotion` is set to `"always"` when OS preference is detected, `"never"` otherwise. This is Framer Motion's native hook, not a manual override |
 
@@ -1079,17 +1079,17 @@ function TaskCard() {
 
 ```
 User clicks link
-    │
-    ▼
-Start exit animation (old page) ─── 200ms
-    │
-    ▼
+    â”‚
+    â–¼
+Start exit animation (old page) â”€â”€â”€ 200ms
+    â”‚
+    â–¼
 AnimatePresence mode="wait"
-    │
-    ▼
-Start enter animation (new page) ─── 250ms
-    │
-    ▼
+    â”‚
+    â–¼
+Start enter animation (new page) â”€â”€â”€ 250ms
+    â”‚
+    â–¼
 Page is interactive
 ```
 
@@ -1128,10 +1128,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
 | Navigation Action | Entry | Exit | Duration | Preset |
 |---|---|---|---|---|
-| **Sidebar link click** | fadeUp (y: 12 → 0) | fadeOut (opacity: 1 → 0) | 250ms | `fadeUp` / `fadeOut` |
-| **Tab switch** | Crossfade (opacity 0 → 1) | Crossfade (opacity 1 → 0) | 200ms | `fadeIn` / `fadeOut` |
-| **Back/forward browser** | slideRight (x: -30 → 0) | slideRight (x: 0 → 30) | 300ms | `slideRight` / `slideOutRight` |
-| **Deep link (external)** | scaleIn (0.98 → 1) + fade | Instant | 300ms | `scaleIn` |
+| **Sidebar link click** | fadeUp (y: 12 â†’ 0) | fadeOut (opacity: 1 â†’ 0) | 250ms | `fadeUp` / `fadeOut` |
+| **Tab switch** | Crossfade (opacity 0 â†’ 1) | Crossfade (opacity 1 â†’ 0) | 200ms | `fadeIn` / `fadeOut` |
+| **Back/forward browser** | slideRight (x: -30 â†’ 0) | slideRight (x: 0 â†’ 30) | 300ms | `slideRight` / `slideOutRight` |
+| **Deep link (external)** | scaleIn (0.98 â†’ 1) + fade | Instant | 300ms | `scaleIn` |
 | **Cmd+K navigate** | Instant | Instant | 0ms | None |
 | **Modal route** | scaleSpringIn | scaleOut | 250ms | `scaleSpringIn` / `scaleOut` |
 
@@ -1142,7 +1142,7 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 | PTR1 | Page transitions are handled at the layout level, not individual pages |
 | PTR2 | `AnimatePresence mode="wait"` ensures exit completes before enter begins |
 | PTR3 | The `key` prop on the animated wrapper MUST be the pathname to trigger re-animation |
-| PTR4 | Cmd+K navigation uses 0ms transitions — it's a power user action that must be instant |
+| PTR4 | Cmd+K navigation uses 0ms transitions â€” it's a power user action that must be instant |
 | PTR5 | Browser back/forward navigation uses slideRight (content slides in from left) to reinforce spatial awareness |
 | PTR6 | Tab switches within the same page use crossfade (200ms), not full page transitions |
 | PTR7 | Reduced motion: all page transitions become instant (0ms), even crossfade |
@@ -1151,14 +1151,14 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
 | Element | Open | Close | Width Change | Duration |
 |---|---|---|---|---|
-| Desktop sidebar expanded | slideRight (x: -240 → 0) | slideRight (x: 0 → -240) | 240px → 64px (collapsed) | 250ms |
-| Desktop sidebar collapsed | slideRight (x: -64 → 0) | slideRight (x: 0 → -64) | 64px → 240px (expanded) | 250ms |
-| Mobile nav bottom sheet | slideRight (y: 100% → 0) | slideRight (y: 0 → 100%) | Full width | 250ms |
-| Right detail panel | slideLeft (x: 400 → 0) | slideLeft (x: 0 → 400) | 400px overlay | 300ms |
+| Desktop sidebar expanded | slideRight (x: -240 â†’ 0) | slideRight (x: 0 â†’ -240) | 240px â†’ 64px (collapsed) | 250ms |
+| Desktop sidebar collapsed | slideRight (x: -64 â†’ 0) | slideRight (x: 0 â†’ -64) | 64px â†’ 240px (expanded) | 250ms |
+| Mobile nav bottom sheet | slideRight (y: 100% â†’ 0) | slideRight (y: 0 â†’ 100%) | Full width | 250ms |
+| Right detail panel | slideLeft (x: 400 â†’ 0) | slideLeft (x: 0 â†’ 400) | 400px overlay | 300ms |
 
-**SBR1 — Sidebar width change uses `layout` prop on the sidebar container with `layoutTransition` preset.** Main content area uses `layout="position"` to reflow around the sidebar without animating its own width.
+**SBR1 â€” Sidebar width change uses `layout` prop on the sidebar container with `layoutTransition` preset.** Main content area uses `layout="position"` to reflow around the sidebar without animating its own width.
 
-**SBR2 — Mobile sidebar is a bottom sheet, not a slide-from-left.** This follows platform convention and avoids gesture conflicts with system back-swipe.
+**SBR2 â€” Mobile sidebar is a bottom sheet, not a slide-from-left.** This follows platform convention and avoids gesture conflicts with system back-swipe.
 
 ---
 
@@ -1202,11 +1202,11 @@ async function initScrollAnimations() {
 
 | Rule | Description |
 |---|---|
-| GUR1 | GSAP is dynamically imported — never a static import. Bundle size contribution: 25KB gzip max |
+| GUR1 | GSAP is dynamically imported â€” never a static import. Bundle size contribution: 25KB gzip max |
 | GUR2 | Every GSAP animation must be wrapped in a `useEffect` cleanup that calls `ctx.revert()` |
 | GUR3 | GSAP must never animate the same element that Framer Motion is animating. Use `data-gsap` attribute selectors to isolate GSAP targets |
 | GUR4 | ScrollTrigger animations must use `scrub: 1` minimum to prevent scroll jank. No `scrub: 0` (instant scrub) |
-| GUR5 | GSAP timeline durations must reference `tokens.duration.*` — no hardcoded duration values |
+| GUR5 | GSAP timeline durations must reference `tokens.duration.*` â€” no hardcoded duration values |
 | GUR6 | On reduced motion, GSAP ScrollTrigger animations resolve immediately: `ScrollTrigger.refresh()` with all animations at progress 1 |
 
 ### 8.4 GSAP Integration Pattern
@@ -1301,14 +1301,14 @@ Rive is reserved for highly complex, multi-state visual animations that cannot b
 
 ```
 Rive editor (.riv)
-    │
-    ▼
-Export optimized .riv file  ← Max 200KB per file
-    │
-    ▼
+    â”‚
+    â–¼
+Export optimized .riv file  â† Max 200KB per file
+    â”‚
+    â–¼
 Place in /public/rive/
-    │
-    ▼
+    â”‚
+    â–¼
 Import via @rive-app/react-canvas
 ```
 
@@ -1317,7 +1317,7 @@ Import via @rive-app/react-canvas
 | Rule | Description |
 |---|---|
 | RUR1 | Rive files must not exceed 200KB each. Files exceeding this must be optimized (reduce artboard size, limit states, compress meshes) |
-| RUR2 | Rive is loaded via dynamic import — never a static import. The `@rive-app/react-canvas` bundle only loads when a Rive animation is mounted |
+| RUR2 | Rive is loaded via dynamic import â€” never a static import. The `@rive-app/react-canvas` bundle only loads when a Rive animation is mounted |
 | RUR3 | Every Rive animation must have a static fallback (static image or CSS animation) that renders when reduced motion is active |
 | RUR4 | Rive state machines must use `stateMachine` input, not animation play/stop. This ensures predictable state transitions |
 | RUR5 | Rive canvases must have explicit `width` and `height` attributes to prevent layout shift during loading |
@@ -1381,15 +1381,15 @@ Every Rive file in the project must be documented:
 **AI motion is system communication, not decoration.** Every AI motion pattern must answer one of these questions within 500ms:
 
 1. "Is the system working?" (Thinking/Loading)
-2. "What stage is it in?" (Processing → Complete)
+2. "What stage is it in?" (Processing â†’ Complete)
 3. "What should I do?" (Suggestion/Recommendation)
 4. "What just happened?" (Agent state change)
 
-### 10.2 AI Motion Presets (V28–V35)
+### 10.2 AI Motion Presets (V28â€“V35)
 
 All AI motion presets are defined in `packages/ui/animation-presets.ts` alongside UI presets. They follow the same architecture and are consumed by the same components.
 
-#### V28 — aiThinking (Thinking Indicator)
+#### V28 â€” aiThinking (Thinking Indicator)
 
 ```typescript
 // Communicates "the AI is processing your request"
@@ -1437,7 +1437,7 @@ export const thinkingDots = {
 };
 ```
 
-#### V29 — aiStreaming (Text Streaming)
+#### V29 â€” aiStreaming (Text Streaming)
 
 ```typescript
 // Communicates "content is arriving in real-time"
@@ -1465,7 +1465,7 @@ export const aiStreamingCursor = {
 };
 ```
 
-#### V30 — aiSuggestion (Suggestion Appearance)
+#### V30 â€” aiSuggestion (Suggestion Appearance)
 
 ```typescript
 // Communicates "the AI has a suggestion for you"
@@ -1493,7 +1493,7 @@ export const aiSuggestion: Variants = {
 };
 ```
 
-#### V31 — aiRecommendation (Recommendation Card)
+#### V31 â€” aiRecommendation (Recommendation Card)
 
 ```typescript
 // Communicates "here is something you might want to act on"
@@ -1528,11 +1528,11 @@ export const aiRecommendation: Variants = {
 };
 ```
 
-#### V32 — aiAgentSpawn (Agent Entrance)
+#### V32 â€” aiAgentSpawn (Agent Entrance)
 
 ```typescript
 // Communicates "an AI agent is now active"
-// Visual: agent icon spawns from trigger point (scale 0→1 with glow burst)
+// Visual: agent icon spawns from trigger point (scale 0â†’1 with glow burst)
 // Duration: 300ms spring
 // Trigger: user invokes an AI agent
 
@@ -1568,7 +1568,7 @@ export const aiAgentBurst: Variants = {
 };
 ```
 
-#### V33 — aiAgentActive (Agent Idle State)
+#### V33 â€” aiAgentActive (Agent Idle State)
 
 ```typescript
 // Communicates "the agent is ready and listening"
@@ -1591,7 +1591,7 @@ export const aiAgentActive: Variants = {
 };
 ```
 
-#### V34 — aiAgentProcessing (Agent Working State)
+#### V34 â€” aiAgentProcessing (Agent Working State)
 
 ```typescript
 // Communicates "the agent is processing your request"
@@ -1612,11 +1612,11 @@ export const aiAgentProcessing: Variants = {
   },
 };
 
-// Processing speed lines (GSAP for this — too complex for FM)
+// Processing speed lines (GSAP for this â€” too complex for FM)
 // See: packages/components/ai/ProcessingSpeedLines.tsx
 ```
 
-#### V35 — aiAgentComplete (Agent Finished State)
+#### V35 â€” aiAgentComplete (Agent Finished State)
 
 ```typescript
 // Communicates "the agent has finished"
@@ -1647,40 +1647,40 @@ export const aiCompleteBurst: Variants = {
 ### 10.3 AI Motion State Machine
 
 ```
-                    ┌──────────┐
-                    │  Idle    │
-                    └────┬─────┘
-                         │ User sends input
-                         ▼
-                    ┌──────────┐
-              ┌────→│ Thinking │←────┐
-              │     │ (V28)    │     │
-              │     └────┬─────┘     │
-              │          │           │
-              │          ▼           │
-              │     ┌──────────┐     │
-              │     │Streaming │     │ Agent fallback
-              │     │ (V29)    │─────┤
-              │     └────┬─────┘     │
-              │          │           │
-              │          ▼           │
-              │     ┌──────────┐     │
-              │     │ Complete │     │
-              │     │ (V35)    │─────┘
-              │     └────┬─────┘
-              │          │
-              │     ┌──────────┐
-              └─────│   Idle   │
-                    └──────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Idle    â”‚
+                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                         â”‚ User sends input
+                         â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”Œâ”€â”€â”€â”€â†’â”‚ Thinking â”‚â†â”€â”€â”€â”€â”
+              â”‚     â”‚ (V28)    â”‚     â”‚
+              â”‚     â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜     â”‚
+              â”‚          â”‚           â”‚
+              â”‚          â–¼           â”‚
+              â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+              â”‚     â”‚Streaming â”‚     â”‚ Agent fallback
+              â”‚     â”‚ (V29)    â”‚â”€â”€â”€â”€â”€â”¤
+              â”‚     â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜     â”‚
+              â”‚          â”‚           â”‚
+              â”‚          â–¼           â”‚
+              â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+              â”‚     â”‚ Complete â”‚     â”‚
+              â”‚     â”‚ (V35)    â”‚â”€â”€â”€â”€â”€â”˜
+              â”‚     â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+              â”‚          â”‚
+              â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â””â”€â”€â”€â”€â”€â”‚   Idle   â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Agent-specific flow:**
 
 ```
 Agent invoked
-    │
-    ▼
-[Spawn] ─→ [Active/Listening] ─→ [Processing] ─→ [Complete] ─→ [Exit]
+    â”‚
+    â–¼
+[Spawn] â”€â†’ [Active/Listening] â”€â†’ [Processing] â”€â†’ [Complete] â”€â†’ [Exit]
   V32          V33                    V34              V35         V32 exit
 ```
 
@@ -1692,7 +1692,7 @@ Agent invoked
 | AIR2 | Streaming text uses 30-50ms per character. At this rate, a 500-character response appears in 2.5 seconds max |
 | AIR3 | Recommendation cards always enter from the right (future direction) and exit to the left (past direction) |
 | AIR4 | Agent processing animation must loop exactly 3 times maximum. If processing takes longer than 4.5 seconds, show a determinate progress bar instead |
-| AIR5 | On reduced motion, all AI animations become instant state toggles. No thinking pulse, no streaming reveal — show content immediately when available |
+| AIR5 | On reduced motion, all AI animations become instant state toggles. No thinking pulse, no streaming reveal â€” show content immediately when available |
 | AIR6 | AI motion is always interruptible. If the user sends a new message while AI is responding, the current animation terminates immediately |
 
 ---
@@ -1708,8 +1708,8 @@ Agent invoked
 | GSAP ScrollTrigger | 8KB | Dynamic import (lazy) | On first ScrollTrigger mount |
 | GSAP MorphSVG | 5KB | Dynamic import (lazy) | On first SVG morph |
 | @rive-app/react-canvas | 35KB | Dynamic import (lazy) | On first Rive mount |
-| Total (FM only) | 30KB | — | — |
-| Total (all libraries) | 95KB | — | Only when features demand it |
+| Total (FM only) | 30KB | â€” | â€” |
+| Total (all libraries) | 95KB | â€” | Only when features demand it |
 
 ### 11.2 Runtime Budgets
 
@@ -1729,7 +1729,7 @@ Agent invoked
 |---|---|
 | APR1 | Only animate `opacity` and `transform`. Never animate `width`, `height`, `top`, `left`, `margin`, or `padding` |
 | APR2 | Use CSS `@keyframes` for decorative loops (glow pulse, shimmer). No JavaScript runtime cost for infinite loops |
-| APR3 | Use `will-change` sparingly — set on the animating element before the animation starts, remove after it settles. Never set `will-change` on more than 8 elements per page |
+| APR3 | Use `will-change` sparingly â€” set on the animating element before the animation starts, remove after it settles. Never set `will-change` on more than 8 elements per page |
 | APR4 | Virtualized lists (100+ items) must not animate off-screen items. Only animate items within the visible viewport + 1 buffer row |
 | APR5 | IntersectionObserver pauses decorative animations when the element is off-screen. Resume on re-entry |
 | APR6 | Battery-sensitive: continuous animations (glow pulse, ambient) pause when the page is backgrounded. Use `document.visibilitychange` |
@@ -1777,7 +1777,7 @@ Every PR is checked for:
 
 ### 12.1 Testing Philosophy
 
-**Animations are behavior, not decoration.** They must be tested like any other behavior — not ignored in test environments.
+**Animations are behavior, not decoration.** They must be tested like any other behavior â€” not ignored in test environments.
 
 ### 12.2 Test Categories
 
@@ -1934,9 +1934,9 @@ walkDir(APP_DIR);
 
 // Report
 if (RESULTS.length === 0) {
-  console.log('✅ Motion Audit: Clean — no violations found');
+  console.log('âœ… Motion Audit: Clean â€” no violations found');
 } else {
-  console.log(`🔍 Motion Audit: ${RESULTS.length} issues found`);
+  console.log(`ðŸ” Motion Audit: ${RESULTS.length} issues found`);
   for (const r of RESULTS) {
     console.log(`  [${r.severity.toUpperCase()}] ${r.file}: ${r.issue}`);
   }
@@ -1949,7 +1949,7 @@ if (RESULTS.length === 0) {
 |---|---|
 | DTR1 | Framer Motion DevTools Chrome extension is required for all frontend developers |
 | DTR2 | Motion audit script runs as a pre-commit hook (`npx tsx scripts/audit-motion.mjs`) |
-| DTR3 | GSAP DevTools markers (`ScrollTrigger.debug = true`) are allowed in development only — stripped from production builds |
+| DTR3 | GSAP DevTools markers (`ScrollTrigger.debug = true`) are allowed in development only â€” stripped from production builds |
 | DTR4 | The debug overlay (`__MOTION_DEV_TOOLS__ = true`) is toggled via URL param `?motion-debug` |
 | DTR5 | Animation performance is profiled in every PR that touches motion code. PR description must include "Motion Impact: [none/low/medium/high]" |
 
@@ -1960,14 +1960,14 @@ if (RESULTS.length === 0) {
 ### 14.1 Phase Overview
 
 ```
-Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 ─── Phase 6 ─── Phase 7
+Phase 1 â”€â”€â”€ Phase 2 â”€â”€â”€ Phase 3 â”€â”€â”€ Phase 4 â”€â”€â”€ Phase 5 â”€â”€â”€ Phase 6 â”€â”€â”€ Phase 7
   Tokens     Presets     Components  Per-page    AI Motion   GSAP+Rive   Testing
    + CSS      + Provider  contracts   transitions  patterns    integration + CI
 ```
 
 ### 14.2 Phase Details
 
-#### Phase 1 — Token Implementation (Sprint 1)
+#### Phase 1 â€” Token Implementation (Sprint 1)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -1977,17 +1977,17 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 | Create `packages/ui/MotionProvider.tsx` | Provider with device tier detection + reduced-motion context | None |
 | Validate: audit script against all page files | Baseline report of current violations | Audit script |
 
-#### Phase 2 — Animation Preset Library (Sprint 2)
+#### Phase 2 â€” Animation Preset Library (Sprint 2)
 
 | Task | Output | Depends On |
 |---|---|---|
-| Create `packages/ui/animation-presets.ts` | V1–V35+ variant definitions | Phase 1 tokens |
+| Create `packages/ui/animation-presets.ts` | V1â€“V35+ variant definitions | Phase 1 tokens |
 | Define all entry, exit, stagger, interaction, overlay, feedback presets | Complete preset library | None |
-| Define AI motion presets (V28–V35) | AI motion patterns | None |
+| Define AI motion presets (V28â€“V35) | AI motion patterns | None |
 | Write tests for all presets | `animation-presets.test.ts` | Preset library |
 | Integrate `MotionProvider` into app root `layout.tsx` | Global motion context | Phase 1 provider |
 
-#### Phase 3 — Component Integration (Sprint 3)
+#### Phase 3 â€” Component Integration (Sprint 3)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -2000,7 +2000,7 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 | Add `@motion` JSDoc contracts to all 7 components | Documentation | Component refactoring |
 | Write component motion tests | `Button.test.tsx`, etc. | Component refactoring |
 
-#### Phase 4 — Page Transitions (Sprint 4)
+#### Phase 4 â€” Page Transitions (Sprint 4)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -2010,7 +2010,7 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 | Remove ad-hoc page-level animation code | Clean 17 page files | Phase 3 components |
 | Verify: audit script shows zero violations | Clean audit | Page cleanup |
 
-#### Phase 5 — AI Motion Patterns (Sprint 5)
+#### Phase 5 â€” AI Motion Patterns (Sprint 5)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -2022,7 +2022,7 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 | Wire AI components into chat system | Functional AI motion | AI component library |
 | Write AI motion tests | All AI component tests | AI component library |
 
-#### Phase 6 — GSAP + Rive Integration (Sprint 6)
+#### Phase 6 â€” GSAP + Rive Integration (Sprint 6)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -2035,7 +2035,7 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 | Register all GSAP animations in gsap-registry | Registry manifest | GSAP components |
 | Write GSAP + Rive tests | Integration tests | Components |
 
-#### Phase 7 — Testing + Performance CI (Sprint 7)
+#### Phase 7 â€” Testing + Performance CI (Sprint 7)
 
 | Task | Output | Depends On |
 |---|---|---|
@@ -2049,22 +2049,22 @@ Phase 1 ─── Phase 2 ─── Phase 3 ─── Phase 4 ─── Phase 5 
 
 ```
 Phase 1 (Tokens)
-    │
-    ▼
+    â”‚
+    â–¼
 Phase 2 (Presets + Provider)
-    │                   │
-    ├───────────────────┤
-    ▼                   ▼
+    â”‚                   â”‚
+    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+    â–¼                   â–¼
 Phase 3 (Components)   Phase 5 (AI Motion)
-    │                   │
-    ▼                   │
-Phase 4 (Pages)        │
-    │                   │
-    ├───────────────────┤
-    ▼
+    â”‚                   â”‚
+    â–¼                   â”‚
+Phase 4 (Pages)        â”‚
+    â”‚                   â”‚
+    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+    â–¼
 Phase 6 (GSAP+Rive)
-    │
-    ▼
+    â”‚
+    â–¼
 Phase 7 (Testing+CI)
 ```
 
@@ -2083,12 +2083,12 @@ Every PR containing animation code MUST pass this checklist before merging:
 | 3 | Component has `@motion` JSDoc block | New/existing components |
 | 4 | Reduced motion path exists and is tested | All animated components |
 | 5 | No `width`, `height`, `top`, `left` in `motion.*` style props | All files |
-| 6 | `will-change` count per page ≤ 8 | All pages |
-| 7 | Stagger total ≤ 500ms | Staggered lists |
+| 6 | `will-change` count per page â‰¤ 8 | All pages |
+| 7 | Stagger total â‰¤ 500ms | Staggered lists |
 | 8 | AnimatePresence wraps all conditional renders | Modals, toasts, dropdowns |
 | 9 | Dynamic import for GSAP, static import for FM | Library imports |
 | 10 | GSAP animation cleanup in `useEffect` return | GSAP files |
-| 11 | Rive file ≤ 200KB | Rive files |
+| 11 | Rive file â‰¤ 200KB | Rive files |
 | 12 | Rive has static fallback | Rive components |
 | 13 | AI motion interrupts on new user input | AI components |
 | 14 | No framer-motion imports in page files | `app/` directory |
@@ -2164,29 +2164,29 @@ export const oldFadeUp: Variants = { ... };
 "Which animation library should I use?"
 
 Do I need to animate...
-│
-├── A UI state change? (hover, tap, enter, exit, open, close)
-│   → Framer Motion
-│   └── Is it a decorative loop? (glow, shimmer, ambient)
-│       → CSS @keyframes
-│
-├── A scroll-driven effect? (parallax, reveal, pin)
-│   → GSAP ScrollTrigger (dynamic import)
-│
-├── A complex timeline? (multi-step sequence, SVG morph)
-│   → GSAP timeline (dynamic import)
-│
-├── A character animation? (ARIA mascot, complex loading)
-│   → Rive (dynamic import)
-│
-├── A celebratory burst? (confetti, streak milestone)
-│   → Rive (preferred) or Framer Motion (simple bursts)
-│
-├── A data-driven update? (chart entry, counter, progress)
-│   → Framer Motion (layout animations, useMotionValue)
-│
-└── A streaming text reveal? (AI response)
-    → Framer Motion (staggered children, not GSAP)
+â”‚
+â”œâ”€â”€ A UI state change? (hover, tap, enter, exit, open, close)
+â”‚   â†’ Framer Motion
+â”‚   â””â”€â”€ Is it a decorative loop? (glow, shimmer, ambient)
+â”‚       â†’ CSS @keyframes
+â”‚
+â”œâ”€â”€ A scroll-driven effect? (parallax, reveal, pin)
+â”‚   â†’ GSAP ScrollTrigger (dynamic import)
+â”‚
+â”œâ”€â”€ A complex timeline? (multi-step sequence, SVG morph)
+â”‚   â†’ GSAP timeline (dynamic import)
+â”‚
+â”œâ”€â”€ A character animation? (ARIA mascot, complex loading)
+â”‚   â†’ Rive (dynamic import)
+â”‚
+â”œâ”€â”€ A celebratory burst? (confetti, streak milestone)
+â”‚   â†’ Rive (preferred) or Framer Motion (simple bursts)
+â”‚
+â”œâ”€â”€ A data-driven update? (chart entry, counter, progress)
+â”‚   â†’ Framer Motion (layout animations, useMotionValue)
+â”‚
+â””â”€â”€ A streaming text reveal? (AI response)
+    â†’ Framer Motion (staggered children, not GSAP)
 ```
 
 ### 16.2 Preset Selection Decision Tree
@@ -2195,21 +2195,21 @@ Do I need to animate...
 "Which entry preset should I use?"
 
 How important is the content?
-│
-├── Hero / Primary (critical information)
-│   → heroReveal (400ms, emphasis easing, y: 30)
-│
-├── Important (section headers, key metrics)
-│   → fadeUp (250ms, y: 12)
-│
-├── Standard (cards, list items, content blocks)
-│   → staggerItem (inside staggerContainer or staggerCard)
-│
-├── Supporting (metadata, secondary info)
-│   → fadeIn (150ms, no y movement)
-│
-└── Modal/overlay content
-    → scaleSpringIn (250ms, spring)
+â”‚
+â”œâ”€â”€ Hero / Primary (critical information)
+â”‚   â†’ heroReveal (400ms, emphasis easing, y: 30)
+â”‚
+â”œâ”€â”€ Important (section headers, key metrics)
+â”‚   â†’ fadeUp (250ms, y: 12)
+â”‚
+â”œâ”€â”€ Standard (cards, list items, content blocks)
+â”‚   â†’ staggerItem (inside staggerContainer or staggerCard)
+â”‚
+â”œâ”€â”€ Supporting (metadata, secondary info)
+â”‚   â†’ fadeIn (150ms, no y movement)
+â”‚
+â””â”€â”€ Modal/overlay content
+    â†’ scaleSpringIn (250ms, spring)
 ```
 
 ### 16.3 AI Motion Selection Decision Tree
@@ -2218,33 +2218,33 @@ How important is the content?
 "Which AI motion pattern should I use?"
 
 What is the system doing?
-│
-├── Processing user input
-│   → aiThinking (V28) — pulsing glow + dots
-│   └── Will response be >300ms?
-│       → Yes: Show thinking animation immediately
-│       → No: Skip, show response directly
-│
-├── Generating a response
-│   → aiStreaming (V29) — character-by-character reveal
-│
-├── Offering a suggestion
-│   → aiSuggestion (V30) — ghost text fade-in
-│
-├── Recommending an action
-│   → aiRecommendation (V31) — slide-in card with glow
-│
-├── Spawning an AI agent
-│   → aiAgentSpawn (V32) — scale 0→1 + burst ring
-│   └── Agent is now active
-│       → aiAgentActive (V33) — ambient pulse
-│       └── Agent is processing
-│           → aiAgentProcessing (V34) — speed lines/oscillation
-│           └── Agent is done
-│               → aiAgentComplete (V35) — checkmark draw + glow burst
-│
-└── Done
-    → Settle to idle state
+â”‚
+â”œâ”€â”€ Processing user input
+â”‚   â†’ aiThinking (V28) â€” pulsing glow + dots
+â”‚   â””â”€â”€ Will response be >300ms?
+â”‚       â†’ Yes: Show thinking animation immediately
+â”‚       â†’ No: Skip, show response directly
+â”‚
+â”œâ”€â”€ Generating a response
+â”‚   â†’ aiStreaming (V29) â€” character-by-character reveal
+â”‚
+â”œâ”€â”€ Offering a suggestion
+â”‚   â†’ aiSuggestion (V30) â€” ghost text fade-in
+â”‚
+â”œâ”€â”€ Recommending an action
+â”‚   â†’ aiRecommendation (V31) â€” slide-in card with glow
+â”‚
+â”œâ”€â”€ Spawning an AI agent
+â”‚   â†’ aiAgentSpawn (V32) â€” scale 0â†’1 + burst ring
+â”‚   â””â”€â”€ Agent is now active
+â”‚       â†’ aiAgentActive (V33) â€” ambient pulse
+â”‚       â””â”€â”€ Agent is processing
+â”‚           â†’ aiAgentProcessing (V34) â€” speed lines/oscillation
+â”‚           â””â”€â”€ Agent is done
+â”‚               â†’ aiAgentComplete (V35) â€” checkmark draw + glow burst
+â”‚
+â””â”€â”€ Done
+    â†’ Settle to idle state
 ```
 
 ### 16.4 Component Animation Decision Tree
@@ -2253,24 +2253,24 @@ What is the system doing?
 "Does my interactive component need a @motion contract?"
 
 Does the component...
-│
-├── Have visual states? (hover, active, disabled, focus)
-│   → Yes: Define interaction presets (whileHover, whileTap)
-│
-├── Open/close? (modal, toast, dropdown, sidebar)
-│   → Yes: Define entry/exit presets + AnimatePresence
-│
-├── Reorder or filter? (task list, sortable table)
-│   → Yes: LayoutGroup + layoutTransition
-│
-├── Show/hide content? (accordion, expandable card)
-│   → Yes: height/opacity transition with AnimatePresence
-│
-├── Display in a list/grid? (card, task row)
-│   → Yes: staggerContainer + staggerItem
-│
-└── None of the above (static display component)?
-    → No motion contract needed
+â”‚
+â”œâ”€â”€ Have visual states? (hover, active, disabled, focus)
+â”‚   â†’ Yes: Define interaction presets (whileHover, whileTap)
+â”‚
+â”œâ”€â”€ Open/close? (modal, toast, dropdown, sidebar)
+â”‚   â†’ Yes: Define entry/exit presets + AnimatePresence
+â”‚
+â”œâ”€â”€ Reorder or filter? (task list, sortable table)
+â”‚   â†’ Yes: LayoutGroup + layoutTransition
+â”‚
+â”œâ”€â”€ Show/hide content? (accordion, expandable card)
+â”‚   â†’ Yes: height/opacity transition with AnimatePresence
+â”‚
+â”œâ”€â”€ Display in a list/grid? (card, task row)
+â”‚   â†’ Yes: staggerContainer + staggerItem
+â”‚
+â””â”€â”€ None of the above (static display component)?
+    â†’ No motion contract needed
 ```
 
 ---
@@ -2331,18 +2331,18 @@ Does the component...
 
 | ID | Preset | Type | Duration | Key Property |
 |---|---|---|---|---|
-| V1 | `fadeIn` | Entry | 150ms | opacity 0→1 |
-| V2 | `fadeUp` | Entry | 250ms | opacity 0→1, y 12→0 |
-| V3 | `fadeDown` | Entry | 250ms | opacity 0→1, y -12→0 |
-| V4 | `scaleIn` | Entry | 150ms | opacity 0→1, scale 0.96→1 |
-| V5 | `slideRight` | Entry | 250ms | opacity 0→1, x -20→0 |
-| V6 | `slideLeft` | Entry | 250ms | opacity 0→1, x 20→0 |
-| V7 | `heroReveal` | Entry | 400ms | opacity 0→1, y 30→0, scale 0.98→1 |
-| V8 | `scaleSpringIn` | Entry | 250ms | spring(400, 30), scale 0.9→1 |
-| V9 | `fadeOut` | Exit | 80ms | opacity 1→0 |
-| V10 | `scaleOut` | Exit | 80ms | opacity 1→0, scale 1→0.96 |
-| V11 | `slideOutRight` | Exit | 80ms | opacity 1→0, x 0→20 |
-| V12 | `collapseOut` | Exit | 150ms | opacity 1→0, height auto→0 |
+| V1 | `fadeIn` | Entry | 150ms | opacity 0â†’1 |
+| V2 | `fadeUp` | Entry | 250ms | opacity 0â†’1, y 12â†’0 |
+| V3 | `fadeDown` | Entry | 250ms | opacity 0â†’1, y -12â†’0 |
+| V4 | `scaleIn` | Entry | 150ms | opacity 0â†’1, scale 0.96â†’1 |
+| V5 | `slideRight` | Entry | 250ms | opacity 0â†’1, x -20â†’0 |
+| V6 | `slideLeft` | Entry | 250ms | opacity 0â†’1, x 20â†’0 |
+| V7 | `heroReveal` | Entry | 400ms | opacity 0â†’1, y 30â†’0, scale 0.98â†’1 |
+| V8 | `scaleSpringIn` | Entry | 250ms | spring(400, 30), scale 0.9â†’1 |
+| V9 | `fadeOut` | Exit | 80ms | opacity 1â†’0 |
+| V10 | `scaleOut` | Exit | 80ms | opacity 1â†’0, scale 1â†’0.96 |
+| V11 | `slideOutRight` | Exit | 80ms | opacity 1â†’0, x 0â†’20 |
+| V12 | `collapseOut` | Exit | 150ms | opacity 1â†’0, height autoâ†’0 |
 | V13 | `staggerContainer` | Stagger | 50ms/item | staggerChildren: 0.05 |
 | V14 | `staggerFast` | Stagger | 30ms/item | staggerChildren: 0.03 |
 | V15 | `staggerCard` | Stagger | 100ms/item | staggerChildren: 0.1 |
@@ -2350,22 +2350,22 @@ Does the component...
 | V17 | `cardHover` | Interaction | 200ms | scale 1.01, y -2, glow |
 | V18 | `iconButtonHover` | Interaction | 80-100ms | hover scale 1.05, tap scale 0.96 |
 | V19 | `navTabActive` | Interaction | 100ms | hover scale 1.04, tap scale 0.96 |
-| V20 | `backdropFade` | Overlay | 150ms | opacity 0→0.6 |
-| V21 | `modalEnter` | Overlay | 250ms | spring(400, 30), scale 0.95→1 |
-| V22 | `toastEnter` | Overlay | 300ms | spring(300, 25), x 50→0 |
-| V23 | `shakeError` | Feedback | 300ms | x oscillation ±4px |
+| V20 | `backdropFade` | Overlay | 150ms | opacity 0â†’0.6 |
+| V21 | `modalEnter` | Overlay | 250ms | spring(400, 30), scale 0.95â†’1 |
+| V22 | `toastEnter` | Overlay | 300ms | spring(300, 25), x 50â†’0 |
+| V23 | `shakeError` | Feedback | 300ms | x oscillation Â±4px |
 | V24 | `successPulse` | Feedback | 400ms | scale pulse, border flash |
-| V25 | `skeletonPulse` | Feedback | 1.5s loop | opacity 0.6⇄0.9 |
-| V26 | `celebrationBanner` | Feedback | 1s | spring(200, 12), scale 0→1 |
+| V25 | `skeletonPulse` | Feedback | 1.5s loop | opacity 0.6â‡„0.9 |
+| V26 | `celebrationBanner` | Feedback | 1s | spring(200, 12), scale 0â†’1 |
 | V27 | `layoutTransition` | Layout | 250ms | ease inOut |
 | V28 | `aiThinking` | AI | 1s loop | opacity/scale pulse, glow |
-| V29 | `aiStreaming` | AI | 150ms/word | opacity 0→1, y 4→0, blur 2→0 |
-| V30 | `aiSuggestion` | AI | 400ms | opacity 0→1, y -4→0, height 0→auto |
-| V31 | `aiRecommendation` | AI | 450ms | spring(250, 22), x 40→0, scale 0.95→1 |
-| V32 | `aiAgentSpawn` | AI | 300ms | spring(350, 20), scale 0→1 |
+| V29 | `aiStreaming` | AI | 150ms/word | opacity 0â†’1, y 4â†’0, blur 2â†’0 |
+| V30 | `aiSuggestion` | AI | 400ms | opacity 0â†’1, y -4â†’0, height 0â†’auto |
+| V31 | `aiRecommendation` | AI | 450ms | spring(250, 22), x 40â†’0, scale 0.95â†’1 |
+| V32 | `aiAgentSpawn` | AI | 300ms | spring(350, 20), scale 0â†’1 |
 | V33 | `aiAgentActive` | AI | 2s loop | ambient pulse, glow |
 | V34 | `aiAgentProcessing` | AI | 1.5s loop | opacity/rotate oscillation |
-| V35 | `aiAgentComplete` | AI | 400ms | pathLength 0→1, glow burst |
+| V35 | `aiAgentComplete` | AI | 400ms | pathLength 0â†’1, glow burst |
 
 ### 18.3 Library Import Rules
 
@@ -2383,7 +2383,7 @@ Does the component...
 |---|---|---|
 | `packages/ui/tokens.ts` | Animation token definitions | Phase 1 |
 | `packages/ui/MotionProvider.tsx` | Global motion context provider | Phase 1 |
-| `packages/ui/animation-presets.ts` | Shared Framer Motion variants (V1–V35) | Phase 2 |
+| `packages/ui/animation-presets.ts` | Shared Framer Motion variants (V1â€“V35) | Phase 2 |
 | `packages/ui/gsap-registry.ts` | GSAP animation manifest | Phase 6 |
 | `apps/web/app/layout.tsx` | PageTransition wrapper integration | Phase 4 |
 | `scripts/audit-motion.mjs` | Motion architecture audit script | Phase 1 |
@@ -2406,4 +2406,4 @@ Does the component...
 
 > **Maintenance:** This document is updated per release cycle. New animated components must reference presets from `animation-presets.ts`. Deviations require Motion Architecture review.
 >
-> **Related documents:** `docs/design/MotionSystem.md` (design specs), `docs/design/DesignStrategy.md` §18 (strategy), `docs/design/Accessibility.md` §7 (reduced motion), `docs/design/10_DesignSystem.md` (component tokens).
+> **Related documents:** `docs/design/MotionSystem.md` (design specs), `docs/design/DesignStrategy.md` Â§18 (strategy), `docs/design/FrontendAccessibilityGuide.md` Â§7 (reduced motion), `docs/design/10_DesignSystem.md` (component tokens).

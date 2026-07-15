@@ -1,4 +1,13 @@
-# Part I — User Flows (17 Modules)
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF01-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part I â€” User Flows (17 Modules)
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control and notation key.**
 > Related: `UserFlows.md` (product-level user flows), `02-FeatureFlows.md` (feature-level end-to-end flows).
@@ -32,50 +41,50 @@
 Every module in this section follows this structure:
 
 ```
-┌──────────────────────────────────────────────┐
-│              MODULE USER FLOW                │
-├──────────────────────────────────────────────┤
-│ Entry Points                                 │
-│   • Navigation (sidebar nav item)            │
-│   • Dashboard widget click                   │
-│   • Quick Capture (Cmd+K shortcut)           │
-│   • Notification tap                         │
-│   • Deep link (external/email)               │
-│   • AI suggestion acceptance                 │
-│   • Command palette command                  │
-│                                              │
-│ Primary Actions                              │
-│   • Create / Edit / Delete / Complete        │
-│   • Each with success + failure paths        │
-│                                              │
-│ Secondary Actions                            │
-│   • Sort / Filter / Search / Export          │
-│   • Bulk operations                          │
-│   • Share / Archive / Restore                │
-│                                              │
-│ AI-Assisted Actions                          │
-│   • "Ask ARIA to..." per module context      │
-│   • Auto-suggest on create                   │
-│   • Pattern detection triggers               │
-│                                              │
-│ Exit Points                                  │
-│   • Navigation away                          │
-│   • Modal close / Esc                        │
-│   • Action completed → toast → auto-return   │
-│   • Session timeout                          │
-│                                              │
-│ Success Paths (Mermaid sequence diagram)     │
-│   • Happy path with optimistic update        │
-│   • Realtime sync confirmation               │
-│   • State transitions                        │
-│                                              │
-│ Failure Paths (Mermaid decision tree)        │
-│   • Network error → retry with backoff       │
-│   • Validation error → inline field error    │
-│   • Auth error → re-auth flow                │
-│   • Rate limit → cooldown indicator          │
-│   • Circuit breaker → degraded mode          │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              MODULE USER FLOW                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Entry Points                                 â”‚
+â”‚   â€¢ Navigation (sidebar nav item)            â”‚
+â”‚   â€¢ Dashboard widget click                   â”‚
+â”‚   â€¢ Quick Capture (Cmd+K shortcut)           â”‚
+â”‚   â€¢ Notification tap                         â”‚
+â”‚   â€¢ Deep link (external/email)               â”‚
+â”‚   â€¢ AI suggestion acceptance                 â”‚
+â”‚   â€¢ Command palette command                  â”‚
+â”‚                                              â”‚
+â”‚ Primary Actions                              â”‚
+â”‚   â€¢ Create / Edit / Delete / Complete        â”‚
+â”‚   â€¢ Each with success + failure paths        â”‚
+â”‚                                              â”‚
+â”‚ Secondary Actions                            â”‚
+â”‚   â€¢ Sort / Filter / Search / Export          â”‚
+â”‚   â€¢ Bulk operations                          â”‚
+â”‚   â€¢ Share / Archive / Restore                â”‚
+â”‚                                              â”‚
+â”‚ AI-Assisted Actions                          â”‚
+â”‚   â€¢ "Ask ARIA to..." per module context      â”‚
+â”‚   â€¢ Auto-suggest on create                   â”‚
+â”‚   â€¢ Pattern detection triggers               â”‚
+â”‚                                              â”‚
+â”‚ Exit Points                                  â”‚
+â”‚   â€¢ Navigation away                          â”‚
+â”‚   â€¢ Modal close / Esc                        â”‚
+â”‚   â€¢ Action completed â†’ toast â†’ auto-return   â”‚
+â”‚   â€¢ Session timeout                          â”‚
+â”‚                                              â”‚
+â”‚ Success Paths (Mermaid sequence diagram)     â”‚
+â”‚   â€¢ Happy path with optimistic update        â”‚
+â”‚   â€¢ Realtime sync confirmation               â”‚
+â”‚   â€¢ State transitions                        â”‚
+â”‚                                              â”‚
+â”‚ Failure Paths (Mermaid decision tree)        â”‚
+â”‚   â€¢ Network error â†’ retry with backoff       â”‚
+â”‚   â€¢ Validation error â†’ inline field error    â”‚
+â”‚   â€¢ Auth error â†’ re-auth flow                â”‚
+â”‚   â€¢ Rate limit â†’ cooldown indicator          â”‚
+â”‚   â€¢ Circuit breaker â†’ degraded mode          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -92,28 +101,28 @@ Every module in this section follows this structure:
 
 | Entry | Trigger | Behavior |
 |---|---|---|
-| Login / Sign-up | OAuth success | Full page load → {Loading} → {Populated} |
+| Login / Sign-up | OAuth success | Full page load â†’ {Loading} â†’ {Populated} |
 | App Shell nav | Sidebar logo click | Instant (CSR) from any route |
-| Browser | Direct URL / bookmark | Full page load → {Loading} → {Populated} |
-| Notification tap | Click notification bell | Deep link → scroll to widget |
+| Browser | Direct URL / bookmark | Full page load â†’ {Loading} â†’ {Populated} |
+| Notification tap | Click notification bell | Deep link â†’ scroll to widget |
 | Quick Capture dismiss | Escape / Submit | Return to {Populated} state |
 
 ### Primary Actions
 
 | Action | Trigger | Flow |
 |---|---|---|
-| View Briefing | Morning widget | Expand briefing card → stream full text |
+| View Briefing | Morning widget | Expand briefing card â†’ stream full text |
 | Navigate to module | Click widget | Route transition to target module |
 | Quick Capture | Cmd+K / + button | Open command palette from any state |
-| Complete task | Checkbox on widget | Optimistic update → API call → streak check |
-| View AI insight | Insight card click | Expand insight → show detail → action buttons |
+| Complete task | Checkbox on widget | Optimistic update â†’ API call â†’ streak check |
+| View AI insight | Insight card click | Expand insight â†’ show detail â†’ action buttons |
 
 ### Secondary Actions
 
 | Action | Trigger | Behavior |
 |---|---|---|
-| Reorder widgets | Drag handle | Local state → persist to preferences |
-| Customize dashboard | Gear icon | Open customization modal → save layout |
+| Reorder widgets | Drag handle | Local state â†’ persist to preferences |
+| Customize dashboard | Gear icon | Open customization modal â†’ save layout |
 | Refresh data | Pull-to-refresh / R | All widgets refetch in parallel |
 | Export dashboard | Export button | PDF snapshot of current view |
 | Collapse widget | Chevron toggle | Local state only |
@@ -124,7 +133,7 @@ Every module in this section follows this structure:
 |---|---|---|
 | "What should I focus on?" | @briefing_agent | Streams priority suggestions into focus widget |
 | "Summarize yesterday" | @memory_agent | Generates yesterday's activity summary card |
-| "Am I on track?" | @learning_agent | Analyzes goal progress → color-coded status |
+| "Am I on track?" | @learning_agent | Analyzes goal progress â†’ color-coded status |
 | "Any opportunities?" | @opportunity_agent | Recent matches widget refreshes |
 
 ### Exit Points
@@ -133,7 +142,7 @@ Every module in this section follows this structure:
 |---|---|---|
 | Navigate to module | Click sidebar icon | CSR route transition |
 | Session timeout | 30 min inactivity | Redirect to login with save-state toast |
-| Logout | Profile menu → Logout | Clear client cache → redirect to /login |
+| Logout | Profile menu â†’ Logout | Clear client cache â†’ redirect to /login |
 | Close tab | Browser close | State persisted in localStorage |
 
 ### Success Paths
@@ -162,7 +171,7 @@ sequenceDiagram
         DB-->>API: JSON results
     end
     API-->>Q: 200 OK + data
-    Q-->>D: Skeleton → Populated transition
+    Q-->>D: Skeleton â†’ Populated transition
     D->>RT: Subscribe to realtime changes
     RT-->>D: Push update on data change
     D-->>U: Full dashboard rendered
@@ -199,25 +208,25 @@ flowchart TD
 **Route:** `/tasks`
 
 ### Entry Points
-- **Primary:** Sidebar nav "Tasks" → `/tasks`
-- **Dashboard widget:** Click task count → `/tasks` with filter
-- **Quick Capture:** Cmd+K → "Add task" → modal → `/tasks` after save
-- **Notification:** Task reminder tap → `/tasks/{id}`
-- **AI suggestion:** "Add this task" → accept → modal → `/tasks`
+- **Primary:** Sidebar nav "Tasks" â†’ `/tasks`
+- **Dashboard widget:** Click task count â†’ `/tasks` with filter
+- **Quick Capture:** Cmd+K â†’ "Add task" â†’ modal â†’ `/tasks` after save
+- **Notification:** Task reminder tap â†’ `/tasks/{id}`
+- **AI suggestion:** "Add this task" â†’ accept â†’ modal â†’ `/tasks`
 - **Deep link:** `/tasks/{id}` from email/external
 
 ### Primary Actions
-- **Create task:** Button → modal → fill → save → optimistic add to list
-- **Complete task:** Checkbox → strike-through → confetti (streak) → next suggestion
-- **Edit task:** Click → inline edit / side panel → save
-- **Delete task:** Swipe / right-click → confirm dialog → remove
-- **View task:** Click → detail panel (slide-over) → full info
+- **Create task:** Button â†’ modal â†’ fill â†’ save â†’ optimistic add to list
+- **Complete task:** Checkbox â†’ strike-through â†’ confetti (streak) â†’ next suggestion
+- **Edit task:** Click â†’ inline edit / side panel â†’ save
+- **Delete task:** Swipe / right-click â†’ confirm dialog â†’ remove
+- **View task:** Click â†’ detail panel (slide-over) â†’ full info
 
 ### Secondary Actions
 - **Sort:** Due date / priority / status / created date
 - **Filter:** Status / priority / category / date range
 - **Search:** Full-text search with fuzzy matching
-- **Bulk actions:** Select multiple → complete / delete / reschedule / assign category
+- **Bulk actions:** Select multiple â†’ complete / delete / reschedule / assign category
 - **Export:** CSV / JSON of filtered list
 - **Share:** Generate share link (future)
 
@@ -231,9 +240,9 @@ flowchart TD
 | "Reschedule overdue" | @task_agent | Auto-suggest new dates based on calendar gaps |
 
 ### Exit Points
-- **Nav away:** Sidebar click → auto-save any dirty form
-- **Close detail panel:** Escape / click outside → return to list
-- **Toast auto-dismiss:** After create/complete → 3s → fade
+- **Nav away:** Sidebar click â†’ auto-save any dirty form
+- **Close detail panel:** Escape / click outside â†’ return to list
+- **Toast auto-dismiss:** After create/complete â†’ 3s â†’ fade
 - **Session timeout:** Save in-progress edits to localStorage
 
 ### Success Paths
@@ -276,17 +285,17 @@ flowchart TD
 **Route:** `/courses`
 
 ### Entry Points
-- **Sidebar nav** "Courses" → `/courses`
-- **Dashboard widget:** "3 courses in progress" → `/courses`
-- **Notification:** Deadline reminder → `/courses/{id}`
-- **Quick Capture:** Cmd+K → "Log course progress"
-- **AI suggestion:** "You should review NPTEL ML" → `/courses/{id}`
+- **Sidebar nav** "Courses" â†’ `/courses`
+- **Dashboard widget:** "3 courses in progress" â†’ `/courses`
+- **Notification:** Deadline reminder â†’ `/courses/{id}`
+- **Quick Capture:** Cmd+K â†’ "Log course progress"
+- **AI suggestion:** "You should review NPTEL ML" â†’ `/courses/{id}`
 
 ### Primary Actions
-- **Add course:** Button → modal → name, platform, deadline, hours/week
-- **Log progress:** Click course → slider/input → update completion %
-- **View course detail:** Click card → split view (info + progress + tasks)
-- **Complete course:** Mark complete → skill update trigger → goal progress
+- **Add course:** Button â†’ modal â†’ name, platform, deadline, hours/week
+- **Log progress:** Click course â†’ slider/input â†’ update completion %
+- **View course detail:** Click card â†’ split view (info + progress + tasks)
+- **Complete course:** Mark complete â†’ skill update trigger â†’ goal progress
 
 ### Secondary Actions
 - **Filter:** Status (active/completed/dropped/planning)
@@ -300,7 +309,7 @@ flowchart TD
 |---|---|---|
 | "Adjust daily target" | @nudge_agent | Recalculates based on deadline vs progress |
 | "Suggest next course" | @roadmap_agent | Based on completed courses + career goals |
-| "Detect struggle" | @learning_agent | Low progress + missed study tasks → intervention |
+| "Detect struggle" | @learning_agent | Low progress + missed study tasks â†’ intervention |
 
 ---
 
@@ -309,19 +318,19 @@ flowchart TD
 **Route:** `/goals`
 
 ### Entry Points
-- **Sidebar nav** → `/goals`
-- **Dashboard widget:** Goal progress rings → `/goals`
-- **ARIA:** "Let's set a goal" → onboarding → goal wizard
+- **Sidebar nav** â†’ `/goals`
+- **Dashboard widget:** Goal progress rings â†’ `/goals`
+- **ARIA:** "Let's set a goal" â†’ onboarding â†’ goal wizard
 
 ### Primary Actions
-- **Create goal:** Wizard → name, category, deadline, key results, milestones
+- **Create goal:** Wizard â†’ name, category, deadline, key results, milestones
 - **Update progress:** Manual % update or auto from linked tasks
-- **View goal detail:** Expand card → KRs → linked tasks → milestones → notes
-- **Complete goal:** Mark complete → celebration animation → skill update
+- **View goal detail:** Expand card â†’ KRs â†’ linked tasks â†’ milestones â†’ notes
+- **Complete goal:** Mark complete â†’ celebration animation â†’ skill update
 
 ### Secondary Actions
 - **Filter:** Status / category / timeline
-- **Link tasks:** From goal detail → "Link existing task"
+- **Link tasks:** From goal detail â†’ "Link existing task"
 - **Share:** Goal progress snapshot (future)
 
 ### AI-Assisted Actions
@@ -330,7 +339,7 @@ flowchart TD
 |---|---|---|
 | "Break into milestones" | @roadmap_agent | Suggests quarterly milestones with checkpoints |
 | "Find related courses" | @learning_agent | Matches goal category to course catalog |
-| "Predict completion" | @learning_agent | Based on pace vs deadline → alert if behind |
+| "Predict completion" | @learning_agent | Based on pace vs deadline â†’ alert if behind |
 
 ---
 
@@ -339,15 +348,15 @@ flowchart TD
 **Route:** `/habits`
 
 ### Entry Points
-- **Sidebar nav** → `/habits`
-- **Dashboard widget:** Streak card → `/habits`
-- **Notification:** "Time for your habit" → log modal
-- **ARIA:** "You missed a habit" → nudge notification
+- **Sidebar nav** â†’ `/habits`
+- **Dashboard widget:** Streak card â†’ `/habits`
+- **Notification:** "Time for your habit" â†’ log modal
+- **ARIA:** "You missed a habit" â†’ nudge notification
 
 ### Primary Actions
 - **Create habit:** Name, frequency (daily/weekly), time of day, reminder toggle
-- **Log habit:** Checkmark for today → streak update → motivational message
-- **View history:** Calendar heatmap → per-habit streak view
+- **Log habit:** Checkmark for today â†’ streak update â†’ motivational message
+- **View history:** Calendar heatmap â†’ per-habit streak view
 - **Edit habit:** Frequency, time, reminders
 
 ### Secondary Actions
@@ -360,7 +369,7 @@ flowchart TD
 | Action | Agent | Behavior |
 |---|---|---|
 | "Suggest habit time" | @nudge_agent | Based on historical completion patterns |
-| "Adjust frequency" | @learning_agent | Notices 80%+ completion → suggest increase |
+| "Adjust frequency" | @learning_agent | Notices 80%+ completion â†’ suggest increase |
 | "Motivational nudge" | @nudge_agent | "You've done X for Y days straight!" |
 
 ---
@@ -370,16 +379,16 @@ flowchart TD
 **Route:** `/sleep`
 
 ### Entry Points
-- **Sidebar nav** → `/sleep`
-- **Dashboard widget:** Last night's score → `/sleep`
-- **ARIA:** Bedtime nudge at 9:30 PM → log modal
-- **Morning briefing:** Sleep insight → `/sleep` detail
+- **Sidebar nav** â†’ `/sleep`
+- **Dashboard widget:** Last night's score â†’ `/sleep`
+- **ARIA:** Bedtime nudge at 9:30 PM â†’ log modal
+- **Morning briefing:** Sleep insight â†’ `/sleep` detail
 
 ### Primary Actions
 - **Log sleep:** Time to bed, time awake, quality rating (1-5)
 - **View score:** Algorithmic score (0-100) based on duration + consistency + quality
 - **View trends:** 7-day / 30-day charts
-- **Set bedtime:** Target bedtime → reminder schedule
+- **Set bedtime:** Target bedtime â†’ reminder schedule
 
 ### Secondary Actions
 - **Add notes:** Free text (what affected sleep)
@@ -392,7 +401,7 @@ flowchart TD
 |---|---|---|
 | "Wind-down message" | @sleep_agent | Personalized bedtime story / reflection |
 | "Analyze patterns" | @learning_agent | Correlates sleep with productivity scores |
-| "Adjust briefing" | @briefing_agent | Low sleep → lighter task suggestions |
+| "Adjust briefing" | @briefing_agent | Low sleep â†’ lighter task suggestions |
 
 ---
 
@@ -401,13 +410,13 @@ flowchart TD
 **Route:** `/income`
 
 ### Entry Points
-- **Sidebar nav** → `/income`
-- **Dashboard widget:** Monthly income snapshot → `/income`
+- **Sidebar nav** â†’ `/income`
+- **Dashboard widget:** Monthly income snapshot â†’ `/income`
 
 ### Primary Actions
 - **Log income:** Amount, source, date, type (freelance/internship/gig)
 - **View analytics:** Monthly trends, hourly rate, source breakdown
-- **Set target:** Monthly income goal → progress indicator
+- **Set target:** Monthly income goal â†’ progress indicator
 
 ### Secondary Actions
 - **Filter:** Date range / source / type
@@ -429,15 +438,15 @@ flowchart TD
 **Route:** `/projects`
 
 ### Entry Points
-- **Sidebar nav** → `/projects`
-- **Dashboard widget:** Active projects → `/projects`
-- **ARIA:** "New project from idea" → import flow
+- **Sidebar nav** â†’ `/projects`
+- **Dashboard widget:** Active projects â†’ `/projects`
+- **ARIA:** "New project from idea" â†’ import flow
 
 ### Primary Actions
 - **Create project:** Name, description, repo link (optional), start date
 - **Add phase:** Phase name, tasks, deadline
-- **Log blockers:** What's blocking → AI suggests solutions
-- **Mark milestone:** Checkpoint reached → celebration
+- **Log blockers:** What's blocking â†’ AI suggests solutions
+- **Mark milestone:** Checkpoint reached â†’ celebration
 - **Complete project:** Archive with summary
 
 ### Secondary Actions
@@ -450,7 +459,7 @@ flowchart TD
 
 | Action | Agent | Behavior |
 |---|---|---|
-| "Generate README" | @task_agent | From project description → markdown file |
+| "Generate README" | @task_agent | From project description â†’ markdown file |
 | "Break into phases" | @roadmap_agent | Timeline estimation based on scope |
 | "Suggest resources" | @resource_agent | Relevant tutorials, docs, tools |
 
@@ -461,14 +470,14 @@ flowchart TD
 **Route:** `/ideas`
 
 ### Entry Points
-- **Sidebar nav** → `/ideas`
-- **Quick Capture:** Cmd+K → "Save idea" → auto-routes to Ideas
-- **Dashboard widget:** Idea count → `/ideas`
-- **ARIA:** "I have an idea" → capture modal
+- **Sidebar nav** â†’ `/ideas`
+- **Quick Capture:** Cmd+K â†’ "Save idea" â†’ auto-routes to Ideas
+- **Dashboard widget:** Idea count â†’ `/ideas`
+- **ARIA:** "I have an idea" â†’ capture modal
 
 ### Primary Actions
-- **Capture idea:** Quick modal → title + description (optional AI expand)
-- **View pipeline:** Kanban: Raw → Validating → Building → Shipped → Archived
+- **Capture idea:** Quick modal â†’ title + description (optional AI expand)
+- **View pipeline:** Kanban: Raw â†’ Validating â†’ Building â†’ Shipped â†’ Archived
 - **Promote idea:** Drag to next stage
 - **Expand idea:** AI-generated outline, market analysis, next steps
 
@@ -493,12 +502,12 @@ flowchart TD
 **Route:** `/resources`
 
 ### Entry Points
-- **Sidebar nav** → `/resources`
-- **Quick Capture:** Cmd+K → "Save link" → auto-routes to Resources
+- **Sidebar nav** â†’ `/resources`
+- **Quick Capture:** Cmd+K â†’ "Save link" â†’ auto-routes to Resources
 - **Browser extension:** (future) Save from any page
 
 ### Primary Actions
-- **Add resource:** URL / file → auto-fetch title + description + favicon
+- **Add resource:** URL / file â†’ auto-fetch title + description + favicon
 - **Tag:** Add tags for organization
 - **View:** Open in new tab / inline preview
 - **Categorize:** Sort into collections
@@ -524,15 +533,15 @@ flowchart TD
 **Route:** `/opportunities`
 
 ### Entry Points
-- **Sidebar nav** → `/opportunities`
-- **Dashboard widget:** "2 new matches" → `/opportunities`
-- **Notification:** Opportunity alert → `/opportunities/{id}`
-- **ARIA:** "Found a match" → `/opportunities`
+- **Sidebar nav** â†’ `/opportunities`
+- **Dashboard widget:** "2 new matches" â†’ `/opportunities`
+- **Notification:** Opportunity alert â†’ `/opportunities/{id}`
+- **ARIA:** "Found a match" â†’ `/opportunities`
 
 ### Primary Actions
 - **View matches:** Card list sorted by match score (0-100%)
 - **View detail:** Role, company, deadline, skills matched, how to apply
-- **Apply:** Track application status (Applied → Interviewing → Offer → Rejected)
+- **Apply:** Track application status (Applied â†’ Interviewing â†’ Offer â†’ Rejected)
 - **Save:** Bookmark for later
 
 ### Secondary Actions
@@ -556,16 +565,16 @@ flowchart TD
 **Route:** `/time`
 
 ### Entry Points
-- **Sidebar nav** → `/time`
-- **Dashboard widget:** Today's focus hours → `/time`
-- **Quick Capture:** Cmd+K → "Start timer"
+- **Sidebar nav** â†’ `/time`
+- **Dashboard widget:** Today's focus hours â†’ `/time`
+- **Quick Capture:** Cmd+K â†’ "Start timer"
 - **Notification:** "Your Pomodoro is done"
 
 ### Primary Actions
-- **Start timer:** Select task → Start → count-up
-- **Stop timer:** Stop → log duration → categorize (deep work / shallow / break)
+- **Start timer:** Select task â†’ Start â†’ count-up
+- **Stop timer:** Stop â†’ log duration â†’ categorize (deep work / shallow / break)
 - **View logs:** Daily / weekly / monthly time breakdown
-- **Pomodoro:** 25-min focus timer → 5-min break → cycle
+- **Pomodoro:** 25-min focus timer â†’ 5-min break â†’ cycle
 
 ### Secondary Actions
 - **Filter:** Date range / category / task
@@ -576,9 +585,9 @@ flowchart TD
 
 | Action | Agent | Behavior |
 |---|---|---|
-| "How was my focus?" | @learning_agent | Deep work hours vs total → trend chart |
+| "How was my focus?" | @learning_agent | Deep work hours vs total â†’ trend chart |
 | "Suggest focus blocks" | @briefing_agent | Based on calendar + energy patterns |
-| "Detect burnout risk" | @learning_agent | > 8h deep work for 5+ days → warn |
+| "Detect burnout risk" | @learning_agent | > 8h deep work for 5+ days â†’ warn |
 
 ---
 
@@ -587,16 +596,16 @@ flowchart TD
 **Route:** `/chat`
 
 ### Entry Points
-- **Sidebar nav** → `/chat`
-- **Any screen:** Cmd+K → "Ask ARIA"
-- **Dashboard:** Chat widget → quick question
-- **Floating button:** Bottom-right corner → opens chat panel
+- **Sidebar nav** â†’ `/chat`
+- **Any screen:** Cmd+K â†’ "Ask ARIA"
+- **Dashboard:** Chat widget â†’ quick question
+- **Floating button:** Bottom-right corner â†’ opens chat panel
 
 ### Primary Actions
-- **Send message:** Type → Enter → stream response
-- **Voice input:** (future) Microphone → speech-to-text → send
+- **Send message:** Type â†’ Enter â†’ stream response
+- **Voice input:** (future) Microphone â†’ speech-to-text â†’ send
 - **View conversation:** Scrollable history grouped by session
-- **Clear session:** New chat → archive old context
+- **Clear session:** New chat â†’ archive old context
 
 ### Secondary Actions
 - **Suggested prompts:** Chips below input based on context
@@ -608,9 +617,9 @@ flowchart TD
 
 | Action | Agent | Behavior |
 |---|---|---|
-| All messages routed | @ARIA orchestrator | Intent classify → dispatch → synthesize |
+| All messages routed | @ARIA orchestrator | Intent classify â†’ dispatch â†’ synthesize |
 | Context assembly | All agents | Profile + recent + memory + relevant data |
-| Action execution | @task_agent / @memory_agent | "Create a task" → automatic execution |
+| Action execution | @task_agent / @memory_agent | "Create a task" â†’ automatic execution |
 
 ### Agent Flow
 
@@ -652,11 +661,11 @@ sequenceDiagram
 **Route:** `/automation`
 
 ### Entry Points
-- **Sidebar nav** → `/automation`
-- **Dashboard widget:** "Scheduled jobs" status → `/automation`
+- **Sidebar nav** â†’ `/automation`
+- **Dashboard widget:** "Scheduled jobs" status â†’ `/automation`
 
 ### Primary Actions
-- **View jobs:** List of all 7 cron jobs with status
+- **View jobs:** List of all 15 cron jobs with status
 - **Trigger manually:** Run any job on demand
 - **View history:** Last run time, duration, success/failure
 - **Configure:** Job schedule (time, frequency)
@@ -671,7 +680,7 @@ sequenceDiagram
 | Action | Agent | Behavior |
 |---|---|---|
 | "Optimize schedule" | @analytics_agent | Suggests best times based on historical runs |
-| "Detect failures" | @analytics_agent | Repeated failure → alert + suggestion |
+| "Detect failures" | @analytics_agent | Repeated failure â†’ alert + suggestion |
 
 ---
 
@@ -680,8 +689,8 @@ sequenceDiagram
 **Route:** `/academics`
 
 ### Entry Points
-- **Sidebar nav** → `/academics`
-- **Dashboard widget:** Semester progress → `/academics`
+- **Sidebar nav** â†’ `/academics`
+- **Dashboard widget:** Semester progress â†’ `/academics`
 
 ### Primary Actions
 - **Set semester:** Name, start/end date, target CGPA
@@ -709,14 +718,14 @@ sequenceDiagram
 **Route:** `/youtube`
 
 ### Entry Points
-- **Sidebar nav** → `/youtube`
-- **Quick Capture:** Cmd+K → "Save YouTube URL"
+- **Sidebar nav** â†’ `/youtube`
+- **Quick Capture:** Cmd+K â†’ "Save YouTube URL"
 - **Browser extension:** (future) Save button on YouTube
 
 ### Primary Actions
-- **Save video:** URL → auto-fetch title, channel, duration, thumbnail
-- **Watch later:** Add to queue → resurface with expiry (60 days)
-- **Mark watched:** Move to watched → auto-notes
+- **Save video:** URL â†’ auto-fetch title, channel, duration, thumbnail
+- **Watch later:** Add to queue â†’ resurface with expiry (60 days)
+- **Mark watched:** Move to watched â†’ auto-notes
 - **Categorize:** Playlist / tags
 
 ### Secondary Actions
@@ -729,7 +738,7 @@ sequenceDiagram
 | Action | Agent | Behavior |
 |---|---|---|
 | "Summarize video" | @memory_agent | Generates transcript summary + key takeaways |
-| "Resurface before expiry" | @memory_agent | "You saved this 55 days ago" → notification |
+| "Resurface before expiry" | @memory_agent | "You saved this 55 days ago" â†’ notification |
 | "Suggest related" | @learning_agent | Based on current courses / projects |
 
 ---
@@ -739,9 +748,9 @@ sequenceDiagram
 **Route:** `/memory`
 
 ### Entry Points
-- **Sidebar nav** → `/memory`
-- **ARIA:** "I remember..." → `/memory` detail
-- **Dashboard widget:** "New memories" count → `/memory`
+- **Sidebar nav** â†’ `/memory`
+- **ARIA:** "I remember..." â†’ `/memory` detail
+- **Dashboard widget:** "New memories" count â†’ `/memory`
 
 ### Primary Actions
 - **View memories:** Timeline of AI-consolidated facts
@@ -759,5 +768,5 @@ sequenceDiagram
 
 | Action | Agent | Behavior |
 |---|---|---|
-| All memory writes | @memory_agent | Background: extract facts → store with confidence |
+| All memory writes | @memory_agent | Background: extract facts â†’ store with confidence |
 | "What do you know about me?" | @memory_agent | Summarize all memories of the user |

@@ -1,4 +1,13 @@
-# Part III — Supporting Screens
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF03-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part III â€” Supporting Screens
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
 > Related: `01-UserFlows.md` (module flows), `02-FeatureFlows.md` (feature flows), `FrontendScreenFlows.md` (screen-to-screen transitions).
@@ -34,10 +43,10 @@ flowchart TD
     end
 
     subgraph Toast["Toast Layer"]
-        ST[Success Toast<br/>Green · 3s auto-dismiss]
-        ET[Error Toast<br/>Red · persistent]
+        ST[Success Toast<br/>Green Â· 3s auto-dismiss]
+        ET[Error Toast<br/>Red Â· persistent]
         UT[Undo Toast<br/>30s timer]
-        OB[Offline Banner<br/>Amber · persistent]
+        OB[Offline Banner<br/>Amber Â· persistent]
     end
 
     Shell --> Page
@@ -64,50 +73,50 @@ flowchart TD
 
 ```
 ROUTE: /module
-├── Shell (persistent)
-│   ├── Sidebar (240px desktop / 64px tablet / bottom tab mobile)
-│   ├── TopBar (64px)
-│   │   ├── Search bar (expandable)
-│   │   ├── Quick actions
-│   │   └── Notification bell
-│   ├── Command Center (Cmd+K overlay)
-│   └── Toast container (fixed position)
-├── PageHeader
-│   ├── Module title
-│   ├── Action buttons (primary + secondary)
-│   └── View toggle (list/grid/kanban/calendar)
-├── ContentArea
-│   ├── FilterBar (chips, search, sort)
-│   ├── ListView (default)
-│   │   ├── LoadingSkeleton (3-5 shimmer items)
-│   │   ├── EmptyState (illustration + CTA)
-│   │   ├── ErrorState (banner + retry)
-│   │   └── Item (icon, title, metadata, actions)
-│   ├── GridView (alternative)
-│   ├── KanbanView (pipeline modules)
-│   └── CalendarView (time-based modules)
-├── SlideOverPanel (detail)
-│   ├── Header (title, status, menu)
-│   ├── Content (full item detail)
-│   ├── ActivityFeed (chronological events)
-│   └── RelatedItems (cross-module links)
-├── CreateModal / EditSheet
-│   ├── Form (fields, selects, date pickers)
-│   ├── AISuggestions (auto-fill chips)
-│   └── Actions (submit, cancel)
-├── ConfirmDialog
-│   ├── Warning icon
-│   ├── Description + details
-│   └── Confirm / Cancel buttons
-├── ShareDialog
-│   ├── Permission selector (view/comment/edit)
-│   ├── Share channel (link/email/app)
-│   └── Expiry settings
-└── Toast (transient, auto-dismiss)
-    ├── Success (green, 3s)
-    ├── Error (red, persistent)
-    ├── Undo (green, 30s timer)
-    └── Offline (amber, persistent)
+â”œâ”€â”€ Shell (persistent)
+â”‚   â”œâ”€â”€ Sidebar (240px desktop / 64px tablet / bottom tab mobile)
+â”‚   â”œâ”€â”€ TopBar (64px)
+â”‚   â”‚   â”œâ”€â”€ Search bar (expandable)
+â”‚   â”‚   â”œâ”€â”€ Quick actions
+â”‚   â”‚   â””â”€â”€ Notification bell
+â”‚   â”œâ”€â”€ Command Center (Cmd+K overlay)
+â”‚   â””â”€â”€ Toast container (fixed position)
+â”œâ”€â”€ PageHeader
+â”‚   â”œâ”€â”€ Module title
+â”‚   â”œâ”€â”€ Action buttons (primary + secondary)
+â”‚   â””â”€â”€ View toggle (list/grid/kanban/calendar)
+â”œâ”€â”€ ContentArea
+â”‚   â”œâ”€â”€ FilterBar (chips, search, sort)
+â”‚   â”œâ”€â”€ ListView (default)
+â”‚   â”‚   â”œâ”€â”€ LoadingSkeleton (3-5 shimmer items)
+â”‚   â”‚   â”œâ”€â”€ EmptyState (illustration + CTA)
+â”‚   â”‚   â”œâ”€â”€ ErrorState (banner + retry)
+â”‚   â”‚   â””â”€â”€ Item (icon, title, metadata, actions)
+â”‚   â”œâ”€â”€ GridView (alternative)
+â”‚   â”œâ”€â”€ KanbanView (pipeline modules)
+â”‚   â””â”€â”€ CalendarView (time-based modules)
+â”œâ”€â”€ SlideOverPanel (detail)
+â”‚   â”œâ”€â”€ Header (title, status, menu)
+â”‚   â”œâ”€â”€ Content (full item detail)
+â”‚   â”œâ”€â”€ ActivityFeed (chronological events)
+â”‚   â””â”€â”€ RelatedItems (cross-module links)
+â”œâ”€â”€ CreateModal / EditSheet
+â”‚   â”œâ”€â”€ Form (fields, selects, date pickers)
+â”‚   â”œâ”€â”€ AISuggestions (auto-fill chips)
+â”‚   â””â”€â”€ Actions (submit, cancel)
+â”œâ”€â”€ ConfirmDialog
+â”‚   â”œâ”€â”€ Warning icon
+â”‚   â”œâ”€â”€ Description + details
+â”‚   â””â”€â”€ Confirm / Cancel buttons
+â”œâ”€â”€ ShareDialog
+â”‚   â”œâ”€â”€ Permission selector (view/comment/edit)
+â”‚   â”œâ”€â”€ Share channel (link/email/app)
+â”‚   â””â”€â”€ Expiry settings
+â””â”€â”€ Toast (transient, auto-dismiss)
+    â”œâ”€â”€ Success (green, 3s)
+    â”œâ”€â”€ Error (red, persistent)
+    â”œâ”€â”€ Undo (green, 30s timer)
+    â””â”€â”€ Offline (amber, persistent)
 ```
 
 ---

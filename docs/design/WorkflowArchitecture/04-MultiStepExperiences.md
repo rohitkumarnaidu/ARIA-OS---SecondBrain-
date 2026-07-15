@@ -1,4 +1,13 @@
-# Part IV — Multi-Step Experiences
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF04-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part IV â€” Multi-Step Experiences
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
 > Related: `UserJourneyArchitecture.md` (time-based journeys), `02-FeatureFlows.md` (feature flows), `09-Settings.md` (settings screens).
@@ -21,7 +30,7 @@
 | 4 | Calendar Connect | Google Calendar toggle | None | Yes | Sync calendar events |
 | 5 | Study Preferences | Hours/day, focus time, duration | Hours: 1-12 | Yes | Create schedule tasks |
 | 6 | First Capture | Quick task demo input | Min 1 char | No | Generate onboarding briefing |
-| 7 | Dashboard | ARIA welcome message | — | — | Redirect to /dashboard |
+| 7 | Dashboard | ARIA welcome message | â€” | â€” | Redirect to /dashboard |
 
 ### State Machine
 
@@ -60,24 +69,24 @@ stateDiagram-v2
 ### Resumption Logic
 
 ```
-On login → Check user_preferences.onboarding_completed
-  → false → Check user_preferences.last_completed_step
-    → null → Start at Step 1
-    → 2 → Resume at Step 3 (profile done, goals next)
-    → 5 → Resume at Step 6 (prefs done, capture next)
-    → 6 → Resume at Step 7 (capture done, dashboard)
-    → 7 → Mark onboarding_completed = true
+On login â†’ Check user_preferences.onboarding_completed
+  â†’ false â†’ Check user_preferences.last_completed_step
+    â†’ null â†’ Start at Step 1
+    â†’ 2 â†’ Resume at Step 3 (profile done, goals next)
+    â†’ 5 â†’ Resume at Step 6 (prefs done, capture next)
+    â†’ 6 â†’ Resume at Step 7 (capture done, dashboard)
+    â†’ 7 â†’ Mark onboarding_completed = true
 ```
 
 ### Edge Cases
 
 | Case | Behavior |
 |---|---|
-| Browser close mid-flow | Save `last_completed_step` to localStorage + Supabase draft. On next login → Resume at step. |
+| Browser close mid-flow | Save `last_completed_step` to localStorage + Supabase draft. On next login â†’ Resume at step. |
 | Network failure during save | Queue step completion locally. Show "Saving..." non-blocking indicator. |
-| Duplicate account | Google OAuth → existing user → check `onboarding_completed` → skip to dashboard |
-| Timezone mismatch | Detect via browser Intl API → pre-fill → allow override. Fallback: UTC. |
-| Invalid semester value | Silently default to 1 → allow change in Profile settings. |
+| Duplicate account | Google OAuth â†’ existing user â†’ check `onboarding_completed` â†’ skip to dashboard |
+| Timezone mismatch | Detect via browser Intl API â†’ pre-fill â†’ allow override. Fallback: UTC. |
+| Invalid semester value | Silently default to 1 â†’ allow change in Profile settings. |
 
 ### Error Recovery
 
@@ -121,7 +130,7 @@ On login → Check user_preferences.onboarding_completed
 
 | Step | Screen | Controls | AI Behavior Impact |
 |---|---|---|---|
-| 1 | ARIA Personality | Slider: Formal ↔ Casual | Adjusts response tone, greeting style |
+| 1 | ARIA Personality | Slider: Formal â†” Casual | Adjusts response tone, greeting style |
 | 2 | Proactivity Level | Select: Low / Medium / High | How often ARIA suggests actions unprompted |
 | 3 | Nudge Preferences | Toggles: Course, Habit, Sleep, Opportunity | Enable/disable per-nudge type |
 | 4 | Model Selection | Select: Ollama (local) / Claude (cloud) / Auto | Sets primary AI provider |
@@ -137,9 +146,9 @@ On login → Check user_preferences.onboarding_completed
 
 | Step | Screen | Method | Background |
 |---|---|---|---|
-| 1 | Browser Bookmarks | Upload HTML bookmarks file | Parse → categorize → save as Resources |
-| 2 | YouTube Watch Later | OAuth → fetch watch later list | Save each video to YouTube Vault |
-| 3 | GitHub Stars | OAuth → fetch starred repos | Save each repo as Resource with auto-summary |
+| 1 | Browser Bookmarks | Upload HTML bookmarks file | Parse â†’ categorize â†’ save as Resources |
+| 2 | YouTube Watch Later | OAuth â†’ fetch watch later list | Save each video to YouTube Vault |
+| 3 | GitHub Stars | OAuth â†’ fetch starred repos | Save each repo as Resource with auto-summary |
 
 ---
 
@@ -168,7 +177,7 @@ On login → Check user_preferences.onboarding_completed
 |---|---|---|---|
 | 1 | Target Skill | Search/select skill or role autocomplete | Suggests top in-demand skills in user's field |
 | 2 | Current Level | Radio: Beginner / Intermediate / Advanced | Asks 3 diagnostic multi-choice questions |
-| 3 | Skill Gap | Auto-generated gap analysis table | Compares current level → target level |
+| 3 | Skill Gap | Auto-generated gap analysis table | Compares current level â†’ target level |
 | 4 | Course Recommendations | List of recommended courses with match % | Matches skill gaps to available courses |
 | 5 | Timeline | Duration (months) + weekly hours + milestones | Generates study schedule with reminders |
 
@@ -183,10 +192,10 @@ On login → Check user_preferences.onboarding_completed
 |---|---|---|---|
 | Display Name | Text input | 2-50 characters | Google profile name |
 | Email | Read-only display | Valid email | Google account email |
-| College | Text input | 2-100 characters | — |
-| Semester | Select (1-8) | Integer 1-8 | — |
+| College | Text input | 2-100 characters | â€” |
+| Semester | Select (1-8) | Integer 1-8 | â€” |
 | Timezone | Select (IANA list) | Valid IANA timezone | Browser Intl detection |
-| Bio | Textarea | 0-500 characters | — |
+| Bio | Textarea | 0-500 characters | â€” |
 | Avatar | Image upload | Max 2MB, PNG/JPEG | Initials fallback |
 
 ---

@@ -1,11 +1,20 @@
-# Part II — Feature Flows (19 Flows × 10 States)
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF02-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part II â€” Feature Flows (19 Flows Ã— 10 States)
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control and notation key.**
 > For per-module user flows, see `01-UserFlows.md`. For screen hierarchy, see `03-SupportingScreens.md`.
 
 ---
 
-## Unified State Matrix — Definition
+## Unified State Matrix â€” Definition
 
 Every feature flow defines a **Unified State Matrix** with these 10 states:
 
@@ -13,10 +22,10 @@ Every feature flow defines a **Unified State Matrix** with these 10 states:
 |---|---|---|---|
 | **Empty** | No data exists for this feature | Illustration + primary CTA | N/A |
 | **Loading** | Initial data fetch in progress | Skeleton shimmer (3-5 items) | Auto-resolves |
-| **Skeleton** | Partial cached data + refresh in progress | Mix of cached items + skeleton placeholders | → Loading → Populated |
-| **Error** | API / network failure | Red banner with message + retry button | Click Retry → Loading |
+| **Skeleton** | Partial cached data + refresh in progress | Mix of cached items + skeleton placeholders | â†’ Loading â†’ Populated |
+| **Error** | API / network failure | Red banner with message + retry button | Click Retry â†’ Loading |
 | **Success** | Action completed successfully | Green toast (3s auto-dismiss) + undo option (30s) | N/A |
-| **First-Time** | User has never done this before | Welcome card / mini-tutorial / highlight | Dismiss → Populated |
+| **First-Time** | User has never done this before | Welcome card / mini-tutorial / highlight | Dismiss â†’ Populated |
 | **Returning** | User has history with this feature | Restore last state + recent items at top | N/A |
 | **Power User** | High-frequency user (> 50 actions) | Compact UI, keyboard hints, hide tooltips | N/A |
 | **Offline** | No network connection | Amber banner + cached data + "Will sync" indicator | Auto-sync on reconnect |
@@ -26,7 +35,7 @@ Every feature flow defines a **Unified State Matrix** with these 10 states:
 
 ## 2.1 Task Creation
 
-**Trigger:** User clicks +Add Task or Cmd+K → "Add task"
+**Trigger:** User clicks +Add Task or Cmd+K â†’ "Add task"
 **Duration Target:** < 3 seconds from click to list update
 **Modules Involved:** Tasks, AI (task_agent)
 
@@ -61,24 +70,24 @@ sequenceDiagram
     API-->>C: 201 + full task object
     C-->>UI: Replace spinner with checkmark
     C-->>UI: Show toast "Task created"
-    API->>N: Check due date ≤ 2h
+    API->>N: Check due date â‰¤ 2h
     N-->>UI: Interrupt notification (if urgent)
     UI-->>U: Task visible in list, toast fading
 ```
 
-### Unified State Matrix — Task Creation
+### Unified State Matrix â€” Task Creation
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | First visit, no tasks | Illustration (empty desk) + "Create your first task" CTA | N/A |
 | **Loading** | Initial page load | 5 skeleton cards (shimmer animation) | Auto-resolves |
-| **Skeleton** | Partial data (cached) | 3 skeleton cards + 2 real cards | → Loading → Populated |
-| **Error** | API 500 / network failure | Red banner: "Couldn't load tasks" + Retry button | Click Retry → Loading |
-| **Success** | Task created | Green toast: "Task created" + 3s → fade | N/A |
-| **First-Time** | New user, no tasks yet | Welcome card: "Welcome! Try creating a task" | After first create → Populated |
+| **Skeleton** | Partial data (cached) | 3 skeleton cards + 2 real cards | â†’ Loading â†’ Populated |
+| **Error** | API 500 / network failure | Red banner: "Couldn't load tasks" + Retry button | Click Retry â†’ Loading |
+| **Success** | Task created | Green toast: "Task created" + 3s â†’ fade | N/A |
+| **First-Time** | New user, no tasks yet | Welcome card: "Welcome! Try creating a task" | After first create â†’ Populated |
 | **Returning** | Has history | Show last-viewed filter + recent tasks at top | N/A |
 | **Power User** | > 50 tasks created | Show keyboard shortcut hints, hide tooltips | N/A |
-| **Offline** | No connection | Banner: "Offline — changes will sync" + cached list | Auto-sync on reconnect |
+| **Offline** | No connection | Banner: "Offline â€” changes will sync" + cached list | Auto-sync on reconnect |
 | **Realtime** | Another device creates | Badge: "1 new task" + button to scroll | Click to view |
 
 ---
@@ -113,16 +122,16 @@ flowchart TD
     style L fill:#13151A,stroke:#EF4444,color:#F1F5F9
 ```
 
-### Unified State Matrix — Task Completion
+### Unified State Matrix â€” Task Completion
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No tasks to complete | N/A (no checkbox visible) | N/A |
-| **Loading** | — | — | — |
-| **Skeleton** | — | — | — |
+| **Loading** | â€” | â€” | â€” |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | API fails | Revert checkbox + red toast: "Couldn't save" | Tap retry in toast |
 | **Success** | API confirms | Confetti burst + green checkmark | N/A |
-| **First-Time** | First task completed | Celebration modal: "You did it!" + streak intro | Dismiss → continue |
+| **First-Time** | First task completed | Celebration modal: "You did it!" + streak intro | Dismiss â†’ continue |
 | **Returning** | Normal completion | Subtle checkmark animation | N/A |
 | **Power User** | Batch complete (select all) | Group progress bar update | N/A |
 | **Offline** | No connection | Checkmark + "Will sync" badge | Auto-sync on reconnect |
@@ -148,7 +157,7 @@ flowchart TD
     E --> G
     F --> G
     G --> H[User confirms]
-    H --> I[Optimistic save → list update]
+    H --> I[Optimistic save â†’ list update]
     I --> J[POST to appropriate endpoint]
     J --> K{Type detected}
     K -->|Idea| L[Save to Ideas pipeline]
@@ -161,20 +170,20 @@ flowchart TD
     P --> Q[Memory agent: extract + store facts]
 ```
 
-### Unified State Matrix — Knowledge Capture
+### Unified State Matrix â€” Knowledge Capture
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No saved items | "Your knowledge vault is empty" + save CTA | N/A |
 | **Loading** | Saving | Spinner on save button + ghost card in list | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Save fails | Toast: "Couldn't save. Retry?" | Tap retry |
 | **Success** | Save confirms | Green toast: "Saved to [module]" | N/A |
 | **First-Time** | First save | "Great! Content appears here" tutorial tip | Dismiss |
 | **Returning** | Normal save | Brief toast, no fanfare | N/A |
 | **Power User** | Batch save 5+ items | Progress bar: "Saving 3/5..." | Individual retry per fail |
-| **Offline** | No connection | "Saved offline — will sync" | Auto-sync |
-| **Realtime** | — | — | — |
+| **Offline** | No connection | "Saved offline â€” will sync" | Auto-sync |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -184,13 +193,13 @@ flowchart TD
 **Duration Target:** < 500ms for cached, < 2s for fresh
 **Modules Involved:** Resources, Ideas, YouTube Vault, Search, AI (memory_agent)
 
-### Unified State Matrix — Knowledge Retrieval
+### Unified State Matrix â€” Knowledge Retrieval
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | Module has no items | Vault illustration + "Save your first item" | N/A |
-| **Loading** | Initial load | 6 skeleton cards (3 rows × 2) | Auto-resolves |
-| **Skeleton** | Cache hit + refresh | 2 cached cards + 4 skeleton | → Loading → Populated |
+| **Loading** | Initial load | 6 skeleton cards (3 rows Ã— 2) | Auto-resolves |
+| **Skeleton** | Cache hit + refresh | 2 cached cards + 4 skeleton | â†’ Loading â†’ Populated |
 | **Error** | API fails | "Couldn't load library" + retry + cached fallback | Retry or show cache |
 | **Success** | Items loaded | Grid/list of cards with metadata | N/A |
 | **First-Time** | New user | "Welcome to your vault! Try saving a link." | N/A |
@@ -207,20 +216,20 @@ flowchart TD
 **Duration Target:** < 3 minutes for full wizard
 **Modules Involved:** Goals, Courses, Skills, AI (roadmap_agent, learning_agent)
 
-### Unified State Matrix — Roadmap Creation
+### Unified State Matrix â€” Roadmap Creation
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No roadmaps | "Plan your learning journey" + template CTA | N/A |
 | **Loading** | AI is analyzing | Step progress bar + "ARIA is analyzing your skills..." | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | AI fails | "Couldn't generate roadmap" + algorithmic fallback | Retry or use defaults |
 | **Success** | Roadmap generated | Timeline view with milestones | N/A |
 | **First-Time** | First roadmap | Welcome wizard with explanation | N/A |
 | **Returning** | Has existing roadmap | Option to update vs create new | N/A |
 | **Power User** | 5+ roadmaps | Dashboard of all roadmaps with progress | N/A |
 | **Offline** | No connection | "Roadmap creation needs internet" + saved preferences | Queue for online |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -230,20 +239,20 @@ flowchart TD
 **Duration Target:** < 2 minutes for wizard
 **Modules Involved:** Goals, Tasks, Courses, AI (roadmap_agent, learning_agent)
 
-### Unified State Matrix — Goal Planning
+### Unified State Matrix â€” Goal Planning
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No goals | "Set your first goal" illustration + templates | N/A |
 | **Loading** | Saving | Progress spinner on save button | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Save fails | "Couldn't save goal" + retry | Retry |
 | **Success** | Goal created | Celebration + "Check your dashboard" | N/A |
 | **First-Time** | First goal | Mini-tutorial on KRs + milestones | Dismiss |
 | **Returning** | Has goals | Pre-fill from previous patterns | N/A |
 | **Power User** | 10+ goals | Compact goal cards, batch operations | N/A |
 | **Offline** | No connection | "Will sync when online" + local save | Auto-sync |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -253,20 +262,20 @@ flowchart TD
 **Duration Target:** < 2 minutes
 **Modules Involved:** Projects, Tasks (phases), AI (task_agent, roadmap_agent)
 
-### Unified State Matrix — Project Creation
+### Unified State Matrix â€” Project Creation
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No projects | "Start building" + template CTA | N/A |
 | **Loading** | AI generating phases | Progress bar: "ARIA is planning your project..." | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | AI fails | Algorithmic phase breakdown (default template) | Retry AI later |
 | **Success** | Project created | Project board with phases visible | N/A |
 | **First-Time** | First project | "You've started a project!" + tips | Dismiss |
 | **Returning** | Has projects | Recent projects shown first | N/A |
 | **Power User** | 10+ projects | Kanban board view, archived projects | N/A |
 | **Offline** | No connection | "Will sync when online" | Auto-sync |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -276,13 +285,13 @@ flowchart TD
 **Duration Target:** < 3s for display, background scan is async
 **Modules Involved:** Opportunities, AI (opportunity_agent, opportunity_matching_agent)
 
-### Unified State Matrix — Opportunity Discovery
+### Unified State Matrix â€” Opportunity Discovery
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No opportunities found | "We'll notify you when we find matches" + skill prompt | N/A |
 | **Loading** | Radar scanning | Spinner: "Scanning for opportunities..." | Auto-resolves |
-| **Skeleton** | Partial results | Show 2-3 known matches + skeleton for new | → Loading → Populated |
+| **Skeleton** | Partial results | Show 2-3 known matches + skeleton for new | â†’ Loading â†’ Populated |
 | **Error** | Scan fails | "Scan failed. Will retry." + last results | Auto-retry |
 | **Success** | New matches found | Cards with score badges + match explanation | N/A |
 | **First-Time** | First match ever | "We found your first match!" highlight card | N/A |
@@ -299,20 +308,20 @@ flowchart TD
 **Duration Target:** < 5 minutes for full flow
 **Modules Involved:** Opportunities, Tasks, AI (task_agent, opportunity_matching_agent)
 
-### Unified State Matrix — Opportunity Application
+### Unified State Matrix â€” Opportunity Application
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No applications yet | "Track your applications here" | N/A |
 | **Loading** | AI generating materials | "ARIA is drafting your cover letter..." | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | AI fails | Manual entry mode + "AI unavailable" badge | Retry later |
 | **Success** | Application tracked | Timeline card with status | N/A |
 | **First-Time** | First application | "You're on your way!" celebration | N/A |
-| **Returning** | Has applications | Pipeline view: Applied → Interviewing → Offer → Rejected | N/A |
+| **Returning** | Has applications | Pipeline view: Applied â†’ Interviewing â†’ Offer â†’ Rejected | N/A |
 | **Power User** | 20+ applications | Kanban board + stats dashboard | N/A |
 | **Offline** | No connection | "Save offline, submit when online" | Auto-sync |
-| **Realtime** | Status changed by scanner | Notification: "Status updated → [stage]" | Tap to view |
+| **Realtime** | Status changed by scanner | Notification: "Status updated â†’ [stage]" | Tap to view |
 
 ---
 
@@ -322,13 +331,13 @@ flowchart TD
 **Duration Target:** < 2s for overview, < 5s for drill-down
 **Modules Involved:** All modules, AI (analytics_agent, learning_agent)
 
-### Unified State Matrix — Analytics Exploration
+### Unified State Matrix â€” Analytics Exploration
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No data yet | "Start using modules to see analytics" + quick links | N/A |
 | **Loading** | Initial load | 6 skeleton chart cards | Auto-resolves |
-| **Skeleton** | Cache hit | 2 cached charts + 4 skeleton | → Loading → Populated |
+| **Skeleton** | Cache hit | 2 cached charts + 4 skeleton | â†’ Loading â†’ Populated |
 | **Error** | Data fetch fails | "Couldn't load analytics" + retry + cached fallback | Retry or show cache |
 | **Success** | Data loaded | Charts with hover tooltips, trend lines | N/A |
 | **First-Time** | First visit | "Welcome to Analytics!" tour overlay | Dismiss |
@@ -345,20 +354,20 @@ flowchart TD
 **Duration Target:** First token < 500ms, full response < 10s
 **Modules Involved:** Chat, All agents, LLM (Ollama/Claude), Memory
 
-### Unified State Matrix — AI Conversation
+### Unified State Matrix â€” AI Conversation
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | New chat | Suggested prompts + "Ask me anything" | N/A |
 | **Loading** | Message sent | User message bubble + typing indicator | N/A |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | LLM fails | "I couldn't process that. Try again?" + fallback response | Retry or rephrase |
 | **Success** | Response received | Full response with action cards, sources | N/A |
 | **First-Time** | First chat ever | "Hi! I'm ARIA. Let me show you around..." | N/A |
 | **Returning** | Has history | Context-aware greeting + continue last topic | N/A |
 | **Power User** | Frequent chatter | Show memory count + "I remember [fact]" | N/A |
 | **Offline** | No connection | "I need internet to respond" + fallback FAQ | Retry on reconnect |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -368,20 +377,20 @@ flowchart TD
 **Duration Target:** < 1s for acceptance, < 3s for execution
 **Modules Involved:** AI (various agents), Target module
 
-### Unified State Matrix — AI Recommendation Acceptance
+### Unified State Matrix â€” AI Recommendation Acceptance
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No recommendations | Wait for AI to generate suggestions | N/A |
 | **Loading** | AI generating | Skeleton suggestion chip | Auto-resolves |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Execution fails | "Couldn't apply" + revert state | Retry or manual mode |
 | **Success** | Applied | Green toast + undo button (30s) | Undo within window |
 | **First-Time** | First acceptance | "Try undoing to see how it works" tip | Dismiss |
 | **Returning** | Has history | Show "Previously accepted" in suggestion | N/A |
 | **Power User** | Frequent accepter | Auto-accept for confidence > 95% (configurable) | Audit log to review |
 | **Offline** | No connection | "I'll apply when you're online" | Queue + execute on sync |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -391,20 +400,20 @@ flowchart TD
 **Duration Target:** < 500ms
 **Modules Involved:** AI (memory_agent)
 
-### Unified State Matrix — AI Recommendation Rejection
+### Unified State Matrix â€” AI Recommendation Rejection
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
-| **Empty** | — | — | — |
-| **Loading** | — | — | — |
-| **Skeleton** | — | — | — |
+| **Empty** | â€” | â€” | â€” |
+| **Loading** | â€” | â€” | â€” |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Feedback save fails | In-memory adjustment, no toast needed | Silent retry |
 | **Success** | Dismissed | Chip slides right + fades | Undo option for 5s |
 | **First-Time** | First rejection | "Thanks for the feedback!" toast | N/A |
 | **Returning** | Has rejection history | Suggestion type suppressed for N days | N/A |
 | **Power User** | Frequent rejector | "Turn off this suggestion type?" prompt | Settings link |
 | **Offline** | No connection | Local dismiss, sync feedback later | Sync on reconnect |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -414,20 +423,20 @@ flowchart TD
 **Duration Target:** First suggestion < 100ms, full results < 500ms
 **Modules Involved:** All modules, Search, AI (memory_agent)
 
-### Unified State Matrix — Search Flow
+### Unified State Matrix â€” Search Flow
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | Search bar idle | Placeholder + recent searches + trending | N/A |
 | **Loading** | Query submitted | Skeleton result cards (3 per module) | Auto-resolves |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | API fails | "Search unavailable" + cached results | Retry button |
 | **Success** | Results returned | Grouped cards with module badges | N/A |
 | **First-Time** | First search ever | "Try searching for 'task' or 'course'" hint | Dismiss |
 | **Returning** | Has history | Recent searches at top + highlighted | N/A |
 | **Power User** | Searches 10+/day | Keyboard-driven (no mouse), advanced operators | N/A |
 | **Offline** | No connection | Local search only (IndexedDB) | Full search on reconnect |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -437,20 +446,20 @@ flowchart TD
 **Duration Target:** < 10s from trigger to save
 **Modules Involved:** All modules (auto-routes based on content)
 
-### Unified State Matrix — Quick Capture
+### Unified State Matrix â€” Quick Capture
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | Modal opened | Empty input + type hints | N/A |
 | **Loading** | AI analyzing | Pulsing badge: "Detecting type..." | Auto-resolves |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Save fails | "Couldn't save. Retry?" + keep modal open | Retry or close |
 | **Success** | Item saved | Green toast + 5s undo + auto-close | Undo within window |
 | **First-Time** | First capture | "Quick! That's how you capture anything" tip | Dismiss |
 | **Returning** | Regular use | Pre-fill from clipboard (URL detection) | N/A |
 | **Power User** | Captures 20+/day | Multi-line input, plain text mode, shortcuts | N/A |
 | **Offline** | No connection | "Saved offline" + local queue | Auto-sync on reconnect |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -460,20 +469,20 @@ flowchart TD
 **Duration Target:** First suggestion < 50ms
 **Modules Involved:** All modules (navigation + actions)
 
-### Unified State Matrix — Command Center
+### Unified State Matrix â€” Command Center
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | Opened (no input) | Command categories + recent commands | N/A |
-| **Loading** | — | — | — |
-| **Skeleton** | — | — | — |
+| **Loading** | â€” | â€” | â€” |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Command fails | Toast: "Couldn't execute" + return to overlay | Retry |
 | **Success** | Command executed | Smooth transition / action | N/A |
 | **First-Time** | First open | "Try typing 'go to tasks'" hint | Dismiss |
 | **Returning** | Has history | Recently used commands shown first | N/A |
 | **Power User** | Uses 50+ shortcuts | Compact mode, no descriptions | N/A |
 | **Offline** | Offline commands only | Grayed-out network-required commands | N/A |
-| **Realtime** | — | — | — |
+| **Realtime** | â€” | â€” | â€” |
 
 ---
 
@@ -483,13 +492,13 @@ flowchart TD
 **Duration Target:** < 500ms from trigger to UI
 **Modules Involved:** Notification System, All modules
 
-### Unified State Matrix — Notification Flow
+### Unified State Matrix â€” Notification Flow
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
 | **Empty** | No notifications | "No new notifications" + history link | N/A |
 | **Loading** | Fetching list | Skeleton notification items | Auto-resolves |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Fetch fails | "Couldn't load notifications" + retry | Retry |
 | **Success** | Notification received | Bell badge + toast + dropdown | N/A |
 | **First-Time** | First notification | "You got your first notification!" highlight | Dismiss |
@@ -506,13 +515,13 @@ flowchart TD
 **Duration Target:** < 500ms for section load, < 200ms per save
 **Modules Involved:** Settings (all 8 sections)
 
-### Unified State Matrix — Settings Flow
+### Unified State Matrix â€” Settings Flow
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
-| **Empty** | — | — | — |
+| **Empty** | â€” | â€” | â€” |
 | **Loading** | Section loading | Skeleton form fields | Auto-resolves |
-| **Skeleton** | — | — | — |
+| **Skeleton** | â€” | â€” | â€” |
 | **Error** | Save fails | Red border on field + error message | Retry or revert |
 | **Success** | Save completes | Green checkmark + toast (2s) | N/A |
 | **First-Time** | First visit | "Customize your experience" overview | Dismiss |
@@ -554,13 +563,13 @@ sequenceDiagram
     Note over D: Background: pre-fetch non-critical modules
 ```
 
-### Unified State Matrix — Initial Sync
+### Unified State Matrix â€” Initial Sync
 
 | State | Trigger | UI Treatment | Recovery |
 |---|---|---|---|
-| **Empty** | First login ever | Full loading → onboarding redirect | N/A |
+| **Empty** | First login ever | Full loading â†’ onboarding redirect | N/A |
 | **Loading** | Auth in progress | Global loading spinner (auth screen) | Auto-resolves |
-| **Skeleton** | Cache found | Skeleton for non-critical + cached critical | → Loading → Populated |
+| **Skeleton** | Cache found | Skeleton for non-critical + cached critical | â†’ Loading â†’ Populated |
 | **Error** | Database unreachable | Cached data + "Limited offline mode" banner | Retry with backoff |
 | **Success** | Data synced | Full dashboard with all widgets | N/A |
 | **First-Time** | Brand new user | Redirect to onboarding wizard | N/A |
