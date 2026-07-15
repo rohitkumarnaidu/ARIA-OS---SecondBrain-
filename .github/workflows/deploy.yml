@@ -34,7 +34,7 @@ jobs:
     timeout-minutes: 15
     environment: ${{ inputs.environment || 'production' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -91,7 +91,7 @@ jobs:
             dockerfile: services/scheduler/Dockerfile
             service_id: RAILWAY_SCHEDULER_SERVICE_ID
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: docker/setup-buildx-action@v3
 
@@ -162,7 +162,7 @@ jobs:
     timeout-minutes: 10
     environment: ${{ inputs.environment || 'production' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Rollback frontend on Vercel
         uses: amondnet/vercel-action@v25
