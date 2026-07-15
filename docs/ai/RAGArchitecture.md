@@ -1,4 +1,4 @@
-# RAG Architecture — Enterprise Reference
+﻿# RAG Architecture â€” Enterprise Reference
 
 ---
 
@@ -6,10 +6,10 @@
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ARIA-ARCH-RAG-001 |
+| **Document ID** | AI-RAG-001 |
 | **Version** | 1.0.0 |
 | **Status** | APPROVED |
-| **Classification** | INTERNAL — Engineering |
+| **Classification** | INTERNAL â€” Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Owner** | AI Architecture Team |
 | **Review Cycle** | Quarterly |
@@ -21,7 +21,7 @@
 
 ### Why RAG Matters for Second Brain OS
 
-Second Brain OS stores the user's entire digital life — tasks, courses, habits, ideas, sleep data, chat history, and learned patterns. While structured queries (SQL/Supabase) satisfy most deterministic lookups, the AI agents need semantic understanding of this data to produce intelligent responses. Retrieval-Augmented Generation (RAG) bridges the gap between structured storage and semantic reasoning.
+Second Brain OS stores the user's entire digital life â€” tasks, courses, habits, ideas, sleep data, chat history, and learned patterns. While structured queries (SQL/Supabase) satisfy most deterministic lookups, the AI agents need semantic understanding of this data to produce intelligent responses. Retrieval-Augmented Generation (RAG) bridges the gap between structured storage and semantic reasoning.
 
 The RAG pipeline enables:
 
@@ -108,10 +108,10 @@ flowchart LR
 | **Dimensions** | 768d (Ollama), 1536d (OpenAI) | Any |
 | **Index type** | IVFFlat, HNSW | HNSW (default) |
 | **Query language** | SQL + `<=>` operator | Python API |
-| **RLS support** | ✅ Inherits Supabase RLS | ❌ Must implement in application |
+| **RLS support** | âœ… Inherits Supabase RLS | âŒ Must implement in application |
 | **Backup** | Automatic (Supabase backups) | Manual filesystem backup |
 | **Cost** | Included in Supabase plan | Free |
-| **Offline** | Requires network | ✅ Fully offline |
+| **Offline** | Requires network | âœ… Fully offline |
 | **Max vectors** | Unlimited (pay for storage) | Limited by disk |
 | **Primary use** | Production, tenant-aware queries | Development, offline fallback |
 
@@ -252,8 +252,8 @@ class ChromaDBStore:
 | **Quality (MTEB)** | 62.3 | 62.3 (matches ada-002) |
 | **Languages** | English + multilingual | English + 100+ languages |
 | **Model size** | ~300MB | N/A (server-side) |
-| **Offline capable** | ✅ Yes | ❌ No |
-| **Batching** | ✅ Yes (up to 32) | ✅ Yes (up to 2048) |
+| **Offline capable** | âœ… Yes | âŒ No |
+| **Batching** | âœ… Yes (up to 32) | âœ… Yes (up to 2048) |
 
 ### Embedding Client Implementation
 
@@ -462,12 +462,12 @@ class ChunkingPipeline:
         return chunks
 
     def _chunk_by_line(self, content: str) -> list[dict]:
-        """Split by newlines — each line is a record (log entry)."""
+        """Split by newlines â€” each line is a record (log entry)."""
         lines = content.strip().split("\n")
         return [self._make_chunk(line.strip(), i) for i, line in enumerate(lines) if line.strip()]
 
     def _chunk_recursive(self, content: str) -> list[dict]:
-        """Recursive character splitting — fallback for any document."""
+        """Recursive character splitting â€” fallback for any document."""
         chunks = []
         separators = ["\n\n", "\n", ". ", " ", ""]
         for separator in separators:
@@ -909,7 +909,7 @@ Retrieved context is injected into the agent's prompt at a specific position to 
 ```mermaid
 flowchart LR
     SysPrompt["[System Prompt]"]
-    Context["[Retrieved Context]<br/>← Injected here"]
+    Context["[Retrieved Context]<br/>â† Injected here"]
     UserQuery["[User Query]"]
     AgentInstr["[Agent Instructions]"]
     Response["[Response]"]
@@ -1004,7 +1004,7 @@ class ContextInjector:
         lines.append("\n---")
         lines.append("## Citation Index")
         for c in self._citations:
-            lines.append(f"[{c['id']}] → {c['source']}")
+            lines.append(f"[{c['id']}] â†’ {c['source']}")
         return "\n".join(lines)
 ```
 
@@ -1017,10 +1017,10 @@ class ContextInjector:
 ```mermaid
 graph TD
     Retrieved["Retrieved Document"]
-    Dense["1. Dense similarity<br/>cosine_sim(query_embedding, doc_embedding) → 0-1<br/>Threshold: > 0.5"]
-    Sparse["2. Sparse (BM25) score<br/>ts_rank(rawvector_matches) → 0-1<br/>Threshold: > 0.1"]
-    RRF["3. RRF fused score<br/>harmonic_rank(dense_rank, sparse_rank) → 0-1<br/>Threshold: > 0.1"]
-    CrossEnc["4. Cross-encoder score<br/>Pairwise(query, doc) → 0-1<br/>Threshold: > 0.3 or top 5"]
+    Dense["1. Dense similarity<br/>cosine_sim(query_embedding, doc_embedding) â†’ 0-1<br/>Threshold: > 0.5"]
+    Sparse["2. Sparse (BM25) score<br/>ts_rank(rawvector_matches) â†’ 0-1<br/>Threshold: > 0.1"]
+    RRF["3. RRF fused score<br/>harmonic_rank(dense_rank, sparse_rank) â†’ 0-1<br/>Threshold: > 0.1"]
+    CrossEnc["4. Cross-encoder score<br/>Pairwise(query, doc) â†’ 0-1<br/>Threshold: > 0.3 or top 5"]
     MetaBoost["5. Metadata boost<br/>recency: +0.1 | priority: +0.2 | source_weight: +0.1"]
     Final["6. Final score<br/>composite = final_relevance + metadata_boost<br/>Threshold: > 0.4"]
     Decision["INJECT or DISCARD"]
@@ -1263,25 +1263,25 @@ graph TD
     ID --> HH
     ID --> HL
 
-    LR --> LR1["Chunking too aggressive → Reduce chunk size, increase overlap"]
-    LR --> LR2["Embedding mismatch → Try different model (OpenAI > Ollama)"]
-    LR --> LR3["Query too narrow → Enable query expansion"]
-    LR --> LR4["Index stale → Rebuild index, verify refresh schedule"]
+    LR --> LR1["Chunking too aggressive â†’ Reduce chunk size, increase overlap"]
+    LR --> LR2["Embedding mismatch â†’ Try different model (OpenAI > Ollama)"]
+    LR --> LR3["Query too narrow â†’ Enable query expansion"]
+    LR --> LR4["Index stale â†’ Rebuild index, verify refresh schedule"]
 
-    LP --> LP1["Chunking too broad → Increase chunk size, semantic boundaries"]
-    LP --> LP2["Threshold too low → Increase min relevance to 0.5+"]
-    LP --> LP3["Missing re-ranker → Enable cross-encoder re-ranking"]
-    LP --> LP4["No metadata filtering → Add source_table/priority filters"]
+    LP --> LP1["Chunking too broad â†’ Increase chunk size, semantic boundaries"]
+    LP --> LP2["Threshold too low â†’ Increase min relevance to 0.5+"]
+    LP --> LP3["Missing re-ranker â†’ Enable cross-encoder re-ranking"]
+    LP --> LP4["No metadata filtering â†’ Add source_table/priority filters"]
 
-    HH --> HH1["Context injection position wrong → Place before user query"]
-    HH --> HH2["Token budget exceeded → Truncate less-relevant context"]
-    HH --> HH3["LLM not following instructions → Strengthen faithfulness prompt"]
-    HH --> HH4["Contradictory context → Deduplicate, add confidence scores"]
+    HH --> HH1["Context injection position wrong â†’ Place before user query"]
+    HH --> HH2["Token budget exceeded â†’ Truncate less-relevant context"]
+    HH --> HH3["LLM not following instructions â†’ Strengthen faithfulness prompt"]
+    HH --> HH4["Contradictory context â†’ Deduplicate, add confidence scores"]
 
-    HL --> HL1["Re-ranker too expensive → Reduce candidates from 20 to 10"]
-    HL --> HL2["Embedding model slow → Switch to nomic-embed-text"]
-    HL --> HL3["No caching → Enable embedding + result caching"]
-    HL --> HL4["Too many docs → Reduce K values (20→10)"]
+    HL --> HL1["Re-ranker too expensive â†’ Reduce candidates from 20 to 10"]
+    HL --> HL2["Embedding model slow â†’ Switch to nomic-embed-text"]
+    HL --> HL3["No caching â†’ Enable embedding + result caching"]
+    HL --> HL4["Too many docs â†’ Reduce K values (20â†’10)"]
 
     style ID fill:#13151A,stroke:#6366F1,color:#F1F5F9
     style LR fill:#13151A,stroke:#EF4444,color:#F1F5F9
@@ -1320,13 +1320,13 @@ Recall@10 dropped to 0.72 for briefing agent queries (target: 0.85)
 - No overlap between chunks causing fragmented retrieval
 
 ### Changes Made
-1. Reduced chunk_size from 1024 → 512 for all tables
-2. Increased overlap from 32 → 64 tokens
+1. Reduced chunk_size from 1024 â†’ 512 for all tables
+2. Increased overlap from 32 â†’ 64 tokens
 3. Added query expansion for short queries (< 5 words)
 
 ### Results
-- Recall@10 improved from 0.72 → 0.89
-- Precision@10 improved from 0.65 → 0.78
+- Recall@10 improved from 0.72 â†’ 0.89
+- Precision@10 improved from 0.65 â†’ 0.78
 - Latency increased by 8% (acceptable)
 
 ### Next Steps

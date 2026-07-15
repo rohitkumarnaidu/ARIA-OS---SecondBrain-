@@ -1,4 +1,4 @@
-# Skill Evidence System — Enterprise Evidence Intelligence Architecture
+﻿# Skill Evidence System â€” Enterprise Evidence Intelligence Architecture
 
 ---
 
@@ -6,12 +6,12 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLEVIDENCE-ARCH-001 |
+| Document ID | AI-SEV-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Classification | Internal — Architecture Reference |
-| Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture — §11, §7, §5, §12) |
+| Classification | Internal â€” Architecture Reference |
+| Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture â€” Â§11, Â§7, Â§5, Â§12) |
 | Companion Docs | `docs/ai/skills/SkillAssessment.md` (Assessment Execution Engine) |
 | | `docs/ai/skills/SkillIntelligence.md` (Analytics Engine & Scoring Pipelines) |
 | | `docs/ai/skills/SkillGraphArchitecture.md` (Graph Storage & Traversal) |
@@ -42,13 +42,13 @@
 
 ### 1.1 Why a Dedicated Evidence Execution Engine?
 
-Skills.md defines the **data model** for evidence — what evidence types exist, how quality is scored, and what thresholds apply per level. SkillEvidence.md defines the **execution engine** — the runtime that collects, verifies, trusts, and weights evidence before it feeds into skill confidence calculations.
+Skills.md defines the **data model** for evidence â€” what evidence types exist, how quality is scored, and what thresholds apply per level. SkillEvidence.md defines the **execution engine** â€” the runtime that collects, verifies, trusts, and weights evidence before it feeds into skill confidence calculations.
 
 The relationship between the four documents:
 
 | Document | Role | Analogy |
 |---|---|---|
-| `skills.md` (§11, §7) | Evidence data model & formulas | Constitution |
+| `skills.md` (Â§11, Â§7) | Evidence data model & formulas | Constitution |
 | `SkillGraphArchitecture.md` | Evidence graph storage | Filing cabinet |
 | `SkillAssessment.md` | Assessment execution engine | Exam proctor |
 | **`SkillEvidence.md`** | **Evidence intelligence engine** | **Private investigator + forensic auditor** |
@@ -56,51 +56,51 @@ The relationship between the four documents:
 ### 1.2 Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                      EVIDENCE INTELLIGENCE ENGINE                             │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐   │
-│  │                   COLLECTION LAYER                                    │   │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │   │
-│  │  │Project   │ │GitHub    │ │Certific. │ │Hackathon │ │Freelance │   │   │
-│  │  │Collector │ │Collector │ │Collector │ │Collector │ │Collector │   │   │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘   │   │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────────┐   │   │
-│  │  │OSS       │ │Assessment│ │Work Exp  │ │Auto-Discovery Engine │   │   │
-│  │  │Collector │ │Collector │ │Collector │ │(ARIA proactive scan) │   │   │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────────────────┘   │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                                    │                                         │
-│                                    ▼                                         │
-│  ┌──────────────────────────────────────────────────────────────────────┐   │
-│  │                   PROCESSING LAYER                                    │   │
-│  │                                                                      │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────────┐  │   │
-│  │  │ Normalizer │─▶│ Verifier   │─▶│ Trust      │─▶│ Weight       │  │   │
-│  │  │ (source    │  │ (3-tier:   │  │ Scorer     │  │ Calculator   │  │   │
-│  │  │  adapters) │  │ Auto→AI→Hu)│  │ (provenance│  │ (quality×trust│  │   │
-│  │  └────────────┘  └────────────┘  └────────────┘  │ ×diversity)  │  │   │
-│  │                                                   └──────────────┘  │   │
-│  │  ┌────────────┐  ┌──────────────────┐  ┌────────────────────────┐  │   │
-│  │  │ Fraud      │  │ Cross-Reference  │  │ AI Validator          │  │   │
-│  │  │ Detector   │  │ Engine           │  │ (LLM authenticity     │  │   │
-│  │  │ (8 signals)│  │ (triangulation)  │  │  + inconsistency)     │  │   │
-│  │  └────────────┘  └──────────────────┘  └────────────────────────┘  │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-│                                    │                                         │
-│                                    ▼                                         │
-│  ┌──────────────────────────────────────────────────────────────────────┐   │
-│  │                   OUTPUT LAYER                                       │   │
-│  │                                                                      │   │
-│  │  ┌────────────────────┐  ┌──────────────────┐  ┌─────────────────┐  │   │
-│  │  │ Confidence Engine  │  │ Analytics        │  │ Graph Storage   │  │   │
-│  │  │ (Bayesian update)  │  │ (Collection/     │  │ (Neo4j evidence │  │   │
-│  │  │                    │  │  Verification/   │  │  nodes + rels)  │  │   │
-│  │  │ Input → Score →    │  │  Fraud KPIs)     │  └─────────────────┘  │   │
-│  │  │        Level → Sig │  └──────────────────┘                       │   │
-│  │  └────────────────────┘                                             │   │
-│  └──────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      EVIDENCE INTELLIGENCE ENGINE                             â”‚
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚                   COLLECTION LAYER                                    â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚  â”‚  â”‚Project   â”‚ â”‚GitHub    â”‚ â”‚Certific. â”‚ â”‚Hackathon â”‚ â”‚Freelance â”‚   â”‚   â”‚
+â”‚  â”‚  â”‚Collector â”‚ â”‚Collector â”‚ â”‚Collector â”‚ â”‚Collector â”‚ â”‚Collector â”‚   â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚  â”‚  â”‚OSS       â”‚ â”‚Assessmentâ”‚ â”‚Work Exp  â”‚ â”‚Auto-Discovery Engine â”‚   â”‚   â”‚
+â”‚  â”‚  â”‚Collector â”‚ â”‚Collector â”‚ â”‚Collector â”‚ â”‚(ARIA proactive scan) â”‚   â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                    â”‚                                         â”‚
+â”‚                                    â–¼                                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚                   PROCESSING LAYER                                    â”‚   â”‚
+â”‚  â”‚                                                                      â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚   â”‚
+â”‚  â”‚  â”‚ Normalizer â”‚â”€â–¶â”‚ Verifier   â”‚â”€â–¶â”‚ Trust      â”‚â”€â–¶â”‚ Weight       â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚ (source    â”‚  â”‚ (3-tier:   â”‚  â”‚ Scorer     â”‚  â”‚ Calculator   â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚  adapters) â”‚  â”‚ Autoâ†’AIâ†’Hu)â”‚  â”‚ (provenanceâ”‚  â”‚ (qualityÃ—trustâ”‚  â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚ Ã—diversity)  â”‚  â”‚   â”‚
+â”‚  â”‚                                                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚   â”‚
+â”‚  â”‚  â”‚ Fraud      â”‚  â”‚ Cross-Reference  â”‚  â”‚ AI Validator          â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚ Detector   â”‚  â”‚ Engine           â”‚  â”‚ (LLM authenticity     â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚ (8 signals)â”‚  â”‚ (triangulation)  â”‚  â”‚  + inconsistency)     â”‚  â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                    â”‚                                         â”‚
+â”‚                                    â–¼                                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚                   OUTPUT LAYER                                       â”‚   â”‚
+â”‚  â”‚                                                                      â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚   â”‚
+â”‚  â”‚  â”‚ Confidence Engine  â”‚  â”‚ Analytics        â”‚  â”‚ Graph Storage   â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚ (Bayesian update)  â”‚  â”‚ (Collection/     â”‚  â”‚ (Neo4j evidence â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚                    â”‚  â”‚  Verification/   â”‚  â”‚  nodes + rels)  â”‚  â”‚   â”‚
+â”‚  â”‚  â”‚ Input â†’ Score â†’    â”‚  â”‚  Fraud KPIs)     â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚   â”‚
+â”‚  â”‚  â”‚        Level â†’ Sig â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                       â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                             â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2b Evidence Collection Pipeline
@@ -150,30 +150,30 @@ graph TD
 Each evidence item progresses through a rigorous state machine:
 
 ```
-                      ┌─────────────────────────────────────┐
-                      │            REJECTED                  │
-                      │  (failed verification / fraud)      │
-                      └─────────────────────────────────────┘
-                         ▲                                  ▲
-                         │                                  │
-┌────────┐   ┌────────┐  │  ┌────────┐  ┌────────┐  ┌──────────┐
-│  RAW   │──▶│ PARSED │──┼─▶│VERIFIED│──▶│ SCORED │──▶│ ACCEPTED │
-│(ingest)│   │(extract│  │  │(auto/AI│  │(weight)│  │ (in use) │
-│        │   │ meta)  │  │  │ /human)│  │        │  │          │
-└────────┘   └────────┘  │  └────────┘  └────────┘  └──────────┘
-                         │      │                          │
-                         │      ▼                          │
-                         │  ┌────────┐                     │
-                         └──│ FLAGGED │◀────────────────────┘
-                            │(suspect)│  ┌──────────────┐
-                            └────────┘  │  CHALLENGED   │
-                                 │      │(peer dispute) │
-                                 ▼      └──────────────┘
-                            ┌────────┐        │
-                            │ARCHIVED│◀───────┘
-                            │(expired│
-                            │ / old) │
-                            └────────┘
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚            REJECTED                  â”‚
+                      â”‚  (failed verification / fraud)      â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â–²                                  â–²
+                         â”‚                                  â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  RAW   â”‚â”€â”€â–¶â”‚ PARSED â”‚â”€â”€â”¼â”€â–¶â”‚VERIFIEDâ”‚â”€â”€â–¶â”‚ SCORED â”‚â”€â”€â–¶â”‚ ACCEPTED â”‚
+â”‚(ingest)â”‚   â”‚(extractâ”‚  â”‚  â”‚(auto/AIâ”‚  â”‚(weight)â”‚  â”‚ (in use) â”‚
+â”‚        â”‚   â”‚ meta)  â”‚  â”‚  â”‚ /human)â”‚  â”‚        â”‚  â”‚          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚      â”‚                          â”‚
+                         â”‚      â–¼                          â”‚
+                         â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”                     â”‚
+                         â””â”€â”€â”‚ FLAGGED â”‚â—€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚(suspect)â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  CHALLENGED   â”‚
+                                 â”‚      â”‚(peer dispute) â”‚
+                                 â–¼      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”        â”‚
+                            â”‚ARCHIVEDâ”‚â—€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚(expiredâ”‚
+                            â”‚ / old) â”‚
+                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ```python
@@ -291,43 +291,43 @@ class BaseCollector(ABC):
 
 ### 2.1 Pipeline Architecture
 
-The collection pipeline runs as a directed acyclic graph of stages. Each evidence source has a dedicated collector that implements the full gather → normalize → enrich → verify → persist flow.
+The collection pipeline runs as a directed acyclic graph of stages. Each evidence source has a dedicated collector that implements the full gather â†’ normalize â†’ enrich â†’ verify â†’ persist flow.
 
 ```
-                    ┌─────────────────────────────────────┐
-                    │      COLLECTION SCHEDULER             │
-                    │  (APScheduler cron + event triggers)  │
-                    └─────────────────────────────────────┘
-                                │
-            ┌───────────────────┼───────────────────┐
-            ▼                   ▼                   ▼
-    ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-    │ Manual Submit │   │ Auto-Discovery│   │ API Import   │
-    │ (user upload) │   │ (ARIA scan)   │   │ (webhook)    │
-    └──────┬───────┘   └──────┬───────┘   └──────┬───────┘
-           │                  │                  │
-           └──────────────────┼──────────────────┘
-                              ▼
-                    ┌──────────────────┐
-                    │  NORMALIZER      │
-                    │  (source→canon.) │
-                    └──────┬───────────┘
-                           ▼
-                    ┌──────────────────┐
-                    │  ENRICHER        │
-                    │ (extract skills, │
-                    │  infer metadata) │
-                    └──────┬───────────┘
-                           ▼
-                    ┌──────────────────┐
-                    │  COLLECTOR QUEUE │
-                    │ (buffered write) │
-                    └──────┬───────────┘
-                           ▼
-                    ┌──────────────────┐
-                    │  VERIFIER        │
-                    │ (3-tier dispatch)│
-                    └──────────────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚      COLLECTION SCHEDULER             â”‚
+                    â”‚  (APScheduler cron + event triggers)  â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                â”‚
+            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+            â–¼                   â–¼                   â–¼
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚ Manual Submit â”‚   â”‚ Auto-Discoveryâ”‚   â”‚ API Import   â”‚
+    â”‚ (user upload) â”‚   â”‚ (ARIA scan)   â”‚   â”‚ (webhook)    â”‚
+    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚                  â”‚                  â”‚
+           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  NORMALIZER      â”‚
+                    â”‚  (sourceâ†’canon.) â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  ENRICHER        â”‚
+                    â”‚ (extract skills, â”‚
+                    â”‚  infer metadata) â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  COLLECTOR QUEUE â”‚
+                    â”‚ (buffered write) â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  VERIFIER        â”‚
+                    â”‚ (3-tier dispatch)â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.2 Evidence Data Model (Core)
@@ -347,7 +347,7 @@ class RawEvidence:
 @dataclass
 class EvidenceItem:
     """
-    Core evidence item — the canonical representation.
+    Core evidence item â€” the canonical representation.
     Persisted to PostgreSQL and Neo4j.
     """
     evidence_id: str          # UUID
@@ -362,9 +362,9 @@ class EvidenceItem:
     collected_at: int
     verified_at: int | None
     verification_method: str | None  # auto | ai | human
-    quality_score: float      # 0.0-1.0 (Gold=1.0 … Unverified=0.1)
+    quality_score: float      # 0.0-1.0 (Gold=1.0 â€¦ Unverified=0.1)
     trust_score: float        # 0.0-1.0 (from Trust Score Framework)
-    weight: float             # Quality × Trust × Recency
+    weight: float             # Quality Ã— Trust Ã— Recency
     fraud_signals: list[str]  # Any fraud flags raised
     signed_hash: str          # Cryptographic integrity hash
     previous_hash: str | None # Chain to previous state
@@ -422,12 +422,12 @@ class ProjectCollector(BaseCollector):
         In production: called with user-submitted URL or uploaded archive.
         For auto-discovery: scans user's linked GitHub repos for new projects.
         """
-        # Manual submission path — user provides URL
+        # Manual submission path â€” user provides URL
         repo_url = credentials.get("repo_url") if credentials else None
         if repo_url:
             return [await self._collect_single(user_id, repo_url)]
 
-        # Auto-discovery path — scan user's GitHub for new repos
+        # Auto-discovery path â€” scan user's GitHub for new repos
         github_token = credentials.get("github_token") if credentials else None
         if github_token:
             return await self._auto_discover(user_id, github_token)
@@ -608,7 +608,7 @@ class ProjectCollector(BaseCollector):
 ```python
 class GitHubCollector(BaseCollector):
     """
-    Collects evidence from GitHub activity — commits, PRs, issues, reviews.
+    Collects evidence from GitHub activity â€” commits, PRs, issues, reviews.
     Zero user effort beyond OAuth authentication.
 
     Data collected:
@@ -1241,7 +1241,7 @@ class OSSCollector(BaseCollector):
 ```python
 class AssessmentCollector(BaseCollector):
     """
-    Collects evidence from the SkillAssessment Engine (§ SkillAssessment.md).
+    Collects evidence from the SkillAssessment Engine (Â§ SkillAssessment.md).
     Assessment results are automatically imported as evidence.
 
     This is the bridge between assessment and evidence systems.
@@ -1258,7 +1258,7 @@ class AssessmentCollector(BaseCollector):
     ) -> list[RawEvidence]:
         """
         Import assessment results as evidence.
-        Called by webhook when an assessment completes (§ SkillAssessment.md 9.2).
+        Called by webhook when an assessment completes (Â§ SkillAssessment.md 9.2).
         """
         assessment_result = credentials.get("validation_result") if credentials else None
         if not assessment_result:
@@ -1406,7 +1406,7 @@ class WorkExperienceCollector(BaseCollector):
             "google": ["google.com", "gmail.com"],
             "microsoft": ["microsoft.com"],
             "amazon": ["amazon.com"],
-            # In production: maintain a domain→company lookup table
+            # In production: maintain a domainâ†’company lookup table
         }
         domain = email.split("@")[1].lower() if "@" in email else ""
         company_key = company.lower().replace(" ", "")
@@ -1453,8 +1453,8 @@ class AutoDiscoveryEngine:
     3. Certification platforms: new badges (via webhook or periodic check)
     4. Upwork/Fiverr: new completed contracts
     5. Devpost: new hackathon participations
-    6. Package registries: npm, PyPI, crates.io — new package publications
-    7. Blog/Publication platforms: Medium, Dev.to, Substack — new articles
+    6. Package registries: npm, PyPI, crates.io â€” new package publications
+    7. Blog/Publication platforms: Medium, Dev.to, Substack â€” new articles
     """
 
     def __init__(self, tenant_config: TenantConfig | None = None):
@@ -1811,61 +1811,61 @@ class CollectionScheduler:
 The Verification Model is the second stage of the Evidence Processing Layer. After collection normalizes raw evidence into canonical `EvidenceItem` objects, the Verification Model determines **authenticity, accuracy, and completeness** through a three-tier escalation system.
 
 ```
-                        ┌─────────────────────────┐
-                        │   COLLECTED EVIDENCE      │
-                        │   (state: RAW)            │
-                        └──────────┬────────────────┘
-                                   ▼
-                    ┌──────────────────────────────┐
-                    │    TIER 1: AUTO VERIFICATION  │
-                    │  (algorithmic checks, no AI)  │
-                    │  • Source accessibility       │
-                    │  • Metadata consistency        │
-                    │  • Format validation           │
-                    │  • Signature verification     │
-                    │  • Anti-tamper hash check     │
-                    └──────────┬───────────────────┘
-                               │
-                    ┌──────────▼───────────────────┐
-                    │  Auto confidence ≥ threshold? │
-                    └──────────┬───────────────────┘
-                    YES        │        NO
-                    ┌──────────▼──────────┐
-                    │  VERIFIED (auto)    │
-                    │  state: VERIFIED    │
-                    └─────────────────────┘
-                               │
-                               ▼
-                    ┌──────────────────────────────┐
-                    │    TIER 2: AI VERIFICATION    │
-                    │  (LLM-based authenticity)     │
-                    │  • Content analysis           │
-                    │  • Anomaly detection          │
-                    │  • Cross-reference checks     │
-                    │  • Inconsistency flagging     │
-                    └──────────┬───────────────────┘
-                               │
-                    ┌──────────▼───────────────────┐
-                    │  AI confidence ≥ threshold?   │
-                    └──────────┬───────────────────┘
-                    YES        │        NO
-                    ┌──────────▼──────────┐
-                    │  VERIFIED (ai)      │
-                    │  state: VERIFIED    │
-                    └─────────────────────┘
-                               │
-                               ▼
-                    ┌──────────────────────────────┐
-                    │  TIER 3: HUMAN VERIFICATION   │
-                    │  (expert review queue)        │
-                    │  • Manual document check      │
-                    │  • Source contact verification│
-                    │  • Domain expert review       │
-                    └──────────┬───────────────────┘
-                               │
-                    ┌──────────▼───────────────────┐
-                    │  VERIFIED (human) / REJECTED  │
-                    └───────────────────────────────┘
+                        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                        â”‚   COLLECTED EVIDENCE      â”‚
+                        â”‚   (state: RAW)            â”‚
+                        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                   â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚    TIER 1: AUTO VERIFICATION  â”‚
+                    â”‚  (algorithmic checks, no AI)  â”‚
+                    â”‚  â€¢ Source accessibility       â”‚
+                    â”‚  â€¢ Metadata consistency        â”‚
+                    â”‚  â€¢ Format validation           â”‚
+                    â”‚  â€¢ Signature verification     â”‚
+                    â”‚  â€¢ Anti-tamper hash check     â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Auto confidence â‰¥ threshold? â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                    YES        â”‚        NO
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  VERIFIED (auto)    â”‚
+                    â”‚  state: VERIFIED    â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                               â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚    TIER 2: AI VERIFICATION    â”‚
+                    â”‚  (LLM-based authenticity)     â”‚
+                    â”‚  â€¢ Content analysis           â”‚
+                    â”‚  â€¢ Anomaly detection          â”‚
+                    â”‚  â€¢ Cross-reference checks     â”‚
+                    â”‚  â€¢ Inconsistency flagging     â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  AI confidence â‰¥ threshold?   â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                    YES        â”‚        NO
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  VERIFIED (ai)      â”‚
+                    â”‚  state: VERIFIED    â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                               â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  TIER 3: HUMAN VERIFICATION   â”‚
+                    â”‚  (expert review queue)        â”‚
+                    â”‚  â€¢ Manual document check      â”‚
+                    â”‚  â€¢ Source contact verificationâ”‚
+                    â”‚  â€¢ Domain expert review       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  VERIFIED (human) / REJECTED  â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 3.2 Verification State Machine
@@ -1991,7 +1991,7 @@ class VerificationDispatcher:
     ) -> VerificationAttempt:
         """
         Run automated algorithmic checks against the evidence.
-        No LLM involved — purely deterministic verification.
+        No LLM involved â€” purely deterministic verification.
         """
         start = time.time()
         verifier = self.auto_verifiers.get(item.source_type, GenericAutoVerifier())
@@ -2110,7 +2110,7 @@ class VerificationContext:
 
 ### 3.4 Auto Verifiers (Tier 1)
 
-Each evidence source type has a dedicated auto-verifier with source-specific checks. These are **fully deterministic** — no AI, no external API calls beyond source validation.
+Each evidence source type has a dedicated auto-verifier with source-specific checks. These are **fully deterministic** â€” no AI, no external API calls beyond source validation.
 
 ```python
 class AutoVerifier(ABC):
@@ -2188,7 +2188,7 @@ class GenericAutoVerifier(AutoVerifier):
             chain_ok = await self._verify_hash_chain(item)
         checks.append(chain_ok)
         if not chain_ok:
-            failed.append("Hash chain broken — evidence tampered")
+            failed.append("Hash chain broken â€” evidence tampered")
 
         pass_count = sum(1 for c in checks if c)
         total = len(checks)
@@ -2523,7 +2523,7 @@ class AssessmentAutoVerifier(AutoVerifier):
             sig_valid = await self._verify_assessment_signature(session_id, signature)
             checks.append(sig_valid)
             if not sig_valid:
-                failed.append("Assessment signature verification failed — result may be tampered")
+                failed.append("Assessment signature verification failed â€” result may be tampered")
 
         # Check 4: Assessment was completed, not abandoned
         status = metadata.get("status", "")
@@ -2739,7 +2739,7 @@ class CrossReferenceEngine:
             return VerificationRecommendation(
                 evidence_ids=evidence_ids,
                 recommended_tier=1,  # Auto only is sufficient
-                reason=f"Skill '{skill}' has {xref.source_count} independent sources — cross-referencing provides sufficient trust",
+                reason=f"Skill '{skill}' has {xref.source_count} independent sources â€” cross-referencing provides sufficient trust",
                 synergy_applied=True,
                 reduced_verification=True,
             )
@@ -2747,7 +2747,7 @@ class CrossReferenceEngine:
             return VerificationRecommendation(
                 evidence_ids=evidence_ids,
                 recommended_tier=1,  # Auto may be sufficient with synergy bonus
-                reason=f"Skill '{skill}' has 2 sources — synergy bonus reduces verification burden",
+                reason=f"Skill '{skill}' has 2 sources â€” synergy bonus reduces verification burden",
                 synergy_applied=True,
                 reduced_verification=True,
             )
@@ -2755,7 +2755,7 @@ class CrossReferenceEngine:
             return VerificationRecommendation(
                 evidence_ids=evidence_ids,
                 recommended_tier=2,  # AI verification recommended
-                reason=f"Skill '{skill}' has only 1 source — full verification required",
+                reason=f"Skill '{skill}' has only 1 source â€” full verification required",
                 synergy_applied=False,
                 reduced_verification=False,
             )
@@ -3181,10 +3181,10 @@ class VerificationAlertManager:
 
 Trust is the **gate** that evidence weight must pass through. Before any quality or recency calculation matters, the system must answer: *"Can we trust that this evidence is authentic and belongs to this user?"*
 
-Trust is computed as a **multiplicative** score — if any single trust component is zero, the entire trust score is zero. This is by design: a forged credential cannot be partially trusted.
+Trust is computed as a **multiplicative** score â€” if any single trust component is zero, the entire trust score is zero. This is by design: a forged credential cannot be partially trusted.
 
 ```
-Trust_Score = Provenance_Integrity × Source_Reputation × Chain_of_Custody × Identity_Binding
+Trust_Score = Provenance_Integrity Ã— Source_Reputation Ã— Chain_of_Custody Ã— Identity_Binding
 
 Where:
   Provenance_Integrity  = Can we verify where this came from?   [0.0, 1.0]
@@ -3193,7 +3193,7 @@ Where:
   Identity_Binding      = Is this firmly tied to the user?      [0.0, 1.0]
 ```
 
-If any factor is 0.0, the trust score is 0.0 — the evidence is rejected regardless of quality.
+If any factor is 0.0, the trust score is 0.0 â€” the evidence is rejected regardless of quality.
 
 ### 4.2 Trust Score Computation
 
@@ -3604,7 +3604,7 @@ class SourceReputationService:
                 has_anti_fraud=True,
                 known_breaches=[],
                 verification_methods=["Cryptographic signature", "Session audit", "Proctoring logs"],
-                notes="Assessment engine has built-in anti-cheating (SkillAssessment.md §7). Highest trust source.",
+                notes="Assessment engine has built-in anti-cheating (SkillAssessment.md Â§7). Highest trust source.",
             ),
             EvidenceSourceType.WORK_EXPERIENCE: SourceReputation(
                 base_score=0.50,
@@ -3754,7 +3754,7 @@ class ChainOfCustodyTracker:
             hash_valid = item.signed_hash == expected_hash
             checks.append(hash_valid)
             if not hash_valid:
-                failures.append("Current hash mismatch — evidence may be tampered")
+                failures.append("Current hash mismatch â€” evidence may be tampered")
 
         # Check 3: Previous hash forms a valid chain (if not the first state)
         if item.previous_hash:
@@ -3763,9 +3763,9 @@ class ChainOfCustodyTracker:
             )
             checks.append(previous_valid)
             if not previous_valid:
-                failures.append("Previous hash mismatch — chain broken")
+                failures.append("Previous hash mismatch â€” chain broken")
         else:
-            # First state — no previous hash expected
+            # First state â€” no previous hash expected
             checks.append(True)
 
         # Check 4: Timestamps are monotonic (created <= updated)
@@ -3881,7 +3881,7 @@ class CustodyResult:
 
 ### 4.6 Identity Binding
 
-Identity binding answers: *"Does this evidence truly belong to this user?"* It's the most critical trust component — even authentic evidence from a trustworthy source is worthless if it belongs to someone else.
+Identity binding answers: *"Does this evidence truly belong to this user?"* It's the most critical trust component â€” even authentic evidence from a trustworthy source is worthless if it belongs to someone else.
 
 ```python
 class IdentityBindingService:
@@ -3890,11 +3890,11 @@ class IdentityBindingService:
     to the user claiming it.
 
     Binding methods (in order of strength):
-    1. OAuth identity match — the evidence came from an OAuth-linked account
-    2. Email domain match — the user's email domain matches the evidence context
-    3. Profile cross-reference — the evidence subject matches user's profile data
-    4. Cryptographic signature — the user signed the evidence submission
-    5. Behavioral consistency — the evidence pattern matches user's history
+    1. OAuth identity match â€” the evidence came from an OAuth-linked account
+    2. Email domain match â€” the user's email domain matches the evidence context
+    3. Profile cross-reference â€” the evidence subject matches user's profile data
+    4. Cryptographic signature â€” the user signed the evidence submission
+    5. Behavioral consistency â€” the evidence pattern matches user's history
     """
 
     def __init__(self):
@@ -4044,14 +4044,14 @@ class IdentityBindingService:
 
 ### 5.1 Weight Formula
 
-Evidence weight determines how much a piece of evidence contributes to the skill confidence calculation. The weight is **not** simply the quality score — it's a composite of quality, trust, recency, and context.
+Evidence weight determines how much a piece of evidence contributes to the skill confidence calculation. The weight is **not** simply the quality score â€” it's a composite of quality, trust, recency, and context.
 
 ```
-Evidence_Weight = Base_Quality × Trust_Score × Recency_Multiplier × Context_Adjustment
+Evidence_Weight = Base_Quality Ã— Trust_Score Ã— Recency_Multiplier Ã— Context_Adjustment
 
 Where:
-  Base_Quality         = skills.md §11 Gold/Silver/Bronze tier mapping  [0.1, 1.0]
-  Trust_Score          = Multiplicative trust from §4                   [0.0, 1.0]
+  Base_Quality         = skills.md Â§11 Gold/Silver/Bronze tier mapping  [0.1, 1.0]
+  Trust_Score          = Multiplicative trust from Â§4                   [0.0, 1.0]
   Recency_Multiplier   = Decay based on evidence age                    [0.3, 1.0]
   Context_Adjustment   = Skill-level cap, diversity bonus, dep. weight  [0.5, 1.5]
 ```
@@ -4254,7 +4254,7 @@ class ContextAdjustment:
 
 ### 5.3 Quality Tier Mapper
 
-Maps evidence quality scores to Gold/Silver/Bronze from skills.md §11.
+Maps evidence quality scores to Gold/Silver/Bronze from skills.md Â§11.
 
 ```python
 class QualityTierMapper:
@@ -4337,9 +4337,9 @@ class SkillEvidenceSummary:
 
 ### 6.1 Overview
 
-The AI Validation Engine uses LLMs to validate evidence authenticity and detect inconsistencies that algorithmic checks miss. It follows the PromptLoader pattern from SkillAssessment.md — prompts live in `prompts/agents/evidence_validator.md` with inline fallbacks.
+The AI Validation Engine uses LLMs to validate evidence authenticity and detect inconsistencies that algorithmic checks miss. It follows the PromptLoader pattern from SkillAssessment.md â€” prompts live in `prompts/agents/evidence_validator.md` with inline fallbacks.
 
-AI validation is **Tier 2** verification — it kicks in when auto-verification is inconclusive, and can be bypassed entirely if cross-referencing provides sufficient trust.
+AI validation is **Tier 2** verification â€” it kicks in when auto-verification is inconclusive, and can be bypassed entirely if cross-referencing provides sufficient trust.
 
 ```python
 class AIEvidenceValidator:
@@ -4347,11 +4347,11 @@ class AIEvidenceValidator:
     AI-powered evidence validation using LLM classification.
 
     Capabilities:
-    1. Authenticity classification — real or fabricated?
-    2. Inconsistency detection — does the evidence contradict itself?
-    3. Exaggeration detection — are claims inflated?
-    4. Cross-source coherence — matches other evidence for this user?
-    5. Anomaly flagging — deviates from expected patterns?
+    1. Authenticity classification â€” real or fabricated?
+    2. Inconsistency detection â€” does the evidence contradict itself?
+    3. Exaggeration detection â€” are claims inflated?
+    4. Cross-source coherence â€” matches other evidence for this user?
+    5. Anomaly flagging â€” deviates from expected patterns?
 
     Uses PromptLoader with graceful fallback to inline defaults.
     """
@@ -4602,9 +4602,9 @@ class MultiLLMRouter:
     Routes validation requests across multiple LLM providers with failover.
 
     Provider priority:
-    1. Claude Sonnet 4 (primary — best accuracy for evidence validation)
-    2. GPT-4o (fallback — comparable quality)
-    3. Ollama/Mistral (last resort — local, free, lower quality)
+    1. Claude Sonnet 4 (primary â€” best accuracy for evidence validation)
+    2. GPT-4o (fallback â€” comparable quality)
+    3. Ollama/Mistral (last resort â€” local, free, lower quality)
     """
 
     PROVIDER_CONFIG = [
@@ -4688,9 +4688,9 @@ class ValidationRetryHandler:
 
 ### 7.1 Fraud Detection Philosophy
 
-Fraud detection in SkillEvidence.md targets **evidence fraud** — faking credentials, inflating contributions, forging certificates, stealing identity. This is completely separate from SkillAssessment.md §7 Anti-Cheating (assessment-taking fraud).
+Fraud detection in SkillEvidence.md targets **evidence fraud** â€” faking credentials, inflating contributions, forging certificates, stealing identity. This is completely separate from SkillAssessment.md Â§7 Anti-Cheating (assessment-taking fraud).
 
-| Dimension | SkillAssessment.md §7 | SkillEvidence.md §7 |
+| Dimension | SkillAssessment.md Â§7 | SkillEvidence.md Â§7 |
 |---|---|---|
 | **Target** | Assessment-taking behavior | Evidence claims |
 | **Fraud types** | Copying, impersonation, AI use | Forged credentials, fake repos, cert fraud |
@@ -5006,7 +5006,7 @@ class TemporalAnomalyDetector(BaseFraudDetector):
 
         dates = [metadata.get(k) for k in ["created_at", "issued_at", "collected_at"] if metadata.get(k)]
         if len(dates) >= 3 and len(set(dates)) == 1:
-            warnings.append("All dates identical — batch creation")
+            warnings.append("All dates identical â€” batch creation")
 
         for key in ["created_at", "issued_at"]:
             val = metadata.get(key)
@@ -5100,9 +5100,9 @@ Integrates evidence weights, assessment results, and prior knowledge into calibr
 ```
 Confidence(skill) = Evidence_Contribution + Assessment_Contribution + Prior
 
-Evidence_Contribution  = Σ(Weight × Impact) / Max_Possible × Evidence_Weight_Pct
-Assessment_Contribution = Σ(Assessment_Score) / Count × Assessment_Weight_Pct
-Prior                  = Base_Probability × Prior_Weight_Pct
+Evidence_Contribution  = Î£(Weight Ã— Impact) / Max_Possible Ã— Evidence_Weight_Pct
+Assessment_Contribution = Î£(Assessment_Score) / Count Ã— Assessment_Weight_Pct
+Prior                  = Base_Probability Ã— Prior_Weight_Pct
 ```
 
 ### 8.2 Confidence Engine
@@ -5277,7 +5277,7 @@ class ConfidenceTrendAnalyzer:
         elif trend == "improving" and velocity_per_month > 0.1:
             rec = "Consider reclassification to higher skill level"
         else:
-            rec = "No action needed — skill level is stable"
+            rec = "No action needed â€” skill level is stable"
 
         return ConfidenceTrend(skill_id=skill_id, trend=trend, change=round(change, 4),
             change_pct=round(change_pct, 4), significant=abs(change_pct) > self.SIGNIFICANCE_THRESHOLD,
@@ -5410,23 +5410,23 @@ class ConfidenceDecayManager:
 The Analytics layer collects and surfaces KPIs across the entire evidence pipeline: collection, verification, trust, weighting, AI validation, and fraud detection. It feeds dashboards, alerts, and the SkillIntelligence.md analytics engine.
 
 ```
-                  ┌─────────────────────────────────────────┐
-                  │         EVIDENCE ANALYTICS ENGINE          │
-                  │                                           │
-                  │  ┌──────────┐ ┌──────────┐ ┌──────────┐  │
-                  │  │Collection│ │Verific.  │ │Trust     │  │
-                  │  │KPIs      │ │KPIs      │ │KPIs      │  │
-                  │  └──────────┘ └──────────┘ └──────────┘  │
-                  │  ┌──────────┐ ┌──────────┐ ┌──────────┐  │
-                  │  │Fraud     │ │Confidence│ │Pipeline  │  │
-                  │  │KPIs      │ │KPIs      │ │Health    │  │
-                  │  └──────────┘ └──────────┘ └──────────┘  │
-                  └─────────────────────────────────────────┘
-                              │            │
-                    ┌─────────▼──┐  ┌──────▼──────────┐
-                    │ Dashboards │  │ Alerts &        │
-                    │ (Real-time)│  │ Notifications   │
-                    └────────────┘  └─────────────────┘
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â”‚         EVIDENCE ANALYTICS ENGINE          â”‚
+                  â”‚                                           â”‚
+                  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                  â”‚  â”‚Collectionâ”‚ â”‚Verific.  â”‚ â”‚Trust     â”‚  â”‚
+                  â”‚  â”‚KPIs      â”‚ â”‚KPIs      â”‚ â”‚KPIs      â”‚  â”‚
+                  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                  â”‚  â”‚Fraud     â”‚ â”‚Confidenceâ”‚ â”‚Pipeline  â”‚  â”‚
+                  â”‚  â”‚KPIs      â”‚ â”‚KPIs      â”‚ â”‚Health    â”‚  â”‚
+                  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â”‚            â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ Dashboards â”‚  â”‚ Alerts &        â”‚
+                    â”‚ (Real-time)â”‚  â”‚ Notifications   â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 9.2 Collection Analytics
@@ -6039,10 +6039,10 @@ FOR (u:User) REQUIRE u.user_id IS UNIQUE;
 // (:Evidence) -[:PREVIOUS_STATE]-> (:Evidence)
 // Each link represents a state transition
 
-// Evidence → User relationship
+// Evidence â†’ User relationship
 // (:User) -[:HAS_EVIDENCE {collected_at: ..., source_type: "..."}]-> (:Evidence)
 
-// Evidence → Skill relationship
+// Evidence â†’ Skill relationship
 // (:Evidence) -[:EVIDENCE_FOR {weight: 0.78}]-> (:Skill)
 
 // Cross-reference relationships
@@ -6145,9 +6145,9 @@ CREATE TABLE evidence_items_template (
 -- Archival policy
 -- ============================================================
 -- Evidence older than 3 years with weight = 0:
---   → Move to evidence_archive table (same schema, different tablespace)
+--   â†’ Move to evidence_archive table (same schema, different tablespace)
 -- Evidence older than 5 years:
---   → Anonymize user_id, then move to cold storage
+--   â†’ Anonymize user_id, then move to cold storage
 
 -- Archival job pseudocode:
 -- INSERT INTO evidence_archive SELECT * FROM evidence_items
@@ -6324,16 +6324,16 @@ $$;
 | **Hackathon** | Event lookup, submission URL, date verification, team size | Submission quality, prize plausibility | Event organizer confirmation | 0.60 | Fake event submissions, inflated prizes |
 | **Freelance** | Contract API lookup, payment data, client reviews, platform profile | Contract description authenticity, rate plausibility | Client reference check | 0.65 | Fake contracts, inflated earnings, platform fraud |
 | **Open Source** | Package registry API, download stats, version history, maintainer check | Package quality, dependency analysis, contribution pattern | N/A (sufficient auto/AI) | 0.80 | Fake packages, inflated downloads, attribution theft |
-| **Assessment** | Session signature verification, duration check, score range, proctoring logs | N/A (assessment engine handles anti-cheat) | N/A (fully automated) | 0.90 | Session hijacking, credential sharing (handled by §7) |
+| **Assessment** | Session signature verification, duration check, score range, proctoring logs | N/A (assessment engine handles anti-cheat) | N/A (fully automated) | 0.90 | Session hijacking, credential sharing (handled by Â§7) |
 | **Work Experience** | LinkedIn API, employment dates, company domain, job title | Description authenticity, title plausibility | Manager reference, pay stub verification | 0.50 | Falsified employment, title inflation, fake companies |
 
 ### Verification Level Recommendations by Evidence Tier
 
 | Evidence Tier | Auto Threshold | AI Threshold | Human Required? | Cross-Ref Bypass |
 |---|---|---|---|---|
-| **Gold** | 0.85 | 0.90 | Only for high-risk sources (Work Exp) | 3+ sources → AI skip |
-| **Silver** | 0.75 | 0.85 | For Work Exp + Cert only | 3+ sources → AI only |
-| **Bronze** | 0.65 | 0.80 | Never | 3+ sources → Auto only |
+| **Gold** | 0.85 | 0.90 | Only for high-risk sources (Work Exp) | 3+ sources â†’ AI skip |
+| **Silver** | 0.75 | 0.85 | For Work Exp + Cert only | 3+ sources â†’ AI only |
+| **Bronze** | 0.65 | 0.80 | Never | 3+ sources â†’ Auto only |
 | **Unverified** | N/A | N/A | N/A | N/A |
 
 
@@ -6342,17 +6342,17 @@ $$;
 ### B.1 Multiplicative Trust
 
 ```
-Trust_Score = Provenance_Score × Source_Reputation × Custody_Score × Identity_Score
+Trust_Score = Provenance_Score Ã— Source_Reputation Ã— Custody_Score Ã— Identity_Score
 
-Where each factor ∈ [0.0, 1.0], and any 0.0 → Trust_Score = 0.0
+Where each factor âˆˆ [0.0, 1.0], and any 0.0 â†’ Trust_Score = 0.0
 
 Example:
   Provenance_Score  = 0.95  (source validated, ext ID exists, URL works)
   Source_Reputation = 0.85  (AWS certification via Credly)
   Custody_Score     = 1.0   (chain intact, hashes match)
   Identity_Score    = 0.80  (OAuth linked + email match)
-  ─────────────────────────────────────────────────
-  Trust_Score       = 0.95 × 0.85 × 1.0 × 0.80 = 0.646
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Trust_Score       = 0.95 Ã— 0.85 Ã— 1.0 Ã— 0.80 = 0.646
 ```
 
 ### B.2 Provenance Score
@@ -6360,7 +6360,7 @@ Example:
 ```
 Provenance_Score = (Source_Valid + Ext_ID_Valid + URL_Valid + TS_Valid + Metadata_Complete) / 5
 
-Critical failure: Source_Valid = false OR Ext_ID_Valid = false → Score = 0.0
+Critical failure: Source_Valid = false OR Ext_ID_Valid = false â†’ Score = 0.0
 ```
 
 ### B.3 Source Reputation
@@ -6379,19 +6379,19 @@ Clamped to [0.0, 1.0]
 ### B.4 Identity Binding Score
 
 ```
-Identity_Score = Σ(Weight_i × Method_Active_i) × Multiplicity_Bonus
+Identity_Score = Î£(Weight_i Ã— Method_Active_i) Ã— Multiplicity_Bonus
 
 Method weights:
-  OAuth:               0.35  (strongest — platform verified identity)
+  OAuth:               0.35  (strongest â€” platform verified identity)
   Crypto_Signature:    0.25  (user signed the submission)
   Account_Ownership:   0.20  (still holds the linked account)
   Email_Domain:        0.10  (email matches evidence context)
   Profile_Cross_Ref:   0.10  (name/location matches)
 
 Multiplicity_Bonus:
-  1 method:  1.0×
-  2 methods: 1.1×
-  3+ methods: 1.2×
+  1 method:  1.0Ã—
+  2 methods: 1.1Ã—
+  3+ methods: 1.2Ã—
 
 If no methods: Score = 0.0
 ```
@@ -6401,7 +6401,7 @@ If no methods: Score = 0.0
 ```
 Custody_Score = (Hash_Valid + Chain_Intact + TS_Ordered + State_Valid + Not_Modified) / 5
 
-Critical failure: Hash_Valid = false → Score = 0.0
+Critical failure: Hash_Valid = false â†’ Score = 0.0
 ```
 
 
@@ -6415,8 +6415,8 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Source Type** | Category of evidence origin: Project, GitHub, Certification, Hackathon, Freelance, Open Source, Assessment, Work Experience |
 | **Collector** | Adapter class that gathers evidence from a specific source type |
 | **Auto-Discovery** | ARIA proactively finding evidence without user submission |
-| **AUTO_IMPORT Mode** | Tenant config: discover → import → notify user (7-day rejection window) |
-| **CONFIRM_FIRST Mode** | Tenant config: discover → notify → import only on user approval |
+| **AUTO_IMPORT Mode** | Tenant config: discover â†’ import â†’ notify user (7-day rejection window) |
+| **CONFIRM_FIRST Mode** | Tenant config: discover â†’ notify â†’ import only on user approval |
 | **Verification** | Process of determining evidence authenticity through 3-tier escalation |
 | **Tier 1 (Auto)** | Deterministic algorithmic verification (no AI, no humans) |
 | **Tier 2 (AI)** | LLM-based authenticity and inconsistency detection |
@@ -6428,7 +6428,7 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Source Reputation** | Baseline trustworthiness of a platform/provider (GitHub = high, LinkedIn = low) |
 | **Chain of Custody** | Immutable hash chain proving evidence hasn't been tampered with |
 | **Identity Binding** | Cryptographic proof that evidence belongs to the claiming user |
-| **Evidence Weight** | Final contribution of an evidence item to skill confidence (quality × trust × recency × context) |
+| **Evidence Weight** | Final contribution of an evidence item to skill confidence (quality Ã— trust Ã— recency Ã— context) |
 | **Recency Decay** | Exponential half-life decay of evidence value over time |
 | **Level Gate Cap** | Maximum weight evidence can contribute at each skill level (beginner = 0.5 cap) |
 | **Diversity Bonus** | Weight bonus from having multiple independent source types for the same skill |
@@ -6444,13 +6444,13 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Confidence Interval** | Range estimate around the confidence score, wider with less evidence |
 | **AI Validation Engine** | LLM-powered authenticity checking using PromptLoader prompts |
 | **PromptLoader** | Central prompt registry loaded from `prompts/` directory with inline fallbacks |
-| **ECE** | Expected Calibration Error — measures how well LLM confidence matches actual accuracy |
-| **RLS** | Row-Level Security — PostgreSQL policy for multi-tenant data isolation |
-| **SLA** | Service Level Agreement — 48h for human review, 24h for escalated items |
+| **ECE** | Expected Calibration Error â€” measures how well LLM confidence matches actual accuracy |
+| **RLS** | Row-Level Security â€” PostgreSQL policy for multi-tenant data isolation |
+| **SLA** | Service Level Agreement â€” 48h for human review, 24h for escalated items |
 | **Half-Life (Recency)** | Time after which evidence weight is halved (varies by source: 90d-730d) |
-| **Skill Level** | Classification: beginner → intermediate → advanced → expert → master |
+| **Skill Level** | Classification: beginner â†’ intermediate â†’ advanced â†’ expert â†’ master |
 | **Evidence Tier** | Quality classification: Gold / Silver / Bronze / Unverified |
-| **Collection Pipeline** | DAG of stages: gather → normalize → enrich → verify → persist |
+| **Collection Pipeline** | DAG of stages: gather â†’ normalize â†’ enrich â†’ verify â†’ persist |
 | **Normalizer** | Converts source-specific raw data to canonical EvidenceItem format |
 | **Enricher** | Infers skills and metadata from raw evidence during processing |
 | **Collection Scheduler** | Manages cron-based collection intervals per source type |
@@ -6458,7 +6458,7 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Auto-Verification** | Tier 1 deterministic checks: URL reachable, metadata present, hashes match |
 | **AI Validation** | Tier 2 LLM-based check: authenticity, inconsistency, exaggeration detection |
 | **Human Review** | Tier 3 manual check: expert reviews evidence that AI couldn't classify |
-| **Verification Escalation** | Process of moving evidence from Tier 1 → Tier 2 → Tier 3 |
+| **Verification Escalation** | Process of moving evidence from Tier 1 â†’ Tier 2 â†’ Tier 3 |
 | **Chain-of-Custody** | Immutable hash-linked record of every evidence state transition |
 | **Multiplicative Trust** | Trust model where zero in any factor zeros the total trust score |
 | **Provenance** | Verifiable origin trail: where evidence came from and how it was collected |
@@ -6467,7 +6467,7 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Recency Half-Life** | Days after which evidence weight decays by 50% (90d-730d per source) |
 | **Level Gate Cap** | Maximum weight an evidence item can contribute at a given skill level |
 | **Diversity Bonus** | Weight multiplier (1.0-1.5) from having 2+ independent source types |
-| **Synergy Multiplier** | Trust bonus from cross-referencing (1.0× single, 1.25× dual, 1.5× 3+) |
+| **Synergy Multiplier** | Trust bonus from cross-referencing (1.0Ã— single, 1.25Ã— dual, 1.5Ã— 3+) |
 | **Forged Credential** | Fraud type: credential ID that doesn't exist at the claimed provider |
 | **Repo Inflation** | Fraud type: artificially inflated GitHub stars, forks, or commits |
 | **Cert Template** | Fraud type: certification generated from template, not real issuer |
@@ -6481,11 +6481,11 @@ Critical failure: Hash_Valid = false → Score = 0.0
 | **Trend Analysis** | Detecting improving/declining/stable confidence over time |
 | **Regression Alert** | Notification when a skill's confidence drops significantly |
 | **Confidence Decay** | Automatic reduction of confidence for skills without recent evidence |
-| **ECE** | Expected Calibration Error — measures LLM confidence calibration quality |
+| **ECE** | Expected Calibration Error â€” measures LLM confidence calibration quality |
 | **PromptLoader** | Central registry loading prompts from `prompts/` with inline fallback |
-| **Multi-LLM Router** | Failover across Claude → GPT-4o → Ollama for AI validation |
-| **RLS** | Row-Level Security — PostgreSQL per-row access control for multi-tenancy |
-| **SLA** | Service Level Agreement — 48h human review, 24h escalated review |
+| **Multi-LLM Router** | Failover across Claude â†’ GPT-4o â†’ Ollama for AI validation |
+| **RLS** | Row-Level Security â€” PostgreSQL per-row access control for multi-tenancy |
+| **SLA** | Service Level Agreement â€” 48h human review, 24h escalated review |
 | **Materialized View** | Pre-computed query result for dashboard reporting performance |
 | **Evidence Archive** | Cold storage for evidence older than 3 years with zero weight |
 | **Partition Pruning** | Query optimization that scans only relevant month partitions |
@@ -6497,7 +6497,7 @@ Critical failure: Hash_Valid = false → Score = 0.0
 
 
 ---
-*End of SkillEvidence.md — Enterprise Evidence Intelligence Architecture*
+*End of SkillEvidence.md â€” Enterprise Evidence Intelligence Architecture*
 
 
 

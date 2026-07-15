@@ -1,4 +1,4 @@
-# Skill Intelligence Engine — Enterprise Analytics Architecture for Skills Intelligence
+﻿# Skill Intelligence Engine â€” Enterprise Analytics Architecture for Skills Intelligence
 
 ---
 
@@ -6,11 +6,11 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLINTEL-ARCH-001 |
+| Document ID | AI-SIN-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Classification | Internal — Architecture Reference |
+| Classification | Internal â€” Architecture Reference |
 | Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture) |
 | Companion Docs | `docs/ai/skills/SkillGraphArchitecture.md` (Graph Storage & Traversal) |
 | Target Stack | Python 3.11+ (Analytics Engine) + Neo4j (Graph Reads) + PostgreSQL (State) + Redis (Cache) + FastAPI (API Layer) |
@@ -42,75 +42,75 @@
 
 The skill graph answers **"what exists and how is it connected?"** The intelligence engine answers **"what does it mean and what should I do?"**
 
-The Skill Graph (SkillGraphArchitecture.md) is the **structural layer** — it stores nodes, edges, and enables traversals. The Skill Intelligence Engine is the **analytical layer** — it operates on top of the graph to compute scores, detect patterns, and generate recommendations.
+The Skill Graph (SkillGraphArchitecture.md) is the **structural layer** â€” it stores nodes, edges, and enables traversals. The Skill Intelligence Engine is the **analytical layer** â€” it operates on top of the graph to compute scores, detect patterns, and generate recommendations.
 
 | Capability | Graph Does | Intelligence Engine Does |
 |---|---|---|
 | Skill Maturity | Stores `level`, `confidence_score`, `evidence_score` as properties | Computes composite maturity with temporal decay, confidence intervals, and trend |
 | Missing Skills | Stores DEPENDS_ON edges | Traverses dependencies, compares against user subgraph, ranks gaps by impact |
-| Outdated Skills | Stores `last_active` timestamp | Analyzes recency decay × market decline — dual-signal detection |
+| Outdated Skills | Stores `last_active` timestamp | Analyzes recency decay Ã— market decline â€” dual-signal detection |
 | Emerging Skills | Stores market trend nodes | Computes growth velocity, community emergence, ecosystem heat |
 | Career Readiness | Stores target skill relationships | Multi-target weighted readiness with time-to-target estimation |
-| Project Readiness | Stores project→skill edges | Skill-coverage analysis with complexity-tier weighting |
+| Project Readiness | Stores projectâ†’skill edges | Skill-coverage analysis with complexity-tier weighting |
 | Market Alignment | Stores demand/growth/salary scores | Portfolio-level alignment scoring with diversification analysis |
 | Future Relevance | Stores trend projections | Multi-factor forecast combining growth, adoption, innovation, ecosystem health |
 
 ### 1.2 Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        DATA INGESTION LAYER                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────────┐  │
-│  │SkillGraph│  │ Market   │  │ Evidence │  │ User Activity     │  │
-│  │ Reader   │  │ Adapter  │  │ Consumer │  │ Stream (Kafka)    │  │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬──────────┘  │
-│       │              │              │                  │           │
-│       ▼              ▼              ▼                  ▼           │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                    INPUT VALIDATION LAYER                      │  │
-│  │  Schema enforcement | Freshness checks | Anomaly detection   │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                      COMPUTATION LAYER                              │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                  PIPELINE ORCHESTRATOR                         │  │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────────┐   │  │
-│  │  │ Real-time│ │ Daily    │ │ Weekly   │ │ Monthly        │   │  │
-│  │  │ Pipeline │ │ Pipeline │ │ Pipeline │ │ Pipeline       │   │  │
-│  │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └───────┬────────┘   │  │
-│  │       │             │            │                │            │  │
-│  │       ▼             ▼            ▼                ▼            │  │
-│  │  ┌────────────────────────────────────────────────────────┐    │  │
-│  │  │              SCORING ENGINE                             │    │  │
-│  │  │  Maturity │ Gap │ Career │ Project │ Market │ Future   │    │  │
-│  │  └────────────────────────────────────────────────────────┘    │  │
-│  │       │             │            │                │            │  │
-│  │       ▼             ▼            ▼                ▼            │  │
-│  │  ┌────────────────────────────────────────────────────────┐    │  │
-│  │  │           RECOMMENDATION FUSION ENGINE                  │    │  │
-│  │  │  SkillFusion | TemporalFilter | ContextRank           │    │  │
-│  │  └────────────────────────────────────────────────────────┘    │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                  AI ENHANCEMENT LAYER                          │  │
-│  │  LLM-Assisted Scoring | Natural Language Explanations        │  │
-│  │  Pattern Discovery | Anomaly Investigation                   │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
-                                   │
-                                   ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                       OUTPUT LAYER                                  │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────────┐  │
-│  │ APIs     │  │ Events   │  │Cache     │  │ Persisted Results │  │
-│  │ (REST)   │  │ (Kafka)  │  │(Redis)   │  │ (PostgreSQL)      │  │
-│  └──────────┘  └──────────┘  └──────────┘  └───────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        DATA INGESTION LAYER                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚SkillGraphâ”‚  â”‚ Market   â”‚  â”‚ Evidence â”‚  â”‚ User Activity     â”‚  â”‚
+â”‚  â”‚ Reader   â”‚  â”‚ Adapter  â”‚  â”‚ Consumer â”‚  â”‚ Stream (Kafka)    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚       â”‚              â”‚              â”‚                  â”‚           â”‚
+â”‚       â–¼              â–¼              â–¼                  â–¼           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚                    INPUT VALIDATION LAYER                      â”‚  â”‚
+â”‚  â”‚  Schema enforcement | Freshness checks | Anomaly detection   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                   â”‚
+                                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      COMPUTATION LAYER                              â”‚
+â”‚                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚                  PIPELINE ORCHESTRATOR                         â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚  â”‚
+â”‚  â”‚  â”‚ Real-timeâ”‚ â”‚ Daily    â”‚ â”‚ Weekly   â”‚ â”‚ Monthly        â”‚   â”‚  â”‚
+â”‚  â”‚  â”‚ Pipeline â”‚ â”‚ Pipeline â”‚ â”‚ Pipeline â”‚ â”‚ Pipeline       â”‚   â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚  â”‚
+â”‚  â”‚       â”‚             â”‚            â”‚                â”‚            â”‚  â”‚
+â”‚  â”‚       â–¼             â–¼            â–¼                â–¼            â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚              SCORING ENGINE                             â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚  Maturity â”‚ Gap â”‚ Career â”‚ Project â”‚ Market â”‚ Future   â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â”‚       â”‚             â”‚            â”‚                â”‚            â”‚  â”‚
+â”‚  â”‚       â–¼             â–¼            â–¼                â–¼            â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚           RECOMMENDATION FUSION ENGINE                  â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚  SkillFusion | TemporalFilter | ContextRank           â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚                  AI ENHANCEMENT LAYER                          â”‚  â”‚
+â”‚  â”‚  LLM-Assisted Scoring | Natural Language Explanations        â”‚  â”‚
+â”‚  â”‚  Pattern Discovery | Anomaly Investigation                   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                   â”‚
+                                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       OUTPUT LAYER                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ APIs     â”‚  â”‚ Events   â”‚  â”‚Cache     â”‚  â”‚ Persisted Results â”‚  â”‚
+â”‚  â”‚ (REST)   â”‚  â”‚ (Kafka)  â”‚  â”‚(Redis)   â”‚  â”‚ (PostgreSQL)      â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2b Intelligence Pipeline
@@ -147,9 +147,9 @@ graph TD
 | Principle | Rationale | Implementation |
 |---|---|---|
 | **Pipelines over monoliths** | Each intelligence capability has independent lifecycle, scaling, failure modes | Isolated pipeline stages with well-defined input/output contracts |
-| **Temporal first** | Skills intelligence is meaningless without time context — velocity, decay, trend are first-class | Every scoring function accepts a `reference_date` parameter; scores decay, grow, and trend over time |
+| **Temporal first** | Skills intelligence is meaningless without time context â€” velocity, decay, trend are first-class | Every scoring function accepts a `reference_date` parameter; scores decay, grow, and trend over time |
 | **Confidence-aware** | Every score includes uncertainty bounds based on data quality, recency, and signal strength | All outputs include `confidence_interval` and `data_freshness` metadata |
-| **Algorithmic base, AI enhancement** | Base layer must work without LLM; AI is additive for explanations, edge cases, pattern discovery | Two-phase scoring: deterministic → LLM enrichment (optional, configurable) |
+| **Algorithmic base, AI enhancement** | Base layer must work without LLM; AI is additive for explanations, edge cases, pattern discovery | Two-phase scoring: deterministic â†’ LLM enrichment (optional, configurable) |
 | **Incremental computation** | Full recomputation is expensive and unnecessary; only changed inputs trigger recalculations | Event-driven invalidation + incremental score updates with watermark tracking |
 | **Graceful degradation** | Every pipeline function has a fallback if upstream data is missing | Default values, skip-and-log, partial results with `completeness` indicator |
 | **Observability by default** | Every score must be explainable: "why this number?" should be traceable to input data | Audit trail with score provenance (which formula, which inputs, when computed) |
@@ -158,7 +158,7 @@ graph TD
 
 #### 1.4.1 Pipeline Orchestrator
 
-The orchestrator manages all pipeline execution — scheduling, dependency resolution, retry, and state persistence.
+The orchestrator manages all pipeline execution â€” scheduling, dependency resolution, retry, and state persistence.
 
 ```python
 class PipelineOrchestrator:
@@ -178,7 +178,7 @@ class PipelineOrchestrator:
     def register(self, stage: PipelineStage):
         """Register a pipeline stage with its dependencies."""
         self.registry[stage.name] = stage
-        # Validate DAG — detect cycles during registration
+        # Validate DAG â€” detect cycles during registration
         if not self._is_acyclic(stage.name):
             raise ValueError(
                 f"Registering '{stage.name}' would create a cycle in the pipeline DAG."
@@ -451,7 +451,7 @@ class ScoringEngine:
 
 #### 1.4.4 ScoreResult Data Model
 
-Every scoring function returns this structured result — enabling explainability, confidence-aware decisions, and audit trails.
+Every scoring function returns this structured result â€” enabling explainability, confidence-aware decisions, and audit trails.
 
 ```python
 @dataclass
@@ -570,24 +570,24 @@ class IntelligenceEventBus:
 
 ### 1.5 Integration with ARIA OS
 
-The intelligence engine is not a microservice — it runs **in-process within FastAPI** (per ADR-004), sharing the same event loop and database connections as the rest of ARIA OS.
+The intelligence engine is not a microservice â€” it runs **in-process within FastAPI** (per ADR-004), sharing the same event loop and database connections as the rest of ARIA OS.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      ARIA OS (FastAPI)                           │
-│                                                                  │
-│  ┌──────────┐  ┌────────────┐  ┌─────────────────────────────┐  │
-│  │ REST API │  │ ARIA Agent │  │ Skill Intelligence Engine   │  │
-│  │ (app/api)│  │ (orchestr.)│  │                             │  │
-│  └──────────┘  └────────────┘  │  PipelineOrchestrator       │  │
-│        │              │         │  ScoringEngine              │  │
-│        │              │         │  RecommendationEngine       │  │
-│        ▼              ▼         │  IntelligenceEventBus       │  │
-│  ┌─────────────────────────────────────┐                      │  │
-│  │      Shared Infrastructure          │                      │  │
-│  │  Neo4j Reader │ PG Pool │ Redis    │                      │  │
-│  └─────────────────────────────────────┘                      │  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      ARIA OS (FastAPI)                           â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ REST API â”‚  â”‚ ARIA Agent â”‚  â”‚ Skill Intelligence Engine   â”‚  â”‚
+â”‚  â”‚ (app/api)â”‚  â”‚ (orchestr.)â”‚  â”‚                             â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  PipelineOrchestrator       â”‚  â”‚
+â”‚        â”‚              â”‚         â”‚  ScoringEngine              â”‚  â”‚
+â”‚        â”‚              â”‚         â”‚  RecommendationEngine       â”‚  â”‚
+â”‚        â–¼              â–¼         â”‚  IntelligenceEventBus       â”‚  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                      â”‚  â”‚
+â”‚  â”‚      Shared Infrastructure          â”‚                      â”‚  â”‚
+â”‚  â”‚  Neo4j Reader â”‚ PG Pool â”‚ Redis    â”‚                      â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                      â”‚  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.6 Deployment Topology
@@ -621,7 +621,7 @@ The intelligence engine consumes **8 input streams**. Each stream has a defined 
 
 ### 2.2 Stream Schemas (Pydantic Models)
 
-#### S1 — User Skill Profile
+#### S1 â€” User Skill Profile
 
 ```python
 class UserSkillProfile(BaseModel):
@@ -689,7 +689,7 @@ class EvidenceItem(BaseModel):
     url: str | None = None
 ```
 
-#### S2 — Target Skills
+#### S2 â€” Target Skills
 
 ```python
 class TargetSkillSet(BaseModel):
@@ -719,7 +719,7 @@ class TargetSkill(BaseModel):
     updated_at: datetime
 ```
 
-#### S3 — Market Intelligence
+#### S3 â€” Market Intelligence
 
 ```python
 class MarketIntelligenceSnapshot(BaseModel):
@@ -747,7 +747,7 @@ class SkillMarketData(BaseModel):
     data_confidence: float = Field(ge=0.0, le=1.0)
 ```
 
-#### S4 — Dependency Graph (Subset)
+#### S4 â€” Dependency Graph (Subset)
 
 ```python
 class DependencySubgraph(BaseModel):
@@ -774,7 +774,7 @@ class DependencyEdge(BaseModel):
     weight: float = Field(default=1.0, ge=0.0, le=1.0)
 ```
 
-#### S5 — Evidence & Assessments
+#### S5 â€” Evidence & Assessments
 
 ```python
 class EvidenceAggregate(BaseModel):
@@ -798,7 +798,7 @@ class AssessmentResult(BaseModel):
     metadata: dict = {}
 ```
 
-#### S6 — Project / Roadmap
+#### S6 â€” Project / Roadmap
 
 ```python
 class ProjectPortfolio(BaseModel):
@@ -826,7 +826,7 @@ class RequiredSkill(BaseModel):
     criticality_weight: float = Field(ge=0.0, le=1.0)
 ```
 
-#### S7 — Opportunity Data
+#### S7 â€” Opportunity Data
 
 ```python
 class OpportunitySet(BaseModel):
@@ -846,7 +846,7 @@ class OpportunitySkillRequirements(BaseModel):
     location: str | None = None
 ```
 
-#### S8 — Temporal Snapshots
+#### S8 â€” Temporal Snapshots
 
 ```python
 class TemporalSnapshotSet(BaseModel):
@@ -983,7 +983,7 @@ The intelligence engine produces **9 output artifacts**. Each artifact is a stru
 
 ### 3.2 Output Schemas
 
-#### O1 — Skill Maturity Report
+#### O1 â€” Skill Maturity Report
 
 ```python
 class SkillMaturityReport(BaseModel):
@@ -1052,7 +1052,7 @@ class MaturityTrendSummary(BaseModel):
     net_maturity_change: float  # Overall change this period
 ```
 
-#### O2 — Gap Analysis Report
+#### O2 â€” Gap Analysis Report
 
 ```python
 class GapAnalysisReport(BaseModel):
@@ -1105,7 +1105,7 @@ class GapSummary(BaseModel):
     top_priority_gaps: list[str]  # Top 5 skill names by priority_score
 ```
 
-#### O3 — Career Readiness Scorecard
+#### O3 â€” Career Readiness Scorecard
 
 ```python
 class CareerReadinessScorecard(BaseModel):
@@ -1146,7 +1146,7 @@ class CareerReadinessRecommendation(BaseModel):
     reasoning: str
 ```
 
-#### O4 — Project Readiness Scorecard
+#### O4 â€” Project Readiness Scorecard
 
 ```python
 class ProjectReadinessScorecard(BaseModel):
@@ -1173,7 +1173,7 @@ class ProjectReadiness(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
 ```
 
-#### O5 — Market Alignment Report
+#### O5 â€” Market Alignment Report
 
 ```python
 class MarketAlignmentReport(BaseModel):
@@ -1203,7 +1203,7 @@ class CategoryAlignment(BaseModel):
     skills_in_category: int
 ```
 
-#### O6 — Future Relevance Forecast
+#### O6 â€” Future Relevance Forecast
 
 ```python
 class FutureRelevanceForecast(BaseModel):
@@ -1242,7 +1242,7 @@ class SkillProjection(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
 ```
 
-#### O7 — Recommendation Set
+#### O7 â€” Recommendation Set
 
 ```python
 class RecommendationSet(BaseModel):
@@ -1294,7 +1294,7 @@ class RecommendationMetadata(BaseModel):
     execution_time_ms: int
 ```
 
-#### O8 — Trend Alert
+#### O8 â€” Trend Alert
 
 ```python
 class TrendAlert(BaseModel):
@@ -1313,12 +1313,12 @@ class TrendAlert(BaseModel):
     metadata: dict = {}
 ```
 
-#### O9 — Inflation Detection Report
+#### O9 â€” Inflation Detection Report
 
 ```python
 class InflationDetectionReport(BaseModel):
     """
-    Detects skill level inflation — when claimed levels exceed
+    Detects skill level inflation â€” when claimed levels exceed
     evidence-backed levels. Provides correction recommendations.
     """
     user_id: str
@@ -1370,7 +1370,7 @@ class OutputDispatcher:
     async def dispatch(self, artifact_name: str, payload: BaseModel):
         """
         Dispatch an output artifact to all configured channels.
-        Idempotent — redis cache prevents duplicate dispatch.
+        Idempotent â€” redis cache prevents duplicate dispatch.
         """
         dispatch_key = f"dispatch:{artifact_name}:{self._hash_payload(payload)}"
 
@@ -1533,7 +1533,7 @@ class ScoringFunction(ABC):
 | F7 | `outdated_detection` | UserSkillProfile + MarketIntelligence | Outdated probability | Which of my skills are declining? |
 | F8 | `emerging_detection` | MarketIntelligence + TrendHistory | Emerging signal | Which new skills should I watch? |
 
-### 4.3 F1 — Skill Maturity Scoring
+### 4.3 F1 â€” Skill Maturity Scoring
 
 **Purpose:** Quantify how mature each skill is, combining level, confidence, evidence quality, recency, and consistency into a single score with trend.
 
@@ -1582,19 +1582,19 @@ def recency_decay_curve(
     elif days_since <= 7:
         return 100.0
     elif days_since <= 30:
-        # Linear decay: 100 → 90
+        # Linear decay: 100 â†’ 90
         return 100.0 - (days_since - 7) / 23 * 10.0
     elif days_since <= 90:
-        # Linear decay: 90 → 60
+        # Linear decay: 90 â†’ 60
         return 90.0 - (days_since - 30) / 60 * 30.0
     elif days_since <= 180:
-        # Linear decay: 60 → 30
+        # Linear decay: 60 â†’ 30
         return 60.0 - (days_since - 90) / 90 * 30.0
     elif days_since <= 365:
-        # Linear decay: 30 → 10
+        # Linear decay: 30 â†’ 10
         return 30.0 - (days_since - 180) / 185 * 20.0
     else:
-        # Asymptotic decay: 10 → 0
+        # Asymptotic decay: 10 â†’ 0
         return 10.0 * math.exp(-(days_since - 365) / 180)
 ```
 
@@ -1695,7 +1695,7 @@ class MaturityTrendDetector:
 ```python
 class SkillMaturityScorer(ScoringFunction):
     """
-    F1 — Skill Maturity Scoring.
+    F1 â€” Skill Maturity Scoring.
     Combines level, confidence, evidence, recency, and consistency.
     """
 
@@ -1829,7 +1829,7 @@ class SkillMaturityScorer(ScoringFunction):
         )
 ```
 
-### 4.4 F2 — Gap Analysis Scoring
+### 4.4 F2 â€” Gap Analysis Scoring
 
 **Purpose:** Quantify gaps between current and target skills. Ranks gaps by severity, priority, and estimated time to close.
 
@@ -1853,7 +1853,7 @@ Default weights: w_size=0.35, w_severity=0.30, w_prerequisites=0.20, w_urgency=0
 ```python
 class GapAnalysisScorer(ScoringFunction):
     """
-    F2 — Gap Analysis Scoring.
+    F2 â€” Gap Analysis Scoring.
     Analyzes gaps between current and target skills.
     """
 
@@ -2001,7 +2001,7 @@ class GapAnalysisScorer(ScoringFunction):
         self, target_skill_id: str, current_skills: dict[str, UserSkill],
         dep_graph: dict
     ) -> tuple[float, list[dict]]:
-        """Compute prerequisite burden — how many missing prerequisites exist."""
+        """Compute prerequisite burden â€” how many missing prerequisites exist."""
         # This would query the dependency graph to find all DEPENDS_ON paths
         # and check which prerequisites the user doesn't have
         missing = []
@@ -2053,7 +2053,7 @@ class GapAnalysisScorer(ScoringFunction):
         return round(base_time + prereq_time, 1)
 ```
 
-### 4.5 F3 — Career Readiness Scoring
+### 4.5 F3 â€” Career Readiness Scoring
 
 **Purpose:** Calculate readiness for each career target. Aggregates gap scores across all skills required for a target role.
 
@@ -2077,7 +2077,7 @@ Default weights: w_coverage=0.40, w_level=0.25, w_growth=0.20, w_interest=0.15
 ```python
 class CareerReadinessScorer(ScoringFunction):
     """
-    F3 — Career Readiness Scoring.
+    F3 â€” Career Readiness Scoring.
     Multi-target readiness with skill coverage, level match, and growth potential.
     """
 
@@ -2209,7 +2209,7 @@ class CareerReadinessScorer(ScoringFunction):
         )
 ```
 
-### 4.6 F4 — Project Readiness Scoring
+### 4.6 F4 â€” Project Readiness Scoring
 
 **Purpose:** Calculate how ready a user is for a specific project by comparing their skill profile against the project's requirements.
 
@@ -2231,7 +2231,7 @@ Default weights: w_required=0.60, w_preferred=0.30, w_complexity=0.10
 ```python
 class ProjectReadinessScorer(ScoringFunction):
     """
-    F4 — Project Readiness Scoring.
+    F4 â€” Project Readiness Scoring.
     Matches user skills against project requirements.
     """
 
@@ -2341,7 +2341,7 @@ class ProjectReadinessScorer(ScoringFunction):
         )
 ```
 
-### 4.7 F5 — Market Alignment Scoring
+### 4.7 F5 â€” Market Alignment Scoring
 
 **Purpose:** Measure how well a user's skill portfolio aligns with current and projected market demand.
 
@@ -2365,7 +2365,7 @@ Default weights: w_demand=0.30, w_growth=0.25, w_salary=0.20, w_diversification=
 ```python
 class MarketAlignmentScorer(ScoringFunction):
     """
-    F5 — Market Alignment Scoring.
+    F5 â€” Market Alignment Scoring.
     Portfolio-level alignment with market demand, growth, salary, and diversification.
     """
 
@@ -2497,7 +2497,7 @@ class MarketAlignmentScorer(ScoringFunction):
         )
 ```
 
-### 4.8 F6 — Future Relevance Scoring
+### 4.8 F6 â€” Future Relevance Scoring
 
 **Purpose:** Project the future relevance of each skill (and the overall portfolio) over 1-year, 3-year, and 5-year horizons.
 
@@ -2523,7 +2523,7 @@ Default weights: w_growth=0.35, w_adoption=0.25, w_innovation=0.20, w_ecosystem=
 ```python
 class FutureRelevanceScorer(ScoringFunction):
     """
-    F6 — Future Relevance Scoring.
+    F6 â€” Future Relevance Scoring.
     Projects skill relevance across 1, 3, and 5 year horizons.
     """
 
@@ -2677,9 +2677,9 @@ class FutureRelevanceScorer(ScoringFunction):
             return "volatile"
 ```
 
-### 4.9 F7 — Outdated Skill Detection
+### 4.9 F7 â€” Outdated Skill Detection
 
-**Purpose:** Detect skills that are becoming outdated — either because the user hasn't used them (recency decay) or because the market is moving away from them (market decline). A dual-signal detector.
+**Purpose:** Detect skills that are becoming outdated â€” either because the user hasn't used them (recency decay) or because the market is moving away from them (market decline). A dual-signal detector.
 
 **Formula:**
 
@@ -2703,7 +2703,7 @@ Thresholds: recency=180 days, market_decline=-20%, velocity=-0.5 levels/quarter
 ```python
 class OutdatedSkillDetector(ScoringFunction):
     """
-    F7 — Outdated Skill Detection.
+    F7 â€” Outdated Skill Detection.
     Dual-signal detector combining recency decay with market decline.
     """
 
@@ -2839,9 +2839,9 @@ class OutdatedSkillDetector(ScoringFunction):
         return 1.0 / (1.0 + math.exp(-steepness * x))
 ```
 
-### 4.10 F8 — Emerging Skill Detection
+### 4.10 F8 â€” Emerging Skill Detection
 
-**Purpose:** Detect skills that are gaining market traction — to recommend as "watch" or "learn next" targets.
+**Purpose:** Detect skills that are gaining market traction â€” to recommend as "watch" or "learn next" targets.
 
 **Formula:**
 
@@ -2865,7 +2865,7 @@ Default weights: w_growth=0.35, w_adoption=0.30, w_community=0.20, w_ecosystem=0
 ```python
 class EmergingSkillDetector(ScoringFunction):
     """
-    F8 — Emerging Skill Detection.
+    F8 â€” Emerging Skill Detection.
     Detects skills gaining market traction.
     """
 
@@ -3013,7 +3013,7 @@ class EmergingSkillDetector(ScoringFunction):
         Uses linear regression slope over last 90 days.
         """
         if len(history) < 2:
-            # Insufficient history — use current demand as weak signal
+            # Insufficient history â€” use current demand as weak signal
             return min(50.0, current_demand * 0.5)
 
         # Use last 3 data points (approximately 90 days)
@@ -3069,30 +3069,30 @@ The intelligence engine operates **6 pipelines** on different cadences. Each pip
 
 ```
 TIME SCALE          PIPELINE               STAGES                                OUTPUTS
-──────────          ────────               ──────                                ───────
-Real-time    ───  real_time        ───  maturity_update                           SkillMaturityReport
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€          â”€â”€â”€â”€â”€â”€â”€â”€               â”€â”€â”€â”€â”€â”€                                â”€â”€â”€â”€â”€â”€â”€
+Real-time    â”€â”€â”€  real_time        â”€â”€â”€  maturity_update                           SkillMaturityReport
 (event-driven)                       gap_check_on_target_add                      GapAnalysisReport
                                       project_readiness_on_change                 ProjectReadinessScorecard
 
-Daily        ───  daily             ───  recency_decay_update                     MaturityTrendUpdate
+Daily        â”€â”€â”€  daily             â”€â”€â”€  recency_decay_update                     MaturityTrendUpdate
                                       market_data_sync                            MarketDataFreshness
                                       emerging_skill_scan                         TrendAlert (if new)
 
-Weekly       ───  weekly            ───  learning_velocity_analysis               LearningVelocityReport
+Weekly       â”€â”€â”€  weekly            â”€â”€â”€  learning_velocity_analysis               LearningVelocityReport
                                       career_readiness_recalc                     CareerReadinessScorecard
                                       market_alignment_recalc                     MarketAlignmentReport
                                       recommendation_generation                  RecommendationSet
 
-Monthly      ───  monthly           ───  future_relevance_forecast                FutureRelevanceForecast
+Monthly      â”€â”€â”€  monthly           â”€â”€â”€  future_relevance_forecast                FutureRelevanceForecast
                                       portfolio_health_assessment                InflationDetectionReport
                                       kpi_calculation                             KPI Dashboard
                                       full_intelligence_report                    Full Report
 
-Quarterly    ───  quarterly         ───  deep_calibration_audit                   CalibrationAudit
+Quarterly    â”€â”€â”€  quarterly         â”€â”€â”€  deep_calibration_audit                   CalibrationAudit
                                       bias_detection_scan                         BiasReport
                                       model_retraining                            Updated Models
 
-On-demand    ───  on_demand         ───  gap_analysis_requested                   GapAnalysisReport
+On-demand    â”€â”€â”€  on_demand         â”€â”€â”€  gap_analysis_requested                   GapAnalysisReport
                                       project_readiness_requested                 ProjectReadinessScorecard
                                       career_readiness_requested                  CareerReadinessScorecard
 ```
@@ -3413,7 +3413,7 @@ Runs every Sunday evening. Full intelligence refresh: learning velocity, career 
 class WeeklyPipeline:
     """
     Weekly intelligence pipeline.
-    The most comprehensive regular pipeline — generates all core intelligence artifacts.
+    The most comprehensive regular pipeline â€” generates all core intelligence artifacts.
     """
 
     def __init__(self, scoring_engine: ScoringEngine, orchestrator: PipelineOrchestrator):
@@ -3563,7 +3563,7 @@ class WeeklyPipeline:
                         skill_name=t.get("target_title", ""),
                         target_title=t.get("target_type", ""),
                         impact="high" if t.get("readiness_score", 100) < 40 else "medium",
-                        reasoning=f"Readiness score of {t.get('readiness_score', 0):.0f}% — needs {t.get('missing_skills_count', 0)} additional skills.",
+                        reasoning=f"Readiness score of {t.get('readiness_score', 0):.0f}% â€” needs {t.get('missing_skills_count', 0)} additional skills.",
                     )
                     for t in targets_data if t.get("readiness_score", 100) < 60
                 ],
@@ -3634,7 +3634,7 @@ class MonthlyPipeline:
     async def _detect_skill_inflation(self, tenant_id: str, reference_date: datetime):
         """
         Detect skill level inflation across all users.
-        Uses 5 signals from skills.md §29.7.
+        Uses 5 signals from skills.md Â§29.7.
         """
         self.logger.info("Detecting skill inflation", tenant=tenant_id)
 
@@ -3839,7 +3839,7 @@ class PipelineScheduler:
 
 ### 5.5 Idempotency & Incremental Processing
 
-Every pipeline stage must be **idempotent** — running it twice with the same inputs produces the same outputs. This enables safe retries.
+Every pipeline stage must be **idempotent** â€” running it twice with the same inputs produces the same outputs. This enables safe retries.
 
 ```python
 class IdempotencyGuard:
@@ -3895,45 +3895,45 @@ class IdempotencyGuard:
 The recommendation system is the **highest-value output** of the intelligence engine. It fuses signals from all 8 scoring models into personalized, actionable recommendations.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     RECOMMENDATION ENGINE                        │
-│                                                                  │
-│  INPUTS                                                          │
-│  ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │
-│  │Maturity │ │  Gap     │ │  Career  │ │  Market  │ │ Future │ │
-│  │ Scores  │ │ Analysis │ │Readiness │ │Alignment │ │Relevance│ │
-│  └────┬────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └───┬────┘ │
-│       │           │            │             │            │      │
-│       ▼           ▼            ▼             ▼            ▼      │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │                    FUSION ENGINE                             │  │
-│  │                                                             │  │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐  │  │
-│  │  │ Weighted     │  │ Temporal     │  │ Contextual      │  │  │
-│  │  │ Fusion Layer │ →│ Filter Layer │ →│ Ranking Layer   │  │  │
-│  │  └──────────────┘  └──────────────┘  └─────────────────┘  │  │
-│  │                                                             │  │
-│  │  5 recommendation types × 5 sources × configurable weights │  │
-│  └────────────────────────────────────────────────────────────┘  │
-│       │                                                          │
-│       ▼                                                          │
-│  ┌────────────────────────────────────────────────────────────┐  │
-│  │                    OUTPUT GENERATOR                          │  │
-│  │  RecommendationSet with priority scores, rationales,        │  │
-│  │  source breakdowns, and expected impacts                    │  │
-│  └────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     RECOMMENDATION ENGINE                        â”‚
+â”‚                                                                  â”‚
+â”‚  INPUTS                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚Maturity â”‚ â”‚  Gap     â”‚ â”‚  Career  â”‚ â”‚  Market  â”‚ â”‚ Future â”‚ â”‚
+â”‚  â”‚ Scores  â”‚ â”‚ Analysis â”‚ â”‚Readiness â”‚ â”‚Alignment â”‚ â”‚Relevanceâ”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”¬â”€â”€â”€â”€â”˜ â”‚
+â”‚       â”‚           â”‚            â”‚             â”‚            â”‚      â”‚
+â”‚       â–¼           â–¼            â–¼             â–¼            â–¼      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚                    FUSION ENGINE                             â”‚  â”‚
+â”‚  â”‚                                                             â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”‚
+â”‚  â”‚  â”‚ Weighted     â”‚  â”‚ Temporal     â”‚  â”‚ Contextual      â”‚  â”‚  â”‚
+â”‚  â”‚  â”‚ Fusion Layer â”‚ â†’â”‚ Filter Layer â”‚ â†’â”‚ Ranking Layer   â”‚  â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚
+â”‚  â”‚                                                             â”‚  â”‚
+â”‚  â”‚  5 recommendation types Ã— 5 sources Ã— configurable weights â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚       â”‚                                                          â”‚
+â”‚       â–¼                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚                    OUTPUT GENERATOR                          â”‚  â”‚
+â”‚  â”‚  RecommendationSet with priority scores, rationales,        â”‚  â”‚
+â”‚  â”‚  source breakdowns, and expected impacts                    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 6.2 Recommendation Types
 
 | Type | Code | Description | Example |
 |---|---|---|---|
-| **Learn** | `learn` | Acquire a new skill not currently in profile | "Learn LangChain — prerequisite for AI Engineer target" |
-| **Improve** | `improve` | Level up an existing skill | "Improve TypeScript from L3 to L4 — 2 levels below target" |
-| **Drop** | `drop` | Deprioritize a declining or non-strategic skill | "Deprioritize jQuery — market demand declined 45% YoY" |
-| **Emerging** | `emerging` | Watch or learn an emerging market skill | "Explore Rust — emerging with 80% growth velocity" |
-| **Opportunity** | `opportunity_readiness` | Prepare for a specific career opportunity | "Build Kubernetes skills — Senior DevOps role requires L4" |
+| **Learn** | `learn` | Acquire a new skill not currently in profile | "Learn LangChain â€” prerequisite for AI Engineer target" |
+| **Improve** | `improve` | Level up an existing skill | "Improve TypeScript from L3 to L4 â€” 2 levels below target" |
+| **Drop** | `drop` | Deprioritize a declining or non-strategic skill | "Deprioritize jQuery â€” market demand declined 45% YoY" |
+| **Emerging** | `emerging` | Watch or learn an emerging market skill | "Explore Rust â€” emerging with 80% growth velocity" |
+| **Opportunity** | `opportunity_readiness` | Prepare for a specific career opportunity | "Build Kubernetes skills â€” Senior DevOps role requires L4" |
 
 ### 6.3 Fusion Engine
 
@@ -3947,7 +3947,7 @@ class RecommendationFusionEngine:
     user history, and peer patterns into prioritized recommendations.
     """
 
-    # Default source weights (from skills.md §20)
+    # Default source weights (from skills.md Â§20)
     DEFAULT_SOURCE_WEIGHTS = {
         "career_targets": 0.35,
         "market_intelligence": 0.25,
@@ -4049,7 +4049,7 @@ class RecommendationFusionEngine:
         # 3. Adjust weights based on strategy
         weights = self._resolve_weights(strategy)
 
-        # 4. Fuse — compute priority score for each candidate
+        # 4. Fuse â€” compute priority score for each candidate
         fused = self._fuse_candidates(candidates, weights, reference_date)
 
         # 5. Apply temporal filters
@@ -4125,7 +4125,7 @@ class RecommendationFusionEngine:
                 confidence=0.8,  # High confidence for explicit career targets
                 rationale=f"{'Improve' if skill_exists else 'Learn'} {target.skill_name} "
                           f"for {target.target_type} target "
-                          f"(L{target.current_level_numeric} → L{target.target_level_numeric}, "
+                          f"(L{target.current_level_numeric} â†’ L{target.target_level_numeric}, "
                           f"gap: {target.gap} levels)",
                 prerequisites=[],
                 estimated_time=f"{max(1, int(target.gap * 2))}-{max(2, int(target.gap * 3))} weeks",
@@ -4213,7 +4213,7 @@ class RecommendationFusionEngine:
                         source_weight=self.DEFAULT_SOURCE_WEIGHTS["skill_graph"],
                         base_priority=90.0,  # Prerequisites get high priority
                         confidence=0.9,
-                        rationale=f"Prerequisite for {target.skill_name} — must learn before target.",
+                        rationale=f"Prerequisite for {target.skill_name} â€” must learn before target.",
                         prerequisites=[],
                         estimated_time="2-4 weeks",
                         expected_impact_type="career",
@@ -4230,7 +4230,7 @@ class RecommendationFusionEngine:
     ) -> list[CandidateRecommendation]:
         """
         Fuse candidates by computing multi-source priority score.
-        A skill may appear from multiple sources — its final priority
+        A skill may appear from multiple sources â€” its final priority
         is the weighted sum of all source contributions.
         """
         # Group by skill_name + recommendation_type
@@ -4244,7 +4244,7 @@ class RecommendationFusionEngine:
                 existing.base_priority = max(existing.base_priority, candidate.base_priority)
                 existing.confidence = max(existing.confidence, candidate.confidence)
                 existing.source_weight += candidate.source_weight
-                existing.rationale += f" | Also from {candidate.source}: {candidate.rationale.split('—')[-1].strip()}"
+                existing.rationale += f" | Also from {candidate.source}: {candidate.rationale.split('â€”')[-1].strip()}"
             else:
                 grouped[key] = candidate
 
@@ -4463,9 +4463,9 @@ class ColdStartStrategy:
 
 | Strategy | Use Case | Weight Shift |
 |---|---|---|
-| `balanced` | Default — general purpose | Standard weights |
-| `career_focused` | User has clear career targets | Career targets: 35% → 50% |
-| `market_focused` | User wants market-driven suggestions | Market intelligence: 25% → 45% |
+| `balanced` | Default â€” general purpose | Standard weights |
+| `career_focused` | User has clear career targets | Career targets: 35% â†’ 50% |
+| `market_focused` | User wants market-driven suggestions | Market intelligence: 25% â†’ 45% |
 | `rapid_growth` | User wants to maximize skill acquisition speed | Market + History boosted |
 | `curriculum` | User following a structured learning path | Skill graph + prerequisites boosted |
 
@@ -4545,7 +4545,7 @@ class RecommendationFeedbackLoop:
 
 ### 7.1 AI Integration Architecture
 
-The intelligence engine is **algorithmic-first** — all core scoring functions work without AI. The AI layer enhances specific workflows where LLM capabilities add unique value:
+The intelligence engine is **algorithmic-first** â€” all core scoring functions work without AI. The AI layer enhances specific workflows where LLM capabilities add unique value:
 
 | Workflow | AI Role | Without AI | With AI |
 |---|---|---|---|
@@ -4561,7 +4561,7 @@ The intelligence engine is **algorithmic-first** — all core scoring functions 
 class IntelligenceAIEnhancer:
     """
     AI enhancement layer for the intelligence engine.
-    All methods have algorithmic fallbacks — AI is additive, not required.
+    All methods have algorithmic fallbacks â€” AI is additive, not required.
     """
 
     def __init__(self, config: AIEnhancerConfig):
@@ -4644,7 +4644,7 @@ class IntelligenceAIEnhancer:
                        f"Advancing this skill unlocks new opportunities in {recommendation.category}.",
             "drop": f"Consider deprioritizing {recommendation.skill_name}. "
                     f"Market signals indicate declining relevance for your current career trajectory.",
-            "emerging": f"Explore {recommendation.skill_name} — an emerging skill with strong market growth. "
+            "emerging": f"Explore {recommendation.skill_name} â€” an emerging skill with strong market growth. "
                         f"Early adoption positions you ahead of the curve in {recommendation.category}.",
             "opportunity_readiness": f"Build {recommendation.skill_name} to qualify for a specific opportunity. "
                                      f"This skill is required for your target career path.",
@@ -4732,7 +4732,7 @@ class AnomalyInvestigator:
                     )
                     if s_before and s_before.maturity_score != s_after.maturity_score:
                         changes.append(
-                            f"{s_after.name}: {s_before.maturity_score:.1f} → {s_after.maturity_score:.1f}"
+                            f"{s_after.name}: {s_before.maturity_score:.1f} â†’ {s_after.maturity_score:.1f}"
                         )
 
             user_prompt = f"""
@@ -4934,26 +4934,26 @@ The intelligence engine must be continuously evaluated to ensure accuracy, fairn
 
 ```
 LEVEL 1: ACCURACY (offline)
-  ┌──────────────────────────────────────────────────┐
-  │  Historical replay → precision/recall@k          │
-  │  Score calibration → predicted vs actual         │
-  │  Ranking quality → NDCG, MAP                     │
-  └──────────────────────────────────────────────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚  Historical replay â†’ precision/recall@k          â”‚
+  â”‚  Score calibration â†’ predicted vs actual         â”‚
+  â”‚  Ranking quality â†’ NDCG, MAP                     â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 LEVEL 2: USER FEEDBACK (online)
-  ┌──────────────────────────────────────────────────┐
-  │  Recommendation acceptance rate                  │
-  │  User satisfaction surveys (NPS)                 │
-  │  Time-to-value metrics                           │
-  └──────────────────────────────────────────────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚  Recommendation acceptance rate                  â”‚
+  â”‚  User satisfaction surveys (NPS)                 â”‚
+  â”‚  Time-to-value metrics                           â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 LEVEL 3: BUSINESS IMPACT (quarterly)
-  ┌──────────────────────────────────────────────────┐
-  │  Career progression velocity                     │
-  │  Skill portfolio diversification                 │
-  │  Learning velocity improvement                   │
-  │  Org readiness score change                      │
-  └──────────────────────────────────────────────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚  Career progression velocity                     â”‚
+  â”‚  Skill portfolio diversification                 â”‚
+  â”‚  Learning velocity improvement                   â”‚
+  â”‚  Org readiness score change                      â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 8.2 Offline Evaluation Harness
@@ -5407,34 +5407,34 @@ The intelligence engine exposes 4 monitoring surfaces:
 
 ```
 MONITORING ARCHITECTURE
-┌─────────────────────────────────────────────────────────────┐
-│                   COLLECTION LAYER                           │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐   │
-│  │ Pipeline    │ │ Score       │ │ Infrastructure     │   │
-│  │ Metrics     │ │ Metrics     │ │ Metrics (CPU, mem,  │   │
-│  │ (timing,    │ │ (drift,     │ │  connections, rate) │   │
-│  │  failures)  │ │  freshness) │ │                     │   │
-│  └─────────────┘ └─────────────┘ └─────────────────────┘   │
-│                          │                                  │
-│                          ▼                                  │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │                    STORAGE                          │    │
-│  │  Prometheus (metrics) | ELK (logs) | PostgreSQL    │    │
-│  └────────────────────────────────────────────────────┘    │
-│                          │                                  │
-│                          ▼                                  │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │                    ALERTING                          │    │
-│  │  Grafana | PagerDuty | Webhook | Slack              │    │
-│  └────────────────────────────────────────────────────┘    │
-│                          │                                  │
-│                          ▼                                  │
-│  ┌────────────────────────────────────────────────────┐    │
-│  │                    DASHBOARDS                        │    │
-│  │  Pipeline Health | Score Drift | KPI Dashboard      │    │
-│  │  User Intelligence | Cost & Usage                   │    │
-│  └────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   COLLECTION LAYER                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Pipeline    â”‚ â”‚ Score       â”‚ â”‚ Infrastructure     â”‚   â”‚
+â”‚  â”‚ Metrics     â”‚ â”‚ Metrics     â”‚ â”‚ Metrics (CPU, mem,  â”‚   â”‚
+â”‚  â”‚ (timing,    â”‚ â”‚ (drift,     â”‚ â”‚  connections, rate) â”‚   â”‚
+â”‚  â”‚  failures)  â”‚ â”‚  freshness) â”‚ â”‚                     â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                          â”‚                                  â”‚
+â”‚                          â–¼                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚                    STORAGE                          â”‚    â”‚
+â”‚  â”‚  Prometheus (metrics) | ELK (logs) | PostgreSQL    â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚                          â”‚                                  â”‚
+â”‚                          â–¼                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚                    ALERTING                          â”‚    â”‚
+â”‚  â”‚  Grafana | PagerDuty | Webhook | Slack              â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚                          â”‚                                  â”‚
+â”‚                          â–¼                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚                    DASHBOARDS                        â”‚    â”‚
+â”‚  â”‚  Pipeline Health | Score Drift | KPI Dashboard      â”‚    â”‚
+â”‚  â”‚  User Intelligence | Cost & Usage                   â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 9.2 Pipeline Health Monitoring
@@ -5586,11 +5586,11 @@ class ScoreDriftDetector:
 | Alert | Condition | Severity | Action | Channel |
 |---|---|---|---|---|
 | PipelineFailure | Pipeline stage fails > 3 times in 1 hour | Critical | Page on-call engineer | PagerDuty + Slack |
-| DataStaleness | Input stream age > 2× SLA | Warning | Auto-retry, notify data team | Slack |
+| DataStaleness | Input stream age > 2Ã— SLA | Warning | Auto-retry, notify data team | Slack |
 | ScoreDrift | Score changes > threshold in 7 days | Warning | Log investigation ticket | Slack |
 | PrecisionDrop | Precision@3 < 0.20 in weekly eval | Critical | Block deployments, rollback model | PagerDuty + Email |
 | BiasDetected | Bias finding with severity=high | Critical | Ethics review, escalate | Email + Slack |
-| CostAnomaly | AI tokens/daily > 2× budget | Warning | Investigate usage pattern | Slack |
+| CostAnomaly | AI tokens/daily > 2Ã— budget | Warning | Investigate usage pattern | Slack |
 | UserSatisfactionDrop | NPS < 20 | Critical | Product review | Email + Slack |
 
 ### 9.5 Dashboards
@@ -5601,7 +5601,7 @@ class DashboardDefinitions:
 
     # Dashboard: Pipeline Health
     PIPELINE_HEALTH = {
-        "title": "Skill Intelligence — Pipeline Health",
+        "title": "Skill Intelligence â€” Pipeline Health",
         "panels": [
             {"title": "Pipeline Execution Duration (p95)", "type": "timeseries"},
             {"title": "Stage Failure Rate", "type": "stat"},
@@ -5613,7 +5613,7 @@ class DashboardDefinitions:
 
     # Dashboard: Score Drift
     SCORE_DRIFT = {
-        "title": "Skill Intelligence — Score Drift",
+        "title": "Skill Intelligence â€” Score Drift",
         "panels": [
             {"title": "Average Maturity Score (7d window)", "type": "timeseries"},
             {"title": "Score Distribution (violin)", "type": "candlestick"},
@@ -5624,7 +5624,7 @@ class DashboardDefinitions:
 
     # Dashboard: Business KPIs
     BUSINESS_KPIS = {
-        "title": "Skill Intelligence — Business KPIs",
+        "title": "Skill Intelligence â€” Business KPIs",
         "panels": [
             {"title": "Recommendation Acceptance Rate", "type": "timeseries"},
             {"title": "Average Career Readiness", "type": "gauge"},
@@ -5642,7 +5642,7 @@ class DashboardDefinitions:
 
 ### 1. DETECT
 - Alert fires: "PipelineFailure" with pipeline name and stage
-- Check: Grafana dashboard "Pipeline Health" → "Stage Failure Rate"
+- Check: Grafana dashboard "Pipeline Health" â†’ "Stage Failure Rate"
 
 ### 2. TRIAGE
 - Check pipeline logs in ELK: `pipeline=<name> AND stage=<stage> AND status=failed`
@@ -5702,7 +5702,7 @@ Every intelligence event emits a structured log:
 
 ### 10.1 KPI Framework
 
-The intelligence engine tracks **12 enterprise KPIs**, extending and specializing the 12 KPIs defined in `skills.md §32.2`. Each KPI has: formula, target, measurement frequency, data source, owner, and action trigger.
+The intelligence engine tracks **12 enterprise KPIs**, extending and specializing the 12 KPIs defined in `skills.md Â§32.2`. Each KPI has: formula, target, measurement frequency, data source, owner, and action trigger.
 
 | # | KPI | Formula | Target | Frequency | Owner |
 |---|---|---|---|---|---|
@@ -5890,13 +5890,13 @@ class KPIGate:
             if change_pct < -self.MAX_REGRESSION_PCT:
                 errors.append(
                     f"{kpi_id} ({candidate.name}): regressed {change_pct:.1f}% "
-                    f"({baseline.value:.2f} → {candidate.value:.2f}). "
+                    f"({baseline.value:.2f} â†’ {candidate.value:.2f}). "
                     f"Max allowed regression: {self.MAX_REGRESSION_PCT}%"
                 )
             elif change_pct > 0:
                 improvements.append(
                     f"{kpi_id} ({candidate.name}): improved {change_pct:.1f}% "
-                    f"({baseline.value:.2f} → {candidate.value:.2f})"
+                    f"({baseline.value:.2f} â†’ {candidate.value:.2f})"
                 )
 
         return GateResult(
@@ -5914,18 +5914,18 @@ class KPIGate:
 
 | KPI | Product Manager | Data Science | Engineering | Leadership |
 |---|---|---|---|---|
-| K1: Recommendation Acceptance | ✅ Primary | ✅ | | ✅ |
-| K2: Precision@3 | | ✅ Primary | | |
-| K3: Avg Career Readiness | ✅ Primary | ✅ | | ✅ |
-| K4: Skill Coverage Growth | ✅ Primary | | | ✅ |
-| K5: Learning Velocity | ✅ Primary | ✅ | | |
-| K6: Intelligence Freshness | | | ✅ Primary | |
-| K7: Data Completeness | | | ✅ Primary | |
-| K8: Pipeline Reliability | | | ✅ Primary | |
-| K9: Calibration Error | | ✅ Primary | | |
-| K10: Inflation Rate | ✅ | ✅ | | ✅ Primary |
-| K11: Time-to-Value | ✅ Primary | | | ✅ |
-| K12: User NPS | ✅ Primary | | | ✅ |
+| K1: Recommendation Acceptance | âœ… Primary | âœ… | | âœ… |
+| K2: Precision@3 | | âœ… Primary | | |
+| K3: Avg Career Readiness | âœ… Primary | âœ… | | âœ… |
+| K4: Skill Coverage Growth | âœ… Primary | | | âœ… |
+| K5: Learning Velocity | âœ… Primary | âœ… | | |
+| K6: Intelligence Freshness | | | âœ… Primary | |
+| K7: Data Completeness | | | âœ… Primary | |
+| K8: Pipeline Reliability | | | âœ… Primary | |
+| K9: Calibration Error | | âœ… Primary | | |
+| K10: Inflation Rate | âœ… | âœ… | | âœ… Primary |
+| K11: Time-to-Value | âœ… Primary | | | âœ… |
+| K12: User NPS | âœ… Primary | | | âœ… |
 
 ---
 
@@ -5948,24 +5948,24 @@ class KPIGate:
 
 | Component | Definition | Range |
 |---|---|---|
-| L — Level Score | level_numeric / 5.0 * 100 | 0-100 |
-| C — Confidence Score | confidence_score * 100 | 0-100 |
-| E — Evidence Score | evidence_score * 100 | 0-100 |
-| R — Recency Score | recency_decay_curve(days_since_active) | 0-100 |
-| K — Consistency Score | 100 * (1 - min(std_dev(levels), 5) / 5) | 0-100 |
-| G — Gap Size | gap / 5.0 * 100 | 0-100 |
-| S — Gap Severity | gap * priority_weight * 20 | 0-100 |
-| P — Prerequisite Burden | min(missing_prereqs * 10, 100) | 0-100 |
-| U — Deadline Urgency | urgency_decay(deadline_days_until) | 0-100 |
-| D — Demand Alignment | avg(market_demand across skills) | 0-100 |
-| V — Diversification | (1 - HHI(categories)) * 100 | 0-100 |
-| A — Adoption Acceleration | second_derivative(adoption_curve) * 5 | 0-100 |
-| M — Market Decline Signal | sigmoid(threshold - growth_score) | 0-100 |
+| L â€” Level Score | level_numeric / 5.0 * 100 | 0-100 |
+| C â€” Confidence Score | confidence_score * 100 | 0-100 |
+| E â€” Evidence Score | evidence_score * 100 | 0-100 |
+| R â€” Recency Score | recency_decay_curve(days_since_active) | 0-100 |
+| K â€” Consistency Score | 100 * (1 - min(std_dev(levels), 5) / 5) | 0-100 |
+| G â€” Gap Size | gap / 5.0 * 100 | 0-100 |
+| S â€” Gap Severity | gap * priority_weight * 20 | 0-100 |
+| P â€” Prerequisite Burden | min(missing_prereqs * 10, 100) | 0-100 |
+| U â€” Deadline Urgency | urgency_decay(deadline_days_until) | 0-100 |
+| D â€” Demand Alignment | avg(market_demand across skills) | 0-100 |
+| V â€” Diversification | (1 - HHI(categories)) * 100 | 0-100 |
+| A â€” Adoption Acceleration | second_derivative(adoption_curve) * 5 | 0-100 |
+| M â€” Market Decline Signal | sigmoid(threshold - growth_score) | 0-100 |
 
 ### A.3 Decay Functions
 
 ```python
-# Recency Decay (days → score)
+# Recency Decay (days â†’ score)
 def recency_decay(days: int) -> float:
     if days <= 7: return 100.0
     if days <= 30: return 100.0 - (days - 7) / 23 * 10.0
@@ -5974,11 +5974,11 @@ def recency_decay(days: int) -> float:
     if days <= 365: return 30.0 - (days - 180) / 185 * 20.0
     return 10.0 * math.exp(-(days - 365) / 180)
 
-# Sigmoid (x → 0-1 probability)
+# Sigmoid (x â†’ 0-1 probability)
 def sigmoid(x: float, steepness: float = 0.05) -> float:
     return 1.0 / (1.0 + math.exp(-steepness * x))
 
-# Growth Projection (growth_rate, horizon_years → projected_score)
+# Growth Projection (growth_rate, horizon_years â†’ projected_score)
 def project_growth(growth: float, years: int) -> float:
     decayed = growth * math.exp(-years * 0.3)
     return max(0, min(100, (decayed + 100) / 2))
@@ -6066,20 +6066,20 @@ dag = {
 
 | Term | Definition |
 |---|---|
-| **Calibration Error (ECE)** | Expected Calibration Error — measures how well predicted probabilities match actual outcomes. ECE = 0 is perfect calibration. |
+| **Calibration Error (ECE)** | Expected Calibration Error â€” measures how well predicted probabilities match actual outcomes. ECE = 0 is perfect calibration. |
 | **Cold Start** | State where a user has insufficient data (< 3 skills) for algorithmic scoring. Requires alternative strategies. |
 | **Confidence Interval** | Range [lower, upper] within which the true score lies with estimated certainty. Wider = less confident. |
 | **Data Freshness** | Age of the input data used for a computation. Measured in seconds/days since last valid update. |
 | **Dual-Signal Detector** | A detection algorithm requiring 2+ independent signals before flagging. Used for outdated skill detection. |
-| **ECE** | Expected Calibration Error — see Calibration Error. |
+| **ECE** | Expected Calibration Error â€” see Calibration Error. |
 | **Fusion Engine** | Component that combines multiple scoring sources with configurable weights into a single priority score. |
 | **Graceful Degradation** | System continues to function (with reduced quality) when upstream dependencies fail or data is missing. |
-| **HHI** | Herfindahl-Hirschman Index — measures concentration. Used inversely for portfolio diversification. |
+| **HHI** | Herfindahl-Hirschman Index â€” measures concentration. Used inversely for portfolio diversification. |
 | **Idempotency** | Property where running the same operation multiple times produces the same result. Enables safe retries. |
 | **Incremental Processing** | Computing only deltas (changes) rather than full recomputation. Requires watermark/offset tracking. |
 | **Inflation Signal** | Evidence that a claimed skill level exceeds what evidence supports. 5 defined signal types. |
 | **L0-L5** | Skill proficiency levels: Unknown(0), Beginner(1), Basic(2), Intermediate(3), Advanced(4), Expert(5). |
-| **NDCG** | Normalized Discounted Cumulative Gain — ranking quality metric that rewards relevant items in top positions. |
+| **NDCG** | Normalized Discounted Cumulative Gain â€” ranking quality metric that rewards relevant items in top positions. |
 | **Pipeline DAG** | Directed Acyclic Graph of pipeline stages. Defines execution order and dependencies between stages. |
 | **Precision@k** | Fraction of top-k recommendations that are relevant. Measures recommendation accuracy. |
 | **Provenance** | Chain of computation steps showing how a score was derived. Enables explainability. |
@@ -6094,5 +6094,5 @@ dag = {
 
 ---
 
-*End of Document — Skill Intelligence Engine v1.0.0*
+*End of Document â€” Skill Intelligence Engine v1.0.0*
 ```
