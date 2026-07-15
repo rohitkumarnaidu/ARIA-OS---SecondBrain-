@@ -1,11 +1,10 @@
 """Tests for shared/utils/webhook_delivery.py — WebhookDeliveryService."""
 
 import asyncio
-import json
 import time
 from unittest.mock import MagicMock, AsyncMock, patch
 import pytest
-from shared.utils.webhook_delivery import WebhookDeliveryService, WebhookResult
+from shared.utils.webhook_delivery import WebhookDeliveryService
 
 
 @pytest.fixture
