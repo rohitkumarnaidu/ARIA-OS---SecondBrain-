@@ -6,12 +6,15 @@
 .git
 .gitignore
 .gitattributes
+.gitmodules
+.gitkeep
 
 # Node
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
 
 # Next.js
 .next/
@@ -22,6 +25,11 @@ coverage/
 .nyc_output/
 __tests__/
 e2e/
+playwright-report/
+test-results/
+
+# Storybook
+storybook-static/
 
 # IDE
 .vscode/
@@ -46,7 +54,10 @@ Dockerfile
 # Static analysis
 .eslintcache
 tsconfig.tsbuildinfo
+*.tsbuildinfo
 
-# Playwright
-playwright-report/
-test-results/
+# Build tools
+.turbo/
+
+# CI / GitHub
+.github/

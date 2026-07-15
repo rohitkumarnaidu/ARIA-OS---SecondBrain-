@@ -3,6 +3,17 @@
 # Multi-stage: development (hot-reload) + production (optimized)
 # =============================================================================
 
+# ── Labels ────────────────────────────────────────────────────────────────────
+FROM scratch AS labels
+LABEL org.opencontainers.image.title="Second Brain OS Frontend"
+LABEL org.opencontainers.image.description="Next.js 14 frontend for the Second Brain OS personal AI productivity system"
+LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.authors="Developer <developer@secondbrain-os.com>"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.url="https://secondbrain-os.com"
+LABEL org.opencontainers.image.source="https://github.com/secondbrain-os/secondbrain"
+LABEL org.opencontainers.image.vendor="Second Brain OS"
+
 # ---- Stage 1: Production Dependencies (only runtime deps) ----
 FROM node:20-alpine AS deps-prod
 WORKDIR /app
@@ -31,6 +42,8 @@ RUN npm run build
 # ---- Stage 4: Production ----
 FROM node:20-alpine AS production
 WORKDIR /app
+
+COPY --from=labels /dev/null /dev/null
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
