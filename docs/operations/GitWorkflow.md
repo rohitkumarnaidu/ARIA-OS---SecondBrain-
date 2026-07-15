@@ -1,10 +1,10 @@
-# Git Workflow
+﻿# Git Workflow
 
-> **Document ID:** SB-OPS-GIT-003  
+> **Document ID:OPS-GIT-001 SB-OPS-GIT-003  
 > **Version:** 2.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Development Process  
+> **Classification:** Internal â€” Development Process  
 > **Owner:** Lead Developer  
 
 ---
@@ -58,11 +58,11 @@ This strategy was selected over Git Flow for the following reasons (per ADR-005)
 | Factor | Trunk-based | Git Flow | Decision |
 |---|---|---|---|
 | Deployment frequency | Daily+ | Weekly | Trunk wins for CI/CD |
-| Branch lifetime | 1-3 days | 3-14 days | Trunk wins — less merge debt |
+| Branch lifetime | 1-3 days | 3-14 days | Trunk wins â€” less merge debt |
 | Release complexity | Low | High (release branches) | Trunk wins for solo/small team |
 | Hotfix handling | Simple branch + deploy | Separate hotfix branch | Trunk wins |
 | History readability | Linear (squash-merge) | Complex merge graph | Trunk wins |
-| Multi-version support | Limited | Excellent | Git Flow wins — N/A for this project |
+| Multi-version support | Limited | Excellent | Git Flow wins â€” N/A for this project |
 | Isolation for large features | Feature flags | Long-lived branches | Feature flags preferred |
 
 **Conclusion:** Trunk-based development with feature flags for incomplete work.
@@ -70,22 +70,22 @@ This strategy was selected over Git Flow for the following reasons (per ADR-005)
 ### 1.2 Branch Hierarchy
 
 ```
-main ────────────────────────────────────────────────────────●──●──●──●──●──●──
-  │                                                           │  │  │  │  │  │
-  ├── feature/task-prioritization ────────────────●────●──────┘  │  │  │  │  │
-  │                                                 │  │         │  │  │  │  │
-  ├── feature/daily-briefing-ui ───────●────●───────┘  │         │  │  │  │  │
-  │                                     │  │            │         │  │  │  │  │
-  ├── bugfix/login-redirect ────────────●──●────────────┼─────────┘  │  │  │  │
-  │                                                      │            │  │  │  │
-  ├── hotfix/security-vulnerability ─────────────●───────┼────────────┘  │  │  │
-  │                                               │       │               │  │  │
-  ├── docs/api-documentation ──────────●──────────┼───────┼───────────────┘  │  │
-  │                                    │          │       │                  │  │
-  ├── refactor/prompt-loader ──────────●─────●────┼───────┼──────────────────┘  │
-  │                                         │     │       │                     │
-  └── experimental/knowledge-graph ────────●─────●───────┼─────────────────────┘
-                                                         │
+main â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â—â”€â”€â—â”€â”€â—â”€â”€â—â”€â”€â—â”€â”€
+  â”‚                                                           â”‚  â”‚  â”‚  â”‚  â”‚  â”‚
+  â”œâ”€â”€ feature/task-prioritization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚  â”‚  â”‚  â”‚
+  â”‚                                                 â”‚  â”‚         â”‚  â”‚  â”‚  â”‚  â”‚
+  â”œâ”€â”€ feature/daily-briefing-ui â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚         â”‚  â”‚  â”‚  â”‚  â”‚
+  â”‚                                     â”‚  â”‚            â”‚         â”‚  â”‚  â”‚  â”‚  â”‚
+  â”œâ”€â”€ bugfix/login-redirect â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚  â”‚  â”‚
+  â”‚                                                      â”‚            â”‚  â”‚  â”‚  â”‚
+  â”œâ”€â”€ hotfix/security-vulnerability â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚  â”‚
+  â”‚                                               â”‚       â”‚               â”‚  â”‚  â”‚
+  â”œâ”€â”€ docs/api-documentation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â”‚
+  â”‚                                    â”‚          â”‚       â”‚                  â”‚  â”‚
+  â”œâ”€â”€ refactor/prompt-loader â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+  â”‚                                         â”‚     â”‚       â”‚                     â”‚
+  â””â”€â”€ experimental/knowledge-graph â”€â”€â”€â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â—â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                         â”‚
                                                     [Squash-merge]
                                                     [Delete source branch]
 ```
@@ -94,7 +94,7 @@ main ─────────────────────────
 
 | Branch Type | Source | Target | Lifetime | Purpose |
 |---|---|---|---|---|
-| `main` | — | — | Permanent | Production-ready code. Always deployable. |
+| `main` | â€” | â€” | Permanent | Production-ready code. Always deployable. |
 | `feature/*` | `main` | `main` | 1-3 days | New functionality. Short-lived. |
 | `bugfix/*` | `main` | `main` | 1-2 days | Bug fixes on existing functionality. |
 | `hotfix/*` | `main` | `main` | < 24 hours | Critical production issues. |
@@ -187,7 +187,7 @@ feature_flags = FeatureFlags()
 
 ### 3.1 Branch Protection Settings (GitHub)
 
-Configured in GitHub → Settings → Branches → `main`:
+Configured in GitHub â†’ Settings â†’ Branches â†’ `main`:
 
 ```yaml
 # .github/branch-protection.yml (requires GitHub Enterprise)
@@ -226,15 +226,15 @@ branch_protection:
 
 | Rule | Value | Severity | Bypass |
 |---|---|---|---|
-| Require PR | ✅ Required | Blocking | Admin override |
+| Require PR | âœ… Required | Blocking | Admin override |
 | Required approvals | 1 | Blocking | Admin override |
-| Dismiss stale reviews | ✅ | Blocking | Re-review |
-| Require conversation resolution | ✅ | Blocking | Resolve conversation |
+| Dismiss stale reviews | âœ… | Blocking | Re-review |
+| Require conversation resolution | âœ… | Blocking | Resolve conversation |
 | Required status checks | 8 checks | Blocking | Cannot bypass |
-| Linear history | ✅ Required | Blocking | Rebase required |
-| Force pushes | ❌ Blocked | Blocking | Cannot bypass |
-| Deletions | ❌ Blocked | Blocking | Cannot bypass |
-| Admin enforcement | ✅ Enabled | Blocking | Cannot bypass |
+| Linear history | âœ… Required | Blocking | Rebase required |
+| Force pushes | âŒ Blocked | Blocking | Cannot bypass |
+| Deletions | âŒ Blocked | Blocking | Cannot bypass |
+| Admin enforcement | âœ… Enabled | Blocking | Cannot bypass |
 
 ### 3.3 CI Status Checks Required
 
@@ -260,7 +260,7 @@ Step 1: Create Branch              git checkout -b feature/142-task-priority
 Step 2: Develop                    [Local commits]
 Step 3: Push Branch                git push -u origin feature/142-task-priority
 Step 4: Create PR                  gh pr create (or GitHub web)
-Step 5: CI Validates               [Automated — 8 checks]
+Step 5: CI Validates               [Automated â€” 8 checks]
 Step 6: Team Review                [1+ approvals]
 Step 7: Final Commit Fixes         [Address review feedback]
 Step 8: Squash-Merge to Main       [GitHub UI]
@@ -316,7 +316,7 @@ gh pr create \
 ```bash
 # Address feedback in new commits
 git add packages/ai/agents/task_agent.py
-git commit -m "fix(tasks): address PR feedback — add edge case for empty tasks"
+git commit -m "fix(tasks): address PR feedback â€” add edge case for empty tasks"
 
 # Push updates
 git push
@@ -478,12 +478,12 @@ Closes #156
 
 | Rule | Enforcement | Example |
 |---|---|---|
-| Header max 72 characters | commit-msg hook | ✅ `feat(tasks): add AI prioritization` |
-| Body wrapped at 72 characters | commit-msg hook | ✅ Manual line breaks |
-| Type must be valid | commit-msg hook | ✅ From type list |
-| Scope must be valid (if present) | commit-msg hook | ✅ From scope list |
-| Subject starts with lowercase | commit-msg hook | ❌ `feat(Tasks):` → `feat(tasks):` |
-| No period at end of subject | commit-msg hook | ❌ `feat: add thing.` → `feat: add thing` |
+| Header max 72 characters | commit-msg hook | âœ… `feat(tasks): add AI prioritization` |
+| Body wrapped at 72 characters | commit-msg hook | âœ… Manual line breaks |
+| Type must be valid | commit-msg hook | âœ… From type list |
+| Scope must be valid (if present) | commit-msg hook | âœ… From scope list |
+| Subject starts with lowercase | commit-msg hook | âŒ `feat(Tasks):` â†’ `feat(tasks):` |
+| No period at end of subject | commit-msg hook | âŒ `feat: add thing.` â†’ `feat: add thing` |
 | Footer for breaking changes | CI check | `Breaking: changes priority field` |
 | Link to issue | CI check | `Closes #142` or `Refs #142` |
 
@@ -618,18 +618,18 @@ Related to #[other-issue]
 ### 6.3 PR Body Bad Practices
 
 ```markdown
-<!-- ❌ BAD: Too vague -->
+<!-- âŒ BAD: Too vague -->
 Closes #142
 
-<!-- ❌ BAD: No context -->
+<!-- âŒ BAD: No context -->
 Fixed the thing. Tests pass.
 
-<!-- ❌ BAD: Overly detailed on implementation -->
+<!-- âŒ BAD: Overly detailed on implementation -->
 Changed line 42 from .map() to .forEach() and line 87 from 
 const to let because the linter said so. Also updated the 
 import order in 3 files.
 
-<!-- ✅ GOOD: Clear and informative -->
+<!-- âœ… GOOD: Clear and informative -->
 Implements RICE-based task prioritization using the task_agent 
 LLM. Users can now auto-prioritize their task list with one 
 click. Falls back to manual sort if LLM is unavailable.
@@ -656,11 +656,11 @@ For changes exceeding 400 lines, break into stacked PRs:
 
 ```
 PR #1: Data model + migration          (120 lines)
-  ↓ (merge to main)
+  â†“ (merge to main)
 PR #2: API endpoint + validation       (180 lines)
-  ↓ (merge to main)
+  â†“ (merge to main)
 PR #3: Frontend UI + state management  (250 lines)
-  ↓ (merge to main)
+  â†“ (merge to main)
 PR #4: Tests + documentation           (100 lines)
 ```
 
@@ -699,7 +699,7 @@ git checkout -b feature/142-ui    # branch off API branch
 | < 50 lines | `size/xs` | < 4 hours | Very high |
 | 50-200 lines | `size/s` | < 12 hours | High |
 | 200-400 lines | `size/m` | < 24 hours | Moderate |
-| 400+ lines | `size/l` | < 48 hours | Low — request split |
+| 400+ lines | `size/l` | < 48 hours | Low â€” request split |
 
 ---
 
@@ -790,30 +790,30 @@ git checkout -b feature/142-ui    # branch off API branch
 
 | Label | Meaning | Action Required | Blocking |
 |---|---|---|---|
-| `blocking` | Must fix before merge | Address and re-request review | ✅ Yes |
-| `suggestion` | Optional improvement | Optional | ❌ No |
-| `nitpick` | Minor style preference | Ignore or quick fix | ❌ No |
-| `question` | Request for clarification | Respond with explanation | ❌ No (unless blocking) |
-| `praise` | Positive feedback | Say thanks | ❌ No |
+| `blocking` | Must fix before merge | Address and re-request review | âœ… Yes |
+| `suggestion` | Optional improvement | Optional | âŒ No |
+| `nitpick` | Minor style preference | Ignore or quick fix | âŒ No |
+| `question` | Request for clarification | Respond with explanation | âŒ No (unless blocking) |
+| `praise` | Positive feedback | Say thanks | âŒ No |
 
 ### 8.6 Disagreement Resolution
 
 ```
 Author disagrees with reviewer feedback
-        │
-        ▼
+        â”‚
+        â–¼
 Author explains reasoning with technical justification
-        │
-        ▼
-┌────────────────┐    Yes
-│ Reviewer agrees│ ───────→ Resolve conversation
-│ with author?   │
-└────────────────┘
-        │ No
-        ▼
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    Yes
+â”‚ Reviewer agreesâ”‚ â”€â”€â”€â”€â”€â”€â”€â†’ Resolve conversation
+â”‚ with author?   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+        â”‚ No
+        â–¼
 Involve Tech Lead as tiebreaker
-        │
-        ▼
+        â”‚
+        â–¼
 Tech Lead makes final decision
 (If still unresolved: Engineering Manager)
 ```
@@ -844,7 +844,7 @@ The following are checked by CI/linters, not humans:
 | **Rebase-merge** | Release branches | All commits preserved | Full granularity | More noise on main |
 | **Merge commit** | Never (except hotfix from release) | Branch history visible | Preserves context | Cluttered history |
 
-**Default: Squash-merge** — all feature branches become a single commit on main.
+**Default: Squash-merge** â€” all feature branches become a single commit on main.
 
 ### 9.2 Squash-Merge Commit Message Template
 
@@ -866,7 +866,7 @@ Closes #142
 ### 9.3 Merge Configuration (GitHub)
 
 ```yaml
-# Repository settings → Pull Requests
+# Repository settings â†’ Pull Requests
 allow_squash_merge: true
 allow_rebase_merge: true
 allow_merge_commit: false
@@ -882,25 +882,25 @@ default_squash_commit_message: pr-body
 
 ```
 Week before release (Feature Freeze)
-        │
-        ▼
+        â”‚
+        â–¼
 Create release branch: release/v1.0
 (cut from main at feature freeze)
-        │
-        ▼
+        â”‚
+        â–¼
 Final testing & bug fixes on release branch
 (PRs target release/v1.0, not main)
-        │
-        ▼
-Rebase-merge release/v1.0 → main
-        │
-        ▼
+        â”‚
+        â–¼
+Rebase-merge release/v1.0 â†’ main
+        â”‚
+        â–¼
 Tag v1.0.0 on main
-        │
-        ▼
+        â”‚
+        â–¼
 Deploy to production
-        │
-        ▼
+        â”‚
+        â–¼
 Delete release branch
 ```
 
@@ -953,14 +953,14 @@ git push
 
 ### 11.1 Hook Directory
 
-All hooks are in `.githooks/` (not `.git/hooks/` — which is not tracked):
+All hooks are in `.githooks/` (not `.git/hooks/` â€” which is not tracked):
 
 ```
 .githooks/
-├── commit-msg           # Validates commit message format
-├── pre-commit           # Linting, formatting, secrets check
-├── pre-push             # Runs test suite
-└── prepare-commit-msg   # Auto-prepends issue number from branch name
+â”œâ”€â”€ commit-msg           # Validates commit message format
+â”œâ”€â”€ pre-commit           # Linting, formatting, secrets check
+â”œâ”€â”€ pre-push             # Runs test suite
+â””â”€â”€ prepare-commit-msg   # Auto-prepends issue number from branch name
 ```
 
 **Enable custom hooks directory:**
@@ -993,7 +993,7 @@ PATTERN="^(feat|fix|docs|refactor|test|chore|style|perf|ci|build|revert)(\([a-z\
 
 if ! echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
     echo ""
-    echo "❌ Invalid commit message format!"
+    echo "âŒ Invalid commit message format!"
     echo ""
     echo "Expected: <type>(<scope>): <description>"
     echo "Example:  feat(tasks): add AI prioritization"
@@ -1008,7 +1008,7 @@ fi
 LENGTH=${#COMMIT_MSG}
 if [ "$LENGTH" -gt 72 ]; then
     echo ""
-    echo "❌ Commit message too long ($LENGTH characters). Max 72 characters."
+    echo "âŒ Commit message too long ($LENGTH characters). Max 72 characters."
     echo ""
     exit 1
 fi
@@ -1029,17 +1029,17 @@ if [ -z "$STAGED_FILES" ]; then
     exit 0
 fi
 
-echo "🔍 Running pre-commit checks..."
+echo "ðŸ” Running pre-commit checks..."
 
 # Check for secrets
 if echo "$STAGED_FILES" | grep -qE '\.env$|\.env\.local$|\.env\.production$'; then
-    echo "❌ ERROR: .env files should not be committed!"
+    echo "âŒ ERROR: .env files should not be committed!"
     exit 1
 fi
 
 # Check for AWS/Azure/GCP keys
 if git diff --cached | grep -qE '(AKIA|ASIA|aws_secret|azure_.*_key|-----BEGIN.*PRIVATE KEY-----)'; then
-    echo "❌ ERROR: Potential secret/key detected in staged changes!"
+    echo "âŒ ERROR: Potential secret/key detected in staged changes!"
     exit 1
 fi
 
@@ -1049,7 +1049,7 @@ if [ -n "$TS_FILES" ]; then
     echo "Running ESLint on staged TypeScript files..."
     npx eslint $TS_FILES
     if [ $? -ne 0 ]; then
-        echo "❌ ESLint failed. Fix errors before committing."
+        echo "âŒ ESLint failed. Fix errors before committing."
         exit 1
     fi
 fi
@@ -1060,12 +1060,12 @@ if [ -n "$PY_FILES" ]; then
     echo "Running Ruff on staged Python files..."
     ruff check $PY_FILES
     if [ $? -ne 0 ]; then
-        echo "❌ Ruff check failed. Fix errors before committing."
+        echo "âŒ Ruff check failed. Fix errors before committing."
         exit 1
     fi
 fi
 
-echo "✅ Pre-commit checks passed!"
+echo "âœ… Pre-commit checks passed!"
 exit 0
 ```
 
@@ -1405,12 +1405,12 @@ A hotfix is warranted when:
 
 | Severity | Example | Response |
 |---|---|---|
-| Critical — Data loss | User data being deleted | Immediate hotfix |
-| Critical — Security | Auth bypass, data leak | Immediate hotfix |
-| Critical — Outage | Site down for all users | Immediate hotfix |
-| High — Major bug | Core feature broken for many users | Hotfix or next deploy |
-| Medium — Minor bug | Cosmetic issue | Normal sprint cycle |
-| Low — Edge case | Rare scenario rarely encountered | Normal backlog |
+| Critical â€” Data loss | User data being deleted | Immediate hotfix |
+| Critical â€” Security | Auth bypass, data leak | Immediate hotfix |
+| Critical â€” Outage | Site down for all users | Immediate hotfix |
+| High â€” Major bug | Core feature broken for many users | Hotfix or next deploy |
+| Medium â€” Minor bug | Cosmetic issue | Normal sprint cycle |
+| Low â€” Edge case | Rare scenario rarely encountered | Normal backlog |
 
 ### 15.2 Hotfix Process
 
@@ -1429,7 +1429,7 @@ git commit -m "fix(auth): prevent token forgery by validating signature"
 git push -u origin hotfix/233-critical-auth-bypass
 gh pr create \
   --title "fix(auth): prevent token forgery by validating signature" \
-  --body "## Critical Security Fix\n\n**Severity:** Critical — Auth bypass\n**CVE:** Pending\n\n**Fix:** Validates JWT signature before accepting token\n\n**Risk:** Minimal — 3 lines changed\n\n**Testing:** Manual + existing tests pass" \
+  --body "## Critical Security Fix\n\n**Severity:** Critical â€” Auth bypass\n**CVE:** Pending\n\n**Fix:** Validates JWT signature before accepting token\n\n**Risk:** Minimal â€” 3 lines changed\n\n**Testing:** Manual + existing tests pass" \
   --label "priority/p0,type/hotfix,status/urgent"
 
 # Step 4: Tag reviewers (@engineering-team)
@@ -1575,38 +1575,38 @@ git branch -r --merged main | grep -v "main" | sed 's/origin\///' | xargs -I {} 
 ```
 
 **Automated cleanup via GitHub Settings:**
-- Repository → Settings → Branches → Branch protection
+- Repository â†’ Settings â†’ Branches â†’ Branch protection
 - Enable "Automatically delete head branches" after merge
 
 ### Appendix D: Commit Message Quick Reference
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│           CONVENTIONAL COMMITS — QUICK REFERENCE             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  Format:  <type>(<scope>): <description>                    │
-│                                                             │
-│  Types:   feat  |  fix  |  docs  |  refactor                │
-│           test  |  chore |  style |  perf                    │
-│           ci    |  build |  revert                           │
-│                                                             │
-│  Scopes:  tasks  |  courses  |  habits  |  goals             │
-│           agents |  api      |  web     |  prompts           │
-│           db     |  ci       |  deps    |  infra             │
-│           auth   |  ai                                       │
-│                                                             │
-│  Examples:                                                   │
-│  feat(tasks): add AI prioritization endpoint                 │
-│  fix(auth): resolve login redirect loop                      │
-│  docs(api): update endpoint documentation                    │
-│  chore(deps): upgrade FastAPI to 0.110.0                    │
-│                                                             │
-│  Breaking: append ! after type:  feat! (api): ...            │
-│  Or footer:  BREAKING CHANGE: ...                            │
-│                                                             │
-│  Max line length: 72 characters                              │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           CONVENTIONAL COMMITS â€” QUICK REFERENCE             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  Format:  <type>(<scope>): <description>                    â”‚
+â”‚                                                             â”‚
+â”‚  Types:   feat  |  fix  |  docs  |  refactor                â”‚
+â”‚           test  |  chore |  style |  perf                    â”‚
+â”‚           ci    |  build |  revert                           â”‚
+â”‚                                                             â”‚
+â”‚  Scopes:  tasks  |  courses  |  habits  |  goals             â”‚
+â”‚           agents |  api      |  web     |  prompts           â”‚
+â”‚           db     |  ci       |  deps    |  infra             â”‚
+â”‚           auth   |  ai                                       â”‚
+â”‚                                                             â”‚
+â”‚  Examples:                                                   â”‚
+â”‚  feat(tasks): add AI prioritization endpoint                 â”‚
+â”‚  fix(auth): resolve login redirect loop                      â”‚
+â”‚  docs(api): update endpoint documentation                    â”‚
+â”‚  chore(deps): upgrade FastAPI to 0.110.0                    â”‚
+â”‚                                                             â”‚
+â”‚  Breaking: append ! after type:  feat! (api): ...            â”‚
+â”‚  Or footer:  BREAKING CHANGE: ...                            â”‚
+â”‚                                                             â”‚
+â”‚  Max line length: 72 characters                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---

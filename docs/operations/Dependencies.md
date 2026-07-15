@@ -1,10 +1,10 @@
-# Dependencies
+﻿# Dependencies
 
-> **Document ID:** SB-OPS-DEPS-006  
+> **Document ID:OPS-DEP-001 SB-OPS-DEPS-006  
 > **Version:** 2.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Development Infrastructure  
+> **Classification:** Internal â€” Development Infrastructure  
 > **Owner:** Lead Developer  
 
 ---
@@ -32,11 +32,11 @@
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor': '#13151A', 'primaryTextColor': '#F1F5F9', 'primaryBorderColor': '#6366F1', 'lineColor': '#6366F1', 'secondaryColor': '#0A0B0F', 'tertiaryColor': '#1A1D24', 'clusterBkg': '#13151A', 'clusterBorder': '#334155', 'nodeBorder': '#6366F1', 'nodeTextColor': '#F1F5F9', 'edgeLabelBackground': '#13151A', 'edgeLabelColor': '#94A3B8'}}}%%
 graph LR
     D["<b>Dependabot</b><br/>Weekly scan: npm + pip + Docker<br/>Auto-creates PRs"]:::primary --> R{"<b>Review</b><br/>CI passes?<br/>Changelog clean?"}:::accent
-    R -->|"✅ Non-breaking"| M["<b>Merge</b><br/>Approve &amp; squash<br/>Auto-deploy"]:::accent
-    R -->|"⚠️ Breaking"| B["<b>Migration Branch</b><br/>feature/dep-upgrade<br/>Code migration needed"]:::warning
+    R -->|"âœ… Non-breaking"| M["<b>Merge</b><br/>Approve &amp; squash<br/>Auto-deploy"]:::accent
+    R -->|"âš ï¸ Breaking"| B["<b>Migration Branch</b><br/>feature/dep-upgrade<br/>Code migration needed"]:::warning
     B --> T["<b>Test</b><br/>Full suite &bull; Smoke<br/>Regression pass"]:::secondary
     T --> M
-    R -->|"❌ Security"| S["<b>Emergency</b><br/>Critical CVE patch<br/>&lt; 24hr SLA"]:::danger
+    R -->|"âŒ Security"| S["<b>Emergency</b><br/>Critical CVE patch<br/>&lt; 24hr SLA"]:::danger
     S --> M
 
     classDef primary fill:#13151A,stroke:#6366F1,stroke-width:2px,color:#F1F5F9
@@ -48,7 +48,7 @@ graph LR
 
 ## 1. External Dependency Inventory
 
-### 1.1 NPM Packages (Frontend — apps/web)
+### 1.1 NPM Packages (Frontend â€” apps/web)
 
 | Package | Version | Category | License | Size (KB) | Purpose |
 |---|---|---|---|---|---|
@@ -71,7 +71,7 @@ graph LR
 **Total npm dependencies (direct + transitive):** ~1,200 packages  
 **Total install size:** ~350 MB (node_modules)
 
-### 1.2 PIP Packages (Backend — apps/api)
+### 1.2 PIP Packages (Backend â€” apps/api)
 
 | Package | Version | Category | License | Purpose |
 |---|---|---|---|---|
@@ -202,7 +202,7 @@ graph LR
 ### 3.2 Version Pin Examples
 
 ```json
-// apps/web/package.json — Version strategy
+// apps/web/package.json â€” Version strategy
 {
   "dependencies": {
     "next": "^14.2.0",              // Caret: auto minor + patch
@@ -223,7 +223,7 @@ graph LR
 ```
 
 ```txt
-# apps/api/requirements.txt — Version strategy
+# apps/api/requirements.txt â€” Version strategy
 fastapi>=0.110.0,<0.120.0           # Range: within minor
 uvicorn[standard]>=0.29.0,<0.30.0   # Range: within minor
 supabase>=2.5.0,<3.0.0              # Range: within major
@@ -318,32 +318,32 @@ updates:
 
 | Package | License | Status | Notes |
 |---|---|---|---|
-| next | MIT | ✅ Safe | Standard permissive |
-| react | MIT | ✅ Safe | Standard permissive |
-| framer-motion | MIT | ✅ Safe | Standard permissive |
-| lucide-react | ISC | ✅ Safe | Standard permissive |
-| zustand | MIT | ✅ Safe | Standard permissive |
-| @supabase/supabase-js | MIT | ✅ Safe | Standard permissive |
-| tailwindcss | MIT | ✅ Safe | Standard permissive |
-| typescript | Apache-2.0 | ✅ Safe | Patent grant compatible |
-| fastapi | MIT | ✅ Safe | Standard permissive |
-| uvicorn | BSD-3 | ✅ Safe | Standard permissive |
-| supabase (Python) | MIT | ✅ Safe | Standard permissive |
-| pydantic | MIT | ✅ Safe | Standard permissive |
-| anthropic (Python) | MIT | ✅ Safe | Standard permissive |
-| pyyaml | MIT | ✅ Safe | Standard permissive |
-| apscheduler | MIT | ✅ Safe | Standard permissive |
+| next | MIT | âœ… Safe | Standard permissive |
+| react | MIT | âœ… Safe | Standard permissive |
+| framer-motion | MIT | âœ… Safe | Standard permissive |
+| lucide-react | ISC | âœ… Safe | Standard permissive |
+| zustand | MIT | âœ… Safe | Standard permissive |
+| @supabase/supabase-js | MIT | âœ… Safe | Standard permissive |
+| tailwindcss | MIT | âœ… Safe | Standard permissive |
+| typescript | Apache-2.0 | âœ… Safe | Patent grant compatible |
+| fastapi | MIT | âœ… Safe | Standard permissive |
+| uvicorn | BSD-3 | âœ… Safe | Standard permissive |
+| supabase (Python) | MIT | âœ… Safe | Standard permissive |
+| pydantic | MIT | âœ… Safe | Standard permissive |
+| anthropic (Python) | MIT | âœ… Safe | Standard permissive |
+| pyyaml | MIT | âœ… Safe | Standard permissive |
+| apscheduler | MIT | âœ… Safe | Standard permissive |
 
 ### 4.3 License Prohibitions
 
 | License | Prohibition | Alternative |
 |---|---|---|
-| GPL-2.0 / GPL-3.0 | ❌ Copyleft — would force project to be GPL | Use MIT/Apache alternatives |
-| AGPL-3.0 | ❌ Network copyleft — stricter than GPL | Use MIT/Apache alternatives |
-| LGPL-3.0 | ⚠️ Limited — can use if dynamically linked | Avoid if possible |
-| SSPL | ❌ MongoDB license — not open source per OSI | Use PostgreSQL instead |
-| BUSL | ❌ Source-available, not open source | Use MIT/Apache alternatives |
-| Proprietary / Non-commercial | ❌ Cannot use in commercial product | Use open alternatives |
+| GPL-2.0 / GPL-3.0 | âŒ Copyleft â€” would force project to be GPL | Use MIT/Apache alternatives |
+| AGPL-3.0 | âŒ Network copyleft â€” stricter than GPL | Use MIT/Apache alternatives |
+| LGPL-3.0 | âš ï¸ Limited â€” can use if dynamically linked | Avoid if possible |
+| SSPL | âŒ MongoDB license â€” not open source per OSI | Use PostgreSQL instead |
+| BUSL | âŒ Source-available, not open source | Use MIT/Apache alternatives |
+| Proprietary / Non-commercial | âŒ Cannot use in commercial product | Use open alternatives |
 
 ### 4.4 License Compliance Process
 
@@ -395,12 +395,12 @@ npx license-checker --production --json --failOn="GPL"
 
 ### Triage Process
 
-1. **Identify** — Dependabot/Snyk creates alert
-2. **Assess** — Determine CVSS score, impact on our codebase
-3. **Respond** — Based on severity threshold (see above)
-4. **Patch** — Update dependency or implement workaround
-5. **Verify** — Confirm vulnerability is resolved
-6. **Document** — Record in security log
+1. **Identify** â€” Dependabot/Snyk creates alert
+2. **Assess** â€” Determine CVSS score, impact on our codebase
+3. **Respond** â€” Based on severity threshold (see above)
+4. **Patch** â€” Update dependency or implement workaround
+5. **Verify** â€” Confirm vulnerability is resolved
+6. **Document** â€” Record in security log
 
 ### Communication
 
@@ -484,23 +484,23 @@ jobs:
 
 ```
 Dependabot opens PR
-        │
-        ▼
-┌─────────────────┐     No (minor/major)
-│  Automated CI   │ ─────────────────→ Human reviews PR
-│  checks pass?   │
-└─────────────────┘
-        │ Yes (patch only)
-        ▼
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     No (minor/major)
+â”‚  Automated CI   â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â†’ Human reviews PR
+â”‚  checks pass?   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+        â”‚ Yes (patch only)
+        â–¼
 Auto-merge enabled
-        │
-        ▼
+        â”‚
+        â–¼
 PR merged to main
-        │
-        ▼
+        â”‚
+        â–¼
 Deploy to staging (if major)
-        │
-        ▼
+        â”‚
+        â–¼
 Deploy to production (after verification)
 ```
 
@@ -510,7 +510,7 @@ Deploy to production (after verification)
 ## Major Version Upgrade Checklist
 
 **Dependency:** [name]
-**From:** [version] → **To:** [version]
+**From:** [version] â†’ **To:** [version]
 **Date:** [planned date]
 
 ### Pre-Upgrade
@@ -566,15 +566,15 @@ Deploy to production (after verification)
 
 | Dependency | Last Release | Health | Notes |
 |---|---|---|---|
-| next | 2026-05-15 | ✅ Healthy | Active development |
-| react | 2026-04-20 | ✅ Healthy | Stable, well-maintained |
-| supabase-js | 2026-05-10 | ✅ Healthy | Active development |
-| fastapi | 2026-05-01 | ✅ Healthy | Active development |
-| supabase (Python) | 2026-04-28 | ✅ Healthy | Active development |
-| pydantic | 2026-05-05 | ✅ Healthy | Active development |
-| pyyaml | 2026-03-01 | ✅ Healthy | Stable, few changes needed |
-| apscheduler | 2026-02-15 | ⚠️ Watch | Less frequent updates |
-| anthropic (Python) | 2026-05-12 | ✅ Healthy | Active development |
+| next | 2026-05-15 | âœ… Healthy | Active development |
+| react | 2026-04-20 | âœ… Healthy | Stable, well-maintained |
+| supabase-js | 2026-05-10 | âœ… Healthy | Active development |
+| fastapi | 2026-05-01 | âœ… Healthy | Active development |
+| supabase (Python) | 2026-04-28 | âœ… Healthy | Active development |
+| pydantic | 2026-05-05 | âœ… Healthy | Active development |
+| pyyaml | 2026-03-01 | âœ… Healthy | Stable, few changes needed |
+| apscheduler | 2026-02-15 | âš ï¸ Watch | Less frequent updates |
+| anthropic (Python) | 2026-05-12 | âœ… Healthy | Active development |
 
 ### 7.3 Deprecated/Unmaintained Dependency Process
 
@@ -656,7 +656,7 @@ AI_CONFIG = {
 ```markdown
 ## AI Model Update Test Plan
 
-**Model:** [name] [current version] → [new version]
+**Model:** [name] [current version] â†’ [new version]
 **Date:** [planned date]
 
 ### Pre-Update
@@ -682,7 +682,7 @@ AI_CONFIG = {
 ### Rollout
 - [ ] Deploy to staging with new model
 - [ ] 24h observation period
-- [ ] Deploy to production (canary: 10% → 50% → 100%)
+- [ ] Deploy to production (canary: 10% â†’ 50% â†’ 100%)
 - [ ] Rollback plan: switch back to old model tag
 ```
 
@@ -711,8 +711,8 @@ ollama pull mistral:7b-v0.2
 | Node.js | ^18.0.0 (LTS) | 2025-04-30 | Next.js 14 | `node --version` in CI |
 | Python | ^3.10.0 | 2026-10-01 | FastAPI, all pip packages | `python --version` in CI |
 | PostgreSQL (Supabase) | ^15.0 | TBD (Supabase managed) | Database queries | Supabase manages |
-| npm | ^9.0.0 | — | Package install | `npm --version` in CI |
-| pip | ^23.0.0 | — | Package install | `pip --version` in CI |
+| npm | ^9.0.0 | â€” | Package install | `npm --version` in CI |
+| pip | ^23.0.0 | â€” | Package install | `pip --version` in CI |
 
 ### 9.2 Platform Migration Paths
 
@@ -742,59 +742,59 @@ ollama pull mistral:7b-v0.2
 ### 10.1 Architecture Dependency Diagram
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (Vercel)                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────────┐ │
-│  │ Next.js  │  │  React   │  │ Tailwind │  │ Framer Motion   │ │
-│  │ ^14.2.0  │  │ ^18.3.0  │  │  ^3.4.0  │  │   ^11.0.0       │ │
-│  └─────┬────┘  └────┬─────┘  └──────────┘  └─────────────────┘ │
-│        │             │                                           │
-│  ┌─────▼─────────────▼───────────────────────────────────────┐  │
-│  │              @supabase/supabase-js ^2.42.0                 │  │
-│  └────────────────────────┬──────────────────────────────────┘  │
-└───────────────────────────┼──────────────────────────────────────┘
-                            │ HTTPS
-                            ▼
-┌──────────────────────────────────────────────────────────────────┐
-│                        BACKEND (Railway)                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────────────┐ │
-│  │ FastAPI  │  │ Pydantic │  │ Supabase │  │   APScheduler   │ │
-│  │ ^0.110.0 │  │  ^2.7.0  │  │  ^2.5.0  │  │   ^3.10.0       │ │
-│  └─────┬────┘  └────┬─────┘  └────┬─────┘  └─────────────────┘ │
-│        │             │            │                              │
-│  ┌─────▼─────────────▼────────────▼─────────────────────────┐  │
-│  │              httpx ^0.27.0 + pyyaml ^6.0.0                │  │
-│  └────────────────────────┬──────────────────────────────────┘  │
-└───────────────────────────┼──────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        ▼                   ▼                   ▼
-┌──────────────┐   ┌──────────────┐   ┌──────────────────┐
-│  Supabase    │   │   Ollama     │   │  Claude (Anthropic)│
-│  PostgreSQL  │   │  Mistral 7B  │   │  Sonnet 4 API    │
-│  + Auth + S3 │   │  (Local)     │   │  (Cloud fallback) │
-│  Free Tier   │   │  Free        │   │  Pay-per-use     │
-└──────────────┘   └──────────────┘   └──────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        FRONTEND (Vercel)                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ Next.js  â”‚  â”‚  React   â”‚  â”‚ Tailwind â”‚  â”‚ Framer Motion   â”‚ â”‚
+â”‚  â”‚ ^14.2.0  â”‚  â”‚ ^18.3.0  â”‚  â”‚  ^3.4.0  â”‚  â”‚   ^11.0.0       â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚        â”‚             â”‚                                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚              @supabase/supabase-js ^2.42.0                 â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚ HTTPS
+                            â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        BACKEND (Railway)                         â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ FastAPI  â”‚  â”‚ Pydantic â”‚  â”‚ Supabase â”‚  â”‚   APScheduler   â”‚ â”‚
+â”‚  â”‚ ^0.110.0 â”‚  â”‚  ^2.7.0  â”‚  â”‚  ^2.5.0  â”‚  â”‚   ^3.10.0       â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚        â”‚             â”‚            â”‚                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚              httpx ^0.27.0 + pyyaml ^6.0.0                â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â–¼                   â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Supabase    â”‚   â”‚   Ollama     â”‚   â”‚  Claude (Anthropic)â”‚
+â”‚  PostgreSQL  â”‚   â”‚  Mistral 7B  â”‚   â”‚  Sonnet 4 API    â”‚
+â”‚  + Auth + S3 â”‚   â”‚  (Local)     â”‚   â”‚  (Cloud fallback) â”‚
+â”‚  Free Tier   â”‚   â”‚  Free        â”‚   â”‚  Pay-per-use     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 10.2 Dependency Relationship Matrix
 
 ```
-                 │ Next React Supa  Fast  Py   Ollama Claude  GH    Vercel Railway
-─────────────────┼─────────────────────────────────────────────────────────────
- Next.js         │  ●    ●     ●     ○     ○     ○      ○      ○     ●      ○
- React           │  ○    ●     ○     ○     ○     ○      ○      ○     ●      ○
- Supabase (JS)   │  ○    ○     ●     ●     ○     ○      ○      ○     ○      ○
- FastAPI         │  ○    ○     ○     ●     ●     ●      ●      ○     ○      ●
- Pydantic        │  ○    ○     ○     ●     ●     ○      ○      ○     ○      ○
- Ollama          │  ○    ○     ○     ●     ○     ●      ●      ○     ○      ○
- Claude API      │  ○    ○     ○     ●     ○     ○      ●      ○     ○      ○
- GitHub Actions  │  ○    ○     ○     ○     ○     ○      ○      ●     ○      ○
- Vercel          │  ●    ●     ○     ○     ○     ○      ○      ○     ●      ○
- Railway         │  ○    ○     ○     ●     ●     ○      ○      ○     ○      ●
+                 â”‚ Next React Supa  Fast  Py   Ollama Claude  GH    Vercel Railway
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ Next.js         â”‚  â—    â—     â—     â—‹     â—‹     â—‹      â—‹      â—‹     â—      â—‹
+ React           â”‚  â—‹    â—     â—‹     â—‹     â—‹     â—‹      â—‹      â—‹     â—      â—‹
+ Supabase (JS)   â”‚  â—‹    â—‹     â—     â—     â—‹     â—‹      â—‹      â—‹     â—‹      â—‹
+ FastAPI         â”‚  â—‹    â—‹     â—‹     â—     â—     â—      â—      â—‹     â—‹      â—
+ Pydantic        â”‚  â—‹    â—‹     â—‹     â—     â—     â—‹      â—‹      â—‹     â—‹      â—‹
+ Ollama          â”‚  â—‹    â—‹     â—‹     â—     â—‹     â—      â—      â—‹     â—‹      â—‹
+ Claude API      â”‚  â—‹    â—‹     â—‹     â—     â—‹     â—‹      â—      â—‹     â—‹      â—‹
+ GitHub Actions  â”‚  â—‹    â—‹     â—‹     â—‹     â—‹     â—‹      â—‹      â—     â—‹      â—‹
+ Vercel          â”‚  â—    â—     â—‹     â—‹     â—‹     â—‹      â—‹      â—‹     â—      â—‹
+ Railway         â”‚  â—‹    â—‹     â—‹     â—     â—     â—‹      â—‹      â—‹     â—‹      â—
 
- ● = Strong dependency (hard to replace)
- ○ = Weak/no dependency (easy to replace)
+ â— = Strong dependency (hard to replace)
+ â—‹ = Weak/no dependency (easy to replace)
 ```
 
 ### 10.3 Critical Path Dependencies
@@ -803,15 +803,15 @@ The following chains represent the most critical dependency paths:
 
 ```
 # Path 1: User Request Flow
-Browser → Vercel → Next.js → React → Supabase JS → HTTPS → Railway → FastAPI → Supabase DB
+Browser â†’ Vercel â†’ Next.js â†’ React â†’ Supabase JS â†’ HTTPS â†’ Railway â†’ FastAPI â†’ Supabase DB
 3 platform dependencies, 4 framework dependencies
 
 # Path 2: AI Agent Flow
-Scheduler → FastAPI → APScheduler → AI Agent → PromptLoader → Ollama OR Claude
+Scheduler â†’ FastAPI â†’ APScheduler â†’ AI Agent â†’ PromptLoader â†’ Ollama OR Claude
 2 platform dependencies, 2 framework dependencies, 1 AI dependency
 
 # Path 3: Build Flow
-Developer → GitHub → GitHub Actions → npm/pip install → Build → Deploy to Vercel + Railway
+Developer â†’ GitHub â†’ GitHub Actions â†’ npm/pip install â†’ Build â†’ Deploy to Vercel + Railway
 2 platform dependencies, 2 tool dependencies
 ```
 
@@ -823,26 +823,26 @@ Developer → GitHub → GitHub Actions → npm/pip install → Build → Deploy
 
 | Dependency | Risk | Primary | Fallback | Degradation |
 |---|---|---|---|---|
-| **Supabase DB** | High — data store | Supabase PostgreSQL | Direct PostgreSQL (pg8000) | Full functionality, different driver |
-| **Supabase Auth** | High — user auth | Supabase Auth | JWT verification + PostgreSQL users table | Manual auth, no OAuth |
-| **Ollama** | Medium — AI | Local Mistral 7B | Claude API (Anthropic) | Higher latency, cost |
-| **Claude API** | Low — AI fallback | Claude Sonnet 4 | Algorithmic fallback (no AI) | Reduced quality, works |
-| **Vercel** | Medium — frontend | Vercel | Railway or Netlify | Same app, different host |
-| **Railway** | Medium — backend | Railway | Fly.io or Render | Same app, different host |
-| **Resend** | Low — email | Resend API | SMTP direct (sendmail) | Delayed delivery |
-| **GitHub** | Medium — code | GitHub | GitLab self-hosted | Different workflow |
+| **Supabase DB** | High â€” data store | Supabase PostgreSQL | Direct PostgreSQL (pg8000) | Full functionality, different driver |
+| **Supabase Auth** | High â€” user auth | Supabase Auth | JWT verification + PostgreSQL users table | Manual auth, no OAuth |
+| **Ollama** | Medium â€” AI | Local Mistral 7B | Claude API (Anthropic) | Higher latency, cost |
+| **Claude API** | Low â€” AI fallback | Claude Sonnet 4 | Algorithmic fallback (no AI) | Reduced quality, works |
+| **Vercel** | Medium â€” frontend | Vercel | Railway or Netlify | Same app, different host |
+| **Railway** | Medium â€” backend | Railway | Fly.io or Render | Same app, different host |
+| **Resend** | Low â€” email | Resend API | SMTP direct (sendmail) | Delayed delivery |
+| **GitHub** | Medium â€” code | GitHub | GitLab self-hosted | Different workflow |
 
 ### 11.2 AI Fallback Implementation
 
 ```python
-# packages/ai/client.py — AI client with full fallback chain
+# packages/ai/client.py â€” AI client with full fallback chain
 
 from ai.prompt_loader import prompts
 import httpx
 import os
 
 class AIClient:
-    """AI client with full fallback chain: Ollama → Claude → Algorithmic."""
+    """AI client with full fallback chain: Ollama â†’ Claude â†’ Algorithmic."""
     
     def __init__(self):
         self.ollama_base = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -919,7 +919,7 @@ ai_client = AIClient()
 ### 11.3 Database Fallback
 
 ```python
-# packages/config/core/supabase.py — Database fallback
+# packages/config/core/supabase.py â€” Database fallback
 
 from supabase import create_client
 import os
@@ -979,7 +979,7 @@ class SupabaseClient:
 ### 12.2 Supabase Lock-In Mitigation
 
 ```python
-# packages/database/repository.py — Abstracted data access layer
+# packages/database/repository.py â€” Abstracted data access layer
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -1041,10 +1041,10 @@ class PostgresTaskRepository(TaskRepository):
 
 ## 13. Migration Path for Each Dependency
 
-### 13.1 Supabase → Direct PostgreSQL
+### 13.1 Supabase â†’ Direct PostgreSQL
 
 ```markdown
-## Migration: Supabase → Direct PostgreSQL
+## Migration: Supabase â†’ Direct PostgreSQL
 
 **Risk:** High (database is core infrastructure)
 **Effort:** 3-4 weeks
@@ -1083,16 +1083,16 @@ class PostgresTaskRepository(TaskRepository):
    - Keep Supabase as read-only backup for 1 week
 
 ### Key Differences
-- **Auth:** Supabase Auth → JWT + sessions table (manual)
-- **Storage:** Supabase Storage → S3/MinIO
-- **Realtime:** Supabase Realtime → WebSocket (custom)
-- **RLS:** Supabase RLS → Application-level authorization
+- **Auth:** Supabase Auth â†’ JWT + sessions table (manual)
+- **Storage:** Supabase Storage â†’ S3/MinIO
+- **Realtime:** Supabase Realtime â†’ WebSocket (custom)
+- **RLS:** Supabase RLS â†’ Application-level authorization
 ```
 
-### 13.2 Vercel → Alternative Hosting
+### 13.2 Vercel â†’ Alternative Hosting
 
 ```markdown
-## Migration: Vercel → Railway / Netlify / Cloudflare Pages
+## Migration: Vercel â†’ Railway / Netlify / Cloudflare Pages
 
 **Risk:** Medium
 **Effort:** 1-2 weeks
@@ -1103,7 +1103,7 @@ class PostgresTaskRepository(TaskRepository):
 1. **Remove Vercel-specific features**
    - Replace `@vercel/analytics` with generic analytics
    - Remove Vercel Edge Functions (use API routes instead)
-   - Remove ISR (Incremental Static Regeneration) — use SSR + CDN
+   - Remove ISR (Incremental Static Regeneration) â€” use SSR + CDN
 
 2. **Deploy to target platform**
    - Railway: Docker-based, straightforward for Next.js
@@ -1121,10 +1121,10 @@ class PostgresTaskRepository(TaskRepository):
    - SEO meta tags preserved
 ```
 
-### 13.3 Railway → Alternative Backend Hosting
+### 13.3 Railway â†’ Alternative Backend Hosting
 
 ```markdown
-## Migration: Railway → Fly.io / Render / Heroku
+## Migration: Railway â†’ Fly.io / Render / Heroku
 
 **Risk:** Medium
 **Effort:** 1-2 weeks
@@ -1151,10 +1151,10 @@ class PostgresTaskRepository(TaskRepository):
    - Test database connectivity from new host
 ```
 
-### 13.4 Ollama → Alternative AI Provider
+### 13.4 Ollama â†’ Alternative AI Provider
 
 ```markdown
-## Migration: Ollama → Other AI Provider
+## Migration: Ollama â†’ Other AI Provider
 
 **Risk:** Low
 **Effort:** < 1 week
@@ -1164,7 +1164,7 @@ class PostgresTaskRepository(TaskRepository):
 
 1. **OpenAI API** (GPT-4, GPT-4o)
    - Compatible API format (OpenAI-compatible)
-   - Change: `ollama/api/generate` → `openai/chat/completions`
+   - Change: `ollama/api/generate` â†’ `openai/chat/completions`
    - Cost: ~$0.03/request (vs Ollama: free)
 
 2. **Groq** (Llama 3, Mixtral)
@@ -1190,10 +1190,10 @@ class PostgresTaskRepository(TaskRepository):
 5. Deploy and monitor
 ```
 
-### 13.5 Anthropic → Alternative AI Provider
+### 13.5 Anthropic â†’ Alternative AI Provider
 
 ```markdown
-## Migration: Anthropic Claude → OpenAI / Groq / Together
+## Migration: Anthropic Claude â†’ OpenAI / Groq / Together
 
 **Risk:** Low
 **Effort:** < 3 days
@@ -1204,17 +1204,17 @@ class PostgresTaskRepository(TaskRepository):
 1. Install new SDK: `pip install openai`
 2. Update `packages/ai/client.py`:
    - Change API endpoint
-   - Update completion format (Claude Messages → OpenAI Chat)
+   - Update completion format (Claude Messages â†’ OpenAI Chat)
    - Adjust system prompt format
 3. Test all agent prompts with new model
 4. Compare output quality
 5. Deploy with gradual rollout
 ```
 
-### 13.6 Resend → Alternative Email Provider
+### 13.6 Resend â†’ Alternative Email Provider
 
 ```markdown
-## Migration: Resend → SendGrid / Mailgun / SMTP
+## Migration: Resend â†’ SendGrid / Mailgun / SMTP
 
 **Risk:** Low
 **Effort:** < 2 days
@@ -1236,30 +1236,30 @@ class PostgresTaskRepository(TaskRepository):
 ### Appendix A: Dependencies Quick Reference
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        DEPENDENCIES QUICK CARD                       │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  RUNTIME (Critical)                                                 │
-│  📦 next ^14.2.0         |  🐍 fastapi ^0.110.0                     │
-│  📦 react ^18.3.0        |  🐍 pydantic ^2.7.0                      │
-│  📦 @supabase/supabase-js | 🐍 supabase ^2.5.0                      │
-│  📦 zustand ^4.5.0       |  🐍 apscheduler ^3.10.0                  │
-│                                                                     │
-│  AI (Medium criticality)                                            │
-│  🤖 Ollama Mistral 7B (local)  ⟶  Claude Sonnet 4 (cloud)          │
-│  ⟶ Algorithmic fallback (no AI, always works)                       │
-│                                                                     │
-│  INFRASTRUCTURE                                                     │
-│  ☁️ Vercel (Frontend)  → Fallback: Railway / Netlify                │
-│  ☁️ Railway (Backend)  → Fallback: Fly.io / Render                  │
-│  🗄️ Supabase (DB+Auth) → Fallback: PostgreSQL direct + custom auth  │
-│                                                                     │
-│  UPDATE CADENCE                                                     │
-│  Patch: Auto-merge (Dependabot)  |  Minor: Weekly review            │
-│  Major: Monthly + staging  |  Security: <24h for critical           │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        DEPENDENCIES QUICK CARD                       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                     â”‚
+â”‚  RUNTIME (Critical)                                                 â”‚
+â”‚  ðŸ“¦ next ^14.2.0         |  ðŸ fastapi ^0.110.0                     â”‚
+â”‚  ðŸ“¦ react ^18.3.0        |  ðŸ pydantic ^2.7.0                      â”‚
+â”‚  ðŸ“¦ @supabase/supabase-js | ðŸ supabase ^2.5.0                      â”‚
+â”‚  ðŸ“¦ zustand ^4.5.0       |  ðŸ apscheduler ^3.10.0                  â”‚
+â”‚                                                                     â”‚
+â”‚  AI (Medium criticality)                                            â”‚
+â”‚  ðŸ¤– Ollama Mistral 7B (local)  âŸ¶  Claude Sonnet 4 (cloud)          â”‚
+â”‚  âŸ¶ Algorithmic fallback (no AI, always works)                       â”‚
+â”‚                                                                     â”‚
+â”‚  INFRASTRUCTURE                                                     â”‚
+â”‚  â˜ï¸ Vercel (Frontend)  â†’ Fallback: Railway / Netlify                â”‚
+â”‚  â˜ï¸ Railway (Backend)  â†’ Fallback: Fly.io / Render                  â”‚
+â”‚  ðŸ—„ï¸ Supabase (DB+Auth) â†’ Fallback: PostgreSQL direct + custom auth  â”‚
+â”‚                                                                     â”‚
+â”‚  UPDATE CADENCE                                                     â”‚
+â”‚  Patch: Auto-merge (Dependabot)  |  Minor: Weekly review            â”‚
+â”‚  Major: Monthly + staging  |  Security: <24h for critical           â”‚
+â”‚                                                                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix B: Dependency Audit Checklist (Monthly)
@@ -1293,10 +1293,10 @@ Tracked via GitHub Issues with label `module/deps`:
 
 | Dependency | Current Version | Latest Version | Status | Security | Health |
 |---|---|---|---|---|---|
-| next | 14.2.0 | 14.2.3 | ✅ Up to date | ✅ No advisories | ✅ Active |
-| react | 18.3.0 | 18.3.1 | ⚠️ Minor behind | ✅ No advisories | ✅ Active |
-| fastapi | 0.110.0 | 0.112.0 | ⚠️ Minor behind | ✅ No advisories | ✅ Active |
-| supabase (JS) | 2.42.0 | 2.45.0 | ⚠️ Minor behind | ✅ No advisories | ✅ Active |
+| next | 14.2.0 | 14.2.3 | âœ… Up to date | âœ… No advisories | âœ… Active |
+| react | 18.3.0 | 18.3.1 | âš ï¸ Minor behind | âœ… No advisories | âœ… Active |
+| fastapi | 0.110.0 | 0.112.0 | âš ï¸ Minor behind | âœ… No advisories | âœ… Active |
+| supabase (JS) | 2.42.0 | 2.45.0 | âš ï¸ Minor behind | âœ… No advisories | âœ… Active |
 
 ### Appendix D: Dependency Update Automation
 

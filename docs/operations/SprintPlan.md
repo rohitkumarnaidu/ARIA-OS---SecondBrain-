@@ -1,10 +1,10 @@
-# Sprint Plan
+﻿# Sprint Plan
 
-> **Document ID:** SB-OPS-SPRINT-002  
+> **Document ID:OPS-SPR-001 SB-OPS-SPRINT-002  
 > **Version:** 2.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Development Process  
+> **Classification:** Internal â€” Development Process  
 > **Owner:** Scrum Master  
 
 ---
@@ -102,7 +102,7 @@ stateDiagram-v2
 | SB-26.S15 | 2026-07-20 | 2026-08-02 | Bug Bash & Hardening |
 | SB-26.S16 | 2026-08-03 | 2026-08-16 | Release v1.0 Prep |
 | SB-26.S17 | 2026-08-17 | 2026-08-30 | Post-Release Stabilization |
-| SB-26.S18+ | 2026-08-31 | — | Ongoing feature development |
+| SB-26.S18+ | 2026-08-31 | â€” | Ongoing feature development |
 
 ### 1.3 Sprint ID Convention
 
@@ -182,7 +182,7 @@ Examples: `SB-26.S1`, `SB-26.S14`, `SB-27.S3`
 
 **Rules:**
 - Stand at the board (physical or virtual)
-- No deep discussions — take them to a breakout
+- No deep discussions â€” take them to a breakout
 - Record blockers in GitHub Issues with `blocked` label
 - Timebox strictly at 10 minutes
 
@@ -193,7 +193,7 @@ Examples: `SB-26.S1`, `SB-26.S14`, `SB-27.S3`
 | < 4 hours | Self-resolve, ask for help in Slack |
 | 4-24 hours | Escalate to Scrum Master |
 | 24-48 hours | Escalate to Engineering Manager |
-| > 48 hours | Escalate to Product Owner — consider scope change |
+| > 48 hours | Escalate to Product Owner â€” consider scope change |
 
 ### 2.4 Sprint Review (60 minutes)
 
@@ -243,7 +243,7 @@ Examples: `SB-26.S1`, `SB-26.S14`, `SB-27.S3`
 
 ### 3.1 Capacity Calculation
 
-Formula: `Available Capacity = (Team Members × Working Days × Hours/Day) × Focus Factor`
+Formula: `Available Capacity = (Team Members Ã— Working Days Ã— Hours/Day) Ã— Focus Factor`
 
 **Standard Team Capacity:**
 
@@ -253,7 +253,7 @@ Formula: `Available Capacity = (Team Members × Working Days × Hours/Day) × Fo
 | Scrum Master | 1 | 2 | 20 | 0.8 | 16 |
 | Developers | 4 | 6 | 120 | 0.75 | 90 |
 | QA | 1 | 6 | 60 | 0.8 | 48 |
-| **Total** | **7** | — | **240** | — | **182** |
+| **Total** | **7** | â€” | **240** | â€” | **182** |
 
 **Focus Factor Adjustments:**
 
@@ -279,10 +279,10 @@ Focus Factor: 0.75
 | Alice | Dev | 10 | 0 | Full capacity | 45 |
 | Bob | Dev | 8 | 2 | Conference Mon-Tue | 36 |
 | Carol | Dev | 10 | 0 | On-call week 1 | 34 |
-| Dave | Dev | 10 | 0 | — | 45 |
-| Eve | QA | 10 | 0 | — | 48 |
-| Frank | PO | 9 | 1 | — | 25 |
-| Grace | SM | 10 | 0 | — | 16 |
+| Dave | Dev | 10 | 0 | â€” | 45 |
+| Eve | QA | 10 | 0 | â€” | 48 |
+| Frank | PO | 9 | 1 | â€” | 25 |
+| Grace | SM | 10 | 0 | â€” | 16 |
 | **Total** | | **67** | **3** | | **249** |
 ```
 
@@ -297,17 +297,17 @@ Focus Factor: 0.75
 | **Confidence** | 0.15 | How confident are we in our estimates? (1-5) |
 | **Effort** | -0.25 | How many story points is this? (inverse) |
 
-RICE Score = `(Reach × 0.25 + Impact × 0.35 + Confidence × 0.15) / Effort`
+RICE Score = `(Reach Ã— 0.25 + Impact Ã— 0.35 + Confidence Ã— 0.15) / Effort`
 
 **Backlog Tiers:**
 
 | Tier | Definition | Planning Horizon |
 |---|---|---|
-| P0 | Critical — blocks all progress | Current sprint |
-| P1 | High — strategic priority | Next 1-2 sprints |
-| P2 | Medium — valuable but not urgent | Next 3-4 sprints |
-| P3 | Low — nice to have | Next 6+ sprints |
-| P4 | Icebox — may never do | Indefinite |
+| P0 | Critical â€” blocks all progress | Current sprint |
+| P1 | High â€” strategic priority | Next 1-2 sprints |
+| P2 | Medium â€” valuable but not urgent | Next 3-4 sprints |
+| P3 | Low â€” nice to have | Next 6+ sprints |
+| P4 | Icebox â€” may never do | Indefinite |
 
 ### 3.3 Sprint Capacity Allocation
 
@@ -544,13 +544,13 @@ milestone: SB-26.S7
 ### 6.3 Sprint Board Columns
 
 ```
-┌──────────────┐    ┌──────────────────┐    ┌──────────────┐    ┌────────────┐    ┌──────┐    ┌──────┐
-│   Backlog    │ →  │  Sprint Backlog  │ →  │ In Progress  │ →  │ In Review  │ →  │In QA │ →  │ Done │
-│              │    │                  │    │              │    │            │    │      │    │      │
-│ Refined &    │    │ Committed items │    │ Active dev   │    │ PR under   │    │QA    │    │DoD  │
-│ prioritized  │    │ DoR met         │    │ Self-assigned │    │ review     │    │verify │    │met  │
-│ Not committed│    │                 │    │ Max 3/dev    │    │ Max 5 total│    │      │    │     │
-└──────────────┘    └──────────────────┘    └──────────────┘    └────────────┘    └──────┘    └──────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”
+â”‚   Backlog    â”‚ â†’  â”‚  Sprint Backlog  â”‚ â†’  â”‚ In Progress  â”‚ â†’  â”‚ In Review  â”‚ â†’  â”‚In QA â”‚ â†’  â”‚ Done â”‚
+â”‚              â”‚    â”‚                  â”‚    â”‚              â”‚    â”‚            â”‚    â”‚      â”‚    â”‚      â”‚
+â”‚ Refined &    â”‚    â”‚ Committed items â”‚    â”‚ Active dev   â”‚    â”‚ PR under   â”‚    â”‚QA    â”‚    â”‚DoD  â”‚
+â”‚ prioritized  â”‚    â”‚ DoR met         â”‚    â”‚ Self-assigned â”‚    â”‚ review     â”‚    â”‚verify â”‚    â”‚met  â”‚
+â”‚ Not committedâ”‚    â”‚                 â”‚    â”‚ Max 3/dev    â”‚    â”‚ Max 5 totalâ”‚    â”‚      â”‚    â”‚     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **WIP Limits:**
@@ -623,7 +623,7 @@ Every item in the sprint backlog MUST meet ALL criteria below:
 
 ### Estimation
 - [ ] Story is estimated in story points
-- [ ] Story size ≤ 13 points (if >13, it must be split)
+- [ ] Story size â‰¤ 13 points (if >13, it must be split)
 - [ ] Task breakdown is created at planning
 
 ### Validation
@@ -647,30 +647,30 @@ Exemptions must be documented in the issue body and approved before Sprint Plann
 
 ```
 Backlog Item Created
-        │
-        ▼
+        â”‚
+        â–¼
 PO adds acceptance criteria
-        │
-        ▼
+        â”‚
+        â–¼
 Tech Lead reviews technical approach
-        │
-        ▼
+        â”‚
+        â–¼
 Design Lead reviews (if UI)
-        │
-        ▼
+        â”‚
+        â–¼
 Team estimates in refinement
-        │
-        ▼
+        â”‚
+        â–¼
 Scrum Master checks DoR checklist
-        │
-        ▼
-┌───────────┐    Yes
-│ DoR Met?  │ ───────→ Move to "Ready" column
-└───────────┘
-     │
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    Yes
+â”‚ DoR Met?  â”‚ â”€â”€â”€â”€â”€â”€â”€â†’ Move to "Ready" column
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚
      No
-     │
-     ▼
+     â”‚
+     â–¼
 Add specific blockers to issue
 Return to refinement queue
 ```
@@ -689,7 +689,7 @@ Return to refinement queue
 | 5 | L | 1-2 days | Complex | Medium | New page with data fetching |
 | 8 | XL | 2-3 days | Very complex | Medium | Agent module integration |
 | 13 | XXL | 3-5 days | Extremely complex | High | End-to-end feature with AI |
-| 21+ | — | Must split | — | — | Epic — break down |
+| 21+ | â€” | Must split | â€” | â€” | Epic â€” break down |
 
 ### 8.2 Reference Stories (Second Brain OS)
 
@@ -711,12 +711,12 @@ Return to refinement queue
 **Step 1: T-Shirt Sizing (Quick Filter)**
 
 During refinement, quickly size items:
-- XS → 1-2 points
-- S → 3 points
-- M → 5 points
-- L → 8 points
-- XL → 13 points
-- XXL → Needs splitting
+- XS â†’ 1-2 points
+- S â†’ 3 points
+- M â†’ 5 points
+- L â†’ 8 points
+- XL â†’ 13 points
+- XXL â†’ Needs splitting
 
 **Step 2: Fibonacci Voting (Planning Poker)**
 
@@ -726,10 +726,10 @@ During refinement, quickly size items:
 4. All cards revealed simultaneously
 5. If variance > 2x (e.g., 3 and 8), discuss reasoning
 6. Re-vote after discussion
-7. Repeat until consensus or majority (≥2/3)
+7. Repeat until consensus or majority (â‰¥2/3)
 
 **Estimation Rules:**
-- Ignore calendar dates — estimate relative effort
+- Ignore calendar dates â€” estimate relative effort
 - Use the smallest person's estimate as the anchor (they'll implement it)
 - A story that takes 2 developers 2 days = 8 points (not 4)
 - Estimation time: Max 5 minutes per story
@@ -746,23 +746,23 @@ velocity = (sprint_n_1_points + sprint_n_2_points + sprint_n_3_points) // 3
 
 | Sprint | Committed Points | Completed Points | Completion % | Velocity |
 |---|---|---|---|---|
-| SB-26.S1 | 60 | 55 | 92% | — |
-| SB-26.S2 | 65 | 60 | 92% | — |
+| SB-26.S1 | 60 | 55 | 92% | â€” |
+| SB-26.S2 | 65 | 60 | 92% | â€” |
 | SB-26.S3 | 70 | 68 | 97% | 61 |
 | SB-26.S4 | 70 | 65 | 93% | 64 |
 | SB-26.S5 | 75 | 70 | 93% | 68 |
 | SB-26.S6 | 80 | 78 | 98% | 71 |
-| SB-26.S7 | 85 | — | — | 71 |
+| SB-26.S7 | 85 | â€” | â€” | 71 |
 
 **Velocity-Based Capacity Planning:**
 
 ```
-Forecast points for next sprint = Last 3 sprint average × (1 - known capacity reduction)
+Forecast points for next sprint = Last 3 sprint average Ã— (1 - known capacity reduction)
 
 Example:
 - Average velocity: 71
 - Next sprint: 2 team members on PTO (25% capacity reduction)
-- Forecast: 71 × 0.75 = 53 points
+- Forecast: 71 Ã— 0.75 = 53 points
 - Commitment ceiling: 53 points
 ```
 
@@ -773,7 +773,7 @@ Example:
 ### 9.1 Demo Script Template
 
 ```markdown
-# Sprint Review Demo Script — SB-26.S7
+# Sprint Review Demo Script â€” SB-26.S7
 
 **Date:** 2026-04-11  
 **Time:** 15:00-16:00 UTC  
@@ -849,7 +849,7 @@ Example:
 ### 9.2 Stakeholder Feedback Template
 
 ```markdown
-## Sprint Review Feedback — SB-YY.SN
+## Sprint Review Feedback â€” SB-YY.SN
 
 **Sprint Goal:** [Goal Statement]
 
@@ -870,8 +870,8 @@ Example:
 
 ### Backlog Changes Resulting from Feedback
 
-- [Issue #] — Description of change
-- [Issue #] — New item added
+- [Issue #] â€” Description of change
+- [Issue #] â€” New item added
 
 ### Approval Status
 
@@ -896,7 +896,7 @@ Example:
 ### 10.1 Start / Stop / Continue Template
 
 ```markdown
-# Sprint Retrospective — SB-YY.SN
+# Sprint Retrospective â€” SB-YY.SN
 
 **Date:** [Date]  
 **Participants:** [Names]  
@@ -906,11 +906,11 @@ Example:
 
 | Metric | Value | Trend |
 |---|---|---|
-| Planned points | 85 | — |
+| Planned points | 85 | â€” |
 | Completed points | 78 | 92% |
-| Bugs found | 5 | ↑ 2 from last sprint |
-| Cycle time (avg) | 2.3 days | ↓ 0.5 days |
-| Code review time (avg) | 6.5 hours | ↓ 2h improvement |
+| Bugs found | 5 | â†‘ 2 from last sprint |
+| Cycle time (avg) | 2.3 days | â†“ 0.5 days |
+| Code review time (avg) | 6.5 hours | â†“ 2h improvement |
 
 ---
 
@@ -941,15 +941,15 @@ Example:
 
 | # | Action Item | Owner | Due Date | Status |
 |---|---|---|---|---|
-| 1 | | | | □ |
-| 2 | | | | □ |
-| 3 | | | | □ |
+| 1 | | | | â–¡ |
+| 2 | | | | â–¡ |
+| 3 | | | | â–¡ |
 
 ## Happiness Index
 
-- Team morale: ⭐⭐⭐⭐⭐ (5/5)
-- Process satisfaction: ⭐⭐⭐⭐ (4/5)
-- Product confidence: ⭐⭐⭐⭐⭐ (5/5)
+- Team morale: â­â­â­â­â­ (5/5)
+- Process satisfaction: â­â­â­â­ (4/5)
+- Product confidence: â­â­â­â­â­ (5/5)
 
 ## Blockers for Next Sprint
 
@@ -965,12 +965,12 @@ Example:
 
 | ID | Sprint | Action Item | Owner | Status | Due | Verified |
 |---|---|---|---|---|---|---|
-| RETRO-001 | SB-26.S1 | Reduce standup time to 10 min | Grace | ✅ Done | S2 | ✅ |
-| RETRO-002 | SB-26.S2 | Add prompt validation to CI | Alice | ✅ Done | S3 | ✅ |
-| RETRO-003 | SB-26.S3 | Create developer onboarding doc | Bob | ✅ Done | S4 | ✅ |
-| RETRO-004 | SB-26.S4 | Implement staging environment | Carol | ⏳ In Progress | S6 | □ |
-| RETRO-005 | SB-26.S5 | Reduce PR review time to <12h | Team | ✅ Done | S6 | ✅ |
-| RETRO-006 | SB-26.S6 | Split large stories before sprint | Frank | ✅ Done | S7 | ✅ |
+| RETRO-001 | SB-26.S1 | Reduce standup time to 10 min | Grace | âœ… Done | S2 | âœ… |
+| RETRO-002 | SB-26.S2 | Add prompt validation to CI | Alice | âœ… Done | S3 | âœ… |
+| RETRO-003 | SB-26.S3 | Create developer onboarding doc | Bob | âœ… Done | S4 | âœ… |
+| RETRO-004 | SB-26.S4 | Implement staging environment | Carol | â³ In Progress | S6 | â–¡ |
+| RETRO-005 | SB-26.S5 | Reduce PR review time to <12h | Team | âœ… Done | S6 | âœ… |
+| RETRO-006 | SB-26.S6 | Split large stories before sprint | Frank | âœ… Done | S7 | âœ… |
 ```
 
 **Rules:**
@@ -1011,31 +1011,31 @@ Rate each dimension 1-5 (1 = poor, 5 = excellent)
 
 | Month | Sprint | Start (Mon) | End (Sun) | Theme | Notes |
 |---|---|---|---|---|---|
-| Jan | S1 | Jan 5 | Jan 18 | Foundation | — |
-| Jan-Feb | S2 | Jan 19 | Feb 1 | Foundation | — |
-| Feb | S3 | Feb 2 | Feb 15 | Task & Goal | — |
-| Feb-Mar | S4 | Feb 16 | Mar 1 | Task & Goal | — |
-| Mar | S5 | Mar 2 | Mar 15 | Course & Habit | — |
-| Mar-Apr | S6 | Mar 16 | Mar 29 | Course & Habit | — |
-| Apr | S7 | Mar 30 | Apr 12 | AI Agents | — |
-| Apr-May | S8 | Apr 13 | Apr 26 | AI Agents | — |
+| Jan | S1 | Jan 5 | Jan 18 | Foundation | â€” |
+| Jan-Feb | S2 | Jan 19 | Feb 1 | Foundation | â€” |
+| Feb | S3 | Feb 2 | Feb 15 | Task & Goal | â€” |
+| Feb-Mar | S4 | Feb 16 | Mar 1 | Task & Goal | â€” |
+| Mar | S5 | Mar 2 | Mar 15 | Course & Habit | â€” |
+| Mar-Apr | S6 | Mar 16 | Mar 29 | Course & Habit | â€” |
+| Apr | S7 | Mar 30 | Apr 12 | AI Agents | â€” |
+| Apr-May | S8 | Apr 13 | Apr 26 | AI Agents | â€” |
 | May | S9 | Apr 27 | May 10 | Dashboard | May 1 holiday |
-| May | S10 | May 11 | May 24 | Dashboard | — |
-| May-Jun | S11 | May 25 | Jun 7 | Mobile | — |
-| Jun | S12 | Jun 8 | Jun 21 | Testing | — |
-| Jun-Jul | S13 | Jun 22 | Jul 5 | Performance | — |
-| Jul | S14 | Jul 6 | Jul 19 | Feature Parity | — |
-| Jul-Aug | S15 | Jul 20 | Aug 2 | Hardening | — |
+| May | S10 | May 11 | May 24 | Dashboard | â€” |
+| May-Jun | S11 | May 25 | Jun 7 | Mobile | â€” |
+| Jun | S12 | Jun 8 | Jun 21 | Testing | â€” |
+| Jun-Jul | S13 | Jun 22 | Jul 5 | Performance | â€” |
+| Jul | S14 | Jul 6 | Jul 19 | Feature Parity | â€” |
+| Jul-Aug | S15 | Jul 20 | Aug 2 | Hardening | â€” |
 | Aug | S16 | Aug 3 | Aug 16 | Release Prep | v1.0 release |
 | Aug | S17 | Aug 17 | Aug 30 | Stabilization | Post-release |
-| Sep | S18 | Aug 31 | Sep 13 | Features | — |
-| Sep-Oct | S19 | Sep 14 | Sep 27 | Features | — |
-| Oct | S20 | Sep 28 | Oct 11 | Features | — |
-| Oct | S21 | Oct 12 | Oct 25 | Features | — |
-| Oct-Nov | S22 | Oct 26 | Nov 8 | Features | — |
-| Nov | S23 | Nov 9 | Nov 22 | Features | — |
-| Nov-Dec | S24 | Nov 23 | Dec 6 | Features | — |
-| Dec | S25 | Dec 7 | Dec 20 | Year-end | — |
+| Sep | S18 | Aug 31 | Sep 13 | Features | â€” |
+| Sep-Oct | S19 | Sep 14 | Sep 27 | Features | â€” |
+| Oct | S20 | Sep 28 | Oct 11 | Features | â€” |
+| Oct | S21 | Oct 12 | Oct 25 | Features | â€” |
+| Oct-Nov | S22 | Oct 26 | Nov 8 | Features | â€” |
+| Nov | S23 | Nov 9 | Nov 22 | Features | â€” |
+| Nov-Dec | S24 | Nov 23 | Dec 6 | Features | â€” |
+| Dec | S25 | Dec 7 | Dec 20 | Year-end | â€” |
 | Dec-Jan | S26 | Dec 21 | Jan 3 | Holiday | Limited capacity |
 
 ### 11.2 Quarterly Planning Cadence
@@ -1091,7 +1091,7 @@ type/spike:         Research, investigation
 type/hotfix:        Emergency production fix
 
 # Priority
-priority/p0: Drop everything — critical
+priority/p0: Drop everything â€” critical
 priority/p1: High priority
 priority/p2: Medium priority
 priority/p3: Low priority
@@ -1141,13 +1141,13 @@ SB-26.S2:   Sprint milestone
 All templates are stored in:
 ```
 .github/
-├── ISSUE_TEMPLATE/
-│   ├── feature-request.md
-│   ├── bug-report.md
-│   └── task.md
-├── PULL_REQUEST_TEMPLATE.md
-└── workflows/
-    └── ci.yml
+â”œâ”€â”€ ISSUE_TEMPLATE/
+â”‚   â”œâ”€â”€ feature-request.md
+â”‚   â”œâ”€â”€ bug-report.md
+â”‚   â””â”€â”€ task.md
+â”œâ”€â”€ PULL_REQUEST_TEMPLATE.md
+â””â”€â”€ workflows/
+    â””â”€â”€ ci.yml
 ```
 
 ---
@@ -1184,13 +1184,13 @@ CREATE TABLE sprint_metrics (
 
 **Conservative Forecast:**
 ```
-Forecast points = Rolling Avg × (1 - σ)
-where σ = standard deviation / mean of last 6 sprints
+Forecast points = Rolling Avg Ã— (1 - Ïƒ)
+where Ïƒ = standard deviation / mean of last 6 sprints
 ```
 
 **Optimistic Forecast:**
 ```
-Forecast points = Rolling Avg × (1 + σ)
+Forecast points = Rolling Avg Ã— (1 + Ïƒ)
 ```
 
 **Release Date Prediction:**
@@ -1243,38 +1243,38 @@ Example: 850 points remaining / 68 velocity = ~12.5 sprints = ~25 weeks
 ### Appendix B: Definition of Ready Poster
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│           DEFINITION OF READY — QUICK REFERENCE          │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ☐  Acceptance criteria written (min 3)                 │
-│  ☐  Dependencies identified & resolved                  │
-│  ☐  Design approved (if UI)                             │
-│  ☐  Technical approach reviewed                         │
-│  ☐  Estimated (1-13 points)                             │
-│  ☐  No blockers on other teams                          │
-│  ☐  Test strategy identified                            │
-│  ☐  Story is actionable (team understands it)           │
-│                                                         │
-│  ALL items MUST be checked before sprint commitment     │
-└─────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           DEFINITION OF READY â€” QUICK REFERENCE          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                         â”‚
+â”‚  â˜  Acceptance criteria written (min 3)                 â”‚
+â”‚  â˜  Dependencies identified & resolved                  â”‚
+â”‚  â˜  Design approved (if UI)                             â”‚
+â”‚  â˜  Technical approach reviewed                         â”‚
+â”‚  â˜  Estimated (1-13 points)                             â”‚
+â”‚  â˜  No blockers on other teams                          â”‚
+â”‚  â˜  Test strategy identified                            â”‚
+â”‚  â˜  Story is actionable (team understands it)           â”‚
+â”‚                                                         â”‚
+â”‚  ALL items MUST be checked before sprint commitment     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix C: Estimation Reference Card
 
 ```
-  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐
-  │  1  │ │  2  │ │  3  │ │  5  │ │  8  │ │ 13  │
-  │ XS  │ │  S  │ │  M  │ │  L  │ │ XL  │ │XXL  │
-  │<2h  │ │2-4h │ │4-8h │ │1-2d │ │2-3d │ │3-5d │
-  └─────┘ └─────┘ └─────┘ └─────┘ └─────┘ └─────┘
+  â”Œâ”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”
+  â”‚  1  â”‚ â”‚  2  â”‚ â”‚  3  â”‚ â”‚  5  â”‚ â”‚  8  â”‚ â”‚ 13  â”‚
+  â”‚ XS  â”‚ â”‚  S  â”‚ â”‚  M  â”‚ â”‚  L  â”‚ â”‚ XL  â”‚ â”‚XXL  â”‚
+  â”‚<2h  â”‚ â”‚2-4h â”‚ â”‚4-8h â”‚ â”‚1-2d â”‚ â”‚2-3d â”‚ â”‚3-5d â”‚
+  â””â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix D: Sprint Calendar ICS Integration
 
 All sprint dates are maintained in the team Google Calendar and synced via:
 
-- Calendar Name: `Second Brain OS — Sprint Calendar`
+- Calendar Name: `Second Brain OS â€” Sprint Calendar`
 - Color coding: Blue (sprint), Green (review), Yellow (retro), Red (release)
 - Subscription URL: [Internal Google Calendar Link]
 - Auto-reminders: 15 minutes before ceremonies
