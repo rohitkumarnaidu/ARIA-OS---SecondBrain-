@@ -1,21 +1,27 @@
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
-from database.schemas.task import TaskCreate, TaskUpdate, TaskResponse
+from database.schemas.task import TaskCreate, TaskUpdate, TaskResponse, TaskListResponse
 
 router = APIRouter()
 
 
-@router.get("/", summary="List all tasks", response_model=List[TaskResponse])
+@router.get("/", summary="List all tasks", response_model=TaskListResponse)
 async def get_tasks(
     current_user=Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ):
     supabase = get_supabase_client()
-    response = (
+    count_response = (
+        supabase.from_("tasks")
+        .select("*", count="exact")
+        .eq("user_id", current_user.user.id)
+        .execute()
+    )
+    total = count_response.count if hasattr(count_response, "count") and count_response.count is not None else len(count_response.data)
+    data_response = (
         supabase.from_("tasks")
         .select(
             "id, user_id, title, status, priority, due_date, created_at, updated_at, completed_at, estimated_minutes, category, description, project_id, goal_id, is_recurring, recurring_frequency, dependency_id, missed_count"
@@ -24,7 +30,7 @@ async def get_tasks(
         .range(offset, offset + limit - 1)
         .execute()
     )
-    return response.data
+    return TaskListResponse(data=data_response.data, total=total, limit=limit, offset=offset)
 
 
 @router.post("/", summary="Create a new task", status_code=201, response_model=TaskResponse)
