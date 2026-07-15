@@ -193,6 +193,15 @@ class TestPromptEntry:
         errors = entry.validate()
         assert any("temperature must be a number" in e for e in errors)
 
+    def test_render_keyerror_returns_body_unchanged(self):
+        entry = PromptEntry(
+            {"version": "1.0", "status": "active"},
+            "Hello {name}, your balance is {balance}",
+            Path("test.md"),
+        )
+        result = entry.render(name="Alice")
+        assert result == "Hello {name}, your balance is {balance}"
+
     def test_parse_no_frontmatter(self):
         from ai.prompt_loader import PromptLoader
 
