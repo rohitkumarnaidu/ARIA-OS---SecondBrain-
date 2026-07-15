@@ -1,5 +1,38 @@
 # Architecture
 
+## Document Control
+
+| Field | Value |
+|---|---|
+| **Document ID** | ENG-ARCH-001 |
+| **Version** | 2.0.0 |
+| **Status** | Active |
+| **Date** | 2026-07-10 |
+| **Classification** | Internal |
+| **Owner** | Developer |
+| **Review Cycle** | Monthly |
+| **Related Docs** | [C4 Architecture](/docs/architecture/README.md), [BackendArchitecture](BackendArchitecture.md), [Schema](Schema.md), [ADRs](/docs/engineering/adr/), [AGENTS.md](/AGENTS.md) |
+
+---
+
+## Table of Contents
+
+1. [System Overview](#system-overview)
+2. [Architectural Philosophy](#architectural-philosophy)
+3. [Component Responsibilities](#component-responsibilities)
+4. [Module Dependency Graph](#module-dependency-graph)
+5. [Data Flow](#data-flow)
+6. [Request Lifecycle](#request-lifecycle)
+7. [Integration Points](#integration-points)
+8. [Deployment Architecture](#deployment-architecture)
+9. [Offline Strategy](#offline-strategy)
+10. [Security Architecture](#security-architecture)
+11. [Tech Stack Summary](#tech-stack-summary)
+12. [Component Diagram](#component-diagram)
+13. [Cross-References](#cross-references)
+
+---
+
 ## System Overview
 
 ```mermaid
@@ -45,6 +78,20 @@ graph TD
     style AI fill:#1a1a2e,stroke:#818CF8,color:#F1F5F9
     style SA fill:#1a1a2e,stroke:#F59E0B,color:#F1F5F9
 ```
+
+---
+
+## Architectural Philosophy
+
+Second Brain OS is built on 7 core principles that drive every architectural decision:
+
+1. **Offline-first** — Works without internet via PWA + IndexedDB + background sync
+2. **Mobile-first** — 44px minimum touch targets, bottom nav, swipe gestures
+3. **Agent-orchestrated** — 11 AI agents (plus 8 skill sub-agents) run automatically on schedules
+4. **Privacy-first** — Data stays in user's Supabase instance, AI runs locally (Ollama)
+5. **Modular** — All 15 features independently toggleable
+6. **Real-time** — Supabase Realtime pushes live updates; no page refresh needed
+7. **Predictive** — System learns patterns and anticipates needs after 3 months
 
 ---
 
@@ -95,13 +142,13 @@ graph TD
 
 ### Database (Supabase)
 
-**Tables:** 21 tables as documented in Database.md
+**Tables:** 27 tables as documented in Database.md
 
 **Features Used:**
 - PostgreSQL for structured storage
 - RLS for row-level security on every table
 - Realtime subscriptions for live UI updates
-- Edge Functions for 8 cron-based agent schedules
+- Edge Functions for 15 cron-based agent schedules
 - pg_cron for database-level cron scheduling
 
 ### AI Layer
@@ -128,6 +175,67 @@ graph TD
 | Bedtime Reminder | 9:30 PM daily | Wind-down nudge with tomorrow's first task |
 | Habit Miss Checker | Midnight daily | Detects 2+ day habit misses, resets streaks |
 | Course Progress Nudge | 6 PM daily | Checks daily study targets, alerts if behind |
+
+---
+
+## Module Dependency Graph
+
+```mermaid
+graph TD
+    DASH[Dashboard<br/>Aggregates All Modules]
+
+    TM[Task Manager<br/>Core Module] <--> CT[Course Tracker]
+    TM <--> YT[YouTube Vault]
+    CT --> SS[Study Sessions]
+    YT --> RL[Resource Library]
+
+    TM --> TT[Time Tracker<br/>Pomodoro]
+    TM --> HE[Habit Engine]
+
+    TT --> SM[Sleep Monitor]
+    HE --> WR[Weekly Review]
+
+    SM --> GR[Goal & Roadmap]
+    WR --> AP[Academic Planner]
+
+    GR --> OR[Opportunity Radar]
+    GR --> IT[Income Tracker]
+
+    OR --> PT[Project Tracker]
+    IT --> IV[Idea Vault]
+
+    DASH --> TM
+    DASH --> CT
+    DASH --> YT
+    DASH --> GR
+    DASH --> OR
+
+    linkStyle 0,1,2 stroke:#6366F1,stroke-width:2px
+    linkStyle 3,4 stroke:#818CF8,stroke-width:2px
+    linkStyle 5,6,7 stroke:#00FFA3,stroke-width:2px
+    linkStyle 8,9 stroke:#F59E0B,stroke-width:2px
+    linkStyle 10,11 stroke:#EF4444,stroke-width:2px
+    linkStyle 12,13,14,15,16 stroke:#94A3B8,stroke-width:2px
+```
+
+**Data Flow Between Modules:**
+
+| Source | Target | Description |
+|--------|--------|-------------|
+| Task → Time | Data | Every timer session links to a task |
+| Task → Goal | FK | Tasks optionally link to goals for progress tracking |
+| Course → Task | Logic | Course generates daily study tasks automatically |
+| Course → Goal | FK | Courses link to learning goals |
+| Sleep → Task | Logic | Low sleep score → heavy tasks moved to tomorrow |
+| Sleep → Habit | Logic | Sleep consistency tracked as a habit |
+| Habit → Goal | Data | Habit completion contributes to goal progress |
+| Goal → Roadmap | FK | Goals link to roadmap nodes for timeline tracking |
+| Project → Task | Logic | Project `next_action` generates tasks |
+| Project → Income | FK | Projects link to income sources |
+| Idea → Project | Logic | Validated ideas become projects |
+| Opportunity → Goal | Logic | Opportunities can trigger new roadmap creation |
+| Income → Project | FK | Income sources link to their generating projects |
+| Weekly → All | Logic | Weekly review aggregates all modules |
 
 ---
 
@@ -273,6 +381,157 @@ flowchart TD
 
 ---
 
+## Request Lifecycle
+
+### Typical API Request (Frontend → Supabase)
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant C as React Component
+    participant Z as Zustand Store
+    participant SB as Supabase Client
+    participant DB as Supabase DB
+    participant RLS as RLS Policy
+    participant RT as Realtime
+    participant RQ as React Query
+
+    U->>C: Click / Form Submit
+    C->>Z: Optimistic update
+    Z->>SB: supabase.from('tasks').insert({...})
+
+    SB->>RLS: Check auth.uid() = user_id
+    alt RLS Pass
+        RLS->>DB: Query Executes
+    else RLS Fail
+        RLS-->>SB: 401 Unauthorized
+        SB-->>Z: Revert optimistic update
+    end
+
+    DB-->>RT: Broadcast change
+    RT-->>RQ: Cache invalidation
+    RQ-->>C: Refetch affected queries
+    C-->>U: Re-render with new data
+```
+
+### AI Chat Request
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant API as Next.js API Route
+    participant CB as Context Builder
+    participant DB as Supabase
+    participant AI as AI Provider
+    participant AE as Action Executor
+    participant MW as Memory Writer
+
+    U->>FE: Type message in ARIA chat
+    FE->>API: POST /api/chat {message}
+
+    API->>CB: 1. Fetch user context
+    CB->>DB: Profile + skills
+    CB->>DB: Active courses + progress
+    CB->>DB: Active goals + progress
+    CB->>DB: Today's tasks + overdue
+    CB->>DB: Last 10 memory entries
+    CB->>DB: Last sleep log
+
+    alt Ollama (USE_LOCAL_AI=true)
+        API->>AI: POST localhost:11434/api/generate
+    else Claude API (fallback)
+        API->>AI: POST api.anthropic.com/v1/messages
+    end
+
+    AI-->>API: Text response + action JSON blocks
+
+    API->>AE: 4. Parse action blocks
+    AE->>DB: add_task / update_course / save_idea / update_goal
+
+    API->>MW: 5. Extract facts & preferences
+    MW->>AI: Send conversation for extraction
+    AI-->>MW: Extracted memory items
+    MW->>DB: Upsert to aria_memory
+
+    API->>DB: 6. Save to chat_messages
+
+    API-->>FE: 7. Return {response, action_taken}
+    FE-->>U: Display ARIA response
+```
+
+### Edge Function Execution (Cron Agent)
+
+```mermaid
+sequenceDiagram
+    participant PG as pg_cron
+    participant EF as Supabase Edge Function (Deno)
+    participant DB as Supabase
+    participant EXT as External APIs
+    participant NOT as Notifications
+
+    PG->>EF: Trigger cron job<br/>(e.g. daily-briefing 01:30 UTC)
+    EF->>DB: 1. Auth with service_role key
+    EF->>DB: 2. Fetch user data
+    DB-->>EF: Tasks, courses, opportunities, etc.
+
+    EF->>EXT: 3. Call external API<br/>(Claude / Brave Search / Resend)
+
+    EXT-->>EF: 4. Raw response
+    EF->>EF: Parse, filter, transform
+
+    EF->>DB: 5. Write results<br/>INSERT/UPDATE tables
+
+    EF->>NOT: 6. Send notifications
+    NOT->>NOT: Push: sendPushNotification()
+    NOT->>EXT: Email: POST resend.com/emails
+    NOT->>EXT: SMS: POST api.twilio.com
+
+    EF->>DB: 7. Log execution result
+```
+
+---
+
+## Integration Points
+
+### Internal Integrations (within the system)
+
+| Integration | Mechanism | Data Flow |
+|-------------|-----------|-----------|
+| Frontend ↔ Supabase | `@supabase/supabase-js` (Direct from client with RLS) | All CRUD operations |
+| Frontend ↔ AI | Next.js API Routes (`/api/chat`) | Chat messages, context |
+| Supabase ↔ Frontend | Supabase Realtime (WebSocket) | Live task/chat updates |
+| Supabase ↔ External APIs | Edge Functions (Deno) | Cron agents calling Brave, Claude, Resend |
+| Supabase ↔ Calendar | Next.js API Routes | OAuth2 + Google Calendar API |
+
+### External Integrations
+
+| Integration | Direction | Protocol | Auth Method |
+|-------------|-----------|----------|-------------|
+| **Ollama** | Backend → Localhost | HTTP POST `localhost:11434/api/generate` | None (localhost only) |
+| **Claude API** | Backend → Cloud | HTTPS REST (`api.anthropic.com`) | API key header |
+| **Brave Search** | Edge Fn → Cloud | HTTPS REST (`api.search.brave.com`) | API key header |
+| **Google Calendar** | Backend ↔ Cloud | HTTPS REST (`www.googleapis.com/calendar/v3`) | OAuth2 (user token) |
+| **Google Fit** | Backend → Cloud | HTTPS REST (`www.googleapis.com/fitness/v1`) | OAuth2 (user token) |
+| **GitHub API** | Backend → Cloud | HTTPS REST (`api.github.com`) | OAuth2 (user token) |
+| **Resend** | Backend → Cloud | HTTPS REST (`api.resend.com`) | API key header |
+| **Twilio** | Backend → Cloud | HTTPS REST (`api.twilio.com`) | Account SID + Auth Token |
+| **Web Push** | Backend → Browser | Web Push Protocol (VAPID) | VAPID keys |
+| **YouTube oEmbed** | Backend → Cloud | HTTPS GET (`youtube.com/oembed`) | None (public API) |
+
+### Integration Security Rules
+
+1. All external API calls go through server-side routes (Next.js API routes, Edge Functions, or FastAPI)
+2. No API keys or secrets ever appear in client-side JavaScript
+3. OAuth tokens are stored in Supabase (users_profile table) encrypted at rest
+4. Rate limits enforced per integration:
+   - Brave Search: 50 queries/day across all users
+   - Claude API: 10 requests/minute per user
+   - GitHub API: 60 requests/hour (unauthenticated), 5,000/hour (authenticated)
+   - Google APIs: per-user OAuth quota
+
+---
+
 ## Deployment Architecture
 
 ```mermaid
@@ -373,7 +632,7 @@ Layer 4: Force logout all devices (Settings page)
 ```
 Every database query filtered by: auth.uid() = user_id
 Enforced at 3 levels:
-  1. RLS on all 21 tables (database level)
+  1. RLS on all 27 tables (database level)
   2. API middleware validates JWT (application level)
   3. Service layer re-checks user_id (business logic level)
 ```
@@ -410,6 +669,34 @@ CREATE POLICY "users_own_data" ON table_name
 3. `BRAVE_API_KEY` never in client code (Edge Functions only)
 4. `.env.local` never committed to GitHub (in `.gitignore` from Day 1)
 5. `NEXT_PUBLIC_*` variables are the only ones safe for client side
+
+---
+
+## Tech Stack Summary
+
+| Layer | Technology | Free Tier |
+|-------|-----------|-----------|
+| Frontend | Next.js 14 + Tailwind CSS + TypeScript | Free |
+| State | Zustand + React Query | Free |
+| Charts | Recharts | Free |
+| Canvas | React Flow | Free (MIT) |
+| Backend | FastAPI (Python) + Next.js API Routes | Free |
+| Database | Supabase PostgreSQL | 500 MB free |
+| Auth | Supabase Auth (Google OAuth) | Free |
+| Realtime | Supabase Realtime | Free |
+| AI (Primary) | Ollama + Llama 3.1 (local) | Free |
+| AI (Fallback) | Claude API (Anthropic) | $5 credits |
+| Email | Resend | 3,000/month free |
+| SMS | Twilio | $15 credits |
+| Push | Web Push + VAPID | Free |
+| Voice | Web Speech API | Free |
+| Search | Brave Search API | 2,000 queries/month |
+| Hosting | Vercel | Free |
+| Extension | WXT Framework | Free |
+| Monitoring | Sentry | 5,000 errors/month |
+| Offline | Workbox + IndexedDB | Free |
+| OCR | Tesseract.js | Free |
+| PDF | pdf-parse | Free |
 
 ---
 
@@ -484,4 +771,20 @@ graph TD
     style SVL fill:#13151A,stroke:#F59E0B,color:#F1F5F9
     style AIL fill:#13151A,stroke:#EF4444,color:#F1F5F9
     style DL fill:#13151A,stroke:#94A3B8,color:#F1F5F9
+```
+
+---
+
+## Cross-References
+
+| Document | Description |
+|---|---|
+| [C4 Architecture](/docs/architecture/README.md) | C4 model: system context, containers, components, deployment |
+| [BackendArchitecture](BackendArchitecture.md) | Detailed backend: FastAPI DI, middleware, auth, patterns |
+| [Schema](Schema.md) | Complete column-level database schema (27 tables) |
+| [ERD](ERD.md) | Entity relationship diagram with cardinalities |
+| [Decision Log](/docs/architecture/decision-log.md) | All 15 ADRs indexed with cross-references |
+| [AGENTS.md §6](/AGENTS.md) | Project structure with file purposes |
+| [AGENTS.md §8](/AGENTS.md) | API endpoint reference (31 routers) |
+| [AGENTS.md §12](/AGENTS.md) | Common patterns for adding endpoints, agents, pages |
 ```

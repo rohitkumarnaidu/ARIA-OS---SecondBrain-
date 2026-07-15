@@ -1,10 +1,10 @@
-# Performance, Scalability & Capacity Planning
+﻿# Performance, Scalability & Capacity Planning
 
 ## Document Control
 
 | Metadata | Value |
 |---|---|
-| **Document ID** | ENG-45 |
+| **Document ID** | ENG-PER-001 |
 | **Version** | 1.0 |
 | **Author** | ARIA OS Engineering |
 | **Status** | Draft |
@@ -43,11 +43,11 @@ Second Brain OS is a single-user personal productivity system. The architecture 
 
 ### 1.4 Performance Philosophy
 
-1. **Perceived performance over raw speed** — Optimize for Time to Interactive and meaningful loading states
-2. **Single-user priority** — The system serves one user; every optimization targets this reality
-3. **LLM latency is the bottleneck** — AI response time dominates user experience; frontend and database optimization exists to make AI wait times tolerable
-4. **No premature optimization** — Caching and indexes are applied strategically where data volume justifies them
-5. **Free-tier constraints drive design** — Supabase 500 MB, Vercel 100 GB bandwidth, Railway 512 MB RAM
+1. **Perceived performance over raw speed** â€” Optimize for Time to Interactive and meaningful loading states
+2. **Single-user priority** â€” The system serves one user; every optimization targets this reality
+3. **LLM latency is the bottleneck** â€” AI response time dominates user experience; frontend and database optimization exists to make AI wait times tolerable
+4. **No premature optimization** â€” Caching and indexes are applied strategically where data volume justifies them
+5. **Free-tier constraints drive design** â€” Supabase 500 MB, Vercel 100 GB bandwidth, Railway 512 MB RAM
 
 ---
 
@@ -150,7 +150,7 @@ import Image from 'next/image'
 
 **Font Optimization**
 ```tsx
-// apps/web/app/layout.tsx — single consolidated font loading
+// apps/web/app/layout.tsx â€” single consolidated font loading
 import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
 
 const syne = Syne({ subsets: ['latin'], display: 'swap', variable: '--font-syne' })
@@ -211,14 +211,14 @@ from shared.utils.cache import cached
 
 @cached(ttl=60, key_prefix="dashboard_stats")
 async def get_dashboard_stats(user_id: str):
-    """Dashboard stats — cached for 60 seconds"""
+    """Dashboard stats â€” cached for 60 seconds"""
     ...
 ```
 
 **Response Compression**
 
 ```python
-# main.py — gzip middleware
+# main.py â€” gzip middleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -226,10 +226,10 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 **Async I/O**
 ```python
-# All endpoints are async — ensures non-blocking I/O for DB calls
+# All endpoints are async â€” ensures non-blocking I/O for DB calls
 @app.get("/api/tasks")
 async def list_tasks(request: Request):
-    """Async handler — no synchronous DB calls"""
+    """Async handler â€” no synchronous DB calls"""
 ```
 
 **Pydantic Validation Overhead**
@@ -250,7 +250,7 @@ async def list_tasks(request: Request):
 | Request timeout | 30s timeout on all AI calls | Prevents hung connections |
 | Response caching | Cache identical prompts for 1 hour | Eliminates redundant API calls |
 | Streaming | Server-Sent Events for chat responses | Faster perceived response |
-| Fallback | Claude → Ollama fallback on API failure | Maintains availability |
+| Fallback | Claude â†’ Ollama fallback on API failure | Maintains availability |
 
 ### 4.3 Uvicorn Configuration
 
@@ -308,7 +308,7 @@ limits = {
 
 ```sql
 -- ============================================================
--- MUST-HAVE INDEXES — Every FK column + frequently filtered column
+-- MUST-HAVE INDEXES â€” Every FK column + frequently filtered column
 -- ============================================================
 
 -- Core user-scoped lookups (every table)
@@ -428,7 +428,7 @@ CREATE INDEX IF NOT EXISTS idx_study_sessions_course ON study_sessions(course_id
 ### 6.3 Context Window Optimization
 
 ```python
-# apps/api/app/ai/context_builder.py — Pseudocode for context trimming
+# apps/api/app/ai/context_builder.py â€” Pseudocode for context trimming
 
 MAX_HISTORY_EXCHANGES = 8
 MAX_SYSTEM_PROMPT_TOKENS = 400
@@ -501,9 +501,9 @@ def build_chat_context(user_id: str, message: str) -> dict:
 | AI requests | ~10/day (Ollama) / ~50/mo (Claude) | Token cost on Claude | Optimize prompts; batch similar tasks |
 | Frontend traffic | Minimal | Vercel free tier | Pro plan ($20/mo) + CDN |
 | Scheduler | Single thread | CPU contention | Separate scheduler service |
-| File storage | N/A (no user uploads) | — | Supabase Storage (1 GB free) |
+| File storage | N/A (no user uploads) | â€” | Supabase Storage (1 GB free) |
 
-### 7.3 Scaling Strategy (Phase 2 — Multi-User)
+### 7.3 Scaling Strategy (Phase 2 â€” Multi-User)
 
 ```mermaid
 graph LR
@@ -536,11 +536,11 @@ Current architecture allows multi-worker deployment with minimal code changes:
 | Concern | Current State | Ready For Workers? |
 |---|---|---|
 | Session state | Zustand (client-side) | Yes |
-| Caching | In-memory `SimpleCache` | No — needs Redis for shared cache |
-| Rate limiting | In-memory dict | No — needs Redis |
-| Scheduler | APScheduler in-process | No — must extract to separate service |
+| Caching | In-memory `SimpleCache` | No â€” needs Redis for shared cache |
+| Rate limiting | In-memory dict | No â€” needs Redis |
+| Scheduler | APScheduler in-process | No â€” must extract to separate service |
 | Static files | Next.js handles | Yes |
-| Database | Supabase (external) | Yes — stateless from app perspective |
+| Database | Supabase (external) | Yes â€” stateless from app perspective |
 | File uploads | Not implemented | N/A |
 
 ---
@@ -566,8 +566,8 @@ Current architecture allows multi-worker deployment with minimal code changes:
 | Opportunities | 30 | 180 | 360 | 720 | ~500 B |
 | Academic marks | 10 | 60 | 120 | 240 | ~200 B |
 | Aria memory | 20 | 120 | 240 | 480 | ~300 B |
-| **Total rows** | **~1,438** | **~8,628** | **~17,261** | **~34,522** | **—** |
-| **Estimated size** | **~3 MB** | **~18 MB** | **~36 MB** | **~72 MB** | **—** |
+| **Total rows** | **~1,438** | **~8,628** | **~17,261** | **~34,522** | **â€”** |
+| **Estimated size** | **~3 MB** | **~18 MB** | **~36 MB** | **~72 MB** | **â€”** |
 
 Conclusion: 12-month storage requirement is **~36 MB**, well within the 500 MB Supabase free tier. At current single-user growth rates, the free tier is sufficient for **~8 years** of operation.
 
@@ -578,12 +578,12 @@ Conclusion: 12-month storage requirement is **~36 MB**, well within the 500 MB S
 | **Railway CPU** | 0.5 vCPU shared | ~5% idle / ~30% during AI | ~200% | >50 req/min sustained OR >70% CPU for 5min |
 | **Railway RAM** | 512 MB | ~120 MB idle / ~300 MB during AI | ~300% | >70% memory usage (360 MB) sustained |
 | **Vercel Function** | 1 GB RAM | ~200 MB peak | ~500% | >300 req/day OR function timeouts |
-| **Supabase CPU** | Shared (free tier) | Minimal — < 5% most queries | Varies | >5s p95 query time on any core query |
+| **Supabase CPU** | Shared (free tier) | Minimal â€” < 5% most queries | Varies | >5s p95 query time on any core query |
 | **Supabase Storage** | 500 MB | < 50 MB after 12 months | ~1,000% | >400 MB (plan upgrade) |
 | **Ollama RAM** | 4 GB (Mistral 7B) | ~4.5 GB with context | ~0% headroom | Model upgrade to 13B (needs 8 GB+) |
-| **Claude API** | N/A (pay-per-token) | ~$2/month | N/A | >$10/month → optimize prompts |
+| **Claude API** | N/A (pay-per-token) | ~$2/month | N/A | >$10/month â†’ optimize prompts |
 
-### 8.3 Cost Projection (Phase 1 — Single User)
+### 8.3 Cost Projection (Phase 1 â€” Single User)
 
 | Service | Current Cost | 12-Month Projection | Notes |
 |---|---|---|---|
@@ -657,16 +657,16 @@ Conclusion: 12-month storage requirement is **~36 MB**, well within the 500 MB S
 
 | Scenario | Concurrency | Duration | Target | k6 Ramp Pattern |
 |---|---|---|---|---|
-| **Normal load** | 1-2 VUs | 5 min | All endpoints < 200ms p95 | 0 → 2 over 30s, hold 4min, → 0 over 30s |
-| **Peak load** | 5 VUs | 5 min | No 5xx errors, < 500ms p95 | 0 → 5 over 1min, hold 3min, → 0 over 1min |
-| **Sustained load** | 3 VUs | 30 min | No performance degradation | 0 → 3 over 1min, hold 28min, → 0 over 1min |
-| **AI burst** | 5 VUs, all hitting `/api/chat` | 2 min | All responses < 15s | 0 → 5 over 10s, hold 100s, → 0 over 10s |
-| **Scheduler spike** | Trigger all 8 cron jobs simultaneously | 1 min | All complete < 60s | Spike: start 8 concurrent scheduler jobs |
+| **Normal load** | 1-2 VUs | 5 min | All endpoints < 200ms p95 | 0 â†’ 2 over 30s, hold 4min, â†’ 0 over 30s |
+| **Peak load** | 5 VUs | 5 min | No 5xx errors, < 500ms p95 | 0 â†’ 5 over 1min, hold 3min, â†’ 0 over 1min |
+| **Sustained load** | 3 VUs | 30 min | No performance degradation | 0 â†’ 3 over 1min, hold 28min, â†’ 0 over 1min |
+| **AI burst** | 5 VUs, all hitting `/api/chat` | 2 min | All responses < 15s | 0 â†’ 5 over 10s, hold 100s, â†’ 0 over 10s |
+| **Scheduler spike** | Trigger all 15 cron jobs simultaneously | 1 min | All complete < 60s | Spike: start 15 concurrent scheduler jobs |
 
 ### 10.3 k6 Script Template
 
 ```javascript
-// tests/load/k6-script.js — Example k6 load test
+// tests/load/k6-script.js â€” Example k6 load test
 
 import http from 'k6/http'
 import { check, sleep } from 'k6'
@@ -728,10 +728,10 @@ export default function () {
 
 ### 10.4 Pre-Launch Checklist (Phase 2)
 
-- [ ] Run normal load scenario — all endpoints pass p95 < 200ms
-- [ ] Run peak load scenario — no 5xx errors, p95 < 500ms
-- [ ] Run sustained load scenario — no performance degradation over 30min
-- [ ] Run AI burst scenario — all chat responses within 15s
+- [ ] Run normal load scenario â€” all endpoints pass p95 < 200ms
+- [ ] Run peak load scenario â€” no 5xx errors, p95 < 500ms
+- [ ] Run sustained load scenario â€” no performance degradation over 30min
+- [ ] Run AI burst scenario â€” all chat responses within 15s
 - [ ] Lighthouse CI score > 90
 - [ ] Bundle size < 500 KB
 - [ ] No memory leaks (stable RAM over 30min load test)
@@ -789,10 +789,10 @@ export default function () {
 | Chat | ~20 KB | ~4 KB | Lazy mount | Mounted on user interaction |
 | Auth | ~10 KB | ~2 KB | Initial | Login/signup pages |
 | **Shared (common)** | ~80 KB | ~15 KB | Initial | Zustand, UI components, utilities |
-| **Three.js** | ~120 KB | — | Lazy | Dashboard globe, loaded on demand |
+| **Three.js** | ~120 KB | â€” | Lazy | Dashboard globe, loaded on demand |
 | **React Flow** | ~80 KB | ~8 KB | Lazy | Roadmap editor, loaded on demand |
-| **Total (initial)** | ~150 KB | ~30 KB | — | Without lazy-loaded modules |
-| **Total (all)** | ~512 KB | ~80 KB | — | With all lazy modules loaded |
+| **Total (initial)** | ~150 KB | ~30 KB | â€” | Without lazy-loaded modules |
+| **Total (all)** | ~512 KB | ~80 KB | â€” | With all lazy modules loaded |
 
 ### Appendix C: Index Creation Script
 
@@ -801,7 +801,7 @@ export default function () {
 -- Run this once on the Supabase SQL editor
 -- See Section 5.2 for the complete index list
 
--- This script is idempotent — safe to run multiple times
+-- This script is idempotent â€” safe to run multiple times
 -- The full list of all 40+ indexes is in Section 5.2
 -- Below is a quick-reference for the most critical indexes:
 
@@ -878,9 +878,9 @@ export default function () {
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | 2026-06-11 | ARIA OS Engineering | Initial document — Phase 1 scope (single user) |
-| — | TBD | — | Next review: after Phase 1 launch or if performance targets are consistently missed |
+| 1.0 | 2026-06-11 | ARIA OS Engineering | Initial document â€” Phase 1 scope (single user) |
+| â€” | TBD | â€” | Next review: after Phase 1 launch or if performance targets are consistently missed |
 
 ---
 
-*End of Document — ENG-45 Performance, Scalability & Capacity Planning*
+*End of Document â€” ENG-45 Performance, Scalability & Capacity Planning*

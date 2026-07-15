@@ -1,13 +1,13 @@
-# Events & Event-Driven Architecture
+﻿# Events & Event-Driven Architecture
 
 ## Document Control
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ENG-018 |
+| **Document ID** | ENG-EVT-001 |
 | **Version** | 2.0 |
 | **Status** | Approved |
-| **Classification** | Internal — Engineering |
+| **Classification** | Internal â€” Engineering |
 | **Owner** | Platform Engineering Team |
 | **Last Updated** | 2026-06-11 |
 | **Review Cycle** | Quarterly |
@@ -265,7 +265,7 @@ Every event in the system MUST conform to this JSON envelope:
 
 **Versioning Rules:**
 - Event payload schemas are versioned independently from the envelope
-- Breaking changes (field removal, type change, required→optional) increment major version
+- Breaking changes (field removal, type change, requiredâ†’optional) increment major version
 - Additive changes (new optional fields) increment minor version
 - Envelope version `1` is always backward compatible
 - Consumers MUST check `event_version` before processing
@@ -317,10 +317,10 @@ stateDiagram-v2
 
 | State | Trigger | Action |
 |-------|---------|--------|
-| `FAILED` | Handler throws exception | Increment retry_count; if < max_retries → transition to RETRYING |
+| `FAILED` | Handler throws exception | Increment retry_count; if < max_retries â†’ transition to RETRYING |
 | `RETRYING` | Retry scheduled | Apply exponential backoff (2^n seconds); max 3 retries |
-| `TIMEOUT` | Processing exceeds TTL | Log warning; if critical → escalate; else → DLQ |
-| `DLQ` | Max retries exhausted | Move to Dead Letter Queue; notify on-call if priority ≥ high |
+| `TIMEOUT` | Processing exceeds TTL | Log warning; if critical â†’ escalate; else â†’ DLQ |
+| `DLQ` | Max retries exhausted | Move to Dead Letter Queue; notify on-call if priority â‰¥ high |
 
 ---
 
@@ -362,7 +362,7 @@ CREATE INDEX idx_dlq_created ON dead_letter_queue(created_at DESC);
 ### DLQ Reprocessing
 
 ```python
-# dlq_reprocessor.py — Scheduled cron to attempt reprocessing
+# dlq_reprocessor.py â€” Scheduled cron to attempt reprocessing
 async def reprocess_dlq_events():
     pending = await db.query(
         "SELECT * FROM dead_letter_queue WHERE dlq_status = 'pending'"
@@ -529,7 +529,7 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
 
 ### Event Flow for Each Cron Agent
 
-**Agent 1 — Daily Briefing (7 AM IST)**
+**Agent 1 â€” Daily Briefing (7 AM IST)**
 ```
 1. pg_cron triggers daily-briefing Edge Function at 01:30 UTC
 2. Edge Function fetches user data:
@@ -543,12 +543,12 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
 4. Calls Claude API with Daily Briefing system prompt
 5. Parses response into structured JSON (6 sections)
 6. INSERT into daily_briefings table
-7. Realtime event → frontend shows briefing banner
+7. Realtime event â†’ frontend shows briefing banner
 8. Sends push notification via Web Push
 9. (Conditional) Sends email via Resend
 ```
 
-**Agent 2 — Missed Task Checker (Every 15 min)**
+**Agent 2 â€” Missed Task Checker (Every 15 min)**
 ```
 1. pg_cron triggers task-checker Edge Function
 2. Queries: tasks WHERE due_date < now()
@@ -560,24 +560,24 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
    b. Send push notification
    c. IF missed_count >= 2: send email
    d. IF missed_count >= 3 AND priority='high': send SMS
-4. Realtime event → frontend updates task cards
+4. Realtime event â†’ frontend updates task cards
 ```
 
-**Agent 3 — Opportunity Radar (6 AM IST)**
+**Agent 3 â€” Opportunity Radar (6 AM IST)**
 ```
 1. pg_cron triggers opp-radar Edge Function at 00:30 UTC
 2. For each user with active profile:
    a. Fetch skills + preferences from users_profile
    b. Call Claude API to generate 8 search queries
-   c. For each query → Brave Search API
-   d. For each result → Claude API opportunity parser
+   c. For each query â†’ Brave Search API
+   d. For each result â†’ Claude API opportunity parser
    e. Filter: match_score >= 50
    f. INSERT matching opportunities
-   g. IF deadline < 48h → immediate push notification
-3. Realtime event → frontend shows new opportunity badges
+   g. IF deadline < 48h â†’ immediate push notification
+3. Realtime event â†’ frontend shows new opportunity badges
 ```
 
-**Agent 4 — Roadmap Update (Sunday 9 AM IST)**
+**Agent 4 â€” Roadmap Update (Sunday 9 AM IST)**
 ```
 1. pg_cron triggers roadmap-update Edge Function
 2. For each active roadmap:
@@ -585,10 +585,10 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
    b. Call Claude API with Roadmap Update Checker prompt
    c. Parse changes into 3 tiers: critical/suggested/informational
    d. INSERT into roadmap_updates table
-   e. IF critical update → push notification
+   e. IF critical update â†’ push notification
 ```
 
-**Agent 5 — Weekly Review (Sunday 8 PM IST)**
+**Agent 5 â€” Weekly Review (Sunday 8 PM IST)**
 ```
 1. pg_cron triggers weekly-review Edge Function
 2. Collect week's data:
@@ -604,7 +604,7 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
 6. Push notification: "Your weekly review is ready"
 ```
 
-**Agent 6 — Bedtime Reminder (9:30 PM IST)**
+**Agent 6 â€” Bedtime Reminder (9:30 PM IST)**
 ```
 1. pg_cron triggers bedtime-reminder Edge Function
 2. Fetch today's completed/missed tasks + study time
@@ -615,7 +615,7 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
    - Bedtime nudge with tomorrow's first task
 ```
 
-**Agent 7 — Habit Miss Checker (Midnight IST)**
+**Agent 7 â€” Habit Miss Checker (Midnight IST)**
 ```
 1. pg_cron triggers habit-miss-checker Edge Function
 2. For each active habit:
@@ -626,13 +626,13 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
       UPDATE current_streak = 0
 ```
 
-**Agent 8 — Course Nudge (6 PM IST)**
+**Agent 8 â€” Course Nudge (6 PM IST)**
 ```
 1. pg_cron triggers course-nudge Edge Function
 2. For each active course:
    a. Calculate days remaining, min/day needed
    b. Check if today's target was met
-   c. IF behind or not studied today → generate alert
+   c. IF behind or not studied today â†’ generate alert
 3. Send push notification for courses needing attention
 ```
 
@@ -643,75 +643,75 @@ SELECT cron.schedule('course-nudge',      '30 12 * * *',   $$...$$);  -- 6 PM IS
 ### Event: Task Created
 
 ```
-User fills form → POST /api/tasks
-  → Frontend: optimistic insert into Zustand store (immediate UI update)
-  → Backend: Supabase INSERT with RLS check
-  → Realtime: broadcast INSERT event to all client instances
-  → Frontend: confirm/rollback optimistic update
-  → If due_date < now() + 2h:
-      → Send push notification (task reminder)
-  → If linked to goal:
-      → Recalculate goal progress
-  → If recurring:
-      → Generate next instance
+User fills form â†’ POST /api/tasks
+  â†’ Frontend: optimistic insert into Zustand store (immediate UI update)
+  â†’ Backend: Supabase INSERT with RLS check
+  â†’ Realtime: broadcast INSERT event to all client instances
+  â†’ Frontend: confirm/rollback optimistic update
+  â†’ If due_date < now() + 2h:
+      â†’ Send push notification (task reminder)
+  â†’ If linked to goal:
+      â†’ Recalculate goal progress
+  â†’ If recurring:
+      â†’ Generate next instance
 ```
 
 ### Event: Task Completed
 
 ```
-User clicks complete → POST /api/tasks/{id}/complete
-  → Frontend: animate completion (checkmark, strike-through)
-  → Backend: UPDATE status='completed', completed_at=NOW(), actual_minutes
-  → Realtime: broadcast UPDATE event
-  → IF all subtasks completed: mark parent task ready
-  → IF task was last in project phase: suggest phase advancement
-  → IF linked to goal: update goal progress_percent
-  → Update daily productivity score
-  → IF streak affected: update habit streak (if applicable)
+User clicks complete â†’ POST /api/tasks/{id}/complete
+  â†’ Frontend: animate completion (checkmark, strike-through)
+  â†’ Backend: UPDATE status='completed', completed_at=NOW(), actual_minutes
+  â†’ Realtime: broadcast UPDATE event
+  â†’ IF all subtasks completed: mark parent task ready
+  â†’ IF task was last in project phase: suggest phase advancement
+  â†’ IF linked to goal: update goal progress_percent
+  â†’ Update daily productivity score
+  â†’ IF streak affected: update habit streak (if applicable)
 ```
 
 ### Event: Sleep Logged
 
 ```
-User logs sleep → POST /api/sleep
-  → Backend: INSERT sleep_log
-  → Calculate sleep_score and sleep_debt
-  → IF score < 50:
-      → UPDATE today's high-priority tasks → medium
-      → Send notification: "Low sleep — heavy tasks moved to tomorrow"
-  → IF score >= 70:
-      → Normal operation
-  → Realtime: broadcast INSERT event
-  → Dashboard sleep card updates
+User logs sleep â†’ POST /api/sleep
+  â†’ Backend: INSERT sleep_log
+  â†’ Calculate sleep_score and sleep_debt
+  â†’ IF score < 50:
+      â†’ UPDATE today's high-priority tasks â†’ medium
+      â†’ Send notification: "Low sleep â€” heavy tasks moved to tomorrow"
+  â†’ IF score >= 70:
+      â†’ Normal operation
+  â†’ Realtime: broadcast INSERT event
+  â†’ Dashboard sleep card updates
 ```
 
 ### Event: Opportunity Found (Scored >= 80)
 
 ```
 Opportunity Radar identifies high-match opportunity
-  → INSERT into opportunities
-  → IF deadline < 48h:
-      → Push notification (immediate)
-      → Email notification (if enabled)
-  → ELSE:
-      → Included in next morning briefing
-  → Realtime: badge count increment
-  → Update opportunity radar stats
+  â†’ INSERT into opportunities
+  â†’ IF deadline < 48h:
+      â†’ Push notification (immediate)
+      â†’ Email notification (if enabled)
+  â†’ ELSE:
+      â†’ Included in next morning briefing
+  â†’ Realtime: badge count increment
+  â†’ Update opportunity radar stats
 ```
 
 ### Event: Chat Message (ARIA)
 
 ```
-User sends message → POST /api/chat
-  → Backend: build context (tasks, goals, courses, memory, sleep)
-  → Call AI provider (Ollama primary / Claude fallback)
-  → Parse response for action JSON blocks
-  → Execute actions (task create, course update, etc.)
-  → Memory writer: extract facts from conversation
-  → Save to chat_messages table
-  → Realtime: broadcast new message
-  → Frontend: append response to chat bubbles
-  → IF action executed: show confirmation card
+User sends message â†’ POST /api/chat
+  â†’ Backend: build context (tasks, goals, courses, memory, sleep)
+  â†’ Call AI provider (Ollama primary / Claude fallback)
+  â†’ Parse response for action JSON blocks
+  â†’ Execute actions (task create, course update, etc.)
+  â†’ Memory writer: extract facts from conversation
+  â†’ Save to chat_messages table
+  â†’ Realtime: broadcast new message
+  â†’ Frontend: append response to chat bubbles
+  â†’ IF action executed: show confirmation card
 ```
 
 ---
@@ -722,31 +722,31 @@ User sends message → POST /api/chat
 
 ```
 User: "I'm overwhelmed and falling behind"
-  → Orchestrator Agent receives message
-  → Dispatch parallel sub-agents:
-      │
-      ├── Planner Agent:
-      │     → Fetch all pending + overdue tasks
-      │     → Calculate priority scores
-      │     → Identify lowest-value tasks to drop
-      │     → Return: {keep: [...], drop: [...], defer: [...]}
-      │
-      ├── Reminder Agent:
-      │     → Fetch missed_count stats
-      │     → Check escalation status
-      │     → Return: {critical_misses: [...], escalations: [...]}
-      │
-      ├── Sleep Monitor Agent:
-      │     → Fetch last 7 days sleep data
-      │     → Calculate sleep debt
-      │     → Return: {sleep_debt, avg_score, fatigue_level}
-      │
-      └── Learning Agent:
-            → Fetch course behind-schedule status
-            → Return: {courses_at_risk: [...], recommended_pauses: [...]}
+  â†’ Orchestrator Agent receives message
+  â†’ Dispatch parallel sub-agents:
+      â”‚
+      â”œâ”€â”€ Planner Agent:
+      â”‚     â†’ Fetch all pending + overdue tasks
+      â”‚     â†’ Calculate priority scores
+      â”‚     â†’ Identify lowest-value tasks to drop
+      â”‚     â†’ Return: {keep: [...], drop: [...], defer: [...]}
+      â”‚
+      â”œâ”€â”€ Reminder Agent:
+      â”‚     â†’ Fetch missed_count stats
+      â”‚     â†’ Check escalation status
+      â”‚     â†’ Return: {critical_misses: [...], escalations: [...]}
+      â”‚
+      â”œâ”€â”€ Sleep Monitor Agent:
+      â”‚     â†’ Fetch last 7 days sleep data
+      â”‚     â†’ Calculate sleep debt
+      â”‚     â†’ Return: {sleep_debt, avg_score, fatigue_level}
+      â”‚
+      â””â”€â”€ Learning Agent:
+            â†’ Fetch course behind-schedule status
+            â†’ Return: {courses_at_risk: [...], recommended_pauses: [...]}
 
-  → Orchestrator merges all results
-  → Generates unified response:
+  â†’ Orchestrator merges all results
+  â†’ Generates unified response:
     "I see 3 urgent tasks, 12 overdue items, and you've had low sleep 4/7 nights.
      Here's what I recommend: drop the 3 lowest-value tasks, pause your React course
      for one week, and focus only on: [1] DSA assignment (due today),
@@ -758,23 +758,23 @@ User: "I'm overwhelmed and falling behind"
 
 ```
 Weekly Review Agent triggered (8 PM IST Sunday)
-  → Analytics Agent:
-      → Compile weekly stats
-      → Detect patterns (missed tasks correlate with low sleep days?)
-      → Return: {stats, patterns, insights}
+  â†’ Analytics Agent:
+      â†’ Compile weekly stats
+      â†’ Detect patterns (missed tasks correlate with low sleep days?)
+      â†’ Return: {stats, patterns, insights}
 
-  → Memory Agent:
-      → Fetch all memories created this week
-      → Check for new patterns
-      → Return: {new_patterns, confirmed_patterns}
+  â†’ Memory Agent:
+      â†’ Fetch all memories created this week
+      â†’ Check for new patterns
+      â†’ Return: {new_patterns, confirmed_patterns}
 
-  → Career Agent:
-      → Check GitHub commit activity
-      → Check opportunity application status
-      → Return: {github_activity, opportunity_updates}
+  â†’ Career Agent:
+      â†’ Check GitHub commit activity
+      â†’ Check opportunity application status
+      â†’ Return: {github_activity, opportunity_updates}
 
-  → Orchestrator merges → Claude API generates narrative review
-  → INSERT weekly_review → Email via Resend → Push notification
+  â†’ Orchestrator merges â†’ Claude API generates narrative review
+  â†’ INSERT weekly_review â†’ Email via Resend â†’ Push notification
 ```
 
 ---
@@ -800,7 +800,7 @@ sequenceDiagram
     DB->>EF: User data
     EF->>Claude: Context string (serialized)
     Claude->>EF: Daily Briefing response
-    EF->>EF: Parse response → 6 sections
+    EF->>EF: Parse response â†’ 6 sections
     EF->>DB: INSERT into daily_briefings
     DB->>RT: Broadcast
     RT->>Push: Push notification
@@ -958,14 +958,14 @@ CREATE INDEX idx_event_logs_priority ON event_logs(priority) WHERE priority IN (
 #### Dashboard: Event Pipeline Health (Real-time)
 
 ```
-Panel 1: Event Throughput          — line chart, events/sec by category (1h window)
-Panel 2: Event Success Rate        — gauge, % of events processed successfully
-Panel 3: Failed Events by Type     — bar chart, top 10 failing event types
-Panel 4: DLQ Size                  — gauge, current DLQ count
-Panel 5: Event Latency (p50/p95)   — line chart, end-to-end processing time
-Panel 6: Active Retries            — gauge, events currently in retry state
-Panel 7: Cron Job Status           — status table, last run + duration per cron
-Panel 8: Event Volume by Hour      — heatmap, events per hour over 7 days
+Panel 1: Event Throughput          â€” line chart, events/sec by category (1h window)
+Panel 2: Event Success Rate        â€” gauge, % of events processed successfully
+Panel 3: Failed Events by Type     â€” bar chart, top 10 failing event types
+Panel 4: DLQ Size                  â€” gauge, current DLQ count
+Panel 5: Event Latency (p50/p95)   â€” line chart, end-to-end processing time
+Panel 6: Active Retries            â€” gauge, events currently in retry state
+Panel 7: Cron Job Status           â€” status table, last run + duration per cron
+Panel 8: Event Volume by Hour      â€” heatmap, events per hour over 7 days
 ```
 
 ### Alerting Rules
@@ -1182,9 +1182,9 @@ Panel 8: Event Volume by Hour      — heatmap, events per hour over 7 days
 | **Dead Letter Queue (DLQ)** | Storage for events that have exhausted their retry attempts |
 | **Event Bus** | Logical transport layer that delivers events from producers to consumers |
 | **Event Envelope** | Standardized wrapper structure applied to every event in the system |
-| **WAL** | Write-Ahead Log — PostgreSQL's mechanism for capturing data changes |
+| **WAL** | Write-Ahead Log â€” PostgreSQL's mechanism for capturing data changes |
 | **Event Versioning** | Strategy for evolving event schemas without breaking consumers |
-| **TTL** | Time-to-Live — maximum time an event remains valid for processing |
+| **TTL** | Time-to-Live â€” maximum time an event remains valid for processing |
 | **Span ID** | Identifies a specific unit of work within a distributed trace |
 | **Trace ID** | Identifies an entire distributed transaction across service boundaries |
 

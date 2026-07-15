@@ -1,19 +1,19 @@
-# Technology Stack — Complete Inventory & Decision Framework
+﻿# Technology Stack â€” Complete Inventory & Decision Framework
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| **Document ID** | ENG-TECHSTACK-001 |
+| **Document ID** | ENG-TSK-001 |
 | **Version** | 2.0.0 |
 | **Status** | Active |
 | **Last Updated** | 2026-06-11 |
-| **Classification** | Internal — Architecture Reference |
+| **Classification** | Internal â€” Architecture Reference |
 | **Owner** | Platform Engineering |
 
 ---
 
-### Architecture Diagram — Technology Stack Landscape
+### Architecture Diagram â€” Technology Stack Landscape
 
 ```mermaid
 %%{
@@ -65,7 +65,7 @@ graph TD
 
 ## 1. Executive Summary
 
-Second Brain OS is built on **26 open-source and free-tier technologies** organized across 7 functional categories. This document serves as the authoritative reference for every technology in the stack — covering selection rationale, alternatives considered, licensing, cost, maturity, upgrade paths, vendor lock-in assessment, and exit strategies.
+Second Brain OS is built on **26 open-source and free-tier technologies** organized across 7 functional categories. This document serves as the authoritative reference for every technology in the stack â€” covering selection rationale, alternatives considered, licensing, cost, maturity, upgrade paths, vendor lock-in assessment, and exit strategies.
 
 **Core Philosophy:** Zero-cost operation for single-user use with a clear migration path to enterprise scale. Every paid alternative has a documented free-tier equivalent that covers the system's current needs. No technology is adopted without a documented exit strategy.
 
@@ -75,7 +75,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 - **AI:** Ollama (local, default) + Claude API (fallback)
 - **DevOps:** Vercel + GitHub Actions
 - **Monthly Cost:** $0 (free tiers)
-- **Enterprise Scaling Cost:** ~$150–400/month
+- **Enterprise Scaling Cost:** ~$150â€“400/month
 
 ---
 
@@ -113,13 +113,13 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 
 | Technology | Alternative 1 | Alternative 2 | Decision |
 |---|---|---|---|
-| **Next.js** | Remix (similar SSR, smaller ecosystem) | Gatsby (static-only, slow builds) | **Next.js** — stronger PWA story, Vercel synergy, larger community |
-| **Tailwind CSS** | Chakra UI (component library lock-in) | Styled Components (runtime cost, bundle size) | **Tailwind** — zero runtime, smaller bundles, more flexible |
-| **Zustand** | Redux Toolkit (boilerplate, context overhead) | Jotai (atomic, learning curve) | **Zustand** — simplest API, built-in persist, no context issues |
-| **Framer Motion** | React Spring (physics-based, less declarative) | CSS Animations (no orchestration) | **Framer Motion** — declarative, SSR, gesture support |
-| **Recharts** | Chart.js (canvas-based, less React-native) | D3.js (low-level, high complexity) | **Recharts** — React-first, composable, accessible |
+| **Next.js** | Remix (similar SSR, smaller ecosystem) | Gatsby (static-only, slow builds) | **Next.js** â€” stronger PWA story, Vercel synergy, larger community |
+| **Tailwind CSS** | Chakra UI (component library lock-in) | Styled Components (runtime cost, bundle size) | **Tailwind** â€” zero runtime, smaller bundles, more flexible |
+| **Zustand** | Redux Toolkit (boilerplate, context overhead) | Jotai (atomic, learning curve) | **Zustand** â€” simplest API, built-in persist, no context issues |
+| **Framer Motion** | React Spring (physics-based, less declarative) | CSS Animations (no orchestration) | **Framer Motion** â€” declarative, SSR, gesture support |
+| **Recharts** | Chart.js (canvas-based, less React-native) | D3.js (low-level, high complexity) | **Recharts** â€” React-first, composable, accessible |
 
-### 3.3 Decision Matrix — Frontend Framework
+### 3.3 Decision Matrix â€” Frontend Framework
 
 | Criterion | Weight | Next.js | Remix | Gatsby |
 |---|---|---|---|---|
@@ -133,7 +133,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | Learning Curve | 10% | 8 | 5 | 8 |
 | **Weighted Score** | **100%** | **9.35** | **6.85** | **7.00** |
 
-### 3.4 Exit Strategy — Frontend
+### 3.4 Exit Strategy â€” Frontend
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
@@ -160,11 +160,11 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 
 | Technology | Alternative 1 | Alternative 2 | Decision |
 |---|---|---|---|
-| **FastAPI** | Django REST (sync-only, heavy) | Flask (sync-only, no built-in validation) | **FastAPI** — async-native, automatic docs, Pydantic integration |
-| **Python 3.10** | Node.js (better for real-time) | Go (better performance) | **Python** — superior AI/ML ecosystem, Ollama integration, faster development velocity |
-| **Uvicorn** | Gunicorn (sync workers, older) | Daphne (less maintained) | **Uvicorn** — fastest ASGI, HTTP/1.1 + HTTP/2, built-in WebSocket |
+| **FastAPI** | Django REST (sync-only, heavy) | Flask (sync-only, no built-in validation) | **FastAPI** â€” async-native, automatic docs, Pydantic integration |
+| **Python 3.10** | Node.js (better for real-time) | Go (better performance) | **Python** â€” superior AI/ML ecosystem, Ollama integration, faster development velocity |
+| **Uvicorn** | Gunicorn (sync workers, older) | Daphne (less maintained) | **Uvicorn** â€” fastest ASGI, HTTP/1.1 + HTTP/2, built-in WebSocket |
 
-### 4.3 Decision Matrix — Backend Framework
+### 4.3 Decision Matrix â€” Backend Framework
 
 | Criterion | Weight | FastAPI | Django REST | Flask |
 |---|---|---|---|---|
@@ -178,7 +178,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | Production Readiness | 5% | 8 | 9 | 7 |
 | **Weighted Score** | **100%** | **8.85** | **6.20** | **5.15** |
 
-### 4.4 Exit Strategy — Backend
+### 4.4 Exit Strategy â€” Backend
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
@@ -202,7 +202,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 
 | Technology | Version | Purpose | License | Maturity | Cost | Rationale |
 |---|---|---|---|---|---|---|
-| **Supabase PostgreSQL** | 15.x | Primary database — 21 tables | PostgreSQL License (open source) | Mature | Free (500 MB) | Full PostgreSQL; built-in auth; real-time subscriptions; RLS; generous free tier |
+| **Supabase PostgreSQL** | 15.x | Primary database — 27 tables | PostgreSQL License (open source) | Mature | Free (500 MB) | Full PostgreSQL; built-in auth; real-time subscriptions; RLS; generous free tier |
 | **Supabase Storage** | n/a | File/asset storage | Apache 2.0 | Mature | Free (1 GB) | S3-compatible; RLS integration; CDN delivery |
 | **Supabase Realtime** | n/a | WebSocket subscriptions | Apache 2.0 | Mature | Free (50 connections) | PostgreSQL WAL-based; automatic; no custom WebSocket server |
 
@@ -216,7 +216,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | **PlanetScale** | MySQL-based (no PostgreSQL); no real-time; limited free tier |
 | **Turso (libSQL)** | Edge-focused; SQLite compatibility issues; immature ecosystem |
 
-### 5.3 Decision Matrix — Database
+### 5.3 Decision Matrix â€” Database
 
 | Criterion | Weight | Supabase | MongoDB Atlas | Neon |
 |---|---|---|---|---|
@@ -230,11 +230,11 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | Migration Ease | 5% | 8 (standard PG) | 2 (document model) | 8 (standard PG) |
 | **Weighted Score** | **100%** | **9.25** | **2.95** | **5.50** |
 
-### 5.4 Exit Strategy — Database
+### 5.4 Exit Strategy â€” Database
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
-| **Supabase PostgreSQL** | Low (standard PostgreSQL) | `pg_dump` → restore to any PostgreSQL host (AWS RDS, Google Cloud SQL, Azure Database for PostgreSQL, Neon) |
+| **Supabase PostgreSQL** | Low (standard PostgreSQL) | `pg_dump` â†’ restore to any PostgreSQL host (AWS RDS, Google Cloud SQL, Azure Database for PostgreSQL, Neon) |
 | **Supabase Auth** | Medium (custom auth schema) | Extract users and migrate to Auth0, Clerk, or Firebase Auth; JWT tokens are standard |
 | **Supabase Realtime** | Medium (WAL-based subscriptions) | Replace with WebSocket server (Socket.IO, native WS) or Supabase Realtime self-hosted |
 | **Supabase Storage** | Low (S3-compatible) | Migrate to AWS S3, Cloudflare R2, or GCP Cloud Storage |
@@ -244,9 +244,9 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | Scale Level | Database Solution | Monthly Cost | Migration Effort |
 |---|---|---|---|
 | **1 user** (current) | Supabase Free | $0 | None |
-| **10–100 users** | Supabase Pro ($25/mo) | $25 | None (same platform) |
-| **100–1000 users** | Supabase Team ($599/mo) or AWS RDS | $100–$600 | Low (same PostgreSQL) |
-| **1000+ users** | AWS RDS Aurora / Neon Enterprise | $200–$2000 | Low (`pg_dump`/`pg_restore`) |
+| **10â€“100 users** | Supabase Pro ($25/mo) | $25 | None (same platform) |
+| **100â€“1000 users** | Supabase Team ($599/mo) or AWS RDS | $100â€“$600 | Low (same PostgreSQL) |
+| **1000+ users** | AWS RDS Aurora / Neon Enterprise | $200â€“$2000 | Low (`pg_dump`/`pg_restore`) |
 
 ---
 
@@ -271,7 +271,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | **OpenRouter** | Aggregates multiple APIs but adds latency and cost; no local option |
 | **LM Studio** | GUI-focused; programmatic API less mature than Ollama |
 
-### 6.3 Decision Matrix — LLM Provider
+### 6.3 Decision Matrix â€” LLM Provider
 
 | Criterion | Weight | Ollama (Local) | Claude API | OpenAI API |
 |---|---|---|---|---|
@@ -286,24 +286,24 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 ### 6.4 AI Fallback Architecture
 
 ```
-┌─────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│ User Request │ ──▶ │ Ollama (Default) │ ──▶ │ Response Success │
-└─────────────┘     └──────────────────┘     └──────────────────┘
-                          │ (timeout/error)
-                          ▼
-                    ┌──────────────────┐     ┌──────────────────┐
-                    │ Claude API (Fallback)│──▶│ Response Success │
-                    └──────────────────┘     └──────────────────┘
-                          │ (timeout/error)
-                          ▼
-                    ┌──────────────────┐
-                    │ Algorithmic       │
-                    │ Fallback          │
-                    │ (no AI, rule-based)│
-                    └──────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ User Request â”‚ â”€â”€â–¶ â”‚ Ollama (Default) â”‚ â”€â”€â–¶ â”‚ Response Success â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚ (timeout/error)
+                          â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ Claude API (Fallback)â”‚â”€â”€â–¶â”‚ Response Success â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚ (timeout/error)
+                          â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ Algorithmic       â”‚
+                    â”‚ Fallback          â”‚
+                    â”‚ (no AI, rule-based)â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-### 6.5 Exit Strategy — AI
+### 6.5 Exit Strategy â€” AI
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
@@ -335,7 +335,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | **GitLab** | More complex; fewer Actions integrations; smaller community |
 | **AWS Amplify** | Complex configuration; vendor lock-in; slow builds |
 
-### 7.3 Exit Strategy — DevOps
+### 7.3 Exit Strategy â€” DevOps
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
@@ -388,7 +388,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 | **Grafana + Loki** | Requires self-hosting; operational overhead for single user |
 | **Logtail** | Better for team workflows; free tier smaller |
 
-### 9.3 Exit Strategy — Monitoring
+### 9.3 Exit Strategy â€” Monitoring
 
 | Technology | Lock-in Risk | Exit Strategy |
 |---|---|---|
@@ -402,30 +402,30 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 ### 10.1 Current Radar (Q2 2026)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    TECHNOLOGY RADAR — Q2 2026                    │
-├────────────────────┬────────────────────┬───────────────────────┤
-│     ADOPT          │      TRIAL         │      ASSESS           │
-│  (Proven, use)     │  (Promising, try)  │  (Watch, evaluate)    │
-├────────────────────┼────────────────────┼───────────────────────┤
-│  Next.js 14        │  Pydantic v2       │  Supabase Edge Fn v2  │
-│  Tailwind CSS 3    │  Claude Sonnet 4   │  Playwright E2E       │
-│  FastAPI           │  Zustand v4        │  LangChain Agents     │
-│  Supabase PG       │  Llama 3.1 8B      │  AI SDK (Vercel)      │
-│  Ollama            │  Ruff              │  tRPC                 │
-│  Framer Motion     │  Recharts          │  Drizzle ORM          │
-│  Sentry            │  Railway           │  BiDirectional        │
-│  GitHub Actions     │                    │  (biome)              │
-├────────────────────┼────────────────────┼───────────────────────┤
-│      HOLD          │  RETIRED           │                       │
-│  (Keep, don't      │  (Migrate away)    │                       │
-│   upgrade yet)     │                    │                       │
-├────────────────────┼────────────────────┼───────────────────────┤
-│  React 18          │  (none)            │                       │
-│  Python 3.10       │                    │                       │
-│  PNPM (keep)       │                    │                       │
-│  ESLint (keep)     │                    │                       │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    TECHNOLOGY RADAR â€” Q2 2026                    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚     ADOPT          â”‚      TRIAL         â”‚      ASSESS           â”‚
+â”‚  (Proven, use)     â”‚  (Promising, try)  â”‚  (Watch, evaluate)    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Next.js 14        â”‚  Pydantic v2       â”‚  Supabase Edge Fn v2  â”‚
+â”‚  Tailwind CSS 3    â”‚  Claude Sonnet 4   â”‚  Playwright E2E       â”‚
+â”‚  FastAPI           â”‚  Zustand v4        â”‚  LangChain Agents     â”‚
+â”‚  Supabase PG       â”‚  Llama 3.1 8B      â”‚  AI SDK (Vercel)      â”‚
+â”‚  Ollama            â”‚  Ruff              â”‚  tRPC                 â”‚
+â”‚  Framer Motion     â”‚  Recharts          â”‚  Drizzle ORM          â”‚
+â”‚  Sentry            â”‚  Railway           â”‚  BiDirectional        â”‚
+â”‚  GitHub Actions     â”‚                    â”‚  (biome)              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚      HOLD          â”‚  RETIRED           â”‚                       â”‚
+â”‚  (Keep, don't      â”‚  (Migrate away)    â”‚                       â”‚
+â”‚   upgrade yet)     â”‚                    â”‚                       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  React 18          â”‚  (none)            â”‚                       â”‚
+â”‚  Python 3.10       â”‚                    â”‚                       â”‚
+â”‚  PNPM (keep)       â”‚                    â”‚                       â”‚
+â”‚  ESLint (keep)     â”‚                    â”‚                       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 10.2 Planned Assessments (Next 6 Months)
@@ -445,19 +445,19 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 ### 11.1 Core Stack Compatibility
 
 ```
-┌───────────────────────────┬──────────────────────────────────────────────────────┐
-│           Tool            │              Compatible Versions                      │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Next.js 14                │ React 18.x │ TypeScript 5.x │ Node 18+               │
-│ React 18.x                │ TypeScript 5.x │ Zustand 4.x │ Recharts 2.x          │
-│ TypeScript 5.x            │ Node 18+ │ React 18.x                                 │
-│ Tailwind CSS 3.x          │ PostCSS 8.x │ autoprefixer 10.x                       │
-│ FastAPI 0.110+            │ Python 3.10+ │ Pydantic 2.x │ Uvicorn 0.29+           │
-│ Pydantic 2.x              │ Python 3.10+ │ FastAPI 0.100+ │ Starlette 0.37+        │
-│ Python 3.10               │ FastAPI 0.110+ │ Pydantic 2.x │ Ollama 0.3+            │
-│ Supabase JS SDK v2        │ React 18.x │ TypeScript 5.x                          │
-│ Sentry SDK v8             │ Next.js 14+ │ React 18.x                             │
-└───────────────────────────┴──────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           Tool            â”‚              Compatible Versions                      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Next.js 14                â”‚ React 18.x â”‚ TypeScript 5.x â”‚ Node 18+               â”‚
+â”‚ React 18.x                â”‚ TypeScript 5.x â”‚ Zustand 4.x â”‚ Recharts 2.x          â”‚
+â”‚ TypeScript 5.x            â”‚ Node 18+ â”‚ React 18.x                                 â”‚
+â”‚ Tailwind CSS 3.x          â”‚ PostCSS 8.x â”‚ autoprefixer 10.x                       â”‚
+â”‚ FastAPI 0.110+            â”‚ Python 3.10+ â”‚ Pydantic 2.x â”‚ Uvicorn 0.29+           â”‚
+â”‚ Pydantic 2.x              â”‚ Python 3.10+ â”‚ FastAPI 0.100+ â”‚ Starlette 0.37+        â”‚
+â”‚ Python 3.10               â”‚ FastAPI 0.110+ â”‚ Pydantic 2.x â”‚ Ollama 0.3+            â”‚
+â”‚ Supabase JS SDK v2        â”‚ React 18.x â”‚ TypeScript 5.x                          â”‚
+â”‚ Sentry SDK v8             â”‚ Next.js 14+ â”‚ React 18.x                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.2 Version Lock Policy
@@ -493,7 +493,7 @@ Second Brain OS is built on **26 open-source and free-tier technologies** organi
 5. Run full test suite (npm test, pytest)
 6. Run linting + type checking
 7. Manual smoke test of affected features
-8. Merge to main → auto-deploy to staging
+8. Merge to main â†’ auto-deploy to staging
 9. Monitor Sentry for new errors (24h)
 10. Promote to production
 ```
@@ -536,29 +536,29 @@ When a dependency enters deprecation:
 
 ```
 Critical Vulnerability Found
-        │
-        ▼
+        â”‚
+        â–¼
 1. Assess impact on our codebase
-        │
-        ▼
+        â”‚
+        â–¼
 2. If exploitable: create hotfix branch
-        │
-        ▼
+        â”‚
+        â–¼
 3. Apply minimum patch (pin version)
-        │
-        ▼
+        â”‚
+        â–¼
 4. Verify tests pass (CI bypass allowed)
-        │
-        ▼
+        â”‚
+        â–¼
 5. Deploy hotfix (Vercel + Railway)
-        │
-        ▼
+        â”‚
+        â–¼
 6. Monitor Sentry for regressions (2h)
-        │
-        ▼
+        â”‚
+        â–¼
 7. Backport patch to main branch
-        │
-        ▼
+        â”‚
+        â–¼
 8. Update AGENTS.md if API changed
 ```
 
@@ -610,7 +610,7 @@ Critical Vulnerability Found
 | User Count | Monthly Cost | Bottleneck | Upgrade Needed |
 |---|---|---|---|
 | 1 (current) | $0 | None | None |
-| 10 | $25 | Supabase 500MB → use | Supabase Pro ($25) |
+| 10 | $25 | Supabase 500MB â†’ use | Supabase Pro ($25) |
 | 50 | $50 | Vercel bandwidth | Vercel Pro ($20) + Supabase Pro ($25) |
 | 100 | $225 | AI cost (Claude) | Ollama for all + Claude Pro ($20) |
 | 500 | $650 | Database (~5GB) | Supabase Team ($599) + Vercel Pro ($20) |
@@ -631,33 +631,33 @@ Critical Vulnerability Found
 ## 16. Dependency Graph
 
 ```
-                           ┌───────────────────┐
-                           │   User's Browser   │
-                           │  (Next.js SSR'd)   │
-                           └────────┬──────────┘
-                                    │
-                    ┌───────────────┼───────────────┐
-                    │               │               │
-                    ▼               ▼               ▼
-            ┌────────────┐  ┌────────────┐  ┌────────────┐
-            │  Supabase   │  │   Ollama   │  │   Claude   │
-            │ PostgreSQL  │  │  (Local)   │  │   (Cloud)  │
-            │  + Realtime │  │  Mistral   │  │  Sonnet 4  │
-            └────────────┘  └────────────┘  └────────────┘
-                    │               │               │
-                    └───────────────┼───────────────┘
-                                    │
-                                    ▼
-                            ┌────────────────┐
-                            │  FastAPI (API)  │
-                            │   + Agents      │
-                            └────────────────┘
-                                    │
-                                    ▼
-                            ┌────────────────┐
-                            │    Scheduler    │
-                            │  (APScheduler)  │
-                            └────────────────┘
+                           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                           â”‚   User's Browser   â”‚
+                           â”‚  (Next.js SSR'd)   â”‚
+                           â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚               â”‚               â”‚
+                    â–¼               â–¼               â–¼
+            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+            â”‚  Supabase   â”‚  â”‚   Ollama   â”‚  â”‚   Claude   â”‚
+            â”‚ PostgreSQL  â”‚  â”‚  (Local)   â”‚  â”‚   (Cloud)  â”‚
+            â”‚  + Realtime â”‚  â”‚  Mistral   â”‚  â”‚  Sonnet 4  â”‚
+            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                    â”‚               â”‚               â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+                                    â–¼
+                            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                            â”‚  FastAPI (API)  â”‚
+                            â”‚   + Agents      â”‚
+                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+                                    â–¼
+                            â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                            â”‚    Scheduler    â”‚
+                            â”‚  (APScheduler)  â”‚
+                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -766,4 +766,4 @@ Critical Vulnerability Found
 
 ---
 
-*End of Document — ENG-TECHSTACK-001*
+*End of Document â€” ENG-TECHSTACK-001*
