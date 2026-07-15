@@ -12,6 +12,7 @@ import {
   Repeat,
   Settings,
   Sparkles,
+  AlertTriangle,
   ChevronDown,
   Check,
   ExternalLink,
@@ -36,6 +37,7 @@ const categoryIcons: Record<NotificationCategory, React.ElementType> = {
   ai: Sparkles,
   reminder: Bell,
   achievement: Sparkles,
+  deadline_alert: AlertTriangle,
 }
 
 const categoryLabels: Record<NotificationCategory, string> = {
@@ -48,6 +50,7 @@ const categoryLabels: Record<NotificationCategory, string> = {
   ai: 'AI Insights',
   reminder: 'Reminders',
   achievement: 'Achievements',
+  deadline_alert: 'Deadline Alerts',
 }
 
 const categoryOrder: NotificationCategory[] = [
