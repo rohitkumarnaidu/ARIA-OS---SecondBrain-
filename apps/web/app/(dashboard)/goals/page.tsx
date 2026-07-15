@@ -286,8 +286,9 @@ export default function GoalsPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Title <span className="text-accent-error">*</span></label>
+                <label htmlFor="goal-title" className="block text-sm font-medium text-text-primary mb-2">Title <span className="text-accent-error">*</span></label>
                 <input
+                  id="goal-title"
                   type="text"
                   value={newGoal.title}
                   onChange={e => setNewGoal({ ...newGoal, title: e.target.value })}
@@ -297,8 +298,9 @@ export default function GoalsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Description</label>
+                <label htmlFor="goal-description" className="block text-sm font-medium text-text-primary mb-2">Description</label>
                 <textarea
+                  id="goal-description"
                   value={newGoal.description}
                   onChange={e => setNewGoal({ ...newGoal, description: e.target.value })}
                   className="input min-h-[80px] resize-none"
@@ -308,8 +310,9 @@ export default function GoalsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Roadmap Type</label>
+                <label htmlFor="goal-roadmap-type" className="block text-sm font-medium text-text-primary mb-2">Roadmap Type</label>
                 <select
+                  id="goal-roadmap-type"
                   value={newGoal.roadmap_type}
                   onChange={e => setNewGoal({ ...newGoal, roadmap_type: e.target.value as typeof roadmapTypes[number] })}
                   className="input capitalize"
@@ -321,8 +324,9 @@ export default function GoalsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">Target Date</label>
+                <label htmlFor="goal-target-date" className="block text-sm font-medium text-text-primary mb-2">Target Date</label>
                 <input
+                  id="goal-target-date"
                   type="date"
                   value={newGoal.target_date}
                   onChange={e => setNewGoal({ ...newGoal, target_date: e.target.value })}
@@ -332,8 +336,9 @@ export default function GoalsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Hours/Day</label>
+                  <label htmlFor="goal-hours-per-day" className="block text-sm font-medium text-text-primary mb-2">Hours/Day</label>
                   <input
+                    id="goal-hours-per-day"
                     type="number"
                     value={newGoal.hours_per_day}
                     onChange={e => setNewGoal({ ...newGoal, hours_per_day: parseFloat(e.target.value) || 2 })}
@@ -344,8 +349,9 @@ export default function GoalsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Days/Week</label>
+                  <label htmlFor="goal-days-per-week" className="block text-sm font-medium text-text-primary mb-2">Days/Week</label>
                   <input
+                    id="goal-days-per-week"
                     type="number"
                     value={newGoal.days_per_week}
                     onChange={e => setNewGoal({ ...newGoal, days_per_week: parseFloat(e.target.value) || 5 })}
