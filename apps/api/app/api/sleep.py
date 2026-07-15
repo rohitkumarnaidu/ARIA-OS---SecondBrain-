@@ -3,8 +3,40 @@ from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.sleep import SleepCreate, SleepUpdate, SleepResponse
+from ai.agents.sleep_agent import analyze_sleep, suggest_bedtime
+from datetime import datetime, timedelta
+from shared.utils.logger import logger
 
 router = APIRouter()
+
+
+@router.get("/wind-down", summary="Get wind-down recommendation for tonight")
+async def get_wind_down(current_user=Depends(get_current_user)):
+    now = datetime.now()
+    if now.hour < 18:
+        return {"available": False, "message": "Check back tonight for your wind-down routine."}
+
+    try:
+        bedtime = await suggest_bedtime(current_user.user.id)
+        analysis = await analyze_sleep(current_user.user.id)
+    except Exception as e:
+        logger.error("Wind-down generation failed", error=str(e))
+        return {"available": False, "message": "Unable to generate wind-down routine right now."}
+
+    suggested_bedtime = bedtime.get("suggested_bedtime", "22:00")
+    b_h, b_m = map(int, suggested_bedtime.split(":"))
+    wake_dt = now.replace(hour=b_h, minute=b_m, second=0, microsecond=0) + timedelta(hours=8)
+    suggested_wake_time = wake_dt.strftime("%H:%M")
+
+    return {
+        "available": True,
+        "suggested_bedtime": suggested_bedtime,
+        "suggested_wake_time": suggested_wake_time,
+        "message": bedtime.get("message", "Time to wind down for the night."),
+        "wind_down_routine": analysis.get("wind_down_routine", []),
+        "recommendations": analysis.get("recommendations", []),
+        "sleep_analysis": analysis.get("sleep_analysis", ""),
+    }
 
 
 @router.get("/", summary="List sleep logs", response_model=List[SleepResponse])
@@ -105,3 +137,5 @@ async def delete_sleep(sleep_id: str, current_user=Depends(get_current_user)):
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
     return None
+
+
