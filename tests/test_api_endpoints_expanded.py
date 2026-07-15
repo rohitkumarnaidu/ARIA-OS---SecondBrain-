@@ -56,6 +56,15 @@ class MockQueryBuilder:
     def lte(self, col, val):
         return self
 
+    def in_(self, col, val):
+        return self
+
+    def not_(self, *args, **kwargs):
+        return self
+
+    def is_(self, *args, **kwargs):
+        return self
+
     def text_search(self, col, val):
         return self
 
