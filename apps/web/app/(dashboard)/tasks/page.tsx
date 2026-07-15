@@ -182,11 +182,13 @@ function SortableKanbanCard({
           isFocused && 'ring-2 ring-accent-primary/60 border-accent-primary/40',
           isCompleted && 'opacity-70',
         )}
-        onClick={() => onClick(task.id)}
-        role="option"
-        aria-selected={isSelected}
-        aria-label={`Task: ${task.title}`}
-      >
+          onClick={() => onClick(task.id)}
+          role="option"
+          aria-selected={isSelected}
+          aria-label={`Task: ${task.title}`}
+          tabIndex={-1}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(task.id) }}
+        >
         {/* Priority color bar */}
         <div
           className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg"
@@ -195,7 +197,7 @@ function SortableKanbanCard({
 
         <div className="p-3 pl-4">
           {/* Header: checkbox + title + actions */}
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2" role="presentation">
             <button
               onClick={(e) => { e.stopPropagation(); onToggleSelect(task.id) }}
               className={cn(
@@ -289,7 +291,6 @@ function SortableKanbanCard({
     </motion.div>
   )
 }
-
 /* ─── Drag Overlay Card ─────────────────────────── */
 
 function DragOverlayCard({ task }: { task: KanbanTask }) {
@@ -672,22 +673,23 @@ function CreateTaskModal({ open, onClose, onSubmit }: CreateTaskModalProps) {
     <Dialog open={open} onClose={onClose} title="Create Task" size="md">
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-text-primary mb-1.5">Title</label>
+          <label htmlFor="task-title" className="block text-sm font-medium text-text-primary mb-1.5">Title</label>
           <input
+            id="task-title"
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
             className="w-full bg-surface-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary outline-none focus:border-accent-primary/50 focus:ring-1 focus:ring-accent-primary/20 transition-all"
             placeholder="What needs to be done?"
-            autoFocus
             aria-label="Task title"
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Priority</label>
+            <label htmlFor="task-priority" className="block text-sm font-medium text-text-primary mb-1.5">Priority</label>
             <select
+              id="task-priority"
               value={priority}
               onChange={e => setPriority(e.target.value as TaskPriority)}
               className="w-full bg-surface-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary/50"
@@ -700,8 +702,9 @@ function CreateTaskModal({ open, onClose, onSubmit }: CreateTaskModalProps) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">Category</label>
+            <label htmlFor="task-category" className="block text-sm font-medium text-text-primary mb-1.5">Category</label>
             <select
+              id="task-category"
               value={category}
               onChange={e => setCategory(e.target.value as TaskCategory)}
               className="w-full bg-surface-primary border border-border rounded-lg px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-primary/50"
@@ -716,8 +719,9 @@ function CreateTaskModal({ open, onClose, onSubmit }: CreateTaskModalProps) {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-text-primary mb-1.5">Due Date</label>
+          <label htmlFor="task-due-date" className="block text-sm font-medium text-text-primary mb-1.5">Due Date</label>
           <input
+            id="task-due-date"
             type="date"
             value={dueDate}
             onChange={e => setDueDate(e.target.value)}
