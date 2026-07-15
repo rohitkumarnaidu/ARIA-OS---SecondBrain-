@@ -1,0 +1,23 @@
+{
+  "service": "secondbrain-os",
+  "env": "production",
+  "api_key_env": "DD_API_KEY",
+  "logs_config": {
+    "source": "python",
+    "service_mapping": {
+      "api": "secondbrain-api",
+      "scheduler": "secondbrain-scheduler",
+      "web": "secondbrain-web"
+    }
+  },
+  "integrations": {
+    "python": {
+      "ddtrace": {
+        "enabled": true,
+        "service": "secondbrain-api",
+        "env": "production",
+        "version": "1.0.0"
+      }
+    }
+  }
+}

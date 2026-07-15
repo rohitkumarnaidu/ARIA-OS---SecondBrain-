@@ -1,0 +1,36 @@
+{
+  "api_key_env": "UPTIMEROBOT_API_KEY",
+  "monitors": [
+    {
+      "friendly_name": "ARIA OS - API Health",
+      "url": "https://api.secondbrain-os.com/health",
+      "type": "http",
+      "interval": 300,
+      "alert_contacts": ["notification_email"]
+    },
+    {
+      "friendly_name": "ARIA OS - API Ready",
+      "url": "https://api.secondbrain-os.com/health/ready",
+      "type": "http",
+      "interval": 300,
+      "alert_contacts": ["notification_email"]
+    },
+    {
+      "friendly_name": "ARIA OS - Frontend",
+      "url": "https://secondbrain-os.vercel.app",
+      "type": "http",
+      "interval": 300,
+      "alert_contacts": ["notification_email"]
+    },
+    {
+      "friendly_name": "ARIA OS - Scheduler",
+      "url": "https://scheduler.secondbrain-os.com/health",
+      "type": "http",
+      "interval": 300,
+      "alert_contacts": ["notification_email"]
+    }
+  ],
+  "alert_contacts": {
+    "notification_email": "developer@secondbrain-os.com"
+  }
+}

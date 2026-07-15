@@ -1,0 +1,8 @@
+{
+  "source_token_env": "LOGTAIL_SOURCE_TOKEN",
+  "endpoint": "https://in.logtail.com",
+  "tags": {
+    "app": "secondbrain-os",
+    "env": "production"
+  }
+}
