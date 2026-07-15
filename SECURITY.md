@@ -1,10 +1,19 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | LEG-SEC-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
 # Security Policy
 
 ## Supported Versions
 
 | Version | Supported |
 |---|---|
-| 0.x (alpha) | ✅ |
+| 0.x (alpha) | âœ… |
 
 ## Reporting a Vulnerability
 
@@ -52,7 +61,7 @@ We follow coordinated disclosure. Please allow us reasonable time to fix the iss
 
 ## Security Relevant Files
 
-- `docs/security/24_Security.md` — Full security documentation
-- `docs/security/25_Compliance.md` — Compliance documentation
-- `docs/security/46_DataPrivacy.md` — Data privacy & GDPR compliance
-- `.github/workflows/ci.yml` — CI pipeline with security checks
+- `docs/security/24_Security.md` â€” Full security documentation
+- `docs/security/25_Compliance.md` â€” Compliance documentation
+- `docs/security/46_DataPrivacy.md` â€” Data privacy & GDPR compliance
+- `.github/workflows/ci.yml` â€” CI pipeline with security checks

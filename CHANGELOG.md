@@ -1,3 +1,12 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | LEG-CHG-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
 # Changelog
 
 All notable changes to Second Brain OS are documented in this file.
@@ -99,7 +108,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [0.1.0] — 2026-06-01
+## [0.1.0] â€” 2026-06-01
 
 ### Added
 - Initial project scaffolding and monorepo structure

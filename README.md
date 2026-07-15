@@ -1,149 +1,173 @@
-# App
+﻿## Document Control
 
-A personal AI productivity system for BTech CSE students that acts as your memory, advisor, opportunity scanner, and daily planner. Built to help you become a builder - not just collect degrees.
+| Field | Value |
+|---|---|
+| Document ID | LEG-README-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
 
-## Features
+# Second Brain OS (ARIA OS)
 
-- **Dashboard & Morning Briefing** - Daily AI-generated briefing with top tasks, opportunities, and progress updates
-- **Task Manager** - Smart task creation with AI-priority, auto-reschedule, and zero-miss policy
-- **Course Tracker** - Track Udemy, Coursera, NPTEL, YouTube playlists all in one place
-- **YouTube Knowledge Vault** - One-tap save, AI summaries, and watch scheduling
-- **Resource Library** - Save articles, books, GitHub repos with auto-tagging and natural language search
-- **Idea Vault** - Capture startup ideas with AI market validation
-- **Goal & Roadmap System** - Visual drag-and-drop roadmap builder with 8 types
-- **Opportunity Radar** - Daily automated scanning for internships, hackathons, fellowships
-- **Income Sources Tracker** - Track all income streams with hourly rate analysis
-- **Project Tracker** - Kanban board with GitHub integration and LinkedIn post generator
-- **Academic Planner** - Semester subjects, marks logging, CGPA calculator
-- **Habit Engine** - Custom habits with streak tracking and goal linking
-- **Sleep Monitor** - Sleep quality tracking with task adjustment based on rest
-- **Time Tracker** - Pomodoro mode, deep work detection, focus hour analysis
-- **Weekly Review** - AI-generated narrative review of your week
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://python.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.11-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3FCF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-2582%20passing-brightgreen)]()
+[![Coverage](https://img.shields.io/badge/Coverage-95.56%25-success)]()
+
+A personal AI productivity system that replaces 12+ tools with one intelligent platform. Purpose-built for BTech CSE students, open-source, and **Rs. 0 forever**.
+
+---
+
+## Demo
+
+> _Screenshot coming soon. Run `make dev-web` + `make dev-api` to see the live dashboard._
+
+---
+
+## Key Features
+
+| Module | What It Does | AI Agent |
+|---|---|---|
+| **Dashboard & Briefing** | Daily AI-generated morning briefing with top 3 priorities | A09 â€” Briefing Agent |
+| **Task Manager** | Smart tasks with auto-reschedule, zero-miss policy | A01 â€” Task Agent |
+| **Course Tracker** | Udemy/Coursera/NPTEL/YouTube â€” all in one place | A14 â€” Nudge Agent |
+| **YouTube Vault** | One-tap save, AI summaries, 60-day expiry | â€” |
+| **Idea Vault** | Capture â†’ score â†’ validate â†’ build pipeline | â€” |
+| **Opportunity Radar** | Daily scan: internships, hackathons, fellowships, freelance | A06 â€” Opportunity Agent |
+| **Income Tracker** | All income streams, effective hourly rate | â€” |
+| **Project Tracker** | Kanban phases, GitHub integration, blocker logging | â€” |
+| **Time Tracker** | Pomodoro, deep work detection, focus analytics | â€” |
+| **Habit Engine** | Custom habits, streaks, goal-linked consistency | A14 â€” Nudge Agent |
+| **Sleep Monitor** | Logs, quality scoring, wind-down messages | A13 â€” Sleep Agent |
+| **Academic Planner** | Semesters, CGPA, at-risk alerts | â€” |
+| **Resource Library** | Auto-tagging, semantic search, browser extension | A03 â€” Learning Agent |
+| **Goal & Roadmap** | Drag-and-drop milestones, skill progression | A08 â€” Roadmap Agent |
+| **Weekly Review** | AI-generated narrative of your week | A10 â€” Weekly Review Agent |
+| **ARIA Chat** | Context-aware AI assistant with persistent memory | A00 â€” ARIA Orchestrator |
+
+---
+
+## Architecture
+
+```
+apps/api/          â† FastAPI backend (29 routers, /api/v1/)
+apps/web/          â† Next.js 14 PWA (cyberpunk design system)
+packages/ai/       â† 10 AI agents + PromptLoader + LLM client
+packages/config/   â† FastAPI config, Supabase, JWT auth
+packages/database/ â† Pydantic schemas (all 18+ tables)
+packages/shared/   â† Cache, rate limiter, audit, security utilities
+services/scheduler/â† 7 cron jobs (APScheduler)
+prompts/           â† 14 AI prompt templates (YAML frontmatter)
+tests/             â† 2,582+ passing tests, 95.56% coverage
+```
+
+**AI Resilience:** Circuit breakers, exponential backoff, provider failover (Ollama â†’ Claude â†’ OpenAI), algorithmic fallback for every AI feature.
+
+---
 
 ## Tech Stack
 
-### Backend
-- FastAPI (Python)
-- Supabase (Database, Auth, Realtime)
-- Ollama (Local AI)
-- Claude API (AI Fallback)
-- PostgreSQL with RLS
+**Frontend:** Next.js 14, React 18, TypeScript, Tailwind CSS, Zustand, Framer Motion, React Flow, Recharts, shadcn/ui
 
-### Frontend
-- Next.js 14
-- React 18
-- Tailwind CSS
-- Zustand (State Management)
-- React Flow (Roadmap Builder)
-- Recharts (Analytics)
+**Backend:** FastAPI, Python 3.10, Supabase (PostgreSQL + Auth + Realtime), APScheduler, Ruff, Black, Pytest
 
-## Getting Started
+**AI:** Ollama (Mistral 7B â€” local), Claude API (fallback), PromptLoader with 14 prompt files, 10 specialized agents
 
-### Prerequisites
+**Infrastructure:** Docker Compose, Vercel (web), Railway (API), GitHub Actions (7 CI jobs), Pre-commit hooks
 
-- Node.js 18+
-- Python 3.10+
-- Supabase Account
-- Claude API Key (optional, for advanced AI)
+---
 
-### Backend Setup (Agent Orchestrator)
+## Quick Start
 
-1. Navigate to the backend directory:
 ```bash
-cd apps/api
+# 1. Clone + install
+git clone <repo-url>
+cd "ARIA OS - SecondBrain"
+make install
+
+# 2. Configure environment
+cp .env.example .env.local  # Edit with Supabase credentials
+
+# 3. Validate setup
+make validate-prompts
+make test
+
+# 4. Start development
+make dev-api   # Terminal 1 â€” http://localhost:8000
+make dev-web   # Terminal 2 â€” http://localhost:3000
 ```
 
-2. Create a virtual environment:
-```bash
-python -m venv venv
-```
+**Detailed guide:** [`docs/quickstart.md`](docs/quickstart.md) â€” get running in under 10 minutes.
 
-3. Activate the virtual environment:
-- Windows: `venv\Scripts\Activate`
-- Linux/Mac: `source venv/bin/activate`
-
-4. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-5. Set up environment variables:
-```bash
-cp ../../.env.example .env
-# Edit .env with your Supabase credentials
-```
-
-6. Run the backend server:
-```bash
-uvicorn main:app --reload
-```
-
-The backend API will be available at `http://localhost:8000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd apps/web
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Set up environment variables:
-Create a `.env.local` file in `apps/web/`:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-The frontend will be available at `http://localhost:3000`
-
-## Project Structure
-
-```
-├── apps/
-│   ├── api/             FastAPI backend (app/api/)
-│   └── web/             Next.js 14 frontend
-├── packages/
-│   ├── ai/              AI agent modules + PromptLoader + LLM client
-│   ├── config/core/     FastAPI config, auth, supabase
-│   ├── database/schemas/ Pydantic models
-│   ├── shared/utils/    Logging, cache, rate limiter, security, audit
-│   ├── types/           Shared TypeScript types
-│   └── ui/              Shared React components
-├── services/
-│   └── scheduler/       APScheduler + 7 cron jobs
-├── prompts/             AI prompt templates (YAML frontmatter)
-│   ├── system/          System prompts (aria_system, guardrails)
-│   ├── agents/          Agent prompts (briefing, memory, sleep, etc.)
-│   └── templates/       Context assembly, email templates
-├── docs/                ~185 files (product, design, engineering, AI, security, devops, qa, operations)
-├── infrastructure/      Helm, K8s, Docker, Terraform, nginx, canary
-├── tests/               2411 Python tests
-├── scripts/             Security, SOC 2, release, bundle audit
-├── security/            SOC 2 reports, pen test reports
-├── monitoring/          Grafana dashboards
-```
+---
 
 ## Documentation
 
-See the `docs/` folder for detailed documentation:
-- Product: PRD, Features, Roadmap
-- Design: UIUX
-- Engineering: Architecture, API, Database
-- AI: Agents, AI Instructions
-- Security
-- DevOps: Deployment
-- Operations: Implementation Status, TechStack
+| Category | Location |
+|---|---|
+| Quick-Start Guide | [`docs/quickstart.md`](docs/quickstart.md) |
+| Full Developer Onboarding | [`docs/operations/44_DeveloperOnboarding.md`](docs/operations/44_DeveloperOnboarding.md) |
+| Master Reference (AGENTS.md) | [`AGENTS.md`](AGENTS.md) |
+| Project Vision | [`docs/product/00_ProjectVision.md`](docs/product/00_ProjectVision.md) |
+| Product Requirements (PRD) | [`docs/product/02_PRD.md`](docs/product/02_PRD.md) |
+| Business Requirements (BRD) | [`docs/product/03_BRD.md`](docs/product/03_BRD.md) |
+| Architecture Docs | [`docs/engineering/`](docs/engineering/) |
+| API Reference | [`docs/engineering/17_API.md`](docs/engineering/17_API.md) |
+| AI Agent Spec | [`docs/ai/20_Agent.md`](docs/ai/20_Agent.md) |
+| Design System | [`docs/design/10_DesignSystem.md`](docs/design/10_DesignSystem.md) |
+| Documentation Index | [`docs/DOCUMENTATION_INDEX.md`](docs/DOCUMENTATION_INDEX.md) |
+
+---
+
+## Commands Cheat Sheet
+
+```bash
+make help              # List all targets
+make dev-api           # Start backend
+make dev-web           # Start frontend
+make lint              # Run all linters
+make test              # Run all Python tests
+make test-coverage     # Tests + HTML coverage report
+make validate-prompts  # Validate prompt frontmatter
+make pre-commit        # Full pre-commit check
+make docker-up         # Start Docker services
+```
+
+---
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines, and [`docs/governance/documentation-ownership.md`](docs/governance/documentation-ownership.md) for documentation ownership.
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- All contributions welcome: bug reports, feature requests, PRs, documentation improvements
+
+**CI pipeline** (7 jobs): Frontend â†’ Backend â†’ Prompts â†’ Docker â†’ Security â†’ Lighthouse â†’ Pentest. All must pass before merge.
+
+---
 
 ## License
 
-MIT License
+[MIT](LICENSE) â€” free to use, modify, and distribute. Built for students, by a student.
+
+---
+
+## Stats
+
+| Metric | Value |
+|---|---|
+| Python files | 184 |
+| TypeScript files | 748 |
+| Documentation files | 270 |
+| Passing tests | 2,582+ |
+| Code coverage | 95.56% |
+| AI agents | 10 |
+| API endpoints | ~80 under /api/v1/ |
+| Architecture Decision Records | 15 |
+| Storybook stories | 380 |
+| E2E specs | 21 |
