@@ -1,12 +1,12 @@
-# Frontend AI/UX Patterns — Second Brain OS
+﻿# Frontend AI/UX Patterns â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-AIUX-001 |
+| Document ID | ENG-FAI-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/components/` — AI-powered UI component patterns |
+| Applies To | `apps/web/components/` â€” AI-powered UI component patterns |
 
 ---
 
@@ -117,9 +117,9 @@ graph TD
 Every AI component implements this state machine:
 
 ```
-IDLE → THINKING → RESPONSE → DISMISSED
-  │        │
-  └── ERROR ──┘ (fallback to algorithmic response or hide)
+IDLE â†’ THINKING â†’ RESPONSE â†’ DISMISSED
+  â”‚        â”‚
+  â””â”€â”€ ERROR â”€â”€â”˜ (fallback to algorithmic response or hide)
 ```
 
 ---
@@ -128,14 +128,14 @@ IDLE → THINKING → RESPONSE → DISMISSED
 
 ### 2.1 Purpose
 
-Shows an AI-suggested value as a subtle hint in an empty input field — like a placeholder but smarter. The hint appears as semi-transparent text that the user can accept (Tab) or ignore (keep typing).
+Shows an AI-suggested value as a subtle hint in an empty input field â€” like a placeholder but smarter. The hint appears as semi-transparent text that the user can accept (Tab) or ignore (keep typing).
 
 ### 2.2 Visual Specification
 
 ```
 +-------------------------------------------------------------------+
 | [Icon] Create a task about...                          [Tab to accept] |
-|        design system proposal  ←── Ghost hint (opacity 40%)      |
+|        design system proposal  â†â”€â”€ Ghost hint (opacity 40%)      |
 +-------------------------------------------------------------------+
 ```
 
@@ -144,8 +144,8 @@ Shows an AI-suggested value as a subtle hint in an empty input field — like a 
 | Idle (no hint) | Normal placeholder | 100% placeholder |
 | Hint visible | Ghost text after cursor | 40% opacity |
 | Accepting hint | Hint converts to input value | 100% |
-| Dismissing hint | Hint fades out as user types | 40% → 0% |
-| Error | No hint (fallback to placeholder) | — |
+| Dismissing hint | Hint fades out as user types | 40% â†’ 0% |
+| Error | No hint (fallback to placeholder) | â€” |
 
 ### 2.3 Implementation
 
@@ -208,7 +208,7 @@ export function GhostHintInput({
           </span>
           {/* Accept hint badge */}
           <span className="absolute right-3 text-[10px] text-text-tertiary bg-background-elevated px-1.5 py-0.5 rounded">
-            Tab ⭾
+            Tab â­¾
           </span>
         </div>
       )}
@@ -240,17 +240,17 @@ export function GhostHintInput({
 ### 2.5 States Diagram
 
 ```
-┌──────────┐  Typing starts  ┌────────────┐  Accept Tab  ┌───────────┐
-│  IDLE    │ ──────────────► │ HINT SHOWN │ ────────────► │ ACCEPTED  │
-│ (empty)  │                 │ (40%)      │               │ (100%)    │
-└──────────┘                └─────┬───────┘               └───────────┘
-                                  │                            │
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  Typing starts  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  Accept Tab  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  IDLE    â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º â”‚ HINT SHOWN â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º â”‚ ACCEPTED  â”‚
+â”‚ (empty)  â”‚                 â”‚ (40%)      â”‚               â”‚ (100%)    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜               â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                  â”‚                            â”‚
                             User types                    Hint accepted
-                                  ▼                            ▼
-                          ┌──────────────┐           ┌─────────────────┐
-                          │ HINT HIDDEN  │           │ NORMAL INPUT    │
-                          │ (typing)     │           │ (editable)      │
-                          └──────────────┘           └─────────────────┘
+                                  â–¼                            â–¼
+                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                          â”‚ HINT HIDDEN  â”‚           â”‚ NORMAL INPUT    â”‚
+                          â”‚ (typing)     â”‚           â”‚ (editable)      â”‚
+                          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -266,22 +266,22 @@ Reveals AI-generated text character by character (or word by word) to simulate r
 ```
 Streaming (in progress):
 +----------------------------------------------------------------------+
-| Here are your top 3 tasks for today▊                                  |
+| Here are your top 3 tasks for todayâ–Š                                  |
 |                                                                       |
-| 1️⃣ Complete DSA assignment (due 5 PM)                                |
-| 2️⃣▊ <-- cursor still advancing                                       |
+| 1ï¸âƒ£ Complete DSA assignment (due 5 PM)                                |
+| 2ï¸âƒ£â–Š <-- cursor still advancing                                       |
 +----------------------------------------------------------------------+
 
 Complete:
 +----------------------------------------------------------------------+
 | Here are your top 3 tasks for today:                                  |
 |                                                                       |
-| 1️⃣ Complete DSA assignment (due 5 PM)                                |
-| 2️⃣ Review ML project proposal                                        |
-| 3️⃣ Read Ch. 8 of System Design                                       |
+| 1ï¸âƒ£ Complete DSA assignment (due 5 PM)                                |
+| 2ï¸âƒ£ Review ML project proposal                                        |
+| 3ï¸âƒ£ Read Ch. 8 of System Design                                       |
 |                                                                       |
-| ────────────────────────────────────────────────────────               |
-| Generated in 1.2s · [Copy] [Regenerate]                               |
+| â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€               |
+| Generated in 1.2s Â· [Copy] [Regenerate]                               |
 +----------------------------------------------------------------------+
 ```
 
@@ -382,7 +382,7 @@ Shows the user that the AI is actively processing their request. Used during: ch
 ```
 Variant 1: Pulse (default)
 +----------------------------------------------------------------------+
-|  ● ● ●   ARIA is thinking...                                        |
+|  â— â— â—   ARIA is thinking...                                        |
 |  (pulsing glow animation)                                            |
 +----------------------------------------------------------------------+
 
@@ -394,7 +394,7 @@ Variant 2: Dots
 
 Variant 3: Typing
 +----------------------------------------------------------------------+
-|  ⬜⬜⬜   ARIA is typing___________________________________         |
+|  â¬œâ¬œâ¬œ   ARIA is typing___________________________________         |
 |  (3 animated squares flashing in sequence)                            |
 +----------------------------------------------------------------------+
 ```
@@ -481,7 +481,7 @@ export function ThinkingIndicator({
 ### 4.4 Usage
 
 ```tsx
-// Chat page — while waiting for AI response
+// Chat page â€” while waiting for AI response
 {isStreaming && <ThinkingIndicator variant="pulse" label="ARIA is responding..." />}
 
 // Briefing generation
@@ -513,14 +513,14 @@ Shows the AI's confidence level in its suggestion or prediction. Used for: oppor
 ```
 +----------------------------------------------------+
 | Score: 92%                                         |
-| ┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╌╌╌╌╌╌╌╌┤  |  ← Progress bar
-| ┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤  |  ← Fill = confidence
-|  ● ── High confidence                             |
+| â”ƒâ”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ”¤  |  â† Progress bar
+| â”ƒâ”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ•Œâ”¤  |  â† Fill = confidence
+|  â— â”€â”€ High confidence                             |
 +----------------------------------------------------+
 
 Variant: Badge only
 +--------------------------------------+
-| [🔲 High] [● Medium] [○ Low]       |
+| [ðŸ”² High] [â— Medium] [â—‹ Low]       |
 +--------------------------------------+
 ```
 
@@ -645,9 +645,9 @@ Inline clickable suggestions that the user can tap to fill form fields quickly. 
 
 Selected state:
 +----------------------------------------------------------------------+
-| [Complete DSA assignment]  ● [Review ML project]  [Read Ch. 8]     |
+| [Complete DSA assignment]  â— [Review ML project]  [Read Ch. 8]     |
 |                                                                      |
-| "Review ML project proposal" ← auto-filled in input                  |
+| "Review ML project proposal" â† auto-filled in input                  |
 +----------------------------------------------------------------------+
 ```
 
@@ -741,21 +741,21 @@ Allows users to reverse an AI action within a configurable time window. Used for
 ```
 Action performed:
 +----------------------------------------------------------------------+
-| ✅ Task "Review PR #42" marked as complete                            |
+| âœ… Task "Review PR #42" marked as complete                            |
 |                                                                      |
-| [↩ Undo]  (5s remaining) ────────▒▒▒▒▒▒▒▒▒▒░░░░░░ 60%               |
+| [â†© Undo]  (5s remaining) â”€â”€â”€â”€â”€â”€â”€â”€â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–‘â–‘â–‘â–‘â–‘â–‘ 60%               |
 |                                                                      |
-| └── Toast notification, fixed bottom-right, z-1060                   |
+| â””â”€â”€ Toast notification, fixed bottom-right, z-1060                   |
 +----------------------------------------------------------------------+
 
 After undo:
 +----------------------------------------------------------------------+
-| ↩ Task restored to "pending"                                         |
+| â†© Task restored to "pending"                                         |
 +----------------------------------------------------------------------+
 
 Timeout:
 +----------------------------------------------------------------------+
-| ✅ Change saved                                                      |
+| âœ… Change saved                                                      |
 +----------------------------------------------------------------------+
 ```
 
@@ -843,7 +843,7 @@ export function AIActionUndo({
               disabled={isUndoing}
               className="mt-2 text-sm font-medium text-accent-primary hover:text-accent-primaryHover disabled:opacity-50"
             >
-              {isUndoing ? 'Undoing...' : '↩ Undo'}
+              {isUndoing ? 'Undoing...' : 'â†© Undo'}
             </button>
           </div>
           <span className="text-xs text-text-tertiary shrink-0">

@@ -1,12 +1,12 @@
-# Frontend Performance Guide — Second Brain OS
+﻿# Frontend Performance Guide â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-PERF-001 |
+| Document ID | ENG-FPF-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/` — Frontend performance optimization |
+| Applies To | `apps/web/` â€” Frontend performance optimization |
 
 ---
 
@@ -137,14 +137,14 @@ graph TD
 
 ```
 Route: /tasks (client component)
-├── react / react-dom       ~38KB (shared, cached)
-├── next/dynamic             ~2KB (shared)
-├── framer-motion           ~28KB (shared across client pages)
-├── lucide-react            ~3KB (tree-shaken)
-├── @supabase/supabase-js   ~7KB (shared)
-├── zustand                 ~1KB (shared)
-├── clsx                    ~0.2KB
-└── App code (tasks page)   ~15KB
+â”œâ”€â”€ react / react-dom       ~38KB (shared, cached)
+â”œâ”€â”€ next/dynamic             ~2KB (shared)
+â”œâ”€â”€ framer-motion           ~28KB (shared across client pages)
+â”œâ”€â”€ lucide-react            ~3KB (tree-shaken)
+â”œâ”€â”€ @supabase/supabase-js   ~7KB (shared)
+â”œâ”€â”€ zustand                 ~1KB (shared)
+â”œâ”€â”€ clsx                    ~0.2KB
+â””â”€â”€ App code (tasks page)   ~15KB
 Total:                       ~75KB
 ```
 
@@ -168,7 +168,7 @@ ANALYZE=true npm run build
 
 | Issue | Detection | Solution |
 |---|---|---|
-| Duplicate React | Bundle analyzer → 2+ React copies | Check peer dep mismatches |
+| Duplicate React | Bundle analyzer â†’ 2+ React copies | Check peer dep mismatches |
 | Full library import | Importing from wrong path | `import { Button } from 'lucide-react'` not `import * as` |
 | Massive date lib | moment.js detected | Use `date-fns` (tree-shakable) |
 | Unused polyfills | Bundle shows core-js | Use `@babel/preset-env` with targets |
@@ -183,10 +183,10 @@ ANALYZE=true npm run build
 Next.js 14 App Router automatically code-splits per route. Each module page loads independently:
 
 ```
-/ → Landing page (shared shell + page)
-/login → Auth page (separate bundle)
-/dashboard → Dashboard bundle
-/tasks → Tasks bundle (includes shared + page-specific)
+/ â†’ Landing page (shared shell + page)
+/login â†’ Auth page (separate bundle)
+/dashboard â†’ Dashboard bundle
+/tasks â†’ Tasks bundle (includes shared + page-specific)
 ```
 
 ### 3.2 Dynamic Imports (Component-Level)
@@ -194,18 +194,18 @@ Next.js 14 App Router automatically code-splits per route. Each module page load
 ```typescript
 import dynamic from 'next/dynamic'
 
-// Heavy 3D background — load only on dashboard
+// Heavy 3D background â€” load only on dashboard
 const ThreeBackground = dynamic(() => import('@/components/ThreeBackground'), {
   ssr: false,
   loading: () => <div className="fixed inset-0 bg-background-page" />,
 })
 
-// Modal — load only when user clicks "Add Task"
+// Modal â€” load only when user clicks "Add Task"
 const AddTaskModal = dynamic(() => import('@/components/AddTaskModal'), {
   loading: () => <div className="w-full h-96 animate-pulse bg-background-elevated rounded-xl" />,
 })
 
-// Roadmap canvas — load only when user navigates to roadmap tab
+// Roadmap canvas â€” load only when user navigates to roadmap tab
 const RoadmapEditor = dynamic(() => import('@/components/RoadmapEditor'), {
   ssr: false,
   loading: () => <RoadmapSkeleton />,
@@ -260,7 +260,7 @@ const { BarChart } = dynamic(() => import('@/lib/dynamic-recharts'), { ssr: fals
 ### 4.2 React.memo Usage
 
 ```typescript
-// ✅ Apply to: list items, card components, pure presentational components
+// âœ… Apply to: list items, card components, pure presentational components
 const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
   return (
     <Card variant="interactive" className="group">
@@ -280,15 +280,15 @@ const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
       && prevProps.task.title === nextProps.task.title
 })
 
-// ❌ Don't memo: components with children/JSX as props
-// ❌ Don't memo: components that change on every render anyway
-// ✅ Do memo: list items (50+ items), dashboard stat cards
+// âŒ Don't memo: components with children/JSX as props
+// âŒ Don't memo: components that change on every render anyway
+// âœ… Do memo: list items (50+ items), dashboard stat cards
 ```
 
 ### 4.3 useMemo and useCallback Guidelines
 
 ```typescript
-// ✅ useMemo for expensive computations
+// âœ… useMemo for expensive computations
 const sortedTasks = useMemo(() => {
   return [...tasks].sort((a, b) =>
     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -302,30 +302,30 @@ const tasksByCategory = useMemo(() => {
   }, {} as Record<string, number>)
 }, [tasks])
 
-// ✅ useCallback for stable function references passed to child components
+// âœ… useCallback for stable function references passed to child components
 const handleComplete = useCallback((taskId: string) => {
   completeTask(taskId)
 }, [completeTask])
 
-// ❌ Don't oversubscribe: only use when there's a measured performance issue
-// ❌ Don't use for simple arithmetic or boolean logic
+// âŒ Don't oversubscribe: only use when there's a measured performance issue
+// âŒ Don't use for simple arithmetic or boolean logic
 ```
 
 ### 4.4 Selector Optimization (Zustand)
 
 ```typescript
-// ❌ BAD: Subscribes to entire store — re-renders on any change
+// âŒ BAD: Subscribes to entire store â€” re-renders on any change
 const { tasks } = useTaskStore()
 
-// ✅ GOOD: Selector subscribes only to `tasks`
+// âœ… GOOD: Selector subscribes only to `tasks`
 const tasks = useTaskStore((state) => state.tasks)
 
-// ✅ BETTER: Selector returns derived value
+// âœ… BETTER: Selector returns derived value
 const pendingCount = useTaskStore(
   (state) => state.tasks.filter(t => t.status === 'pending').length
 )
 
-// ✅ BEST: Shallow equality for multiple values
+// âœ… BEST: Shallow equality for multiple values
 import { shallow } from 'zustand/shallow'
 const { tasks, loading } = useTaskStore(
   (state) => ({ tasks: state.tasks, loading: state.loading }),
@@ -342,7 +342,7 @@ const { tasks, loading } = useTaskStore(
 ```typescript
 import Image from 'next/image'
 
-// ✅ ALWAYS use Next.js Image for optimization
+// âœ… ALWAYS use Next.js Image for optimization
 <Image
   src="/icons/logo.png"
   alt="ARIA OS Logo"
@@ -354,7 +354,7 @@ import Image from 'next/image'
   blurDataURL="data:image/webp;base64,..."
 />
 
-// ✅ Use remote images with hostname config
+// âœ… Use remote images with hostname config
 // next.config.js
 module.exports = {
   images: {
@@ -396,7 +396,7 @@ module.exports = {
 // app/layout.tsx
 import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
 
-// Display: Syne — headings (limited weight range)
+// Display: Syne â€” headings (limited weight range)
 const syne = Syne({
   subsets: ['latin'],
   variable: '--font-syne',
@@ -405,7 +405,7 @@ const syne = Syne({
   weight: ['400', '600', '700'],
 })
 
-// Body: DM Sans — most text
+// Body: DM Sans â€” most text
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
@@ -413,19 +413,19 @@ const dmSans = DM_Sans({
   preload: true,
 })
 
-// Mono: JetBrains Mono — code, stats, timestamps
+// Mono: JetBrains Mono â€” code, stats, timestamps
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains',
   display: 'swap',
-  preload: false,             // Not critical — loads on demand
+  preload: false,             // Not critical â€” loads on demand
 })
 ```
 
 ### 6.2 Font Fallback Strategy
 
 ```css
-/* In globals.css — define fallback fonts matching metrics */
+/* In globals.css â€” define fallback fonts matching metrics */
 :root {
   --font-syne: 'Syne', system-ui, sans-serif;
   --font-dm-sans: 'DM Sans', system-ui, sans-serif;
@@ -440,12 +440,12 @@ const jetbrainsMono = JetBrains_Mono({
 ### 7.1 Request Batching
 
 ```typescript
-// ❌ BAD: Multiple sequential requests
+// âŒ BAD: Multiple sequential requests
 const tasks = await fetchTasks()
 const courses = await fetchCourses()
 const goals = await fetchGoals()
 
-// ✅ GOOD: Parallel requests
+// âœ… GOOD: Parallel requests
 const [tasks, courses, goals] = await Promise.all([
   fetchTasks(),
   fetchCourses(),
@@ -508,17 +508,17 @@ function TaskSearch() {
 ### 8.1 Preventing Re-Render Cascades
 
 ```typescript
-// ❌ BAD: New object on every render → child re-renders
+// âŒ BAD: New object on every render â†’ child re-renders
 <TaskCard task={tasks.find(t => t.id === id)} />
 
-// ✅ GOOD: Memoize derived data
+// âœ… GOOD: Memoize derived data
 const currentTask = useMemo(
   () => tasks.find(t => t.id === id),
   [tasks, id]
 )
 <TaskCard task={currentTask} />
 
-// ✅ BETTER: React.memo on child component prevents re-render when props haven't changed
+// âœ… BETTER: React.memo on child component prevents re-render when props haven't changed
 const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
   return <div>{/* ... */}</div>
 })
@@ -527,7 +527,7 @@ const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
 ### 8.2 State Colocation
 
 ```typescript
-// ❌ BAD: State in parent causes all children to re-render
+// âŒ BAD: State in parent causes all children to re-render
 function TasksPage() {
   const [filter, setFilter] = useState('all')
   return (
@@ -539,7 +539,7 @@ function TasksPage() {
   )
 }
 
-// ✅ GOOD: Push state down to only the component that needs it
+// âœ… GOOD: Push state down to only the component that needs it
 function TasksPage() {
   return (
     <div>
@@ -553,10 +553,10 @@ function TasksPage() {
 ### 8.3 Context Splitting
 
 ```typescript
-// ❌ BAD: Single context causes all consumers to re-render
+// âŒ BAD: Single context causes all consumers to re-render
 const AppContext = createContext({ user: null, tasks: [], theme: 'dark' })
 
-// ✅ GOOD: Split by update frequency
+// âœ… GOOD: Split by update frequency
 const UserContext = createContext<SupabaseUser | null>(null)
 const TaskContext = createContext<Task[]>([])
 const ThemeContext = createContext<'dark' | 'cyberpunk'>('cyberpunk')
@@ -653,13 +653,13 @@ export function reportWebVitals() {
 
 | Technique | Applied? | Impact |
 |---|---|---|
-| Route-level code splitting | ✅ Built-in (App Router) | High |
-| Dynamic imports for heavy components | ✅ Implemented | Medium |
-| React.memo on list items | ✅ Task cards | Medium |
-| Zustand selector optimization | ✅ Used across stores | Medium |
-| Image optimization via `<Image>` | ✅ Configured | High |
-| Font optimization with `display:swap` | ✅ Syne + DM Sans | Medium |
-| Bundle analyzer run | Quarterly | — |
+| Route-level code splitting | âœ… Built-in (App Router) | High |
+| Dynamic imports for heavy components | âœ… Implemented | Medium |
+| React.memo on list items | âœ… Task cards | Medium |
+| Zustand selector optimization | âœ… Used across stores | Medium |
+| Image optimization via `<Image>` | âœ… Configured | High |
+| Font optimization with `display:swap` | âœ… Syne + DM Sans | Medium |
+| Bundle analyzer run | Quarterly | â€” |
 | Virtual scrolling (200+ items) | Phase 2 | Medium |
 | Streaming SSR with Suspense | Phase 2 | Medium |
 | React Query caching | Phase 2 | Medium |

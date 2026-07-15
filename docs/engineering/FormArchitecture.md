@@ -1,12 +1,12 @@
-# Form Architecture — Second Brain OS
+﻿# Form Architecture â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-FORM-001 |
+| Document ID | ENG-FRM-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/` — All CRUD forms across 17 modules |
+| Applies To | `apps/web/` â€” All CRUD forms across 17 modules |
 
 ---
 
@@ -26,7 +26,7 @@
 
 ---
 
-### Architecture Diagram — Form State Machine & Validation Pipeline
+### Architecture Diagram â€” Form State Machine & Validation Pipeline
 
 ```mermaid
 %%{
@@ -102,11 +102,11 @@ graph TD
 
 | Reason | Detail |
 |---|---|
-| **Performance** | Uncontrolled inputs by default — minimal re-renders (only changed field updates, not entire form) |
-| **Type inference** | `z.infer<typeof TaskSchema>` generates TypeScript types directly from validation schema — single source of truth |
+| **Performance** | Uncontrolled inputs by default â€” minimal re-renders (only changed field updates, not entire form) |
+| **Type inference** | `z.infer<typeof TaskSchema>` generates TypeScript types directly from validation schema â€” single source of truth |
 | **Bundle size** | react-hook-form: ~9KB gzipped, Zod: ~8KB gzipped |
-| **Native validation** | Each input registers independently — no wrapper component needed |
-| **Resolver pattern** | Validation logic separated from UI — easy to swap or test independently |
+| **Native validation** | Each input registers independently â€” no wrapper component needed |
+| **Resolver pattern** | Validation logic separated from UI â€” easy to swap or test independently |
 
 ### 1.3 Import Pattern
 
@@ -135,23 +135,23 @@ import { z } from 'zod'
 ### 2.2 Form Mode Decision Matrix
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                       WHAT KIND OF FORM?                                │
-│                                                                          │
-│  Is this a CREATE or EDIT operation?                                     │
-│  ├── CREATE → How many fields?                                           │
-│  │            ├── 1-3 fields  → Quick Create (inline form)              │
-│  │            └── 4+ fields   → Full Create (modal form)                │
-│  └── EDIT    → Is data complex?                                          │
-│                ├── Yes → Modal with pre-populated fields                 │
-│                └── No  → Inline editable text (click to edit)           │
-│                                                                          │
-│  Is the form for SETTINGS or CONFIG?                                     │
-│  └── Yes → Auto-save on blur / debounced save                           │
-│                                                                          │
-│  Is this for SEARCH or FILTER?                                           │
-│  └── Yes → Controlled inputs, debounced (300ms), URL-synced             │
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       WHAT KIND OF FORM?                                â”‚
+â”‚                                                                          â”‚
+â”‚  Is this a CREATE or EDIT operation?                                     â”‚
+â”‚  â”œâ”€â”€ CREATE â†’ How many fields?                                           â”‚
+â”‚  â”‚            â”œâ”€â”€ 1-3 fields  â†’ Quick Create (inline form)              â”‚
+â”‚  â”‚            â””â”€â”€ 4+ fields   â†’ Full Create (modal form)                â”‚
+â”‚  â””â”€â”€ EDIT    â†’ Is data complex?                                          â”‚
+â”‚                â”œâ”€â”€ Yes â†’ Modal with pre-populated fields                 â”‚
+â”‚                â””â”€â”€ No  â†’ Inline editable text (click to edit)           â”‚
+â”‚                                                                          â”‚
+â”‚  Is the form for SETTINGS or CONFIG?                                     â”‚
+â”‚  â””â”€â”€ Yes â†’ Auto-save on blur / debounced save                           â”‚
+â”‚                                                                          â”‚
+â”‚  Is this for SEARCH or FILTER?                                           â”‚
+â”‚  â””â”€â”€ Yes â†’ Controlled inputs, debounced (300ms), URL-synced             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.3 Form Outline Per Module
@@ -279,13 +279,13 @@ export const TaskSchema = z.object({
 
 ```
 FormPage / Modal
-├── FormProvider (react-hook-form context)
-│   ├── FormField (wrapper component)
-│   │   ├── Label
-│   │   ├── Input / Select / Textarea / Checkbox
-│   │   └── ErrorMessage
-│   ├── FormSection (grouping)
-│   └── FormActions (Submit + Cancel)
+â”œâ”€â”€ FormProvider (react-hook-form context)
+â”‚   â”œâ”€â”€ FormField (wrapper component)
+â”‚   â”‚   â”œâ”€â”€ Label
+â”‚   â”‚   â”œâ”€â”€ Input / Select / Textarea / Checkbox
+â”‚   â”‚   â””â”€â”€ ErrorMessage
+â”‚   â”œâ”€â”€ FormSection (grouping)
+â”‚   â””â”€â”€ FormActions (Submit + Cancel)
 ```
 
 ### 4.2 FormField Wrapper
@@ -671,14 +671,14 @@ export function SettingsForm() {
 |  Label (text-text-primary, text-sm, font-medium)                    |
 |                                                                     |
 |  +--------------------------------------------------------------+  |
-|  | Input value                                      ┌──────────┐ |  |
-|  |                                                   │ ⚠ icon   │ |  |
-|  |                                                   └──────────┘ |  |
+|  | Input value                                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” |  |
+|  |                                                   â”‚ âš  icon   â”‚ |  |
+|  |                                                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ |  |
 |  +--------------------------------------------------------------+  |
 |    border: accent-error (1px solid #EF4444)                        |
 |    ring: focus-ring-error (0 0 0 2px #EF4444)                     |
 |                                                                     |
-|  ⚠ Title is required (text-xs, text-accent-error, flex, gap-1)    |
+|  âš  Title is required (text-xs, text-accent-error, flex, gap-1)    |
 |    role="alert", aria-live="assertive"                              |
 +--------------------------------------------------------------------+
 ```
@@ -725,7 +725,7 @@ const onSubmit = async (data: TaskFormData) => {
 ### 6.4 Global Error Boundary for Forms
 
 ```typescript
-// app/global-error.tsx — catches uncaught form errors
+// app/global-error.tsx â€” catches uncaught form errors
 'use client'
 export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
   return (
@@ -756,32 +756,32 @@ Every submit button follows this pattern:
 |---|---|---|
 | Idle | "Save" / "Create Task" | No |
 | Submitting | `<Loader2 className="animate-spin" />` + "Saving..." | Yes |
-| Success | Dismiss modal / show toast | — |
+| Success | Dismiss modal / show toast | â€” |
 | Error | Show error, re-enable button | No |
 
 ### 7.2 Submit Flow Diagram
 
 ```
 User clicks "Save"
-        │
-        ▼
-  ┌─ form.handleSubmit(onSubmit)
-  │   Validates all fields
-  │   │
-  │   ├── Invalid → Focus first error field, show errors
-  │   │
-  │   └── Valid
-  │         │
-  │         ▼
-  │   setIsSubmitting(true)
-  │   │
-  │   ▼
-  │   Call store action (e.g., addTask)
-  │   │
-  │   ├── Success → toast.success, onClose()
-  │   └── Error   → toast.error, setServerError, setIsSubmitting(false)
-  │
-  └─ form.reset() (optional)
+        â”‚
+        â–¼
+  â”Œâ”€ form.handleSubmit(onSubmit)
+  â”‚   Validates all fields
+  â”‚   â”‚
+  â”‚   â”œâ”€â”€ Invalid â†’ Focus first error field, show errors
+  â”‚   â”‚
+  â”‚   â””â”€â”€ Valid
+  â”‚         â”‚
+  â”‚         â–¼
+  â”‚   setIsSubmitting(true)
+  â”‚   â”‚
+  â”‚   â–¼
+  â”‚   Call store action (e.g., addTask)
+  â”‚   â”‚
+  â”‚   â”œâ”€â”€ Success â†’ toast.success, onClose()
+  â”‚   â””â”€â”€ Error   â†’ toast.error, setServerError, setIsSubmitting(false)
+  â”‚
+  â””â”€ form.reset() (optional)
 ```
 
 ### 7.3 Preventing Double Submit
@@ -1107,7 +1107,7 @@ triggerRef.current?.focus()
 ### 10.5 Number Input Handling
 
 ```typescript
-// Coerce string → number in schema
+// Coerce string â†’ number in schema
 estimated_minutes: z.coerce.number()
   .int('Must be a whole number')
   .min(5, 'Minimum 5 minutes')
@@ -1239,7 +1239,7 @@ describe('TaskFormSchema', () => {
 ### 11.3 Integration Test Pattern
 
 ```typescript
-describe('Tasks Page — Create Task Flow', () => {
+describe('Tasks Page â€” Create Task Flow', () => {
   it('completes full task creation flow', async () => {
     render(<TasksPage />)
 

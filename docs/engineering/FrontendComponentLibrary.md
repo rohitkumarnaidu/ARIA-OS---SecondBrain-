@@ -1,12 +1,12 @@
-# Frontend Component Library — Second Brain OS
+﻿# Frontend Component Library â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-COMP-001 |
+| Document ID | ENG-FCL-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/components/` — All shared UI components |
+| Applies To | `apps/web/components/` â€” All shared UI components |
 
 ---
 
@@ -31,47 +31,47 @@
 
 ```
 apps/web/components/
-├── ui/                          # Atomic UI primitives
-│   ├── Button.tsx               # 4 variants, 3 sizes, 6 states
-│   ├── Card.tsx                  # 6 variants, 4 sizes, 7 states
-│   ├── Input.tsx                 # 9 types, 7 states
-│   ├── Select.tsx                # Native select, 7 states
-│   ├── Textarea.tsx              # Auto-resize, 7 states
-│   ├── Label.tsx                 # Form labels
-│   ├── ErrorMessage.tsx          # Form validation errors
-│   ├── Checkbox.tsx              # Custom styled checkbox
-│   ├── Toggle.tsx                # Boolean toggle
-│   ├── Badge.tsx                 # Status/label badges
-│   ├── Tag.tsx                   # Filterable tags
-│   ├── Avatar.tsx                # User avatars
-│   ├── Spinner.tsx               # Loading spinners
-│   ├── Skeleton.tsx              # Content placeholders
-│   ├── Progress.tsx              # Progress bars
-│   ├── Tooltip.tsx               # Hover tooltips
-│   ├── Icon.tsx                  # Icon wrapper
-│   └── Divider.tsx               # Section dividers
-│
-├── Navbar.tsx                    # Top navigation (64px, fixed)
-├── Sidebar.tsx                   # Side navigation (240px, fixed)
-├── Modal.tsx                     # Accessible modal with Framer Motion
-├── Toast.tsx                     # Toast notifications
-├── EmptyState.tsx                # Empty state placeholder
-├── ErrorBoundary.tsx             # Component-level error boundary
-├── DataTable.tsx                 # Sortable, filterable table
-├── KanbanBoard.tsx               # Drag-and-drop columns
-├── RoadmapEditor.tsx             # React Flow canvas
-├── Heatmap.tsx                   # GitHub-style activity grid
-├── MessageList.tsx               # Chat message thread
-├── CommandPalette.tsx            # Cmd+K global search
-├── StatsCard.tsx                 # Dashboard statistic card
-├── FilterTabs.tsx                # Status filter tabs
-├── Pagination.tsx                # Page navigation
-├── Breadcrumbs.tsx               # Hierarchical nav trail
-├── FloatingActionButton.tsx      # Quick capture button
-├── Calendar.tsx                  # Month/week/day views
-├── ActivityFeed.tsx              # Chronological events
-├── ThreeBackground.tsx           # Three.js cyberpunk background
-└── UI.tsx                        # Legacy exports
+â”œâ”€â”€ ui/                          # Atomic UI primitives
+â”‚   â”œâ”€â”€ Button.tsx               # 4 variants, 3 sizes, 6 states
+â”‚   â”œâ”€â”€ Card.tsx                  # 6 variants, 4 sizes, 7 states
+â”‚   â”œâ”€â”€ Input.tsx                 # 9 types, 7 states
+â”‚   â”œâ”€â”€ Select.tsx                # Native select, 7 states
+â”‚   â”œâ”€â”€ Textarea.tsx              # Auto-resize, 7 states
+â”‚   â”œâ”€â”€ Label.tsx                 # Form labels
+â”‚   â”œâ”€â”€ ErrorMessage.tsx          # Form validation errors
+â”‚   â”œâ”€â”€ Checkbox.tsx              # Custom styled checkbox
+â”‚   â”œâ”€â”€ Toggle.tsx                # Boolean toggle
+â”‚   â”œâ”€â”€ Badge.tsx                 # Status/label badges
+â”‚   â”œâ”€â”€ Tag.tsx                   # Filterable tags
+â”‚   â”œâ”€â”€ Avatar.tsx                # User avatars
+â”‚   â”œâ”€â”€ Spinner.tsx               # Loading spinners
+â”‚   â”œâ”€â”€ Skeleton.tsx              # Content placeholders
+â”‚   â”œâ”€â”€ Progress.tsx              # Progress bars
+â”‚   â”œâ”€â”€ Tooltip.tsx               # Hover tooltips
+â”‚   â”œâ”€â”€ Icon.tsx                  # Icon wrapper
+â”‚   â””â”€â”€ Divider.tsx               # Section dividers
+â”‚
+â”œâ”€â”€ Navbar.tsx                    # Top navigation (64px, fixed)
+â”œâ”€â”€ Sidebar.tsx                   # Side navigation (240px, fixed)
+â”œâ”€â”€ Modal.tsx                     # Accessible modal with Framer Motion
+â”œâ”€â”€ Toast.tsx                     # Toast notifications
+â”œâ”€â”€ EmptyState.tsx                # Empty state placeholder
+â”œâ”€â”€ ErrorBoundary.tsx             # Component-level error boundary
+â”œâ”€â”€ DataTable.tsx                 # Sortable, filterable table
+â”œâ”€â”€ KanbanBoard.tsx               # Drag-and-drop columns
+â”œâ”€â”€ RoadmapEditor.tsx             # React Flow canvas
+â”œâ”€â”€ Heatmap.tsx                   # GitHub-style activity grid
+â”œâ”€â”€ MessageList.tsx               # Chat message thread
+â”œâ”€â”€ CommandPalette.tsx            # Cmd+K global search
+â”œâ”€â”€ StatsCard.tsx                 # Dashboard statistic card
+â”œâ”€â”€ FilterTabs.tsx                # Status filter tabs
+â”œâ”€â”€ Pagination.tsx                # Page navigation
+â”œâ”€â”€ Breadcrumbs.tsx               # Hierarchical nav trail
+â”œâ”€â”€ FloatingActionButton.tsx      # Quick capture button
+â”œâ”€â”€ Calendar.tsx                  # Month/week/day views
+â”œâ”€â”€ ActivityFeed.tsx              # Chronological events
+â”œâ”€â”€ ThreeBackground.tsx           # Three.js cyberpunk background
+â””â”€â”€ UI.tsx                        # Legacy exports
 ```
 
 ### 1.2 Atomic Design Mapping
@@ -106,7 +106,7 @@ Time | Chat | Automation | Login
 graph TD
     subgraph Atoms["Atoms (18 Primitives)"]
         direction LR
-        A1["Button<br/>4 variants × 3 sizes"]
+        A1["Button<br/>4 variants Ã— 3 sizes"]
         A2["Card<br/>6 variants"]
         A3["Input<br/>9 types"]
         A4["Badge / Tag / Avatar / Icon"]
@@ -196,7 +196,7 @@ interface ButtonProps {
 
 | State | Visual | Transition |
 |---|---|---|
-| Default | Normal | — |
+| Default | Normal | â€” |
 | Hover | Background darkens 10%, shadow intensifies | 150ms ease-out |
 | Active | `scale(0.97)` | 50ms |
 | Disabled | `opacity-50`, `cursor-not-allowed` | Instant |
@@ -562,10 +562,10 @@ interface ModalProps {
 
 | Variant | Width | Animation | Backdrop |
 |---|---|---|---|
-| `alert` | `max-w-sm (384px)` | Scale 0.9→1 | `bg-black/50 backdrop-blur-sm` |
-| `confirmation` | `max-w-md (448px)` | Scale 0.9→1 | `bg-black/50 backdrop-blur-sm` |
-| `form` | `max-w-lg (512px)` | Scale 0.9→1 | `bg-black/50 backdrop-blur-sm` |
-| `large` | `max-w-2xl (672px)` | Scale 0.9→1 | `bg-black/50 backdrop-blur-sm` |
+| `alert` | `max-w-sm (384px)` | Scale 0.9â†’1 | `bg-black/50 backdrop-blur-sm` |
+| `confirmation` | `max-w-md (448px)` | Scale 0.9â†’1 | `bg-black/50 backdrop-blur-sm` |
+| `form` | `max-w-lg (512px)` | Scale 0.9â†’1 | `bg-black/50 backdrop-blur-sm` |
+| `large` | `max-w-2xl (672px)` | Scale 0.9â†’1 | `bg-black/50 backdrop-blur-sm` |
 | `slide-in` | `w-96 (384px)` | Slide from right | `bg-black/30` |
 
 ### 5.3 Full Implementation

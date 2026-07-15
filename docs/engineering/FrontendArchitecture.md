@@ -1,4 +1,13 @@
-﻿# Frontend Architecture — Enterprise Reference
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-FAR-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Frontend Architecture — Enterprise Reference
 
 **Document ID:** FE-ARCH-001  
 **Version:** 2.0.0  

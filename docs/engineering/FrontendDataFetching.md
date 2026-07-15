@@ -1,12 +1,12 @@
-# Frontend Data Fetching & API Integration — Second Brain OS
+﻿# Frontend Data Fetching & API Integration â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-FETCH-001 |
+| Document ID | ENG-FDF-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/` — All data fetching patterns |
+| Applies To | `apps/web/` â€” All data fetching patterns |
 
 ---
 
@@ -74,55 +74,55 @@ flowchart LR
 |---|---|---|---|---|
 | **Supabase** (primary) | HTTPS + WebSocket | `https://*.supabase.co` | `anon_key` + JWT | All CRUD operations, realtime subscriptions |
 | **FastAPI Backend** | REST (HTTPS) | `http://localhost:8000` or Railway URL | JWT Bearer | Chat, Automation triggers, AI endpoints |
-| **Claude API** (via backend) | REST (proxied) | Backend → `api.anthropic.com` | Backend-managed | AI fallback when Ollama unavailable |
+| **Claude API** (via backend) | REST (proxied) | Backend â†’ `api.anthropic.com` | Backend-managed | AI fallback when Ollama unavailable |
 | **Ollama** (local) | REST (via backend) | `http://localhost:11434` (server-side) | None (localhost) | Default AI provider |
 
 ### 1.2 Decision Flow
 
 ```
 Component needs data
-        │
-        ▼
+        â”‚
+        â–¼
   Is this a database table? (tasks, courses, goals...)
-  ├── YES → Use Supabase SDK directly (Zustand store)
-  │        └── Needs realtime? → Add useRealtime subscription
-  │
-  └── NO  → Is it an AI/automation operation?
-              ├── YES → Call FastAPI backend /api/chat or /api/automation/*
-              └── NO  → Is it a third-party API?
-                          ├── YES → Call via backend proxy
-                          └── NO  → Call FastAPI custom endpoint
+  â”œâ”€â”€ YES â†’ Use Supabase SDK directly (Zustand store)
+  â”‚        â””â”€â”€ Needs realtime? â†’ Add useRealtime subscription
+  â”‚
+  â””â”€â”€ NO  â†’ Is it an AI/automation operation?
+              â”œâ”€â”€ YES â†’ Call FastAPI backend /api/chat or /api/automation/*
+              â””â”€â”€ NO  â†’ Is it a third-party API?
+                          â”œâ”€â”€ YES â†’ Call via backend proxy
+                          â””â”€â”€ NO  â†’ Call FastAPI custom endpoint
 ```
 
 ### 1.3 Connection Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        FRONTEND (Browser)                               │
-│                                                                          │
-│  ┌─────────────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │ Zustand Store       │  │ React Query  │  │ Fetch Wrapper        │   │
-│  │ (CRUD cache)        │  │ (Phase 2)    │  │ (chat, automation)   │   │
-│  └─────────┬───────────┘  └──────┬───────┘  └──────────┬───────────┘   │
-│            │                    │                       │               │
-│            ▼                    ▼                       ▼               │
-│  ┌─────────────────────────────────────────────────────────────┐       │
-│  │                    Supabase Client (Browser)                  │       │
-│  │  • anon_key for auth                                         │       │
-│  │  • JWT access_token for RLS                                  │       │
-│  │  • Real-time WebSocket subscriptions                         │       │
-│  └─────────────────────────┬───────────────────────────────────┘       │
-│                            │                                           │
-└────────────────────────────┼───────────────────────────────────────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-┌──────────────────┐  ┌──────────┐  ┌──────────────┐
-│   Supabase       │  │ FastAPI  │  │   Direct      │
-│   PostgreSQL     │  │ Backend  │  │   Services    │
-│   (Primary DB)   │  │ (REST)   │  │   (Ollama,    │
-│                  │  │          │  │    Claude)    │
-└──────────────────┘  └──────────┘  └──────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        FRONTEND (Browser)                               â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Zustand Store       â”‚  â”‚ React Query  â”‚  â”‚ Fetch Wrapper        â”‚   â”‚
+â”‚  â”‚ (CRUD cache)        â”‚  â”‚ (Phase 2)    â”‚  â”‚ (chat, automation)   â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚            â”‚                    â”‚                       â”‚               â”‚
+â”‚            â–¼                    â–¼                       â–¼               â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                    Supabase Client (Browser)                  â”‚       â”‚
+â”‚  â”‚  â€¢ anon_key for auth                                         â”‚       â”‚
+â”‚  â”‚  â€¢ JWT access_token for RLS                                  â”‚       â”‚
+â”‚  â”‚  â€¢ Real-time WebSocket subscriptions                         â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                            â”‚                                           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                             â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â–¼              â–¼              â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Supabase       â”‚  â”‚ FastAPI  â”‚  â”‚   Direct      â”‚
+â”‚   PostgreSQL     â”‚  â”‚ Backend  â”‚  â”‚   Services    â”‚
+â”‚   (Primary DB)   â”‚  â”‚ (REST)   â”‚  â”‚   (Ollama,    â”‚
+â”‚                  â”‚  â”‚          â”‚  â”‚    Claude)    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -227,7 +227,7 @@ export const supabase = createBrowserClient(
 ### 3.2 Standard CRUD Pattern (Zustand)
 
 ```typescript
-// lib/taskStore.ts — Supabase CRUD inside Zustand
+// lib/taskStore.ts â€” Supabase CRUD inside Zustand
 fetchTasks: async () => {
   set({ loading: true, error: null })
   try {
@@ -285,7 +285,7 @@ addTask: async (task) => {
 const { data, error } = await supabase
   .from('tasks')
   .select('*')
-  .eq('user_id', userId)  // Explicit filter — NEVER omit this
+  .eq('user_id', userId)  // Explicit filter â€” NEVER omit this
 ```
 
 ---
@@ -380,22 +380,22 @@ export async function streamChatMessage(
 ### 5.1 Streaming State Machine
 
 ```
-IDLE → User sends message
-  │
-  ▼
-CONNECTING → POST to /api/chat/stream
-  │
-  ├── Error → ERROR state → Show error, retry button
-  │
-  └── Success → STREAMING
-        │
-        ▼
+IDLE â†’ User sends message
+  â”‚
+  â–¼
+CONNECTING â†’ POST to /api/chat/stream
+  â”‚
+  â”œâ”€â”€ Error â†’ ERROR state â†’ Show error, retry button
+  â”‚
+  â””â”€â”€ Success â†’ STREAMING
+        â”‚
+        â–¼
     Read chunks from ReadableStream
     Update UI on each chunk
-        │
-        ├── Stream ends → COMPLETE → Persist message, show final
-        │
-        └── Error mid-stream → PARTIAL → Show partial, retry
+        â”‚
+        â”œâ”€â”€ Stream ends â†’ COMPLETE â†’ Persist message, show final
+        â”‚
+        â””â”€â”€ Error mid-stream â†’ PARTIAL â†’ Show partial, retry
 ```
 
 ### 5.2 Chat UI State Types
@@ -476,7 +476,7 @@ async function fetchWithErrorHandling<T>(
     try {
       return await fetcher()
     } catch (error: any) {
-      // Network error → retry after delay
+      // Network error â†’ retry after delay
       if (error.message?.includes('fetch') || error.message?.includes('NetworkError')) {
         if (attempt < retryCount) {
           await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt))) // Exponential backoff
@@ -487,7 +487,7 @@ async function fetchWithErrorHandling<T>(
         throw appError
       }
 
-      // Auth error → redirect to login
+      // Auth error â†’ redirect to login
       if (error.status === 401 || error.code === 'PGRST301') {
         const appError = new AuthError()
         onError?.(appError)
@@ -495,7 +495,7 @@ async function fetchWithErrorHandling<T>(
         throw appError
       }
 
-      // Rate limit → show retry countdown
+      // Rate limit â†’ show retry countdown
       if (error.status === 429) {
         const retryAfter = parseInt(error.headers?.get('retry-after') || '60')
         const appError = new RateLimitError(retryAfter)
@@ -701,21 +701,21 @@ function useCreateTask() {
 ### 9.1 State Machine Per Data Fetch
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     FETCH STATE MACHINE                       │
-│                                                              │
-│  ┌───────┐    fetch    ┌─────────┐   success   ┌────────┐  │
-│  │ IDLE  │ ──────────► │ LOADING │ ──────────► │  DATA  │  │
-│  └───────┘            └─────────┘             └────────┘  │
-│                           │                                  │
-│                        error                                 │
-│                           ▼                                  │
-│                       ┌───────┐   retry    ┌─────────┐      │
-│                       │ ERROR │ ─────────► │ LOADING │      │
-│                       └───────┘            └─────────┘      │
-│                                                              │
-│  DATA state can also go back to LOADING (refresh/poll)       │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     FETCH STATE MACHINE                       â”‚
+â”‚                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”    fetch    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”   success   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ IDLE  â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º â”‚ LOADING â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º â”‚  DATA  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”˜            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜             â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                           â”‚                                  â”‚
+â”‚                        error                                 â”‚
+â”‚                           â–¼                                  â”‚
+â”‚                       â”Œâ”€â”€â”€â”€â”€â”€â”€â”   retry    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+â”‚                       â”‚ ERROR â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º â”‚ LOADING â”‚      â”‚
+â”‚                       â””â”€â”€â”€â”€â”€â”€â”€â”˜            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+â”‚                                                              â”‚
+â”‚  DATA state can also go back to LOADING (refresh/poll)       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 9.2 Standardized Hook Pattern
@@ -824,13 +824,13 @@ useRealtime({
 
 | Module | Realtime Needed? | Events | Rationale |
 |---|---|---|---|
-| Tasks | ✅ | INSERT, UPDATE, DELETE | Multi-device sync, collaboration |
-| Courses | ✅ | INSERT, UPDATE, DELETE | Progress tracking across devices |
-| Goals | ✅ | UPDATE only | Milestone completion sync |
-| Habits | ✅ | INSERT, UPDATE | Daily check-ins from mobile |
-| Sleep | ❌ | None (snapshot on load) | Single-device, infrequent |
-| Income | ❌ | None (snapshot on load) | Financial data, infrequent changes |
-| Chat | ✅ | INSERT | New messages from AI or other sessions |
+| Tasks | âœ… | INSERT, UPDATE, DELETE | Multi-device sync, collaboration |
+| Courses | âœ… | INSERT, UPDATE, DELETE | Progress tracking across devices |
+| Goals | âœ… | UPDATE only | Milestone completion sync |
+| Habits | âœ… | INSERT, UPDATE | Daily check-ins from mobile |
+| Sleep | âŒ | None (snapshot on load) | Single-device, infrequent |
+| Income | âŒ | None (snapshot on load) | Financial data, infrequent changes |
+| Chat | âœ… | INSERT | New messages from AI or other sessions |
 
 ---
 
