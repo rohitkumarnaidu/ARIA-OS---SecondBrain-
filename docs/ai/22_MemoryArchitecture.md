@@ -1,4 +1,4 @@
-# 22. Memory Architecture — Enterprise Reference
+﻿# 22. Memory Architecture â€” Enterprise Reference
 
 ---
 
@@ -6,10 +6,10 @@
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ARIA-ARCH-MEM-001 |
+| **Document ID** | AI-MEM-001 |
 | **Version** | 2.0.0 |
 | **Status** | APPROVED |
-| **Classification** | INTERNAL — Engineering |
+| **Classification** | INTERNAL â€” Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Owner** | AI Architecture Team |
 | **Review Cycle** | Quarterly |
@@ -21,26 +21,26 @@
 
 ### Why Memory Architecture Matters
 
-The memory architecture is the foundational layer enabling ARIA's persistent learning, contextual awareness, and behavioral adaptation. Without a structured memory system, every AI interaction would be stateless — the system would have no recollection of past conversations, user preferences, learned patterns, or procedural knowledge. This architecture bridges the gap between stateless LLM inference and stateful personal AI companionship.
+The memory architecture is the foundational layer enabling ARIA's persistent learning, contextual awareness, and behavioral adaptation. Without a structured memory system, every AI interaction would be stateless â€” the system would have no recollection of past conversations, user preferences, learned patterns, or procedural knowledge. This architecture bridges the gap between stateless LLM inference and stateful personal AI companionship.
 
 ### Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| **Tiered Memory Model** | 5-tier (Buffer → Working → Episodic → Semantic → Procedural) | Inspired by human cognitive architecture (Atkinson-Shiffrin + Tulving); enables graduated retention, relevance weighting, and resource optimization |
+| **Tiered Memory Model** | 5-tier (Buffer â†’ Working â†’ Episodic â†’ Semantic â†’ Procedural) | Inspired by human cognitive architecture (Atkinson-Shiffrin + Tulving); enables graduated retention, relevance weighting, and resource optimization |
 | **Storage Backend** | Supabase (PostgreSQL + JSONB) | Leverages existing project infrastructure; JSONB enables schema-less value storage with indexing; Row-Level Security provides tenant isolation |
-| **Importance Scoring** | Composite score (recency × frequency × source × category) | Ensures high-value memories are preferentially surfaced while noise decays naturally |
+| **Importance Scoring** | Composite score (recency Ã— frequency Ã— source Ã— category) | Ensures high-value memories are preferentially surfaced while noise decays naturally |
 | **Consolidation Strategy** | Scheduled (daily) + Event-driven (on significant interaction) | Balances computational cost with timeliness; daily batch handles bulk, events capture critical updates immediately |
 | **Memory Retrieval** | Hybrid: SQL ordering + semantic scoring | Low-latency for production queries without requiring vector infrastructure on day one |
 | **Token Budget** | 4000 tokens max for assembled context | Matches typical LLM context window constraints; prevents prompt overflow |
 
 ### Architecture Principles
 
-1. **Tenant Isolation** — All memory is scoped by `user_id`; no cross-tenant leakage
-2. **Graceful Degradation** — If a tier is unavailable, the system falls back to higher-priority tiers
-3. **Eventual Consistency** — Episodic → Semantic consolidation is asynchronous; short-term views may lag by up to 24 hours
-4. **Privacy by Design** — Every memory has a source, confidence, and importance; users can query, modify, or delete any memory
-5. **Observability** — All memory operations are logged with latency, size, and access patterns
+1. **Tenant Isolation** â€” All memory is scoped by `user_id`; no cross-tenant leakage
+2. **Graceful Degradation** â€” If a tier is unavailable, the system falls back to higher-priority tiers
+3. **Eventual Consistency** â€” Episodic â†’ Semantic consolidation is asynchronous; short-term views may lag by up to 24 hours
+4. **Privacy by Design** â€” Every memory has a source, confidence, and importance; users can query, modify, or delete any memory
+5. **Observability** â€” All memory operations are logged with latency, size, and access patterns
 
 ---
 
@@ -57,8 +57,8 @@ graph TD
 
         T0 --> T1 --> T2 --> T3 --> T4
 
-        MSL[Memory Serialization Layer<br/>Compression → Encoding → Storage → Retrieval]
-        CE[Consolidation Engine<br/>Short→Long Term | Summarization<br/>Pattern Detection | Deduplication]
+        MSL[Memory Serialization Layer<br/>Compression â†’ Encoding â†’ Storage â†’ Retrieval]
+        CE[Consolidation Engine<br/>Shortâ†’Long Term | Summarization<br/>Pattern Detection | Deduplication]
         RE[Retrieval Engine<br/>Semantic Search | Recency Boost<br/>Relevance Scoring | Hybrid Query]
 
         T2 --> MSL
@@ -85,14 +85,14 @@ graph TD
 
 ### Purpose
 
-Buffer memory holds the last N messages of the current conversation for immediate contextual continuity. It is the most ephemeral tier — scoped to the current interaction window and never persisted to the database.
+Buffer memory holds the last N messages of the current conversation for immediate contextual continuity. It is the most ephemeral tier â€” scoped to the current interaction window and never persisted to the database.
 
 ### Characteristics
 
 | Property | Value |
 |----------|-------|
 | **Retention** | Last N messages (configurable, default: 10) |
-| **Persistence** | None — in-memory only |
+| **Persistence** | None â€” in-memory only |
 | **Scope** | Current conversation turn |
 | **Latency** | < 1 ms (local variable) |
 | **Size** | ~2000 tokens max |
@@ -249,7 +249,7 @@ budget_allocation = {
 
 ### Purpose
 
-Episodic memory stores records of past interactions — what was said, decided, promised, or corrected. This tier enables ARIA to reference past conversations, maintain conversational continuity across sessions, and learn from user corrections. It is the persistence layer for all interaction history.
+Episodic memory stores records of past interactions â€” what was said, decided, promised, or corrected. This tier enables ARIA to reference past conversations, maintain conversational continuity across sessions, and learn from user corrections. It is the persistence layer for all interaction history.
 
 ### Storage Schema
 
@@ -258,7 +258,7 @@ Episodic memory stores records of past interactions — what was said, decided, 
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | `uuid` | PK, DEFAULT gen_random_uuid() | Unique message identifier |
-| `user_id` | `uuid` | FK → users(id), NOT NULL, INDEX | Tenant ownership |
+| `user_id` | `uuid` | FK â†’ users(id), NOT NULL, INDEX | Tenant ownership |
 | `session_id` | `uuid` | INDEX | Groups messages into sessions |
 | `role` | `text` | CHECK(role IN ('user', 'aria', 'system')) | Message origin |
 | `message` | `text` | NOT NULL | Full message content |
@@ -266,8 +266,8 @@ Episodic memory stores records of past interactions — what was said, decided, 
 | `token_count` | `int` | DEFAULT 0 | Estimated token count |
 | `metadata` | `jsonb` | DEFAULT '{}'::jsonb | Intent, entities, sentiment, topics |
 | `interaction_type` | `text` | NULL | query, command, correction, decision, creation |
-| `parent_message_id` | `uuid` | NULL, FK → chat_messages(id) | Thread tracking |
-| `importance_score` | `float` | DEFAULT 0.5 | 0.0–1.0 episodic importance |
+| `parent_message_id` | `uuid` | NULL, FK â†’ chat_messages(id) | Thread tracking |
+| `importance_score` | `float` | DEFAULT 0.5 | 0.0â€“1.0 episodic importance |
 | `created_at` | `timestamptz` | DEFAULT now(), INDEX | Event timestamp |
 
 **Indexes**:
@@ -470,7 +470,7 @@ async def event_driven_consolidation(user_id: str, message_id: str, event_type: 
 
 ### Purpose
 
-Semantic memory is the long-term knowledge store about the user. It captures preferences, behavioral patterns, stable traits, past decisions, factual information, and skill-related data. This is the tier that enables ARIA to "know" the user over time — to anticipate needs, personalize responses, and detect behavioral shifts.
+Semantic memory is the long-term knowledge store about the user. It captures preferences, behavioral patterns, stable traits, past decisions, factual information, and skill-related data. This is the tier that enables ARIA to "know" the user over time â€” to anticipate needs, personalize responses, and detect behavioral shifts.
 
 ### Storage Schema
 
@@ -479,14 +479,14 @@ Semantic memory is the long-term knowledge store about the user. It captures pre
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | `uuid` | PK, DEFAULT gen_random_uuid() | Unique memory identifier |
-| `user_id` | `uuid` | FK → users(id), NOT NULL, INDEX | Tenant ownership |
+| `user_id` | `uuid` | FK â†’ users(id), NOT NULL, INDEX | Tenant ownership |
 | `key` | `text` | NOT NULL, UNIQUE(user_id, key) | Memory identifier (e.g., "preferred_study_time") |
 | `value` | `jsonb` | NOT NULL | Memory value (scalar, array, or object) |
-| `importance` | `float` | DEFAULT 0.5, CHECK(0.0–1.0), INDEX | Importance weight for retrieval ranking |
+| `importance` | `float` | DEFAULT 0.5, CHECK(0.0â€“1.0), INDEX | Importance weight for retrieval ranking |
 | `category` | `text` | NOT NULL, CHECK(...) | preference, pattern, trait, decision, fact, skill |
 | `subcategory` | `text` | NULL | Fine-grained classification within category |
 | `source` | `text` | NOT NULL, CHECK(...) | How learned: extracted, explicit, inferred, consolidated, event_driven |
-| `confidence` | `float` | DEFAULT 0.5, CHECK(0.0–1.0) | Certainty level |
+| `confidence` | `float` | DEFAULT 0.5, CHECK(0.0â€“1.0) | Certainty level |
 | `ttl_days` | `int` | NULL | Time-to-live; NULL = indefinite |
 | `version` | `int` | DEFAULT 1 | Incremented on update |
 | `created_at` | `timestamptz` | DEFAULT now() | First stored timestamp |
@@ -514,14 +514,14 @@ CREATE INDEX idx_aria_memory_tags_gin
 
 | Category | Description | Example | Typical Importance | Retention |
 |----------|-------------|---------|--------------------|-----------|
-| `preference` | Stated or inferred user preferences | `preferred_study_time: "night"` | 0.7–0.9 | Indefinite |
-| `pattern` | Behavioral pattern detected | `task_abandonment_rate: 0.3` | 0.6–0.9 | 90 days |
-| `trait` | Stable user characteristic | `consistency: "high", initiation: "low"` | 0.5–0.8 | Indefinite |
-| `decision` | Past decision made | `framework_choice: "React over Vue"` | 0.5–0.7 | Indefinite |
-| `fact` | Factual information about user | `current_year: 3`, `major: "CSE"` | 0.4–0.6 | Until invalidated |
-| `skill` | Skill-related information | `skill_level: {python: "intermediate"}` | 0.6–0.8 | Indefinite |
-| `observation` | Contextual observation not yet confirmed as pattern | `mentioned_job_search: true` | 0.2–0.4 | 30 days |
-| `correction` | Explicit user correction to ARIA behavior | `preferred_ formality: "casual"` | 0.8–0.95 | Indefinite |
+| `preference` | Stated or inferred user preferences | `preferred_study_time: "night"` | 0.7â€“0.9 | Indefinite |
+| `pattern` | Behavioral pattern detected | `task_abandonment_rate: 0.3` | 0.6â€“0.9 | 90 days |
+| `trait` | Stable user characteristic | `consistency: "high", initiation: "low"` | 0.5â€“0.8 | Indefinite |
+| `decision` | Past decision made | `framework_choice: "React over Vue"` | 0.5â€“0.7 | Indefinite |
+| `fact` | Factual information about user | `current_year: 3`, `major: "CSE"` | 0.4â€“0.6 | Until invalidated |
+| `skill` | Skill-related information | `skill_level: {python: "intermediate"}` | 0.6â€“0.8 | Indefinite |
+| `observation` | Contextual observation not yet confirmed as pattern | `mentioned_job_search: true` | 0.2â€“0.4 | 30 days |
+| `correction` | Explicit user correction to ARIA behavior | `preferred_ formality: "casual"` | 0.8â€“0.95 | Indefinite |
 
 ### Importance Scoring Algorithm
 
@@ -667,7 +667,7 @@ async def _update_access_tracking(user_id: str, memories: list[dict]):
 
 ### Purpose
 
-Procedural memory stores knowledge about *how to do things* — workflows, skills, processes, and action sequences. Unlike Semantic Memory (which stores *what* the system knows about the user), Procedural Memory stores *how* the system should operate, interact, and execute tasks. This tier enables ARIA to learn and refine its operational behavior over time.
+Procedural memory stores knowledge about *how to do things* â€” workflows, skills, processes, and action sequences. Unlike Semantic Memory (which stores *what* the system knows about the user), Procedural Memory stores *how* the system should operate, interact, and execute tasks. This tier enables ARIA to learn and refine its operational behavior over time.
 
 ### What Procedural Memory Contains
 
@@ -687,12 +687,12 @@ Procedural memory stores knowledge about *how to do things* — workflows, skill
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | `id` | `uuid` | PK | Unique identifier |
-| `user_id` | `uuid` | FK → users(id), NOT NULL, INDEX | Tenant ownership |
+| `user_id` | `uuid` | FK â†’ users(id), NOT NULL, INDEX | Tenant ownership |
 | `trigger` | `text` | NOT NULL, INDEX | Condition that activates this procedure |
 | `trigger_type` | `text` | CHECK(...) | keyword, intent, pattern, schedule, event |
 | `procedure` | `jsonb` | NOT NULL | Steps, parameters, preconditions, postconditions |
 | `version` | `int` | DEFAULT 1 | Incremented on updates |
-| `effectiveness` | `float` | DEFAULT 0.5, CHECK(0.0–1.0) | How well this procedure achieves its goal |
+| `effectiveness` | `float` | DEFAULT 0.5, CHECK(0.0â€“1.0) | How well this procedure achieves its goal |
 | `execution_count` | `int` | DEFAULT 0 | How many times this was invoked |
 | `success_count` | `int` | DEFAULT 0 | How many times it succeeded |
 | `tags` | `jsonb` | DEFAULT '[]'::jsonb | Categorization tags |
@@ -706,7 +706,7 @@ procedure_schema = {
     "trigger": {
         "type": "string",                    # Activation condition
         "match_mode": "exact|fuzzy|regex",   # Matching strategy
-        "priority": 0.0–1.0,                 # Priority vs other matching procedures
+        "priority": 0.0â€“1.0,                 # Priority vs other matching procedures
     },
     "steps": [
         {
@@ -833,10 +833,10 @@ Memory serialization defines how memory content is transformed between its stora
 | Technique | Compression Ratio | Quality Impact | When Applied |
 |-----------|------------------|----------------|--------------|
 | **Truncation** | Variable | Low (loses tail) | Messages exceeding max_length |
-| **Summarization** | 5:1–20:1 | Medium (semantic preservation) | Episodic consolidation |
-| **Deduplication** | 1.1:1–5:1 | None (identical content) | Pre-storage for semantic memory |
-| **Structured Encoding** | 2:1–5:1 | Low (structure preserved) | Memory values with repeated schema |
-| **Pruning (Low-Importance)** | 1.5:1–10:1 | Low (low-value content removed) | Context assembly when over budget |
+| **Summarization** | 5:1â€“20:1 | Medium (semantic preservation) | Episodic consolidation |
+| **Deduplication** | 1.1:1â€“5:1 | None (identical content) | Pre-storage for semantic memory |
+| **Structured Encoding** | 2:1â€“5:1 | Low (structure preserved) | Memory values with repeated schema |
+| **Pruning (Low-Importance)** | 1.5:1â€“10:1 | Low (low-value content removed) | Context assembly when over budget |
 
 ### Serialization Format
 
@@ -943,7 +943,7 @@ def serialize_episodic_compact(messages: list[dict], budget: int) -> str:
 
 ```python
 def estimate_tokens(text: str) -> int:
-    """Rough token estimation (4 chars ≈ 1 token for English text)."""
+    """Rough token estimation (4 chars â‰ˆ 1 token for English text)."""
     return len(text) // 4 + 1
 
 def truncate_to_tokens(text: str, max_tokens: int) -> str:
@@ -969,7 +969,7 @@ graph TD
     RAW[Raw Episodic Entries<br/>Chat messages, event logs]
     RAW --> F1[1. Filter & Clean<br/>Remove noise, duplicates<br/>Keep user messages, corrections]
     F1 --> F2[2. Group & Segment<br/>Group by session, topic, proximity<br/>Output: coherent clusters]
-    F2 --> F3[3. Summarize<br/>LLM summarization per cluster<br/>5-20 msgs → 3-5 sentence summary]
+    F2 --> F3[3. Summarize<br/>LLM summarization per cluster<br/>5-20 msgs â†’ 3-5 sentence summary]
     F3 --> F4[4. Extract Signals<br/>Pattern detection, preferences<br/>Decision logging, fact extraction]
     F4 --> F5[5. Score & Rank<br/>Calculate importance, confidence<br/>Assign category, source metadata]
     F5 --> F6[6. Store<br/>Upsert into aria_memory<br/>Insert/update procedural_memory]
@@ -990,26 +990,26 @@ graph TD
 #### Strategy A: Batch Consolidation (Daily Cron)
 
 - **Schedule**: Every 24 hours at midnight
-- **Scope**: All unprocessed episodic entries from the last 24–48 hours
+- **Scope**: All unprocessed episodic entries from the last 24â€“48 hours
 - **Method**: LLM-based extraction with structured output format
-- **Token Cost**: ~2000–4000 tokens per consolidation cycle
-- **Latency Tolerance**: 30–60 seconds (background job)
+- **Token Cost**: ~2000â€“4000 tokens per consolidation cycle
+- **Latency Tolerance**: 30â€“60 seconds (background job)
 
 #### Strategy B: Incremental Consolidation (Event-Driven)
 
 - **Trigger**: High-significance events (corrections, decisions, explicit preferences)
 - **Scope**: Single interaction or message
 - **Method**: Rule-based extraction with optional LLM verification
-- **Token Cost**: ~200–500 tokens per event
-- **Latency Tolerance**: 1–3 seconds (inline with response)
+- **Token Cost**: ~200â€“500 tokens per event
+- **Latency Tolerance**: 1â€“3 seconds (inline with response)
 
 #### Strategy C: Periodic Deep Consolidation (Weekly)
 
 - **Schedule**: Every Sunday
 - **Scope**: All episodic entries from the last 7 days
 - **Method**: Full LLM analysis with cross-session pattern detection
-- **Token Cost**: ~8000–16000 tokens
-- **Latency Tolerance**: 2–5 minutes (background job)
+- **Token Cost**: ~8000â€“16000 tokens
+- **Latency Tolerance**: 2â€“5 minutes (background job)
 
 ### Prompt Templates for Consolidation
 
@@ -1258,7 +1258,7 @@ graph TD
     A --> R[REINFORCE<br/>Accessed]
     R -->|access updates| A
 
-    CON --> D[DECAY<br/>importance × 0.8 if<br/>last_accessed > 90d]
+    CON --> D[DECAY<br/>importance Ã— 0.8 if<br/>last_accessed > 90d]
     R --> D
 
     D --> AR[ARCHIVE<br/>importance < 0.1]
@@ -1279,7 +1279,7 @@ graph TD
 |-------|-----------|--------|-----------|
 | **CREATE** | New data from interaction, consolidation, or explicit input | Insert into `aria_memory` with computed importance | On every significant interaction |
 | **ACTIVE** | Importance >= 0.1 | Included in context assembly queries | Every AI request |
-| **CONSOLIDATE** | Scheduled cron or event trigger | Summarize episodic → semantic | Daily + event-driven |
+| **CONSOLIDATE** | Scheduled cron or event trigger | Summarize episodic â†’ semantic | Daily + event-driven |
 | **REINFORCE** | Memory accessed and led to accepted suggestion | importance += 0.05, access_count += 1 | On user acceptance |
 | **WEAKEN** | Suggestion based on this memory was rejected | importance -= 0.1 | On user rejection |
 | **DECAY** | last_accessed > 90 days (weekly cron) | importance *= 0.8 | Weekly |
@@ -1361,11 +1361,11 @@ async def weaken_memory(memory_id: str):
 
 | Tier | Table | Per-User Row Count | Avg Row Size | Total Size (1 user) | Total Size (1000 users) |
 |------|-------|-------------------|-------------|---------------------|-------------------------|
-| Tier 1 | (in-memory) | — | ~2 KB | ~2 KB (volatile) | ~2 MB (volatile) |
-| Tier 2 | `chat_messages` | 10,000–50,000 | ~2 KB | ~20–100 MB | ~20–100 GB |
-| Tier 3 | `aria_memory` | 200–2,000 | ~1 KB | ~0.2–2 MB | ~0.2–2 GB |
-| Tier 3 | `aria_memory_archive` | 500–5,000 | ~1 KB | ~0.5–5 MB | ~0.5–5 GB |
-| Tier 4 | `procedural_memory` | 20–200 | ~3 KB | ~60–600 KB | ~60–600 MB |
+| Tier 1 | (in-memory) | â€” | ~2 KB | ~2 KB (volatile) | ~2 MB (volatile) |
+| Tier 2 | `chat_messages` | 10,000â€“50,000 | ~2 KB | ~20â€“100 MB | ~20â€“100 GB |
+| Tier 3 | `aria_memory` | 200â€“2,000 | ~1 KB | ~0.2â€“2 MB | ~0.2â€“2 GB |
+| Tier 3 | `aria_memory_archive` | 500â€“5,000 | ~1 KB | ~0.5â€“5 MB | ~0.5â€“5 GB |
+| Tier 4 | `procedural_memory` | 20â€“200 | ~3 KB | ~60â€“600 KB | ~60â€“600 MB |
 
 ### Retrieval Latency Budget
 
@@ -1384,12 +1384,12 @@ async def weaken_memory(memory_id: str):
 
 ```
 Total Context Budget: 4000 tokens
-    ├── Tier 0 Buffer:         200 tokens  (5%)
-    ├── Tier 1 Working:       1200 tokens  (30%)
-    ├── Tier 2 Episodic:       600 tokens  (15%)
-    ├── Tier 3 Semantic:       800 tokens  (20%)
-    ├── System Instructions:   800 tokens  (20%)
-    └── User Message:          400 tokens  (10%)
+    â”œâ”€â”€ Tier 0 Buffer:         200 tokens  (5%)
+    â”œâ”€â”€ Tier 1 Working:       1200 tokens  (30%)
+    â”œâ”€â”€ Tier 2 Episodic:       600 tokens  (15%)
+    â”œâ”€â”€ Tier 3 Semantic:       800 tokens  (20%)
+    â”œâ”€â”€ System Instructions:   800 tokens  (20%)
+    â””â”€â”€ User Message:          400 tokens  (10%)
 ```
 
 ### Caching Strategy
@@ -1407,12 +1407,12 @@ Total Context Budget: 4000 tokens
 
 ### Privacy Principles
 
-1. **User Ownership** — All memory data belongs to the user. ARIA is a custodian, not an owner.
-2. **Transparency** — Users can view what memories are stored about them at any time.
-3. **Control** — Users can modify, archive, or delete individual memories or purge all data.
-4. **Minimality** — Only store memories that demonstrably improve the user experience.
-5. **Segmentation** — Memories are never shared between users. No cross-tenant access.
-6. **Compliance** — Architecture supports GDPR/CCPA data portability and right-to-deletion requests.
+1. **User Ownership** â€” All memory data belongs to the user. ARIA is a custodian, not an owner.
+2. **Transparency** â€” Users can view what memories are stored about them at any time.
+3. **Control** â€” Users can modify, archive, or delete individual memories or purge all data.
+4. **Minimality** â€” Only store memories that demonstrably improve the user experience.
+5. **Segmentation** â€” Memories are never shared between users. No cross-tenant access.
+6. **Compliance** â€” Architecture supports GDPR/CCPA data portability and right-to-deletion requests.
 
 ### What Is Stored
 
@@ -1521,6 +1521,137 @@ class MemoryPrivacyService:
 
 ---
 
+---
+
+## Appendix F: Non-Functional Requirements (NFRs)
+
+| NFR | Requirement | Target | Measurement |
+|---|---|---|---|
+| **Performance** | Context assembly time | < 200ms p95 | Request tracing |
+| **Availability** | Memory system uptime | 99.9% | Health check endpoint |
+| **Durability** | Memory persistence | 100% no data loss | Backup verification |
+| **Scalability** | Concurrent users | 1000 users per instance | Load testing |
+| **Security** | Tenant isolation | Zero cross-user leakage | RLS audit |
+| **Privacy** | Data retention | GDPR compliant | Retention policy enforcement |
+
+---
+
+## Appendix G: Performance Targets
+
+| Operation | Target Latency | Current | Notes |
+|---|---|---|---|
+| Buffer append | < 1ms | < 0.5ms | In-memory operation |
+| Working memory rebuild | < 200ms | ~150ms | Queries 5 tables |
+| Episodic retrieval (last 10) | < 50ms | ~15ms | Indexed by user_id + created_at |
+| Semantic retrieval (top 20) | < 100ms | ~30ms | Indexed by confidence + recency |
+| Consolidation (per user) | < 30s | ~10s | Batch of ~500 messages |
+| Full context assembly | < 300ms | ~200ms | All tiers combined |
+| Memory decay (all users) | < 60s | ~20s | Batch UPDATE |
+| Recovery from failure | < 5s | < 1s | Circuit breaker cooldown |
+
+---
+
+## Appendix H: Edge Cases
+
+| Case | Expected Behavior | Implementation |
+|---|---|---|
+| **Empty conversation** | Return empty context | Graceful handling in assembly |
+| **Single user message** | Buffer has 1 entry, working memory is minimal | Normal pipeline |
+| **10,000 messages in 1 day** | Buffer truncates to last 10, consolidation processes in batches | Batch size limit |
+| **Memory table empty** | Return empty list for all retrieval | Normal path |
+| **All memories below 0.1 confidence** | Return empty semantic context | Graceful degradation |
+| **User has 50+ goals** | Only top 5 sorted by priority/target_date returned | Priority filtering |
+| **Cross-user data (service role)** | Explicit user_id filter required | Audit check |
+| **Memory content > 10KB** | Truncated to 1000 tokens during retrieval | Token budget limit |
+| **Special characters in memory** | Stored as-is, escaped in SQL queries | Parameterized queries |
+| **Concurrent consolidation requests** | Lock per user_id, skip if already running | `SELECT ... FOR UPDATE` |
+
+---
+
+## Appendix I: Failure Scenarios
+
+| Scenario | Detection | Impact | Recovery |
+|---|---|---|---|
+| **Supabase connection timeout** | Timeout > 2s | Stale/empty context | Return cached state, log error |
+| **Ollama service down** | Circuit breaker opens | No embedding generation | Use keyword-only search |
+| **Consolidation cron fails** | Job error log | Memory learning delayed 24h | Retry 2x, skip to next day |
+| **Memory table corruption** | Query error | Some memories unavailable | Restore from backup |
+| **Token budget overrun** | Token count > 4000 | Truncated context | Emergency hard truncation |
+| **HNSW index corruption** | Search error | Fallback to brute force scan | Rebuild index |
+| **Rate limit exceeded** | 429 from Supabase | Delayed queries | Exponential backoff retry |
+| **Deadlock on consolidation** | PostgreSQL error | Failed batch | Retry with random delay |
+
+---
+
+## Appendix J: Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| **Memory growth unbounded** | Medium | High | Consolidation + decay + purge pipeline |
+| **Stale memories mislead AI** | Medium | Medium | Recency boost in ranking, decay |
+| **Cross-user data leak** | Low | Critical | RLS + service role audit |
+| **Token cost from large context** | High | Medium | 4000 token hard limit |
+| **Consolidation performance degrades** | Medium | Medium | Batch processing, time limit |
+| **Embedding model changes** | Low | Medium | Version embeddings, re-index on upgrade |
+
+---
+
+## Appendix K: Testing Strategy
+
+| Test Category | Coverage | Method | Frequency |
+|---|---|---|---|
+| **Unit** | Buffer, working memory classes | pytest | Every push |
+| **Integration** | Retrieval pipeline | pytest + test DB | Every commit |
+| **Performance** | Latency budgets | pytest-benchmark | Weekly |
+| **Load** | Concurrent user memory access | locust | Monthly |
+| **Chaos** | Random service failures | pytest + mocks | Monthly |
+| **Regression** | Memory consistency | Golden dataset comparison | Pre-release |
+
+### Test Scenarios
+
+```python
+async def test_buffer_capacity():
+    """Buffer drops oldest messages when capacity exceeded."""
+    buffer = BufferMemory(capacity=3)
+    for i in range(5):
+        buffer.add("user", f"Message {i}")
+    assert len(buffer.messages) == 3
+    assert buffer.messages[0]["content"] == "Message 2"
+
+async def test_working_memory_rebuild():
+    """Working memory assembles correct state."""
+    wm = await build_working_memory(user_id="test")
+    assert "identity" in wm
+    assert "temporal" in wm
+    assert wm["identity"]["user_id"] == "test"
+
+async def test_semantic_retrieval_ordering():
+    """Results ordered by confidence descending."""
+    results = await get_semantic_memories("test", top_k=10)
+    for i in range(len(results) - 1):
+        assert results[i]["confidence"] >= results[i + 1]["confidence"]
+
+async def test_consolidation_empty_user():
+    """Consolidation handles user with no messages."""
+    result = await consolidate_memories("new_user")
+    assert result["memories_created"] == 0
+    assert result["errors"] == []
+```
+
+### Performance Test
+
+```python
+async def test_retrieval_latency(benchmark):
+    """Retrieval must stay within latency budget."""
+    async def retrieve():
+        return await hybrid_retrieval("test query", "test_user")
+
+    result = benchmark(retrieve)
+    assert result.status_code == 200
+```
+
+---
+
 ## Future Roadmap
 
 ### Phase 2: Vector Memory Store
@@ -1566,7 +1697,7 @@ class MemoryPrivacyService:
 
 ## Appendix A: Memory Schema Reference
 
-### `chat_messages` Table — Full DDL
+### `chat_messages` Table â€” Full DDL
 
 ```sql
 CREATE TABLE chat_messages (
@@ -1596,7 +1727,7 @@ CREATE INDEX idx_chat_messages_type ON chat_messages (user_id, interaction_type)
 CREATE INDEX idx_chat_messages_metadata_gin ON chat_messages USING GIN (metadata jsonb_path_ops);
 ```
 
-### `aria_memory` Table — Full DDL
+### `aria_memory` Table â€” Full DDL
 
 ```sql
 CREATE TABLE aria_memory (
@@ -1634,7 +1765,7 @@ CREATE INDEX idx_aria_memory_last_accessed ON aria_memory (user_id, last_accesse
 CREATE INDEX idx_aria_memory_tags_gin ON aria_memory USING GIN (tags jsonb_path_ops);
 ```
 
-### `procedural_memory` Table — Full DDL
+### `procedural_memory` Table â€” Full DDL
 
 ```sql
 CREATE TABLE procedural_memory (
@@ -1658,7 +1789,7 @@ CREATE INDEX idx_procedural_memory_trigger ON procedural_memory (user_id, trigge
 CREATE INDEX idx_procedural_memory_effectiveness ON procedural_memory (user_id, effectiveness DESC);
 ```
 
-### `aria_memory_archive` Table — Full DDL
+### `aria_memory_archive` Table â€” Full DDL
 
 ```sql
 CREATE TABLE aria_memory_archive (
@@ -1681,8 +1812,8 @@ Analyze the following messages between a user (U) and AI assistant (A).
 For each pattern you identify, provide:
 1. A unique key name (snake_case, max 50 chars)
 2. A human-readable description
-3. Confidence score (0.0–1.0)
-4. Evidence — specific excerpts that support this pattern
+3. Confidence score (0.0â€“1.0)
+4. Evidence â€” specific excerpts that support this pattern
 
 Focus on:
 - Productivity patterns (peak hours, procrastination triggers)
@@ -1715,8 +1846,8 @@ Extract the following if present:
 
 For each extracted memory, assign:
 - Category: preference | pattern | trait | decision | fact | correction
-- Importance: 0.0–1.0 (how useful for future personalization)
-- Confidence: 0.0–1.0 (how certain we are)
+- Importance: 0.0â€“1.0 (how useful for future personalization)
+- Confidence: 0.0â€“1.0 (how certain we are)
 
 Conversation:
 {conversation_text}
@@ -1772,8 +1903,8 @@ MEMORY_CONFIG = {
     "decay_cron": "0 2 * * 0",       # Weekly Sunday 2 AM
     "decay_threshold_days": 90,      # Days before decay applies
     "decay_factor": 0.8,             # Importance multiplier on decay
-    "archive_threshold": 0.1,        # Below this → archive
-    "forget_threshold": 0.05,        # Below this → delete
+    "archive_threshold": 0.1,        # Below this â†’ archive
+    "forget_threshold": 0.05,        # Below this â†’ delete
     
     # Performance
     "context_total_budget": 4000,    # Total token budget for assembly
@@ -1787,10 +1918,10 @@ MEMORY_CONFIG = {
 
 | Document | Description |
 |----------|-------------|
-| [21_AI_Architecture.md](./21_AI_Architecture.md) | Overall AI system architecture |
+| [20_Agent.md](./20_Agent.md) | AI system architecture |
 | [23_KnowledgeGraph.md](./23_KnowledgeGraph.md) | Knowledge graph integration |
-| [24_AgentOrchestration.md](./24_AgentOrchestration.md) | Agent routing and task dispatch |
-| [25_PromptEngineering.md](./25_PromptEngineering.md) | Prompt templates and system instructions |
-| [Database_Schema.md](../engineering/database_schema.md) | Full database schema reference |
-| [Memory_Consolidation_Service.md](../engineering/memory_consolidation_service.md) | Consolidation service implementation |
-| [PRD.md](../product/PRD.md) | Product requirements document |
+| [19_AI_Instructions.md](./19_AI_Instructions.md) | Agent orchestration and routing |
+| [PromptVersioning.md](./PromptVersioning.md) | Prompt templates and versioning |
+| [Database Schema](../architecture/database-erd.md) | Full database schema reference |
+| [Memory Architecture](./22_MemoryArchitecture.md) | Memory consolidation architecture |
+| [PRD](../product/02_PRD.md) | Product requirements document |

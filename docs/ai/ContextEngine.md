@@ -1,4 +1,4 @@
-# Context Engine — Enterprise Reference
+﻿# Context Engine â€” Enterprise Reference
 
 ---
 
@@ -6,10 +6,10 @@
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ARIA-ARCH-CE-001 |
+| **Document ID** | AI-CTX-001 |
 | **Version** | 1.0.0 |
 | **Status** | APPROVED |
-| **Classification** | INTERNAL — Engineering |
+| **Classification** | INTERNAL â€” Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Owner** | AI Architecture Team |
 | **Review Cycle** | Quarterly |
@@ -21,65 +21,65 @@
 
 ### Why the Context Engine Matters
 
-The Context Engine is the bridge between raw database state and the AI prompt. Every ARIA interaction — whether it's a daily briefing, a weekly review, a sleep nudge, or a chat response — requires a structured, prioritized, and token-budgeted view of the user's current reality. Without the Context Engine, the AI would receive either too much data (overflowing context windows) or too little (producing irrelevant or hallucinated responses).
+The Context Engine is the bridge between raw database state and the AI prompt. Every ARIA interaction â€” whether it's a daily briefing, a weekly review, a sleep nudge, or a chat response â€” requires a structured, prioritized, and token-budgeted view of the user's current reality. Without the Context Engine, the AI would receive either too much data (overflowing context windows) or too little (producing irrelevant or hallucinated responses).
 
 The Context Engine solves three fundamental problems:
 
-1. **Data selection**: Which of the 18+ database tables need to be queried for a given agent?
+1. **Data selection**: Which of the 27+ database tables need to be queried for a given agent?
 2. **Token budgeting**: How do we fit the most relevant information into a limited (4096 token) context window?
-3. **Priority ranking**: Which facts about the user matter most right now — overdue tasks, poor sleep, course deadlines, or new opportunities?
+3. **Priority ranking**: Which facts about the user matter most right now â€” overdue tasks, poor sleep, course deadlines, or new opportunities?
 
 ### Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| **Assembly approach** | Fetch → Filter → Rank → Assemble pipeline | Modular, testable stages; each stage can be independently optimized or skipped |
+| **Assembly approach** | Fetch â†’ Filter â†’ Rank â†’ Assemble pipeline | Modular, testable stages; each stage can be independently optimized or skipped |
 | **Token budget model** | Per-agent fixed budget with dynamic weighting | Guarantees no agent exceeds context window; priority scoring ensures best data wins |
 | **Context cache** | TTL-based (30s for live data, 5min for stable data) | Balances freshness with assembly latency; avoids redundant Supabase queries |
 | **Serialization format** | Structured text with JSON blocks for machine parsing | Human-readable when logged; machine-parseable for the LLM |
-| **Weighting algorithm** | Recency × Urgency × Relevance composite score | Ensures stale data decays naturally while critical items float to top |
-| **Fallback behavior** | Graceful degradation per data source | If `sleep_logs` is down, briefing still works — just without sleep insights |
+| **Weighting algorithm** | Recency Ã— Urgency Ã— Relevance composite score | Ensures stale data decays naturally while critical items float to top |
+| **Fallback behavior** | Graceful degradation per data source | If `sleep_logs` is down, briefing still works â€” just without sleep insights |
 
 ### Architecture Principles
 
-1. **Sub-100ms assembly target** — Context assembly must not add perceptible latency to user interactions
-2. **Token-first design** — Every byte counts; the assembly pipeline prioritizes information density
-3. **Observability by default** — Every assembly records source tables, token counts, latency, and priority scores
-4. **Fail open** — If a context source is unavailable, the engine logs the error but assembles context from remaining sources
-5. **Agent-specific tailoring** — The briefing agent gets different context than the sleep agent; the engine filters by agent type
+1. **Sub-100ms assembly target** â€” Context assembly must not add perceptible latency to user interactions
+2. **Token-first design** â€” Every byte counts; the assembly pipeline prioritizes information density
+3. **Observability by default** â€” Every assembly records source tables, token counts, latency, and priority scores
+4. **Fail open** â€” If a context source is unavailable, the engine logs the error but assembles context from remaining sources
+5. **Agent-specific tailoring** â€” The briefing agent gets different context than the sleep agent; the engine filters by agent type
 
 ---
 
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CONTEXT ENGINE ARCHITECTURE                          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────────┐   │
-│  │  AGENT       │    │  CONTEXT     │    │  PRIORITY   │    │  PROMPT    │   │
-│  │  TRIGGER     │───▶│  FETCHER     │───▶│  SCORER     │───▶│  ASSEMBLER │   │
-│  │  (Event/     │    │  (Supabase   │    │  (Recency   │    │  (Token    │   │
-│  │   Cron/Chat) │    │   Queries)   │    │   × Urgency)│    │   Budget)  │   │
-│  └─────────────┘    └──────┬───────┘    └──────┬──────┘    └──────┬─────┘   │
-│                            │                   │                   │         │
-│                            ▼                   ▼                   ▼         │
-│                     ┌──────────────┐    ┌─────────────┐    ┌────────────┐   │
-│                     │  CACHE LAYER │    │  FILTER     │    │  LLM       │   │
-│                     │  (TTL-based  │    │  ENGINE     │    │  CLIENT    │   │
-│                     │   Expiry)    │    │  (Threshold)│    │  (Ollama/  │   │
-│                     └──────────────┘    └─────────────┘    │  Claude)   │   │
-│                                                            └────────────┘   │
-│                                                                              │
-│  DATA SOURCES (Supabase Tables):                                             │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐  │
-│  │Tasks │ │Courses│ │Habits│ │Sleep │ │Memory│ │Goals │ │Income│ │Time  │  │
-│  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘  │
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                                        │
-│  │Ideas │ │Proj. │ │Users │ │Chat  │                                        │
-│  └──────┘ └──────┘ └──────┘ └──────┘                                        │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                         CONTEXT ENGINE ARCHITECTURE                          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  AGENT       â”‚    â”‚  CONTEXT     â”‚    â”‚  PRIORITY   â”‚    â”‚  PROMPT    â”‚   â”‚
+â”‚  â”‚  TRIGGER     â”‚â”€â”€â”€â–¶â”‚  FETCHER     â”‚â”€â”€â”€â–¶â”‚  SCORER     â”‚â”€â”€â”€â–¶â”‚  ASSEMBLER â”‚   â”‚
+â”‚  â”‚  (Event/     â”‚    â”‚  (Supabase   â”‚    â”‚  (Recency   â”‚    â”‚  (Token    â”‚   â”‚
+â”‚  â”‚   Cron/Chat) â”‚    â”‚   Queries)   â”‚    â”‚   Ã— Urgency)â”‚    â”‚   Budget)  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                            â”‚                   â”‚                   â”‚         â”‚
+â”‚                            â–¼                   â–¼                   â–¼         â”‚
+â”‚                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚                     â”‚  CACHE LAYER â”‚    â”‚  FILTER     â”‚    â”‚  LLM       â”‚   â”‚
+â”‚                     â”‚  (TTL-based  â”‚    â”‚  ENGINE     â”‚    â”‚  CLIENT    â”‚   â”‚
+â”‚                     â”‚   Expiry)    â”‚    â”‚  (Threshold)â”‚    â”‚  (Ollama/  â”‚   â”‚
+â”‚                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  Claude)   â”‚   â”‚
+â”‚                                                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                              â”‚
+â”‚  DATA SOURCES (Supabase Tables):                                             â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚Tasks â”‚ â”‚Coursesâ”‚ â”‚Habitsâ”‚ â”‚Sleep â”‚ â”‚Memoryâ”‚ â”‚Goals â”‚ â”‚Incomeâ”‚ â”‚Time  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”                                        â”‚
+â”‚  â”‚Ideas â”‚ â”‚Proj. â”‚ â”‚Users â”‚ â”‚Chat  â”‚                                        â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜                                        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -91,11 +91,11 @@ The Context Engine solves three fundamental problems:
 flowchart LR
     Agent["Agent Trigger"] --> Fetch["1. Fetch<br/>Supabase Queries<br/>18+ Tables"]
     Fetch --> Filter["2. Filter<br/>Agent-specific<br/>Remove Irrelevant"]
-    Filter --> Rank["3. Rank<br/>Recency × Urgency<br/>× Relevance Score"]
+    Filter --> Rank["3. Rank<br/>Recency Ã— Urgency<br/>Ã— Relevance Score"]
     Rank --> Budget["4. Token Budget<br/>Fit in 4096 ctx<br/>Truncate Excess"]
     Budget --> Assemble["5. Assemble<br/>Structured Text +<br/>JSON Blocks"]
     Assemble --> Cache["6. Cache<br/>TTL: 30s-5min"]
-    Cache --> Inject["7. Inject → Prompt<br/>LLM Ready Context"]
+    Cache --> Inject["7. Inject â†’ Prompt<br/>LLM Ready Context"]
 
     style Agent fill:#6366F1,stroke:#818CF8,color:#F1F5F9
     style Fetch fill:#1E293B,stroke:#6366F1,color:#F1F5F9
@@ -146,7 +146,7 @@ class ContextSource:
     refresh_interval: int  # seconds
     default_token_budget: int  # tokens
     agents: list[str]  # which agents query this source
-    priority_multiplier: float  # base × multiplier for priority scoring
+    priority_multiplier: float  # base Ã— multiplier for priority scoring
     fields: list[str]  # specific columns to fetch
     where_clause: str | None  # SQL filter override per agent
     order_by: str | None  # default sort order
@@ -159,7 +159,7 @@ SOURCE_REGISTRY: dict[str, ContextSource] = {
         default_token_budget=800,
         agents=["briefing_agent", "task_agent", "weekly_review_agent",
                 "nudge_agent", "sleep_agent", "chat"],
-        priority_multiplier=1.5,  # overdue tasks get 1.5× boost
+        priority_multiplier=1.5,  # overdue tasks get 1.5Ã— boost
         fields=["id", "title", "status", "priority", "due_date", "goal_id"],
         where_clause="status IN ('pending', 'in_progress')",
         order_by="due_date ASC NULLS LAST",
@@ -170,7 +170,7 @@ SOURCE_REGISTRY: dict[str, ContextSource] = {
         refresh_interval=30,
         default_token_budget=400,
         agents=["sleep_agent", "briefing_agent"],
-        priority_multiplier=1.8,  # poor sleep gets 1.8× boost
+        priority_multiplier=1.8,  # poor sleep gets 1.8Ã— boost
         fields=["id", "sleep_date", "duration_hours", "score", "bedtime", "wake_time"],
         where_clause="sleep_date >= CURRENT_DATE - 7",
         order_by="sleep_date DESC",
@@ -190,30 +190,30 @@ The pipeline consists of four stages, executed sequentially for every context as
 
 ```
 Stage 1: FETCH
-├── Identify agent → lookup required sources from registry
-├── Check cache → return cached context if TTL valid
-├── Execute parallel Supabase queries for each required source
-└── Collect results in raw data dict
+â”œâ”€â”€ Identify agent â†’ lookup required sources from registry
+â”œâ”€â”€ Check cache â†’ return cached context if TTL valid
+â”œâ”€â”€ Execute parallel Supabase queries for each required source
+â””â”€â”€ Collect results in raw data dict
 
 Stage 2: FILTER
-├── Remove rows that don't meet minimum priority threshold
-├── Strip PII fields (passwords, secrets) from data
-├── Apply agent-specific filter overrides
-├── Deduplicate entries (same task from different queries)
-└── Output clean, safe dataset
+â”œâ”€â”€ Remove rows that don't meet minimum priority threshold
+â”œâ”€â”€ Strip PII fields (passwords, secrets) from data
+â”œâ”€â”€ Apply agent-specific filter overrides
+â”œâ”€â”€ Deduplicate entries (same task from different queries)
+â””â”€â”€ Output clean, safe dataset
 
 Stage 3: RANK
-├── Score each item using composite priority algorithm
-├── Sort by score descending
-├── Apply token budget allocation per source
-└── Truncate low-priority items when budget exceeded
+â”œâ”€â”€ Score each item using composite priority algorithm
+â”œâ”€â”€ Sort by score descending
+â”œâ”€â”€ Apply token budget allocation per source
+â””â”€â”€ Truncate low-priority items when budget exceeded
 
 Stage 4: ASSEMBLE
-├── Format data into structured text template
-├── Insert agent-specific instruction blocks
-├── Attach system prompts from PromptLoader
-├── Calculate final token count
-└── Return assembled context dict to calling agent
+â”œâ”€â”€ Format data into structured text template
+â”œâ”€â”€ Insert agent-specific instruction blocks
+â”œâ”€â”€ Attach system prompts from PromptLoader
+â”œâ”€â”€ Calculate final token count
+â””â”€â”€ Return assembled context dict to calling agent
 ```
 
 ### Assembly Pipeline Implementation
@@ -347,7 +347,7 @@ class ContextEngine:
     def _calculate_priority(
         self, row: dict, table_name: str, now: float, multiplier: float
     ) -> float:
-        """Composite priority score: recency × urgency × multiplier."""
+        """Composite priority score: recency Ã— urgency Ã— multiplier."""
         score = 1.0
 
         # Recency factor: items modified recently score higher
@@ -475,25 +475,25 @@ When assembled context exceeds the agent's token budget, the engine applies a th
 
 ```
 Tier 1: Truncate Low-Priority Items (within source)
-└── For each source, drop items below the 20th percentile of priority scores
-    → Typical savings: 20-30% of source tokens
+â””â”€â”€ For each source, drop items below the 20th percentile of priority scores
+    â†’ Typical savings: 20-30% of source tokens
 
 Tier 2: Remove Lowest-Value Sources
-└── Sort sources by aggregate priority score × agent-relevance multiplier
-└── Remove sources from the bottom until budget is within 90%
-    → Priority order: Sleep(1.8) > Tasks(1.5) > Memory(1.4) > Goals(1.3) > ...
+â””â”€â”€ Sort sources by aggregate priority score Ã— agent-relevance multiplier
+â””â”€â”€ Remove sources from the bottom until budget is within 90%
+    â†’ Priority order: Sleep(1.8) > Tasks(1.5) > Memory(1.4) > Goals(1.3) > ...
 
 Tier 3: Summarize Instead of List
-└── Replace item-level data with aggregate summaries
-    └── "12 tasks pending (3 urgent, 5 high, 4 medium)"
-    └── "Sleep avg 6.2h over 7 days (trending down)"
-    → Used only as last resort; reduces detail but preserves signal
+â””â”€â”€ Replace item-level data with aggregate summaries
+    â””â”€â”€ "12 tasks pending (3 urgent, 5 high, 4 medium)"
+    â””â”€â”€ "Sleep avg 6.2h over 7 days (trending down)"
+    â†’ Used only as last resort; reduces detail but preserves signal
 ```
 
 ### Priority Scoring Algorithm
 
 ```
-composite_score = recency_factor × urgency_factor × priority_multiplier × source_multiplier
+composite_score = recency_factor Ã— urgency_factor Ã— priority_multiplier Ã— source_multiplier
 
 Where:
   recency_factor    = max(0.1, 1 - (age_hours / 168))
@@ -601,38 +601,38 @@ class DynamicWeightEngine:
 ### Context Flow Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                     CROSS-AGENT CONTEXT SHARING                               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────┐         ┌──────────────────┐                           │
-│  │ Memory Agent (A02)│         │ Context Engine    │                         │
-│  │ Consolidates      │────────▶│ Writes to        │                         │
-│  │ patterns + prefs  │  memory│ memory table      │                         │
-│  └──────────────────┘    ────▶└──────────────────┘                           │
-│                                                  │                           │
-│                                                  ▼                           │
-│  ┌──────────────────┐         ┌──────────────────┐                           │
-│  │ Briefing Agent    │◀────────│ Context Engine    │                         │
-│  │ (A09)             │  reads  │ Reads memory      │                         │
-│  │ Receives learned   │  memory │ table for briefing│                         │
-│  │ patterns           │         └──────────────────┘                           │
-│  └──────────────────┘                                                        │
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────────┐│
-│  │ Shared Artifacts in memory table:                                        ││
-│  │  - user_preferences: {"tone": "direct", "detail_level": "concise"}       ││
-│  │  - learned_patterns: {"procrastination": "Tues evenings",                ││
-│  │    "peak_productivity": "mornings before 11 AM"}                         ││
-│  │  - interaction_history: {"last_briefing_sent": "2026-06-10T07:00:00Z"}   ││
-│  └──────────────────────────────────────────────────────────────────────────┘│
-│                                                                              │
-│  CONTEXT ENGINE SHARING PROTOCOL:                                            │
-│  1. Agent A produces context → stored in memory with source_id, ttl         │
-│  2. Agent B requests context → engine checks memory table for source_id     │
-│  3. If found & within TTL → returns cached context                          │
-│  4. If not → engine fetches fresh from Supabase, stores for future agents   │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     CROSS-AGENT CONTEXT SHARING                               â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                           â”‚
+â”‚  â”‚ Memory Agent (A02)â”‚         â”‚ Context Engine    â”‚                         â”‚
+â”‚  â”‚ Consolidates      â”‚â”€â”€â”€â”€â”€â”€â”€â”€â–¶â”‚ Writes to        â”‚                         â”‚
+â”‚  â”‚ patterns + prefs  â”‚  memoryâ”‚ memory table      â”‚                         â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”€â”€â”€â”€â–¶â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                           â”‚
+â”‚                                                  â”‚                           â”‚
+â”‚                                                  â–¼                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                           â”‚
+â”‚  â”‚ Briefing Agent    â”‚â—€â”€â”€â”€â”€â”€â”€â”€â”€â”‚ Context Engine    â”‚                         â”‚
+â”‚  â”‚ (A09)             â”‚  reads  â”‚ Reads memory      â”‚                         â”‚
+â”‚  â”‚ Receives learned   â”‚  memory â”‚ table for briefingâ”‚                         â”‚
+â”‚  â”‚ patterns           â”‚         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                           â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                                        â”‚
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚ Shared Artifacts in memory table:                                        â”‚â”‚
+â”‚  â”‚  - user_preferences: {"tone": "direct", "detail_level": "concise"}       â”‚â”‚
+â”‚  â”‚  - learned_patterns: {"procrastination": "Tues evenings",                â”‚â”‚
+â”‚  â”‚    "peak_productivity": "mornings before 11 AM"}                         â”‚â”‚
+â”‚  â”‚  - interaction_history: {"last_briefing_sent": "2026-06-10T07:00:00Z"}   â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”‚                                                                              â”‚
+â”‚  CONTEXT ENGINE SHARING PROTOCOL:                                            â”‚
+â”‚  1. Agent A produces context â†’ stored in memory with source_id, ttl         â”‚
+â”‚  2. Agent B requests context â†’ engine checks memory table for source_id     â”‚
+â”‚  3. If found & within TTL â†’ returns cached context                          â”‚
+â”‚  4. If not â†’ engine fetches fresh from Supabase, stores for future agents   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Sharing Protocol
@@ -740,30 +740,30 @@ User State: rested (sleep 7.2h), moderate task load (9 pending)
 ### Cache Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                       CONTEXT CACHE LAYER                             │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                       │
-│  ┌─────────────────────┐    ┌─────────────────────┐                   │
-│  │  TIER 1: In-Memory   │    │  TIER 2: Supabase   │                   │
-│  │  Dict Cache          │    │  memory Table       │                   │
-│  │                      │    │                      │                   │
-│  │  Key: user_id:table  │    │  Key: user_id:key   │                   │
-│  │  TTL: 30-300s       │    │  TTL: 300-3600s     │                   │
-│  │  Storage: ~50MB max │    │  Storage: Unlimited  │                   │
-│  │  Eviction: LRU      │    │  Eviction: TTL       │                   │
-│  └─────────────────────┘    └─────────────────────┘                   │
-│         │                           │                                 │
-│         ▼                           ▼                                 │
-│  ┌──────────────────────────────────────────────┐                     │
-│  │  CACHE MANAGER                                 │                     │
-│  │  - get(key): check Tier 1 → miss → check T2  │                     │
-│  │  - set(key, value, ttl): write to T1 + T2     │                     │
-│  │  - invalidate(table_name): clear T1 entries   │                     │
-│  │  - warmup(agent_name): pre-fetch common srcs  │                     │
-│  └──────────────────────────────────────────────┘                     │
-│                                                                       │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       CONTEXT CACHE LAYER                             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                   â”‚
+â”‚  â”‚  TIER 1: In-Memory   â”‚    â”‚  TIER 2: Supabase   â”‚                   â”‚
+â”‚  â”‚  Dict Cache          â”‚    â”‚  memory Table       â”‚                   â”‚
+â”‚  â”‚                      â”‚    â”‚                      â”‚                   â”‚
+â”‚  â”‚  Key: user_id:table  â”‚    â”‚  Key: user_id:key   â”‚                   â”‚
+â”‚  â”‚  TTL: 30-300s       â”‚    â”‚  TTL: 300-3600s     â”‚                   â”‚
+â”‚  â”‚  Storage: ~50MB max â”‚    â”‚  Storage: Unlimited  â”‚                   â”‚
+â”‚  â”‚  Eviction: LRU      â”‚    â”‚  Eviction: TTL       â”‚                   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                   â”‚
+â”‚         â”‚                           â”‚                                 â”‚
+â”‚         â–¼                           â–¼                                 â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                     â”‚
+â”‚  â”‚  CACHE MANAGER                                 â”‚                     â”‚
+â”‚  â”‚  - get(key): check Tier 1 â†’ miss â†’ check T2  â”‚                     â”‚
+â”‚  â”‚  - set(key, value, ttl): write to T1 + T2     â”‚                     â”‚
+â”‚  â”‚  - invalidate(table_name): clear T1 entries   â”‚                     â”‚
+â”‚  â”‚  - warmup(agent_name): pre-fetch common srcs  â”‚                     â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                     â”‚
+â”‚                                                                       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### TTL Configuration
@@ -890,21 +890,21 @@ When a context source is unavailable (Supabase error, network timeout, corrupted
 
 ```
 Source unavailable
-    │
-    ├── Cache hit?
-    │   ├── Yes → Return cached data (stale but functional)
-    │   └── No  → Continue
-    │
-    ├── Alternative source available?
-    │   ├── Yes → Substitute (e.g., use habit_logs if habits fails)
-    │   └── No  → Continue
-    │
-    ├── Can compute derived data?
-    │   ├── Yes → Compute from other sources
-    │   └── No  → Continue
-    │
-    └── Skip source → Log warning → Assemble without it
-        └── Agent receives incomplete context → Degraded but functional
+    â”‚
+    â”œâ”€â”€ Cache hit?
+    â”‚   â”œâ”€â”€ Yes â†’ Return cached data (stale but functional)
+    â”‚   â””â”€â”€ No  â†’ Continue
+    â”‚
+    â”œâ”€â”€ Alternative source available?
+    â”‚   â”œâ”€â”€ Yes â†’ Substitute (e.g., use habit_logs if habits fails)
+    â”‚   â””â”€â”€ No  â†’ Continue
+    â”‚
+    â”œâ”€â”€ Can compute derived data?
+    â”‚   â”œâ”€â”€ Yes â†’ Compute from other sources
+    â”‚   â””â”€â”€ No  â†’ Continue
+    â”‚
+    â””â”€â”€ Skip source â†’ Log warning â†’ Assemble without it
+        â””â”€â”€ Agent receives incomplete context â†’ Degraded but functional
 ```
 
 ### Source Substitution Matrix

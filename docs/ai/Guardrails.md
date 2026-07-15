@@ -1,4 +1,4 @@
-# Guardrails — Enterprise Reference
+﻿# Guardrails â€” Enterprise Reference
 
 ---
 
@@ -6,10 +6,10 @@
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ARIA-SEC-GRD-001 |
+| **Document ID** | AI-GRD-001 |
 | **Version** | 1.0.0 |
 | **Status** | APPROVED |
-| **Classification** | INTERNAL — Security + Engineering |
+| **Classification** | INTERNAL â€” Security + Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Owner** | AI Architecture Team |
 | **Review Cycle** | Quarterly |
@@ -44,7 +44,7 @@ The guardrail system addresses five threat categories:
 
 ### Architecture Principles
 
-1. **Defense in depth**: Four independent layers (prompt, model, output, application) — failure of any single layer is contained
+1. **Defense in depth**: Four independent layers (prompt, model, output, application) â€” failure of any single layer is contained
 2. **Reject-safe**: When guardrail confidence is low (< 0.7), the response is blocked by default
 3. **Observable by design**: Every guardrail decision is logged with reason, confidence, and latency
 4. **User feedback loop**: Users can report incorrect blocks or unsafe responses to improve guardrail accuracy
@@ -58,52 +58,52 @@ The guardrail system addresses five threat categories:
 ### 4-Layer Defense Model
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                       GUARDRAIL ARCHITECTURE (4-LAYER)                         │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  USER INPUT (Prompt)                                                          │
-│    │                                                                          │
-│    ▼                                                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  LAYER 1: PROMPT-LEVEL GUARDRAILS                                       │  │
-│  │  ┌────────────────┐ ┌──────────────────┐ ┌────────────────────────┐    │  │
-│  │  │ Input validation│ │ Prompt injection  │ │ Jailbreak detection  │    │  │
-│  │  │ (length, format)│ │ detection (regex) │ │ (pattern matching)   │    │  │
-│  │  └────────────────┘ └──────────────────┘ └────────────────────────┘    │  │
-│  └────────────────────────────────┬────────────────────────────────────────┘  │
-│                                   │ Blocked? ── Yes ──▶ Return 400 + log      │
-│                                   ▼ No                                        │
-│                               LLM INFERENCE                                    │
-│                                   │                                           │
-│                                   ▼                                           │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  LAYER 2: MODEL-LEVEL GUARDRAILS                                        │  │
-│  │  ┌────────────────┐ ┌──────────────────┐ ┌────────────────────────┐    │  │
-│  │  │ System prompt  │ │ Temperature &    │ │ Output schema         │    │  │
-│  │  │ guardrails     │ │ top_p clamping   │ │ enforcement (JSON)    │    │  │
-│  │  └────────────────┘ └──────────────────┘ └────────────────────────┘    │  │
-│  └────────────────────────────────┬────────────────────────────────────────┘  │
-│                                   ▼                                           │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  LAYER 3: OUTPUT-LEVEL GUARDRAILS                                       │  │
-│  │  ┌────────────────┐ ┌──────────────────┐ ┌────────────────────────┐    │  │
-│  │  │ Content         │ │ PII redaction    │ │ Hallucination         │    │  │
-│  │  │ moderation      │ │ (regex + NER)    │ │ detection (fact check)│    │  │
-│  │  └────────────────┘ └──────────────────┘ └────────────────────────┘    │  │
-│  └────────────────────────────────┬────────────────────────────────────────┘  │
-│                                   │ Blocked? ── Yes ──▶ Return 451 + log      │
-│                                   ▼ No                                        │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  LAYER 4: APPLICATION-LEVEL GUARDRAILS                                  │  │
-│  │  ┌────────────────┐ ┌──────────────────┐ ┌────────────────────────┐    │  │
-│  │  │ Rate limiting  │ │ Abuse detection  │ │ Audit logging +       │    │  │
-│  │  │ (token bucket) │ │ (anomaly scoring) │ │ alerting              │    │  │
-│  │  └────────────────┘ └──────────────────┘ └────────────────────────┘    │  │
-│  └────────────────────────────────┬────────────────────────────────────────┘  │
-│                                   ▼                                           │
-│                         SAFE RESPONSE TO USER                                  │
-└──────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                       GUARDRAIL ARCHITECTURE (4-LAYER)                         â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                               â”‚
+â”‚  USER INPUT (Prompt)                                                          â”‚
+â”‚    â”‚                                                                          â”‚
+â”‚    â–¼                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  LAYER 1: PROMPT-LEVEL GUARDRAILS                                       â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚ Input validationâ”‚ â”‚ Prompt injection  â”‚ â”‚ Jailbreak detection  â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚ (length, format)â”‚ â”‚ detection (regex) â”‚ â”‚ (pattern matching)   â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                   â”‚ Blocked? â”€â”€ Yes â”€â”€â–¶ Return 400 + log      â”‚
+â”‚                                   â–¼ No                                        â”‚
+â”‚                               LLM INFERENCE                                    â”‚
+â”‚                                   â”‚                                           â”‚
+â”‚                                   â–¼                                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  LAYER 2: MODEL-LEVEL GUARDRAILS                                        â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚ System prompt  â”‚ â”‚ Temperature &    â”‚ â”‚ Output schema         â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚ guardrails     â”‚ â”‚ top_p clamping   â”‚ â”‚ enforcement (JSON)    â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                   â–¼                                           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  LAYER 3: OUTPUT-LEVEL GUARDRAILS                                       â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚ Content         â”‚ â”‚ PII redaction    â”‚ â”‚ Hallucination         â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚ moderation      â”‚ â”‚ (regex + NER)    â”‚ â”‚ detection (fact check)â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                   â”‚ Blocked? â”€â”€ Yes â”€â”€â–¶ Return 451 + log      â”‚
+â”‚                                   â–¼ No                                        â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  LAYER 4: APPLICATION-LEVEL GUARDRAILS                                  â”‚  â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚  â”‚
+â”‚  â”‚  â”‚ Rate limiting  â”‚ â”‚ Abuse detection  â”‚ â”‚ Audit logging +       â”‚    â”‚  â”‚
+â”‚  â”‚  â”‚ (token bucket) â”‚ â”‚ (anomaly scoring) â”‚ â”‚ alerting              â”‚    â”‚  â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                   â–¼                                           â”‚
+â”‚                         SAFE RESPONSE TO USER                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4-Layer Guardrail Defense Pipeline
@@ -119,7 +119,7 @@ graph TD
         PID --> JD["Jailbreak Detection<br/>Pattern Matching"]
     end
 
-    L1 -->|Blocked| Block1["⛔ Return 400 + Log"]
+    L1 -->|Blocked| Block1["â›” Return 400 + Log"]
     L1 -->|Pass| LLM["LLM Inference"]
 
     LLM --> L2
@@ -138,7 +138,7 @@ graph TD
         PII --> HD["Hallucination<br/>Detection"]
     end
 
-    L3 -->|Blocked| Block2["⛔ Return 451 + Log"]
+    L3 -->|Blocked| Block2["â›” Return 451 + Log"]
     L3 -->|Pass| L4
 
     subgraph L4["Layer 4: Application-Level Guardrails"]
@@ -147,7 +147,7 @@ graph TD
         AD --> AL["Audit Logging +<br/>Alerting"]
     end
 
-    L4 --> Safe["✅ Safe Response to User"]
+    L4 --> Safe["âœ… Safe Response to User"]
 
     style Input fill:#1E293B,stroke:#6366F1,color:#F1F5F9
     style L1 fill:#0A0B0F,stroke:#EF4444,color:#EF4444
@@ -235,7 +235,7 @@ class InputValidator:
 class PromptInjectionDetector:
     """Detects prompt injection, jailbreak, and context manipulation attempts."""
 
-    # Injection patterns — known prompt injection signatures
+    # Injection patterns â€” known prompt injection signatures
     INJECTION_PATTERNS = [
         r'ignore\s+(all\s+)?(previous|above|below)\s+(instructions|commands|prompts)',
         r'forget\s+(all\s+)?(previous|above|below)',
@@ -345,7 +345,7 @@ prompt_injection_detector = PromptInjectionDetector()
 The system prompt (`prompts/system/guardrails.md`) is the first line of defense at the model level. It instructs the LLM on boundaries:
 
 ```
-## Guardrails — Absolute Prohibitions
+## Guardrails â€” Absolute Prohibitions
 
 You MUST refuse any request that involves:
 1. Self-harm, suicide, or self-injury of any kind
@@ -368,7 +368,7 @@ DO NOT suggest alternative ways to achieve the prohibited goal.
 
 ```python
 class ModelParameterGuard:
-    """Enforces safe model parameters — prevents agents from setting dangerous values."""
+    """Enforces safe model parameters â€” prevents agents from setting dangerous values."""
 
     SAFE_PARAMETERS = {
         "temperature": {"min": 0.0, "max": 1.0, "default": 0.5},
@@ -895,7 +895,7 @@ class AbuseDetector:
 
 ```python
 class InputGuardrailPipeline:
-    """Complete input validation pipeline — runs before LLM inference."""
+    """Complete input validation pipeline â€” runs before LLM inference."""
 
     def __init__(self):
         self.validator = InputValidator()
@@ -961,7 +961,7 @@ class InputGuardrailPipeline:
 
 ```python
 class OutputGuardrailPipeline:
-    """Complete output validation pipeline — runs after LLM inference."""
+    """Complete output validation pipeline â€” runs after LLM inference."""
 
     def __init__(self, supabase_client):
         self.moderator = OutputModerator()
@@ -1159,7 +1159,7 @@ jobs:
 | Rate limiting | 10 | Weekly | Correct enforcement at boundaries |
 | Abuse detection | 10 | Weekly | > 85% detection, < 5% false positive |
 | Adversarial (LLM-generated) | 50 | Monthly | > 95% detection rate |
-| Total | 260 | — | — |
+| Total | 260 | â€” | â€” |
 
 ---
 
@@ -1234,49 +1234,49 @@ class GuardrailFeedbackCollector:
 
 ```
 GUARDRAIL INCIDENT
-    │
-    ▼
-┌──────────────────────┐
-│ 1. DETECT            │
-│    - Automated alert │
-│    - User report     │
-│    - Monitoring      │
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│ 2. CLASSIFY          │
-│    - Determine SEV   │
-│    - Log incident    │
-│    - Assign owner    │
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│ 3. CONTAIN           │
-│    - Block user      │
-│    - Blacklist input │
-│    - Disable feature │
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│ 4. INVESTIGATE       │
-│    - Root cause      │
-│    - Impact analysis │
-│    - Evidence gather │
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│ 5. REMEDIATE         │
-│    - Deploy fix      │
-│    - Update tests    │
-│    - Add regression  │
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│ 6. REVIEW            │
-│    - Post-mortem     │
-│    - Update docs     │
-│    - Close incident  │
-└──────────────────────┘
+    â”‚
+    â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 1. DETECT            â”‚
+â”‚    - Automated alert â”‚
+â”‚    - User report     â”‚
+â”‚    - Monitoring      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 2. CLASSIFY          â”‚
+â”‚    - Determine SEV   â”‚
+â”‚    - Log incident    â”‚
+â”‚    - Assign owner    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 3. CONTAIN           â”‚
+â”‚    - Block user      â”‚
+â”‚    - Blacklist input â”‚
+â”‚    - Disable feature â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 4. INVESTIGATE       â”‚
+â”‚    - Root cause      â”‚
+â”‚    - Impact analysis â”‚
+â”‚    - Evidence gather â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 5. REMEDIATE         â”‚
+â”‚    - Deploy fix      â”‚
+â”‚    - Update tests    â”‚
+â”‚    - Add regression  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 6. REVIEW            â”‚
+â”‚    - Post-mortem     â”‚
+â”‚    - Update docs     â”‚
+â”‚    - Close incident  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---

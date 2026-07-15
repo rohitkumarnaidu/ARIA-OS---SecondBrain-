@@ -1,3 +1,14 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | AI-KG-001 |
+| Version | 2.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-14 |
+
+---
+
 # 23. Knowledge Graph
 
 ## Overview
@@ -442,3 +453,488 @@ async def hybrid_search(query: str, user_id: str, top_k: int = 10) -> list:
 7. **Pattern Detection** — "You consistently abandon courses after 3 weeks when they move from fundamentals to advanced topics. Consider pairing advanced courses with a project from week 3 onwards."
 
 8. **Income Insight** — "The skills you use for your freelance income (React, Python) are the same ones in your active courses. Completing these courses could directly increase your freelance rate."
+
+---
+
+## Security
+
+### Data Isolation
+
+Knowledge graph data is highly sensitive — it represents the complete semantic map of a user's digital life. Strict isolation is enforced at every layer:
+
+```sql
+-- RLS on graph snapshot table
+ALTER TABLE user_knowledge_graph ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY user_graph_isolation ON user_knowledge_graph
+    FOR ALL USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+
+-- RLS on entity extraction logs
+CREATE TABLE graph_entity_extraction_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    extraction_timestamp TIMESTAMPTZ NOT NULL DEFAULT now(),
+    entities_found INTEGER,
+    relationships_found INTEGER,
+    source_type TEXT,            -- structured, unstructured
+    extraction_duration_ms INTEGER
+);
+
+ALTER TABLE graph_entity_extraction_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY graph_log_isolation ON graph_entity_extraction_log
+    FOR ALL USING (user_id = auth.uid())
+    WITH CHECK (user_id = auth.uid());
+```
+
+### Access Controls by Role
+
+| Role | Read Graph | Write Graph | Execute Queries | Export Graph |
+|---|---|---|---|---|
+| User | Own graph only | Own graph only | Own graph only | Own graph (JSON) |
+| AI Agent | Current user only (via context) | New entities from chat only | Path/insight queries | None |
+| Admin | All graphs (aggregate stats only) | None | Aggregate graph stats | Anonymized only |
+| Developer | All graphs (debug mode only) | Write (maintenance) | All queries | With audit log |
+
+### Security Risks and Mitigations
+
+| Risk | Severity | Mitigation |
+|---|---|---|
+| Re-identification via graph structure | Medium | Only expose graph query results through ARIA's natural language; never raw graph data |
+| Entity extraction of sensitive data | High | PII filter on text before entity extraction; skip extraction for sensitive fields |
+| Graph poisoning via malicious input | Medium | Input sanitization on chat messages before entity extraction; validate entity labels |
+| Cross-user graph inference | Low | User-isolated graph snapshots; no global graph |
+| Brute-force graph traversal | Low | Rate limit on `/refresh-graph` endpoint (max 1 per 5 min per user) |
+
+### PII Filtering in Entity Extraction
+
+```python
+# packages/ai/knowledge_graph/security.py
+class GraphPIIFilter:
+    """Prevent sensitive information from entering the knowledge graph."""
+
+    SENSITIVE_PATTERNS = {
+        "password": r"(?i)(password|passwd|pwd)\s*[:=]\s*\S+",
+        "api_key": r"(?i)(api[_-]?key|secret)\s*[:=]\s*\S+",
+        "token": r"\b(eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})\b",
+        "financial": r"\b\d{16}\b",  # Credit card numbers
+    }
+
+    def filter_entity_label(self, label: str) -> tuple[str, bool]:
+        """Check if label contains sensitive data. Returns (cleaned_label, was_redacted)."""
+        for pattern_name, pattern in self.SENSITIVE_PATTERNS.items():
+            if re.search(pattern, label):
+                logger.warning("graph.pii_detected", pattern=pattern_name)
+                return "[Redacted]", True
+        return label, False
+
+    def filter_entity_batch(self, entities: list[dict]) -> list[dict]:
+        """Filter a batch of entities for PII."""
+        filtered = []
+        for entity in entities:
+            clean_label, redacted = self.filter_entity_label(entity.get("label", ""))
+            entity["label"] = clean_label
+            entity["pii_redacted"] = redacted
+            filtered.append(entity)
+        return filtered
+```
+
+---
+
+## Error Handling
+
+### Graph Operation Failures
+
+| Failure Mode | Impact | Detection | Recovery |
+|---|---|---|---|
+| Entity extraction timeout | Partial graph update | asyncio.TimeoutError (5s timeout) | Fallback to structured extraction only |
+| NetworkX operation error | Query returns incomplete results | nx exception caught | Return partial results with warning flag |
+| Graph snapshot save failure | Last good snapshot preserved | supabase write error | Retry with backoff (3 attempts); keep previous version |
+| JSON serialization error | Single entity lost | TypeError on serialization | Skip un-serializable entity, log warning |
+| Concurrent graph updates | Race condition on version | Version conflict (optimistic lock) | Increment version; retry merge |
+| Corrupt graph data | Queries fail | Deserialization error | Restore from last known good snapshot |
+
+### Graceful Degradation
+
+```python
+# packages/ai/knowledge_graph/error_handler.py
+class GraphErrorHandler:
+    """Handle graph operation failures with graceful degradation."""
+
+    async def safe_build_graph(self, user_id: str) -> dict:
+        """Build user graph with fallback strategies."""
+        try:
+            return await self._build_full_graph(user_id)
+        except TimeoutError:
+            logger.warning("graph.build.timeout", user_id=user_id)
+            return await self._build_structured_only_graph(user_id)  # Skip NLP extraction
+        except Exception as e:
+            logger.error("graph.build.failed", user_id=user_id, error=str(e))
+            return await self._load_last_snapshot(user_id)  # Return stale graph
+
+    async def safe_query(self, graph: nx.Graph, query_type: str, params: dict) -> dict:
+        """Execute graph query with fallback for unsupported operations."""
+        try:
+            return await self._execute_query(graph, query_type, params)
+        except nx.NetworkXError as e:
+            logger.warning("graph.query.error", query_type=query_type, error=str(e))
+            return {"error": str(e), "partial_results": [], "degraded": True}
+        except Exception as e:
+            logger.error("graph.query.fatal", query_type=query_type, error=str(e))
+            return {"error": "Query failed", "results": [], "degraded": True}
+
+    async def safe_save_snapshot(self, user_id: str, graph: nx.Graph) -> bool:
+        """Save graph snapshot with automatic recovery."""
+        version = await self._get_current_version(user_id)
+        try:
+            snapshot = self._serialize_graph(graph)
+            await self.supabase.from_("user_knowledge_graph").insert({
+                "user_id": user_id,
+                "graph_snapshot": snapshot,
+                "version": version + 1,
+                "entity_count": graph.number_of_nodes(),
+                "relationship_count": graph.number_of_edges(),
+            }).execute()
+            return True
+        except Exception as e:
+            logger.error("graph.save.failed", user_id=user_id, version=version, error=str(e))
+            return False
+```
+
+### Consistency Recovery
+
+```python
+class GraphConsistencyChecker:
+    """Validate graph integrity and repair inconsistencies."""
+
+    async def check_and_repair(self, user_id: str) -> dict:
+        """Run consistency checks and auto-repair issues."""
+        graph = await self._load_graph(user_id)
+        issues = []
+
+        # Check 1: Orphan edges (edge referencing non-existent node)
+        for edge in graph.edges():
+            if not graph.has_node(edge[0]) or not graph.has_node(edge[1]):
+                graph.remove_edge(edge[0], edge[1])
+                issues.append(f"Removed orphan edge: {edge}")
+
+        # Check 2: Duplicate nodes
+        seen = set()
+        for node in list(graph.nodes()):
+            if node in seen:
+                graph.remove_node(node)
+                issues.append(f"Removed duplicate node: {node}")
+            seen.add(node)
+
+        # Check 3: Stale entities (referencing deleted source records)
+        for node in list(graph.nodes()):
+            if ":" in node:
+                source_type, source_id = node.split(":", 1)
+                if source_type in ("task", "goal", "course"):
+                    exists = await self._check_record_exists(source_type, source_id)
+                    if not exists:
+                        graph.remove_node(node)
+                        issues.append(f"Removed stale entity: {node}")
+
+        return {"repaired": len(issues), "issues": issues, "graph": graph}
+```
+
+---
+
+## Performance
+
+### Graph Query Latency at Scale
+
+| Operation | 100 Entities | 1,000 Entities | 10,000 Entities | Degradation Factor |
+|---|---|---|---|---|
+| Load graph (JSON deserialize) | 2ms | 15ms | 150ms | O(n) |
+| Build graph from database | 50ms | 500ms | 5,000ms | O(n) |
+| Path finding (shortest_path) | 1ms | 5ms | 50ms | O(V+E) |
+| Community detection | 10ms | 100ms | 2,000ms | O(V log V) |
+| Degree centrality | 1ms | 5ms | 50ms | O(V) |
+| Impact trace (2 hops) | 2ms | 10ms | 100ms | O(d^2) |
+| Skill gap analysis | 1ms | 3ms | 20ms | O(k) |
+| JSON serialization | 1ms | 10ms | 100ms | O(V+E) |
+| Save snapshot to Supabase | 10ms | 50ms | 500ms | O(n) |
+
+### Indexing Strategy
+
+```python
+# packages/ai/knowledge_graph/indexing.py
+class GraphIndexManager:
+    """Maintain auxiliary indexes for fast graph operations."""
+
+    def __init__(self):
+        self.indexes = {}
+
+    async def build_indexes(self, graph: nx.Graph):
+        """Build all auxiliary indexes after graph construction."""
+        start = time.time()
+
+        # Index 1: Entity type index (for type-filtered queries)
+        type_index = defaultdict(list)
+        for node, data in graph.nodes(data=True):
+            type_index[data.get("type", "Unknown")].append(node)
+        self.indexes["type_index"] = dict(type_index)
+
+        # Index 2: Relationship type index (for relation-filtered queries)
+        rel_index = defaultdict(list)
+        for u, v, data in graph.edges(data=True):
+            rel_index[data.get("type", "related")].append((u, v))
+        self.indexes["rel_index"] = dict(rel_index)
+
+        # Index 3: Label text index (for search)
+        label_index = {}
+        for node, data in graph.nodes(data=True):
+            label = data.get("label", "").lower()
+            for word in label.split():
+                if word not in label_index:
+                    label_index[word] = []
+                label_index[word].append(node)
+        self.indexes["label_index"] = label_index
+
+        logger.info("graph.indexes.built", duration_ms=(time.time() - start) * 1000)
+
+    def search_by_label(self, query: str) -> list[str]:
+        """Fast label search using pre-built text index."""
+        words = query.lower().split()
+        if not words or "label_index" not in self.indexes:
+            return []
+        results = set(self.indexes["label_index"].get(words[0], []))
+        for word in words[1:]:
+            results &= set(self.indexes["label_index"].get(word, []))
+        return list(results)
+```
+
+### Performance Optimization Recommendations
+
+| Technique | Improvement | Implementation Complexity | When to Apply |
+|---|---|---|---|
+| Lazy graph loading (load on first query) | 100% reduction in startup cost | Low | Always |
+| Incremental graph updates (no full rebuild) | 10x faster for single changes | Medium | Production |
+| Cache query results (TTL: 5 min) | 5x throughput for repeated queries | Low | High-traffic deployments |
+| Async relationship builder | 3x faster build | Medium | Large graphs (> 1K entities) |
+| Graph pruning (archive entities > 90 days stale) | 30% size reduction | Medium | Periodic maintenance |
+| Edge-weight-based path finding | More relevant paths | Medium | Insight quality |
+
+---
+
+## Monitoring
+
+### Graph Health Metrics
+
+| Metric | Type | Description | Alert Threshold |
+|---|---|---|---|
+| `graph.entity_count` | Gauge | Number of entities per user | N/A (monitor trend) |
+| `graph.relationship_count` | Gauge | Number of relationships per user | N/A (monitor trend) |
+| `graph.density` | Gauge | Edge count / (Node count * (Node count - 1)) | > 0.3 (too dense, likely errors) |
+| `graph.build_duration_ms` | Histogram | Time to build/refresh graph | > 5,000ms |
+| `graph.query_duration_ms` | Histogram | Time to execute graph queries | > 500ms |
+| `graph.save_duration_ms` | Histogram | Time to persist snapshot | > 1,000ms |
+| `graph.entity_extraction_rate` | Counter | Entities extracted per source | N/A |
+| `graph.stale_entity_cleanup` | Counter | Entities removed due to staleness | N/A |
+| `graph.error_rate` | Counter | Graph operation errors | > 5% |
+
+### Refresh Cadence Tracking
+
+```python
+# packages/ai/knowledge_graph/monitoring.py
+class GraphRefreshMonitor:
+    """Track graph refresh cadence and health."""
+
+    async def record_refresh(self, user_id: str, trigger: str, duration_ms: int, entities: int, relationships: int):
+        """Record a graph refresh event for monitoring."""
+        await self.supabase.from_("graph_refresh_log").insert({
+            "user_id": user_id,
+            "trigger": trigger,           # message, cron, api, manual
+            "duration_ms": duration_ms,
+            "entities_found": entities,
+            "relationships_found": relationships,
+            "success": True,
+        }).execute()
+
+    async def get_refresh_health(self, user_id: str) -> dict:
+        """Get graph refresh health summary for a user."""
+        logs = await self.supabase.from_("graph_refresh_log")\
+            .select("*")\
+            .eq("user_id", user_id)\
+            .order("created_at", desc=True)\
+            .limit(20)\
+            .execute()
+
+        if not logs.data:
+            return {"status": "never_refreshed"}
+
+        recent = logs.data[:10]
+        avg_duration = sum(l["duration_ms"] for l in recent) / len(recent)
+        success_rate = sum(1 for l in recent if l["success"]) / len(recent)
+
+        return {
+            "status": "healthy" if success_rate > 0.9 else "degraded",
+            "last_refresh": logs.data[0]["created_at"],
+            "avg_duration_ms": avg_duration,
+            "success_rate": success_rate,
+            "total_refreshes": len(logs.data),
+        }
+```
+
+### Dashboard Panels
+
+A dedicated Grafana panel for graph health:
+
+```
+|-------------------------------------------------------|
+| Graph Entity Count (per user, avg)                    |
+| Line: 7-day trend                                     |
+| Current: 45.2 entities/user   Trend: +12% vs prev wk |
+|-------------------------------------------------------|
+| Graph Build Latency (p50/p95/p99)                     |
+| Line: 24h timeline                                    |
+| P50: 120ms  P95: 450ms  P99: 1800ms                   |
+|-------------------------------------------------------|
+| Graph Refresh Success Rate                            |
+| Gauge: 96.2%                                          |
+|-------------------------------------------------------|
+| Top Graph Query Types                                 |
+| Bar: path_finding (42%), centrality (28%), gap (20%)  |
+|-------------------------------------------------------|
+```
+
+---
+
+## Integration with Embedding / Vector System
+
+The knowledge graph and vector embedding system are complementary and deeply integrated:
+
+### Hybrid Search with Graph Boost
+
+```python
+# packages/ai/knowledge_graph/hybrid_search.py
+class GraphEnhancedSearch:
+    """Combine vector similarity with graph connectivity for ranked retrieval."""
+
+    async def search(self, query: str, user_id: str, top_k: int = 10) -> list[dict]:
+        """Hybrid search: vector similarity boosted by graph centrality."""
+        # 1. Get vector search results (from embeddings table)
+        vector_results = await vector_search(query, user_id, top_k * 2)
+
+        # 2. Load user's knowledge graph
+        graph = await self.load_user_graph(user_id)
+
+        # 3. Boost results that are more connected in the graph
+        centrality = nx.degree_centrality(graph) if graph.number_of_nodes() > 0 else {}
+
+        for result in vector_results:
+            node_id = self._to_node_id(result)
+            if node_id in centrality:
+                result["score"] = result.get("score", 0) * (1 + centrality[node_id] * 0.5)
+                result["graph_boost"] = centrality[node_id]
+
+            # Add graph context
+            if node_id in graph:
+                neighbors = list(graph.neighbors(node_id))[:5]
+                result["graph_neighbors"] = [
+                    {"id": n, "label": graph.nodes[n].get("label", ""), "type": graph.nodes[n].get("type", "")}
+                    for n in neighbors
+                ]
+
+        # 4. Re-rank and return
+        vector_results.sort(key=lambda x: x.get("score", 0), reverse=True)
+        return vector_results[:top_k]
+```
+
+### Cross-System Data Flow
+
+```mermaid
+graph TD
+    UDATA["User Data (Supabase Tables)"] --> EMBED["Embedding Pipeline<br/>nomic-embed-text -> 768d"]
+    UDATA --> EXTRACT["Entity Extraction<br/>Structured + Unstructured"]
+    EMBED --> VSTORE["Vector Store (pgvector)<br/>Semantic Search"]
+    EXTRACT --> KGRAPH["Knowledge Graph (NetworkX)<br/>Relationship Mapping"]
+    VSTORE --> SEARCH["Semantic Search<br/>Cosine Similarity"]
+    KGRAPH --> QUERY["Graph Query<br/>Path Finding + Centrality"]
+    SEARCH --> FUSION["Hybrid Fusion<br/>Vector Score * Graph Boost"]
+    QUERY --> FUSION
+    FUSION --> ARIA["ARIA Response<br/>Ranked + Explained"]
+
+    style UDATA fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style VSTORE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style KGRAPH fill:#13151A,stroke:#818CF8,color:#F1F5F9
+    style FUSION fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style ARIA fill:#6366F1,stroke:#818CF8,color:#F1F5F9
+```
+
+### Shared Entity Resolution
+
+Entities extracted for the knowledge graph are also tagged with the same IDs used in the embedding system:
+
+```python
+class EntityResolver:
+    """Ensure consistent entity IDs between graph and vector systems."""
+
+    def resolve_entity_id(self, source_table: str, source_id: str) -> str:
+        """Generate a consistent entity ID used in both systems."""
+        return f"{source_table[:-1]}:{source_id}"  # e.g., task:abc-123
+
+    def resolve_embedding_id(self, source_table: str, source_id: str) -> str:
+        """Generate the embedding record ID for cross-reference."""
+        return f"{source_table}:{source_id}"
+
+    async def get_entity_with_embeddings(
+        self, user_id: str, entity_id: str
+    ) -> dict:
+        """Fetch both graph entity data and its vector embeddings."""
+        graph = await load_user_graph(user_id)
+        node_data = graph.nodes.get(entity_id, {})
+
+        embeddings = await supabase.from_("document_embeddings")\
+            .select("content, embedding")\
+            .eq("user_id", user_id)\
+            .eq("source_record_id", entity_id.split(":")[-1])\
+            .execute()
+
+        return {
+            "graph_data": node_data,
+            "embeddings": embeddings.data,
+            "entity_id": entity_id,
+        }
+```
+
+### Unified Refresh Job
+
+A single cron job refreshes both systems in sequence:
+
+```python
+async def unified_refresh(user_id: str):
+    """Refresh both knowledge graph and embeddings for a user."""
+    # Phase 1: Update graph
+    graph_builder = GraphBuilder()
+    graph = await graph_builder.build_graph(user_id)
+    await graph_builder.save_snapshot(user_id, graph)
+
+    # Phase 2: Update embeddings (only for tables that changed)
+    indexer = EmbeddingIndexer()
+    await indexer.index_user(user_id)
+
+    # Phase 3: Cross-reference validation
+    resolver = EntityResolver()
+    issues = await resolver.validate_consistency(user_id, graph)
+    if issues:
+        logger.warning("graph.embedding.inconsistency", user_id=user_id, issues=issues)
+
+    logger.info("graph.embedding.refresh.complete", user_id=user_id)
+```
+
+---
+
+## Related Documents
+
+| Document | Description | Cross-Reference |
+|---|---|---|
+| [Embeddings.md](Embeddings.md) | Embedding generation and storage | Shared vector representation for graph nodes |
+| [RAGArchitecture.md](RAGArchitecture.md) | Retrieval-augmented generation | Graph-enhanced retrieval for context assembly |
+| [22_MemoryArchitecture.md](22_MemoryArchitecture.md) | Memory system architecture | Graph as long-term semantic memory store |
+| [SemanticMemory.md](SemanticMemory.md) | Semantic memory implementation | Entity relationships stored in knowledge graph |
+| [MCP-Architecture.md](MCP-Architecture.md) | MCP server architecture | Graph query tools exposed via MCP |
+| [docs/engineering/15_Database.md](../engineering/15_Database.md) | Database schema | Supabase tables feeding entity extraction |
+| [docs/ai/20_Agent.md](20_Agent.md) | AI agent specification | Agents consuming graph insights |

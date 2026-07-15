@@ -1,8 +1,19 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | AI-PRM-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+---
+
 # 21. Prompts Library
 
 ## Overview
 
-85+ ready-to-use prompts for ARIA and Claude. Sourced from the Second Brain OS Bible (Chapter 15) and extended for production use. Organized into two sections: **User Prompts** (speak to ARIA) and **Build Prompts** (use with Claude while developing).
+85+ ready-to-use prompts for ARIA and Claude, plus 22 system prompt files (2 system + 18 agent + 2 templates) including 8 skill-related prompts. Sourced from the Second Brain OS Bible (Chapter 15) and extended for production use. Organized into two sections: **User Prompts** (speak to ARIA) and **Build Prompts** (use with Claude while developing). For the full system prompt inventory, see `docs/ai/PromptVersioning.md`.
 
 ---
 
@@ -202,7 +213,7 @@ Use these prompts with Claude.ai while developing each phase of the system.
 
 13. Write a sleep quality score algorithm that takes duration and self-rating and outputs a 0-100 score with explanations.
 
-14. Write a cron job scheduler in Python using APScheduler that triggers all 8 agents at their respective times.
+14. Write a cron job scheduler in Python using APScheduler that triggers all 11 agents at their respective times.
 ```
 
 ### AI Agents

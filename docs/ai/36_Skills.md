@@ -1,3 +1,14 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | AI-SKL-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+---
+
 # 36. Skills
 
 ## Overview

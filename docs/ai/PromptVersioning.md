@@ -1,22 +1,22 @@
-# Prompt Versioning Strategy
+﻿# Prompt Versioning Strategy
 
 ## Document Control
 
 | Property | Value |
 |---|---|
-| **Document ID** | DOC-AI-005 |
+| **Document ID** | AI-PVR-001 |
 | **Version** | 1.0.0 |
 | **Status** | Draft |
 | **Author** | AI Engineering Team |
 | **Last Updated** | 2026-06-11 |
-| **Approved By** | — |
-| **Supersedes** | — |
+| **Approved By** | â€” |
+| **Supersedes** | `docs/operations/PromptVersioning.md` (deleted 2026-07-11 â€” duplicate of this document) |
 
 ---
 
 ## 1. Executive Summary
 
-Prompt versioning is the practice of managing changes to AI prompts with the same rigor as application code. In Second Brain OS, every interaction with ARIA's agents — from daily briefings to opportunity scanning to memory consolidation — is driven by a system prompt. An unversioned change to a prompt can silently alter agent behavior, degrade output quality, or break downstream consumers that depend on a specific response format.
+Prompt versioning is the practice of managing changes to AI prompts with the same rigor as application code. In Second Brain OS, every interaction with ARIA's agents â€” from daily briefings to opportunity scanning to memory consolidation â€” is driven by a system prompt. An unversioned change to a prompt can silently alter agent behavior, degrade output quality, or break downstream consumers that depend on a specific response format.
 
 **Why it matters:**
 
@@ -34,14 +34,14 @@ This document defines the complete prompt versioning lifecycle, storage strategy
 Every prompt in the system follows a defined lifecycle. No prompt may be used in production outside this flow.
 
 ```
-  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌────────────┐    ┌──────────┐    ┌────────────┐
-  │  DRAFT   │───▶│   TEST   │───▶│  REVIEW  │───▶│  VERSIONED │───▶│ DEPLOYED │───▶│ DEPRECATED │
-  │          │    │          │    │          │    │            │    │          │    │            │
-  │ Author   │    │ CI runs  │    │ Peer     │    │ Tagged in  │    │ Active   │    │ Replaced   │
-  │ creates  │    │ tests    │    │ review   │    │ git +      │    │ in prod  │    │ by newer   │
-  │ prompt   │    │ + manual │    │ + sign-  │    │ registry   │    │          │    │ version    │
-  └──────────┘    └──────────┘    │ off      │    └────────────┘    └──────────┘    └────────────┘
-                                  └──────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚  DRAFT   â”‚â”€â”€â”€â–¶â”‚   TEST   â”‚â”€â”€â”€â–¶â”‚  REVIEW  â”‚â”€â”€â”€â–¶â”‚  VERSIONED â”‚â”€â”€â”€â–¶â”‚ DEPLOYED â”‚â”€â”€â”€â–¶â”‚ DEPRECATED â”‚
+  â”‚          â”‚    â”‚          â”‚    â”‚          â”‚    â”‚            â”‚    â”‚          â”‚    â”‚            â”‚
+  â”‚ Author   â”‚    â”‚ CI runs  â”‚    â”‚ Peer     â”‚    â”‚ Tagged in  â”‚    â”‚ Active   â”‚    â”‚ Replaced   â”‚
+  â”‚ creates  â”‚    â”‚ tests    â”‚    â”‚ review   â”‚    â”‚ git +      â”‚    â”‚ in prod  â”‚    â”‚ by newer   â”‚
+  â”‚ prompt   â”‚    â”‚ + manual â”‚    â”‚ + sign-  â”‚    â”‚ registry   â”‚    â”‚          â”‚    â”‚ version    â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ off      â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 | Stage | Description | Gate |
@@ -50,7 +50,7 @@ Every prompt in the system follows a defined lifecycle. No prompt may be used in
 | **Test** | Automated tests run against the prompt: format validation, example execution, regression checks | All tests pass |
 | **Review** | Pull request with tested prompt. Peer review of wording, variable usage, output schema, and edge cases | At least 1 approval |
 | **Versioned** | Prompt is assigned a semantic version, moved to `prompts/versioned/`, and committed to main | Version tag applied |
-| **Deployed** | Prompt is live in production — served by the Prompt Registry to all agents | Registry activated |
+| **Deployed** | Prompt is live in production â€” served by the Prompt Registry to all agents | Registry activated |
 | **Deprecated** | A newer version exists. Old version is retained for traceability but not used for new sessions | Registry marks `status: deprecated` |
 
 **Exceptions**: Hotfix prompts (PATCH-level changes to fix broken output format) may skip the REVIEW stage with explicit engineering lead approval, but must still pass TEST and be VERSIONED.
@@ -65,31 +65,33 @@ All prompts live in the `prompts/` directory at the monorepo root, alongside `pa
 
 ```
 prompts/
-├── drafts/                          # Work-in-progress prompts (not yet versioned)
-│   ├── briefing-v2-test.yaml
-│   └── memory-summarizer-experimental.yaml
-├── versioned/                       # Released prompts (immutable once committed)
-│   ├── briefing/
-│   │   ├── v1.0.0.yaml
-│   │   ├── v1.1.0.yaml
-│   │   └── v2.0.0.yaml
-│   ├── memory-summarizer/
-│   │   ├── v1.0.0.yaml
-│   │   └── v1.1.0.yaml
-│   ├── learning-tutor/
-│   │   └── v1.0.0.yaml
-│   ├── opportunity-scanner/
-│   │   └── v1.0.0.yaml
-│   └── habit-coach/
-│       └── v1.0.0.yaml
-├── registry.yaml                    # Central catalog of all prompts
-├── registry.schema.json             # JSON Schema for registry validation
-└── tests/                           # Prompt test suites
-    ├── briefing.test.yaml
-    ├── memory-summarizer.test.yaml
-    └── helpers/
-        └── test-runner.py
+â”œâ”€â”€ drafts/                          # Work-in-progress prompts (not yet versioned)
+â”‚   â”œâ”€â”€ briefing-v2-test.yaml
+â”‚   â””â”€â”€ memory-summarizer-experimental.yaml
+â”œâ”€â”€ versioned/                       # Released prompts (immutable once committed)
+â”‚   â”œâ”€â”€ briefing/
+â”‚   â”‚   â”œâ”€â”€ v1.0.0.yaml
+â”‚   â”‚   â”œâ”€â”€ v1.1.0.yaml
+â”‚   â”‚   â””â”€â”€ v2.0.0.yaml
+â”‚   â”œâ”€â”€ memory-summarizer/
+â”‚   â”‚   â”œâ”€â”€ v1.0.0.yaml
+â”‚   â”‚   â””â”€â”€ v1.1.0.yaml
+â”‚   â”œâ”€â”€ learning-tutor/
+â”‚   â”‚   â””â”€â”€ v1.0.0.yaml
+â”‚   â”œâ”€â”€ opportunity-scanner/
+â”‚   â”‚   â””â”€â”€ v1.0.0.yaml
+â”‚   â””â”€â”€ habit-coach/
+â”‚       â””â”€â”€ v1.0.0.yaml
+â”œâ”€â”€ registry.yaml                    # Central catalog of all prompts
+â”œâ”€â”€ registry.schema.json             # JSON Schema for registry validation
+    â””â”€â”€ tests/                           # Prompt test suites
+    â”œâ”€â”€ briefing.test.yaml
+    â”œâ”€â”€ memory-summarizer.test.yaml
+    â””â”€â”€ helpers/
+        â””â”€â”€ test-runner.py
 ```
+
+**Current inventory**: 22 prompt files â€” 2 system, 18 agent (10 core + 8 skill-related), and 2 template prompts. The 8 skill-related agent prompts are: skill_assessment, skill_career, skill_evidence, skill_intelligence, skill_market, skill_opportunity, skill_recommendation, and skill_roadmap. These live under `prompts/agents/` alongside the 10 core agent prompts.
 
 ## Prompt Lifecycle States
 
@@ -244,7 +246,7 @@ Input:
 Output:
 {
   "greeting": "Good morning, Alex! You had solid sleep last night.",
-  "summary": "You have 3 tasks today. Your LeetCode goal is at 45% — keep the momentum.",
+  "summary": "You have 3 tasks today. Your LeetCode goal is at 45% â€” keep the momentum.",
   "top_tasks": ["Complete DSA assignment", "Review pull request", "Plan weekly budget"],
   "sleep_note": null,
   "goal_progress": [{"goal_name": "LeetCode 100", "progress_pct": 45}],
@@ -277,7 +279,7 @@ Output:
 | Context | Yes | Dynamic variables injected at runtime. Every variable used here must be declared in `input_variables` frontmatter. |
 | Instructions | Yes | Ordered list of behavioral rules. Changes here typically constitute a MINOR version bump. |
 | Output Format | Yes | JSON schema that the prompt must produce. Breaking changes to the schema require a MAJOR version bump. |
-| Examples | Recommended | 1-3 worked examples showing input → output. Zero-shot prompts benefit greatly from examples. Crucially, examples themselves must match the current output format. |
+| Examples | Recommended | 1-3 worked examples showing input â†’ output. Zero-shot prompts benefit greatly from examples. Crucially, examples themselves must match the current output format. |
 
 ### Variable Interpolation
 
@@ -290,7 +292,7 @@ resolved_prompt = prompt_text.format(**context_variables)
 response = await ollama_client.generate(model=prompt.metadata.model, prompt=resolved_prompt)
 ```
 
-If a required variable is missing at runtime, the agent must raise a `PromptVariableError` — not silently render an empty string.
+If a required variable is missing at runtime, the agent must raise a `PromptVariableError` â€” not silently render an empty string.
 
 ---
 
@@ -620,8 +622,8 @@ New prompt versions are not deployed to all users at once. Instead, they follow 
 |---|---|---|---|
 | **Canary** | Internal team (developers) | 24 hours | Manual review, format checks |
 | **Beta** | opt-in users (5% of users) | 48 hours | Automated format checks, error rate monitoring, latency monitoring |
-| **Gradual** | 25% → 50% → 75% of users | 6 hours per tier | Error rate < 0.1%, latency < 2x baseline, user feedback score > 3.5/5 |
-| **Full** | 100% of users | — | Continuous monitoring active |
+| **Gradual** | 25% â†’ 50% â†’ 75% of users | 6 hours per tier | Error rate < 0.1%, latency < 2x baseline, user feedback score > 3.5/5 |
+| **Full** | 100% of users | â€” | Continuous monitoring active |
 
 ### Canary Deployment
 
@@ -649,7 +651,7 @@ If a deployed prompt version causes errors, the rollback is a single configurati
 registry.set_deployed_version("briefing-daily", "1.0.0")
 
 # This changes one value in Supabase or a config file
-# No code deploy needed — the registry is hot-reloaded
+# No code deploy needed â€” the registry is hot-reloaded
 ```
 
 The rollback mechanism is tested monthly in non-production environments.
@@ -775,7 +777,7 @@ Messages to summarize: {messages}
 4. Detect new or changed preferences (e.g., "User prefers morning study for DSA").
 5. List action items the user committed to (e.g., "Will complete assignment by Friday").
 6. Extract named entities: people mentioned, topics discussed, tools/referenced.
-7. If the conversation is empty or trivial, return a minimal record — do not fabricate.
+7. If the conversation is empty or trivial, return a minimal record â€” do not fabricate.
 
 # Output Format
 {
