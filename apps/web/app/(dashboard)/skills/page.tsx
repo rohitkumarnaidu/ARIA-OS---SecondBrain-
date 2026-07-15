@@ -109,7 +109,10 @@ export default function SkillsPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.03 }}
                         className="flex items-center justify-between p-3 rounded-lg bg-background-card hover:bg-background-card-hover transition-colors cursor-pointer border border-border-default"
+                        role="button"
+                        tabIndex={0}
                         onClick={() => setSelectedSkillId(selectedSkillId === skill.skill_id ? null : skill.skill_id)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedSkillId(selectedSkillId === skill.skill_id ? null : skill.skill_id) } }}
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
