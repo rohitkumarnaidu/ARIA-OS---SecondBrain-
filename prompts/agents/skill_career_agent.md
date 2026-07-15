@@ -6,6 +6,8 @@ max_tokens: 4096
 temperature: 0.3
 description: Analyze career readiness and recommend career paths based on skill inventory.
 tags: [skills, career, readiness]
+approved_by: developer
+review_cycle: weekly
 last_updated: 2026-06-24
 ---
 

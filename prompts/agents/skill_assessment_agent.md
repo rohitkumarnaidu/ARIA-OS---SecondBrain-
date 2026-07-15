@@ -6,6 +6,8 @@ max_tokens: 4096
 temperature: 0.3
 description: Assess user skill levels, identify gaps, and recommend next milestones.
 tags: [skills, assessment, gap-analysis]
+approved_by: developer
+review_cycle: weekly
 last_updated: 2026-06-24
 ---
 
