@@ -17,4 +17,5 @@ export interface Opportunity {
   matchBreakdown: MatchBreakdown[]
   url?: string
   createdAt: string
+  deadline?: string
 }
