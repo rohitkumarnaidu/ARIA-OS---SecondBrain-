@@ -1,8 +1,116 @@
-from typing import List
+from typing import List, Dict
 from datetime import datetime, timedelta
 from config.core.supabase import get_supabase_client
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
+
+
+def _parse_time_range(task: dict) -> tuple:
+    start = task.get("start_time") or task.get("scheduled_start")
+    end = task.get("end_time") or task.get("scheduled_end")
+    return start, end
+
+
+def detect_schedule_conflicts(tasks: List[dict]) -> List[dict]:
+    conflicts = []
+    for i, a in enumerate(tasks):
+        start_a, end_a = _parse_time_range(a)
+        if not start_a or not end_a:
+            continue
+        for b in tasks[i + 1:]:
+            start_b, end_b = _parse_time_range(b)
+            if not start_b or not end_b:
+                continue
+            if start_a < end_b and start_b < end_a:
+                conflicts.append({
+                    "task_a_id": a.get("id"),
+                    "task_a_title": a.get("title"),
+                    "task_b_id": b.get("id"),
+                    "task_b_title": b.get("title"),
+                    "overlap_start": max(start_a, start_b),
+                    "overlap_end": min(end_a, end_b),
+                })
+    return conflicts
+
+
+def detect_circular_dependencies(tasks: List[dict]) -> List[List[str]]:
+    dep_map: Dict[str, str] = {}
+    for task in tasks:
+        dep = task.get("dependency_id") or task.get("depends_on")
+        if dep:
+            dep_map[task["id"]] = dep
+
+    circular: List[List[str]] = []
+    visited_global: set = set()
+
+    def dfs(node: str, path: list, visited: set):
+        if node in visited:
+            cycle_start = path.index(node)
+            cycle = path[cycle_start:] + [node]
+            circular.append(cycle)
+            return
+        if node in visited_global:
+            return
+        visited.add(node)
+        visited_global.add(node)
+        path.append(node)
+        if node in dep_map:
+            dfs(dep_map[node], path, visited)
+        path.pop()
+        visited.discard(node)
+
+    for task in tasks:
+        tid = task.get("id")
+        if tid and tid not in visited_global:
+            dfs(tid, [], set())
+
+    return circular
+
+
+def calculate_priority_score(task: dict, user_context: dict) -> int:
+    score = 50
+    priority_map = {"critical": 20, "urgent": 15, "high": 10, "medium": 5, "low": 0}
+    score += priority_map.get(task.get("priority", "medium"), 5)
+
+    due_date = task.get("due_date")
+    if due_date:
+        try:
+            due = datetime.fromisoformat(due_date) if isinstance(due_date, str) else due_date
+            now = datetime.now()
+            hours_left = (due - now).total_seconds() / 3600
+            if hours_left < 0:
+                score += 25
+            elif hours_left < 6:
+                score += 20
+            elif hours_left < 24:
+                score += 15
+            elif hours_left < 72:
+                score += 10
+            elif hours_left < 168:
+                score += 5
+        except (ValueError, TypeError):
+            pass
+
+    goal_ids = set(user_context.get("active_goal_ids", []))
+    task_goal = task.get("goal_id")
+    if task_goal and task_goal in goal_ids:
+        score += 15
+
+    effort = task.get("estimated_minutes", 60)
+    if effort <= 15:
+        score += 10
+    elif effort <= 30:
+        score += 5
+    elif effort >= 120:
+        score -= 5
+
+    sleep_quality = user_context.get("sleep_quality", 70)
+    if sleep_quality < 50:
+        score -= 10
+    elif sleep_quality < 65:
+        score -= 5
+
+    return max(0, min(100, score))
 
 
 async def breakdown_task(user_id: str, task_id: str) -> List[dict]:
