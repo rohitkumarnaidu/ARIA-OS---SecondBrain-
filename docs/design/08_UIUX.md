@@ -1,11 +1,13 @@
 # UI/UX Specification — Second Brain OS
 
+## Document Control
+
 | Field | Value |
 |---|---|
 | Document ID | DSG-UIUX-008 |
-| Version | 3.0.0 |
+| Version | 3.1.0 |
 | Status | Active |
-| Last Updated | 2026-06-11 |
+| Last Updated | 2026-07-11 |
 | Classification | Internal — Design Reference |
 | Target Audience | Designers, Frontend Developers, QA Engineers |
 
@@ -925,14 +927,500 @@ Before marking a design as "Ready for Dev", the designer must verify:
 
 ---
 
+## 17. Visual Design Direction
+
+### 17.1 Design Identity
+
+| Attribute | Direction |
+|---|---|
+| **Genre** | Cyberpunk / Tech-noir |
+| **Mood** | Focused, powerful, introspective |
+| **Color temperature** | Cool (dark blues, indigos) with warm neon accents |
+| **Texture** | Subtle noise, scan lines, grid overlays |
+| **Lighting** | Self-illuminated (neon glow on dark) |
+| **Typography** | Geometric sans (Syne) for display, humanist sans (DM Sans) for body |
+| **Shapes** | Sharp corners (12px radius), clean lines, minimal ornamentation |
+| **Motion** | Purposeful, 60fps, micro-interactions that communicate state |
+
+### 17.2 Mood Board
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  VISUAL REFERENCES                                          │
+│                                                             │
+│  Color: Blade Runner 2049 palette — deep blacks, neon teal, │
+│         warm orange accents                                 │
+│                                                             │
+│  Typography: Arcane (Netflix) title cards — bold geometric  │
+│              sans, tracking, uppercase headlines            │
+│                                                             │
+│  UI: Ghost in the Shell SAC_2045 interfaces — glass         │
+│      morphism, holographic overlays, grid-based layouts     │
+│                                                             │
+│  Data viz: Minority Report — floating data points,          │
+│            translucent overlays, real-time feeds            │
+│                                                             │
+│  Texture: Tron: Legacy — light trails, neon edges,          │
+│           dark reflective surfaces                          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 17.3 Emotional Design Goals
+
+| User State | Design Response |
+|---|---|
+| Overwhelmed (many tasks) | Clean, spaced layout with clear hierarchy. Progress bars show completion. |
+| Focused (deep work) | Minimal UI, Pomodoro timer prominent, distractions hidden. |
+| Curious (exploring features) | Interactive onboarding, progressive disclosure, tooltips. |
+| Accomplished (task complete) | Celebratory micro-animation (confetti), streak updates. |
+| Tired (late night) | Dark theme, reduced contrast on secondary elements, warm-toned accents. |
+| Lost (new user) | Guided flows, contextual help, clear CTAs. |
+
+---
+
+## 18. Design Principles
+
+| # | Principle | Definition | How We Apply It |
+|---|---|---|---|
+| 1 | **Hierarchy** | Every screen has one primary action. Visual weight communicates importance. | Card titles are Syne bold; secondary text is DM Sans normal. Primary buttons are the most saturated color on the page. |
+| 2 | **Contrast** | Differentiate elements through color, size, spacing, and texture — never rely on color alone. | Task priority uses icon + color + label (e.g., "!" icon + red + "Urgent"). Interactive elements have distinct hover states. |
+| 3 | **Consistency** | Similar elements look and behave similarly across the entire application. | All cards share the same padding (p-5), border radius (xl/16px), and background. All buttons share the same height (44px) and radius (lg/12px). |
+| 4 | **Feedback** | Every action produces a visible, immediate response. | Button press scales to 0.97. Task completion strikes through text. Form errors shake the input. Toast appears on every mutation. |
+| 5 | **Tolerance** | Prevent errors before they happen. When errors occur, make recovery easy. | Undo toasts (5s window). Confirmation on destructive actions. Auto-save on forms. Input validation with clear messages. |
+| 6 | **Accessibility** | No feature is complete until it's accessible. | WCAG 2.1 AA minimum. Keyboard navigable. Screen reader compatible. Reduced motion respected. |
+| 7 | **Performance as UX** | Perceived performance is a design concern, not just an engineering one. | Skeleton screens under 200ms. Optimistic UI updates. Route preloading. 60fps animations. |
+
+---
+
+## 19. Layout System
+
+### 19.1 Architecture Overview
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                      Pages (16 modules)                       │
+│  Composed via PageLayout + StateHandler + DataView pattern    │
+├───────────────────────────────────────────────────────────────┤
+│                   CSS Grid Framework                          │
+│  12-column grid | CSS Grid auto-fill | Flexbox compositions  │
+├───────────────────────────────────────────────────────────────┤
+│                   Spacing Scale (4px base)                    │
+│  0(0) | 1(4) | 2(8) | 3(12) | 4(16) | 5(20) | 6(24) | ...  │
+├───────────────────────────────────────────────────────────────┤
+│               Container & Max-Width System                    │
+│  App max: 1280px | Content max: 720px | Sidebar: 240px       │
+├───────────────────────────────────────────────────────────────┤
+│              Responsive Breakpoints (6 levels)                │
+│  xs(375) | sm(640) | md(768) | lg(1024) | xl(1280) | 2xl(1536)│
+└───────────────────────────────────────────────────────────────┘
+```
+
+### 19.2 CSS Grid Framework
+
+| Property | Value | Notes |
+|---|---|---|
+| Grid columns | 12 | Standard layout grid |
+| Column gap | 24px (gap-6) | Consistent across all grid uses |
+| Horizontal padding | 32px (px-8) on desktop, 16px (px-4) on mobile |
+| Max container width | 1280px | Applied to `.app-container` |
+| Content max width | 720px | For long-form reading (goals, briefing) |
+
+**Column Span Classes:**
+
+| Span | Class | Usage |
+|---|---|---|
+| Full | `col-span-12` | Dashboard briefing, full-width banners |
+| Two-thirds | `col-span-8` | Main content area with sidebar |
+| Half | `col-span-6` | Split layouts, side-by-side panels |
+| Third | `col-span-4` | Three-column card layouts |
+| Quarter | `col-span-3` | Four-column stat grid |
+
+### 19.3 Responsive Card Grid
+
+```css
+/* Primary card grid pattern */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Stat grid (4 columns on desktop, 2 on tablet, 1 on mobile) */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* Compact card grid for dense screens */
+.compact-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+```
+
+### 19.4 Dashboard Grid Layout
+
+```
+Desktop (1280px+):
+┌─────────────────────────────────────────────────────────────┐
+│  Daily Briefing                                 (col-span-12) │
+├──────────────┬──────────────┬──────────────┬────────────────┤
+│  Tasks Today │  Courses     │  Income       │  Streak        │
+│  (col-span-3)│  (col-span-3)│  (col-span-3) │  (col-span-3)  │
+├──────────────┴──────────────┼───────────────┴────────────────┤
+│  Activity Heatmap            │  Upcoming Deadlines           │
+│  (col-span-8)                │  (col-span-4)                 │
+├──────────────┬──────────────┴───────────────┬────────────────┤
+│  Quick Stats │  Recent Resources            │  Top Goal      │
+│  (col-span-3)│  (col-span-6)                │  (col-span-3)  │
+└──────────────┴──────────────────────────────┴────────────────┘
+```
+
+### 19.5 Spacing Scale
+
+Base unit: **4px**. All spacing values MUST be multiples of 4.
+
+| Token | Pixels | Tailwind | Usage |
+|---|---|---|---|
+| 0 | 0px | `gap-0` `p-0` | Remove spacing |
+| 1 | 4px | `gap-1` `p-1` | Tight inner paddings, icon gaps |
+| 2 | 8px | `gap-2` `p-2` | Stack spacing, tight gaps, sidebar items |
+| 3 | 12px | `gap-3` `p-3` | Button padding (vertical), list gaps |
+| 4 | 16px | `gap-4` `p-4` | Card padding (compact), dashboard stat gaps |
+| 5 | 20px | `gap-5` `p-5` | Card padding (default), card grid gap |
+| 6 | 24px | `gap-6` `p-6` | Section spacing, modal padding, column gap |
+| 7 | 28px | `gap-7` `p-7` | Page section gaps (optional) |
+| 8 | 32px | `gap-8` `p-8` | Page horizontal padding, sidebar width |
+| 10 | 40px | `gap-10` `p-10` | Large section separation |
+| 12 | 48px | `gap-12` `p-12` | Page section margins |
+| 16 | 64px | `gap-16` `p-16` | Major page sections |
+| 20 | 80px | `gap-20` `p-20` | Hero sections, extra-large spacing |
+
+### 19.6 Container and Layout Widths
+
+| Element | Width | Notes |
+|---|---|---|
+| App container | max-w-7xl (1280px) | Centered with auto margins |
+| Sidebar (desktop) | w-60 (240px) | Fixed position, full height |
+| Navbar content | max-w-7xl (1280px) | Centered within navbar |
+| Modal (default) | max-w-lg (512px) | Centered on viewport |
+| Modal (large) | max-w-2xl (672px) | For complex forms |
+| Modal (full screen) | 100vw x 100vh | Mobile only |
+| Toast | max-w-sm (384px) | Top-right position |
+| Dropdown menu | w-56 (224px) | Anchored to trigger |
+| Search bar (navbar) | max-w-md (448px) | Centered in navbar |
+| Content body | max-w-prose (720px) | Long-form reading |
+| Card (minimum) | min-w-[320px] | Card grid auto-fill |
+
+---
+
+## 20. Image Style Guide
+
+### 20.1 Image Types
+
+| Type | Format | Max Size | Usage |
+|---|---|---|---|
+| User avatar | JPEG/WebP | 200x200px, <50KB | Profile, navbar |
+| Course thumbnail | JPEG/WebP | 640x360px, <100KB | Course cards |
+| Resource preview | WebP | 1280x720px, <200KB | Resource cards |
+| Empty state illustration | SVG | 64x64px | Module empty states |
+| Custom illustration | SVG | Variable | Dashboard hero, branding |
+| Background texture | PNG/WebP | Full width, <50KB | Page backgrounds |
+
+### 20.2 Image Guidelines
+
+- All raster images MUST be served in WebP format with JPEG fallback
+- SVG MUST be optimized with SVGO (remove metadata, collapse groups)
+- Icons and illustrations MUST be monochromatic (currentColor fill where possible)
+- User-uploaded images MUST be processed server-side (resize, format convert)
+- Decorative images MUST have `aria-hidden="true"` and empty `alt=""`
+
+### 20.3 Image Fallbacks
+
+| Scenario | Fallback |
+|---|---|
+| Avatar not set | Initials in accent-primary circle |
+| Course thumbnail not available | Gradient placeholder (accent-primary to accent-secondary) |
+| Resource preview fails | File type icon (PDF, Video, Link, etc.) |
+| Image loading | Skeleton (card aspect ratio placeholder) |
+| Image error | Broken image icon with "Image not available" text |
+
+---
+
+## 21. Form Design
+
+### 21.1 Form Layout Patterns
+
+| Layout | Usage | Properties |
+|---|---|---|
+| Single column | Most forms (task, course, habit) | Max-width 480px, centered |
+| Two column | Settings, profile | 2-column grid, gap-6 |
+| Inline | Search, quick filters | Horizontal layout, items aligned |
+| Accordion | Long forms (goal, project) | Sections collapsible, one open at a time |
+| Stepped | Onboarding, setup wizard | Step indicator + content + prev/next |
+
+### 21.2 Input States
+
+#### Default
+```
+┌─────────────────────────────┐
+│  Label (text-secondary, sm) │
+│  ┌───────────────────────┐  │
+│  │ Placeholder text      │  │
+│  └───────────────────────┘  │
+│  Helper text (sm, tertiary) │
+└─────────────────────────────┘
+```
+
+#### Focus
+```
+┌─────────────────────────────┐
+│  Label (text-accent, sm)    │
+│  ┌───────────────────────┐  │
+│  │ Typed text            │  │
+│  └───────────────────────┘  │
+│  Helper text (sm, tertiary) │
+└─────────────────────────────┘
+```
+
+#### Error
+```
+┌─────────────────────────────┐
+│  Label (text-error, sm)     │
+│  ┌───────────────────────┐  │
+│  │ Typed text            │  │
+│  └───────────────────────┘  │
+│  ⚠ Error message (sm, err)  │
+└─────────────────────────────┘
+```
+
+#### Disabled
+```
+┌─────────────────────────────┐
+│  Label (text-disabled, sm)  │
+│  ┌───────────────────────┐  │
+│  │ Disabled text         │  │
+│  └───────────────────────┘  │
+│  Helper text (sm, disabled) │
+└─────────────────────────────┘
+```
+
+#### Filled (Success)
+```
+┌─────────────────────────────┐
+│  Label (text-secondary, sm) │
+│  ┌───────────────────────┐  │
+│  │ ✓ Valid input         │  │
+│  └───────────────────────┘  │
+│  (no helper text needed)    │
+└─────────────────────────────┘
+```
+
+### 21.3 Form Validation Rules
+
+| Validation | Timing | Message Style |
+|---|---|---|
+| Required field | On blur + submit | "[Field label] is required" |
+| Format validation | On blur | "Enter a valid [format]" |
+| Max length | On input (live) | Character counter: "25/200" |
+| Min length | On blur | "Must be at least X characters" |
+| Pattern match | On blur | Specific format instructions |
+| Async (unique check) | Debounced 500ms | "[Value] is already taken" |
+
+### 21.4 Form Submission
+
+| State | Button State | Feedback |
+|---|---|---|
+| Idle | Enabled | Normal |
+| Submitting | Spinner replaces icon, disabled | Inline spinner |
+| Success | Brief green flash, then reset | Toast "Saved successfully" |
+| Error | Re-enable, shake animation | Inline error message + toast |
+| Server error | Re-enable | Toast "Something went wrong" + retry |
+
+---
+
+## 22. Dark Mode Design Decisions
+
+### 22.1 Dark Mode Strategy
+
+| Decision | Implementation | Rationale |
+|---|---|---|
+| Always dark (v1) | `darkMode: 'class'`, body always has `dark` class | Primary users are students working late; light mode not needed |
+| No toggle (v1) | No light/dark switch | Single theme reduces complexity; light mode planned for v2 |
+| True black sparingly | #050607 for deepest surfaces | Avoids eye strain; true black used only for input fields |
+| Glass overlays | rgba white overlays on dark surfaces | Creates depth without light colors |
+| Neon glow | Box-shadow with accent colors | Replaces drop shadows (invisible on dark) |
+| Gradient backgrounds | Dual radial gradients on body | Adds texture without affecting readability |
+
+### 22.2 Dark Mode-Only Patterns
+
+| Pattern | Implementation |
+|---|---|
+| **Text shadows** | None (text on dark needs no shadow) |
+| **Box shadows** | Replace with glow effects (colored shadows) |
+| **Focus rings** | accent-primary ring, visible on all surfaces |
+| **Active states** | Scale down (0.97) instead of darkening |
+| **Borders** | Visible borders on all cards and sections (light gray #2A2E3F) |
+| **Skeleton loading** | Dark gray shimmer (#1A1D28 to #2A2E3F) |
+| **Error states** | Red border + red glow, not just color change |
+| **Disabled states** | Opacity 50% across all elements |
+
+### 22.3 Dark Mode Color Tokens
+
+All tokens are designed for dark backgrounds. No token maps to a light-equivalent in v1.
+
+| Token | Hex | Light Alternative (Future) |
+|---|---|---|
+| `bg-page` | #0A0B0F | #F8FAFC |
+| `bg-card` | #12141C | #FFFFFF |
+| `bg-elevated` | #1A1D28 | #F1F5F9 |
+| `border-default` | #2A2E3F | #E2E8F0 |
+| `text-primary` | #F0F2F5 | #0F172A |
+
+---
+
+## 23. Design Tokens vs Hardcoded Values
+
+### 23.1 The Rule
+
+**NEVER hardcode colors, spacing, typography, shadows, or animation values in component files.**
+
+All visual properties MUST reference design tokens defined in `tailwind.config.js` or `globals.css`.
+
+### 23.2 Token Categories
+
+| Category | Source | Example |
+|---|---|---|
+| Colors | `tailwind.config.js` | `bg-background-card` |
+| Fonts | `globals.css` | CSS custom properties |
+| Spacing | `tailwind.config.js` | `gap-5`, `p-6` |
+| Shadows | `tailwind.config.js` | `shadow-glow` |
+| Animations | `tailwind.config.js` | `animate-float` |
+| Z-index | `tailwind.config.js` | `z-dropdown` |
+| Border radius | `tailwind.config.js` | `rounded-xl` |
+| Breakpoints | `tailwind.config.js` | `lg:` |
+
+### 23.3 Enforcement
+
+| Mechanism | Scope | Tool |
+|---|---|---|
+| ESLint rule | JSX/TSX files | `eslint-plugin-tailwindcss` |
+| Design review | PR review process | Manual check for hardcoded values |
+| Component development | New components | Start from existing component patterns |
+| Automated check | CI pipeline | Compare vs allowed tokens list |
+
+---
+
+## 24. Design Review Process
+
+### 24.1 Review Stages
+
+| Stage | Participants | Focus | Artifacts |
+|---|---|---|---|
+| **Self-review** | Designer | Compliance with design system, all states covered, accessibility basics | Figma file annotated |
+| **Peer review** | 2+ designers | Consistency, visual quality, UX flow completeness | Figma comments |
+| **Lead review** | Design lead | Brand alignment, quality bar, accessibility compliance | Sign-off checklist |
+| **Engineering review** | Lead frontend dev | Technical feasibility, design token usage, effort estimate | Spec review |
+| **PM sign-off** | Product manager | Requirements met, timeline aligned, scope confirmed | Final approval |
+
+### 24.2 Review Checklist
+
+- [ ] All component states designed (default, hover, active, disabled, loading, error, empty)
+- [ ] Responsive layouts specified (mobile, tablet, desktop)
+- [ ] Design tokens used (no hardcoded values)
+- [ ] Color contrast verified (4.5:1 minimum)
+- [ ] Focus indicators designed for interactive elements
+- [ ] Touch targets >=44x44px
+- [ ] Typography hierarchy correct (h1 to h2 to h3 to body)
+- [ ] Icons have aria-labels or text alternatives
+- [ ] Reduced motion alternatives considered
+- [ ] Error states and validation messages defined
+- [ ] Edge cases handled (long text, overflow, missing data)
+- [ ] Copy approved
+
+---
+
+## 25. Figma File Organization
+
+### 25.1 File Structure
+
+```
+Project: ARIA OS — Second Brain
+├── 🎨 Design System
+│   ├── 🎨 Colors — Color palette with tokens, contrast info, usage notes
+│   ├── 🔤 Typography — Type scale, font families, line heights, examples
+│   ├── 📐 Spacing — Spacing scale, padding/gap recommendations
+│   ├── 🖼 Icons — Icon set reference, usage guidelines
+│   ├── 🧩 Components
+│   │   ├── Button — All variants, sizes, states (grid layout)
+│   │   ├── Card — All variants, internal structure, responsive
+│   │   ├── Input — All types, all states, error handling
+│   │   ├── Modal — Desktop/mobile, empty, with content
+│   │   ├── Badge — All variants, sizes
+│   │   ├── Dropdown — Items, groups, dividers, scrolling
+│   │   ├── Progress — Linear, circular, step indicators
+│   │   ├── Tooltip — Positions, content types
+│   │   ├── Skeleton — Card, list, chart placeholders
+│   │   ├── Toast — All variants, stacked
+│   │   ├── Spinner — All sizes, inline vs centered
+│   │   ├── Avatar — All sizes, with image, fallback initials
+│   │   └── Tabs — Horizontal, vertical, with icons
+│   └── 🔄 Patterns
+│       ├── Empty States — All 16 module empty states
+│       ├── Loading States — Skeleton layouts for each module
+│       ├── Error States — Error banners, error modals
+│       └── Navigation — Sidebar, navbar, bottom nav, breadcrumbs
+│
+├── 🖥️ Screens
+│   ├── 01 Dashboard — Default, empty, briefing detail
+│   ├── 02 Tasks — List, kanban, detail, create, empty
+│   ├── 03 Courses — Grid, detail, progress, empty
+│   ├── 04 Goals — Canvas, detail, roadmap, empty
+│   ├── 05 Habits — Grid, calendar, streak view, empty
+│   ├── 06 Sleep — Dashboard, log, history
+│   ├── 07 Income — Dashboard, entry list, add/edit
+│   ├── 08 Projects — Kanban, detail, board settings
+│   ├── 09 Ideas — Pipeline (raw to validating to building to shipped)
+│   ├── 10 Resources — Grid, collections, detail
+│   ├── 11 Opportunities — List, detail, match scores
+│   ├── 12 Time — Dashboard, timer active, stats
+│   ├── 13 Chat — Message list, ARIA response, empty
+│   └── 14 Automation — Briefing, radar, weekly review
+│
+├── 🧪 Prototypes
+│   ├── Onboarding Flow
+│   ├── Task Creation Flow
+│   ├── Weekly Review Flow
+│   └── Mobile Navigation Flow
+│
+└── 📝 Research & Specs
+    ├── Personas (3 core personas)
+    ├── User Journey Maps (Aarav, Priya, Rohan)
+    ├── Usability Test Reports
+    └── Design Annotations
+```
+
+### 25.2 Component Organization Rules
+
+- Every component is a **Figma component** with auto-layout
+- Components are organized by type in the Assets panel
+- Variants are used for different states (default, hover, active, disabled)
+- Component descriptions include design token references
+- Naming convention: `ComponentName/Variant/State` (e.g., `Button/Primary/Default`)
+- Components use styles (color, text, effect styles) — never hardcoded values
+
+---
+
 ## Reference
 
 | Document | Link |
 |---|---|
-| Design Architecture | `docs/design/09_Design.md` |
+| Design Architecture | *Merged into this document (v3.1.0)* |
 | Design System | `docs/design/10_DesignSystem.md` |
 | Design Tokens | `docs/design/35_DesignTokens.md` |
-| Accessibility Design | `docs/design/Accessibility.md` |
+| Accessibility Design | `docs/design/FrontendAccessibilityGuide.md` |
 | Branding Guide | `docs/design/Branding.md` |
 | Motion System | `docs/design/MotionSystem.md` |
 | Responsive Design | `docs/design/ResponsiveRules.md` |
@@ -949,3 +1437,4 @@ Before marking a design as "Ready for Dev", the designer must verify:
 | 1.0.0 | 2026-05-15 | Design Team | Initial UI/UX specification |
 | 2.0.0 | 2026-06-01 | Design Team | Added user research methodology, metrics framework, accessibility integration |
 | 3.0.0 | 2026-06-11 | Design Team | Enterprise upgrade: 16 sections, micro-interactions catalog, feedback systems, onboarding UX, mobile UX patterns, design handoff process |
+| 3.1.0 | 2026-07-11 | Developer | Merged Design Architecture (09_Design.md) into this document; added Visual Design Direction, Layout System, Image Style Guide, Form Design, Dark Mode, Design Tokens, Design Review Process, Figma Organization |

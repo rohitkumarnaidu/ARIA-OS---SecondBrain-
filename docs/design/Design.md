@@ -1,8 +1,8 @@
-# Design Architecture — Second Brain OS (ARIA OS)
+﻿# Design Architecture â€” Second Brain OS (ARIA OS)
 
 > **Single source of truth for every design decision across Antigravity (design system), Stitch (component library), Figma (design tooling), and Frontend Engineering.**
 >
-> This document synthesizes 18 design documents into one authoritative blueprint. It supersedes DesignStrategy.md (strategic foundation), DesignSystemResearch.md (token/component/theme research), MotionArchitecture.md (animation engineering), ProductArchitecture.md (domain model), InformationArchitecture.md (navigation & IA), UserJourneyArchitecture.md (journey maps), Branding.md (brand identity), Accessibility.md (a11y), ResponsiveRules.md (responsive), MotionSystem.md (motion design), 08_UIUX.md, 09_Design.md, 10_DesignSystem.md, 35_DesignTokens.md, Competitive_Intelligence_Report.md, and both Enterprise Discovery Reports. Any conflict among source documents is silently resolved here — this document is the single authority.
+> This document synthesizes 18 design documents into one authoritative blueprint. It supersedes DesignStrategy.md (strategic foundation), DesignSystemResearch.md (token/component/theme research), MotionArchitecture.md (animation engineering), ProductArchitecture.md (domain model), InformationArchitecture.md (navigation & IA), UserJourneyArchitecture.md (journey maps), Branding.md (brand identity), FrontendAccessibilityGuide.md (a11y), ResponsiveRules.md (responsive), MotionSystem.md (motion design), 08_UIUX.md, 09_Design.md, 10_DesignSystem.md, 35_DesignTokens.md, Competitive_Intelligence_Report.md, and both Enterprise Discovery Reports. Any conflict among source documents is silently resolved here â€” this document is the single authority.
 
 ---
 
@@ -10,20 +10,20 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-DESIGN-ARCH-001 |
+| Document ID | DSG-DSN-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Design & Engineering Leadership |
+| Classification | Internal â€” Design & Engineering Leadership |
 | Target Audience | Design Team (Antigravity), Engineering Team (Stitch), AI Agents, Product Team, Design Reviewers |
-| Supersedes | DesignStrategy.md, DesignSystemResearch.md, MotionArchitecture.md, 08_UIUX.md, 09_Design.md, 10_DesignSystem.md, 35_DesignTokens.md |
-| Companion Docs | Branding.md (brand guidelines), Accessibility.md (detailed a11y specs), MotionSystem.md (motion design intent), ProductArchitecture.md (domain model), InformationArchitecture.md (IA details), UserJourneyArchitecture.md (journey details), FrontendTechnicalResearch.md (engineering constraints) |
+| Supersedes | DesignStrategy.md, DesignSystemResearch.md, MotionArchitecture.md, 08_UIUX.md, 09_Design.md, 10_DesignSystem.md, 35_DesignTokens.md, Accessibility.md |
+| Companion Docs | Branding.md (brand guidelines), FrontendAccessibilityGuide.md (detailed a11y specs), MotionSystem.md (motion design intent), ProductArchitecture.md (domain model), InformationArchitecture.md (IA details), UserJourneyArchitecture.md (journey details), FrontendTechnicalResearch.md (engineering constraints) |
 
 ---
 
 ## Table of Contents
 
-**Part I — Vision & Philosophy**
+**Part I â€” Vision & Philosophy**
 1. Executive Design Vision
 2. Product Vision
 3. Brand Vision
@@ -33,29 +33,29 @@
 7. AI-First Design Principles
 8. Personas
 
-**Part II — Users & Information Architecture**
+**Part II â€” Users & Information Architecture**
 9. Information Architecture
 10. Navigation Architecture
 
-**Part III — Dashboards, Layout & Pages**
+**Part III â€” Dashboards, Layout & Pages**
 11. Dashboard Architecture
 12. Layout System
 13. Page Architecture
 14. Responsive & Cross-Platform Strategy
 
-**Part IV — Design Tokens & Themes**
+**Part IV â€” Design Tokens & Themes**
 15. Design Token Architecture
 16. Theme Architecture
 17. Color System
 
-**Part V — Component Architecture**
+**Part V â€” Component Architecture**
 18. Component Architecture & Library
 19. Typography
 20. Iconography
 21. Spacing & Layout Grid
 22. Data Visualization
 
-**Part VI — Enterprise Quality**
+**Part VI â€” Enterprise Quality**
 23. Accessibility
 24. Responsive Design
 25. Empty, Loading, Error & Edge States
@@ -63,7 +63,7 @@
 27. Search & Filter Architecture
 28. Command Center Architecture
 
-**Part VII — Motion, Governance & Guidelines**
+**Part VII â€” Motion, Governance & Guidelines**
 29. Notification & Communication System
 30. Motion & Animation
 31. Design Governance
@@ -75,12 +75,12 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
 flowchart LR
-    R["🔬 Research"] --> I["💡 Ideate"]
-    I --> P["🎨 Prototype"]
-    P --> T["🧪 Test"]
+    R["ðŸ”¬ Research"] --> I["ðŸ’¡ Ideate"]
+    I --> P["ðŸŽ¨ Prototype"]
+    P --> T["ðŸ§ª Test"]
     T --> I
-    T --> L["✅ Launch"]
-    L --> S["📈 Ship"]
+    T --> L["âœ… Launch"]
+    L --> S["ðŸ“ˆ Ship"]
     S --> R
     R --> R1["25-product CI<br/>(Competitive Intel)"]
     I --> I1["Design sprints<br/>+ storyboards"]
@@ -97,7 +97,7 @@ flowchart LR
 
 ---
 
-# Part I — Vision & Philosophy
+# Part I â€” Vision & Philosophy
 
 ---
 
@@ -107,13 +107,13 @@ flowchart LR
 
 **Second Brain OS is the world's first AI operating system for builders. Its design language makes intelligence feel ambient, power feel effortless, and complexity feel inevitable.**
 
-We are not building a productivity tool. We are building a cognitive extension — a system that thinks alongside the user, anticipates before they ask, and fades into the background when not needed. The design must embody three truths:
+We are not building a productivity tool. We are building a cognitive extension â€” a system that thinks alongside the user, anticipates before they ask, and fades into the background when not needed. The design must embody three truths:
 
 1. **The user is brilliant.** Our job is to remove friction, not add features. Every component, every interaction, every pixel must justify its existence by making the user faster, clearer, or more capable.
 
 2. **Time is the only non-renewable resource.** Every millisecond of delay, every extra click, every moment of confusion is a tax on the user's life. The design treats latency as a moral failing.
 
-3. **AI is a material, not a feature.** Like glass, light, or motion — AI is something we design with, not something we add on. The system's intelligence is woven into its fabric: ambient suggestions, predictive defaults, contextual awareness, and transparent reasoning.
+3. **AI is a material, not a feature.** Like glass, light, or motion â€” AI is something we design with, not something we add on. The system's intelligence is woven into its fabric: ambient suggestions, predictive defaults, contextual awareness, and transparent reasoning.
 
 ### 1.2 Design Mission
 
@@ -139,29 +139,29 @@ Every design decision must honor these contracts with the user:
 When conflicts arise between design documents, resolution follows this chain:
 
 ```
-Design.md (THIS FILE — Single Source of Truth)
-  ├── DesignStrategy.md (Strategic foundation — wins on conflicting vision)
-  ├── DesignSystemResearch.md (Token/component research — wins on tokens)
-  ├── MotionArchitecture.md (Animation engineering — wins on motion)
-  ├── ProductArchitecture.md (Domain model — wins on feature boundaries)
-  ├── InformationArchitecture.md (IA — wins on navigation/sitemap)
-  ├── UserJourneyArchitecture.md (Journeys — wins on user flows)
-  ├── Branding.md (Brand — wins on voice/tone)
-  ├── Accessibility.md (A11y — wins on compliance)
-  ├── FrontendTechnicalResearch.md (Engineering — wins on performance budgets)
-  └── (All remaining docs — consulted for context, overridden by above)
+Design.md (THIS FILE â€” Single Source of Truth)
+  â”œâ”€â”€ DesignStrategy.md (Strategic foundation â€” wins on conflicting vision)
+  â”œâ”€â”€ DesignSystemResearch.md (Token/component research â€” wins on tokens)
+  â”œâ”€â”€ MotionArchitecture.md (Animation engineering â€” wins on motion)
+  â”œâ”€â”€ ProductArchitecture.md (Domain model â€” wins on feature boundaries)
+  â”œâ”€â”€ InformationArchitecture.md (IA â€” wins on navigation/sitemap)
+  â”œâ”€â”€ UserJourneyArchitecture.md (Journeys â€” wins on user flows)
+  â”œâ”€â”€ Branding.md (Brand â€” wins on voice/tone)
+  â”œâ”€â”€ Accessibility.md (A11y â€” wins on compliance)
+  â”œâ”€â”€ FrontendTechnicalResearch.md (Engineering â€” wins on performance budgets)
+  â””â”€â”€ (All remaining docs â€” consulted for context, overridden by above)
 ```
 
 ### 1.5 Document Architecture Relationship
 
 ```
-Design.md (THIS FILE — Design Blueprint)
-  ├── Antigravity (Design System — tokens, atoms, molecules, organisms)
-  │   ├── Figma Library (design tooling — components, variants, auto-layout)
-  │   └── Stitch (Component Library — implementation in code)
-  ├── MotionSystem.md (Animation principles + MotionArchitecture.md engineering)
-  ├── FrontendTechnicalResearch.md (Rendering, state, routing — engineering constraint)
-  └── (All module pages, layouts, and feature UI built from Antigravity components)
+Design.md (THIS FILE â€” Design Blueprint)
+  â”œâ”€â”€ Antigravity (Design System â€” tokens, atoms, molecules, organisms)
+  â”‚   â”œâ”€â”€ Figma Library (design tooling â€” components, variants, auto-layout)
+  â”‚   â””â”€â”€ Stitch (Component Library â€” implementation in code)
+  â”œâ”€â”€ MotionSystem.md (Animation principles + MotionArchitecture.md engineering)
+  â”œâ”€â”€ FrontendTechnicalResearch.md (Rendering, state, routing â€” engineering constraint)
+  â””â”€â”€ (All module pages, layouts, and feature UI built from Antigravity components)
 ```
 
 ---
@@ -197,13 +197,13 @@ Second Brain OS is an AI-powered personal productivity operating system for BTec
 
 ### 3.1 Brand Identity Foundation
 
-ARIA stands for **Adaptive Reasoning Intelligence Agent**. The name evokes melody, flow, and harmony — qualities a second brain should bring to the chaos of modern student life. Just as an aria in opera carries the emotional weight of a scene, ARIA carries the cognitive weight of its user.
+ARIA stands for **Adaptive Reasoning Intelligence Agent**. The name evokes melody, flow, and harmony â€” qualities a second brain should bring to the chaos of modern student life. Just as an aria in opera carries the emotional weight of a scene, ARIA carries the cognitive weight of its user.
 
-**Origin narrative:** Born from the realization that a BTech CSE student juggles 15+ life dimensions — coursework, side projects, job applications, fitness, sleep, finances, relationships, and self-discovery. No existing tool orchestrates these holistically. ARIA is the conductor.
+**Origin narrative:** Born from the realization that a BTech CSE student juggles 15+ life dimensions â€” coursework, side projects, job applications, fitness, sleep, finances, relationships, and self-discovery. No existing tool orchestrates these holistically. ARIA is the conductor.
 
 ### 3.2 Brand Mission
 
-> To eliminate cognitive overhead for ambitious students by providing a unified, AI-powered second brain that learns, adapts, and anticipates — so they can focus on what matters: building, learning, and growing.
+> To eliminate cognitive overhead for ambitious students by providing a unified, AI-powered second brain that learns, adapts, and anticipates â€” so they can focus on what matters: building, learning, and growing.
 
 ### 3.3 Brand Vision Statement
 
@@ -251,7 +251,7 @@ Every design decision must pass through this attribute filter:
 
 | Principle | Rule | Rationale |
 |---|---|---|
-| **Dark Canvas, Neon Intent** | Background is infinite dark (`#0A0B0F`). Neon accents ≤ 15% of any screen. Light emits from content. | Reduces eye strain, makes content pop, establishes cyberpunk mood without being garish. |
+| **Dark Canvas, Neon Intent** | Background is infinite dark (`#0A0B0F`). Neon accents â‰¤ 15% of any screen. Light emits from content. | Reduces eye strain, makes content pop, establishes cyberpunk mood without being garish. |
 | **Depth Through Elevation** | Cards at +1 level above page. Modals at +2. Toasts float above everything. Each level casts a glow, not a drop shadow. | Glow shadows reinforce cyberpunk aesthetic; elevation communicates hierarchy naturally. |
 | **Typography as Architecture** | Syne for display (headings, hero text). DM Sans for body (reading, labels). JetBrains Mono for code. Scale based on content hierarchy, not device. | Distinctive brand recognition (Syne) + reading comfort (DM Sans) + code clarity (JetBrains Mono). |
 | **Intentional White Space** | Minimum 16px gutters. Content density decreases as cognitive load increases. AI-generated content gets more spacing than user content. | Breathing room reduces anxiety. AI content needs extra space for scanning. |
@@ -263,7 +263,7 @@ Every design decision must pass through this attribute filter:
 
 ### 4.1 The Mentor Archetype
 
-Second Brain OS is not a tool. It is not a friend. It is a **Mentor** — competent, demanding, encouraging, and always honest.
+Second Brain OS is not a tool. It is not a friend. It is a **Mentor** â€” competent, demanding, encouraging, and always honest.
 
 | Mentor Trait | Design Expression | Opposite (Rejected) |
 |---|---|---|
@@ -286,7 +286,7 @@ Second Brain OS is not a tool. It is not a friend. It is a **Mentor** — compet
 | Personality Trait | UI Translation |
 |---|---|
 | Competent | Automatic context restoration, predictive defaults, cross-module intelligence |
-| Demanding | "You studied 45 min — 15 min short. Quick session?" (not "Good job trying!") |
+| Demanding | "You studied 45 min â€” 15 min short. Quick session?" (not "Good job trying!") |
 | Encouraging | "+1 done! You're building momentum." (not confetti for everything) |
 | Honest | "Week 3 completion: 42%. Let's discuss what's blocking you." |
 
@@ -299,8 +299,8 @@ What the product is NOT:
 | **The Cheerleader** | Constant celebration devalues real achievement |
 | **The Nag** | Guilt-inducing reminders cause churn |
 | **The Genius** | Black-box AI that feels like magic erodes trust |
-| **The Disorganized Genius** | Smart but forgetful — most AI tools today |
-| **The Corporate Tool** | Sterile, formal, bureaucratic — Notion's problem |
+| **The Disorganized Genius** | Smart but forgetful â€” most AI tools today |
+| **The Corporate Tool** | Sterile, formal, bureaucratic â€” Notion's problem |
 
 ---
 
@@ -364,7 +364,7 @@ Every screen must communicate its most important information within 5 seconds at
 
 **Applies to:** Dashboard, Briefing, KPI strips, Notification previews, Widgets.
 **Rejects:** Dense data dumps, walls of text, metrics without context.
-**Implementation:** KPI strips with trend indicators (↑↓→). Mini-charts (sparklines) for time series. Color-coded status dots (green=good, yellow=warning, red=critical).
+**Implementation:** KPI strips with trend indicators (â†‘â†“â†’). Mini-charts (sparklines) for time series. Color-coded status dots (green=good, yellow=warning, red=critical).
 
 #### P2: Forgiveness Over Guilt
 The system never shames the user for absence, missed tasks, or broken streaks. Every interaction that could induce guilt must include a one-click path to resolution.
@@ -388,7 +388,7 @@ The system reveals depth only when the user signals readiness. First session: 3 
 **Implementation:** Command palette lists 5 basic commands initially, expands to 50+ as user learns. Settings grouped by "Basic" / "Advanced" toggle.
 
 #### P5: AI as Material, Not Magic
-Every AI action is transparent, reversible, and learnable. The user should understand what the AI did, why it did it, and how to adjust it. AI augments judgment — it does not replace it.
+Every AI action is transparent, reversible, and learnable. The user should understand what the AI did, why it did it, and how to adjust it. AI augments judgment â€” it does not replace it.
 
 **Applies to:** Briefing generation, task classification, opportunity matching, scheduling suggestions.
 **Rejects:** Black-box decisions, unlabeled automation, irreversible AI actions.
@@ -402,7 +402,7 @@ Every interaction should feel instantaneous. Under 100ms for feedback. Under 1s 
 **Implementation:** Skeleton screens for loads > 300ms. Optimistic UI for mutations. Progress indication with estimated time for AI operations. Cancelable AI generation.
 
 #### P7: One Codebase, Three Experiences
-The same codebase delivers three distinct experiences — mobile (glance), tablet (lean-back), desktop (deep work). Each is optimized for its platform's strengths, not responsively squished.
+The same codebase delivers three distinct experiences â€” mobile (glance), tablet (lean-back), desktop (deep work). Each is optimized for its platform's strengths, not responsively squished.
 
 **Applies to:** All page layouts, navigation, interaction patterns.
 **Rejects:** Desktop-first-then-squish, mobile-only-then-stretch, platform-specific feature gaps.
@@ -414,7 +414,7 @@ The same codebase delivers three distinct experiences — mobile (glance), table
 
 ### 7.1 Ambient Presence
 
-ARIA is perceptible only when needed. The AI presence is indicated by a subtle glow pulse on the ARIA avatar in the sidebar — active when processing, dormant when idle. The user should never feel watched; they should feel supported.
+ARIA is perceptible only when needed. The AI presence is indicated by a subtle glow pulse on the ARIA avatar in the sidebar â€” active when processing, dormant when idle. The user should never feel watched; they should feel supported.
 
 **Design patterns:**
 - Ghost hints: Faded suggestions that appear on hover (not persistently)
@@ -448,7 +448,7 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 
 | Pattern | Description | Example |
 |---|---|---|
-| **Ghost Hint** | Faded suggestion on hover, activates on focus | "Try: 'Finish DBMS assignment' — ARIA" |
+| **Ghost Hint** | Faded suggestion on hover, activates on focus | "Try: 'Finish DBMS assignment' â€” ARIA" |
 | **Streaming Response** | Token-by-token display with cursor animation | Briefing generation, chat responses |
 | **Thinking Indicator** | Animated brain-wave pulse during AI processing | Before briefing appears, while agent runs |
 | **Confidence Badge** | High/Medium/Low indicator next to AI output | Opportunity match score, task classification |
@@ -464,45 +464,45 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 
 | Priority | Persona | Type | Design Weight |
 |---|---|---|---|
-| **Tier 1 (Primary)** | Arjun Mehta | BTech CSE Student | 40% — drives all core decisions |
-| **Tier 1 (Primary)** | Priya Sharma | BTech CSE Student (Builder) | 30% — drives technical depth |
-| **Tier 2 (Secondary)** | Rahul Verma | Freelancer / Side Hustler | 15% — drives income + project features |
-| **Tier 2 (Secondary)** | Ananya Gupta | Creator / Content Maker | 10% — drives content pipeline |
-| **Tier 3 (Future)** | Vikram Singh | Knowledge Worker | 3% — accommodates, doesn't drive |
-| **Tier 3 (Future)** | Neha Patel | Power User / Early Adopter | 2% — advanced patterns, not core UX |
+| **Tier 1 (Primary)** | Arjun Mehta | BTech CSE Student | 40% â€” drives all core decisions |
+| **Tier 1 (Primary)** | Priya Sharma | BTech CSE Student (Builder) | 30% â€” drives technical depth |
+| **Tier 2 (Secondary)** | Rahul Verma | Freelancer / Side Hustler | 15% â€” drives income + project features |
+| **Tier 2 (Secondary)** | Ananya Gupta | Creator / Content Maker | 10% â€” drives content pipeline |
+| **Tier 3 (Future)** | Vikram Singh | Knowledge Worker | 3% â€” accommodates, doesn't drive |
+| **Tier 3 (Future)** | Neha Patel | Power User / Early Adopter | 2% â€” advanced patterns, not core UX |
 
-### 8.2 Arjun Mehta — The Overwhelmed Student (Primary)
+### 8.2 Arjun Mehta â€” The Overwhelmed Student (Primary)
 
 **Bio:** 20, 2nd Year BTech CSE at VIT Chennai. Dell Inspiron 15 (8GB RAM, i5), Android phone, Jio 4G hotspot. Chrome with 47 tabs open. Rs. 5,000/month total income.
 
 **Daily Reality:**
 ```
- 7:00 AM — Wake up, check phone (20 min scrolling)
- 7:30 AM — Morning routine (skip breakfast most days)
- 8:00 AM — College classes (notes in Notion, loses half)
- 1:00 PM — Lunch + YouTube (200+ "Watch Later" videos)
- 2:00 PM — Self-study (opens VS Code, distracted by Twitter/Reddit)
- 6:00 PM — Free time (tells himself he'll study, games instead)
- 8:00 PM — Guilt-study (opens Udemy course from 3 months ago)
-10:00 PM — Late-night motivation spike (starts project, never finishes)
-12:00 AM — Scrolling Instagram/Reddit in bed
- 1:30 AM — Sleep (bad quality, phone in hand)
+ 7:00 AM â€” Wake up, check phone (20 min scrolling)
+ 7:30 AM â€” Morning routine (skip breakfast most days)
+ 8:00 AM â€” College classes (notes in Notion, loses half)
+ 1:00 PM â€” Lunch + YouTube (200+ "Watch Later" videos)
+ 2:00 PM â€” Self-study (opens VS Code, distracted by Twitter/Reddit)
+ 6:00 PM â€” Free time (tells himself he'll study, games instead)
+ 8:00 PM â€” Guilt-study (opens Udemy course from 3 months ago)
+10:00 PM â€” Late-night motivation spike (starts project, never finishes)
+12:00 AM â€” Scrolling Instagram/Reddit in bed
+ 1:30 AM â€” Sleep (bad quality, phone in hand)
 ```
 
 **Top Frustrations (Severity 8-10):**
 - 6 enrolled online courses, 0 completed
-- Tasks in Todoist, notes in Notion, deadlines on Google Calendar — no single view
+- Tasks in Todoist, notes in Notion, deadlines on Google Calendar â€” no single view
 - Missed 2 internship deadlines last semester
 - 20+ startup ideas in notes app, none started
 - Sleep procrastination: knows he needs better sleep, can't stop
 
 **Design Implications:**
 - Single unified dashboard showing tasks + courses + deadlines + opportunities
-- Course completion nudges with micro-commitments (not "finish course" — "study 25 min")
+- Course completion nudges with micro-commitments (not "finish course" â€” "study 25 min")
 - Sleep wind-down mode that locks phone distractions
-- Idea pipeline with one-click → task → project conversion
+- Idea pipeline with one-click â†’ task â†’ project conversion
 
-### 8.3 Priya Sharma — The Builder (Primary)
+### 8.3 Priya Sharma â€” The Builder (Primary)
 
 **Bio:** 21, 3rd Year BTech CSE at IIIT Hyderabad. MacBook Air M2, iPhone 14. Active GitHub (80+ contributions/month). Building a devtool startup on the side. Rs. 25,000/month (freelance + internship).
 
@@ -518,39 +518,39 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 - Project dependency visualization
 - GitHub integration for PR tracking, commit-based progress
 
-### 8.4 Rahul Verma — The Freelancer (Secondary)
+### 8.4 Rahul Verma â€” The Freelancer (Secondary)
 
 **Bio:** 22, Final Year BTech CSE at Manipal. Windows desktop (custom build, 32GB RAM). Freelances on Upwork + Fiverr. Rs. 45,000/month average. Building portfolio for FAANG applications.
 
 **Key Traits:**
 - Juggles 3-5 freelance projects simultaneously
-- Income fluctuates wildly — needs tracking and forecasting
+- Income fluctuates wildly â€” needs tracking and forecasting
 - Client communication, invoicing, deadline management
 - Wants Second Brain OS to be his freelance command center
 
 **Design Implications:**
 - Income tracking with hourly rate computation + invoice generation
-- Project profitability dashboard (time spent × rate vs. earnings)
+- Project profitability dashboard (time spent Ã— rate vs. earnings)
 - Client communication log (integrated with calendar)
 - Freelance-specific opportunity matching
 
-### 8.5 Ananya Gupta — The Creator (Secondary)
+### 8.5 Ananya Gupta â€” The Creator (Secondary)
 
 **Bio:** 20, 2nd Year BTech CSE at PES Bangalore. MacBook Air M1. Runs a tech YouTube channel (4.2K subscribers). Also writes on Medium. Rs. 8,000/month from AdSense + sponsorships.
 
 **Key Traits:**
-- Content pipeline management: idea → script → shoot → edit → publish → promote
+- Content pipeline management: idea â†’ script â†’ shoot â†’ edit â†’ publish â†’ promote
 - Multiple platforms: YouTube, Medium, Twitter, LinkedIn
 - Needs content calendar, cross-platform scheduling, analytics
 - Sponsorship tracking and outreach management
 
 **Design Implications:**
-- Content pipeline kanban (Idea → Script → Recording → Editing → Published)
+- Content pipeline kanban (Idea â†’ Script â†’ Recording â†’ Editing â†’ Published)
 - Cross-platform posting schedule
 - Analytics dashboard for each platform
 - Sponsor outreach tracker
 
-### 8.6 Vikram Singh — The Knowledge Worker (Future)
+### 8.6 Vikram Singh â€” The Knowledge Worker (Future)
 
 **Bio:** 24, Working Professional (SDE-1 at a startup). BTech CSE graduate. Uses Second Brain OS for personal knowledge management, side projects, and continuous learning.
 
@@ -561,17 +561,17 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 - Wants integration with work tools (Slack, Jira, GitHub)
 
 **Design Implications:**
-- Knowledge graph visualization (notes → ideas → projects)
+- Knowledge graph visualization (notes â†’ ideas â†’ projects)
 - Reading progress tracker with highlights
 - Network relationship manager
 - API/webhook integration layer for work tools
 
-### 8.7 Neha Patel — The Power User (Future)
+### 8.7 Neha Patel â€” The Power User (Future)
 
 **Bio:** 21, 3rd Year BTech CSE at BITS Pilani. Uses Linux (Arch, btw), tiling window managers, and CLI tools. Contributes to open-source AI projects. Rs. 12,000/month (freelance + open-source grants).
 
 **Key Traits:**
-- Maximum efficiency seeker — automates everything
+- Maximum efficiency seeker â€” automates everything
 - Wants API access, custom scripts, plugins/extensions
 - Multiple monitors, prefers dark themes, hates mouse interaction
 - Uses AI extensively but wants fine-grained control
@@ -585,7 +585,7 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 
 ---
 
-# Part II — Users & Information Architecture
+# Part II â€” Users & Information Architecture
 
 ---
 
@@ -599,7 +599,7 @@ When AI fails (Ollama timeout, Claude API error, ambiguous query), the system:
 | **Cross-module intelligence** | Search, command center, and AI operate across all modules | The whole point of a unified OS is eliminating tool fragmentation |
 | **Context preservation** | Navigation preserves state: filters, scroll position, selection | User mental models should survive page transitions |
 | **Progressive disclosure** | First session shows 3 modules; Month 1 shows 10; Power users see all 20 | Avoid overwhelming new users while enabling power users |
-| **Module parity** | Every module has the same interaction pattern: list → detail → action | Predictable mental model reduces cognitive load |
+| **Module parity** | Every module has the same interaction pattern: list â†’ detail â†’ action | Predictable mental model reduces cognitive load |
 
 ### 9.2 Module Inventory (20 Modules)
 
@@ -608,10 +608,10 @@ The system is organized into 20 modules across 6 navigation groups:
 **Group 1: Core Productivity (4 modules)**
 | Module | Purpose | Dashboard Element | First Session |
 |---|---|---|---|
-| Tasks | Task CRUD with priority, dependencies, status | Today's tasks + overdue count | ✅ Show |
-| Courses | Course tracking with progress, deadlines | Course completion % + next deadline | ✅ Show |
-| Goals | Goal management with roadmap, milestones | Goal progress bars + next milestone | ✅ Show |
-| Habits | Habit definitions with frequency, streaks | Today's habits + streak count | ✅ Show |
+| Tasks | Task CRUD with priority, dependencies, status | Today's tasks + overdue count | âœ… Show |
+| Courses | Course tracking with progress, deadlines | Course completion % + next deadline | âœ… Show |
+| Goals | Goal management with roadmap, milestones | Goal progress bars + next milestone | âœ… Show |
+| Habits | Habit definitions with frequency, streaks | Today's habits + streak count | âœ… Show |
 
 **Group 2: Tracking & Analytics (3 modules)**
 | Module | Purpose | Dashboard Element | First Session |
@@ -624,7 +624,7 @@ The system is organized into 20 modules across 6 navigation groups:
 | Module | Purpose | Dashboard Element | First Session |
 |---|---|---|---|
 | Projects | Project phases, blockers, URLs | Active projects + at-risk count | Week 1 |
-| Ideas | Idea pipeline (raw → validating → building) | Idea pipeline count + new today | Week 1 |
+| Ideas | Idea pipeline (raw â†’ validating â†’ building) | Idea pipeline count + new today | Week 1 |
 | Resources | Resource library with tags, collections | Recent resources + unread count | Month 1 |
 
 **Group 4: Intelligence & Growth (3 modules)**
@@ -667,35 +667,35 @@ The system is organized into 20 modules across 6 navigation groups:
 
 ```
 Navigation Architecture:
-├── Bottom Tab Bar (Mobile) / Sidebar (Desktop)
-│   ├── Dashboard (Home) — Aggregated view of all modules
-│   ├── Tasks — Task list + quick-add
-│   ├── Courses — Course grid + progress
-│   ├── Goals — Goal cards + milestones
-│   ├── Habits — Habit grid + today's log
-│   ├── Projects — Project kanban + timeline
-│   ├── Ideas — Idea pipeline (kanban-style)
-│   ├── Sleep — Sleep log + insights
-│   ├── Income — Income entries + summaries
-│   ├── Time — Time log + pomodoro
-│   ├── Resources — Resource library
-│   ├── Opportunities — Opportunity radar
-│   ├── Learning — Learning dashboard
-│   ├── Chat — ARIA conversation
-│   ├── Briefing — Daily briefing (pushed)
-│   ├── Weekly Review — Weekly review (pushed)
-│   ├── Memory — AI memory viewer
-│   ├── Analytics — Cross-module analytics
-│   ├── Automation — Automation settings
-│   └── Settings — User preferences
-│
-├── Search (Global) — Accessible from any page via Cmd+K
-│
-├── Command Center (Global) — Accessible from any page via Cmd+Shift+K
-│
-├── Quick Add (Floating) — Task, habit, entry, idea creation from any page
-│
-└── Notifications (Global) — Bell icon in top bar, slide-out panel
+â”œâ”€â”€ Bottom Tab Bar (Mobile) / Sidebar (Desktop)
+â”‚   â”œâ”€â”€ Dashboard (Home) â€” Aggregated view of all modules
+â”‚   â”œâ”€â”€ Tasks â€” Task list + quick-add
+â”‚   â”œâ”€â”€ Courses â€” Course grid + progress
+â”‚   â”œâ”€â”€ Goals â€” Goal cards + milestones
+â”‚   â”œâ”€â”€ Habits â€” Habit grid + today's log
+â”‚   â”œâ”€â”€ Projects â€” Project kanban + timeline
+â”‚   â”œâ”€â”€ Ideas â€” Idea pipeline (kanban-style)
+â”‚   â”œâ”€â”€ Sleep â€” Sleep log + insights
+â”‚   â”œâ”€â”€ Income â€” Income entries + summaries
+â”‚   â”œâ”€â”€ Time â€” Time log + pomodoro
+â”‚   â”œâ”€â”€ Resources â€” Resource library
+â”‚   â”œâ”€â”€ Opportunities â€” Opportunity radar
+â”‚   â”œâ”€â”€ Learning â€” Learning dashboard
+â”‚   â”œâ”€â”€ Chat â€” ARIA conversation
+â”‚   â”œâ”€â”€ Briefing â€” Daily briefing (pushed)
+â”‚   â”œâ”€â”€ Weekly Review â€” Weekly review (pushed)
+â”‚   â”œâ”€â”€ Memory â€” AI memory viewer
+â”‚   â”œâ”€â”€ Analytics â€” Cross-module analytics
+â”‚   â”œâ”€â”€ Automation â€” Automation settings
+â”‚   â””â”€â”€ Settings â€” User preferences
+â”‚
+â”œâ”€â”€ Search (Global) â€” Accessible from any page via Cmd+K
+â”‚
+â”œâ”€â”€ Command Center (Global) â€” Accessible from any page via Cmd+Shift+K
+â”‚
+â”œâ”€â”€ Quick Add (Floating) â€” Task, habit, entry, idea creation from any page
+â”‚
+â””â”€â”€ Notifications (Global) â€” Bell icon in top bar, slide-out panel
 ```
 
 ### 9.5 IA Content Types
@@ -730,46 +730,46 @@ The system supports 7 navigation types, each serving a distinct user need:
 ### 10.2 Sidebar Architecture (Desktop)
 
 ```
-┌──────────────────────┐
-│ ARIA Logo + Status   │ ← Brand mark + AI online/offline indicator
-├──────────────────────┤
-│ 🔍 Search...         │ ← Global search bar (Cmd+Shift+F)
-│ ⌨️ Commands...       │ ← Quick command (Cmd+K)
-├──────────────────────┤
-│ 📊 Dashboard         │ ← Home — aggregated view
-├──────────────────────┤
-│ Core                 │ ← Group header
-│  ☑️ Tasks        3   │ ← Badge: overdue count
-│  📚 Courses     70%  │ ← Badge: overall progress
-│  🎯 Goals       2/5  │ ← Badge: completed/total
-│  🔄 Habits      4/6  │ ← Badge: done today/total
-├──────────────────────┤
-│ Track                │ ← Group header
-│  😴 Sleep        82  │ ← Badge: last night's score
-│  💰 Income    ₹45K  │ ← Badge: monthly total
-│  ⏱ Time       3.2h  │ ← Badge: today's focus
-├──────────────────────┤
-│ Build                │ ← Group header
-│  📦 Projects     2   │ ← Badge: active count
-│  💡 Ideas        5   │ ← Badge: unprocessed count
-│  📎 Resources   12   │ ← Badge: total count
-├──────────────────────┤
-│ Intelligence         │ ← Group header
-│  🎯 Opportunities  2 │ ← Badge: new matches
-│  🧠 Learning       3d│ ← Badge: day streak
-│  💭 Memory         8 │ ← Badge: insights
-├──────────────────────┤
-│ ARIA                 │ ← Group header
-│  🗞 Briefing         │ ← Today's briefing (auto-pushed)
-│  💬 Chat           2 │ ← Badge: unread
-│  📋 Weekly Review    │ ← Latest review (auto-pushed)
-├──────────────────────┤
-│ System               │ ← Collapsible group
-│  📊 Analytics        │
-│  ⚙️ Automation       │
-│  🔌 Integrations     │
-│  ⚙️ Settings         │
-└──────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ARIA Logo + Status   â”‚ â† Brand mark + AI online/offline indicator
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ðŸ” Search...         â”‚ â† Global search bar (Cmd+Shift+F)
+â”‚ âŒ¨ï¸ Commands...       â”‚ â† Quick command (Cmd+K)
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ðŸ“Š Dashboard         â”‚ â† Home â€” aggregated view
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Core                 â”‚ â† Group header
+â”‚  â˜‘ï¸ Tasks        3   â”‚ â† Badge: overdue count
+â”‚  ðŸ“š Courses     70%  â”‚ â† Badge: overall progress
+â”‚  ðŸŽ¯ Goals       2/5  â”‚ â† Badge: completed/total
+â”‚  ðŸ”„ Habits      4/6  â”‚ â† Badge: done today/total
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Track                â”‚ â† Group header
+â”‚  ðŸ˜´ Sleep        82  â”‚ â† Badge: last night's score
+â”‚  ðŸ’° Income    â‚¹45K  â”‚ â† Badge: monthly total
+â”‚  â± Time       3.2h  â”‚ â† Badge: today's focus
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Build                â”‚ â† Group header
+â”‚  ðŸ“¦ Projects     2   â”‚ â† Badge: active count
+â”‚  ðŸ’¡ Ideas        5   â”‚ â† Badge: unprocessed count
+â”‚  ðŸ“Ž Resources   12   â”‚ â† Badge: total count
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Intelligence         â”‚ â† Group header
+â”‚  ðŸŽ¯ Opportunities  2 â”‚ â† Badge: new matches
+â”‚  ðŸ§  Learning       3dâ”‚ â† Badge: day streak
+â”‚  ðŸ’­ Memory         8 â”‚ â† Badge: insights
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ARIA                 â”‚ â† Group header
+â”‚  ðŸ—ž Briefing         â”‚ â† Today's briefing (auto-pushed)
+â”‚  ðŸ’¬ Chat           2 â”‚ â† Badge: unread
+â”‚  ðŸ“‹ Weekly Review    â”‚ â† Latest review (auto-pushed)
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ System               â”‚ â† Collapsible group
+â”‚  ðŸ“Š Analytics        â”‚
+â”‚  âš™ï¸ Automation       â”‚
+â”‚  ðŸ”Œ Integrations     â”‚
+â”‚  âš™ï¸ Settings         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Sidebar rules:**
@@ -783,10 +783,10 @@ The system supports 7 navigation types, each serving a distinct user need:
 ### 10.3 Bottom Tab Bar (Mobile)
 
 ```
-┌─────────┬─────────┬─────────┬─────────┬─────────┐
-│   📊    │   ☑️    │   📚    │   🎯    │   💬    │
-│  Home   │  Tasks  │ Courses │  Goals  │  ARIA   │
-└─────────┴─────────┴─────────┴─────────┴─────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   ðŸ“Š    â”‚   â˜‘ï¸    â”‚   ðŸ“š    â”‚   ðŸŽ¯    â”‚   ðŸ’¬    â”‚
+â”‚  Home   â”‚  Tasks  â”‚ Courses â”‚  Goals  â”‚  ARIA   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Rules:**
@@ -839,17 +839,17 @@ Navigation preserves the following state across all transitions:
 
 | State | Preserved? | Duration |
 |---|---|---|
-| Scroll position | ✅ Yes | Session |
-| Filters and sort | ✅ Yes | Session |
-| Selected items | ✅ Yes | Session |
-| Sidebar collapsed state | ✅ Yes | Persistent (localStorage) |
-| Tab bar active tab | ✅ Yes | Session |
-| Search query | ✅ Yes | 5 min (then resets) |
-| Command palette input | ❌ No | Resets on close |
+| Scroll position | âœ… Yes | Session |
+| Filters and sort | âœ… Yes | Session |
+| Selected items | âœ… Yes | Session |
+| Sidebar collapsed state | âœ… Yes | Persistent (localStorage) |
+| Tab bar active tab | âœ… Yes | Session |
+| Search query | âœ… Yes | 5 min (then resets) |
+| Command palette input | âŒ No | Resets on close |
 
 ---
 
-# Part III — Dashboards, Layout & Pages
+# Part III â€” Dashboards, Layout & Pages
 
 ---
 
@@ -857,7 +857,7 @@ Navigation preserves the following state across all transitions:
 
 ### 11.1 Dashboard Philosophy
 
-The dashboard is not a homepage. It is a **command center** — the first thing the user sees and the surface from which all actions originate. Every element on the dashboard must answer one of three questions:
+The dashboard is not a homepage. It is a **command center** â€” the first thing the user sees and the surface from which all actions originate. Every element on the dashboard must answer one of three questions:
 
 1. **What needs my attention now?** (Overdue tasks, upcoming deadlines, critical notifications)
 2. **How am I doing?** (KPI trends, streaks, progress bars)
@@ -889,73 +889,73 @@ Every dashboard is composed from these building blocks:
 | **Suggestion Chip** | Single AI suggestion with accept/dismiss | Nudge agent, opportunity agent |
 | **Calendar Mini** | Compact month view with event dots | Courses, deadlines, tasks |
 | **Status Dot** | Colored dot indicating module health | All modules |
-| **Trend Badge** | Small badge showing ↑↓→ with percentage | All metric comparisons |
+| **Trend Badge** | Small badge showing â†‘â†“â†’ with percentage | All metric comparisons |
 
 ### 11.4 Morning Briefing Layout
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ 🌅 Good morning, Arjun!                    Wed, Jun 11, 2026 │
-│ ┌────────────────────────────────────────────────────────┐ │
-│ │ 📊 Today's Focus                                    │ │
-│ │ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐      │ │
-│ │ │Tasks │ │Courses│ │Habits│ │Sleep │ │Focus │      │ │
-│ │ │ 4/7  │ │ 70%  │ │ 3/6  │ │  82  │ │ 2.5h │      │ │
-│ │ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘      │ │
-│ ├────────────────────────────────────────────────────────┤ │
-│ │ ☑️ Priority Tasks                    + Add Task       │ │
-│ │ ┌────────────────────────────────────────────────┐     │ │
-│ │ │ ☐ Finish DBMS assignment — Due Today 🔴       │     │ │
-│ │ │ ☐ Submit internship application — Due Tomorrow │     │ │
-│ │ │ ☐ Review pull request for project X            │     │ │
-│ │ └────────────────────────────────────────────────┘     │ │
-│ ├────────────────────────────────────────────────────────┤ │
-│ │ 💡 AI Insight                                        │ │
-│ │ "You study best between 4-7 PM. I've scheduled your   │ │
-│ │  DBMS session for 4 PM today. Ready?"                 │ │
-│ │ [Accept] [Reschedule] [Dismiss]                       │ │
-│ ├────────────────────────────────────────────────────────┤ │
-│ │ 📅 Today's Schedule                                    │ │
-│ │ 10:00 AM — DBMS Lecture                                │ │
-│ │  2:00 PM — Lab Session                                 │ │
-│ │  4:00 PM — Study Block (AI-scheduled)                 │ │
-│ │  7:00 PM — Gym (habit)                                 │ │
-│ └────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸŒ… Good morning, Arjun!                    Wed, Jun 11, 2026 â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“Š Today's Focus                                    â”‚ â”‚
+â”‚ â”‚ â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”      â”‚ â”‚
+â”‚ â”‚ â”‚Tasks â”‚ â”‚Coursesâ”‚ â”‚Habitsâ”‚ â”‚Sleep â”‚ â”‚Focus â”‚      â”‚ â”‚
+â”‚ â”‚ â”‚ 4/7  â”‚ â”‚ 70%  â”‚ â”‚ 3/6  â”‚ â”‚  82  â”‚ â”‚ 2.5h â”‚      â”‚ â”‚
+â”‚ â”‚ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜      â”‚ â”‚
+â”‚ â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤ â”‚
+â”‚ â”‚ â˜‘ï¸ Priority Tasks                    + Add Task       â”‚ â”‚
+â”‚ â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚ â”‚
+â”‚ â”‚ â”‚ â˜ Finish DBMS assignment â€” Due Today ðŸ”´       â”‚     â”‚ â”‚
+â”‚ â”‚ â”‚ â˜ Submit internship application â€” Due Tomorrow â”‚     â”‚ â”‚
+â”‚ â”‚ â”‚ â˜ Review pull request for project X            â”‚     â”‚ â”‚
+â”‚ â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚ â”‚
+â”‚ â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤ â”‚
+â”‚ â”‚ ðŸ’¡ AI Insight                                        â”‚ â”‚
+â”‚ â”‚ "You study best between 4-7 PM. I've scheduled your   â”‚ â”‚
+â”‚ â”‚  DBMS session for 4 PM today. Ready?"                 â”‚ â”‚
+â”‚ â”‚ [Accept] [Reschedule] [Dismiss]                       â”‚ â”‚
+â”‚ â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤ â”‚
+â”‚ â”‚ ðŸ“… Today's Schedule                                    â”‚ â”‚
+â”‚ â”‚ 10:00 AM â€” DBMS Lecture                                â”‚ â”‚
+â”‚ â”‚  2:00 PM â€” Lab Session                                 â”‚ â”‚
+â”‚ â”‚  4:00 PM â€” Study Block (AI-scheduled)                 â”‚ â”‚
+â”‚ â”‚  7:00 PM â€” Gym (habit)                                 â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.5 Productivity Dashboard Layout
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│ 📊 Productivity Dashboard                                    │
-│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐              │
-│ │Tasks │ │Focus │ │Habits│ │Goals │ │Sleep │              │
-│ │ 57%  │ │ 3.2h │ │ 67%  │ │ 40%  │ │  82  │              │
-│ │ ▲12% │ │ ▲8%  │ │ ▼3%  │ │ ▲5%  │ │ —    │              │
-│ └──────┘ └──────┘ └──────┘ └──────┘ └──────┘              │
-│                                                              │
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐         │
-│ │ ☑️ Tasks     │ │ 📚 Courses  │ │ 🔄 Habits   │         │
-│ │ 4 due today  │ │ 3 active    │ │ 4/6 today   │         │
-│ │ 1 overdue 🔴 │ │ 70% avg     │ │ 12d streak  │         │
-│ │ [View All]   │ │ [View All]  │ │ [View All]  │         │
-│ └──────────────┘ └──────────────┘ └──────────────┘         │
-│                                                              │
-│ ┌────────────────────────────────────────────────┐         │
-│ │ 📈 Weekly Trend                                │         │
-│ │ [Sparkline: task completion, focus time, habit │         │
-│ │  completion over 7 days — 3 mini line charts]  │         │
-│ └────────────────────────────────────────────────┘         │
-│                                                              │
-│ ┌────────────────────────────────────────────────┐         │
-│ │ 💡 AI Suggestions (2)                          │         │
-│ │ • "You focus better after exercise. Try        │         │
-│ │    scheduling study blocks after gym." [Done]  │         │
-│ │ • "Course DBMS has 3 upcoming deadlines.       │         │
-│ │    Want me to break them into tasks?" [Break]  │         │
-│ └────────────────────────────────────────────────┘         │
-└──────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸ“Š Productivity Dashboard                                    â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”              â”‚
+â”‚ â”‚Tasks â”‚ â”‚Focus â”‚ â”‚Habitsâ”‚ â”‚Goals â”‚ â”‚Sleep â”‚              â”‚
+â”‚ â”‚ 57%  â”‚ â”‚ 3.2h â”‚ â”‚ 67%  â”‚ â”‚ 40%  â”‚ â”‚  82  â”‚              â”‚
+â”‚ â”‚ â–²12% â”‚ â”‚ â–²8%  â”‚ â”‚ â–¼3%  â”‚ â”‚ â–²5%  â”‚ â”‚ â€”    â”‚              â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜              â”‚
+â”‚                                                              â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”‚
+â”‚ â”‚ â˜‘ï¸ Tasks     â”‚ â”‚ ðŸ“š Courses  â”‚ â”‚ ðŸ”„ Habits   â”‚         â”‚
+â”‚ â”‚ 4 due today  â”‚ â”‚ 3 active    â”‚ â”‚ 4/6 today   â”‚         â”‚
+â”‚ â”‚ 1 overdue ðŸ”´ â”‚ â”‚ 70% avg     â”‚ â”‚ 12d streak  â”‚         â”‚
+â”‚ â”‚ [View All]   â”‚ â”‚ [View All]  â”‚ â”‚ [View All]  â”‚         â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â”‚
+â”‚                                                              â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”‚
+â”‚ â”‚ ðŸ“ˆ Weekly Trend                                â”‚         â”‚
+â”‚ â”‚ [Sparkline: task completion, focus time, habit â”‚         â”‚
+â”‚ â”‚  completion over 7 days â€” 3 mini line charts]  â”‚         â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â”‚
+â”‚                                                              â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”‚
+â”‚ â”‚ ðŸ’¡ AI Suggestions (2)                          â”‚         â”‚
+â”‚ â”‚ â€¢ "You focus better after exercise. Try        â”‚         â”‚
+â”‚ â”‚    scheduling study blocks after gym." [Done]  â”‚         â”‚
+â”‚ â”‚ â€¢ "Course DBMS has 3 upcoming deadlines.       â”‚         â”‚
+â”‚ â”‚    Want me to break them into tasks?" [Break]  â”‚         â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.6 Dashboard Responsive Behavior
@@ -1033,106 +1033,106 @@ Every module page follows one of these archetypes:
 Every page shares this structural shell:
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ Page Header (sticky)                                      │
-│ ┌───────────────┬────────────────────┬─────────────────┐ │
-│ │ Breadcrumb    │ Page Title + Meta  │ Action Buttons  │ │
-│ │ (detail only) │                    │ (Add, Edit, etc)│ │
-│ └───────────────┴────────────────────┴─────────────────┘ │
-├──────────────────────────────────────────────────────────┤
-│ Filter/Search Bar (optional, conditionally shown)          │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Search Input │ Sort Dropdown │ Filter Chips │ View   │ │
-│ └──────────────────────────────────────────────────────┘ │
-├──────────────────────────────────────────────────────────┤
-│ Main Content Area (scrollable)                            │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Content (list, grid, detail, chart, etc.)            │ │
-│ │                                                      │ │
-│ └──────────────────────────────────────────────────────┘ │
-├──────────────────────────────────────────────────────────┤
-│ Footer (optional — pagination, summary, metadata)         │
-└──────────────────────────────────────────────────────────┘
-│ Floating Action Button (list/index views)                  │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Page Header (sticky)                                      â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Breadcrumb    â”‚ Page Title + Meta  â”‚ Action Buttons  â”‚ â”‚
+â”‚ â”‚ (detail only) â”‚                    â”‚ (Add, Edit, etc)â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Filter/Search Bar (optional, conditionally shown)          â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Search Input â”‚ Sort Dropdown â”‚ Filter Chips â”‚ View   â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Main Content Area (scrollable)                            â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Content (list, grid, detail, chart, etc.)            â”‚ â”‚
+â”‚ â”‚                                                      â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Footer (optional â€” pagination, summary, metadata)         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â”‚ Floating Action Button (list/index views)                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 13.3 List Page Anatomy
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ 📚 Courses (3)                              [+ Add Course]│
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 🔍 Search courses...  Sort: Recent ▼  Filter: All ▼  │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📘 Database Management Systems            70% ■■■■■■ │ │
-│ │ CSE301 • Prof. Sharma • Due: Dec 15                 │ │
-│ │ Next: Normalization quiz — Tomorrow                 │ │
-│ └──────────────────────────────────────────────────────┘ │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📗 Data Structures & Algorithms          45% ■■■■░░ │ │
-│ │ CSE201 • Prof. Patel • Due: Dec 20                  │ │
-│ │ Next: Graph theory assignment — Fri                 │ │
-│ └──────────────────────────────────────────────────────┘ │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📙 Operating Systems                     20% ■■░░░░ │ │
-│ │ CSE401 • Prof. Gupta • Due: Jan 10                  │ │
-│ │ Warning: 3 consecutive weeks below target pace 🔴    │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📊 Progress: 70% · 45% · 20%  |  ▲12% this week     │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                            [+ FAB]       │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸ“š Courses (3)                              [+ Add Course]â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ” Search courses...  Sort: Recent â–¼  Filter: All â–¼  â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“˜ Database Management Systems            70% â– â– â– â– â– â–  â”‚ â”‚
+â”‚ â”‚ CSE301 â€¢ Prof. Sharma â€¢ Due: Dec 15                 â”‚ â”‚
+â”‚ â”‚ Next: Normalization quiz â€” Tomorrow                 â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“— Data Structures & Algorithms          45% â– â– â– â– â–‘â–‘ â”‚ â”‚
+â”‚ â”‚ CSE201 â€¢ Prof. Patel â€¢ Due: Dec 20                  â”‚ â”‚
+â”‚ â”‚ Next: Graph theory assignment â€” Fri                 â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“™ Operating Systems                     20% â– â– â–‘â–‘â–‘â–‘ â”‚ â”‚
+â”‚ â”‚ CSE401 â€¢ Prof. Gupta â€¢ Due: Jan 10                  â”‚ â”‚
+â”‚ â”‚ Warning: 3 consecutive weeks below target pace ðŸ”´    â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“Š Progress: 70% Â· 45% Â· 20%  |  â–²12% this week     â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                            [+ FAB]       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 13.4 Detail Page Anatomy
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ ← Courses / Database Management Systems                  │
-├──────────────────────────────────────────────────────────┤
-│ 📘 Database Management Systems           Status: Active  │
-│ CSE301 • Prof. Sharma • Tue/Thu 10-11:30 AM             │
-│ Due: Dec 15, 2026                                        │
-│                                                           │
-│ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐                    │
-│ │ 70%  │ │ 3.2h │ │ 85%  │ │  A-  │                    │
-│ │Progress│Week   │Attendance│Grade  │                    │
-│ └──────┘ └──────┘ └──────┘ └──────┘                    │
-│                                                           │
-│ 📋 Assignments (4)                              [+ Add]  │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ ☑️ Normalization Quiz — Tomorrow               🔴   │ │
-│ │ ☐ ER Diagram Project — Dec 1                         │ │
-│ │ ☐ SQL Assignment 3 — Dec 10                          │ │
-│ │ ✓ Final Project — Dec 15                              │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ 📝 Notes (8)                                [+ Add Note] │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 🗒 Week 12 — Normalization Forms            Nov 15   │ │
-│ │ 🗒 Week 11 — Functional Dependencies         Nov 8    │ │
-│ │ ...                                                    │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ 💡 AI Insight                                             │
-│ "You're strong on SQL (92% quiz avg) but weak on         │
-│  normalization theory (64%). I suggest 2 focused         │
-│  sessions this week on 3NF/BCNF."                        │
-│ [Schedule Session] [Show Resources] [Dismiss]            │
-│                                                           │
-│ 📅 Upcoming Deadlines                                     │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Tomorrow: Normalization Quiz                          │ │
-│ │ Dec 1: ER Diagram Project Due                         │ │
-│ │ Dec 10: SQL Assignment 3 Due                          │ │
-│ │ Dec 15: Final Project Due                             │ │
-│ └──────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â† Courses / Database Management Systems                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ðŸ“˜ Database Management Systems           Status: Active  â”‚
+â”‚ CSE301 â€¢ Prof. Sharma â€¢ Tue/Thu 10-11:30 AM             â”‚
+â”‚ Due: Dec 15, 2026                                        â”‚
+â”‚                                                           â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”                    â”‚
+â”‚ â”‚ 70%  â”‚ â”‚ 3.2h â”‚ â”‚ 85%  â”‚ â”‚  A-  â”‚                    â”‚
+â”‚ â”‚Progressâ”‚Week   â”‚Attendanceâ”‚Grade  â”‚                    â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”˜                    â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ“‹ Assignments (4)                              [+ Add]  â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ â˜‘ï¸ Normalization Quiz â€” Tomorrow               ðŸ”´   â”‚ â”‚
+â”‚ â”‚ â˜ ER Diagram Project â€” Dec 1                         â”‚ â”‚
+â”‚ â”‚ â˜ SQL Assignment 3 â€” Dec 10                          â”‚ â”‚
+â”‚ â”‚ âœ“ Final Project â€” Dec 15                              â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ“ Notes (8)                                [+ Add Note] â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ—’ Week 12 â€” Normalization Forms            Nov 15   â”‚ â”‚
+â”‚ â”‚ ðŸ—’ Week 11 â€” Functional Dependencies         Nov 8    â”‚ â”‚
+â”‚ â”‚ ...                                                    â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ’¡ AI Insight                                             â”‚
+â”‚ "You're strong on SQL (92% quiz avg) but weak on         â”‚
+â”‚  normalization theory (64%). I suggest 2 focused         â”‚
+â”‚  sessions this week on 3NF/BCNF."                        â”‚
+â”‚ [Schedule Session] [Show Resources] [Dismiss]            â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ“… Upcoming Deadlines                                     â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Tomorrow: Normalization Quiz                          â”‚ â”‚
+â”‚ â”‚ Dec 1: ER Diagram Project Due                         â”‚ â”‚
+â”‚ â”‚ Dec 10: SQL Assignment 3 Due                          â”‚ â”‚
+â”‚ â”‚ Dec 15: Final Project Due                             â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1154,7 +1154,7 @@ Every page shares this structural shell:
 | Sidebar | Fixed 240px/56px | Collapsible drawer | Hidden (hamburger) |
 | Navigation | Left sidebar | Left drawer (slide-over) | Bottom tab bar |
 | Content columns | 3-column grid | 2-column grid | Single column |
-| Detail views | Side-by-side (list + detail) | Side-by-side (narrow list) | Stacked (list → detail) |
+| Detail views | Side-by-side (list + detail) | Side-by-side (narrow list) | Stacked (list â†’ detail) |
 | Quick Add | Slide-over panel | Slide-over panel | Bottom sheet |
 | Command Palette | Center modal | Center modal | Full screen |
 | Tables | Full table with all columns | Horizontal scroll | Card list (mobile cards) |
@@ -1166,26 +1166,26 @@ Every page shares this structural shell:
 The design is mobile-first (foundational layouts at < 768px) but desktop-best (primary experience optimized for 1200px+). This means:
 
 1. **Content is authored once**, displayed differently per platform
-2. **Mobile constraints force prioritization** — if it doesn't fit mobile, it's not essential
-3. **Desktop adds richness** — more columns, more data, more interactions
-4. **Tablet is the bridge** — portrait mode leans mobile, landscape leans desktop
+2. **Mobile constraints force prioritization** â€” if it doesn't fit mobile, it's not essential
+3. **Desktop adds richness** â€” more columns, more data, more interactions
+4. **Tablet is the bridge** â€” portrait mode leans mobile, landscape leans desktop
 
 ### 14.4 Cross-Platform Parity
 
 | Feature | Desktop | Tablet | Mobile |
 |---|---|---|---|
-| Full CRUD | ✅ | ✅ | ✅ |
-| AI Features | ✅ (full) | ✅ (full) | ✅ (simplified) |
-| Offline Mode | ✅ | ✅ | ✅ |
-| Notifications | ✅ (toast) | ✅ (toast) | ✅ (push) |
-| File Upload | ✅ | ✅ | ✅ (camera) |
+| Full CRUD | âœ… | âœ… | âœ… |
+| AI Features | âœ… (full) | âœ… (full) | âœ… (simplified) |
+| Offline Mode | âœ… | âœ… | âœ… |
+| Notifications | âœ… (toast) | âœ… (toast) | âœ… (push) |
+| File Upload | âœ… | âœ… | âœ… (camera) |
 | Charts | Full interactive | Interactive | Static |
-| Keyboard Shortcuts | ✅ (full) | ❌ | ❌ |
-| Drag and Drop | ✅ | ✅ (limited) | ❌ |
+| Keyboard Shortcuts | âœ… (full) | âŒ | âŒ |
+| Drag and Drop | âœ… | âœ… (limited) | âŒ |
 
 ---
 
-# Part IV — Design Tokens & Themes
+# Part IV â€” Design Tokens & Themes
 
 ---
 
@@ -1193,7 +1193,7 @@ The design is mobile-first (foundational layouts at < 768px) but desktop-best (p
 
 ### 15.1 Token Philosophy
 
-Tokens are the atomic units of design — named values that encode every visual decision in the system. They exist at three tiers:
+Tokens are the atomic units of design â€” named values that encode every visual decision in the system. They exist at three tiers:
 
 | Tier | Scope | Example | Usage |
 |---|---|---|---|
@@ -1235,11 +1235,11 @@ Pattern: `category-property-state-variant`
 
 ### 15.4 Token Categories (10 Categories)
 
-**1. Color Tokens** — Core palette, semantic mappings, surface colors, text colors, border colors, state colors, chart colors. See §17 for complete color system.
+**1. Color Tokens** â€” Core palette, semantic mappings, surface colors, text colors, border colors, state colors, chart colors. See Â§17 for complete color system.
 
-**2. Typography Tokens** — Font families (Syne, DM Sans, JetBrains Mono), type scale (12px-48px in 8 steps), font weights (400, 500, 600, 700), line heights (1.2-1.6), letter spacing (0-2px). See §19 for complete typography system.
+**2. Typography Tokens** â€” Font families (Syne, DM Sans, JetBrains Mono), type scale (12px-48px in 8 steps), font weights (400, 500, 600, 700), line heights (1.2-1.6), letter spacing (0-2px). See Â§19 for complete typography system.
 
-**3. Spacing Tokens** — 4px base unit, scale: 4, 8, 12, 16, 20, 24, 32, 48, 64, 96. See §12.3 for spacing system.
+**3. Spacing Tokens** â€” 4px base unit, scale: 4, 8, 12, 16, 20, 24, 32, 48, 64, 96. See Â§12.3 for spacing system.
 
 **4. Radius Tokens**
 
@@ -1269,7 +1269,7 @@ Note: Glow shadows replace traditional drop shadows for the cyberpunk aesthetic.
 
 **6. Motion Tokens**
 
-See §30 for complete motion system. Key tokens:
+See Â§30 for complete motion system. Key tokens:
 
 | Category | Token Prefix | Examples |
 |---|---|---|
@@ -1342,7 +1342,7 @@ Theming is not just dark/light mode. It is a **dimensional system** where multip
 
 | Theme Name | Base | Contrast | Accent | Use Case |
 |---|---|---|---|---|
-| **Default Dark** | Dark | Normal | Indigo | Primary — all users |
+| **Default Dark** | Dark | Normal | Indigo | Primary â€” all users |
 | **High Contrast Dark** | Dark | High | Indigo | Low-vision users |
 | **Neon Dark** | Dark | Normal | Neon | Personalization |
 | **Amber Dark** | Dark | Normal | Amber | Warm preference |
@@ -1386,12 +1386,12 @@ Each theme remaps semantic tokens by modifying a subset of primitives:
 | `indigo-200` | `#C7D2FE` | Borders (light) |
 | `indigo-300` | `#A5B4FC` | Disabled accent |
 | `indigo-400` | `#818CF8` | Light accent |
-| `indigo-500` | `#6366F1` | **Primary accent** — buttons, links, active states |
+| `indigo-500` | `#6366F1` | **Primary accent** â€” buttons, links, active states |
 | `indigo-600` | `#4F46E5` | Hover accent |
 | `indigo-700` | `#4338CA` | Active/pressed accent |
 | `indigo-800` | `#3730A3` | Dark backgrounds (rare) |
 | `indigo-900` | `#312E81` | Deepest accent |
-| `neon-400` | `#00FFA3` | **Neon accent** — success, growth, AI positive |
+| `neon-400` | `#00FFA3` | **Neon accent** â€” success, growth, AI positive |
 | `neon-500` | `#00CC82` | Neon hover |
 
 ### 17.2 Semantic Color Tokens
@@ -1461,7 +1461,7 @@ Each theme remaps semantic tokens by modifying a subset of primitives:
 
 ---
 
-# Part V — Component Architecture
+# Part V â€” Component Architecture
 
 ---
 
@@ -1543,44 +1543,44 @@ Default, Hover (brighten 10%), Active (darken 10%), Disabled (opacity 0.4), Load
 
 **Anatomy:**
 ```
-┌─────────────────────────────────────┐
-│ Card Container (radius-md, shadow-card) │
-│ ┌───────────────────────────────┐   │
-│ │ Card Header (optional)       │   │
-│ │ ┌─────┬─────────────────┐   │   │
-│ │ │Icon │ Title + Subtitle│   │   │
-│ │ └─────┴─────────────────┘   │   │
-│ └───────────────────────────────┘   │
-│ ┌───────────────────────────────┐   │
-│ │ Card Content                  │   │
-│ │ (flexible, children-based)    │   │
-│ └───────────────────────────────┘   │
-│ ┌───────────────────────────────┐   │
-│ │ Card Footer (optional)       │   │
-│ │ Actions, metadata, timestamps│   │
-│ └───────────────────────────────┘   │
-└─────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Card Container (radius-md, shadow-card) â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚ â”‚ Card Header (optional)       â”‚   â”‚
+â”‚ â”‚ â”Œâ”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚ â”‚ â”‚Icon â”‚ Title + Subtitleâ”‚   â”‚   â”‚
+â”‚ â”‚ â””â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚ â”‚ Card Content                  â”‚   â”‚
+â”‚ â”‚ (flexible, children-based)    â”‚   â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚ â”‚ Card Footer (optional)       â”‚   â”‚
+â”‚ â”‚ Actions, metadata, timestampsâ”‚   â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Variants:**
-- `default` — Full card with border + shadow
-- `interactive` — Hover state with elevated shadow, cursor pointer
-- `compact` — Reduced padding (12px vs 16px), smaller text
-- `highlight` — Left accent border (colored by status)
+- `default` â€” Full card with border + shadow
+- `interactive` â€” Hover state with elevated shadow, cursor pointer
+- `compact` â€” Reduced padding (12px vs 16px), smaller text
+- `highlight` â€” Left accent border (colored by status)
 
 ### 18.6 Input Component Specification
 
 **Anatomy:**
 ```
-┌──────────────────────────────────────┐
-│ Label (optional, top or floating)    │
-│ ┌────────────────────────────────┐   │
-│ │ Prefix (opt) │ Input │ Suffix │   │
-│ │              │       │ (opt)  │   │
-│ └────────────────────────────────┘   │
-│ Helper text (optional, below)        │
-│ Error message (optional, red)        │
-└──────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Label (optional, top or floating)    â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚ â”‚ Prefix (opt) â”‚ Input â”‚ Suffix â”‚   â”‚
+â”‚ â”‚              â”‚       â”‚ (opt)  â”‚   â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚ Helper text (optional, below)        â”‚
+â”‚ Error message (optional, red)        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **States:**
@@ -1590,7 +1590,7 @@ Default, Focus (accent border + glow ring), Hover (border lighten), Filled (slig
 
 | Variant | Shape | Usage |
 |---|---|---|
-| `text` | Pulsing rectangle, 100% width × 1em | Text placeholders |
+| `text` | Pulsing rectangle, 100% width Ã— 1em | Text placeholders |
 | `circle` | Pulsing circle, `size-token` | Avatar, icon placeholders |
 | `card` | Card-shaped pulsing block | Card loading state |
 | `chart` | Chart-shaped pulsing block | Chart loading state |
@@ -1656,7 +1656,7 @@ Default, Focus (accent border + glow ring), Hover (border lighten), Filled (slig
 
 | Source | Format | Usage |
 |---|---|---|
-| **Lucide Icons** | SVG (inline) | Primary icon set — all interface icons |
+| **Lucide Icons** | SVG (inline) | Primary icon set â€” all interface icons |
 | **Custom Icons** | SVG (optimized) | Brand-specific icons (ARIA logo, app icons) |
 | **Emoji** | Native Unicode | Badges, status indicators (following OS standard) |
 
@@ -1664,11 +1664,11 @@ Default, Focus (accent border + glow ring), Hover (border lighten), Filled (slig
 
 | Size | Grid | Usage |
 |---|---|---|
-| 16px | 16×16 | Inline with text, badge icons, small indicators |
-| 20px | 20×20 | Sidebar icons, list item icons, default |
-| 24px | 24×24 | Button icons, card icons, feature icons |
-| 32px | 32×32 | Empty state icons, hero icons, large indicators |
-| 48px | 48×48 | App icons, welcome screen, marketing |
+| 16px | 16Ã—16 | Inline with text, badge icons, small indicators |
+| 20px | 20Ã—20 | Sidebar icons, list item icons, default |
+| 24px | 24Ã—24 | Button icons, card icons, feature icons |
+| 32px | 32Ã—32 | Empty state icons, hero icons, large indicators |
+| 48px | 48Ã—48 | App icons, welcome screen, marketing |
 
 ### 20.3 Icon Usage Rules
 
@@ -1697,12 +1697,12 @@ Default, Focus (accent border + glow ring), Hover (border lighten), Filled (slig
 | Context | Vertical Spacing | Horizontal Spacing |
 |---|---|---|
 | Between cards in grid | 24px | 24px |
-| Between sections on page | 48px | — |
-| Between list items | 8px | — |
-| Between form fields | 24px | — |
-| Between label and input | 8px | — |
-| Between button and text | 12px | — |
-| Between icon and label | 8px | — |
+| Between sections on page | 48px | â€” |
+| Between list items | 8px | â€” |
+| Between form fields | 24px | â€” |
+| Between label and input | 8px | â€” |
+| Between button and text | 12px | â€” |
+| Between icon and label | 8px | â€” |
 
 ---
 
@@ -1713,8 +1713,8 @@ Default, Focus (accent border + glow ring), Hover (border lighten), Filled (slig
 Charts in Second Brain OS serve one purpose: **make trends visible at a glance.** They are communication tools, not analytical instruments. Every chart must:
 
 1. Be readable in under 3 seconds
-2. Show trend direction (↑↓→) before absolute values
-3. Use chart color tokens from §17
+2. Show trend direction (â†‘â†“â†’) before absolute values
+3. Use chart color tokens from Â§17
 4. Have a simplified mobile version
 5. Provide interactive tooltip on hover (desktop) and tap (mobile)
 
@@ -1745,7 +1745,7 @@ Charts in Second Brain OS serve one purpose: **make trends visible at a glance.*
 
 ---
 
-# Part VI — Enterprise Quality
+# Part VI â€” Enterprise Quality
 
 ---
 
@@ -1773,9 +1773,9 @@ Charts in Second Brain OS serve one purpose: **make trends visible at a glance.*
 
 | Token | Requirement | Validation |
 |---|---|---|
-| `color-text-primary` | Contrast ≥ 7:1 against bg | WCAG AAA |
-| `color-text-secondary` | Contrast ≥ 4.5:1 against bg | WCAG AA |
-| `color-text-tertiary` | Contrast ≥ 3:1 against bg | Minimum for non-essential |
+| `color-text-primary` | Contrast â‰¥ 7:1 against bg | WCAG AAA |
+| `color-text-secondary` | Contrast â‰¥ 4.5:1 against bg | WCAG AA |
+| `color-text-tertiary` | Contrast â‰¥ 3:1 against bg | Minimum for non-essential |
 | `focus-ring` | 2px solid accent with 2px offset | Visible focus on all interactive elements |
 | `motion-reduce` | Respects `prefers-reduced-motion` | All animations have reduced alternative |
 
@@ -1833,7 +1833,7 @@ Charts in Second Brain OS serve one purpose: **make trends visible at a glance.*
 
 ### 24.3 Touch Targets
 
-All interactive elements on mobile must have minimum 44×44px touch targets with 8px minimum spacing between targets.
+All interactive elements on mobile must have minimum 44Ã—44px touch targets with 8px minimum spacing between targets.
 
 ---
 
@@ -1855,13 +1855,13 @@ Every component and page must define behavior for 7 states:
 
 ### 25.2 Empty State Design
 
-Empty states are not voids — they are opportunities. Every empty state must include:
+Empty states are not voids â€” they are opportunities. Every empty state must include:
 
-1. **Illustration** — Contextual vector illustration (cyberpunk style, dark background, neon accents)
-2. **Helpful heading** — "Ready for your first task?" not "No tasks found"
-3. **Example action** — "Try 'Finish DBMS assignment'"
-4. **Primary CTA** — "Create first task" button
-5. **Secondary CTA** — "Learn about tasks" link (optional)
+1. **Illustration** â€” Contextual vector illustration (cyberpunk style, dark background, neon accents)
+2. **Helpful heading** â€” "Ready for your first task?" not "No tasks found"
+3. **Example action** â€” "Try 'Finish DBMS assignment'"
+4. **Primary CTA** â€” "Create first task" button
+5. **Secondary CTA** â€” "Learn about tasks" link (optional)
 
 ### 25.3 Loading State Design
 
@@ -1870,7 +1870,7 @@ Empty states are not voids — they are opportunities. Every empty state must in
 | Page load | Skeleton screen (full page) | Until first paint | Layout-matched gray blocks with pulse animation |
 | Data refresh | Shimmer on existing content | Until complete | Subtle overlay on existing data, non-blocking |
 | AI generation | Thinking indicator + progress | 3-10s | Brain-wave animation + "ARIA is thinking..." + cancel button |
-| Image load | Blur-up placeholder | Until loaded | 20px blurred version → sharp transition |
+| Image load | Blur-up placeholder | Until loaded | 20px blurred version â†’ sharp transition |
 | Form submit | Button loading state | Until response | Spinner replaces icon, button disabled |
 
 ### 25.4 Error State Design
@@ -1913,37 +1913,37 @@ Empty states are not voids — they are opportunities. Every empty state must in
 #### Ghost Hint
 **Purpose:** Suggest actions without interrupting flow.
 **Behavior:** Faded text suggestion appears on hover/focus. Click fills the suggestion. Dismiss via Esc.
-**States:** Hidden (default) → Visible (hover) → Filled (click) → Dismissed (Esc)
+**States:** Hidden (default) â†’ Visible (hover) â†’ Filled (click) â†’ Dismissed (Esc)
 **Example:** "Try: 'Finish DBMS assignment'" appears faded in task input.
 
 #### Streaming Text
 **Purpose:** Display AI-generated content as it's generated.
 **Behavior:** Token-by-token render with blinking cursor. Smooth character reveal. User can read while generation completes.
-**States:** Generating (cursor blinks) → Complete (cursor stops, no edit) → Error (fallback displayed)
+**States:** Generating (cursor blinks) â†’ Complete (cursor stops, no edit) â†’ Error (fallback displayed)
 **Used by:** Briefing, Weekly Review, Chat responses.
 
 #### Thinking Indicator
 **Purpose:** Communicate AI processing without blocking.
 **Behavior:** Animated brain-wave pulse next to ARIA avatar. Duration estimate shown for known operations. Cancel button always available.
-**States:** Idle (no indicator) → Thinking (pulse animation + "ARIA is thinking...") → Complete (fade out) → Cancelled (stop animation)
+**States:** Idle (no indicator) â†’ Thinking (pulse animation + "ARIA is thinking...") â†’ Complete (fade out) â†’ Cancelled (stop animation)
 **Used by:** All AI agents.
 
 #### Confidence Badge
 **Purpose:** Help user calibrate trust in AI output.
 **Behavior:** Small badge next to AI-generated content. High (green), Medium (amber), Low (red).
-**States:** High (85-100%) → Medium (60-84%) → Low (< 60%)
+**States:** High (85-100%) â†’ Medium (60-84%) â†’ Low (< 60%)
 **Used by:** Task classification, opportunity matching, learning insights.
 
 #### Suggestion Chip
 **Purpose:** Present AI suggestion as actionable chip.
 **Behavior:** Horizontal chip with icon + text + accept button + dismiss (X). Accept triggers action. Dismiss removes chip.
-**States:** Visible (new) → Accepted (chip becomes success green, fades in 5s) → Dismissed (slide out, fade)
+**States:** Visible (new) â†’ Accepted (chip becomes success green, fades in 5s) â†’ Dismissed (slide out, fade)
 **Used by:** Nudge agent, opportunity agent, learning agent.
 
 #### AI Action Undo
 **Purpose:** Allow reversal of AI autonomous actions.
 **Behavior:** Toast notification appears after AI action with "Undo" button. 10-second undo window. Undo restores previous state.
-**States:** Visible (10s countdown) → Undone (state restored, "Undone" confirmation) → Expired (toast fades, action permanent)
+**States:** Visible (10s countdown) â†’ Undone (state restored, "Undone" confirmation) â†’ Expired (toast fades, action permanent)
 **Used by:** Briefing generation, auto-classification, auto-scheduling.
 
 ### 26.3 AI Presence Indicator
@@ -2000,37 +2000,37 @@ Every list view (tasks, courses, resources, etc.) supports:
 ### 27.3 Search Result Page Layout
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│ 🔍 Search results for "DBMS"           Filters ▼         │
-│ Found 12 results in 4 modules            [All] [Tasks]   │
-│                                         [Courses] [Notes]│
-│                                                           │
-│ 📚 Courses (4)                                            │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📘 Database Management Systems — CSE301             │ │
-│ │ Normalization, SQL, ER diagrams...      Match: 95%  │ │
-│ └──────────────────────────────────────────────────────┘ │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ 📗 Advanced DBMS — CSE401                           │ │
-│ │ Query optimization, indexing, NoSQL...   Match: 82%  │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ ☑️ Tasks (5)                                              │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ ☐ Finish DBMS normalization assignment — Due: Tomorrow│ │
-│ │ High priority • CSE301 • Created Nov 20              │ │
-│ └──────────────────────────────────────────────────────┘ │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ ☐ Submit DBMS project proposal — Due: Dec 1         │ │
-│ │ Medium priority • CSE301 • Created Nov 18            │ │
-│ └──────────────────────────────────────────────────────┘ │
-│                                                           │
-│ 🗒 Notes (3)                                              │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ DBMS — Normalization Notes — Nov 15                 │ │
-│ │ 1NF, 2NF, 3NF, BCNF definitions and examples...     │ │
-│ └──────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸ” Search results for "DBMS"           Filters â–¼         â”‚
+â”‚ Found 12 results in 4 modules            [All] [Tasks]   â”‚
+â”‚                                         [Courses] [Notes]â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ“š Courses (4)                                            â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“˜ Database Management Systems â€” CSE301             â”‚ â”‚
+â”‚ â”‚ Normalization, SQL, ER diagrams...      Match: 95%  â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“— Advanced DBMS â€” CSE401                           â”‚ â”‚
+â”‚ â”‚ Query optimization, indexing, NoSQL...   Match: 82%  â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ â˜‘ï¸ Tasks (5)                                              â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ â˜ Finish DBMS normalization assignment â€” Due: Tomorrowâ”‚ â”‚
+â”‚ â”‚ High priority â€¢ CSE301 â€¢ Created Nov 20              â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ â˜ Submit DBMS project proposal â€” Due: Dec 1         â”‚ â”‚
+â”‚ â”‚ Medium priority â€¢ CSE301 â€¢ Created Nov 18            â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                           â”‚
+â”‚ ðŸ—’ Notes (3)                                              â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ DBMS â€” Normalization Notes â€” Nov 15                 â”‚ â”‚
+â”‚ â”‚ 1NF, 2NF, 3NF, BCNF definitions and examples...     â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -2046,7 +2046,7 @@ The Command Center is the power user's primary interface. It provides keyboard-a
 | **Trigger** | `Cmd+K` (Mac), `Ctrl+K` (Windows/Linux) |
 | **Dismiss** | `Esc` or click outside |
 | **Search** | Fuzzy match across action names, module names, and descriptions |
-| **Navigation** | `↑` `↓` to move, `Enter` to select, `Tab` to complete |
+| **Navigation** | `â†‘` `â†“` to move, `Enter` to select, `Tab` to complete |
 | **Categories** | Navigate, Create, Actions, Search, Settings |
 | **Recent** | 5 most recently used actions shown at top |
 | **AI mode** | Natural language: type any request, AI interprets |
@@ -2065,44 +2065,44 @@ The Command Center is the power user's primary interface. It provides keyboard-a
 ### 28.3 Command Palette Layout
 
 ```
-┌─────────────────────────────────────────────────┐
-│ ⌨️ Commands                          esc to close│
-│ ┌─────────────────────────────────────────────┐ │
-│ │ 🔍 Type a command or search...              │ │
-│ └─────────────────────────────────────────────┘ │
-│                                                   │
-│ Recent                                            │
-│ ┌─────────────────────────────────────────────┐ │
-│ │ 📄 Go to Tasks                           ── │ │
-│ │ ➕ New Task                               ── │ │
-│ │ 🔍 Search Tasks                           ── │ │
-│ └─────────────────────────────────────────────┘ │
-│                                                   │
-│ Navigate                                          │
-│ ┌─────────────────────────────────────────────┐ │
-│ │ 📊 Dashboard                                │ │
-│ │ ☑️ Tasks                                    │ │
-│ │ 📚 Courses                                  │ │
-│ │ 🎯 Goals                                    │ │
-│ │ ... (20 modules)                            │ │
-│ └─────────────────────────────────────────────┘ │
-│                                                   │
-│ Create                                            │
-│ ┌─────────────────────────────────────────────┐ │
-│ │ ➕ New Task                (T)              │ │
-│ │ ➕ New Course              (C)              │ │
-│ │ ➕ New Goal                (G)              │ │
-│ │ ➕ Log Habit                (H)              │ │
-│ │ ...                                          │ │
-│ └─────────────────────────────────────────────┘ │
-│                                                   │
-│ 🔥 Try "create task finish DBMS assignment high"  │
-└─────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ âŒ¨ï¸ Commands                          esc to closeâ”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ” Type a command or search...              â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                   â”‚
+â”‚ Recent                                            â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“„ Go to Tasks                           â”€â”€ â”‚ â”‚
+â”‚ â”‚ âž• New Task                               â”€â”€ â”‚ â”‚
+â”‚ â”‚ ðŸ” Search Tasks                           â”€â”€ â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                   â”‚
+â”‚ Navigate                                          â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“Š Dashboard                                â”‚ â”‚
+â”‚ â”‚ â˜‘ï¸ Tasks                                    â”‚ â”‚
+â”‚ â”‚ ðŸ“š Courses                                  â”‚ â”‚
+â”‚ â”‚ ðŸŽ¯ Goals                                    â”‚ â”‚
+â”‚ â”‚ ... (20 modules)                            â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                   â”‚
+â”‚ Create                                            â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ âž• New Task                (T)              â”‚ â”‚
+â”‚ â”‚ âž• New Course              (C)              â”‚ â”‚
+â”‚ â”‚ âž• New Goal                (G)              â”‚ â”‚
+â”‚ â”‚ âž• Log Habit                (H)              â”‚ â”‚
+â”‚ â”‚ ...                                          â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                   â”‚
+â”‚ ðŸ”¥ Try "create task finish DBMS assignment high"  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-# Part VII — Motion, Governance & Guidelines
+# Part VII â€” Motion, Governance & Guidelines
 
 ---
 
@@ -2130,30 +2130,30 @@ The Command Center is the power user's primary interface. It provides keyboard-a
 ### 29.3 Notification Center (Slide-Out Panel)
 
 ```
-┌────────────────────────────────────────┐
-│ 🔔 Notifications (5 unread)   Mark all│
-│ read                                  │
-│                                        │
-│ ┌────────────────────────────────────┐ │
-│ │ 🎯 New opportunity match!   Today │ │
-│ │ Google SWE Internship - 92% match │ │
-│ │ [View] [Dismiss]                  │ │
-│ └────────────────────────────────────┘ │
-│ ┌────────────────────────────────────┐ │
-│ │ 📚 Course deadline approaching    │ │
-│ │ DBMS assignment due tomorrow      │ │
-│ │ [View] [Dismiss]                  │ │
-│ └────────────────────────────────────┘ │
-│ ┌────────────────────────────────────┐ │
-│ │ 💡 AI Insight                     │ │
-│ │ Your focus is best before noon     │ │
-│ │ [Accept] [Schedule] [Dismiss]     │ │
-│ └────────────────────────────────────┘ │
-│                                        │
-│ ── Today ── (2 more below)            │
-│ ── Yesterday ── (3 items)             │
-│ ── This Week ── (8 items)             │
-└────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸ”” Notifications (5 unread)   Mark allâ”‚
+â”‚ read                                  â”‚
+â”‚                                        â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸŽ¯ New opportunity match!   Today â”‚ â”‚
+â”‚ â”‚ Google SWE Internship - 92% match â”‚ â”‚
+â”‚ â”‚ [View] [Dismiss]                  â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ“š Course deadline approaching    â”‚ â”‚
+â”‚ â”‚ DBMS assignment due tomorrow      â”‚ â”‚
+â”‚ â”‚ [View] [Dismiss]                  â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ ðŸ’¡ AI Insight                     â”‚ â”‚
+â”‚ â”‚ Your focus is best before noon     â”‚ â”‚
+â”‚ â”‚ [Accept] [Schedule] [Dismiss]     â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                        â”‚
+â”‚ â”€â”€ Today â”€â”€ (2 more below)            â”‚
+â”‚ â”€â”€ Yesterday â”€â”€ (3 items)             â”‚
+â”‚ â”€â”€ This Week â”€â”€ (8 items)             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -2172,7 +2172,7 @@ Motion in Second Brain OS is purposeful, not decorative. Every animation must se
 
 | Principle | Rule | Example |
 |---|---|---|
-| **Fast by default** | All animations complete in ≤ 300ms | Page transitions at 200ms |
+| **Fast by default** | All animations complete in â‰¤ 300ms | Page transitions at 200ms |
 | **Natural easing** | Ease-out for enter, ease-in for exit | Cards ease-out on mount |
 | **Purposeful only** | No animation without a UX reason | No spinning logos |
 | **Accessible first** | Respect `prefers-reduced-motion` | All animations have reduced alternative |
@@ -2194,8 +2194,8 @@ Motion in Second Brain OS is purposeful, not decorative. Every animation must se
 
 | Token | Cubic Bezier | Usage |
 |---|---|---|
-| `ease-out-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` | Default enter — fast start, smooth stop |
-| `ease-out-back` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Emphasis enter — slight overshoot |
+| `ease-out-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` | Default enter â€” fast start, smooth stop |
+| `ease-out-back` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Emphasis enter â€” slight overshoot |
 | `ease-in-out-cubic` | `cubic-bezier(0.65, 0, 0.35, 1)` | Page transitions, neutral |
 | `ease-in-expo` | `cubic-bezier(0.7, 0, 0.84, 0)` | Exit animations |
 | `spring-gentle` | Spring(damping: 20, stiffness: 200) | Natural movement, cards, sheets |
@@ -2204,13 +2204,13 @@ Motion in Second Brain OS is purposeful, not decorative. Every animation must se
 ### 30.5 Motion Presets
 
 **Page Transitions:**
-- Enter: Fade up + scale (0.98→1), 200ms, ease-out-expo
+- Enter: Fade up + scale (0.98â†’1), 200ms, ease-out-expo
 - Exit: Fade out + slight scale down, 150ms, ease-in-expo
 - Stagger: Children enter at 30ms intervals
 
 **Modal/Dialog:**
-- Enter: Backdrop fades in 150ms, modal scales up (0.95→1) in 200ms, spring-gentle
-- Exit: Backdrop fades out 100ms, modal scales down (1→0.97) + fades 100ms
+- Enter: Backdrop fades in 150ms, modal scales up (0.95â†’1) in 200ms, spring-gentle
+- Exit: Backdrop fades out 100ms, modal scales down (1â†’0.97) + fades 100ms
 
 **List Items:**
 - Enter: Fade in + slide up 16px, 200ms, ease-out-expo, stagger 20ms
@@ -2218,8 +2218,8 @@ Motion in Second Brain OS is purposeful, not decorative. Every animation must se
 - Exit: Fade out + shrink height, 150ms
 
 **Notifications (Toast):**
-- Enter: Slide in from top-right, translateX(100%→0), 300ms, ease-out-expo
-- Exit: Slide out to top-right, translateX(0→100%) + fade, 200ms
+- Enter: Slide in from top-right, translateX(100%â†’0), 300ms, ease-out-expo
+- Exit: Slide out to top-right, translateX(0â†’100%) + fade, 200ms
 
 **AI Streaming Text:**
 - Character reveal: 20ms per token, no easing (instant)
@@ -2268,7 +2268,7 @@ Every component must pass this checklist before inclusion:
 - [ ] Keyboard navigable with visible focus indicator
 - [ ] Screen reader friendly (ARIA labels, roles, live regions)
 - [ ] Responsive tested at all 5 breakpoints
-- [ ] Performance budget ≤ 50ms render time
+- [ ] Performance budget â‰¤ 50ms render time
 - [ ] Motion animations respect `prefers-reduced-motion`
 - [ ] TypeScript typed (no `any`)
 - [ ] Documented in Storybook with examples and props table
@@ -2331,7 +2331,7 @@ Every component must pass this checklist before inclusion:
 
 | Rule | Rationale |
 |---|---|
-| Virtual scrolling for lists > 100 items | DOM nodes ≤ 20 regardless of dataset size |
+| Virtual scrolling for lists > 100 items | DOM nodes â‰¤ 20 regardless of dataset size |
 | Image lazy loading + blur-up placeholders | Reduce initial payload, smooth visual transition |
 | Code-split at route level | Never load unused page code |
 | Skeleton screens over spinners | Perceived performance: skeleton = 2x faster perception |
@@ -2354,7 +2354,7 @@ The Antigravity Design System is designed to scale from 50 to 1,000+ components.
 | **3-tier architecture** | Components use semantic tokens, never primitives |
 | **Composition over inheritance** | New components compose from existing primitives |
 | **Variant explosion prevention** | Max 4 variants per component; use composition for > 4 |
-| **Naming convention** | `category-variant-state-size` — enforced by linting |
+| **Naming convention** | `category-variant-state-size` â€” enforced by linting |
 | **One component, one job** | Split before it violates single responsibility |
 
 ### 33.2 New Module Integration
@@ -2375,7 +2375,7 @@ When adding a new module to the system:
 When adding a new platform (watch, TV, voice, etc.):
 
 1. **Persona:** Define platform-specific user mode (glance, lean-back, command)
-2. **Navigation:** Adapt navigation model to platform constraints (≤ 5 items for watch)
+2. **Navigation:** Adapt navigation model to platform constraints (â‰¤ 5 items for watch)
 3. **Components:** Create platform-specific component variants (not new components)
 4. **Reduced surface:** Platform shows subset of functionality, not all modules
 5. **State sync:** All platforms share the same data via Supabase real-time subscriptions
@@ -2410,24 +2410,24 @@ When adding a new AI agent:
 
 ```
 Design.md (THIS FILE)
-  ├── DesignStrategy.md (vision & strategy)
-  ├── DesignSystemResearch.md (token/component research)
-  ├── MotionArchitecture.md (animation engineering)
-  ├── MotionSystem.md (motion design intent)
-  ├── 10_DesignSystem.md (previous design system spec)
-  ├── 35_DesignTokens.md (token reference)
-  ├── 08_UIUX.md (UI/UX guidelines)
-  ├── 09_Design.md (design guidelines)
-  ├── Branding.md (brand identity)
-  ├── Accessibility.md (accessibility)
-  ├── ResponsiveRules.md (responsive)
-  ├── ProductArchitecture.md (domain model)
-  ├── InformationArchitecture.md (IA & sitemap)
-  ├── UserJourneyArchitecture.md (journey maps)
-  ├── FrontendTechnicalResearch.md (engineering constraints)
-  ├── Competitive_Intelligence_Report.md (competitive research)
-  ├── Enterprise_Frontend_Discovery_Report_v3.md (enterprise findings)
-  └── Personas.md (user profiles)
+  â”œâ”€â”€ DesignStrategy.md (vision & strategy)
+  â”œâ”€â”€ DesignSystemResearch.md (token/component research)
+  â”œâ”€â”€ MotionArchitecture.md (animation engineering)
+  â”œâ”€â”€ MotionSystem.md (motion design intent)
+  â”œâ”€â”€ 10_DesignSystem.md (previous design system spec)
+  â”œâ”€â”€ 35_DesignTokens.md (token reference)
+  â”œâ”€â”€ 08_UIUX.md (UI/UX guidelines)
+  â”œâ”€â”€ 09_Design.md (design guidelines)
+  â”œâ”€â”€ Branding.md (brand identity)
+  â”œâ”€â”€ Accessibility.md (accessibility)
+  â”œâ”€â”€ ResponsiveRules.md (responsive)
+  â”œâ”€â”€ ProductArchitecture.md (domain model)
+  â”œâ”€â”€ InformationArchitecture.md (IA & sitemap)
+  â”œâ”€â”€ UserJourneyArchitecture.md (journey maps)
+  â”œâ”€â”€ FrontendTechnicalResearch.md (engineering constraints)
+  â”œâ”€â”€ Competitive_Intelligence_Report.md (competitive research)
+  â”œâ”€â”€ Enterprise_Frontend_Discovery_Report_v3.md (enterprise findings)
+  â””â”€â”€ Personas.md (user profiles)
 ```
 
 ### Appendix B: Typography Quick Reference
@@ -2465,18 +2465,18 @@ Design.md (THIS FILE)
 
 | Component | Primitives | Variants | A11y | Storybook | Tests |
 |---|---|---|---|---|---|
-| Button | Radix | 4 (primary/secondary/ghost/danger) | ✅ | ✅ | ✅ |
-| Card | — | 4 (default/interactive/compact/highlight) | ✅ | ✅ | ✅ |
-| Input | Radix | 3 (default/error/disabled) | ✅ | ✅ | ✅ |
-| Select | Radix | 3 (default/error/disabled) | ✅ | ✅ | ✅ |
-| Badge | — | 5 (default/success/warning/error/info) | ✅ | ✅ | ✅ |
-| Modal | Radix | 2 (default/fullscreen) | ✅ | ✅ | ✅ |
-| Toast | Radix | 3 (success/error/info) | ✅ | ✅ | ✅ |
-| Skeleton | — | 5 (text/circle/card/chart/table-row) | ✅ | ✅ | ✅ |
-| Ghost Hint | — | 4 (hidden/visible/filled/dismissed) | ✅ | ✅ | ✅ |
-| Streaming Text | — | 3 (generating/complete/error) | ✅ | ✅ | ✅ |
-| KPI Strip | — | 2 (default/compact) | ✅ | ✅ | ✅ |
-| Data Table | Radix | 2 (default/compact) | ✅ | ✅ | ✅ |
+| Button | Radix | 4 (primary/secondary/ghost/danger) | âœ… | âœ… | âœ… |
+| Card | â€” | 4 (default/interactive/compact/highlight) | âœ… | âœ… | âœ… |
+| Input | Radix | 3 (default/error/disabled) | âœ… | âœ… | âœ… |
+| Select | Radix | 3 (default/error/disabled) | âœ… | âœ… | âœ… |
+| Badge | â€” | 5 (default/success/warning/error/info) | âœ… | âœ… | âœ… |
+| Modal | Radix | 2 (default/fullscreen) | âœ… | âœ… | âœ… |
+| Toast | Radix | 3 (success/error/info) | âœ… | âœ… | âœ… |
+| Skeleton | â€” | 5 (text/circle/card/chart/table-row) | âœ… | âœ… | âœ… |
+| Ghost Hint | â€” | 4 (hidden/visible/filled/dismissed) | âœ… | âœ… | âœ… |
+| Streaming Text | â€” | 3 (generating/complete/error) | âœ… | âœ… | âœ… |
+| KPI Strip | â€” | 2 (default/compact) | âœ… | âœ… | âœ… |
+| Data Table | Radix | 2 (default/compact) | âœ… | âœ… | âœ… |
 
 ### Appendix E: Figma Component Naming Convention
 
@@ -2499,26 +2499,26 @@ Examples:
 | `color-accent-primary` | `--color-accent-primary` | `ACCENT_PRIMARY` | `bg-accent-primary`, `text-accent-primary` |
 | `color-bg-page` | `--color-bg-page` | `BG_PAGE` | `bg-page` |
 | `font-family-display` | `--font-family-display` | `FONT_DISPLAY` | `font-display` |
-| `space-16` | `--space-16` | `SPACE_16` | `p-4` (4 × 4px) |
+| `space-16` | `--space-16` | `SPACE_16` | `p-4` (4 Ã— 4px) |
 | `duration-200` | `--duration-200` | `DURATION_200` | `duration-200` |
 | `radius-md` | `--radius-md` | `RADIUS_MD` | `rounded-md` |
 | `shadow-card` | `--shadow-card` | `SHADOW_CARD` | `shadow-card` |
 
-### Appendix G: AI Agent → Design Pattern Mapping
+### Appendix G: AI Agent â†’ Design Pattern Mapping
 
 | Agent | UI Pattern | Component | Confidence Indicator |
 |---|---|---|---|
-| A01 — Task Agent | Suggestion Chip | `SuggestionChip` | Medium |
-| A02 — Memory Agent | Insight Card | `InsightCard` | Variable |
-| A03 — Learning Agent | Insight Card + Trend Card | `InsightCard` + `TrendCard` | High |
-| A06 — Opportunity Agent | Suggestion Chip + Confidence Badge | `SuggestionChip` + `ConfidenceBadge` | High |
-| A09 — Briefing Agent | Streaming Text + KPI Strip | `StreamingText` + `KPIStrip` | High |
-| A10 — Weekly Review | Streaming Text + Trend Card | `StreamingText` + `TrendCard` | High |
-| A13 — Sleep Agent | Ghost Hint + Suggestion Chip | `GhostHint` + `SuggestionChip` | Medium |
-| A14 — Nudge Agent | Suggestion Chip + Confidence Badge | `SuggestionChip` + `ConfidenceBadge` | Medium |
+| A01 â€” Task Agent | Suggestion Chip | `SuggestionChip` | Medium |
+| A02 â€” Memory Agent | Insight Card | `InsightCard` | Variable |
+| A03 â€” Learning Agent | Insight Card + Trend Card | `InsightCard` + `TrendCard` | High |
+| A06 â€” Opportunity Agent | Suggestion Chip + Confidence Badge | `SuggestionChip` + `ConfidenceBadge` | High |
+| A09 â€” Briefing Agent | Streaming Text + KPI Strip | `StreamingText` + `KPIStrip` | High |
+| A10 â€” Weekly Review | Streaming Text + Trend Card | `StreamingText` + `TrendCard` | High |
+| A13 â€” Sleep Agent | Ghost Hint + Suggestion Chip | `GhostHint` + `SuggestionChip` | Medium |
+| A14 â€” Nudge Agent | Suggestion Chip + Confidence Badge | `SuggestionChip` + `ConfidenceBadge` | Medium |
 
 ---
 
-*End of Design Architecture — Second Brain OS (ARIA OS)*
+*End of Design Architecture â€” Second Brain OS (ARIA OS)*
 *This document is the single source of truth for all design decisions. Any conflict with source documents is silently resolved here.*
-*Next phase: Antigravity Design System (tokens → atoms → molecules → organisms → pages) implemented in Figma + Stitch component library.*
+*Next phase: Antigravity Design System (tokens â†’ atoms â†’ molecules â†’ organisms â†’ pages) implemented in Figma + Stitch component library.*

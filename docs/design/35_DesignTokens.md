@@ -1,3 +1,14 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-TOK-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+---
+
 # Design Tokens Reference
 
 > **Source of truth**: `apps/web/tailwind.config.js` (theme extensions) and `apps/web/app/globals.css` (CSS custom properties + utility classes).
