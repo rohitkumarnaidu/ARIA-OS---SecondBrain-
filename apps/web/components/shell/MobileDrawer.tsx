@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { LucideIcon } from 'lucide-react'
-import { X, LayoutDashboard, CheckSquare, BookOpen, Youtube, FileText, Lightbulb, Target, Radar, Wallet, FolderKanban, GraduationCap, Moon, Clock, MessageCircle, Zap } from 'lucide-react'
+import { X, LayoutDashboard, CheckSquare, BookOpen, Youtube, FileText, Lightbulb, Target, Radar, Wallet, FolderKanban, GraduationCap, Moon, Clock, MessageCircle, Zap, Flag, Bell, Brain } from 'lucide-react'
 import { clsx } from 'clsx'
 
 interface MobileDrawerProps {
@@ -35,6 +35,8 @@ const trackingItems = [
 const systemItems = [
   { name: 'Chat', href: '/chat', icon: MessageCircle },
   { name: 'Automation', href: '/automation', icon: Zap },
+  { name: 'Learning Insights', href: '/learning', icon: Brain },
+  { name: 'Feature Flags', href: '/flags', icon: Flag },
 ]
 
 function NavSection({ title, items, pathname, onItemClick }: { title: string; items: { name: string; href: string; icon: LucideIcon }[]; pathname: string; onItemClick: () => void }) {
