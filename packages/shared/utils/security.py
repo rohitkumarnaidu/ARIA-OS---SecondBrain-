@@ -1,8 +1,8 @@
 """Security utilities for API protection"""
 
-import hashlib
 import secrets
 import re
+import bcrypt
 
 
 def generate_secure_token(length: int = 32) -> str:
@@ -11,13 +11,13 @@ def generate_secure_token(length: int = 32) -> str:
 
 
 def hash_password(password: str) -> str:
-    """Hash password using SHA-256 (use bcrypt in production)"""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash password using bcrypt"""
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(password: str, hashed: str) -> bool:
     """Verify password against hash"""
-    return hash_password(password) == hashed
+    return bcrypt.checkpw(password.encode(), hashed.encode())
 
 
 def sanitize_input(input_str: str) -> str:

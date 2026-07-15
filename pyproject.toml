@@ -5,5 +5,18 @@ exclude = ["apps/web/"]
 line-length = 120
 target-version = ["py310"]
 
+[tool.coverage.run]
+omit = [
+    "**/api_stubs_generated.py",
+    "**/schemas_generated.py",
+    "scripts/benchmark_api.py",
+    "scripts/dependency-report.py",
+    "scripts/health-check.py",
+    "scripts/add-react-memo.py",
+    "scripts/attack-scenarios.py",
+    "scripts/run_migration.py",
+    "scripts/validate-doc-ids.py",
+]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
