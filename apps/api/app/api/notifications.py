@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from shared.utils.logger import logger
 from database.schemas.notification import NotificationResponse
 from datetime import datetime
+from typing import Optional
 
 router = APIRouter()
 
@@ -188,6 +189,37 @@ async def generate_proactive_nudges(current_user=Depends(get_current_user)):
                     logger.error("Failed to insert sleep nudge", error=str(e))
 
     return [NotificationResponse(**n) for n in created]
+
+
+@router.get("/nudges", summary="List nudge history", response_model=list)
+async def list_nudges(
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    read: Optional[bool] = None,
+    current_user=Depends(get_current_user),
+):
+    supabase = get_supabase_client()
+    nudge_categories = ["habit", "course", "task"]
+    try:
+        query = (
+            supabase.from_("notifications")
+            .select("id, user_id, title, message, category, priority, read, action_url, icon, created_at")
+            .eq("user_id", current_user.user.id)
+            .in_("category", nudge_categories)
+            .order("created_at", ascending=False)
+        )
+        if read is not None:
+            query = query.eq("read", read)
+        resp = query.range(offset, offset + limit - 1).execute()
+        nudges = resp.data or []
+        for n in nudges:
+            n["type"] = n.get("category", "task")
+            severity_map = {"low": "info", "medium": "warning", "high": "critical"}
+            n["severity"] = severity_map.get(n.get("priority", "medium"), "info")
+        return nudges
+    except Exception as e:
+        logger.error("Failed to fetch nudges", error=str(e))
+        return []
 
 
 @router.get("/deadline-alerts", summary="Get deadline alerts", response_model=list)
