@@ -23,7 +23,12 @@ class PromptEntry:
         return self.body
 
     def render(self, **kwargs) -> str:
-        return self.body.format(**kwargs) if kwargs else self.body
+        if not kwargs:
+            return self.body
+        try:
+            return self.body.format(**kwargs)
+        except KeyError:
+            return self.body
 
     def validate(self) -> List[str]:
         errors = []
