@@ -26,6 +26,7 @@ import {
   CheckSquare,
   AlertCircle,
   Loader2,
+  Square,
 } from 'lucide-react'
 import { cn } from '@/components/ui/utils'
 import { Badge } from '@/components/ui/Badge'
@@ -170,7 +171,7 @@ export default function ChatPage() {
   const courseStore = useCourseStore()
   const goalStore = useGoalStore()
 
-  const isStreaming = store.loading
+  const isStreaming = store.loading || store.streaming
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -220,7 +221,7 @@ export default function ChatPage() {
     setSending(true)
 
     try {
-      await store.send(text, activeConversation?.id)
+      await store.send(text, activeConversation?.id, true)
       const currentStore = useChatStore.getState()
       if (currentStore.error) {
         setSendError(currentStore.error)
@@ -583,30 +584,53 @@ export default function ChatPage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Streaming indicator */}
+              {/* Streaming message bubble */}
               <AnimatePresence>
-                {isStreaming && (
+                {store.streaming && (
                   <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    key="streaming-bubble"
+                    initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -8 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 26 }}
                     className="flex justify-start mb-3"
                   >
-                    <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[var(--surface-secondary)] border border-[var(--border)]">
-                      <Loader2 size={14} className="animate-spin text-[var(--accent-primary)]" />
-                      <span className="flex items-center gap-1.5">
+                    <div className="max-w-[75%] rounded-2xl px-4 py-2.5 bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-primary)] rounded-bl-md">
+                      <div className="flex items-center gap-1.5 mb-1.5">
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
                           <Bot size={10} />
                           ARIA
                         </span>
-                        <span className="text-xs text-[var(--text-tertiary)]">thinking...</span>
-                      </span>
+                      </div>
+                      <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {store.streamingContent || (
+                          <span className="text-[var(--text-tertiariy)]">thinking...</span>
+                        )}
+                        <motion.span
+                          aria-hidden="true"
+                          className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
+                          style={{ backgroundColor: 'var(--accent-primary)' }}
+                          animate={{ opacity: [1, 0.15, 1] }}
+                          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+                        />
+                      </div>
+                      {/* Stop generating button */}
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          onClick={() => store.cancelStreaming()}
+                          aria-label="Stop generating"
+                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-[var(--accent-danger)]/10 text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-danger)]"
+                        >
+                          <Square size={10} />
+                          Stop generating
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {sending && (
+              {sending && !store.streaming && (
                 <div className="flex justify-start mb-3">
                   <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[var(--surface-secondary)] border border-[var(--border)]">
                     <Loader2 size={14} className="animate-spin text-[var(--accent-primary)]" />
