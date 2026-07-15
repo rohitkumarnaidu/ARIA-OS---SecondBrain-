@@ -67,8 +67,8 @@ async def predict_task_completion(current_user=Depends(get_current_user)):
                     prob = max(10, prob - 15)
                 elif days_left <= 3:
                     prob = min(100, prob + 5)
-            except (ValueError, TypeError):
-                pass
+            except (ValueError, TypeError) as e:
+                logger.warn("Failed to parse date field in prediction", error=str(e))
 
         prob = max(0, min(100, prob))
         confidence = "High" if completed > 20 else "Medium" if completed > 5 else "Low"
@@ -247,8 +247,8 @@ async def predict_sleep(current_user=Depends(get_current_user)):
                 confidence="Medium" if score_count >= 10 else "Low",
                 based_on_sessions=score_count,
             )
-        except (ValueError, TypeError):
-            pass
+        except (ValueError, TypeError) as e:
+            logger.warn("Failed to parse date field in prediction", error=str(e))
 
     rec = (
         "Great sleep quality! Keep your consistent schedule."
@@ -302,8 +302,8 @@ async def predict_smart_slots(current_user=Depends(get_current_user)):
             hour = dt.hour
             day = dt.weekday()
             slot_map[(day, hour)].append(dur)
-        except (ValueError, TypeError):
-            pass
+        except (ValueError, TypeError) as e:
+            logger.warn("Failed to parse date field in prediction", error=str(e))
 
     slots = []
     best_hour = 9
