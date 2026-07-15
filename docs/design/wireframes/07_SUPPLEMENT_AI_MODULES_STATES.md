@@ -1,4 +1,13 @@
-# 07 — Supplement: Time Tracking, Academics, YouTube, Automation, Learning, Memory, AI Components & States Wireframes
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-W07-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# 07 â€” Supplement: Time Tracking, Academics, YouTube, Automation, Learning, Memory, AI Components & States Wireframes
 
 | Field | Value |
 |---|---|
@@ -8,7 +17,7 @@
 
 ---
 
-## App-Level UI States — State Machine
+## App-Level UI States â€” State Machine
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
@@ -63,7 +72,7 @@ stateDiagram-v2
     end note
 ```
 
-## Supplement Module — Screen Flow Map
+## Supplement Module â€” Screen Flow Map
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
@@ -103,12 +112,12 @@ graph LR
     Mem --> Grouped["What ARIA Knows<br/>Grouped by Domain"]:::mView
     Mem --> MSettings["Memory Settings<br/>Privacy + Auto-Learn"]:::mView
 
-    AI --> Ghost["Ghost Hint<br/>4 States: Hidden → Visible → Filled → Dismissed"]:::aiView
-    AI --> Stream["Streaming Text<br/>3 States: Generating → Complete → Error"]:::aiView
-    AI --> Think["Thinking Indicator<br/>4 States: Idle → Thinking → Complete → Cancelled"]:::aiView
+    AI --> Ghost["Ghost Hint<br/>4 States: Hidden â†’ Visible â†’ Filled â†’ Dismissed"]:::aiView
+    AI --> Stream["Streaming Text<br/>3 States: Generating â†’ Complete â†’ Error"]:::aiView
+    AI --> Think["Thinking Indicator<br/>4 States: Idle â†’ Thinking â†’ Complete â†’ Cancelled"]:::aiView
     AI --> Badge["Confidence Badge<br/>4 Levels: High / Med / Low / Unknown"]:::aiView
-    AI --> Chip["Suggestion Chip<br/>3 States: Default → Hover → Selected"]:::aiView
-    AI --> Undo["AI Action Undo<br/>4 States: Action → Toast → Undo → Confirmed"]:::aiView
+    AI --> Chip["Suggestion Chip<br/>3 States: Default â†’ Hover â†’ Selected"]:::aiView
+    AI --> Undo["AI Action Undo<br/>4 States: Action â†’ Toast â†’ Undo â†’ Confirmed"]:::aiView
 
     classDef tMod fill:#6366F1,stroke:#818CF8,color:#F1F5F9
     classDef aMod fill:#13151A,stroke:#F59E0B,color:#F1F5F9
