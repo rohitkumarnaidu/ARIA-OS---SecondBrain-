@@ -1,10 +1,10 @@
-# Docker Configuration
+﻿# Docker Configuration
 
-> **Document ID**: SB-DOCKER-001  
+> **Document ID**: DVO-DCK-001  
 > **Version**: 1.0.0  
 > **Status**: Active  
 > **Last Updated**: 2026-06-11  
-> **Classification**: Internal — Engineering Reference  
+> **Classification**: Internal â€” Engineering Reference  
 > **Target Audience**: DevOps Engineers, Backend Developers, Infrastructure Team
 
 ---
@@ -78,7 +78,7 @@ graph TD
 ### 2.1 Frontend Dockerfile (Next.js)
 
 ```dockerfile
-# apps/web/Dockerfile — Multi-stage build for Next.js
+# apps/web/Dockerfile â€” Multi-stage build for Next.js
 
 # Stage 1: Dependencies
 FROM node:18-alpine AS deps
@@ -124,7 +124,7 @@ CMD ["node", "server.js"]
 ### 2.2 Backend Dockerfile (FastAPI)
 
 ```dockerfile
-# apps/api/Dockerfile — Multi-stage build for FastAPI
+# apps/api/Dockerfile â€” Multi-stage build for FastAPI
 
 # Stage 1: Builder
 FROM python:3.10-slim AS builder
@@ -159,7 +159,7 @@ CMD ["gunicorn", "main:app", "--worker-class", "uvicorn.workers.UvicornWorker", 
 ### 2.3 Scheduler Dockerfile (APScheduler)
 
 ```dockerfile
-# services/scheduler/Dockerfile — Single-stage build
+# services/scheduler/Dockerfile â€” Single-stage build
 
 FROM python:3.10-slim
 RUN addgroup --system --gid 1001 appgroup && adduser --system --uid 1001 appuser
@@ -181,7 +181,7 @@ CMD ["python", "main.py"]
 | Practice | Implementation |
 |---|---|
 | Multi-stage builds | Frontend: 3 stages; Backend: 2 stages |
-| Minimal base images | Alpine (frontend), Slim (backend) — 5x smaller than full images |
+| Minimal base images | Alpine (frontend), Slim (backend) â€” 5x smaller than full images |
 | Non-root user | All containers run as non-root (uid 1001) |
 | Layer caching | Dependencies copied before code for cache optimization |
 | Health checks | Every container has interval-based health probes |
@@ -393,10 +393,10 @@ flowchart LR
 
 | Service | Current Size | Budget | Status | Techniques |
 |---|---|---|---|---|
-| Frontend (runner) | ~120MB | <150MB | ✅ | Alpine, standalone output, multi-stage |
-| Backend (runner) | ~180MB | <200MB | ✅ | Slim base, user install, dep pruning |
-| Scheduler | ~150MB | <200MB | ✅ | Slim base, minimal deps |
-| Ollama | ~4GB | <5GB | ⚠️ | Quantized model |
+| Frontend (runner) | ~120MB | <150MB | âœ… | Alpine, standalone output, multi-stage |
+| Backend (runner) | ~180MB | <200MB | âœ… | Slim base, user install, dep pruning |
+| Scheduler | ~150MB | <200MB | âœ… | Slim base, minimal deps |
+| Ollama | ~4GB | <5GB | âš ï¸ | Quantized model |
 
 **Total stack (excluding Ollama):** ~450MB
 
@@ -463,7 +463,7 @@ htmlcov
 
 | Technique | Layer Savings | Total Savings | Effort |
 |---|---|---|---|
-| Alpine base (vs Debian) | — | ~800MB | Low |
+| Alpine base (vs Debian) | â€” | ~800MB | Low |
 | Multi-stage builds | ~200MB | ~200MB | Medium |
 | `npm ci --only=production` | ~50MB | ~50MB | Low |
 | `pip install --user` | ~30MB | ~30MB | Low |
@@ -490,10 +490,10 @@ graph TD
     end
 
     subgraph PortMappings["Host Port Mappings"]
-        P1[":3000 → frontend:3000"]
-        P2[":8000 → backend:8000"]
-        P3[":8001 → scheduler:8001"]
-        P4[":11434 → ollama:11434"]
+        P1[":3000 â†’ frontend:3000"]
+        P2[":8000 â†’ backend:8000"]
+        P3[":8001 â†’ scheduler:8001"]
+        P4[":11434 â†’ ollama:11434"]
     end
 
     style AppNetwork fill:#13151A,stroke:#6366F1,color:#F1F5F9
@@ -513,9 +513,9 @@ graph TD
 Containers resolve each other by service name within the network:
 
 ```
-frontend  → http://backend:8000     (API calls)
-scheduler → http://backend:8000     (health check, job results)
-backend   → http://ollama:11434     (AI inference)
+frontend  â†’ http://backend:8000     (API calls)
+scheduler â†’ http://backend:8000     (health check, job results)
+backend   â†’ http://ollama:11434     (AI inference)
 ```
 
 ### 5.3 Port Exposure Summary
@@ -688,7 +688,7 @@ docker compose --profile ai up -d --scale backend=2
 ### 8.2 Health Check Response
 
 ```json
-// GET /health → Backend
+// GET /health â†’ Backend
 {
   "status": "healthy",
   "version": "2.1.0",
@@ -698,7 +698,7 @@ docker compose --profile ai up -d --scale backend=2
   "memory_usage": { "rss_mb": 245, "percent": 48 }
 }
 
-// GET /health → Scheduler
+// GET /health â†’ Scheduler
 {
   "status": "healthy",
   "jobs_running": 6,
@@ -722,9 +722,9 @@ docker inspect --format='{{json .State.Health}}' sbos-api
 docker logs sbos-api
 
 # Common failures:
-# - start_period too short → increase
-# - timeout too short for slow ops → increase
-# - network dependency not ready → add depends_on condition
+# - start_period too short â†’ increase
+# - timeout too short for slow ops â†’ increase
+# - network dependency not ready â†’ add depends_on condition
 ```
 
 ---
@@ -744,7 +744,7 @@ docker logs sbos-api
 
 | Service | Rationale |
 |---|---|
-| Backend 512MB | Python + FastAPI uses 150–300MB. 512MB allows for AI request spikes |
+| Backend 512MB | Python + FastAPI uses 150â€“300MB. 512MB allows for AI request spikes |
 | Frontend 512MB | Next.js SSR with 4 concurrent requests |
 | Scheduler 256MB | Minimal process, short-lived jobs |
 | Ollama 8GB | Mistral 7B needs ~4GB base; 8GB for context processing |
@@ -759,9 +759,9 @@ docker stats
 docker inspect sbos-api | jq '.[0].HostConfig.Memory'
 
 # Alert thresholds:
-# - Memory > 80% for 5min → Review allocation
-# - CPU > 90% for 5min → Scale up
-# - OOM kills → Increase memory immediately
+# - Memory > 80% for 5min â†’ Review allocation
+# - CPU > 90% for 5min â†’ Scale up
+# - OOM kills â†’ Increase memory immediately
 ```
 
 ---
@@ -945,14 +945,14 @@ services:
 
 | Practice | Implementation | Status |
 |---|---|---|
-| Non-root user | `USER nextjs` / `USER appuser` | ✅ |
-| Minimal base images | Alpine (frontend), Slim (backend) | ✅ |
-| Drop capabilities | `cap_drop: ALL` | ✅ |
-| No privilege escalation | `no-new-privileges:true` | ✅ |
-| Read-only root FS | `read_only: true` | ✅ |
-| Secret management | Runtime env vars, not baked in | ✅ |
-| Vulnerability scanning | Trivy in CI | ✅ |
-| Package pinning | Lock files with specific versions | ✅ |
+| Non-root user | `USER nextjs` / `USER appuser` | âœ… |
+| Minimal base images | Alpine (frontend), Slim (backend) | âœ… |
+| Drop capabilities | `cap_drop: ALL` | âœ… |
+| No privilege escalation | `no-new-privileges:true` | âœ… |
+| Read-only root FS | `read_only: true` | âœ… |
+| Secret management | Runtime env vars, not baked in | âœ… |
+| Vulnerability scanning | Trivy in CI | âœ… |
+| Package pinning | Lock files with specific versions | âœ… |
 
 ### 13.2 Security-Hardened Compose
 
@@ -1000,10 +1000,10 @@ trivy image --exit-code 1 --severity CRITICAL sbos-api:latest
 ### 13.4 Secrets Management Rules
 
 ```
-❌ NEVER bake secrets into images:
+âŒ NEVER bake secrets into images:
    ENV SUPABASE_KEY=hardcoded-value  # WRONG!
 
-✅ Always use runtime environment variables:
+âœ… Always use runtime environment variables:
    environment:
      - SUPABASE_KEY=${SUPABASE_KEY}
 ```

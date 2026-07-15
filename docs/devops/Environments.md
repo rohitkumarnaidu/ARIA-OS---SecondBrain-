@@ -1,10 +1,10 @@
-# Environment Architecture
+﻿# Environment Architecture
 
-> **Document ID**: SB-ENV-001  
+> **Document ID**: DVO-ENV-001  
 > **Version**: 1.0.0  
 > **Status**: Active  
 > **Last Updated**: 2026-06-11  
-> **Classification**: Internal — Engineering Reference  
+> **Classification**: Internal â€” Engineering Reference  
 > **Target Audience**: Developers, DevOps Engineers, QA Engineers
 
 ---
@@ -21,7 +21,7 @@
 8. [Feature Flags Per Environment](#8-feature-flags-per-environment)
 9. [AI Model Differences Per Environment](#9-ai-model-differences-per-environment)
 10. [Testing in Each Environment](#10-testing-in-each-environment)
-11. [Promotion Workflow: Dev → Staging → Prod](#11-promotion-workflow-dev--staging--prod)
+11. [Promotion Workflow: Dev â†’ Staging â†’ Prod](#11-promotion-workflow-dev--staging--prod)
 12. [Rollback Procedures Per Environment](#12-rollback-procedures-per-environment)
 13. [Environment Parity Checklist](#13-environment-parity-checklist)
 
@@ -30,25 +30,25 @@
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 graph LR
-    subgraph Local["💻 Local Development"]
+    subgraph Local["ðŸ’» Local Development"]
         L_Next["Next.js :3000"] --- L_API["FastAPI :8000"]
         L_API --- L_Ollama["Ollama :11434"]
         L_API --- L_Supabase["Supabase Local CLI"]
     end
 
-    subgraph Preview["🔀 Preview (PR)"]
+    subgraph Preview["ðŸ”€ Preview (PR)"]
         P_Vercel["Vercel Preview URL"]
         P_Railway["Railway Dev Branch"]
         P_Supabase["Supabase Preview DB"]
     end
 
-    subgraph Staging["🧪 Staging"]
+    subgraph Staging["ðŸ§ª Staging"]
         S_Vercel["Vercel Staging"]
         S_Railway["Railway Staging"]
         S_Supabase["Supabase Staging Project"]
     end
 
-    subgraph Production["🚀 Production"]
+    subgraph Production["ðŸš€ Production"]
         Prod_Vercel["Vercel Production<br/>(secondbrain-os.vercel.app)"]
         Prod_Railway["Railway Production<br/>(api.secondbrain-os.com)"]
         Prod_Supabase["Supabase Production<br/>(PostgreSQL)"]
@@ -56,7 +56,7 @@ graph LR
         Prod_Resend["Resend (Email)"]
     end
 
-    subgraph DR["🔄 Disaster Recovery"]
+    subgraph DR["ðŸ”„ Disaster Recovery"]
         DR_Backup["Supabase Daily Backup"]
         DR_Env["Backup .env & Config"]
         DR_Docs["Git-based Documentation"]
@@ -73,40 +73,40 @@ graph LR
 ### 1.1 Environment Topology
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        ENVIRONMENT ARCHITECTURE                             │
-│                                                                             │
-│   ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐      │
-│   │   LOCAL DEV       │    │    PREVIEW        │    │    PRODUCTION    │      │
-│   │   (Developer)     │    │    (PR Deploy)    │    │    (Live)        │      │
-│   │                   │    │                   │    │                  │      │
-│   │  ┌─────────────┐  │    │  ┌─────────────┐  │    │  ┌────────────┐  │      │
-│   │  │ Next.js :3000│  │    │  │ Vercel      │  │    │  │ Vercel     │  │      │
-│   │  │ FastAPI:8000 │  │    │  │ Preview URL │  │    │  │ Production │  │      │
-│   │  │ Ollama:11434 │  │    │  │ Railway Dev │  │    │  │ Railway    │  │      │
-│   │  │ Supabase     │  │    │  │ Branch       │  │    │  │ Production │  │      │
-│   │  │ (local CLI)  │  │    │  └──────┬──────┘  │    │  └────────────┘  │      │
-│   │  └─────────────┘  │    │         │          │    │                  │      │
-│   └──────────────────┘    └──────────┼──────────┘    └──────────────────┘      │
-│                                      │                                         │
-│                           ┌──────────┴──────────┐                              │
-│                           │     STAGING          │                              │
-│                           │     (Pre-Prod)       │                              │
-│                           │                      │                              │
-│                           │  ┌────────────────┐  │                              │
-│                           │  │ Vercel Staging  │  │                              │
-│                           │  │ Railway Staging │  │                              │
-│                           │  │ Supabase        │  │                              │
-│                           │  │ Staging Project │  │                              │
-│                           │  └────────────────┘  │                              │
-│                           └──────────────────────┘                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        ENVIRONMENT ARCHITECTURE                             â”‚
+â”‚                                                                             â”‚
+â”‚   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+â”‚   â”‚   LOCAL DEV       â”‚    â”‚    PREVIEW        â”‚    â”‚    PRODUCTION    â”‚      â”‚
+â”‚   â”‚   (Developer)     â”‚    â”‚    (PR Deploy)    â”‚    â”‚    (Live)        â”‚      â”‚
+â”‚   â”‚                   â”‚    â”‚                   â”‚    â”‚                  â”‚      â”‚
+â”‚   â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚      â”‚
+â”‚   â”‚  â”‚ Next.js :3000â”‚  â”‚    â”‚  â”‚ Vercel      â”‚  â”‚    â”‚  â”‚ Vercel     â”‚  â”‚      â”‚
+â”‚   â”‚  â”‚ FastAPI:8000 â”‚  â”‚    â”‚  â”‚ Preview URL â”‚  â”‚    â”‚  â”‚ Production â”‚  â”‚      â”‚
+â”‚   â”‚  â”‚ Ollama:11434 â”‚  â”‚    â”‚  â”‚ Railway Dev â”‚  â”‚    â”‚  â”‚ Railway    â”‚  â”‚      â”‚
+â”‚   â”‚  â”‚ Supabase     â”‚  â”‚    â”‚  â”‚ Branch       â”‚  â”‚    â”‚  â”‚ Production â”‚  â”‚      â”‚
+â”‚   â”‚  â”‚ (local CLI)  â”‚  â”‚    â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜  â”‚    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚      â”‚
+â”‚   â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚    â”‚         â”‚          â”‚    â”‚                  â”‚      â”‚
+â”‚   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+â”‚                                      â”‚                                         â”‚
+â”‚                           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                              â”‚
+â”‚                           â”‚     STAGING          â”‚                              â”‚
+â”‚                           â”‚     (Pre-Prod)       â”‚                              â”‚
+â”‚                           â”‚                      â”‚                              â”‚
+â”‚                           â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚                              â”‚
+â”‚                           â”‚  â”‚ Vercel Staging  â”‚  â”‚                              â”‚
+â”‚                           â”‚  â”‚ Railway Staging â”‚  â”‚                              â”‚
+â”‚                           â”‚  â”‚ Supabase        â”‚  â”‚                              â”‚
+â”‚                           â”‚  â”‚ Staging Project â”‚  â”‚                              â”‚
+â”‚                           â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚                              â”‚
+â”‚                           â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-                    Feature Branch  ──▶  PR Preview
-                           │
-                    Main Branch  ──▶  Staging Deploy
-                           │
-                    Release Tag  ──▶  Production Deploy
+                    Feature Branch  â”€â”€â–¶  PR Preview
+                           â”‚
+                    Main Branch  â”€â”€â–¶  Staging Deploy
+                           â”‚
+                    Release Tag  â”€â”€â–¶  Production Deploy
 ```
 
 ### 1.2 Environment Summary
@@ -259,30 +259,30 @@ Data Strategy for Local Development:
 ### 3.1 Staging Architecture
 
 ```
-                      ┌──────────────────────────────┐
-                      │       STAGING                 │
-                      │                              │
-                      │  https://staging.example.com  │
-                      │                              │
-                      │  ┌────────────────────────┐  │
-                      │  │  Vercel Staging Branch │  │
-                      │  │  (Git: main branch)     │  │
-                      │  └───────────┬────────────┘  │
-                      │              │                │
-                      │              ▼                │
-                      │  ┌────────────────────────┐  │
-                      │  │  Railway Staging        │  │
-                      │  │  (staging branch)       │  │
-                      │  │  FastAPI + Scheduler    │  │
-                      │  └───────────┬────────────┘  │
-                      │              │                │
-                      │              ▼                │
-                      │  ┌────────────────────────┐  │
-                      │  │  Supabase Staging       │  │
-                      │  │  (separate project)     │  │
-                      │  │  + Anonymized Data      │  │
-                      │  └────────────────────────┘  │
-                      └──────────────────────────────┘
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚       STAGING                 â”‚
+                      â”‚                              â”‚
+                      â”‚  https://staging.example.com  â”‚
+                      â”‚                              â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Vercel Staging Branch â”‚  â”‚
+                      â”‚  â”‚  (Git: main branch)     â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â”‚              â”‚                â”‚
+                      â”‚              â–¼                â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Railway Staging        â”‚  â”‚
+                      â”‚  â”‚  (staging branch)       â”‚  â”‚
+                      â”‚  â”‚  FastAPI + Scheduler    â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â”‚              â”‚                â”‚
+                      â”‚              â–¼                â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Supabase Staging       â”‚  â”‚
+                      â”‚  â”‚  (separate project)     â”‚  â”‚
+                      â”‚  â”‚  + Anonymized Data      â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 3.2 Staging Configuration
@@ -292,7 +292,7 @@ Data Strategy for Local Development:
 | Setting | Value |
 |---|---|
 | Git Branch | `main` |
-| Production Branch | (none — staging is not production) |
+| Production Branch | (none â€” staging is not production) |
 | Auto Deploy | On push to `main` |
 | Domain | `staging-secondbrain-os.vercel.app` |
 | Custom Domain | `staging.secondbrain-os.com` |
@@ -386,31 +386,31 @@ CORS_ORIGINS=https://staging-secondbrain-os.vercel.app,https://staging.secondbra
 ### 4.1 Production Architecture
 
 ```
-                      ┌──────────────────────────────┐
-                      │      PRODUCTION               │
-                      │                              │
-                      │  https://secondbrain-os.com   │
-                      │                              │
-                      │  ┌────────────────────────┐  │
-                      │  │  Vercel Production     │  │
-                      │  │  (main branch,         │  │
-                      │  │   custom domain)       │  │
-                      │  └───────────┬────────────┘  │
-                      │              │                │
-                      │              ▼                │
-                      │  ┌────────────────────────┐  │
-                      │  │  Railway Production     │  │
-                      │  │  (production branch)    │  │
-                      │  │  FastAPI + Scheduler    │  │
-                      │  └───────────┬────────────┘  │
-                      │              │                │
-                      │              ▼                │
-                      │  ┌────────────────────────┐  │
-                      │  │  Supabase Production    │  │
-                      │  │  (production project)   │  │
-                      │  │  + Full data + PITR    │  │
-                      │  └────────────────────────┘  │
-                      └──────────────────────────────┘
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â”‚      PRODUCTION               â”‚
+                      â”‚                              â”‚
+                      â”‚  https://secondbrain-os.com   â”‚
+                      â”‚                              â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Vercel Production     â”‚  â”‚
+                      â”‚  â”‚  (main branch,         â”‚  â”‚
+                      â”‚  â”‚   custom domain)       â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â”‚              â”‚                â”‚
+                      â”‚              â–¼                â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Railway Production     â”‚  â”‚
+                      â”‚  â”‚  (production branch)    â”‚  â”‚
+                      â”‚  â”‚  FastAPI + Scheduler    â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â”‚              â”‚                â”‚
+                      â”‚              â–¼                â”‚
+                      â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+                      â”‚  â”‚  Supabase Production    â”‚  â”‚
+                      â”‚  â”‚  (production project)   â”‚  â”‚
+                      â”‚  â”‚  + Full data + PITR    â”‚  â”‚
+                      â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+                      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4.2 Production Configuration
@@ -482,26 +482,26 @@ CORS_ORIGINS=https://secondbrain-os.com,https://www.secondbrain-os.com
 Before promoting to production, the following must pass:
 
 ```
-☐ All CI checks pass (frontend, backend, prompts, security)
-☐ Staging deployment fully validated
-☐ Database migrations tested and approved
-☐ Performance benchmarks meet targets
-☐ Security scan completed (no high-severity vulns)
-☐ Changelog updated
-☐ Release manager approval obtained
-☐ Rollback plan documented
-☐ Backup verified (database + environment vars)
+â˜ All CI checks pass (frontend, backend, prompts, security)
+â˜ Staging deployment fully validated
+â˜ Database migrations tested and approved
+â˜ Performance benchmarks meet targets
+â˜ Security scan completed (no high-severity vulns)
+â˜ Changelog updated
+â˜ Release manager approval obtained
+â˜ Rollback plan documented
+â˜ Backup verified (database + environment vars)
 ```
 
 ### 4.5 Production Runbook Summary
 
 | Action | Command / Procedure | Responsible |
 |---|---|---|
-| Deploy | GitHub merge to `main` → Vercel auto-deploy | CI/CD |
+| Deploy | GitHub merge to `main` â†’ Vercel auto-deploy | CI/CD |
 | Verify | Check Vercel deployment status, Railway logs | Developer |
 | Monitor | Watch Sentry errors, Vercel Analytics, Supabase | Developer |
-| Rollback | Vercel: Deployment → ... → Rollback | Developer |
-| Emergency | Railway: Previous deploy → Redeploy | On-call |
+| Rollback | Vercel: Deployment â†’ ... â†’ Rollback | Developer |
+| Emergency | Railway: Previous deploy â†’ Redeploy | On-call |
 
 ---
 
@@ -562,36 +562,36 @@ Preview Backend Strategy:
 Supabase Pro ($25/mo) provides database branching:
 
 ```
-Each PR branch → Supabase Branch → Preview Deploy
+Each PR branch â†’ Supabase Branch â†’ Preview Deploy
 
-  main  ─── staging (stable)
-  feat/login ─── feat/login-preview (isolated)
-  feat/ui ─── feat/ui-preview (isolated)
+  main  â”€â”€â”€ staging (stable)
+  feat/login â”€â”€â”€ feat/login-preview (isolated)
+  feat/ui â”€â”€â”€ feat/ui-preview (isolated)
 ```
 
 ### 5.4 Preview Deployment Workflow
 
 ```
 Developer pushes to branch `feat/new-feature`
-    │
-    ▼
+    â”‚
+    â–¼
 GitHub detects push to feature branch
-    │
-    ▼
+    â”‚
+    â–¼
 CI Pipeline starts (lint, type-check, test, validate prompts)
-    │
-    ├── Success → Vercel Preview Deploy + Railway staging deploy
-    │
-    └── Failure → PR checks show ❌, developer notified
-    │
-    ▼
+    â”‚
+    â”œâ”€â”€ Success â†’ Vercel Preview Deploy + Railway staging deploy
+    â”‚
+    â””â”€â”€ Failure â†’ PR checks show âŒ, developer notified
+    â”‚
+    â–¼
 Vercel bot posts preview URL in PR
-    │
-    ▼
+    â”‚
+    â–¼
 Reviewer tests the preview
-    │
-    ▼
-PR merged → Preview auto-canceled → Main deploys to staging
+    â”‚
+    â–¼
+PR merged â†’ Preview auto-canceled â†’ Main deploys to staging
 ```
 
 ---
@@ -603,10 +603,10 @@ PR merged → Preview auto-canceled → Main deploys to staging
 | Source | Frontend | Backend | Purpose |
 |---|---|---|---|
 | `.env.local` | `apps/web/` | `apps/api/` | Local development |
-| Vercel Dashboard | ✅ Project settings | — | Frontend env vars per env |
-| Railway Dashboard | — | ✅ Service variables | Backend env vars per env |
-| GitHub Actions Secrets | — | — | CI/CD pipeline secrets |
-| 1Password Vault | — | — | Backup / disaster recovery |
+| Vercel Dashboard | âœ… Project settings | â€” | Frontend env vars per env |
+| Railway Dashboard | â€” | âœ… Service variables | Backend env vars per env |
+| GitHub Actions Secrets | â€” | â€” | CI/CD pipeline secrets |
+| 1Password Vault | â€” | â€” | Backup / disaster recovery |
 
 ### 6.2 Environment Variable Matrix
 
@@ -674,30 +674,30 @@ if __name__ == "__main__":
 ### 7.1 Migration Workflow
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Develop   │────▶│    Test     │────▶│   Deploy    │
-│  (Local)    │     │  (Staging)  │     │  (Prod)     │
-└─────────────┘     └─────────────┘     └─────────────┘
-       │                   │                   │
-       ▼                   ▼                   ▼
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│ Create SQL  │     │ Run migrate │     │ Run migrate │
-│ in supabase │     │ on staging  │     │ on prod     │
-│ /migrations │     │ + verify    │     │ + verify    │
-└─────────────┘     └─────────────┘     └─────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Develop   â”‚â”€â”€â”€â”€â–¶â”‚    Test     â”‚â”€â”€â”€â”€â–¶â”‚   Deploy    â”‚
+â”‚  (Local)    â”‚     â”‚  (Staging)  â”‚     â”‚  (Prod)     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                   â”‚                   â”‚
+       â–¼                   â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Create SQL  â”‚     â”‚ Run migrate â”‚     â”‚ Run migrate â”‚
+â”‚ in supabase â”‚     â”‚ on staging  â”‚     â”‚ on prod     â”‚
+â”‚ /migrations â”‚     â”‚ + verify    â”‚     â”‚ + verify    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.2 Migration File Structure
 
 ```
 supabase/
-└── migrations/
-    ├── 20260101000000_initial_schema.sql
-    ├── 20260201000000_add_habit_logs.sql
-    ├── 20260301000000_add_sleep_tracking.sql
-    ├── 20260401000000_add_income_entries.sql
-    ├── 20260501000000_add_ai_memory.sql
-    └── README.md
+â””â”€â”€ migrations/
+    â”œâ”€â”€ 20260101000000_initial_schema.sql
+    â”œâ”€â”€ 20260201000000_add_habit_logs.sql
+    â”œâ”€â”€ 20260301000000_add_sleep_tracking.sql
+    â”œâ”€â”€ 20260401000000_add_income_entries.sql
+    â”œâ”€â”€ 20260501000000_add_ai_memory.sql
+    â””â”€â”€ README.md
 ```
 
 ### 7.3 Migration Best Practices
@@ -715,7 +715,7 @@ supabase/
 
 ```bash
 # Before deploying to production:
-# 1. Push to main branch → auto-deploys to staging
+# 1. Push to main branch â†’ auto-deploys to staging
 # 2. Run migrations on staging:
 supabase db push --linked  # Uses staging project link
 
@@ -824,13 +824,13 @@ function DashboardPage() {
 
 | Feature | Local | Preview | Staging | Production |
 |---|---|---|---|---|
-| New Dashboard | ✅ | ✅ | ✅ | ❌ (Pilot) |
-| AI Sleep Agent | ✅ | ✅ | ✅ | ❌ |
-| V2 API | ✅ | ❌ | ✅ | ❌ |
-| Analytics Dashboard | ✅ | ✅ | ❌ | ❌ |
-| Export Features | ✅ | ✅ | ✅ | ✅ |
-| Admin Panel | ✅ | ✅ | ✅ | ❌ |
-| Debug Logging | ✅ | ❌ | ✅ | ❌ |
+| New Dashboard | âœ… | âœ… | âœ… | âŒ (Pilot) |
+| AI Sleep Agent | âœ… | âœ… | âœ… | âŒ |
+| V2 API | âœ… | âŒ | âœ… | âŒ |
+| Analytics Dashboard | âœ… | âœ… | âŒ | âŒ |
+| Export Features | âœ… | âœ… | âœ… | âœ… |
+| Admin Panel | âœ… | âœ… | âœ… | âŒ |
+| Debug Logging | âœ… | âŒ | âœ… | âŒ |
 
 ---
 
@@ -882,10 +882,10 @@ def get_model_config():
 ### 9.3 Key Differences
 
 ```
-Local:            ollama (localhost:11434) → immediate, free
-Preview:          ollama (dev machine) → may be offline, falls back to Claude
-Staging:          ollama (staging container) → consistent, tracked costs
-Production:       Claude (API) → reliable, monitored, sanctioned cost
+Local:            ollama (localhost:11434) â†’ immediate, free
+Preview:          ollama (dev machine) â†’ may be offline, falls back to Claude
+Staging:          ollama (staging container) â†’ consistent, tracked costs
+Production:       Claude (API) â†’ reliable, monitored, sanctioned cost
 ```
 
 ---
@@ -896,12 +896,12 @@ Production:       Claude (API) → reliable, monitored, sanctioned cost
 
 | Test Type | Local | Preview | Staging | Production |
 |---|---|---|---|---|
-| **Unit Tests** | ✅ Run locally | ✅ Run in CI | ❌ | ❌ |
-| **Integration Tests** | ✅ Run locally | ✅ Run in CI | ✅ Run on deploy | ❌ |
-| **E2E Tests** | ✅ Run locally | ❌ | ✅ Run on deploy | ❌ |
-| **Performance Tests** | ❌ | ❌ | ✅ Run on deploy | ✅ Monitored |
-| **Security Scan** | ✅ Run locally | ✅ Run in CI | ❌ | ✅ Scheduled |
-| **Smoke Tests** | ❌ | ❌ | ✅ Run on deploy | ✅ Run on deploy |
+| **Unit Tests** | âœ… Run locally | âœ… Run in CI | âŒ | âŒ |
+| **Integration Tests** | âœ… Run locally | âœ… Run in CI | âœ… Run on deploy | âŒ |
+| **E2E Tests** | âœ… Run locally | âŒ | âœ… Run on deploy | âŒ |
+| **Performance Tests** | âŒ | âŒ | âœ… Run on deploy | âœ… Monitored |
+| **Security Scan** | âœ… Run locally | âœ… Run in CI | âŒ | âœ… Scheduled |
+| **Smoke Tests** | âŒ | âŒ | âœ… Run on deploy | âœ… Run on deploy |
 
 ### 10.2 Testing Commands by Environment
 
@@ -960,9 +960,9 @@ def smoke_test(env: str):
         try:
             resp = requests.get(url, timeout=10)
             assert resp.status_code < 500, f"{url} returned {resp.status_code}"
-            print(f"✅ {name}: {url} - {resp.status_code}")
+            print(f"âœ… {name}: {url} - {resp.status_code}")
         except Exception as e:
-            print(f"❌ {name}: {url} - {e}")
+            print(f"âŒ {name}: {url} - {e}")
             sys.exit(1)
 
 if __name__ == "__main__":
@@ -972,26 +972,26 @@ if __name__ == "__main__":
 
 ---
 
-## 11. Promotion Workflow: Dev → Staging → Prod
+## 11. Promotion Workflow: Dev â†’ Staging â†’ Prod
 
 ### 11.1 Promotion Pipeline
 
 ```
                               PROMOTION PIPELINE
-  ┌──────────────────────────────────────────────────────────────────┐
-  │                                                                  │
-  │  DEVELOP                 STAGING                    PRODUCTION   │
-  │  ┌────────┐             ┌────────┐                ┌────────┐    │
-  │  │ Branch │─── PR ────▶│  main  │─── Release ───▶│  main  │    │
-  │  └────────┘             └────────┘                └────────┘    │
-  │      │                      │                         │          │
-  │      ▼                      ▼                         ▼          │
-  │  Local Dev              Auto Deploy               Manual        │
-  │  + Tests                + CI Checks               + Approval    │
-  │  + Preview URL          + Smoke Tests             + Release Tag │
-  │                         + Staging Validation      + Production  │
-  │                                                    Deploy       │
-  └──────────────────────────────────────────────────────────────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚                                                                  â”‚
+  â”‚  DEVELOP                 STAGING                    PRODUCTION   â”‚
+  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”             â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”                â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+  â”‚  â”‚ Branch â”‚â”€â”€â”€ PR â”€â”€â”€â”€â–¶â”‚  main  â”‚â”€â”€â”€ Release â”€â”€â”€â–¶â”‚  main  â”‚    â”‚
+  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜             â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜                â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+  â”‚      â”‚                      â”‚                         â”‚          â”‚
+  â”‚      â–¼                      â–¼                         â–¼          â”‚
+  â”‚  Local Dev              Auto Deploy               Manual        â”‚
+  â”‚  + Tests                + CI Checks               + Approval    â”‚
+  â”‚  + Preview URL          + Smoke Tests             + Release Tag â”‚
+  â”‚                         + Staging Validation      + Production  â”‚
+  â”‚                                                    Deploy       â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 11.2 Step-by-Step Promotion
@@ -1067,14 +1067,14 @@ git push origin v2.1.0
 | **Preview** | Re-push or close PR | <2 min | None (ephemeral) |
 | **Staging** | Vercel: Previous deploy | <5 min | None (shared DB, backward-compat schema) |
 | **Production** | Vercel: Rollback + Railway: Previous deploy | <10 min | Minimal (API version compatibility) |
-| **Database** | PITR restore | 15–60 min | Data loss from time of restore |
+| **Database** | PITR restore | 15â€“60 min | Data loss from time of restore |
 
 ### 12.2 Frontend Rollback (Vercel)
 
 **Method 1: Dashboard Rollback**
-1. Go to Vercel Dashboard → Deployments
+1. Go to Vercel Dashboard â†’ Deployments
 2. Find the last known-good deployment
-3. Click "..." → "Promote to Production"
+3. Click "..." â†’ "Promote to Production"
 
 **Method 2: CLI Rollback**
 ```bash
@@ -1091,8 +1091,8 @@ vercel rollback
 ### 12.3 Backend Rollback (Railway)
 
 **Method 1: Dashboard Deploy**
-1. Go to Railway Dashboard → Deployment
-2. Click "Deploy" → Select previous image version
+1. Go to Railway Dashboard â†’ Deployment
+2. Click "Deploy" â†’ Select previous image version
 3. Confirm deploy
 
 **Method 2: CLI Rollback**
@@ -1121,7 +1121,7 @@ supabase db dump --linked -f prod_backup.sql
 
 # Step 3: Restore from PITR
 # Use Supabase dashboard:
-#   Database → Backups → Point-in-Time Recovery
+#   Database â†’ Backups â†’ Point-in-Time Recovery
 #   Select timestamp before bad migration
 
 # Step 4: Verify data integrity
@@ -1131,15 +1131,15 @@ supabase db dump --linked -f prod_backup.sql
 ### 12.5 Rollback Checklist
 
 ```
-☐ Identify the rollback trigger (error rate, bug, performance)
-☐ Notify team via Slack #devops channel
-☐ Stop new deploys (lock Vercel, Railway)
-☐ Rollback frontend (Vercel dashboard)
-☐ Rollback backend (Railway previous deploy)
-☐ Verify rollback health checks pass
-☐ If database migration rollback needed: restore from PITR
-☐ Post-mortem: create issue for root cause analysis
-☐ Unlock deploys after resolution
+â˜ Identify the rollback trigger (error rate, bug, performance)
+â˜ Notify team via Slack #devops channel
+â˜ Stop new deploys (lock Vercel, Railway)
+â˜ Rollback frontend (Vercel dashboard)
+â˜ Rollback backend (Railway previous deploy)
+â˜ Verify rollback health checks pass
+â˜ If database migration rollback needed: restore from PITR
+â˜ Post-mortem: create issue for root cause analysis
+â˜ Unlock deploys after resolution
 ```
 
 ---
@@ -1152,55 +1152,55 @@ Use this checklist to verify environment consistency before production releases:
 
 ```
 SOURCE CODE PARITY
-☐ Same Git commit deployed to all environments
-☐ No environment-specific code branches
-☐ Feature flags match intended configuration
+â˜ Same Git commit deployed to all environments
+â˜ No environment-specific code branches
+â˜ Feature flags match intended configuration
 
 ENVIRONMENT VARIABLES PARITY
-☐ All required variables present in each environment
-☐ Values differ only when intentionally different (e.g., URLs)
-☐ No hardcoded values in code (all config via env vars)
-☐ Secrets rotated on schedule
-☐ Secret values verified via 1Password match
+â˜ All required variables present in each environment
+â˜ Values differ only when intentionally different (e.g., URLs)
+â˜ No hardcoded values in code (all config via env vars)
+â˜ Secrets rotated on schedule
+â˜ Secret values verified via 1Password match
 
 DATABASE PARITY
-☐ Same migration version applied everywhere
-☐ Schema diff between staging and prod is empty
-☐ Indexes match between environments
-☐ RLS policies match between environments
-☐ Seed data representative of production patterns
+â˜ Same migration version applied everywhere
+â˜ Schema diff between staging and prod is empty
+â˜ Indexes match between environments
+â˜ RLS policies match between environments
+â˜ Seed data representative of production patterns
 
 AI CONFIGURATION PARITY
-☐ Model versions match (or intentional upgrade in prod)
-☐ Prompt files match across environments
-☐ Temperature/parameter settings match
-☐ Fallback behavior tested in staging
+â˜ Model versions match (or intentional upgrade in prod)
+â˜ Prompt files match across environments
+â˜ Temperature/parameter settings match
+â˜ Fallback behavior tested in staging
 
 BUILD PARITY
-☐ Same Node.js version (18.x) everywhere
-☐ Same Python version (3.10+) everywhere
-☐ Same dependency versions (package-lock.json, requirements.txt)
-☐ Same Docker base images
-☐ Same build arguments
+â˜ Same Node.js version (18.x) everywhere
+â˜ Same Python version (3.10+) everywhere
+â˜ Same dependency versions (package-lock.json, requirements.txt)
+â˜ Same Docker base images
+â˜ Same build arguments
 
 NETWORK PARITY
-☐ CORS origins correct for each environment
-☐ SSL/TLS certificates valid
-☐ DNS records resolve correctly
-☐ API URLs match environment
-☐ WebSocket URLs match environment
+â˜ CORS origins correct for each environment
+â˜ SSL/TLS certificates valid
+â˜ DNS records resolve correctly
+â˜ API URLs match environment
+â˜ WebSocket URLs match environment
 
 MONITORING PARITY
-☐ Health check endpoints responding
-☐ Sentry DSN configured per environment
-☐ Logging level appropriate (debug in staging, info in prod)
-☐ Alert thresholds configured
+â˜ Health check endpoints responding
+â˜ Sentry DSN configured per environment
+â˜ Logging level appropriate (debug in staging, info in prod)
+â˜ Alert thresholds configured
 
 PERFORMANCE PARITY
-☐ Build time under 3 minutes
-☐ Lighthouse score > 80 in staging
-☐ API p95 response time < 2s in staging
-☐ No memory leaks detected in 15-min soak test
+â˜ Build time under 3 minutes
+â˜ Lighthouse score > 80 in staging
+â˜ API p95 response time < 2s in staging
+â˜ No memory leaks detected in 15-min soak test
 ```
 
 ### 13.2 Parity Validation Script
@@ -1235,20 +1235,20 @@ echo "=== Parity Check Complete ==="
 ### 13.3 Environment Sizing Comparison
 
 ```
-┌────────────────────┬──────────┬──────────┬──────────────┐
-│ Resource            │ Local    │ Staging  │ Production   │
-├────────────────────┼──────────┼──────────┼──────────────┤
-│ Frontend Instances  │ 1        │ 1        │ Auto-scaled  │
-│ Backend Instances   │ 1        │ 1        │ 2+           │
-│ Worker Instances    │ 1        │ 1        │ 1            │
-│ DB Storage          │ Local FS │ 500MB    │ 500MB–10GB   │
-│ DB Connections      │ Unlimited│ 60       │ 60–200       │
-│ Cache (in-memory)   │ Volatile │ 50MB     │ 200MB        │
-│ AI (primary)        │ Ollama   │ Ollama   │ Claude       │
-│ AI (fallback)       │ None     │ Claude   │ Claude       │
-│ Log Retention       │ No limit │ 7 days   │ 30 days      │
-│ Backup Frequency    │ Manual   │ Daily    │ Daily + PITR │
-└────────────────────┴──────────┴──────────┴──────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Resource            â”‚ Local    â”‚ Staging  â”‚ Production   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Frontend Instances  â”‚ 1        â”‚ 1        â”‚ Auto-scaled  â”‚
+â”‚ Backend Instances   â”‚ 1        â”‚ 1        â”‚ 2+           â”‚
+â”‚ Worker Instances    â”‚ 1        â”‚ 1        â”‚ 1            â”‚
+â”‚ DB Storage          â”‚ Local FS â”‚ 500MB    â”‚ 500MBâ€“10GB   â”‚
+â”‚ DB Connections      â”‚ Unlimitedâ”‚ 60       â”‚ 60â€“200       â”‚
+â”‚ Cache (in-memory)   â”‚ Volatile â”‚ 50MB     â”‚ 200MB        â”‚
+â”‚ AI (primary)        â”‚ Ollama   â”‚ Ollama   â”‚ Claude       â”‚
+â”‚ AI (fallback)       â”‚ None     â”‚ Claude   â”‚ Claude       â”‚
+â”‚ Log Retention       â”‚ No limit â”‚ 7 days   â”‚ 30 days      â”‚
+â”‚ Backup Frequency    â”‚ Manual   â”‚ Daily    â”‚ Daily + PITR â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---

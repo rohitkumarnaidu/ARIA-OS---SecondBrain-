@@ -1,10 +1,10 @@
-# Kubernetes Architecture
+﻿# Kubernetes Architecture
 
-> **Document ID**: SB-K8S-001  
+> **Document ID**: DVO-K8S-001  
 > **Version**: 1.0.0  
 > **Status**: Draft  
 > **Last Updated**: 2026-06-11  
-> **Classification**: Internal — Engineering Reference (Future State)  
+> **Classification**: Internal â€” Engineering Reference (Future State)  
 > **Target Audience**: DevOps Engineers, SRE Team, Infrastructure Architects
 
 > **IMPORTANT**: This document describes the **future-state** Kubernetes architecture. The project currently uses **Docker Compose** for local development and **Railway** for production deployment. Kubernetes migration is planned for scaling beyond 1,000 concurrent users.
@@ -49,7 +49,7 @@ graph LR
         BackendK8s["Backend<br/>Deploy + HPA"]
         SchedulerK8s["Scheduler<br/>Deploy"]
         OllamaK8s["Ollama<br/>StatefulSet"]
-        Ingress["Ingress (NGINX)<br/>TLS → Path-based routing"]
+        Ingress["Ingress (NGINX)<br/>TLS â†’ Path-based routing"]
         Monitoring["Prometheus + Grafana"]
         Logging["EFK Stack (Logging)"]
 
@@ -106,7 +106,7 @@ graph TD
         end
 
         subgraph IngressSection["INGRESS"]
-            Ingress["Host: secondbrain-os.com → frontend-svc:3000<br/>Host: api.secondbrain-os.com → backend-svc:8000<br/>TLS: letsencrypt-prod"]
+            Ingress["Host: secondbrain-os.com â†’ frontend-svc:3000<br/>Host: api.secondbrain-os.com â†’ backend-svc:8000<br/>TLS: letsencrypt-prod"]
         end
 
         subgraph Monitoring["MONITORING STACK"]
@@ -154,7 +154,7 @@ graph TD
 | **Node Pool: General** | 3x e2-standard-2 (2 vCPU, 8GB RAM) | General-purpose workloads |
 | **Node Pool: GPU** | 1x g2-standard-4 (4 vCPU, 16GB RAM, L4 GPU) | Ollama AI inference |
 | **Node Pool: Spot** | 2x e2-standard-2 (preemptible) | Cost-optimized batch jobs |
-| **Cluster Autoscaler** | Enabled (0–10 nodes per pool) | Automatic scaling |
+| **Cluster Autoscaler** | Enabled (0â€“10 nodes per pool) | Automatic scaling |
 | **Region** | us-central1 | Central US, low latency |
 | **Zones** | us-central1-a, us-central1-b, us-central1-c | Multi-AZ for HA |
 
@@ -830,10 +830,10 @@ spec:
 
 | ConfigMap / Secret | Frontend | Backend | Scheduler | Ollama |
 |---|---|---|---|---|
-| `frontend-config` | ✅ | — | — | — |
-| `frontend-secrets` | ✅ | — | — | — |
-| `backend-config` | — | ✅ | ✅ | — |
-| `backend-secrets` | — | ✅ | ✅ | — |
+| `frontend-config` | âœ… | â€” | â€” | â€” |
+| `frontend-secrets` | âœ… | â€” | â€” | â€” |
+| `backend-config` | â€” | âœ… | âœ… | â€” |
+| `backend-secrets` | â€” | âœ… | âœ… | â€” |
 
 ---
 
@@ -996,10 +996,10 @@ spec:
 
 | Deployment | Min | Max | CPU Target | Memory Target | Custom Metric |
 |---|---|---|---|---|---|
-| Frontend | 2 | 10 | 70% | 80% | — |
+| Frontend | 2 | 10 | 70% | 80% | â€” |
 | Backend | 3 | 15 | 70% | 80% | 100 req/s per pod |
-| Scheduler | 1 | 1 | — | — | — |
-| Ollama | 1 | 1 | — | — | — |
+| Scheduler | 1 | 1 | â€” | â€” | â€” |
+| Ollama | 1 | 1 | â€” | â€” | â€” |
 
 ---
 
@@ -1009,9 +1009,9 @@ spec:
 
 | Deployment | CPU Request | CPU Limit | Memory Request | Memory Limit | GPU |
 |---|---|---|---|---|---|
-| Frontend | 250m | 500m | 256Mi | 512Mi | — |
-| Backend | 250m | 1000m | 256Mi | 512Mi | — |
-| Scheduler | 100m | 250m | 128Mi | 256Mi | — |
+| Frontend | 250m | 500m | 256Mi | 512Mi | â€” |
+| Backend | 250m | 1000m | 256Mi | 512Mi | â€” |
+| Scheduler | 100m | 250m | 128Mi | 256Mi | â€” |
 | Ollama | 2000m | 4000m | 4Gi | 8Gi | 1x L4 |
 
 ### 9.2 Quality of Service Classes
@@ -1050,35 +1050,35 @@ spec:
 
 ```
 charts/
-├── sbos/
-│   ├── Chart.yaml
-│   ├── values.yaml
-│   ├── values.dev.yaml
-│   ├── values.staging.yaml
-│   ├── values.prod.yaml
-│   ├── templates/
-│   │   ├── _helpers.tpl
-│   │   ├── frontend-deployment.yaml
-│   │   ├── frontend-service.yaml
-│   │   ├── frontend-hpa.yaml
-│   │   ├── backend-deployment.yaml
-│   │   ├── backend-service.yaml
-│   │   ├── backend-hpa.yaml
-│   │   ├── scheduler-deployment.yaml
-│   │   ├── scheduler-service.yaml
-│   │   ├── ollama-statefulset.yaml
-│   │   ├── ollama-service.yaml
-│   │   ├── ollama-pvc.yaml
-│   │   ├── ingress.yaml
-│   │   ├── configmap.yaml
-│   │   ├── sealed-secrets.yaml
-│   │   ├── namespace.yaml
-│   │   ├── limitrange.yaml
-│   │   ├── network-policy.yaml
-│   │   ├── pod-disruption-budget.yaml
-│   │   └── pdb.yaml
-│   └── tests/
-│       └── connection.yaml
+â”œâ”€â”€ sbos/
+â”‚   â”œâ”€â”€ Chart.yaml
+â”‚   â”œâ”€â”€ values.yaml
+â”‚   â”œâ”€â”€ values.dev.yaml
+â”‚   â”œâ”€â”€ values.staging.yaml
+â”‚   â”œâ”€â”€ values.prod.yaml
+â”‚   â”œâ”€â”€ templates/
+â”‚   â”‚   â”œâ”€â”€ _helpers.tpl
+â”‚   â”‚   â”œâ”€â”€ frontend-deployment.yaml
+â”‚   â”‚   â”œâ”€â”€ frontend-service.yaml
+â”‚   â”‚   â”œâ”€â”€ frontend-hpa.yaml
+â”‚   â”‚   â”œâ”€â”€ backend-deployment.yaml
+â”‚   â”‚   â”œâ”€â”€ backend-service.yaml
+â”‚   â”‚   â”œâ”€â”€ backend-hpa.yaml
+â”‚   â”‚   â”œâ”€â”€ scheduler-deployment.yaml
+â”‚   â”‚   â”œâ”€â”€ scheduler-service.yaml
+â”‚   â”‚   â”œâ”€â”€ ollama-statefulset.yaml
+â”‚   â”‚   â”œâ”€â”€ ollama-service.yaml
+â”‚   â”‚   â”œâ”€â”€ ollama-pvc.yaml
+â”‚   â”‚   â”œâ”€â”€ ingress.yaml
+â”‚   â”‚   â”œâ”€â”€ configmap.yaml
+â”‚   â”‚   â”œâ”€â”€ sealed-secrets.yaml
+â”‚   â”‚   â”œâ”€â”€ namespace.yaml
+â”‚   â”‚   â”œâ”€â”€ limitrange.yaml
+â”‚   â”‚   â”œâ”€â”€ network-policy.yaml
+â”‚   â”‚   â”œâ”€â”€ pod-disruption-budget.yaml
+â”‚   â”‚   â””â”€â”€ pdb.yaml
+â”‚   â””â”€â”€ tests/
+â”‚       â””â”€â”€ connection.yaml
 ```
 
 ### 10.2 Chart.yaml
@@ -1383,9 +1383,9 @@ spec:
 
 | Feature | Istio | Linkerd | Consul Connect |
 |---|---|---|---|
-| **mTLS** | ✅ Automatic | ✅ Automatic | ✅ Automatic |
-| **Traffic splitting** | ✅ Fine-grained | ✅ Simple | ✅ Via config |
-| **Observability** | ✅ Deep (Kiali) | ✅ Good (Grafana) | ✅ Basic |
+| **mTLS** | âœ… Automatic | âœ… Automatic | âœ… Automatic |
+| **Traffic splitting** | âœ… Fine-grained | âœ… Simple | âœ… Via config |
+| **Observability** | âœ… Deep (Kiali) | âœ… Good (Grafana) | âœ… Basic |
 | **Resource overhead** | ~2GB per node | ~200MB per node | ~500MB per node |
 | **Learning curve** | High | Medium | Medium |
 | **Community** | Very active | Active | Active |
@@ -1767,27 +1767,27 @@ kubectl rollout undo -n sbos deployment/backend
 |---|---|---|---|
 | General pool | e2-standard-2 (2vCPU, 8GB) | 3 | ~$210 |
 | GPU pool | g2-standard-4 (4vCPU, 16GB, L4) | 1 | ~$240 |
-| Spot pool | e2-standard-2 (2vCPU, 8GB) | 0–2 | ~$0–$140 |
-| GKE cluster fee | — | — | ~$73 |
-| **Total** | | | **~$523–$663/mo** |
+| Spot pool | e2-standard-2 (2vCPU, 8GB) | 0â€“2 | ~$0â€“$140 |
+| GKE cluster fee | â€” | â€” | ~$73 |
+| **Total** | | | **~$523â€“$663/mo** |
 
 ## Appendix C: Migration Checklist from Railway
 
 ```
-☐ Provision GKE cluster with node pools
-☐ Install NGINX Ingress Controller
-☐ Set up cert-manager for TLS
-☐ Create namespaces and service accounts
-☐ Deploy ConfigMaps and External Secrets
-☐ Install Prometheus + Grafana stack
-☐ Deploy application Helm chart
-☐ Configure Network Policies
-☐ Set up PDB and HPA
-☐ Point DNS to K8s ingress
-☐ Migrate Supabase (no changes needed)
-☐ Verify health endpoints
-☐ Monitor for 1-hour soak
-☐ Decommission Railway project
+â˜ Provision GKE cluster with node pools
+â˜ Install NGINX Ingress Controller
+â˜ Set up cert-manager for TLS
+â˜ Create namespaces and service accounts
+â˜ Deploy ConfigMaps and External Secrets
+â˜ Install Prometheus + Grafana stack
+â˜ Deploy application Helm chart
+â˜ Configure Network Policies
+â˜ Set up PDB and HPA
+â˜ Point DNS to K8s ingress
+â˜ Migrate Supabase (no changes needed)
+â˜ Verify health endpoints
+â˜ Monitor for 1-hour soak
+â˜ Decommission Railway project
 ```
 
 ---

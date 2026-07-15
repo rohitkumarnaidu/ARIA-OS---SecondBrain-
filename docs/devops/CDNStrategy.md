@@ -1,10 +1,10 @@
-# CDN Strategy
+﻿# CDN Strategy
 
-> **Document ID**: SB-CDN-001  
+> **Document ID**: DVO-CDN-001  
 > **Version**: 1.0.0  
 > **Status**: Active  
 > **Last Updated**: 2026-06-11  
-> **Classification**: Internal — Engineering Reference  
+> **Classification**: Internal â€” Engineering Reference  
 > **Target Audience**: Frontend Developers, DevOps Engineers, Performance Engineers
 
 ---
@@ -31,15 +31,15 @@
 
 ```mermaid
 graph TD
-    subgraph CDN["GLOBAL CDN ARCHITECTURE — Vercel Edge Network (100+ POPs)"]
+    subgraph CDN["GLOBAL CDN ARCHITECTURE â€” Vercel Edge Network (100+ POPs)"]
         USWest["US West<br/>(LAX)"]
         USEast["US East<br/>(IAD)"]
         EUWest["EU West<br/>(LHR)"]
         EUEast["EU East<br/>(FRA)"]
         Asia["Asia<br/>(NRT)"]
-        OriginShield["VERCEL ORIGIN SHIELD<br/>(us-east-1 — Central Cache Layer)"]
-        NextJS["NEXT.JS SERVERLESS<br/>(us-east-1 — SSR + API Routes)"]
-        Railway["RAILWAY BACKEND<br/>(us-west — FastAPI Containers)"]
+        OriginShield["VERCEL ORIGIN SHIELD<br/>(us-east-1 â€” Central Cache Layer)"]
+        NextJS["NEXT.JS SERVERLESS<br/>(us-east-1 â€” SSR + API Routes)"]
+        Railway["RAILWAY BACKEND<br/>(us-west â€” FastAPI Containers)"]
     end
 
     USWest --> OriginShield
@@ -68,12 +68,12 @@ flowchart LR
     User["User requests<br/>https://secondbrain-os.com"]
     DNS["DNS resolves to<br/>nearest Vercel POP (Anycast)"]
     POP["POP checks Edge Cache"]
-    Hit["HIT → Serve cached<br/>response (<10ms)"]
-    Miss["MISS → Forward to<br/>Origin Shield (us-east-1)"]
+    Hit["HIT â†’ Serve cached<br/>response (<10ms)"]
+    Miss["MISS â†’ Forward to<br/>Origin Shield (us-east-1)"]
     Shield["Origin Shield<br/>checks its cache"]
-    ShieldHit["HIT → Serve from<br/>Origin Shield, cache at POP"]
-    ShieldMiss["MISS → Forward to<br/>Next.js Serverless"]
-    API["For API calls:<br/>Railway Backend →<br/>Supabase Database"]
+    ShieldHit["HIT â†’ Serve from<br/>Origin Shield, cache at POP"]
+    ShieldMiss["MISS â†’ Forward to<br/>Next.js Serverless"]
+    API["For API calls:<br/>Railway Backend â†’<br/>Supabase Database"]
 
     User --> DNS
     DNS --> POP
@@ -99,24 +99,24 @@ flowchart LR
 
 ```
 Layer 1: Browser Cache
-  • Fastest: 0–5ms
-  • Controlled via Cache-Control headers
-  • Best for: static assets, fonts, images
+  â€¢ Fastest: 0â€“5ms
+  â€¢ Controlled via Cache-Control headers
+  â€¢ Best for: static assets, fonts, images
 
 Layer 2: Vercel Edge Cache (POP)
-  • Fast: 5–20ms
-  • Shared across users at the same POP
-  • TTL: 5min–1year depending on resource
+  â€¢ Fast: 5â€“20ms
+  â€¢ Shared across users at the same POP
+  â€¢ TTL: 5minâ€“1year depending on resource
 
 Layer 3: Vercel Origin Shield
-  • Medium: 20–50ms
-  • Central cache layer for all POPs
-  • Reduces origin load by ~80%
+  â€¢ Medium: 20â€“50ms
+  â€¢ Central cache layer for all POPs
+  â€¢ Reduces origin load by ~80%
 
 Layer 4: Application Cache (in-memory)
-  • Slowest: 50–200ms
-  • In FastAPI, TTL-based tag cache
-  • Best for: computed API responses
+  â€¢ Slowest: 50â€“200ms
+  â€¢ In FastAPI, TTL-based tag cache
+  â€¢ Best for: computed API responses
 ```
 
 ### 1.4 Caching Decision Matrix
@@ -144,7 +144,7 @@ Vercel operates 100+ POPs globally:
 | **North America** | NY, SF, LA, Chicago, Dallas, Miami, Toronto, Vancouver | 30+ | <20ms |
 | **Europe** | London, Frankfurt, Paris, Amsterdam, Stockholm, Madrid, Milan, Warsaw | 25+ | <25ms |
 | **Asia-Pacific** | Tokyo, Singapore, Sydney, Mumbai, Seoul, Hong Kong | 20+ | <30ms |
-| **South America** | São Paulo, Buenos Aires, Santiago, Lima | 10+ | <40ms |
+| **South America** | SÃ£o Paulo, Buenos Aires, Santiago, Lima | 10+ | <40ms |
 | **Middle East** | Dubai, Tel Aviv, Istanbul | 5+ | <45ms |
 | **Africa** | Johannesburg, Cape Town, Lagos, Nairobi | 5+ | <60ms |
 
@@ -310,17 +310,17 @@ no-cache:
 
 | Endpoint | Method | Cacheable | TTL | Strategy |
 |---|---|---|---|---|
-| `/api/tasks/` | GET | ✅ | 30s | SWR |
-| `/api/tasks/{id}` | GET | ✅ | 30s | SWR |
-| `/api/tasks/` | POST | ❌ | — | — |
-| `/api/habits/` | GET | ✅ | 60s | SWR |
-| `/api/goals/` | GET | ✅ | 120s | SWR |
-| `/api/sleep/` | GET | ✅ | 300s | SWR |
-| `/api/chat/` | POST | ❌ | — | — |
-| `/api/automation/*` | POST | ❌ | — | — |
-| `/api/income/` | GET | ✅ | 60s | SWR |
-| `/api/time/stats` | GET | ✅ | 60s | SWR |
-| `/health` | GET | ❌ | — | — |
+| `/api/tasks/` | GET | âœ… | 30s | SWR |
+| `/api/tasks/{id}` | GET | âœ… | 30s | SWR |
+| `/api/tasks/` | POST | âŒ | â€” | â€” |
+| `/api/habits/` | GET | âœ… | 60s | SWR |
+| `/api/goals/` | GET | âœ… | 120s | SWR |
+| `/api/sleep/` | GET | âœ… | 300s | SWR |
+| `/api/chat/` | POST | âŒ | â€” | â€” |
+| `/api/automation/*` | POST | âŒ | â€” | â€” |
+| `/api/income/` | GET | âœ… | 60s | SWR |
+| `/api/time/stats` | GET | âœ… | 60s | SWR |
+| `/health` | GET | âŒ | â€” | â€” |
 
 ### 4.2 Supabase CDN Caching
 
@@ -515,15 +515,15 @@ flowchart LR
 
 | Approach | Pros | Cons | Decision |
 |---|---|---|---|
-| **Self-hosted** | No external DNS, full cache control, no CORS | Larger bundle | ✅ Primary |
-| **Google Fonts CDN** | Easy setup, Google-optimized | External DNS, privacy concerns | ❌ Not used |
+| **Self-hosted** | No external DNS, full cache control, no CORS | Larger bundle | âœ… Primary |
+| **Google Fonts CDN** | Easy setup, Google-optimized | External DNS, privacy concerns | âŒ Not used |
 
 ### 6.2 Self-Hosted Font Configuration
 
 ```css
 /* apps/web/app/globals.css */
 
-/* Syne — Headings */
+/* Syne â€” Headings */
 @font-face {
   font-family: 'Syne';
   src: url('/fonts/syne/Syne-Regular.woff2') format('woff2');
@@ -537,7 +537,7 @@ flowchart LR
   font-display: swap;
 }
 
-/* DM Sans — Body */
+/* DM Sans â€” Body */
 @font-face {
   font-family: 'DM Sans';
   src: url('/fonts/dm-sans/DMSans-Regular.woff2') format('woff2');
@@ -551,7 +551,7 @@ flowchart LR
   font-display: swap;
 }
 
-/* JetBrains Mono — Code */
+/* JetBrains Mono â€” Code */
 @font-face {
   font-family: 'JetBrains Mono';
   src: url('/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2') format('woff2');
@@ -609,7 +609,7 @@ On each Vercel deployment:
 vercel purge
 vercel purge --pattern "/api/tasks/*"
 
-# Or via Dashboard: Deployment → ... → Purge Cache
+# Or via Dashboard: Deployment â†’ ... â†’ Purge Cache
 ```
 
 ### 7.4 Cache Invalidation Matrix
@@ -853,15 +853,15 @@ export function reportWebVitals(metric: any) {
 
 ```
 Current State:
-  CDN → Static assets only
-  Edge Functions → Basic auth + geolocation
+  CDN â†’ Static assets only
+  Edge Functions â†’ Basic auth + geolocation
 
 Future State:
-  CDN → Static + dynamic API responses at edge
-  Edge Functions → Auth, geolocation, A/B testing
-  Edge Feature Flags → Real-time configuration
-  Edge Personalization → Region-specific content
-  Edge API Cache → SWR for GET endpoints at POP
+  CDN â†’ Static + dynamic API responses at edge
+  Edge Functions â†’ Auth, geolocation, A/B testing
+  Edge Feature Flags â†’ Real-time configuration
+  Edge Personalization â†’ Region-specific content
+  Edge API Cache â†’ SWR for GET endpoints at POP
 ```
 
 ### 11.2 Edge Function Use Cases
@@ -878,7 +878,7 @@ Future State:
 ### 11.3 Edge Authentication (JWT at Edge)
 
 ```typescript
-// middleware.ts — JWT validation at edge, no origin call
+// middleware.ts â€” JWT validation at edge, no origin call
 async function verifyJWT(token: string, secret: string): Promise<boolean> {
   try {
     const encoder = new TextEncoder()
@@ -903,13 +903,13 @@ async function verifyJWT(token: string, secret: string): Promise<boolean> {
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('session')?.value
   if (token && await verifyJWT(token, process.env.JWT_SECRET!)) {
-    // Valid token — set user header for origin
+    // Valid token â€” set user header for origin
     const payload = JSON.parse(atob(token.split('.')[1]))
     const requestHeaders = new Headers(request.headers)
     requestHeaders.set('x-user-id', payload.user_id)
     return NextResponse.next({ request: { headers: requestHeaders } })
   }
-  // Unauthenticated — allow public routes only
+  // Unauthenticated â€” allow public routes only
   const publicPaths = ['/', '/login', '/register', '/api/auth']
   if (!publicPaths.some(p => request.nextUrl.pathname.startsWith(p))) {
     return NextResponse.redirect(new URL('/login', request.url))
@@ -921,7 +921,7 @@ export async function middleware(request: NextRequest) {
 ### 11.4 Edge Feature Flags
 
 ```typescript
-// middleware.ts — Evaluate feature flags at edge
+// middleware.ts â€” Evaluate feature flags at edge
 const FLAGS = {
   new_dashboard: { enabled: true, rollout: 100 },
   ai_chat: { enabled: false, rollout: 0 },
@@ -963,7 +963,7 @@ vercel purge                              # Purge entire CDN
 vercel purge --pattern "/api/tasks/*"     # Purge specific path
 
 # Cache Hit Ratio Monitoring
-# Vercel Dashboard → Analytics → Edge Requests
+# Vercel Dashboard â†’ Analytics â†’ Edge Requests
 
 # Check Current Headers
 curl -I https://secondbrain-os.com/_next/static/chunks/app/layout-*.js

@@ -1,13 +1,13 @@
-# Deployment Strategy
+﻿# Deployment Strategy
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| **Document ID** | SB-DEVOPS-DEPLOY-001 |
+| **Document ID** | DVO-DEP-001 |
 | **Version** | 2.0.0 |
 | **Status** | Active |
-| **Classification** | Internal — Engineering |
+| **Classification** | Internal â€” Engineering |
 | **Author** | DevOps Team |
 | **Last Updated** | 2026-06-11 |
 | **Review Cycle** | Monthly |
@@ -21,13 +21,13 @@
 2. [Deployment Architecture Overview](#2-deployment-architecture-overview)
 3. [Environment Matrix](#3-environment-matrix)
 4. [Deployment Pipeline (CI/CD)](#4-deployment-pipeline-cicd)
-5. [Frontend Deployment — Vercel](#5-frontend-deployment--vercel)
-6. [Backend Deployment — Railway](#6-backend-deployment--railway)
-7. [Database Deployments — Supabase](#7-database-deployments--supabase)
-8. [AI Service Deployment — Ollama & Claude](#8-ai-service-deployment--ollama--claude)
-9. [Scheduler Deployment — APScheduler](#9-scheduler-deployment--apscheduler)
-10. [Infrastructure as Code (IaC) — Terraform](#10-infrastructure-as-code-iac--terraform)
-11. [Containerization Strategy — Docker](#11-containerization-strategy--docker)
+5. [Frontend Deployment â€” Vercel](#5-frontend-deployment--vercel)
+6. [Backend Deployment â€” Railway](#6-backend-deployment--railway)
+7. [Database Deployments â€” Supabase](#7-database-deployments--supabase)
+8. [AI Service Deployment â€” Ollama & Claude](#8-ai-service-deployment--ollama--claude)
+9. [Scheduler Deployment â€” APScheduler](#9-scheduler-deployment--apscheduler)
+10. [Infrastructure as Code (IaC) â€” Terraform](#10-infrastructure-as-code-iac--terraform)
+11. [Containerization Strategy â€” Docker](#11-containerization-strategy--docker)
 12. [Kubernetes Orchestration (Future)](#12-kubernetes-orchestration-future)
 13. [Deployment Automation & Scripting](#13-deployment-automation--scripting)
 14. [Rollback Procedures](#14-rollback-procedures)
@@ -43,7 +43,7 @@
 
 ## 1. Executive Summary
 
-**Purpose:** This document defines the comprehensive deployment strategy for Second Brain OS (ARIA OS) across all environments — local development, staging, and production. It covers the CI/CD pipeline, infrastructure provisioning, containerization, rollback procedures, monitoring integration, and disaster recovery.
+**Purpose:** This document defines the comprehensive deployment strategy for Second Brain OS (ARIA OS) across all environments â€” local development, staging, and production. It covers the CI/CD pipeline, infrastructure provisioning, containerization, rollback procedures, monitoring integration, and disaster recovery.
 
 **Scope:** All deployable components of the Second Brain OS monorepo:
 - **Frontend:** Next.js 14 application (Vercel)
@@ -55,9 +55,9 @@
 **Guiding Principles:**
 - **Zero-downtime deployments** for production frontend and backend
 - **Infrastructure as Code** for all cloud resources
-- **Immutable deployments** — no post-deployment configuration changes
+- **Immutable deployments** â€” no post-deployment configuration changes
 - **Automated rollback** with RTO < 5 minutes for frontend, < 10 minutes for backend
-- **Security-first** — secrets never in code, all traffic encrypted, all deployments audited
+- **Security-first** â€” secrets never in code, all traffic encrypted, all deployments audited
 
 **Current Maturity:** The deployment pipeline is partially automated with manual steps for database migrations and environment variable management. The roadmap targets full IaC automation by Q4 2026.
 
@@ -165,7 +165,7 @@ flowchart LR
 | **Auth Provider** | Supabase local | Supabase (staging project) | Supabase (production project) |
 | **Backups** | None | Daily automated | Point-in-Time Recovery (7-day) |
 
-### 3.2 Environment Configuration Matrix — Detailed
+### 3.2 Environment Configuration Matrix â€” Detailed
 
 ```yaml
 environments:
@@ -201,7 +201,7 @@ environments:
       alerts_channel: email
 
   production:
-    description: "Production — live user traffic"
+    description: "Production â€” live user traffic"
     domains:
       frontend: app.secondbrainos.com
       backend: api.secondbrainos.com
@@ -270,7 +270,7 @@ graph TD
     GA --> SCHED
 ```
 
-### 4.2 Workflow Configuration — `ci.yml`
+### 4.2 Workflow Configuration â€” `ci.yml`
 
 ```yaml
 name: CI
@@ -290,7 +290,7 @@ env:
 
 jobs:
   frontend-checks:
-    name: Frontend — Lint & Type-Check
+    name: Frontend â€” Lint & Type-Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -306,7 +306,7 @@ jobs:
       - run: cd apps/web && npm run build
 
   backend-checks:
-    name: Backend — Ruff & Compile
+    name: Backend â€” Ruff & Compile
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -322,7 +322,7 @@ jobs:
           python -m py_compile services/scheduler/main.py
 
   test-suite:
-    name: Tests — Pytest Suite
+    name: Tests â€” Pytest Suite
     needs: [frontend-checks, backend-checks]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -339,7 +339,7 @@ jobs:
           file: ./coverage.xml
 
   security-audit:
-    name: Security — Dependency Audit
+    name: Security â€” Dependency Audit
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -354,7 +354,7 @@ jobs:
       - run: pip install safety && safety check -r apps/api/requirements.txt
 ```
 
-### 4.3 Workflow Configuration — `deploy-frontend.yml`
+### 4.3 Workflow Configuration â€” `deploy-frontend.yml`
 
 ```yaml
 name: Deploy Frontend
@@ -379,7 +379,7 @@ jobs:
           vercel-args: "--prod"
 ```
 
-### 4.4 Workflow Configuration — `deploy-backend.yml`
+### 4.4 Workflow Configuration â€” `deploy-backend.yml`
 
 ```yaml
 name: Deploy Backend
@@ -404,7 +404,7 @@ jobs:
           service: backend
 ```
 
-### 4.5 Workflow Configuration — `deploy-scheduler.yml`
+### 4.5 Workflow Configuration â€” `deploy-scheduler.yml`
 
 ```yaml
 name: Deploy Scheduler
@@ -443,7 +443,7 @@ jobs:
 
 ---
 
-## 5. Frontend Deployment — Vercel
+## 5. Frontend Deployment â€” Vercel
 
 ### 5.1 Vercel Project Configuration
 
@@ -487,7 +487,7 @@ NEXT_PUBLIC_APP_URL=https://staging.secondbrainos.com
 8. Traffic gradually shifted to new deployment
 9. Old deployment retained for instant rollback (last 10)
 
-Deployment status: BUILDING → READY → (ERROR if failed)
+Deployment status: BUILDING â†’ READY â†’ (ERROR if failed)
 ```
 
 ### 5.4 Preview Deployments
@@ -508,7 +508,7 @@ Preview deployments provide:
 - Serverless function execution
 - Environment variables from Vercel project (preview scope)
 
-### 5.5 Vercel Configuration — `vercel.json`
+### 5.5 Vercel Configuration â€” `vercel.json`
 
 ```json
 {
@@ -543,7 +543,7 @@ Preview deployments provide:
 
 ---
 
-## 6. Backend Deployment — Railway
+## 6. Backend Deployment â€” Railway
 
 ### 6.1 Railway Project Configuration
 
@@ -587,7 +587,7 @@ LOG_LEVEL=WARN
 6. If health check passes, traffic routed to new deployment
 7. Old deployment retained (last 5 deploys)
 
-Deployment status: BUILDING → DEPLOYING → CRASHED/HEALTHY
+Deployment status: BUILDING â†’ DEPLOYING â†’ CRASHED/HEALTHY
 ```
 
 ### 6.4 Backend Health Check Endpoint
@@ -614,50 +614,50 @@ async def health_check():
 
 ---
 
-## 7. Database Deployments — Supabase
+## 7. Database Deployments â€” Supabase
 
 ### 7.1 Migration Strategy
 
 Database changes follow a strict migration-based approach:
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                  Migration Workflow                  │
-├─────────────────────────────────────────────────────┤
-│ 1. Developer creates migration SQL in migrations/    │
-│ 2. Migration tested on local Supabase instance       │
-│ 3. PR includes migration file + revert script        │
-│ 4. Staging migration applied automatically on deploy │
-│ 5. Production migration applied manually by DevOps   │
-│ 6. Migration verified with schema comparison tool    │
-└─────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                  Migration Workflow                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ 1. Developer creates migration SQL in migrations/    â”‚
+â”‚ 2. Migration tested on local Supabase instance       â”‚
+â”‚ 3. PR includes migration file + revert script        â”‚
+â”‚ 4. Staging migration applied automatically on deploy â”‚
+â”‚ 5. Production migration applied manually by DevOps   â”‚
+â”‚ 6. Migration verified with schema comparison tool    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.2 Migration File Structure
 
 ```
 migrations/
-├── 001_initial_schema.sql
-├── 002_add_habit_logs.sql
-├── 003_add_income_entries.sql
-├── 004_add_sleep_tracking.sql
-├── 005_add_feature_flags.sql
-└── revert/
-    ├── 001_revert_initial_schema.sql
-    ├── 002_revert_habit_logs.sql
-    ├── 003_revert_income_entries.sql
-    ├── 004_revert_sleep_tracking.sql
-    └── 005_revert_feature_flags.sql
+â”œâ”€â”€ 001_initial_schema.sql
+â”œâ”€â”€ 002_add_habit_logs.sql
+â”œâ”€â”€ 003_add_income_entries.sql
+â”œâ”€â”€ 004_add_sleep_tracking.sql
+â”œâ”€â”€ 005_add_feature_flags.sql
+â””â”€â”€ revert/
+    â”œâ”€â”€ 001_revert_initial_schema.sql
+    â”œâ”€â”€ 002_revert_habit_logs.sql
+    â”œâ”€â”€ 003_revert_income_entries.sql
+    â”œâ”€â”€ 004_revert_sleep_tracking.sql
+    â””â”€â”€ 005_revert_feature_flags.sql
 ```
 
 ### 7.3 Migration Naming Convention
 
 ```
 {NNN}_{description}_{action}.sql
-  ↑        ↑            ↑
-  │        │            └── create / alter / add / modify / drop
-  │        └── Snake_case description of change
-  └── Sequential number (001, 002, ...)
+  â†‘        â†‘            â†‘
+  â”‚        â”‚            â””â”€â”€ create / alter / add / modify / drop
+  â”‚        â””â”€â”€ Snake_case description of change
+  â””â”€â”€ Sequential number (001, 002, ...)
 ```
 
 ### 7.4 Migration Template
@@ -697,7 +697,7 @@ COMMIT;
 
 ```sql
 -- Revert: 005_revert_feature_flags.sql
--- Description: Revert migration 005 — remove feature_flags table
+-- Description: Revert migration 005 â€” remove feature_flags table
 
 BEGIN;
 
@@ -796,7 +796,7 @@ def apply_migration(supabase, filepath: str, version: str):
             "status": "success",
         }).execute()
 
-        print(f"  ✓ Applied {filename} ({duration}ms)")
+        print(f"  âœ“ Applied {filename} ({duration}ms)")
         return True
     except Exception as e:
         duration = int((time.time() - start) * 1000)
@@ -809,7 +809,7 @@ def apply_migration(supabase, filepath: str, version: str):
             "error": str(e),
         }).execute()
 
-        print(f"  ✗ Failed {filename}: {e}")
+        print(f"  âœ— Failed {filename}: {e}")
         return False
 
 
@@ -830,7 +830,7 @@ def revert_migration(supabase, version: str):
     """Revert a specific migration."""
     revert_file = f"{REVERTS_DIR}/{version}_revert.sql"
     if not os.path.exists(revert_file):
-        print(f"  ✗ Revert file not found: {revert_file}")
+        print(f"  âœ— Revert file not found: {revert_file}")
         return False
 
     with open(revert_file, "r") as f:
@@ -839,10 +839,10 @@ def revert_migration(supabase, version: str):
     try:
         supabase.rpc("exec_sql", {"sql": sql}).execute()
         supabase.table("_migrations").delete().eq("version", version).execute()
-        print(f"  ✓ Reverted migration {version}")
+        print(f"  âœ“ Reverted migration {version}")
         return True
     except Exception as e:
-        print(f"  ✗ Revert failed: {e}")
+        print(f"  âœ— Revert failed: {e}")
         return False
 
 
@@ -871,7 +871,7 @@ if __name__ == "__main__":
             match = re.match(r"(\d+)", os.path.basename(f))
             if match:
                 v = match.group(1)
-                status = "✓ Applied" if v in applied else "○ Pending"
+                status = "âœ“ Applied" if v in applied else "â—‹ Pending"
                 print(f"  [{status}] {os.path.basename(f)}")
 ```
 
@@ -886,7 +886,7 @@ if __name__ == "__main__":
 
 ---
 
-## 8. AI Service Deployment — Ollama & Claude
+## 8. AI Service Deployment â€” Ollama & Claude
 
 ### 8.1 Local AI (Ollama) Deployment
 
@@ -951,7 +951,7 @@ OLLAMA_MODEL = "mistral:7b"
 
 
 class AIClient:
-    """Unified AI client with fallback chain: Ollama → Claude → Exception."""
+    """Unified AI client with fallback chain: Ollama â†’ Claude â†’ Exception."""
 
     def __init__(self):
         self.ollama_base = OLLAMA_BASE_URL
@@ -1033,7 +1033,7 @@ llm = AIClient()
 
 ---
 
-## 9. Scheduler Deployment — APScheduler
+## 9. Scheduler Deployment â€” APScheduler
 
 ### 9.1 Scheduler Configuration
 
@@ -1060,72 +1060,72 @@ import asyncio
 def create_scheduler() -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler()
 
-    # Daily Briefing — 7:00 AM
+    # Daily Briefing â€” 7:00 AM
     scheduler.add_job(
         trigger_daily_briefing,
         CronTrigger(hour=7, minute=0, timezone="Asia/Kolkata"),
         id="daily_briefing",
-        name="A09 — Generate Daily Briefing",
+        name="A09 â€” Generate Daily Briefing",
         max_instances=1,
         coalesce=True,
     )
 
-    # Opportunity Radar — 6:00 AM
+    # Opportunity Radar â€” 6:00 AM
     scheduler.add_job(
         trigger_opportunity_radar,
         CronTrigger(hour=6, minute=0, timezone="Asia/Kolkata"),
         id="opportunity_radar",
-        name="A06 — Scan Opportunities",
+        name="A06 â€” Scan Opportunities",
         max_instances=1,
         coalesce=True,
     )
 
-    # Weekly Review — Sunday 8:00 PM
+    # Weekly Review â€” Sunday 8:00 PM
     scheduler.add_job(
         trigger_weekly_review,
         CronTrigger(day_of_week="sun", hour=20, minute=0, timezone="Asia/Kolkata"),
         id="weekly_review",
-        name="A10 — Generate Weekly Review",
+        name="A10 â€” Generate Weekly Review",
         max_instances=1,
         coalesce=True,
     )
 
-    # Missed Task Checker — Every 15 minutes
+    # Missed Task Checker â€” Every 15 minutes
     scheduler.add_job(
         check_missed_tasks,
         CronTrigger(minute="*/15", timezone="Asia/Kolkata"),
         id="missed_tasks",
-        name="A11 — Check Missed Tasks",
+        name="A11 â€” Check Missed Tasks",
         max_instances=1,
         coalesce=True,
     )
 
-    # Habit Miss Checker — Midnight
+    # Habit Miss Checker â€” Midnight
     scheduler.add_job(
         check_missed_habits,
         CronTrigger(hour=0, minute=5, timezone="Asia/Kolkata"),
         id="missed_habits",
-        name="A12 — Check Missed Habits",
+        name="A12 â€” Check Missed Habits",
         max_instances=1,
         coalesce=True,
     )
 
-    # Sleep Wind-down — 9:30 PM
+    # Sleep Wind-down â€” 9:30 PM
     scheduler.add_job(
         generate_sleep_winddown,
         CronTrigger(hour=21, minute=30, timezone="Asia/Kolkata"),
         id="sleep_winddown",
-        name="A13 — Sleep Wind-down Message",
+        name="A13 â€” Sleep Wind-down Message",
         max_instances=1,
         coalesce=True,
     )
 
-    # Course Nudge — 6:00 PM
+    # Course Nudge â€” 6:00 PM
     scheduler.add_job(
         generate_course_nudge,
         CronTrigger(hour=18, minute=0, timezone="Asia/Kolkata"),
         id="course_nudge",
-        name="A14 — Course Progress Nudge",
+        name="A14 â€” Course Progress Nudge",
         max_instances=1,
         coalesce=True,
     )
@@ -1175,7 +1175,7 @@ def get_job_summary():
 
 ---
 
-## 10. Infrastructure as Code (IaC) — Terraform
+## 10. Infrastructure as Code (IaC) â€” Terraform
 
 ### 10.1 Terraform Provider Configuration
 
@@ -1364,7 +1364,7 @@ output "supabase_db_url" {
 
 ---
 
-## 11. Containerization Strategy — Docker
+## 11. Containerization Strategy â€” Docker
 
 ### 11.1 Backend Dockerfile
 
@@ -1562,27 +1562,27 @@ volumes:
 ### 12.1 Target Architecture
 
 ```
-        ┌─────────────┐
-        │  Ingress NGINX│
-        │  + Cert-Manager│
-        └──────┬──────┘
-               │
-    ┌──────────┼──────────┐
-    │          │          │
-    ▼          ▼          ▼
-┌──────┐  ┌──────┐  ┌──────┐
-│Front │  │Back  │  │Sched │
-│Deploy│  │Deploy│  │Deploy│
-│HPA   │  │HPA   │  │      │
-├──────┤  ├──────┤  ├──────┤
-│Svc   │  │Svc   │  │Svc   │
-└──────┘  └──────┘  └──────┘
-               │
-               ▼
-          ┌──────────┐
-          │ Supabase  │
-          │ (external)│
-          └──────────┘
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚  Ingress NGINXâ”‚
+        â”‚  + Cert-Managerâ”‚
+        â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+               â”‚
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚          â”‚          â”‚
+    â–¼          â–¼          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”
+â”‚Front â”‚  â”‚Back  â”‚  â”‚Sched â”‚
+â”‚Deployâ”‚  â”‚Deployâ”‚  â”‚Deployâ”‚
+â”‚HPA   â”‚  â”‚HPA   â”‚  â”‚      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”¤
+â”‚Svc   â”‚  â”‚Svc   â”‚  â”‚Svc   â”‚
+â””â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”˜
+               â”‚
+               â–¼
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â”‚ Supabase  â”‚
+          â”‚ (external)â”‚
+          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 12.2 Kubernetes Manifests (Future Reference)
@@ -1687,7 +1687,7 @@ spec:
 ```bash
 #!/bin/bash
 # scripts/deploy-all.sh
-# Full-stack deployment script — triggers all services
+# Full-stack deployment script â€” triggers all services
 # Usage: ./scripts/deploy-all.sh [staging|production]
 
 set -euo pipefail
@@ -1696,7 +1696,7 @@ ENVIRONMENT="${1:-staging}"
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 
 echo "=========================================="
-echo "  Second Brain OS — Full Deployment"
+echo "  Second Brain OS â€” Full Deployment"
 echo "  Environment: $ENVIRONMENT"
 echo "  Timestamp:   $TIMESTAMP"
 echo "=========================================="
@@ -1709,20 +1709,20 @@ if [ $? -ne 0 ]; then
     echo "  FAILED: Prompt validation errors. Aborting."
     exit 1
 fi
-echo "  ✓ Pre-deployment checks passed."
+echo "  âœ“ Pre-deployment checks passed."
 
 # Step 2: Run database migrations
 echo ""
 echo "[2/5] Running database migrations..."
 python scripts/run_migrations.py apply
-echo "  ✓ Database migrations applied."
+echo "  âœ“ Database migrations applied."
 
 # Step 3: Build and push Docker images
 echo ""
 echo "[3/5] Building and pushing images..."
 docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml push
-echo "  ✓ Images built and pushed."
+echo "  âœ“ Images built and pushed."
 
 # Step 4: Trigger platform deployments
 echo ""
@@ -1732,14 +1732,14 @@ vercel --prod --token $VERCEL_TOKEN
 # Railway
 railway up --service backend
 railway up --service scheduler
-echo "  ✓ Platform deployments triggered."
+echo "  âœ“ Platform deployments triggered."
 
 # Step 5: Post-deployment health check
 echo ""
 echo "[5/5] Running post-deployment health checks..."
 sleep 10
 ./scripts/health-check.sh $ENVIRONMENT
-echo "  ✓ Health checks passed."
+echo "  âœ“ Health checks passed."
 
 echo ""
 echo "=========================================="
@@ -1772,13 +1772,13 @@ rollback_frontend() {
     # Get last N successful deployments
     vercel list --token $VERCEL_TOKEN | grep "READY" | head -$STEPS | tail -1 | \
         awk '{print $2}' | xargs vercel promote --token $VERCEL_TOKEN
-    echo "  ✓ Frontend rolled back."
+    echo "  âœ“ Frontend rolled back."
 }
 
 rollback_backend() {
     echo "Rolling back backend (Railway)..."
     railway rollback --service backend $STEPS
-    echo "  ✓ Backend rolled back."
+    echo "  âœ“ Backend rolled back."
 }
 
 case $TARGET in
@@ -1804,15 +1804,15 @@ echo "=========================================="
 
 | Scenario | Frontend Rollback | Backend Rollback | Database Rollback | RTO Target | RPO Target |
 |---|---|---|---|---|---|
-| Visual/UI bug | ✅ Vercel promote previous | ❌ | ❌ | < 2 min | 0 |
-| API error (500) on new path | ❌ | ✅ Railway rollback | ❌ | < 3 min | 0 |
-| API error on all routes | ❌ | ✅ Railway rollback | ❌ | < 3 min | 0 |
-| Breaking API change | ❌ | ✅ Railway rollback | ❌ | < 3 min | 0 |
-| Auth failure | ❌ | ✅ Railway rollback | ❌ | < 3 min | 0 |
-| Data corruption | ❌ | ❌ | ✅ PITR + script fix | < 30 min | < 5 min |
-| Security vulnerability | ✅ | ✅ | ✅ PITR | < 15 min | < 5 min |
-| Dependency vulnerability | ✅ | ✅ | ❌ | < 1 hour | 0 |
-| Feature flag misconfiguration | ✅ | ✅ | ❌ | < 5 min | 0 |
+| Visual/UI bug | âœ… Vercel promote previous | âŒ | âŒ | < 2 min | 0 |
+| API error (500) on new path | âŒ | âœ… Railway rollback | âŒ | < 3 min | 0 |
+| API error on all routes | âŒ | âœ… Railway rollback | âŒ | < 3 min | 0 |
+| Breaking API change | âŒ | âœ… Railway rollback | âŒ | < 3 min | 0 |
+| Auth failure | âŒ | âœ… Railway rollback | âŒ | < 3 min | 0 |
+| Data corruption | âŒ | âŒ | âœ… PITR + script fix | < 30 min | < 5 min |
+| Security vulnerability | âœ… | âœ… | âœ… PITR | < 15 min | < 5 min |
+| Dependency vulnerability | âœ… | âœ… | âŒ | < 1 hour | 0 |
+| Feature flag misconfiguration | âœ… | âœ… | âŒ | < 5 min | 0 |
 
 ### 14.2 Frontend Rollback (Vercel)
 
@@ -1822,7 +1822,7 @@ echo "=========================================="
 2. Select project "secondbrain-frontend"
 3. Click "Deployments" tab
 4. Find the last known-good deployment (marked "READY")
-5. Click "..." (more options) → "Promote to Production"
+5. Click "..." (more options) â†’ "Promote to Production"
 6. Confirm in dialog
 7. Verify: Health check URL returns 200
 
@@ -1870,7 +1870,7 @@ SELECT * FROM tasks WHERE created_at > '2026-06-11T10:00:00Z' AND title LIKE '%b
 -- Update or delete the bad records
 DELETE FROM tasks WHERE id IN ('bad-record-uuid-1', 'bad-record-uuid-2');
 
--- Scenario 2: Point-in-Time Recovery (PITR) — Supabase Pro tier
+-- Scenario 2: Point-in-Time Recovery (PITR) â€” Supabase Pro tier
 -- 1. Go to Supabase Dashboard > Database > Backups
 -- 2. Click "Restore" button
 -- 3. Select a timestamp BEFORE the incident occurred
@@ -1893,18 +1893,18 @@ pg_restore --clean --if-exists --db $DATABASE_URL --no-owner \
 ### 14.5 Rollback Verification Checklist
 
 ```
-□ Frontend: Visit https://app.secondbrainos.com — page loads without errors
-□ Frontend: Console shows no 4xx/5xx API errors
-□ Frontend: Web Vitals within normal range (LCP < 2.5s, CLS < 0.1)
-□ Backend: GET /api/health returns {"status": "healthy"}
-□ Backend: Test key endpoints return expected data
-□ Backend: Error rate < 0.1% (baseline normal)
-□ Database: Query execution times at baseline
-□ Database: No locked tables or long-running queries
-□ Auth: Login flow works end-to-end
-□ Scheduler: All cron jobs executing on schedule
-□ Monitoring: Alert dashboard shows green
-□ Logs: No ERROR level logs from new deployment
+â–¡ Frontend: Visit https://app.secondbrainos.com â€” page loads without errors
+â–¡ Frontend: Console shows no 4xx/5xx API errors
+â–¡ Frontend: Web Vitals within normal range (LCP < 2.5s, CLS < 0.1)
+â–¡ Backend: GET /api/health returns {"status": "healthy"}
+â–¡ Backend: Test key endpoints return expected data
+â–¡ Backend: Error rate < 0.1% (baseline normal)
+â–¡ Database: Query execution times at baseline
+â–¡ Database: No locked tables or long-running queries
+â–¡ Auth: Login flow works end-to-end
+â–¡ Scheduler: All cron jobs executing on schedule
+â–¡ Monitoring: Alert dashboard shows green
+â–¡ Logs: No ERROR level logs from new deployment
 ```
 
 ---
@@ -1919,28 +1919,28 @@ Second Brain OS currently uses **rolling deployments** via Vercel and Railway. B
 
 ```
 User Traffic
-     │
-     ▼
-┌─────────────┐     ┌─────────────┐
-│   Load      │     │   Load      │
-│   Balancer  │────▶│   Balancer  │
-│ (Active)    │     │ (Standby)   │
-└──────┬──────┘     └──────┬──────┘
-       │                   │
-       ▼                   ▼
-┌─────────────┐     ┌─────────────┐
-│  Blue Env   │     │  Green Env  │
-│ (current)   │     │  (new)      │
-│ v2.0.0      │     │  v2.1.0     │
-└─────────────┘     └─────────────┘
-       │                   │
-       └───────────────────┘
-              │
-              ▼
-        ┌──────────┐
-        │ Database │
-        │ (shared) │
-        └──────────┘
+     â”‚
+     â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Load      â”‚     â”‚   Load      â”‚
+â”‚   Balancer  â”‚â”€â”€â”€â”€â–¶â”‚   Balancer  â”‚
+â”‚ (Active)    â”‚     â”‚ (Standby)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                   â”‚
+       â–¼                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Blue Env   â”‚     â”‚  Green Env  â”‚
+â”‚ (current)   â”‚     â”‚  (new)      â”‚
+â”‚ v2.0.0      â”‚     â”‚  v2.1.0     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                   â”‚
+       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+              â”‚
+              â–¼
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚ Database â”‚
+        â”‚ (shared) â”‚
+        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Blue-Green Workflow:**
@@ -1955,18 +1955,18 @@ User Traffic
 
 ```
 Traffic Split
-     │
-     ├── 90% ──► Stable (v2.0.0)
-     │
-     └── 10% ──► Canary (v2.1.0)
-                 │
-                 ├── Monitor: Error rate, latency, crash rate
-                 │
-                 ├── If clean after 30 min → 50/50 split
-                 │
-                 ├── If clean after 60 min → 100% to new
-                 │
-                 └── If errors → instant rollback to 100% stable
+     â”‚
+     â”œâ”€â”€ 90% â”€â”€â–º Stable (v2.0.0)
+     â”‚
+     â””â”€â”€ 10% â”€â”€â–º Canary (v2.1.0)
+                 â”‚
+                 â”œâ”€â”€ Monitor: Error rate, latency, crash rate
+                 â”‚
+                 â”œâ”€â”€ If clean after 30 min â†’ 50/50 split
+                 â”‚
+                 â”œâ”€â”€ If clean after 60 min â†’ 100% to new
+                 â”‚
+                 â””â”€â”€ If errors â†’ instant rollback to 100% stable
 ```
 
 **Canary Criteria for Promotion:**
@@ -2057,9 +2057,9 @@ fi
 echo -n "Check 1/6: Frontend loads... "
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_URL)
 if [ "$HTTP_CODE" = "200" ]; then
-    echo "✓ ($HTTP_CODE)"
+    echo "âœ“ ($HTTP_CODE)"
 else
-    echo "✗ ($HTTP_CODE)"
+    echo "âœ— ($HTTP_CODE)"
     FAILURES=$((FAILURES + 1))
 fi
 
@@ -2067,9 +2067,9 @@ fi
 echo -n "Check 2/6: Backend healthy... "
 HEALTH=$(curl -s $BACKEND_URL/api/health)
 if echo "$HEALTH" | grep -q '"status":"healthy"'; then
-    echo "✓"
+    echo "âœ“"
 else
-    echo "✗"
+    echo "âœ—"
     FAILURES=$((FAILURES + 1))
 fi
 
@@ -2077,9 +2077,9 @@ fi
 echo -n "Check 3/6: Database reachable... "
 DB_CHECK=$(curl -s $BACKEND_URL/api/health | grep -o '"database":[^,}]*')
 if echo "$DB_CHECK" | grep -q "connected"; then
-    echo "✓"
+    echo "âœ“"
 else
-    echo "✗"
+    echo "âœ—"
     FAILURES=$((FAILURES + 1))
 fi
 
@@ -2087,9 +2087,9 @@ fi
 echo -n "Check 4/6: API response time... "
 RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" $BACKEND_URL/api/health)
 if (( $(echo "$RESPONSE_TIME < 2.0" | bc -l) )); then
-    echo "✓ (${RESPONSE_TIME}s)"
+    echo "âœ“ (${RESPONSE_TIME}s)"
 else
-    echo "✗ (${RESPONSE_TIME}s — too slow)"
+    echo "âœ— (${RESPONSE_TIME}s â€” too slow)"
     FAILURES=$((FAILURES + 1))
 fi
 
@@ -2097,9 +2097,9 @@ fi
 echo -n "Check 5/6: Auth endpoint reachable... "
 AUTH_CODE=$(curl -s -o /dev/null -w "%{http_code}" $BACKEND_URL/api/auth/login)
 if [ "$AUTH_CODE" != "000" ]; then
-    echo "✓ ($AUTH_CODE)"
+    echo "âœ“ ($AUTH_CODE)"
 else
-    echo "✗ (unreachable)"
+    echo "âœ— (unreachable)"
     FAILURES=$((FAILURES + 1))
 fi
 
@@ -2136,31 +2136,31 @@ exit $FAILURES
 
 | Gate | Check | Blocking? |
 |---|---|---|
-| npm audit | High/critical vulnerabilities | ✅ Yes |
-| pip safety check | Known vulnerabilities | ✅ Yes |
-| Ruff lint | Security-relevant rules | ✅ Yes |
-| ESLint | `no-eval`, `no-implied-eval` | ✅ Yes |
-| Secret scanning | Hardcoded secrets in PR | ✅ Yes |
-| Docker image scan | Base image vulnerabilities | ⏳ Planned |
-| SBOM generation | Software bill of materials | ⏳ Planned |
+| npm audit | High/critical vulnerabilities | âœ… Yes |
+| pip safety check | Known vulnerabilities | âœ… Yes |
+| Ruff lint | Security-relevant rules | âœ… Yes |
+| ESLint | `no-eval`, `no-implied-eval` | âœ… Yes |
+| Secret scanning | Hardcoded secrets in PR | âœ… Yes |
+| Docker image scan | Base image vulnerabilities | â³ Planned |
+| SBOM generation | Software bill of materials | â³ Planned |
 
 ### 17.3 Deployment Security Checklist
 
 ```
-□ All secrets injected via environment variables (never in code)
-□ .env files in .gitignore
-□ No secrets in build logs or artifacts
-□ TLS enabled for all frontend and backend endpoints
-□ CORS configured with specific origins (no wildcard in production)
-□ CSP headers set in frontend
-□ Rate limiting enabled on all API endpoints
-□ Database connections use encrypted transport
-□ RLS policies verified on all Supabase tables
-□ Auth tokens expire after 24 hours
-□ Deployment logs do not contain sensitive data
-□ Health check endpoints do not expose internals
-□ Container images scanned for vulnerabilities
-□ API keys rotated within policy window
+â–¡ All secrets injected via environment variables (never in code)
+â–¡ .env files in .gitignore
+â–¡ No secrets in build logs or artifacts
+â–¡ TLS enabled for all frontend and backend endpoints
+â–¡ CORS configured with specific origins (no wildcard in production)
+â–¡ CSP headers set in frontend
+â–¡ Rate limiting enabled on all API endpoints
+â–¡ Database connections use encrypted transport
+â–¡ RLS policies verified on all Supabase tables
+â–¡ Auth tokens expire after 24 hours
+â–¡ Deployment logs do not contain sensitive data
+â–¡ Health check endpoints do not expose internals
+â–¡ Container images scanned for vulnerabilities
+â–¡ API keys rotated within policy window
 ```
 
 ### 17.4 Incident Response Integration
@@ -2168,11 +2168,11 @@ exit $FAILURES
 The deployment pipeline integrates with the incident response process:
 
 ```
-1. Deployment fails CI → Automated notification (Slack/Discord)
-2. Deployment succeeds but error rate spikes → PagerDuty/Email alert
-3. Security vulnerability detected in new dependency → Blocked by CI
-4. Database migration error → Immediately halt, alert DevOps
-5. Auth failure after deploy → Rollback automatically triggered
+1. Deployment fails CI â†’ Automated notification (Slack/Discord)
+2. Deployment succeeds but error rate spikes â†’ PagerDuty/Email alert
+3. Security vulnerability detected in new dependency â†’ Blocked by CI
+4. Database migration error â†’ Immediately halt, alert DevOps
+5. Auth failure after deploy â†’ Rollback automatically triggered
 ```
 
 ---
@@ -2250,58 +2250,58 @@ OWNER: DevOps Lead
 ESTIMATED TIME: 15 minutes
 
 PREREQUISITES:
-  □ All PRs merged to develop
-  □ CI passing on develop branch
-  □ Staging deployment healthy for >24 hours
-  □ Changelog updated
-  □ Version strings bumped
-  □ Release PR created and approved
+  â–¡ All PRs merged to develop
+  â–¡ CI passing on develop branch
+  â–¡ Staging deployment healthy for >24 hours
+  â–¡ Changelog updated
+  â–¡ Version strings bumped
+  â–¡ Release PR created and approved
 
 STEPS:
   1. [DEVOPS] Verify staging is healthy
-     → Visit https://staging.secondbrainos.com
-     → Run: ./scripts/health-check.sh staging
-     → Expected: All 6 checks pass
+     â†’ Visit https://staging.secondbrainos.com
+     â†’ Run: ./scripts/health-check.sh staging
+     â†’ Expected: All 6 checks pass
 
   2. [DEVOPS] Create release PR
-     → git checkout -b release/vX.Y.Z develop
-     → Update version strings
-     → Generate changelog
-     → git push origin release/vX.Y.Z
-     → gh pr create --base main --head release/vX.Y.Z
+     â†’ git checkout -b release/vX.Y.Z develop
+     â†’ Update version strings
+     â†’ Generate changelog
+     â†’ git push origin release/vX.Y.Z
+     â†’ gh pr create --base main --head release/vX.Y.Z
 
   3. [REVIEWER] Approve release PR
-     → Review code changes (should be only version bumps + changelog)
-     → Approve PR
+     â†’ Review code changes (should be only version bumps + changelog)
+     â†’ Approve PR
 
   4. [DEVOPS] Merge release PR
-     → gh pr merge release/vX.Y.Z --squash
+     â†’ gh pr merge release/vX.Y.Z --squash
 
   5. [AUTOMATED] CI/CD pipeline runs
-     → Wait for GitHub Actions to complete
-     → Verify frontend deploys to Vercel
-     → Verify backend deploys to Railway
-     → Verify scheduler deploys to Railway
+     â†’ Wait for GitHub Actions to complete
+     â†’ Verify frontend deploys to Vercel
+     â†’ Verify backend deploys to Railway
+     â†’ Verify scheduler deploys to Railway
 
   6. [DEVOPS] Tag release
-     → git checkout main && git pull
-     → git tag -a vX.Y.Z -m "Release vX.Y.Z"
-     → git push origin vX.Y.Z
-     → Create GitHub Release
+     â†’ git checkout main && git pull
+     â†’ git tag -a vX.Y.Z -m "Release vX.Y.Z"
+     â†’ git push origin vX.Y.Z
+     â†’ Create GitHub Release
 
   7. [DEVOPS] Post-deployment validation
-     → Run: ./scripts/health-check.sh production
-     → Expected: All 6 checks pass
-     → Verify: Monitoring dashboards green
-     → Verify: No alert spikes
+     â†’ Run: ./scripts/health-check.sh production
+     â†’ Expected: All 6 checks pass
+     â†’ Verify: Monitoring dashboards green
+     â†’ Verify: No alert spikes
 
   8. [DEVOPS] Merge back to develop
-     → git checkout develop && git merge main && git push
+     â†’ git checkout develop && git merge main && git push
 
 COMPLETION:
-  □ Release announced in team channel
-  □ Deployment documented in runbook log
-  □ Version updated in docs
+  â–¡ Release announced in team channel
+  â–¡ Deployment documented in runbook log
+  â–¡ Version updated in docs
 ```
 
 ### 19.2 Emergency Hotfix Runbook
@@ -2314,46 +2314,46 @@ ESTIMATED TIME: 30 minutes
 SEVERITY: Critical
 
 TRIGGER CONDITIONS:
-  □ SQL injection or auth bypass vulnerability
-  □ Data loss occurring
-  □ Complete service outage
-  □ P0/P1 security incident
+  â–¡ SQL injection or auth bypass vulnerability
+  â–¡ Data loss occurring
+  â–¡ Complete service outage
+  â–¡ P0/P1 security incident
 
 STEPS:
   1. [ENGINEER] Triage and isolate
-     → Identify affected component(s)
-     → Determine if rollback is faster than fix
-     → If faster: Execute rollback immediately (Section 14)
+     â†’ Identify affected component(s)
+     â†’ Determine if rollback is faster than fix
+     â†’ If faster: Execute rollback immediately (Section 14)
 
   2. [ENGINEER] Create hotfix branch
-     → git checkout main && git pull
-     → git checkout -b hotfix/vCURRENT.PATCH+1
+     â†’ git checkout main && git pull
+     â†’ git checkout -b hotfix/vCURRENT.PATCH+1
 
   3. [ENGINEER] Apply fix
-     → Implement minimal fix (no refactoring)
-     → Add regression test
-     → Bump PATCH version
+     â†’ Implement minimal fix (no refactoring)
+     â†’ Add regression test
+     â†’ Bump PATCH version
 
   4. [ENGINEER] Create hotfix PR
-     → git push origin hotfix/vCURRENT.PATCH+1
-     → gh pr create --base main \
+     â†’ git push origin hotfix/vCURRENT.PATCH+1
+     â†’ gh pr create --base main \
          --label hotfix --label security
 
   5. [REVIEWER] Expedited review
-     → Timebox: 15 minutes maximum
-     → Focus: Does fix resolve the issue?
-     → Skip: Style, performance, documentation review
+     â†’ Timebox: 15 minutes maximum
+     â†’ Focus: Does fix resolve the issue?
+     â†’ Skip: Style, performance, documentation review
 
   6. [DEVOPS] Merge and deploy
-     → gh pr merge hotfix/vCURRENT.PATCH+1
-     → Wait for CI/CD pipeline
-     → Verify deployment health
+     â†’ gh pr merge hotfix/vCURRENT.PATCH+1
+     â†’ Wait for CI/CD pipeline
+     â†’ Verify deployment health
 
   7. [DEVOPS] Post-incident
-     → Tag release: git tag vCURRENT.PATCH+1
-     → Merge to develop
-     → File incident report
-     → Schedule root cause analysis
+     â†’ Tag release: git tag vCURRENT.PATCH+1
+     â†’ Merge to develop
+     â†’ File incident report
+     â†’ Schedule root cause analysis
 ```
 
 ---
@@ -2452,26 +2452,26 @@ def get_deployment_history(limit: int = 50) -> list[dict]:
 
 | Variable | Purpose | Required | Source |
 |---|---|---|---|
-| `SUPABASE_URL` | Supabase project URL for DB + Auth | ✅ Yes | Supabase Dashboard → Settings → API |
-| `SUPABASE_KEY` | Supabase anon/public key (frontend) | ✅ Yes | Supabase Dashboard → Settings → API |
-| `SUPABASE_SERVICE_KEY` | Supabase service_role key (backend only) | ✅ Yes | Supabase Dashboard → Settings → API |
-| `JWT_SECRET` | JWT signing secret for token validation | ✅ Yes | Supabase Dashboard → Settings → API |
-| `JWT_ALGORITHM` | JWT algorithm (default: HS256) | ✅ Yes | Hardcoded default |
-| `CLAUDE_API_KEY` | Anthropic Claude API key for AI fallback | ✅ If `USE_LOCAL_AI=False` | Anthropic Console |
-| `OLLAMA_BASE_URL` | Ollama API endpoint URL | ✅ If `USE_LOCAL_AI=True` | `http://localhost:11434` |
-| `USE_LOCAL_AI` | Toggle between Ollama and Claude | ✅ Yes | `True` or `False` |
-| `RESEND_API_KEY` | Resend service for transactional emails | ❌ Email features | Resend Dashboard |
-| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | ✅ Yes | Deploy URL |
-| `LOG_LEVEL` | Logging verbosity (DEBUG, INFO, WARN, ERROR) | ❌ Default: INFO | — |
-| `RATE_LIMIT_MAX` | Max requests per window per IP | ❌ Default: 100 | — |
-| `RATE_LIMIT_WINDOW` | Rate limit window in seconds | ❌ Default: 60 | — |
-| `AUDIT_LOG_ENABLED` | Enable audit logging middleware | ❌ Default: True | — |
-| `CSRF_ENABLED` | Enable CSRF protection | ❌ Default: True | — |
-| `DATA_RETENTION_DAYS` | Days to retain logs/analytics before cleanup | ❌ Default: 90 | — |
-| `API_KEY_SALT` | Salt for API key hashing (SHA-256) | ✅ If API keys used | Generate with `openssl rand -hex 16` |
-| `SENTRY_DSN` | Sentry error tracking DSN | ❌ | Sentry Dashboard |
-| `APP_NAME` | Application display name | ❌ | — |
-| `ENVIRONMENT` | Deployment environment name | ❌ Default: production | — |
+| `SUPABASE_URL` | Supabase project URL for DB + Auth | âœ… Yes | Supabase Dashboard â†’ Settings â†’ API |
+| `SUPABASE_KEY` | Supabase anon/public key (frontend) | âœ… Yes | Supabase Dashboard â†’ Settings â†’ API |
+| `SUPABASE_SERVICE_KEY` | Supabase service_role key (backend only) | âœ… Yes | Supabase Dashboard â†’ Settings â†’ API |
+| `JWT_SECRET` | JWT signing secret for token validation | âœ… Yes | Supabase Dashboard â†’ Settings â†’ API |
+| `JWT_ALGORITHM` | JWT algorithm (default: HS256) | âœ… Yes | Hardcoded default |
+| `CLAUDE_API_KEY` | Anthropic Claude API key for AI fallback | âœ… If `USE_LOCAL_AI=False` | Anthropic Console |
+| `OLLAMA_BASE_URL` | Ollama API endpoint URL | âœ… If `USE_LOCAL_AI=True` | `http://localhost:11434` |
+| `USE_LOCAL_AI` | Toggle between Ollama and Claude | âœ… Yes | `True` or `False` |
+| `RESEND_API_KEY` | Resend service for transactional emails | âŒ Email features | Resend Dashboard |
+| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | âœ… Yes | Deploy URL |
+| `LOG_LEVEL` | Logging verbosity (DEBUG, INFO, WARN, ERROR) | âŒ Default: INFO | â€” |
+| `RATE_LIMIT_MAX` | Max requests per window per IP | âŒ Default: 100 | â€” |
+| `RATE_LIMIT_WINDOW` | Rate limit window in seconds | âŒ Default: 60 | â€” |
+| `AUDIT_LOG_ENABLED` | Enable audit logging middleware | âŒ Default: True | â€” |
+| `CSRF_ENABLED` | Enable CSRF protection | âŒ Default: True | â€” |
+| `DATA_RETENTION_DAYS` | Days to retain logs/analytics before cleanup | âŒ Default: 90 | â€” |
+| `API_KEY_SALT` | Salt for API key hashing (SHA-256) | âœ… If API keys used | Generate with `openssl rand -hex 16` |
+| `SENTRY_DSN` | Sentry error tracking DSN | âŒ | Sentry Dashboard |
+| `APP_NAME` | Application display name | âŒ | â€” |
+| `ENVIRONMENT` | Deployment environment name | âŒ Default: production | â€” |
 
 ### 21.2 Health Check Endpoints
 
@@ -2479,7 +2479,7 @@ def get_deployment_history(limit: int = 50) -> list[dict]:
 |---|---|---|---|
 | `GET /health` | Simple liveness check | `{"status":"healthy","timestamp":"..."}` | Every 30s (load balancer) |
 | `GET /health/live` | Kubernetes liveness probe | `{"status":"alive"}` | Every 10s (K8s) |
-| `GET /health/ready` | Readiness — checks all dependencies | `{"status":"healthy","dependencies":{"supabase":"ok","ollama":"ok","claude_api":"configured"}}` | Every 15s (K8s) |
+| `GET /health/ready` | Readiness â€” checks all dependencies | `{"status":"healthy","dependencies":{"supabase":"ok","ollama":"ok","claude_api":"configured"}}` | Every 15s (K8s) |
 
 **Expected readiness response:**
 ```json
@@ -2500,17 +2500,17 @@ def get_deployment_history(limit: int = 50) -> list[dict]:
 
 | Component | Scale Strategy | Limits | Cost Implication |
 |---|---|---|---|
-| Frontend (Vercel) | Automatic — Vercel Edge Network scales globally | 100 GB bandwidth (free tier) | Free → Pro ($20/mo) |
-| Backend (Railway) | Manual — increase instances or RAM | Starter: 512 MB RAM, 1 vCPU | Starter ($5/mo) → Scale ($20+/mo) |
-| Database (Supabase) | Upgrade tier for more connections, storage, PITR | Free: 500 MB, 2 connections | Free → Pro ($25/mo) → Team ($599/mo) |
+| Frontend (Vercel) | Automatic â€” Vercel Edge Network scales globally | 100 GB bandwidth (free tier) | Free â†’ Pro ($20/mo) |
+| Backend (Railway) | Manual â€” increase instances or RAM | Starter: 512 MB RAM, 1 vCPU | Starter ($5/mo) â†’ Scale ($20+/mo) |
+| Database (Supabase) | Upgrade tier for more connections, storage, PITR | Free: 500 MB, 2 connections | Free â†’ Pro ($25/mo) â†’ Team ($599/mo) |
 | AI (Ollama) | Single instance, no auto-scaling | RAM: 8 GB min, 16 GB recommended | Free (local hardware) |
-| AI (Claude API) | N/A — managed by Anthropic | 50 req/min (API tier dependent) | Pay-as-you-go (~$0.015/req) |
+| AI (Claude API) | N/A â€” managed by Anthropic | 50 req/min (API tier dependent) | Pay-as-you-go (~$0.015/req) |
 
 **Scaling Triggers:**
-- CPU > 80% for 5 minutes → Increase Railway instance resources
-- Memory > 80% for 5 minutes → Add another instance or upgrade tier
-- DB connections > 80% of pool → Upgrade Supabase tier or optimize pool size
-- P95 latency > 1s → Investigate + cache + optimize queries before scaling
+- CPU > 80% for 5 minutes â†’ Increase Railway instance resources
+- Memory > 80% for 5 minutes â†’ Add another instance or upgrade tier
+- DB connections > 80% of pool â†’ Upgrade Supabase tier or optimize pool size
+- P95 latency > 1s â†’ Investigate + cache + optimize queries before scaling
 
 ### 21.4 Disaster Recovery Procedure
 
@@ -2526,8 +2526,8 @@ def get_deployment_history(limit: int = 50) -> list[dict]:
 **DR Quick Steps:**
 1. **Identify scope**: Is it frontend, backend, database, or AI?
 2. **Contain**: Rollback the affected component immediately
-3. **Restore**: Use PITR for database (Supabase Dashboard → Database → Backups → Restore)
-4. **Verify**: Run `./scripts/health-check.sh production` — all 6 checks must pass
+3. **Restore**: Use PITR for database (Supabase Dashboard â†’ Database â†’ Backups â†’ Restore)
+4. **Verify**: Run `./scripts/health-check.sh production` â€” all 6 checks must pass
 5. **Document**: Log the incident in `logs/incidents.log` with timestamp, root cause, resolution
 
 ---
