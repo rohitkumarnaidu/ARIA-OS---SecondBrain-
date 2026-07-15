@@ -1,10 +1,10 @@
-# Branding — Second Brain OS (ARIA)
+﻿# Branding â€” Second Brain OS (ARIA)
 
-> **Document ID:** SB-BRAND-001  
+> **Document ID:DSG-BRN-001 SB-BRAND-001  
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Public — Brand Guidelines  
+> **Classification:** Public â€” Brand Guidelines  
 > **Owner:** Product Design Team
 
 ---
@@ -51,13 +51,13 @@ graph LR
 
 ### 1.1 The ARIA Story
 
-ARIA stands for **Adaptive Reasoning Intelligence Agent**. The name was chosen because ARIA evokes melody, flow, and harmony — qualities that a second brain should bring to the chaos of modern student life. Just as an aria in opera carries the emotional weight of a scene, ARIA carries the cognitive weight of its user.
+ARIA stands for **Adaptive Reasoning Intelligence Agent**. The name was chosen because ARIA evokes melody, flow, and harmony â€” qualities that a second brain should bring to the chaos of modern student life. Just as an aria in opera carries the emotional weight of a scene, ARIA carries the cognitive weight of its user.
 
-**Origin narrative:** Born from the realization that a BTech CSE student juggles 15+ life dimensions — coursework, side projects, job applications, fitness, sleep, finances, relationships, and self-discovery. No existing tool orchestrates these holistically. ARIA is the conductor.
+**Origin narrative:** Born from the realization that a BTech CSE student juggles 15+ life dimensions â€” coursework, side projects, job applications, fitness, sleep, finances, relationships, and self-discovery. No existing tool orchestrates these holistically. ARIA is the conductor.
 
 ### 1.2 Brand Mission
 
-> **To eliminate cognitive overhead for ambitious students by providing a unified, AI-powered second brain that learns, adapts, and anticipates — so they can focus on what matters: building, learning, and growing.**
+> **To eliminate cognitive overhead for ambitious students by providing a unified, AI-powered second brain that learns, adapts, and anticipates â€” so they can focus on what matters: building, learning, and growing.**
 
 ### 1.3 Brand Vision
 
@@ -68,10 +68,10 @@ A world where every student has an AI companion that knows them deeply enough to
 | Dimension | Trait | Manifestation |
 |---|---|---|
 | **Archetype** | The Sage + The Magician | Knowledgeable but transformative; teaches but also empowers |
-| **Tone axis** | Warm — Professional — Precise — Encouraging | Leans warm-professional for general; shifts toward one pole per context |
+| **Tone axis** | Warm â€” Professional â€” Precise â€” Encouraging | Leans warm-professional for general; shifts toward one pole per context |
 | **Energy** | High-agency, low-anxiety | Proactive suggestions without pressure; confident without arrogance |
 | **Intelligence** | Sharp, curious, never condescending | Explains when asked; trusts user to understand |
-| **Aesthetic** | Cyberpunk — not dystopian, not pastel | Neon accents on dark canvases; intentional glow; never generic AI blues |
+| **Aesthetic** | Cyberpunk â€” not dystopian, not pastel | Neon accents on dark canvases; intentional glow; never generic AI blues |
 
 ### 1.5 Brand Values
 
@@ -87,22 +87,22 @@ A world where every student has an AI companion that knows them deeply enough to
 
 ## 2. Logo Usage & Asset Rules
 
-### 2.1 Primary Logo — ARIA Mark
+### 2.1 Primary Logo â€” ARIA Mark
 
 The primary logo consists of the ARIA wordmark in Syne Bold with a subtle neon accent glow treatment.
 
-**Horizontal lockup:** Wordmark "ARIA" in Syne Bold, 48px cap-height, with the tagline "Second Brain OS" set in DM Sans Medium at 14px below, right-aligned to the "A" in ARIA. The gradient on "ARIA" runs `#6366F1` → `#00FFA3` horizontally.
+**Horizontal lockup:** Wordmark "ARIA" in Syne Bold, 48px cap-height, with the tagline "Second Brain OS" set in DM Sans Medium at 14px below, right-aligned to the "A" in ARIA. The gradient on "ARIA" runs `#6366F1` â†’ `#00FFA3` horizontally.
 
-**Symbol-only mark:** A stylized brain-wave glyph formed by three intersecting arcs — representing memory, pattern recognition, and action. The arcs use the accent-primary (`#6366F1`) and accent-neon (`#00FFA3`) colors. Intended for favicon, app icon, and avatar contexts.
+**Symbol-only mark:** A stylized brain-wave glyph formed by three intersecting arcs â€” representing memory, pattern recognition, and action. The arcs use the accent-primary (`#6366F1`) and accent-neon (`#00FFA3`) colors. Intended for favicon, app icon, and avatar contexts.
 
 ### 2.2 Logo Clear Space
 
 | Context | Minimum Clear Space | Unit |
 |---|---|---|
 | Digital (web/app) | Height of the "A" character | em |
-| Print | 2× cap-height of the logo | mm |
-| Merchandise | 3× cap-height | mm |
-| Partner co-branding | 1.5× cap-height | mm |
+| Print | 2Ã— cap-height of the logo | mm |
+| Merchandise | 3Ã— cap-height | mm |
+| Partner co-branding | 1.5Ã— cap-height | mm |
 
 ### 2.3 Logo Minimum Size
 
@@ -110,16 +110,16 @@ The primary logo consists of the ARIA wordmark in Syne Bold with a subtle neon a
 |---|---|---|
 | Desktop web | 120px | Horizontal lockup |
 | Mobile web | 80px | Symbol-only mark preferred below 100px |
-| App icon | 48×48px | Symbol-only |
-| Favicon | 16×16px / 32×32px | Symbol-only, simplified |
-| Social media avatar | 400×400px | Symbol-only on dark gradient |
+| App icon | 48Ã—48px | Symbol-only |
+| Favicon | 16Ã—16px / 32Ã—32px | Symbol-only, simplified |
+| Social media avatar | 400Ã—400px | Symbol-only on dark gradient |
 | Print | 25mm | Horizontal lockup |
 
 ### 2.4 Logo on Backgrounds
 
 | Background | Logo Color | Notes |
 |---|---|---|
-| Dark (`#0A0B0F` or `#13151A`) | White (`#F1F5F9`) with neon gradient accent | Preferred — always safe |
+| Dark (`#0A0B0F` or `#13151A`) | White (`#F1F5F9`) with neon gradient accent | Preferred â€” always safe |
 | Light (any light background) | Dark (`#0A0B0F`) with adjusted gradient | Gradient must retain contrast |
 | Image (photography) | White with subtle drop shadow | Shadow: 0 2px 16px rgba(0,0,0,0.6) |
 | Gradient backgrounds | White | Never place on busy gradient |
@@ -127,14 +127,14 @@ The primary logo consists of the ARIA wordmark in Syne Bold with a subtle neon a
 
 ### 2.5 Logo Don'ts
 
-- ❌ Stretch, skew, rotate, or warp the logo
-- ❌ Change the typeface or recreate the logo in any font
-- ❌ Add drop shadows, outlines, or effects (except the official gradient)
-- ❌ Place on low-contrast backgrounds
-- ❌ Use the symbol mark without the wordmark in contexts where brand recognition is critical
-- ❌ Animate the logo in ways that don't align with the Motion System (no spinning, bouncing, or flashing)
-- ❌ Change the color of the arcs in the symbol mark
-- ❌ Add the tagline without the wordmark
+- âŒ Stretch, skew, rotate, or warp the logo
+- âŒ Change the typeface or recreate the logo in any font
+- âŒ Add drop shadows, outlines, or effects (except the official gradient)
+- âŒ Place on low-contrast backgrounds
+- âŒ Use the symbol mark without the wordmark in contexts where brand recognition is critical
+- âŒ Animate the logo in ways that don't align with the Motion System (no spinning, bouncing, or flashing)
+- âŒ Change the color of the arcs in the symbol mark
+- âŒ Add the tagline without the wordmark
 
 ---
 
@@ -142,16 +142,16 @@ The primary logo consists of the ARIA wordmark in Syne Bold with a subtle neon a
 
 ### 3.1 Color Philosophy
 
-The Second Brain OS palette is rooted in cyberpunk aesthetics — dark, intentional, and neon-tinged. Every color serves a functional purpose beyond decoration. Backgrounds are never pure black (which causes eye strain and looks lifeless); instead, `#0A0B0F` provides depth without fatigue. Accent colors are used sparingly — they should feel like rewards, not wallpaper.
+The Second Brain OS palette is rooted in cyberpunk aesthetics â€” dark, intentional, and neon-tinged. Every color serves a functional purpose beyond decoration. Backgrounds are never pure black (which causes eye strain and looks lifeless); instead, `#0A0B0F` provides depth without fatigue. Accent colors are used sparingly â€” they should feel like rewards, not wallpaper.
 
 ### 3.2 Primary Palette
 
 | Token | Hex | RGB | Usage | WCAG AA on bg-page |
 |---|---|---|---|---|
-| `--bg-page` | `#0A0B0F` | 10, 11, 15 | Primary background — all pages | — |
-| `--bg-card` | `#13151A` | 19, 21, 26 | Card, sidebar, modal surfaces | — |
-| `--bg-card-hover` | `#1A1D24` | 26, 29, 36 | Card hover, elevated surfaces | — |
-| `--bg-elevated` | `#1E2230` | 30, 34, 48 | Dropdowns, tooltips, popovers | — |
+| `--bg-page` | `#0A0B0F` | 10, 11, 15 | Primary background â€” all pages | â€” |
+| `--bg-card` | `#13151A` | 19, 21, 26 | Card, sidebar, modal surfaces | â€” |
+| `--bg-card-hover` | `#1A1D24` | 26, 29, 36 | Card hover, elevated surfaces | â€” |
+| `--bg-elevated` | `#1E2230` | 30, 34, 48 | Dropdowns, tooltips, popovers | â€” |
 
 ### 3.3 Accent Palette
 
@@ -171,10 +171,10 @@ The Second Brain OS palette is rooted in cyberpunk aesthetics — dark, intentio
 | `--text-primary` | `#F1F5F9` | Body text, headings | 16.2:1 |
 | `--text-secondary` | `#94A3B8` | Subtle text, metadata, placeholders | 9.8:1 |
 | `--text-tertiary` | `#64748B` | Disabled text, hints | 6.1:1 |
-| `--text-inverse` | `#0A0B0F` | Text on light/colored backgrounds | — |
-| `--border-default` | `#1E293B` | Card borders, dividers | — |
-| `--border-accent` | `#334155` | Focused inputs, hover borders | — |
-| `--border-light` | `#475569` | High-contrast borders when needed | — |
+| `--text-inverse` | `#0A0B0F` | Text on light/colored backgrounds | â€” |
+| `--border-default` | `#1E293B` | Card borders, dividers | â€” |
+| `--border-accent` | `#334155` | Focused inputs, hover borders | â€” |
+| `--border-light` | `#475569` | High-contrast borders when needed | â€” |
 
 ### 3.5 Status Colors
 
@@ -190,10 +190,10 @@ The Second Brain OS palette is rooted in cyberpunk aesthetics — dark, intentio
 
 | Gradient Name | Start | End | Angle | Usage |
 |---|---|---|---|---|
-| `gradient-accent` | `#6366F1` | `#818CF8` | 135° | Primary button backgrounds, active tab indicators |
-| `gradient-neon` | `#6366F1` | `#00FFA3` | 90° | Hero sections, celebration animations, brand headers |
-| `gradient-card` | `#13151A` | `#1A1D24` | 180° | Card subtle depth, dashboard tiles |
-| `gradient-glow` | `rgba(99,102,241,0.15)` | `transparent` | 0° | Glow effects behind neon elements |
+| `gradient-accent` | `#6366F1` | `#818CF8` | 135Â° | Primary button backgrounds, active tab indicators |
+| `gradient-neon` | `#6366F1` | `#00FFA3` | 90Â° | Hero sections, celebration animations, brand headers |
+| `gradient-card` | `#13151A` | `#1A1D24` | 180Â° | Card subtle depth, dashboard tiles |
+| `gradient-glow` | `rgba(99,102,241,0.15)` | `transparent` | 0Â° | Glow effects behind neon elements |
 
 ### 3.7 Color Application Rules
 
@@ -209,7 +209,7 @@ The Second Brain OS palette is rooted in cyberpunk aesthetics — dark, intentio
 
 ### 4.1 Type System Philosophy
 
-Typography in ARIA OS serves two masters: readability and identity. DM Sans provides the warmth and readability for long reading sessions (course notes, briefings). Syne provides the distinctive cyberpunk character that makes the OS feel intentional. JetBrains Mono signals "this is a tool for builders" — used sparingly for code, data, and technical output.
+Typography in ARIA OS serves two masters: readability and identity. DM Sans provides the warmth and readability for long reading sessions (course notes, briefings). Syne provides the distinctive cyberpunk character that makes the OS feel intentional. JetBrains Mono signals "this is a tool for builders" â€” used sparingly for code, data, and technical output.
 
 ### 4.2 Font Stack
 
@@ -256,10 +256,10 @@ For responsive typography, use `clamp()` values that interpolate between mobile 
 ### 4.5 Typography Rules
 
 - **Maximum line length:** 75 characters for body text, 90 characters for code.
-- **Heading hierarchy:** Never skip levels. H1 → H2 → H3, in order.
+- **Heading hierarchy:** Never skip levels. H1 â†’ H2 â†’ H3, in order.
 - **Link styling:** Underline only on hover. Default state uses `--accent-primary` color.
 - **Selection color:** `::selection { background: rgba(99, 102, 241, 0.35); color: #F1F5F9; }`
-- **Placeholder text:** Use `--text-tertiary` (`#64748B`) — must meet 3:1 contrast ratio against the input background.
+- **Placeholder text:** Use `--text-tertiary` (`#64748B`) â€” must meet 3:1 contrast ratio against the input background.
 - **Number alignment:** Use tabular numbers (OpenType `tnum`) in data tables, dashboard metrics, and any columnar numeric data.
 
 ### 4.6 Webfont Loading Strategy
@@ -288,7 +288,7 @@ ARIA OS uses a custom icon style that blends **line-art minimalism** with **cybe
 |---|---|---|
 | Stroke width | 1.5px | Thin enough for elegance, thick enough for visibility |
 | Style | Outlined, rounded caps, rounded joins | Approachable precision |
-| Size grid | 20×20px (default), 16×16px (compact), 24×24px (large) | Consistent optical alignment |
+| Size grid | 20Ã—20px (default), 16Ã—16px (compact), 24Ã—24px (large) | Consistent optical alignment |
 | Corner radius on shapes | 2px | Slight softening of hard edges |
 | Filled variants | Used only for active/selected states | Maintains distinction |
 | Animation | Subtle hover scale (1.05) or stroke color shift | Never bounce or spin |
@@ -324,12 +324,12 @@ ARIA OS uses a custom icon style that blends **line-art minimalism** with **cybe
 
 | Context | Size | Notes |
 |---|---|---|
-| Navigation items | 20×20px | Sidebar and bottom nav |
-| Button icons | 16×16px | Inside buttons, inline with text |
-| Status badges | 12×12px | Small indicators, dots |
-| Module icons (cards) | 24×24px | Card headers, module grid |
-| Modal / empty state | 48×48px | Centered illustrations |
-| Notification icons | 20×20px | Toast and snackbar |
+| Navigation items | 20Ã—20px | Sidebar and bottom nav |
+| Button icons | 16Ã—16px | Inside buttons, inline with text |
+| Status badges | 12Ã—12px | Small indicators, dots |
+| Module icons (cards) | 24Ã—24px | Card headers, module grid |
+| Modal / empty state | 48Ã—48px | Centered illustrations |
+| Notification icons | 20Ã—20px | Toast and snackbar |
 
 ---
 
@@ -339,7 +339,7 @@ ARIA OS uses a custom icon style that blends **line-art minimalism** with **cybe
 
 ARIA OS illustrations follow a **cyberpunk-infused flat vector** style:
 
-- **Geometric foundations:** Shapes built from circles, arcs, and straight lines — no organic blobs.
+- **Geometric foundations:** Shapes built from circles, arcs, and straight lines â€” no organic blobs.
 - **Two-tone + accent:** Every illustration uses exactly 2 colors from the neutral palette plus 1 accent color.
 - **Minimal depth:** 1-2 layers of overlap. No photorealistic rendering.
 - **Glow nodes:** Important elements get a subtle neon glow halo.
@@ -351,12 +351,12 @@ ARIA OS illustrations follow a **cyberpunk-infused flat vector** style:
 
 | Context | Style Notes | Example Use |
 |---|---|---|
-| **Empty states** | Single focal object, centered, 160×160px, with subtle glow | "No tasks yet" screen |
+| **Empty states** | Single focal object, centered, 160Ã—160px, with subtle glow | "No tasks yet" screen |
 | **Onboarding** | Sequential illustrations with progress arcs | Feature walkthroughs |
 | **Error pages** | Broken circuit / disconnected node metaphor | 404, 500 pages |
 | **Success / celebration** | Burst patterns, expanding rings, neon sparks | Habit streak milestones |
 | **Loading states** | Pulsing brain-wave glyph, data stream animation | Briefing generation |
-| **Module headers** | Small (32×32px) geometric icons for each module | Dashboard module cards |
+| **Module headers** | Small (32Ã—32px) geometric icons for each module | Dashboard module cards |
 
 ### 6.3 Photography Guidelines
 
@@ -381,9 +381,9 @@ Photography is rarely used but when it is:
 
 | Principle | Description | Do | Don't |
 |---|---|---|---|
-| **Clear over clever** | Precision beats wordplay | "Your task 'Finish report' is due in 2 hours." | "Time flies when you're having fun — and your task is almost late!" |
+| **Clear over clever** | Precision beats wordplay | "Your task 'Finish report' is due in 2 hours." | "Time flies when you're having fun â€” and your task is almost late!" |
 | **Empowering over coddling** | Trust the user's intelligence | "Here are 3 options. Pick what works." | "Don't worry, I'll handle everything for you!" |
-| **Direct with warmth** | Professional foundation, human touch | "You missed 2 habits today. Want to reschedule?" | "Oopsie daisy! You forgot your habits! 🙈" |
+| **Direct with warmth** | Professional foundation, human touch | "You missed 2 habits today. Want to reschedule?" | "Oopsie daisy! You forgot your habits! ðŸ™ˆ" |
 | **Data-backed** | Every claim has a source | "Your focus score dropped 15% this week. Your deep work sessions decreased by 2." | "You seem a bit distracted lately!" |
 
 ### 7.2 Tone by Context
@@ -393,12 +393,12 @@ Photography is rarely used but when it is:
 | **Tasks** | Direct, action-oriented | "3 tasks due today. Prioritizing: 'Submit AI assignment' is urgent." | Short sentences, imperative where appropriate, no fluff |
 | **Courses** | Patient, instructive | "You're 60% through 'Machine Learning'. Here's a 15-min recap of last week's module before you continue." | Explanatory, encouraging, connects concepts |
 | **Habits** | Encouraging, non-judgmental | "You've built a 12-day streak on 'Read 30 mins'. One miss doesn't erase progress. Ready to pick it back up?" | Positive framing, streak emphasis, reset-friendly |
-| **Sleep** | Data-based, factual | "Your sleep score: 72 (↑5 from last week). Deep sleep: 1h48m (below target by 22m). Wind-down in 45 min recommended." | Metric-driven, objective, actionable recommendation |
-| **Income** | Neutral, precise | "This month: ₹12,400 earned across 4 sources. Hourly average: ₹310. Projected month-end: ₹18,500." | Accounting-like precision, projections with confidence |
+| **Sleep** | Data-based, factual | "Your sleep score: 72 (â†‘5 from last week). Deep sleep: 1h48m (below target by 22m). Wind-down in 45 min recommended." | Metric-driven, objective, actionable recommendation |
+| **Income** | Neutral, precise | "This month: â‚¹12,400 earned across 4 sources. Hourly average: â‚¹310. Projected month-end: â‚¹18,500." | Accounting-like precision, projections with confidence |
 | **Opportunities** | Curated, exciting | "Found 2 internship matches matching your 'ML Engineer' goal profile. One closes in 5 days." | Scarcity-aware, matched-language, action-biased |
 | **Chat (ARIA casual)** | Warm, companionable | Users can be casual; ARIA mirrors their tone but maintains professionalism | Adapts to user's casualness, uses memory for personalization, never overly familiar |
 | **Error messages** | Honest, solution-first | "Couldn't save your task. Your changes are backed up locally. Try again?" | Takes responsibility, offers path forward |
-| **Push notifications** | Brief, actionable | "📌 'AI Assignment' due in 2h. Start now? (5 min avg)" | Minimal text, clear action, time context |
+| **Push notifications** | Brief, actionable | "ðŸ“Œ 'AI Assignment' due in 2h. Start now? (5 min avg)" | Minimal text, clear action, time context |
 
 ### 7.3 Voice Do's and Don'ts
 
@@ -407,7 +407,7 @@ Photography is rarely used but when it is:
 | Use contractions (you're, it's, don't) | Use corporate jargon (leverage, synergize, circle back) |
 | Address the user as "you" | Use "we" excessively ("We think you should...") |
 | End notifications with a question for interaction | Use exclamation marks in >20% of messages |
-| Acknowledge user effort ("You completed 12 tasks today — that's 3 above your average") | Compare user to others ("Other users complete more tasks than you") |
+| Acknowledge user effort ("You completed 12 tasks today â€” that's 3 above your average") | Compare user to others ("Other users complete more tasks than you") |
 | Use emojis sparingly and only in casual contexts | Use emoji as bullet points or decoration |
 | Keep messages under 150 characters for notifications | Send wall-of-text responses without formatting |
 
@@ -425,9 +425,9 @@ Photography is rarely used but when it is:
 | Concept | Standard Phrasing |
 |---|---|
 | Create | "Add [item]" or "Create [item]" |
-| Delete | "Delete [item]" — never "Remove" or "Erase" |
+| Delete | "Delete [item]" â€” never "Remove" or "Erase" |
 | Save | "Save changes" (button) / "Saved" (feedback) |
-| Cancel | "Cancel" — never "Go back" or "Dismiss" |
+| Cancel | "Cancel" â€” never "Go back" or "Dismiss" |
 | Confirm | "Confirm" for actions, "Yes, [action]" for destructive |
 | Loading | "[Action]ing..." with progress indicator |
 | Error | "Couldn't [action]. [Reason]. [Solution]." |
@@ -438,7 +438,7 @@ Photography is rarely used but when it is:
 
 ### 8.1 Integration Brand Principles
 
-When ARIA OS integrates with third-party services, the brand must remain identifiable while respecting the partner's brand. The integration is always framed as "ARIA OS connecting to [Service]" — never "ARIA OS powered by [Service]" and never "[Service] inside ARIA OS."
+When ARIA OS integrates with third-party services, the brand must remain identifiable while respecting the partner's brand. The integration is always framed as "ARIA OS connecting to [Service]" â€” never "ARIA OS powered by [Service]" and never "[Service] inside ARIA OS."
 
 ### 8.2 Co-Branding Rules
 
@@ -446,26 +446,26 @@ When ARIA OS integrates with third-party services, the brand must remain identif
 |---|---|
 | Logo order | ARIA OS logo first (left/top), partner logo second (right/bottom) |
 | Size parity | ARIA OS logo must equal or exceed partner logo in size |
-| Separation | Minimum 24px or 1.5× cap-height between logos |
+| Separation | Minimum 24px or 1.5Ã— cap-height between logos |
 | Colors | ARIA OS retains its dark theme; partner's brand colors used only for their logo |
 | Typography | Partner's typography used only for their content; ARIA OS UI always uses ARIA fonts |
-| Attribution | "Connected to [Service]" or "With [Service]" — smaller type, secondary color |
+| Attribution | "Connected to [Service]" or "With [Service]" â€” smaller type, secondary color |
 
 ### 8.3 Supported Integration Types
 
 | Category | Partner Examples | Branding Approach |
 |---|---|---|
-| Calendar | Google Calendar, Outlook | "Connected to Google Calendar" — icon + name in settings |
+| Calendar | Google Calendar, Outlook | "Connected to Google Calendar" â€” icon + name in settings |
 | Cloud Storage | Google Drive, OneDrive, Dropbox | "Attach from Drive" button with Drive icon + ARIA styling |
 | Communication | Slack, Discord, Telegram | Notification relay with partner icon in ARIA notification card |
-| AI Models | Ollama, Claude API | "Local AI (Ollama)" / "Cloud AI (Claude)" — model badge in chat |
-| Code Hosting | GitHub, GitLab | "Import from GitHub" — repo list with GitHub styling adapted to dark theme |
+| AI Models | Ollama, Claude API | "Local AI (Ollama)" / "Cloud AI (Claude)" â€” model badge in chat |
+| Code Hosting | GitHub, GitLab | "Import from GitHub" â€” repo list with GitHub styling adapted to dark theme |
 
 ### 8.4 Integration UI Elements
 
 - **Partner icons:** Used in their original color ONLY when the user has connected that service. Otherwise use grayscale.
 - **Partner typography:** Never use partner fonts in ARIA UI. Only use in iframes or embedded partner content.
-- **Partner status badges:** Small colored dots next to service name — green for connected, gray for disconnected.
+- **Partner status badges:** Small colored dots next to service name â€” green for connected, gray for disconnected.
 - **OAuth screens:** Use ARIA's dark theme for the OAuth consent redirect page (where possible).
 
 ---
@@ -494,7 +494,7 @@ When ARIA OS integrates with third-party services, the brand must remain identif
 
 | Item | Design |
 |---|---|
-| Stickers | Symbol-only mark in accent-neon on transparent / dark vinyl; 50×50mm die-cut |
+| Stickers | Symbol-only mark in accent-neon on transparent / dark vinyl; 50Ã—50mm die-cut |
 | T-shirt | Front: small chest logo (wordmark, 8cm wide). Back: large symbol mark (25cm) with tagline. Dark heather gray or black. |
 | Hoodie | Left chest: embroidered symbol mark (4cm). Right sleeve: tagline in Syne, vertical. Black or charcoal. |
 | Notebook | Cover: embossed symbol mark on matte black. Inside: dot grid, dark gray pages. |
@@ -514,18 +514,18 @@ When ARIA OS integrates with third-party services, the brand must remain identif
 
 | Platform | Content Focus | Posting Cadence | Visual Style |
 |---|---|---|---|
-| Twitter/X | Product updates, tips, community engagement | 3-5×/week | Screenshot + 1-line hook text |
-| LinkedIn | Long-form posts about productivity, AI, student life | 2×/week | Carousel PDF with slide images |
-| YouTube | Tutorials, updates, behind-the-scenes | 1×/week (22min avg) | Dark studio with neon accents |
+| Twitter/X | Product updates, tips, community engagement | 3-5Ã—/week | Screenshot + 1-line hook text |
+| LinkedIn | Long-form posts about productivity, AI, student life | 2Ã—/week | Carousel PDF with slide images |
+| YouTube | Tutorials, updates, behind-the-scenes | 1Ã—/week (22min avg) | Dark studio with neon accents |
 | Discord | Community support, feature requests, beta access | Daily engagement | Custom emoji set in ARIA style |
 | GitHub | Open-source repo, issues, discussions | As commits happen | Repo README with full branding |
-| Instagram | Visual storytelling, student life | 3×/week | Reels (9:16) with cyberpunk overlay style |
+| Instagram | Visual storytelling, student life | 3Ã—/week | Reels (9:16) with cyberpunk overlay style |
 
 ### 10.2 Social Media Visual Templates
 
-- **Twitter cards:** 1200×675px, dark background, logo top-left, accent line separator, body text in DM Sans 32pt.
-- **LinkedIn carousels:** 1080×1080px per slide, title slide with gradient, content slides with bullet points and accent bars.
-- **YouTube thumbnails:** 1280×720px, high-contrast, ARIA screenshot + bold white text with accent outline.
+- **Twitter cards:** 1200Ã—675px, dark background, logo top-left, accent line separator, body text in DM Sans 32pt.
+- **LinkedIn carousels:** 1080Ã—1080px per slide, title slide with gradient, content slides with bullet points and accent bars.
+- **YouTube thumbnails:** 1280Ã—720px, high-contrast, ARIA screenshot + bold white text with accent outline.
 - **Discord server:** Dark theme with ARIA color scheme, custom role badges using status color dots.
 
 ### 10.3 Brand Hashtags
@@ -546,7 +546,7 @@ On social media, ARIA's voice is more casual but still professional:
 
 ## 11. Brand Evolution Roadmap
 
-### 11.1 Current State (v1.0 — 2026 Q2)
+### 11.1 Current State (v1.0 â€” 2026 Q2)
 
 - Brand identity established: ARIA wordmark + symbol mark, dark cyberpunk theme
 - Design system tokens finalized and in code
@@ -554,7 +554,7 @@ On social media, ARIA's voice is more casual but still professional:
 - Social media profiles created, minimal presence
 - Website: single landing page
 
-### 11.2 Near-Term (v1.1 — 2026 Q3)
+### 11.2 Near-Term (v1.1 â€” 2026 Q3)
 
 - **Illustration system:** Full library of 20+ custom illustrations for all empty states and onboarding
 - **Animation brand:** Lottie files for logo reveal, page transitions, and celebration moments
@@ -562,7 +562,7 @@ On social media, ARIA's voice is more casual but still professional:
 - **Case studies:** 3 user stories with permission, turned into branded PDFs
 - **Community assets:** Discord emoji pack, custom sticker designs
 
-### 11.3 Medium-Term (v1.5 — 2026 Q4)
+### 11.3 Medium-Term (v1.5 â€” 2026 Q4)
 
 - **Brand guidelines v2:** Based on real-world feedback from 100+ beta users
 - **Light theme exploration:** Research into whether a light theme aligns with brand identity (unlikely, but evaluate)
@@ -570,7 +570,7 @@ On social media, ARIA's voice is more casual but still professional:
 - **Accessibility-first brand audit:** Ensure all brand assets pass WCAG AA
 - **Illustration expansion:** 50+ illustrations, animated variants, complete onboarding flow
 
-### 11.4 Long-Term (v2.0 — 2027 Q1+)
+### 11.4 Long-Term (v2.0 â€” 2027 Q1+)
 
 - **Brand refresh:** Evaluate if the cyberpunk aesthetic needs evolution as the user base diversifies beyond CSE students
 - **Sub-brand creation:** Potential product lines (ARIA Lite for casual users, ARIA Pro for power users)
@@ -582,11 +582,11 @@ On social media, ARIA's voice is more casual but still professional:
 
 | Metric | Measurement | Current Baseline | Target |
 |---|---|---|---|
-| Brand recall | Survey: "Which tool uses the brain-wave glyph?" | — (pre-launch) | 40% recognition in target demographic |
-| Voice consistency | Audit of 50 random UI strings for voice compliance | — (pre-launch) | >90% compliance |
-| Design system adoption | % of components using token system | — (pre-launch) | 100% |
-| Third-party misbranding | Instances of incorrect logo/color usage online | — | <5/month |
-| Social engagement | Avg monthly mentions with #SecondBrainOS | — | 500+ mentions |
+| Brand recall | Survey: "Which tool uses the brain-wave glyph?" | â€” (pre-launch) | 40% recognition in target demographic |
+| Voice consistency | Audit of 50 random UI strings for voice compliance | â€” (pre-launch) | >90% compliance |
+| Design system adoption | % of components using token system | â€” (pre-launch) | 100% |
+| Third-party misbranding | Instances of incorrect logo/color usage online | â€” | <5/month |
+| Social engagement | Avg monthly mentions with #SecondBrainOS | â€” | 500+ mentions |
 
 ### 11.6 Brand Governance
 
@@ -621,16 +621,16 @@ Before any public-facing release, verify:
 
 | Asset | Formats | Resolution |
 |---|---|---|
-| Logo (horizontal) | SVG, PNG, EPS | SVG preferred; PNG at 2× (2400×600px) |
-| Logo (symbol) | SVG, PNG, ICO, iOS/Android | 512×512px base; all favicon sizes |
-| Color swatches | ASE, JSON, CSS custom props | — |
+| Logo (horizontal) | SVG, PNG, EPS | SVG preferred; PNG at 2Ã— (2400Ã—600px) |
+| Logo (symbol) | SVG, PNG, ICO, iOS/Android | 512Ã—512px base; all favicon sizes |
+| Color swatches | ASE, JSON, CSS custom props | â€” |
 | Font files | WOFF2, WOFF | All weights listed in Section 4.3 |
-| Icon set | SVG sprite, React components | 16×16, 20×20, 24×24 |
+| Icon set | SVG sprite, React components | 16Ã—16, 20Ã—20, 24Ã—24 |
 | Illustration library | SVG, Lottie (JSON) | SVG for static, Lottie for animated |
-| Social templates | Figma, Sketch | 2× export resolution |
+| Social templates | Figma, Sketch | 2Ã— export resolution |
 
 ---
 
 > **Maintenance:** This document is reviewed quarterly by the Brand Committee. Propose changes via PR to `docs/design/Branding.md` with brand committee approval.
 >
-> **Related documents:** `docs/design/10_DesignSystem.md` (visual tokens), `docs/design/35_DesignTokens.md` (code-level tokens), `docs/design/MotionSystem.md` (animation guidelines), `docs/design/Accessibility.md` (inclusive brand application).
+> **Related documents:** `docs/design/10_DesignSystem.md` (visual tokens), `docs/design/35_DesignTokens.md` (code-level tokens), `docs/design/MotionSystem.md` (animation guidelines), `docs/design/FrontendAccessibilityGuide.md` (inclusive brand application).

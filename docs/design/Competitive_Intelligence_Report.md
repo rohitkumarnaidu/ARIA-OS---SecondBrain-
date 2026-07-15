@@ -1,8 +1,8 @@
-# Competitive Intelligence Research Report
+﻿# Competitive Intelligence Research Report
 
 > **Part of the Second Brain OS architecture suite.**
 > For the full Product Architecture, see [ProductArchitecture.md](./ProductArchitecture.md).
-> For the Enterprise Frontend Discovery Report, see [Enterprise_Frontend_Discovery_Report_v3.md](./Enterprise_Frontend_Discovery_Report_v3.md). — Second Brain OS (ARIA OS)
+> For the Enterprise Frontend Discovery Report, see [Enterprise_Frontend_Discovery_Report_v3.md](./Enterprise_Frontend_Discovery_Report_v3.md). â€” Second Brain OS (ARIA OS)
 
 ---
 
@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-CI-001 |
+| Document ID | DSG-CIR-001 |
 | Version | 1.0.0 |
 | Status | Active |
-| Classification | Internal — Strategy & Product Reference |
+| Classification | Internal â€” Strategy & Product Reference |
 | Target Audience | Product Managers, Designers, Frontend Engineers, AI Engineers |
 | Last Updated | 2026-06-11 |
 | Review Cycle | Quarterly |
@@ -48,9 +48,9 @@
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
 graph TD
-    A["🔍 Collect"] --> B["📊 Analyze"]
-    B --> C["🗺️ Map"]
-    C --> D["📋 Strategic Recommendations"]
+    A["ðŸ” Collect"] --> B["ðŸ“Š Analyze"]
+    B --> C["ðŸ—ºï¸ Map"]
+    C --> D["ðŸ“‹ Strategic Recommendations"]
     A --> A1["25 Products<br/>across 6 categories"]
     A1 --> B1["Reverse-engineer<br/>UX + AI patterns"]
     B1 --> C1["Competitive Advantage<br/>Matrix (Section 12)"]
@@ -75,16 +75,16 @@ This report reverse-engineers 25 products across 6 categories (productivity, kno
 ### 1.2 Key Findings
 
 **ARIA OS has a genuine competitive moat in three areas:**
-1. **Student-specific depth** — Courses, CGPA, semester planning, hackathon radar, exam countdown — no competitor offers these
-2. **Cross-domain integration** — Course → Skill → Project → Income flow is structurally impossible for single-domain tools to replicate
-3. **Zero-cost local AI** — Ollama on student laptops with algorithmic fallback creates a privacy + cost advantage VC-backed competitors cannot match
+1. **Student-specific depth** â€” Courses, CGPA, semester planning, hackathon radar, exam countdown â€” no competitor offers these
+2. **Cross-domain integration** â€” Course â†’ Skill â†’ Project â†’ Income flow is structurally impossible for single-domain tools to replicate
+3. **Zero-cost local AI** â€” Ollama on student laptops with algorithmic fallback creates a privacy + cost advantage VC-backed competitors cannot match
 
 **Biggest UX gaps versus best-in-class:**
-1. **Command palette** (Linear: Cmd+K, local search, p95 <60ms) — not implemented
-2. **Keyboard shortcuts** (Linear: every action has shortcut, two-key navigation) — not implemented
-3. **Notification management** (Linear: Inbox, Pulse, snooze, tiering) — basic push only
-4. **Search** (Linear: hybrid semantic, fuzzy, operators) — basic Supabase full-text
-5. **Mobile experience** (Linear: custom Liquid Glass, full keyboard) — basic PWA
+1. **Command palette** (Linear: Cmd+K, local search, p95 <60ms) â€” not implemented
+2. **Keyboard shortcuts** (Linear: every action has shortcut, two-key navigation) â€” not implemented
+3. **Notification management** (Linear: Inbox, Pulse, snooze, tiering) â€” basic push only
+4. **Search** (Linear: hybrid semantic, fuzzy, operators) â€” basic Supabase full-text
+5. **Mobile experience** (Linear: custom Liquid Glass, full keyboard) â€” basic PWA
 
 ### 1.3 Products Analyzed
 
@@ -106,7 +106,7 @@ This report reverse-engineers 25 products across 6 categories (productivity, kno
 | Product | Core Philosophy | Tagline | Designer Ethos |
 |---|---|---|---|
 | **Linear** | Quality-first, opinionated, keyboard-driven | "Software used to be a craft" | Every feature is a deliberate choice, not a compromise |
-| **Notion** | Composability over features | "We don't build tools — we give users building blocks" | Blocks as LEGO; post-file, post-MS Office world |
+| **Notion** | Composability over features | "We don't build tools â€” we give users building blocks" | Blocks as LEGO; post-file, post-MS Office world |
 | **Obsidian** | Radical data ownership | "Your data is just a folder of Markdown files" | Zero dependency, future-proof, user sovereignty |
 | **Capacities** | Object-based thinking | "What kind of thing is this?" | Structured capture without rigidity |
 | **ChatGPT** | Capability-first Swiss Army knife | "Bring your ideas to life" | Broad but shallow; confident motivator |
@@ -118,7 +118,7 @@ This report reverse-engineers 25 products across 6 categories (productivity, kno
 
 ### 2.2 Key Insights for ARIA OS
 
-ARIA occupies a unique position — it's not just a tool but an operating system for the student's entire life. The product philosophy should be:
+ARIA occupies a unique position â€” it's not just a tool but an operating system for the student's entire life. The product philosophy should be:
 
 > **"Your second brain should be faster than your first."**
 
@@ -162,13 +162,13 @@ This means:
 - Sidebar dims (opacity 0.5) after destination reached
 - Focus shifts to content area automatically
 - Users feel the sidebar "getting out of the way"
-- Implementation: `sidebar opacity → 0.5 after 500ms of inactivity in content area, back to 1.0 on hover`
+- Implementation: `sidebar opacity â†’ 0.5 after 500ms of inactivity in content area, back to 1.0 on hover`
 
 **2. Linear's Two-Key Navigations**
-- G+I → Inbox, G+P → Projects, G+T → Teams
+- G+I â†’ Inbox, G+P â†’ Projects, G+T â†’ Teams
 - Vim-inspired sequential keybinding
 - Learned organically through Cmd+K shortcut display
-- For ARIA: G+D → Dashboard, G+T → Tasks, G+C → Courses, G+H → Habits, G+S → Sleep
+- For ARIA: G+D â†’ Dashboard, G+T â†’ Tasks, G+C â†’ Courses, G+H â†’ Habits, G+S â†’ Sleep
 
 **3. Capacities' Object-Type Breadcrumb**
 - Always shows "where you are" in the type hierarchy
@@ -177,7 +177,7 @@ This means:
 - Prevents lost-in-deep-navigation syndrome
 
 **4. Notion's Page-as-Folder**
-- No separate folder structure — nesting creates hierarchy
+- No separate folder structure â€” nesting creates hierarchy
 - Any page can become a parent by adding child pages
 - Reduces structural overhead
 - For ARIA: Goals can contain Tasks and Courses; Projects can contain Tasks and Ideas
@@ -190,9 +190,9 @@ This means:
 ### 3.3 Recommended Navigation Model for ARIA OS
 
 ```
-Level 1 — Permanent: Collapsible sidebar (240px → 64px icon-only)
-Level 2 — Contextual: Tab bar within module (list/kanban/calendar/detail)  
-Level 3 — Power User: Cmd+K palette + Two-key shortcuts (G+T, G+C, G+H)
+Level 1 â€” Permanent: Collapsible sidebar (240px â†’ 64px icon-only)
+Level 2 â€” Contextual: Tab bar within module (list/kanban/calendar/detail)  
+Level 3 â€” Power User: Cmd+K palette + Two-key shortcuts (G+T, G+C, G+H)
 
 Sidebar sections:
 1. ARIA OS Logo + Workspace name
@@ -211,7 +211,7 @@ Sidebar sections:
 
 | Product | Default View | Layout | Data Density | Key Innovation |
 |---|---|---|---|---|
-| **Linear** | Inbox (not a dashboard) | Insights + Pulse + Dashboards | Low-Medium | "Keep your own score" — pair every metric with comparison context |
+| **Linear** | Inbox (not a dashboard) | Insights + Pulse + Dashboards | Low-Medium | "Keep your own score" â€” pair every metric with comparison context |
 | **Stripe** | Card-less KPI strip | 4-6 metrics top, charts middle, tables bottom | Medium-High | Hierarchy from shadows/borders, not surface colors |
 | **PostHog** | Customizable insight grid | Text cards, button tiles, AI analysis | High | 7 insight types, AI analyzes changes on refresh |
 | **Notion** | Home tab (customizable sections) | Upcoming, Recents, Favorites, Agents | Low-Medium | User chooses what to see |
@@ -220,9 +220,9 @@ Sidebar sections:
 
 **1. Stripe's Card-Less KPI Strip**
 - 4-6 glanceable metrics at the top
-- No card containers — just numbers with labels and trend arrows
+- No card containers â€” just numbers with labels and trend arrows
 - Hierarchy from spacing, typography weight, and subtle borders
-- For ARIA: Productivity Score (▲5%), Tasks Today (3), Sleep Score (78), Opportunities (+2), Course Progress (65%), Income Rate (₹250/hr)
+- For ARIA: Productivity Score (â–²5%), Tasks Today (3), Sleep Score (78), Opportunities (+2), Course Progress (65%), Income Rate (â‚¹250/hr)
 
 **2. Linear's "Pair Every Key Metric with Comparison Context"**
 - Every number shows "vs last week" trend
@@ -231,7 +231,7 @@ Sidebar sections:
 
 **3. PostHog's AI Refresh Analysis**
 - When dashboard data refreshes, AI highlights what changed
-- "Your productivity score increased 8% this week — primarily driven by task completion rate (+12%)"
+- "Your productivity score increased 8% this week â€” primarily driven by task completion rate (+12%)"
 - Turns raw data into narrative insights
 
 **4. Time-of-Day Adaptive Dashboard**
@@ -244,20 +244,20 @@ Sidebar sections:
 ### 4.3 Recommended Dashboard for ARIA OS
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  🌅 GOOD MORNING, AARAV — Sleep 78 · 3 tasks today · 1 opp     │ ← ARIA greeting + status
-├──────────────────────────────────────────────────────────────────┤
-│  72  │  3/8   │  78  │  +2   │  65%  │  ₹250/hr               │ ← Stripe-style KPI strip
-│  ▲5% │  Tasks │ Sleep│  Opps │ Course│  Income                 │
-├─────────────────────┬──────────────────────┬────────────────────┤
-│  TODAY'S FOCUS       │  COURSE TARGET        │  TOMORROW PREVIEW  │
-│  3 Priority Tasks    │  Node.js: 45min/day   │  1 deadline        │
-│  + Time blocks       │  40% behind           │  2 tasks           │
-│                      │  Daily: 30min ☐☐☐    │                     │
-├─────────────────────┴──────────────────────┴────────────────────┤
-│  ACTIVITY (7-day) ████░░░░░░  Productivity trend — week view   │
-│  HEATMAP (6-month) [GitHub-style grid] — click for daily view  │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ðŸŒ… GOOD MORNING, AARAV â€” Sleep 78 Â· 3 tasks today Â· 1 opp     â”‚ â† ARIA greeting + status
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  72  â”‚  3/8   â”‚  78  â”‚  +2   â”‚  65%  â”‚  â‚¹250/hr               â”‚ â† Stripe-style KPI strip
+â”‚  â–²5% â”‚  Tasks â”‚ Sleepâ”‚  Opps â”‚ Courseâ”‚  Income                 â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TODAY'S FOCUS       â”‚  COURSE TARGET        â”‚  TOMORROW PREVIEW  â”‚
+â”‚  3 Priority Tasks    â”‚  Node.js: 45min/day   â”‚  1 deadline        â”‚
+â”‚  + Time blocks       â”‚  40% behind           â”‚  2 tasks           â”‚
+â”‚                      â”‚  Daily: 30min â˜â˜â˜    â”‚                     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  ACTIVITY (7-day) â–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘  Productivity trend â€” week view   â”‚
+â”‚  HEATMAP (6-month) [GitHub-style grid] â€” click for daily view  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -268,24 +268,24 @@ Sidebar sections:
 
 | Product | Search Type | Performance | Key Innovation |
 |---|---|---|---|
-| **Linear** | Hybrid semantic (AI vectors + keyword) | p95 <60ms — searches local MobX pool | Local data search, not API. Two-key go-to + Cmd+K |
+| **Linear** | Hybrid semantic (AI vectors + keyword) | p95 <60ms â€” searches local MobX pool | Local data search, not API. Two-key go-to + Cmd+K |
 | **Notion** | Full-text + operator syntax | Server search | `from:@user`, `in:Page`, `tag:Tag` operators |
 | **Obsidian** | Full-text with regex + file type filters | Local (instant) | Quick Switcher creates files if not found |
 | **Stripe** | Universal across all resources | Server search | `?` key opens help, Copy Object ID (Cmd+I) |
-| **PostHog** | Natural language queries | AI + SQL | "Why has traffic decreased?" → SQL → insight |
+| **PostHog** | Natural language queries | AI + SQL | "Why has traffic decreased?" â†’ SQL â†’ insight |
 
 ### 5.2 Key Innovations to Adopt
 
 **1. Linear's Local-First Search Architecture**
 - Searches local data (MobX pool in Linear, IndexedDB for ARIA), not API
-- P95 <60ms — feels instant
+- P95 <60ms â€” feels instant
 - Falls back to server search for full-text content
 - For ARIA: Search IndexedDB first (tasks, courses, goals), then Supabase full-text
 
 **2. Linear's Hybrid Semantic Search**
 - AI vectors + keyword matching
 - "Find what I mean, not what I type"
-- Fuzzy matching for typos (Dambase → Database)
+- Fuzzy matching for typos (Dambase â†’ Database)
 - `"phrase"` for exact match, `-negate` to exclude, `AND` for conjunction
 
 **3. Notion's `/` Command System**
@@ -301,22 +301,22 @@ Sidebar sections:
 ### 5.3 Recommended Search Model for ARIA OS
 
 ```
-Global: Cmd+K — searches ALL modules
-  → Fuzzy title match (typo tolerant)
-  → Full-text content match (scoped to recent/active items)
-  → Natural language: "react articles from 3 months ago"
-  → Operators: from:ARIA, tag:WebDev, in:Tasks, before:2026-07-01
-  → Actions: /new task, /new idea, /chat, /goto Dashboard
+Global: Cmd+K â€” searches ALL modules
+  â†’ Fuzzy title match (typo tolerant)
+  â†’ Full-text content match (scoped to recent/active items)
+  â†’ Natural language: "react articles from 3 months ago"
+  â†’ Operators: from:ARIA, tag:WebDev, in:Tasks, before:2026-07-01
+  â†’ Actions: /new task, /new idea, /chat, /goto Dashboard
   
 Module: Cmd+F within current module
-  → Filters list in real-time
-  → Supports same operators, scoped to module
+  â†’ Filters list in real-time
+  â†’ Supports same operators, scoped to module
   
 Quick: / from any context
-  → /task "Complete DBMS assignment"
-  → /idea "AI-powered study buddy"  
-  → /course "Node.js" + deadline:2weeks
-  → /chat "What's my day look like?"
+  â†’ /task "Complete DBMS assignment"
+  â†’ /idea "AI-powered study buddy"  
+  â†’ /course "Node.js" + deadline:2weeks
+  â†’ /chat "What's my day look like?"
 ```
 
 ---
@@ -331,7 +331,7 @@ Quick: / from any context
 | **Claude** | Extended Thinking + Artifacts | User asks | Thinking display (watch reasoning build trust), Artifacts as renderable panels |
 | **Cursor** | Inline AI in IDE | User types | Tab to accept, @-mention context, inline suggestions that don't disrupt flow |
 | **Notion AI** | In-editor blocks + Q&A + Custom Agents | User asks + scheduled | AI output as native blocks, "Nosy" character, 20-min agent memory |
-| **Perplexity** | Source-backed answers | User asks | Status phases (searching → reading → writing), inline citations build trust |
+| **Perplexity** | Source-backed answers | User asks | Status phases (searching â†’ reading â†’ writing), inline citations build trust |
 | **Glean** | Enterprise AI search across 100+ connectors | User asks + proactive | Permission-aware cross-app search, proactive knowledge surfacing |
 | **Devin** | Autonomous SWE agent | User task | Full autonomous execution, IDE + browser + terminal control |
 
@@ -339,13 +339,13 @@ Quick: / from any context
 
 **1. Claude's Extended Thinking Display**
 - Show ARIA's reasoning process: "Thinking...", "Researching...", "Analyzing...", "Writing..."
-- Builds calibrated trust — user can see how ARIA arrived at an answer
+- Builds calibrated trust â€” user can see how ARIA arrived at an answer
 - For ARIA: "Checking your tasks... Analyzing your sleep score... Reviewing course deadlines..."
 
 **2. ChatGPT's Mode Selection**
 - Let users set context before asking: Plan, Execute, Learn, Reflect
 - Mode sets temperature, system prompt, and tool availability
-- For ARIA: "I want to..." → Plan (strategic), Do (task execution), Learn (course material), Review (retrospective)
+- For ARIA: "I want to..." â†’ Plan (strategic), Do (task execution), Learn (course material), Review (retrospective)
 
 **3. Cursor's Inline Suggestions**
 - AI suggests actions without disrupting current flow
@@ -354,7 +354,7 @@ Quick: / from any context
 
 **4. Notion's AI-as-Native-Blocks**
 - AI responses embed action buttons, task cards, progress bars directly
-- Not plain text — interactive UI components
+- Not plain text â€” interactive UI components
 - For ARIA: Briefing cards with checkable tasks, opportunity cards with "Save" button, progress bars with "Log" action
 
 **5. Perplexity's Source Grounding**
@@ -397,16 +397,16 @@ When ARIA dispatches multiple agents for a single user request:
 
 ```
 User: "What should I focus on today?"
-     ↓
+     â†“
 ARIA dispatches: Planner + Sleep + Learning + Opportunity (parallel)
-     ↓
+     â†“
 Results merge into single briefing response
-     ↓
+     â†“
 User sees: Unified response with agent attribution
-           "📋 Tasks (Planner): 3 priority tasks — DBMS assignment due tomorrow"
-           "😴 Sleep (Sleep Agent): Score 78 — light day scheduled"
-           "📚 Courses (Learning Agent): Node.js — behind by 2 days"
-           "🎯 Opportunities (Radar): 2 new matches >80%"
+           "ðŸ“‹ Tasks (Planner): 3 priority tasks â€” DBMS assignment due tomorrow"
+           "ðŸ˜´ Sleep (Sleep Agent): Score 78 â€” light day scheduled"
+           "ðŸ“š Courses (Learning Agent): Node.js â€” behind by 2 days"
+           "ðŸŽ¯ Opportunities (Radar): 2 new matches >80%"
 ```
 
 ### 6.6 Opportunities Competitors Missed
@@ -414,9 +414,9 @@ User sees: Unified response with agent attribution
 | Missed Opportunity | ARIA OS Advantage |
 |---|---|
 | **Proactive daily briefing combining tasks, courses, sleep, and opportunities** | No competitor combines all 4 in one daily push |
-| **Sleep-adjusted UI** — interface adapts to cognitive state | No competitor adjusts task scheduling or UI density based on sleep |
-| **Cross-domain pattern detection** — "Your sleep drops when you study after 11 PM" | Data silos prevent competitors from making cross-domain correlations |
-| **Learning → Skill → Opportunity pipeline** | No competitor connects course completion to skill updates to opportunity matching |
+| **Sleep-adjusted UI** â€” interface adapts to cognitive state | No competitor adjusts task scheduling or UI density based on sleep |
+| **Cross-domain pattern detection** â€” "Your sleep drops when you study after 11 PM" | Data silos prevent competitors from making cross-domain correlations |
+| **Learning â†’ Skill â†’ Opportunity pipeline** | No competitor connects course completion to skill updates to opportunity matching |
 | **Course deadline auto-detection with daily study target** | No competitor calculates daily minutes needed across multiple courses |
 
 ---
@@ -437,7 +437,7 @@ User sees: Unified response with agent attribution
 ### 7.2 Key Innovations to Adopt
 
 **1. Linear's Keyboard-Driven Task Creation**
-- Cmd+K → type → assign → create in <10s
+- Cmd+K â†’ type â†’ assign â†’ create in <10s
 - Every field accessible via keyboard
 - No mouse required for the most common action
 
@@ -449,7 +449,7 @@ User sees: Unified response with agent attribution
 **3. Motion's AI Scheduling**
 - AI suggests time blocks based on task priority, energy level, and available time
 - Re-prioritizes based on deadlines and dependencies
-- For ARIA: Sleep-adjusted scheduling — low sleep → lighter tasks pushed to top
+- For ARIA: Sleep-adjusted scheduling â€” low sleep â†’ lighter tasks pushed to top
 
 **4. Notion's Multiple Database Views**
 - Same underlying data viewed as list, kanban, calendar, timeline, table
@@ -459,7 +459,7 @@ User sees: Unified response with agent attribution
 **5. Obsidian's Bi-Directional Linking**
 - Every item shows backlinks and unlinked mentions
 - Related content surfacing without explicit linking
-- For ARIA: "This task is linked to: Node.js Course, Full-Stack Goal — Also related: 2 resources you saved"
+- For ARIA: "This task is linked to: Node.js Course, Full-Stack Goal â€” Also related: 2 resources you saved"
 
 ### 7.3 Zero-Miss Policy
 
@@ -467,9 +467,9 @@ Adapted from Linear's auto-rollover and Sunsama's bounded lists:
 
 ```
 Every overdue task must be in one of three states:
-1. DONE — completed before or after deadline
-2. RESCHEDULED — new due date set with reason
-3. DROPPED — explicitly abandoned with reason logged
+1. DONE â€” completed before or after deadline
+2. RESCHEDULED â€” new due date set with reason
+3. DROPPED â€” explicitly abandoned with reason logged
 
 No task disappears. No task silently remains overdue.
 ```
@@ -492,7 +492,7 @@ No task disappears. No task silently remains overdue.
 **1. PostHog's Multiple Lenses**
 - Same data viewed as different chart types reveals different patterns
 - Trends (over time), Funnels (conversion), Retention (returning), Paths (user journeys), Stickiness (frequency), Lifecycle (new vs returning)
-- For ARIA: Productivity as trends (daily score), funnels (task creation → completion), retention (weekly returning), paths (module navigation)
+- For ARIA: Productivity as trends (daily score), funnels (task creation â†’ completion), retention (weekly returning), paths (module navigation)
 
 **2. Stripe's Surgical Use of Accent**
 - Charts use ONE accent color (#6366F1 for ARIA), not rainbow palettes
@@ -506,11 +506,11 @@ No task disappears. No task silently remains overdue.
 
 **4. PostHog's Notebooks**
 - Compile multiple insights + AI commentary into a narrative
-- For ARIA: Weekly review as a notebook — chart + AI analysis + action items
+- For ARIA: Weekly review as a notebook â€” chart + AI analysis + action items
 
 **5. Mixpanel's Flows**
 - Visual path analysis showing how users navigate
-- For ARIA: See how users flow between modules (Dashboard → Tasks → Courses)
+- For ARIA: See how users flow between modules (Dashboard â†’ Tasks â†’ Courses)
 
 ### 8.3 Chart Design Tokens
 
@@ -552,7 +552,7 @@ No task disappears. No task silently remains overdue.
 **2. Linear's Pulse for Async Updates**
 - Batched daily summary arrives at 7 AM before work starts
 - Not everything needs real-time delivery
-- For ARIA: Pulse as the Daily Briefing — batched push at 7 AM with all non-urgent updates
+- For ARIA: Pulse as the Daily Briefing â€” batched push at 7 AM with all non-urgent updates
 
 **3. Linear's Notification Tiering**
 - **Interrupt**: Assigned, @mentioned, deadline < 2h (immediate push)
@@ -561,8 +561,8 @@ No task disappears. No task silently remains overdue.
 
 **4. Work State Model**
 - **Focus**: Only critical interrupts, all else batched
-- **Available**: Default — ambient + interrupt allowed
-- **Review**: End-of-day — show all activity as digest
+- **Available**: Default â€” ambient + interrupt allowed
+- **Review**: End-of-day â€” show all activity as digest
 
 **5. Sleep-Aware Quiet Hours**
 - Auto-enable Focus mode when sleep score is low
@@ -585,12 +585,12 @@ No task disappears. No task silently remains overdue.
 ### 10.2 Key Innovations to Adopt
 
 **1. Linear's Mobile Tab Bar**
-- Custom Liquid Glass design — frosted background with dynamic blur
+- Custom Liquid Glass design â€” frosted background with dynamic blur
 - 5 items, user-adjustable ordering
 - Full keyboard shortcuts on tablet with external keyboard
 
 **2. Stripe's Sidebar Collapse to Icon-Only**
-- 240px → 48px at tablet breakpoints
+- 240px â†’ 48px at tablet breakpoints
 - Icons maintain context without labels
 - Smooth transition, no sudden layout shifts
 
@@ -601,12 +601,12 @@ No task disappears. No task silently remains overdue.
 
 **4. Capacities' Floating Action Button**
 - Persistent FAB for quick capture from any screen
-- Contextual — offers different options based on current module
+- Contextual â€” offers different options based on current module
 
 ### 10.3 Recommended Multi-Device Strategy for ARIA OS
 
 ```
-DESKTOP (Primary — deep work):
+DESKTOP (Primary â€” deep work):
   Layout: Sidebar (240px) + Header (64px) + Content + Optional Right panel (320px)
   Keyboard: Full shortcuts, Cmd+K universal, Cmd+Shift+C for quick capture
   Performance: Local-first with IndexedDB, sub-100ms interactions
@@ -618,7 +618,7 @@ TABLET (Consumption + light creation):
   Touch: Swipe actions + drag-and-drop, pencil support for capture
   Shortcuts: External keyboard support
 
-MOBILE (On-the-go — capture + check):
+MOBILE (On-the-go â€” capture + check):
   Bottom nav: Home (5 tabs) + Tasks + Quick Capture + Chat + Modules
   Gestures: Swipe left (complete), right (reschedule), down (refresh)
   Data: Offline-first, briefing cached, quick capture works without connection
@@ -664,23 +664,23 @@ MOBILE (On-the-go — capture + check):
 | **Target User** | Dev teams | Everyone | PKM power users | General | Developers | Product teams | **BTech CSE students** |
 | **Primary Interaction** | Keyboard | Blocks | Linking | Chat | Dashboard | Analytics | **AI + Keyboard + Dashboard** |
 | **Data Model** | Issues | Blocks/DBs | Files | Messages | Transactions | Events | **Objects + Relations + Graph** |
-| **Speed** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | **⭐⭐⭐⭐⭐ (local-first)** |
-| **AI Integration** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | **⭐⭐⭐⭐⭐ (8 agents)** |
-| **Offline** | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | **⭐⭐⭐⭐⭐ (3-layer)** |
-| **Knowledge Mgmt** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐ | ⭐⭐ | **⭐⭐⭐⭐⭐ (type + graph)** |
-| **Mobile** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | **⭐⭐⭐⭐ (PWA-first)** |
-| **Accessibility** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | **⭐⭐⭐⭐⭐ (WCAG 2.1 AA)** |
+| **Speed** | â­â­â­â­â­ | â­â­â­ | â­â­â­â­ | â­â­â­â­ | â­â­â­â­â­ | â­â­â­ | **â­â­â­â­â­ (local-first)** |
+| **AI Integration** | â­â­â­ | â­â­â­â­ | â­â­â­ | â­â­â­â­â­ | â­â­â­ | â­â­â­â­ | **â­â­â­â­â­ (11 agents)** |
+| **Offline** | â­â­â­â­ | â­â­ | â­â­â­â­â­ | â­â­â­ | â­â­â­ | â­â­ | **â­â­â­â­â­ (3-layer)** |
+| **Knowledge Mgmt** | â­â­â­ | â­â­â­â­â­ | â­â­â­â­â­ | â­â­ | â­â­ | â­â­ | **â­â­â­â­â­ (type + graph)** |
+| **Mobile** | â­â­â­â­ | â­â­â­ | â­â­â­ | â­â­â­â­â­ | â­â­â­ | â­â­ | **â­â­â­â­ (PWA-first)** |
+| **Accessibility** | â­â­â­â­ | â­â­â­ | â­â­â­ | â­â­â­ | â­â­â­â­ | â­â­â­ | **â­â­â­â­â­ (WCAG 2.1 AA)** |
 | **Learning Curve** | Medium | Low-Medium | High | Low | Medium | Medium | **Medium (guided)** |
-| **Cost** | $8/mo | $10/mo | Free | $20/mo | Free | Free tier | **₹0 (free)** |
+| **Cost** | $8/mo | $10/mo | Free | $20/mo | Free | Free tier | **â‚¹0 (free)** |
 
 ### 12.1 ARIA OS Competitive Advantages
 
-1. **Student-specific modules**: CGPA, semester, exam countdown, hackathon radar — no competitor has these
-2. **Cross-domain compound growth**: Course → Skill → Project → Income flow — structurally impossible for single-domain tools
-3. **Proactive AI with 8 agents**: Daily briefing, opportunity radar, sleep adjustment, course nudging — combined in one system
+1. **Student-specific modules**: CGPA, semester, exam countdown, hackathon radar â€” no competitor has these
+2. **Cross-domain compound growth**: Course â†’ Skill â†’ Project â†’ Income flow â€” structurally impossible for single-domain tools
+3. **Proactive AI with 11 agents**: Daily briefing, opportunity radar, sleep adjustment, course nudging â€” combined in one system
 4. **Zero cost**: Structurally impossible for VC-backed competitors to match ($8-20/mo minimum)
 5. **Offline-first PWA**: Works on campus with unreliable internet
-6. **Local AI (Ollama)**: Data never leaves the machine — privacy as a differentiator
+6. **Local AI (Ollama)**: Data never leaves the machine â€” privacy as a differentiator
 7. **Sleep-adjusted scheduling**: Interface and workload adapt to cognitive state
 
 ---
@@ -689,23 +689,23 @@ MOBILE (On-the-go — capture + check):
 
 | Feature | Linear | Notion | Obsidian | ChatGPT | Stripe | PostHog | ARIA Status |
 |---|---|---|---|---|---|---|---|
-| Task management | ✅ | ✅ | ⬜ (plugins) | ❌ | ❌ | ❌ | ✅ |
-| Course tracking | ❌ | ⬜ (template) | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Goal/roadmap planning | ✅ (cycles) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| Knowledge management | ⬜ (docs) | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| AI chat | ❌ | ⬜ (Q&A) | ⬜ (plugin) | ✅ | ❌ | ⬜ | ✅ |
-| Daily briefing | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Opportunity radar | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Sleep tracking | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Income tracking | ❌ | ⬜ (template) | ❌ | ❌ | ✅ | ❌ | **✅ Unique** |
-| Habit tracking | ❌ | ⬜ (template) | ⬜ (plugin) | ❌ | ❌ | ❌ | ✅ |
-| Time tracking | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| YouTube vault | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Offline-first | ✅ (partial) | ❌ | ✅ | ✅ (partial) | ❌ | ❌ | ✅ |
-| Voice input | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ⬜ Planned |
-| Browser extension | ❌ | ✅ (clipper) | ❌ | ❌ | ❌ | ❌ | ⬜ Planned |
-| CGPA calculator | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
-| Semester planner | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | **✅ Unique** |
+| Task management | âœ… | âœ… | â¬œ (plugins) | âŒ | âŒ | âŒ | âœ… |
+| Course tracking | âŒ | â¬œ (template) | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Goal/roadmap planning | âœ… (cycles) | âœ… | âŒ | âŒ | âŒ | âŒ | âœ… |
+| Knowledge management | â¬œ (docs) | âœ… | âœ… | âŒ | âŒ | âŒ | âœ… |
+| AI chat | âŒ | â¬œ (Q&A) | â¬œ (plugin) | âœ… | âŒ | â¬œ | âœ… |
+| Daily briefing | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Opportunity radar | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Sleep tracking | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Income tracking | âŒ | â¬œ (template) | âŒ | âŒ | âœ… | âŒ | **âœ… Unique** |
+| Habit tracking | âŒ | â¬œ (template) | â¬œ (plugin) | âŒ | âŒ | âŒ | âœ… |
+| Time tracking | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| YouTube vault | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Offline-first | âœ… (partial) | âŒ | âœ… | âœ… (partial) | âŒ | âŒ | âœ… |
+| Voice input | âŒ | âŒ | âŒ | âœ… | âŒ | âŒ | â¬œ Planned |
+| Browser extension | âŒ | âœ… (clipper) | âŒ | âŒ | âŒ | âŒ | â¬œ Planned |
+| CGPA calculator | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
+| Semester planner | âŒ | âŒ | âŒ | âŒ | âŒ | âŒ | **âœ… Unique** |
 
 ### 13.1 Gap Summary
 
@@ -738,7 +738,7 @@ The competitive moat is the **depth of student-specific integration**, not any s
 | **Notifications** | Linear (Inbox, Pulse, snooze, tiering) | Basic push | **High gap** | P1 |
 | **Mobile Experience** | Linear (custom Liquid Glass, full keyboard) | Basic PWA | **High gap** | P1 |
 | **Offline UX** | Obsidian (100% offline by default) | 3-layer (SW+IDB+sync) | **Medium gap** | P2 |
-| **Onboarding** | Notion (intent question → checklist → templates) | 5-step wizard planned | **Medium gap** | P1 |
+| **Onboarding** | Notion (intent question â†’ checklist â†’ templates) | 5-step wizard planned | **Medium gap** | P1 |
 | **Accessibility** | Linear (Radix primitives, WCAG compliant) | Tokens defined, not tested | **High gap** | P1 |
 | **Motion/Animations** | Linear (sub-100ms, asymmetric timing) | Framer Motion chosen, not implemented | **Medium gap** | P2 |
 | **Drag & Drop** | Linear (smooth, optimistic) | Not implemented | **Medium gap** | P2 |
@@ -769,57 +769,57 @@ The competitive moat is the **depth of student-specific integration**, not any s
 
 ### 16.1 Must-Adopt (from competition)
 
-1. **Linear's Cmd+K command palette** — Universal search + navigation + actions. Local data search (not API). p95 <60ms. Shortcut display next to every action.
+1. **Linear's Cmd+K command palette** â€” Universal search + navigation + actions. Local data search (not API). p95 <60ms. Shortcut display next to every action.
 
-2. **Linear's two-key navigation** — G+I (Inbox), G+P (Projects), G+T (Tasks), G+C (Courses) — Vim-inspired power user model.
+2. **Linear's two-key navigation** â€” G+I (Inbox), G+P (Projects), G+T (Tasks), G+C (Courses) â€” Vim-inspired power user model.
 
-3. **Linear's notification Inbox + Pulse** — Single notification hub with snooze, tiering (interrupt/ambient/digest), and batched daily Pulse summary at 7 AM.
+3. **Linear's notification Inbox + Pulse** â€” Single notification hub with snooze, tiering (interrupt/ambient/digest), and batched daily Pulse summary at 7 AM.
 
-4. **Notion's `/` command system** — Create any item (task, idea, course, goal) by typing `/` from any context. AI auto-detects type.
+4. **Notion's `/` command system** â€” Create any item (task, idea, course, goal) by typing `/` from any context. AI auto-detects type.
 
-5. **Stripe's KPI strip dashboard** — 4-6 glanceable metrics at top. Card-less layout. Hierarchy from shadows and borders, not surface colors.
+5. **Stripe's KPI strip dashboard** â€” 4-6 glanceable metrics at top. Card-less layout. Hierarchy from shadows and borders, not surface colors.
 
-6. **PostHog's multiple analytic lenses** — Same data as trends, funnels, retention, paths, stickiness, lifecycle.
+6. **PostHog's multiple analytic lenses** â€” Same data as trends, funnels, retention, paths, stickiness, lifecycle.
 
-7. **Claude's Extended Thinking display** — Show ARIA's reasoning process (researching, analyzing, writing). Builds trust through transparency.
+7. **Claude's Extended Thinking display** â€” Show ARIA's reasoning process (researching, analyzing, writing). Builds trust through transparency.
 
-8. **Obsidian's bi-directional linking** — Every item shows backlinks and unlinked mentions. Related content surfacing.
+8. **Obsidian's bi-directional linking** â€” Every item shows backlinks and unlinked mentions. Related content surfacing.
 
-9. **Capacities' object-based capture** — Every save has a type (task, idea, resource, course) with structured properties and cross-type relations.
+9. **Capacities' object-based capture** â€” Every save has a type (task, idea, resource, course) with structured properties and cross-type relations.
 
-10. **Sunsama's bounded daily lists** — Show only what's achievable. Don't overwhelm with everything overdue. End-of-day ritual.
+10. **Sunsama's bounded daily lists** â€” Show only what's achievable. Don't overwhelm with everything overdue. End-of-day ritual.
 
-11. **Linear's receding sidebar** — Sidebar dims after destination reached, putting focus on content.
+11. **Linear's receding sidebar** â€” Sidebar dims after destination reached, putting focus on content.
 
-12. **Notion's page-as-folder nesting** — Modules as parents, items as children, not separate folder structures.
+12. **Notion's page-as-folder nesting** â€” Modules as parents, items as children, not separate folder structures.
 
-13. **Stripe's surgical use of accent** — One brand color, not rainbow palettes. Clarity over decoration.
+13. **Stripe's surgical use of accent** â€” One brand color, not rainbow palettes. Clarity over decoration.
 
-14. **Cursor's inline suggestions** — AI suggests actions without disrupting current flow. Tab to accept.
+14. **Cursor's inline suggestions** â€” AI suggests actions without disrupting current flow. Tab to accept.
 
-15. **Perplexity's source grounding** — Every recommendation includes "Why this matches you" with specific evidence.
+15. **Perplexity's source grounding** â€” Every recommendation includes "Why this matches you" with specific evidence.
 
 ### 16.2 To Improve Upon
 
-1. **Dashboard adapts to time of day** — Linear's dashboard is static. ARIA's should shift: morning (briefing), midday (tasks), evening (review), night (sleep).
+1. **Dashboard adapts to time of day** â€” Linear's dashboard is static. ARIA's should shift: morning (briefing), midday (tasks), evening (review), night (sleep).
 
-2. **Notification tiering with sleep awareness** — Linear has Focus/Available/Review states. ARIA should auto-switch based on sleep score and time of day.
+2. **Notification tiering with sleep awareness** â€” Linear has Focus/Available/Review states. ARIA should auto-switch based on sleep score and time of day.
 
-3. **Cross-domain compound visualization** — No competitor visualizes "course → skill → project → income" chain. ARIA can uniquely show this growth path.
+3. **Cross-domain compound visualization** â€” No competitor visualizes "course â†’ skill â†’ project â†’ income" chain. ARIA can uniquely show this growth path.
 
-4. **AI confidence disclosure with student-appropriate tone** — Not corporate-sterile like most AI tools. Direct, honest, slightly motivational. "I'm 80% sure this is a task, not an idea."
+4. **AI confidence disclosure with student-appropriate tone** â€” Not corporate-sterile like most AI tools. Direct, honest, slightly motivational. "I'm 80% sure this is a task, not an idea."
 
-5. **Zero-miss policy with compassionate execution** — Every overdue task tracked, but nudge language is supportive, not shaming.
+5. **Zero-miss policy with compassionate execution** â€” Every overdue task tracked, but nudge language is supportive, not shaming.
 
 ### 16.3 To Avoid
 
-1. **Obsidian's file-explorer nav** — Too technical for non-power users
-2. **Notion's infinite sidebar nesting** — >3 levels gets confusing
-3. **ChatGPT's "obedient hallucination"** — Don't agree with wrong user input. Push back with evidence
-4. **Generic sparkle icons for AI** — Notion's Nosy character shows the value of distinctive AI branding
-5. **PostHog's overwhelming dashboard options** — Too many choices. Limit to 10-15 well-designed widgets
-6. **Motion's over-automation** — Users should feel in control, not like the AI is running their life
-7. **ClickUp's feature bloat** — Don't add features for the sake of covering a checklist. Every feature must earn its place
+1. **Obsidian's file-explorer nav** â€” Too technical for non-power users
+2. **Notion's infinite sidebar nesting** â€” >3 levels gets confusing
+3. **ChatGPT's "obedient hallucination"** â€” Don't agree with wrong user input. Push back with evidence
+4. **Generic sparkle icons for AI** â€” Notion's Nosy character shows the value of distinctive AI branding
+5. **PostHog's overwhelming dashboard options** â€” Too many choices. Limit to 10-15 well-designed widgets
+6. **Motion's over-automation** â€” Users should feel in control, not like the AI is running their life
+7. **ClickUp's feature bloat** â€” Don't add features for the sake of covering a checklist. Every feature must earn its place
 
 ---
 
@@ -840,32 +840,32 @@ The competitive moat is the **depth of student-specific integration**, not any s
 
 | Priority | Pattern | Effort | Impact | Dependencies |
 |---|---|---|---|---|
-| **P0 — Sprint 1** | Cmd+K Command Palette | 2 weeks | Very High | None |
-| **P0 — Sprint 1** | Keyboard shortcuts (basic set) | 1 week | Very High | None |
-| **P0 — Sprint 2** | Notification Inbox + tiering | 2 weeks | High | Existing push infra |
-| **P0 — Sprint 2** | `/` command system | 1 week | High | Cmd+K palette |
-| **P0 — Sprint 3** | Object-based capture | 2 weeks | High | Type detection AI |
-| **P1 — Sprint 3** | Two-key navigation (G+T, G+C) | 0.5 week | High | Keyboard shortcuts |
-| **P1 — Sprint 4** | Time-of-day adaptive dashboard | 2 weeks | High | Dashboard refactor |
-| **P1 — Sprint 4** | Empty/error states catalog | 1 week | Medium | Component library |
-| **P1 — Sprint 5** | Bi-directional linking | 2 weeks | High | Search infrastructure |
-| **P1 — Sprint 5** | Extended Thinking display | 1 week | High | Chat UI |
-| **P2 — Sprint 6** | Receding sidebar | 0.5 week | Medium | Sidebar component |
-| **P2 — Sprint 6** | KPI strip dashboard | 1 week | Medium | Dashboard refactor |
+| **P0 â€” Sprint 1** | Cmd+K Command Palette | 2 weeks | Very High | None |
+| **P0 â€” Sprint 1** | Keyboard shortcuts (basic set) | 1 week | Very High | None |
+| **P0 â€” Sprint 2** | Notification Inbox + tiering | 2 weeks | High | Existing push infra |
+| **P0 â€” Sprint 2** | `/` command system | 1 week | High | Cmd+K palette |
+| **P0 â€” Sprint 3** | Object-based capture | 2 weeks | High | Type detection AI |
+| **P1 â€” Sprint 3** | Two-key navigation (G+T, G+C) | 0.5 week | High | Keyboard shortcuts |
+| **P1 â€” Sprint 4** | Time-of-day adaptive dashboard | 2 weeks | High | Dashboard refactor |
+| **P1 â€” Sprint 4** | Empty/error states catalog | 1 week | Medium | Component library |
+| **P1 â€” Sprint 5** | Bi-directional linking | 2 weeks | High | Search infrastructure |
+| **P1 â€” Sprint 5** | Extended Thinking display | 1 week | High | Chat UI |
+| **P2 â€” Sprint 6** | Receding sidebar | 0.5 week | Medium | Sidebar component |
+| **P2 â€” Sprint 6** | KPI strip dashboard | 1 week | Medium | Dashboard refactor |
 
 ### 17.3 Quick Wins (Sprint 1-2)
 
 These items deliver high impact with minimal effort and no dependencies:
 
-1. **Keyboard shortcuts** (1 week) — Cmd+K, Cmd+1-5 for navigation, Cmd+Shift+C for capture
-2. **Cmd+K Command Palette** (2 weeks) — Search + navigate + create from single interface
-3. **`/` command system** (1 week, after Cmd+K) — Create items from any context
-4. **Sunsama-style bounded daily lists** (0.5 week) — Show only achievable tasks today
-5. **Empty states for all modules** (1 week) — Action-oriented, not dead ends
+1. **Keyboard shortcuts** (1 week) â€” Cmd+K, Cmd+1-5 for navigation, Cmd+Shift+C for capture
+2. **Cmd+K Command Palette** (2 weeks) â€” Search + navigate + create from single interface
+3. **`/` command system** (1 week, after Cmd+K) â€” Create items from any context
+4. **Sunsama-style bounded daily lists** (0.5 week) â€” Show only achievable tasks today
+5. **Empty states for all modules** (1 week) â€” Action-oriented, not dead ends
 
 ---
 
-> **Document Status**: Active — v1.0.0
+> **Document Status**: Active â€” v1.0.0
 > **Review Date**: 2026-06-11
 > **Next Review**: 2026-09-11
 

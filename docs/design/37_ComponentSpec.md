@@ -1,10 +1,10 @@
-# Component Specification — Second Brain OS (ARIA)
+﻿# Component Specification â€” Second Brain OS (ARIA)
 
-> **Document ID:** SB-COMP-SPEC-001  
+> **Document ID:DSG-CSP-001 SB-COMP-SPEC-001  
 > **Version:** 1.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-18  
-> **Classification:** Internal — Engineering & Design  
+> **Classification:** Internal â€” Engineering & Design  
 > **Owner:** Design Engineering Team
 
 ---
@@ -26,55 +26,55 @@
 
 | # | Component | Type | States | Dependencies | Storybook |
 |---|---|---|---|---|---|
-| 1 | `Button` | Action | default, hover, active, disabled, loading, icon-only | `@/components/ui/Button` | ✅ |
-| 2 | `Input` | Form | default, focus, filled, error, disabled, readonly | `@/components/ui/Input` | ✅ |
-| 3 | `Card` | Layout | default, hover, selected | `@/components/ui/Card` | ✅ |
-| 4 | `Badge` | Display | default, dot, count | `@/components/ui/Badge` | ✅ |
-| 5 | `Skeleton` | Feedback | pulse, wave, shimmer | `@/components/ui/Skeleton` | — |
-| 6 | `Spinner` | Feedback | sm, md, lg, with-label | `@/components/ui/Spinner` | — |
-| 7 | `EmptyCanvas` | Empty | default, action, illustration | `@/components/ui/EmptyCanvas` | — |
-| 8 | `ErrorState` | Feedback | default, retry, redirect | `@/components/ui/ErrorState` | — |
-| 9 | `LoadingScreen` | Feedback | default, progress, determinate | `@/components/ui/LoadingScreen` | — |
-| 10 | `PageHeader` | Layout | default, back-button, actions | `@/components/ui/PageHeader` | — |
-| 11 | `Dialog` | Overlay | closed, open, confirm | `@/components/ui/Dialog` | — |
-| 12 | `Sheet` | Overlay | closed, open, positions: left/right/bottom | `@/components/ui/Sheet` | — |
-| 13 | `Drawer` | Overlay | closed, open, size: sm/md/lg/full | `@/components/ui/Drawer` | — |
-| 14 | `Popover` | Overlay | closed, open, positions: top/bottom/left/right | `@/components/ui/Popover` | — |
-| 15 | `Tooltip` | Overlay | hidden, visible, delay: fast/slow | `@/components/ui/Tooltip` | — |
-| 16 | `Select` | Form | default, focus, open, selected, error, disabled | `@/components/ui/Select` | — |
-| 17 | `Switch` | Form | off, on, disabled | `@/components/ui/Switch` | — |
-| 18 | `Tabs` | Navigation | inactive, active, hover, underline | `@/components/ui/Tabs` | — |
-| 19 | `DropdownMenu` | Overlay | closed, open, item-hover, item-selected | `@/components/ui/DropdownMenu` | — |
-| 20 | `BentoGrid` | Layout | default, populated, empty | `@/components/ui/BentoGrid` | — |
-| 21 | `ProgressRing` | Feedback | determinate, indeterminate, value range | `@/components/ui/ProgressRing` | — |
-| 22 | `ActivityHeatmap` | Display | daily, weekly, monthly, empty, loading | `@/components/ui/ActivityHeatmap` | — |
-| 23 | `Timeline` | Display | default, active, completed, upcoming | `@/components/ui/Timeline` | — |
-| 24 | `ChartContainer` | Layout | loading, empty, data, error | `@/components/ui/ChartContainer` | — |
-| 25 | `Modal` | Overlay | closed, open, size: sm/md/lg/fullscreen | `@/components/ui/Modal` | — |
-| 26 | `EmptyState` | Empty | default, action, illustration, search | `@/components/ui/EmptyState` | — |
-| 27 | `Avatar` | Display | image, initials, fallback, status-dot | `@/components/ui/Avatar` | — |
-| 28 | `Command` | Navigation | closed, open, empty, results, loading | `@/components/ui/Command` | — |
-| 29 | `DataTable` | Data | empty, loading, populated, sorted, filtered, paginated | `@/components/ui/DataTable` | — |
-| 30 | `Pagination` | Navigation | first, prev, page, next, last, ellipsis, disabled | `@/components/ui/Pagination` | — |
-| 31 | `Slider` | Form | default, hover, dragging, disabled | `@/components/ui/Slider` | — |
-| 32 | `Textarea` | Form | default, focus, filled, error, disabled, char-count | `@/components/ui/Textarea` | — |
-| 33 | `Toggle` | Form | off, on, disabled, size: sm/md/lg | `@/components/ui/Toggle` | — |
-| 34 | `Toolbar` | Navigation | default, grouped, overflow | `@/components/ui/Toolbar` | — |
-| 35 | `TreeView` | Navigation | collapsed, expanded, selected, disabled, nested | `@/components/ui/TreeView` | — |
-| 36 | `Calendar` | Display | default, selected, today, disabled, min/max | `@/components/ui/Calendar` | — |
-| 37 | `Combobox` | Form | closed, open, empty, selected, search, async | `@/components/ui/Combobox` | — |
-| 38 | `FileUpload` | Form | empty, dragging, files, error, max-files | `@/components/ui/FileUpload` | — |
-| 39 | `DatePicker` | Form | closed, open, selected, range | `@/components/ui/DatePicker` | — |
-| 40 | `FormField` | Form | default, error, disabled, with-helper | `@/components/ui/Form` | — |
-| 41 | `MultiSelect` | Form | closed, open, selected, search, max | `@/components/ui/MultiSelect` | — |
-| 42 | `AIDock` | AI | idle, open, thinking, streaming, error | `@/components/ai/AIDock` | — |
-| 43 | `ThinkingIndicator` | AI | idle, thinking, complete, error, cancelled | `@/components/ai/ThinkingIndicator` | — |
-| 44 | `AIInsightCard` | AI | recommendation, insight, alert | `@/components/ai/AIInsightCard` | — |
-| 45 | `AIUndo` | AI | visible, expired, dismissed | `@/components/ai/AIUndo` | — |
-| 46 | `StreamingText` | AI | idle, streaming, complete | `@/components/ai/StreamingText` | — |
-| 47 | `GhostHint` | AI | idle, visible, dismissed | `@/components/ai/GhostHint` | — |
-| 48 | `SuggestionChips` | AI | default, selected, hover | `@/components/ai/SuggestionChips` | — |
-| 49 | `ConfidenceBadge` | AI | low, medium, high, unknown | `@/components/ai/ConfidenceBadge` | — |
+| 1 | `Button` | Action | default, hover, active, disabled, loading, icon-only | `@/components/ui/Button` | âœ… |
+| 2 | `Input` | Form | default, focus, filled, error, disabled, readonly | `@/components/ui/Input` | âœ… |
+| 3 | `Card` | Layout | default, hover, selected | `@/components/ui/Card` | âœ… |
+| 4 | `Badge` | Display | default, dot, count | `@/components/ui/Badge` | âœ… |
+| 5 | `Skeleton` | Feedback | pulse, wave, shimmer | `@/components/ui/Skeleton` | â€” |
+| 6 | `Spinner` | Feedback | sm, md, lg, with-label | `@/components/ui/Spinner` | â€” |
+| 7 | `EmptyCanvas` | Empty | default, action, illustration | `@/components/ui/EmptyCanvas` | â€” |
+| 8 | `ErrorState` | Feedback | default, retry, redirect | `@/components/ui/ErrorState` | â€” |
+| 9 | `LoadingScreen` | Feedback | default, progress, determinate | `@/components/ui/LoadingScreen` | â€” |
+| 10 | `PageHeader` | Layout | default, back-button, actions | `@/components/ui/PageHeader` | â€” |
+| 11 | `Dialog` | Overlay | closed, open, confirm | `@/components/ui/Dialog` | â€” |
+| 12 | `Sheet` | Overlay | closed, open, positions: left/right/bottom | `@/components/ui/Sheet` | â€” |
+| 13 | `Drawer` | Overlay | closed, open, size: sm/md/lg/full | `@/components/ui/Drawer` | â€” |
+| 14 | `Popover` | Overlay | closed, open, positions: top/bottom/left/right | `@/components/ui/Popover` | â€” |
+| 15 | `Tooltip` | Overlay | hidden, visible, delay: fast/slow | `@/components/ui/Tooltip` | â€” |
+| 16 | `Select` | Form | default, focus, open, selected, error, disabled | `@/components/ui/Select` | â€” |
+| 17 | `Switch` | Form | off, on, disabled | `@/components/ui/Switch` | â€” |
+| 18 | `Tabs` | Navigation | inactive, active, hover, underline | `@/components/ui/Tabs` | â€” |
+| 19 | `DropdownMenu` | Overlay | closed, open, item-hover, item-selected | `@/components/ui/DropdownMenu` | â€” |
+| 20 | `BentoGrid` | Layout | default, populated, empty | `@/components/ui/BentoGrid` | â€” |
+| 21 | `ProgressRing` | Feedback | determinate, indeterminate, value range | `@/components/ui/ProgressRing` | â€” |
+| 22 | `ActivityHeatmap` | Display | daily, weekly, monthly, empty, loading | `@/components/ui/ActivityHeatmap` | â€” |
+| 23 | `Timeline` | Display | default, active, completed, upcoming | `@/components/ui/Timeline` | â€” |
+| 24 | `ChartContainer` | Layout | loading, empty, data, error | `@/components/ui/ChartContainer` | â€” |
+| 25 | `Modal` | Overlay | closed, open, size: sm/md/lg/fullscreen | `@/components/ui/Modal` | â€” |
+| 26 | `EmptyState` | Empty | default, action, illustration, search | `@/components/ui/EmptyState` | â€” |
+| 27 | `Avatar` | Display | image, initials, fallback, status-dot | `@/components/ui/Avatar` | â€” |
+| 28 | `Command` | Navigation | closed, open, empty, results, loading | `@/components/ui/Command` | â€” |
+| 29 | `DataTable` | Data | empty, loading, populated, sorted, filtered, paginated | `@/components/ui/DataTable` | â€” |
+| 30 | `Pagination` | Navigation | first, prev, page, next, last, ellipsis, disabled | `@/components/ui/Pagination` | â€” |
+| 31 | `Slider` | Form | default, hover, dragging, disabled | `@/components/ui/Slider` | â€” |
+| 32 | `Textarea` | Form | default, focus, filled, error, disabled, char-count | `@/components/ui/Textarea` | â€” |
+| 33 | `Toggle` | Form | off, on, disabled, size: sm/md/lg | `@/components/ui/Toggle` | â€” |
+| 34 | `Toolbar` | Navigation | default, grouped, overflow | `@/components/ui/Toolbar` | â€” |
+| 35 | `TreeView` | Navigation | collapsed, expanded, selected, disabled, nested | `@/components/ui/TreeView` | â€” |
+| 36 | `Calendar` | Display | default, selected, today, disabled, min/max | `@/components/ui/Calendar` | â€” |
+| 37 | `Combobox` | Form | closed, open, empty, selected, search, async | `@/components/ui/Combobox` | â€” |
+| 38 | `FileUpload` | Form | empty, dragging, files, error, max-files | `@/components/ui/FileUpload` | â€” |
+| 39 | `DatePicker` | Form | closed, open, selected, range | `@/components/ui/DatePicker` | â€” |
+| 40 | `FormField` | Form | default, error, disabled, with-helper | `@/components/ui/Form` | â€” |
+| 41 | `MultiSelect` | Form | closed, open, selected, search, max | `@/components/ui/MultiSelect` | â€” |
+| 42 | `AIDock` | AI | idle, open, thinking, streaming, error | `@/components/ai/AIDock` | â€” |
+| 43 | `ThinkingIndicator` | AI | idle, thinking, complete, error, cancelled | `@/components/ai/ThinkingIndicator` | â€” |
+| 44 | `AIInsightCard` | AI | recommendation, insight, alert | `@/components/ai/AIInsightCard` | â€” |
+| 45 | `AIUndo` | AI | visible, expired, dismissed | `@/components/ai/AIUndo` | â€” |
+| 46 | `StreamingText` | AI | idle, streaming, complete | `@/components/ai/StreamingText` | â€” |
+| 47 | `GhostHint` | AI | idle, visible, dismissed | `@/components/ai/GhostHint` | â€” |
+| 48 | `SuggestionChips` | AI | default, selected, hover | `@/components/ai/SuggestionChips` | â€” |
+| 49 | `ConfidenceBadge` | AI | low, medium, high, unknown | `@/components/ai/ConfidenceBadge` | â€” |
 
 ---
 
@@ -110,9 +110,9 @@ index.ts                # Barrel export from components/ui/
 | Loading state | `isLoading?: boolean` | When async data needed |
 
 ### 2.4 Styling Rules
-- NO inline `style` objects with static values — use Tailwind + variables
-- NO `any` in type definitions — use `unknown` + type guards
-- NO `var()`, `let` — always `const`
+- NO inline `style` objects with static values â€” use Tailwind + variables
+- NO `any` in type definitions â€” use `unknown` + type guards
+- NO `var()`, `let` â€” always `const`
 - ALL colors via design tokens: `var(--accent-primary)`, `var(--text-primary)`, etc.
 - ALL spacing via Tailwind classes: `gap-2`, `p-4`, `m-2`
 - ALL transitions: `transition-all duration-200`
@@ -222,7 +222,7 @@ Every component MUST implement these states where applicable:
 
 | Test Type | Coverage | Tool |
 |---|---|---|
-| Unit tests | All 49 components — 2 variants × 3 states × 2 edge cases minimum | Vitest + Testing Library |
+| Unit tests | All 49 components â€” 2 variants Ã— 3 states Ã— 2 edge cases minimum | Vitest + Testing Library |
 | Accessibility | All components pass axe-core | `jest-axe` + Lighthouse CI |
 | Visual regression | Core 28 components in Storybook | Chromatic / Percy |
 | Interaction | Form controls, overlays, keyboard nav | Playwright |

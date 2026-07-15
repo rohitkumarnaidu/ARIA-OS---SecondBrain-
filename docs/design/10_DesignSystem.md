@@ -11,6 +11,84 @@
 
 ---
 
+## Table of Contents
+
+1. [Executive Summary](#1-executive-summary)
+   - [Design System Goals](#11-design-system-goals)
+2. [Component Architecture](#2-component-architecture)
+   - [Atomic Design Hierarchy](#21-atomic-design-hierarchy)
+   - [Layer Dependency Rules](#22-layer-dependency-rules)
+3. [Button System](#3-button-system)
+   - [Button Variants](#31-button-variants)
+   - [Button Sizes](#32-button-sizes)
+   - [Button States](#33-button-states)
+   - [Button Use Cases](#34-button-use-cases)
+   - [Button Composition](#35-button-composition)
+4. [Card System](#4-card-system)
+   - [Card Variants](#41-card-variants)
+   - [Card Anatomy](#42-card-anatomy)
+   - [Card Sizes](#43-card-sizes)
+   - [Card States](#44-card-states)
+   - [Card Composition](#45-card-composition)
+5. [Input System](#5-input-system)
+   - [Input Types](#51-input-types)
+   - [Input State Matrix](#52-input-state-matrix)
+   - [Input Anatomy](#53-input-anatomy)
+   - [Form Field Composition](#54-form-field-composition)
+   - [Checkbox / Radio / Toggle States](#55-checkbox--radio--toggle-states)
+6. [Navigation System](#6-navigation-system)
+   - [Sidebar](#61-sidebar)
+   - [Navbar](#62-navbar)
+   - [Breadcrumbs](#63-breadcrumbs)
+   - [Tabs](#64-tabs)
+   - [Pagination](#65-pagination)
+   - [Bottom Navigation (Mobile)](#66-bottom-navigation-mobile)
+7. [Modal / Dialog System](#7-modal--dialog-system)
+   - [Modal Variants](#71-modal-variants)
+   - [Modal Properties](#72-modal-properties)
+   - [Modal Behavior](#73-modal-behavior)
+   - [Modal Composition](#74-modal-composition)
+8. [Data Display](#8-data-display)
+   - [Table Specifications](#81-table-specifications)
+   - [List / Grid / Tree](#82-list--grid--tree)
+   - [Empty States](#83-empty-states)
+   - [Loading States (Skeleton)](#84-loading-states-skeleton)
+9. [Chart Components](#9-chart-components)
+   - [Chart Types](#91-chart-types)
+   - [Chart Specifications](#92-chart-specifications)
+   - [Progress Indicators](#93-progress-indicators)
+10. [Notification System](#10-notification-system)
+    - [Toast Variants](#101-toast-variants)
+    - [Badge Variants](#102-badge-variants)
+    - [Notification Types](#103-notification-types)
+11. [Design Token Documentation](#11-design-token-documentation)
+    - [Token Categories](#111-token-categories)
+    - [Token Usage Rules](#112-token-usage-rules)
+    - [How to Add a New Token](#113-how-to-add-a-new-token)
+12. [Component API Documentation Format](#12-component-api-documentation-format)
+13. [Component Development Workflow](#13-component-development-workflow)
+14. [Testing Components](#14-testing-components)
+15. [Versioning and Changelog](#15-versioning-and-changelog)
+16. [Color System](#16-color-system)
+    - [Background Colors](#161-background-colors)
+    - [Text Colors](#162-text-colors)
+    - [Border Colors](#163-border-colors)
+    - [Accent Colors](#164-accent-colors)
+    - [Priority Colors](#165-priority-colors)
+    - [Glass Colors](#166-glass-colors)
+    - [Color Usage Rules](#167-color-usage-rules)
+17. [Typography Scale](#17-typography-scale)
+    - [Complete Type Scale](#171-complete-type-scale)
+    - [Typography Usage Rules](#172-typography-usage-rules)
+    - [Text Truncation](#173-text-truncation)
+18. [Iconography System](#18-iconography-system)
+    - [Icon Library](#181-icon-library)
+    - [Icon Usage Rules](#182-icon-usage-rules)
+    - [Icon Mapping](#183-icon-mapping)
+19. [Reference](#reference)
+
+---
+
 ## Design System Architecture
 
 ```mermaid
@@ -775,16 +853,197 @@ describe('Button', () => {
 
 ---
 
+## 16. Color System
+
+### 16.1 Background Colors
+
+| Token | Hex | Usage | Contrast Ratio |
+|---|---|---|---|
+| `bg-background` | #0A0B0F | Main page background | Base |
+| `bg-background-dark` | #050607 | Deepest level (search input, dropdowns) | Slightly higher |
+| `bg-background-card` | #12141C | Card, sidebar, navbar backgrounds | 14.8:1 (text-primary) |
+| `bg-background-elevated` | #1A1D28 | Elevated surfaces (dropdowns, modals) | 12.4:1 |
+| `bg-background-input` | #0D0F14 | Input field backgrounds | 15.8:1 |
+
+### 16.2 Text Colors
+
+| Token | Hex | Usage | Contrast Ratio on bg-background |
+|---|---|---|---|
+| `text-text-primary` | #F0F2F5 | Headings, body text | 15.2:1 |
+| `text-text-secondary` | #8B92A5 | Subheadings, metadata | 7.1:1 |
+| `text-text-tertiary` | #5A6075 | Placeholders, disabled text | 4.6:1 |
+| `text-text-inverse` | #0F172A | Text on light backgrounds | N/A |
+| `text-text-disabled` | #475569 | Disabled element text | 3.5:1 |
+
+### 16.3 Border Colors
+
+| Token | Hex | Usage |
+|---|---|---|
+| `border-border-default` | #2A2E3F | Default card/component borders |
+| `border-border-subtle` | #1E222E | Subtle separator lines |
+| `border-border-accent` | #6366F1 | Active/focus border state |
+| `border-border-light` | #E2E8F0 | Light mode borders (future) |
+
+### 16.4 Accent Colors
+
+| Token | Hex | Usage | Contrast Ratio |
+|---|---|---|---|
+| `accent-primary` | #6366F1 | Primary actions, links, active states | 5.2:1 |
+| `accent-primary-hover` | #4F46E5 | Primary button hover | — |
+| `accent-secondary` | #10B981 | Success states, completed | 7.8:1 |
+| `accent-secondary-hover` | #059669 | Success hover | — |
+| `accent-warning` | #F59E0B | Warning states, medium priority | 6.1:1 |
+| `accent-warning-hover` | #D97706 | Warning hover | — |
+| `accent-error` | #EF4444 | Error states, urgent priority | 4.8:1 |
+| `accent-error-hover` | #DC2626 | Error hover | — |
+| `accent-info` | #3B82F6 | Informational badges, links | 4.2:1 |
+| `accent-success` | #22C55E | Positive indicators | 6.5:1 |
+| `accent-neon` | #00FFA3 | Decorative highlights, low priority | 12.1:1 |
+| `accent-cyber` | #FF3366 | Urgent indicators, critical badges | 5.5:1 |
+
+### 16.5 Priority Colors
+
+| Token | Hex | Usage |
+|---|---|---|
+| `priority-urgent` | #FF3366 | Critical tasks (cyber pink) |
+| `priority-high` | #FF6B35 | High-importance tasks (orange) |
+| `priority-medium` | #FFB800 | Normal tasks (amber) |
+| `priority-low` | #00FFA3 | Low-priority tasks (neon green) |
+
+### 16.6 Glass (RGBA)
+
+| Token | Value | Usage |
+|---|---|---|
+| `glass-light` | rgba(255,255,255,0.03) | Subtle glass surfaces |
+| `glass-medium` | rgba(255,255,255,0.08) | Card glass overlays |
+| `glass-heavy` | rgba(255,255,255,0.15) | Highlighted glass states |
+
+### 16.7 Color Usage Rules
+
+| Rule | Description |
+|---|---|
+| **Primary actions only** | accent-primary used exclusively for primary CTAs (1 per view max) |
+| **Semantic colors** | Never use accent-error for decoration; only for actual errors/urgency |
+| **Neon sparingly** | accent-neon for decorative highlights, priority-low, streak effects only |
+| **No color alone** | Never communicate status through color alone — always pair with icon + text |
+| **Glass augment** | Glass colors add to background-color, don't replace it |
+| **Priority mapping** | Priority colors map 1:1 to task priority levels |
+| **Hover variants** | Every interactive color has a corresponding hover variant |
+| **Disabled opacity** | Disabled elements use opacity 50% across the board |
+
+---
+
+## 17. Typography Scale
+
+### 17.1 Complete Type Scale
+
+| Level | Size | Line Height | Font Weight | Font Family | Tailwind | Usage |
+|---|---|---|---|---|---|---|
+| 7xl | 48px | 1.0 | 700 (bold) | Syne | `text-7xl` | Hero display, landing page |
+| 6xl | 42px | 1.05 | 700 (bold) | Syne | `text-6xl` | Section hero titles |
+| 5xl | 36px | 1.1 | 700 (bold) | Syne | `text-5xl` | Page titles (dashboard) |
+| 4xl | 32px | 1.15 | 600 (semibold) | Syne | `text-4xl` | Module page headers |
+| 3xl | 28px | 1.2 | 600 (semibold) | DM Sans | `text-3xl` | Section headers |
+| 2xl | 24px | 1.25 | 600 (semibold) | DM Sans | `text-2xl` | Card titles |
+| xl | 20px | 1.3 | 500 (medium) | DM Sans | `text-xl` | Subheadings, modal titles |
+| lg | 18px | 1.35 | 500 (medium) | DM Sans | `text-lg` | Module subheadings |
+| base | 16px | 1.5 | 400 (normal) | DM Sans | `text-base` | Body text, list items |
+| sm | 14px | 1.5 | 400 (normal) | DM Sans | `text-sm` | Secondary info, metadata |
+| xs | 13px | 1.5 | 500 (medium) | DM Sans | `text-xs` | Labels, badge text |
+| 2xs | 12px | 1.3 | 500 (medium) | JetBrains Mono | `text-[12px]` | Timestamps, counters |
+| micro | 11px | 1.2 | 600 (semibold) | JetBrains Mono | `text-[11px]` | Data labels, chart values |
+
+### 17.2 Typography Usage Rules
+
+| Rule | Description |
+|---|---|
+| **Syne is display only** | Syne used for headlines <= 3xl only. Never for body text. |
+| **DM Sans is default** | 90% of text uses DM Sans. Body, labels, buttons, inputs. |
+| **JetBrains Mono for data** | Code, timers, scores, percentages, technical data. |
+| **Line height scales** | Larger text gets tighter line height. Smaller text gets looser. |
+| **Font weight hierarchy** | bold (700) for page titles, semibold (600) for sections, medium (500) for sub-sections, normal (400) for body. |
+| **Gradient text** | `.text-gradient-accent` for high-value numbers, scores, and key metrics only. |
+| **No orphans** | `text-balance` on all headings that wrap. |
+| **Max line length** | Body text max-width 720px for readability. |
+
+### 17.3 Text Truncation
+
+| Element | Lines | Class | Notes |
+|---|---|---|---|
+| Card title | 2 | `line-clamp-2` | Truncate with ellipsis |
+| Card description | 3 | `line-clamp-3` | Truncate with ellipsis |
+| Table cell | 1 | `truncate` | Truncate with ellipsis |
+| Page title | 1 | `truncate` | No wrap, truncate |
+| Notification message | 2 | `line-clamp-2` | Toast notification |
+| Task title (list) | 1 | `truncate` | No wrap |
+
+---
+
+## 18. Iconography System
+
+### 18.1 Icon Library
+
+| Set | Source | License | Count Used |
+|---|---|---|---|
+| Primary | lucide-react | MIT / ISC | ~60 icons |
+| Navigation | lucide-react | — | 16 sidebar icons |
+| Status | lucide-react | — | 8 status icons |
+| Actions | lucide-react | — | ~30 action icons |
+| Custom | apps/web/public/icons/ | Proprietary | ~5 custom (ARIA logo, etc.) |
+
+### 18.2 Icon Usage Rules
+
+| Rule | Description |
+|---|---|
+| **Stroke width** | Default lucide-react stroke (1.5px). Never change. |
+| **Size** | 20x20px for sidebar, 16x16px for inline, 24x24px for buttons with text |
+| **Color** | Inherits current text color. Use `text-` utilities for overrides. |
+| **Label** | Every standalone icon has `aria-label` or `aria-labelledby` |
+| **Custom icons** | SVG files in `public/icons/`, optimized with SVGO |
+| **No brand icons** | Use text labels instead of brand logos (limited set) |
+| **Consistent metaphor** | Same icon always means same action (e.g., `Plus` always for create) |
+
+### 18.3 Icon Mapping (Selected)
+
+| Action | Icon (lucide-react) | Size |
+|---|---|---|
+| Create / Add | `Plus` | 20px |
+| Edit | `Pencil` | 16px |
+| Delete | `Trash2` | 16px |
+| Close | `X` | 20px |
+| Search | `Search` | 20px |
+| Settings | `Settings` | 20px |
+| Notifications | `Bell` | 20px |
+| Menu | `Menu` | 24px |
+| Back | `ArrowLeft` | 20px |
+| Forward | `ArrowRight` | 20px |
+| Up | `ChevronUp` | 16px |
+| Down | `ChevronDown` | 16px |
+| More | `MoreHorizontal` / `MoreVertical` | 20px |
+| Filter | `Filter` | 16px |
+| Sort | `ArrowUpDown` | 16px |
+| Download | `Download` | 20px |
+| Upload | `Upload` | 20px |
+| Share | `Share2` | 20px |
+| Drag | `GripVertical` | 16px |
+| Check | `Check` | 16px |
+| Warning | `AlertTriangle` | 20px |
+| Error | `AlertCircle` | 20px |
+| Info | `Info` | 20px |
+| Success | `CheckCircle` | 20px |
+
+---
+
 ## Reference
 
 | Document | Link |
 |---|---|
 | UI/UX Specification | docs/design/08_UIUX.md |
-| Design Architecture | docs/design/09_Design.md |
+| Design Architecture | *Merged into 08_UIUX.md (v3.1.0)* |
 | Design Tokens | docs/design/35_DesignTokens.md |
 | Branding Guide | docs/design/Branding.md |
 | Motion System | docs/design/MotionSystem.md |
-| Accessibility | docs/design/Accessibility.md |
+| Accessibility | docs/design/FrontendAccessibilityGuide.md |
 | Tailwind Config | apps/web/tailwind.config.js |
 | Components | apps/web/components/ |
 
@@ -797,3 +1056,4 @@ describe('Button', () => {
 | 1.0.0 | 2026-05-15 | Design Team | Initial design system |
 | 2.0.0 | 2026-06-01 | Design Team | Added component architecture, button/card/input system |
 | 3.0.0 | 2026-06-11 | Design Team | Enterprise upgrade: 15 sections, atomic design, 30+ component specs, notification system, token docs, dev workflow, testing, versioning |
+| 3.1.0 | 2026-07-11 | Developer | Added Color System (16), Typography Scale (17), Iconography System (18) from merged Design Architecture (09_Design.md) |
