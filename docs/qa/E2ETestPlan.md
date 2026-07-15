@@ -1,12 +1,12 @@
-# E2E Test Plan — ARIA OS Second Brain
+﻿# E2E Test Plan â€” ARIA OS Second Brain
 
 | Field | Value |
 |---|---|
-| **Document ID** | SB-QA-E2E-PLAN-001 |
+| **Document ID** | QA-E2P-001 |
 | **Version** | 1.0.0 |
 | **Status** | Active |
-| **Last Updated** | 2026-06-13 |
-| **Classification** | Internal — QA |
+| **Last Updated** | 2026-07-11 |
+| **Classification** | Internal â€” QA |
 | **Framework** | Playwright v1.52+ |
 | **Target** | Production-like dev server (`localhost:3000`) |
 
@@ -40,11 +40,11 @@
 
 | Project | Browser | Viewport | Priority |
 |---------|---------|----------|----------|
-| `chromium` | Chrome 125+ | 1280×720 | Critical |
-| `firefox` | Firefox 126+ | 1280×720 | High |
-| `webkit` | Safari 17+ | 1280×720 | High |
-| `mobile-chrome` | Chrome (Pixel 5) | 393×851 | Medium |
-| `mobile-safari` | Safari (iPhone 13) | 390×844 | Medium |
+| `chromium` | Chrome 125+ | 1280Ã—720 | Critical |
+| `firefox` | Firefox 126+ | 1280Ã—720 | High |
+| `webkit` | Safari 17+ | 1280Ã—720 | High |
+| `mobile-chrome` | Chrome (Pixel 5) | 393Ã—851 | Medium |
+| `mobile-safari` | Safari (iPhone 13) | 390Ã—844 | Medium |
 
 ### 1.4 Environment Configuration
 
@@ -68,7 +68,7 @@ stateDiagram-v2
     RedirectedLogin --> LoginPage: Arrive at /login
     LoginPage --> Authenticated: Successful login
     Authenticated --> DashboardAccess: Redirect to original requested path
-    Authenticated --> LoginPage: Visit /login while authenticated → redirected away
+    Authenticated --> LoginPage: Visit /login while authenticated â†’ redirected away
     Unauthenticated --> PublicAccess: Visit / or /login
     PublicAccess --> LoginPage: Access login page freely
     Authenticated --> SessionExpired: Token expires
@@ -77,77 +77,77 @@ stateDiagram-v2
 
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
-| AUTH-01 | Unauthenticated user is redirected to `/login` from `/dashboard` | P0 | ✅ |
-| AUTH-02 | Unauthenticated user is redirected from _all 16 protected routes_ | P0 | ✅ |
-| AUTH-03 | Authenticated user can access `/dashboard` without redirect | P0 | ✅ |
-| AUTH-04 | Public routes `/` and `/login` are accessible without auth | P0 | ✅ |
-| AUTH-05 | After login, user is redirected to original requested path | P0 | ✅ |
-| AUTH-06 | Redirect preserves query parameters | P1 | ✅ |
-| AUTH-07 | Expired session shows login redirect | P1 | ✅ |
-| AUTH-08 | Login page is not accessible when already authenticated | P1 | ✅ |
-| AUTH-09 | Middleware returns 307 redirect (not 401/403) | P2 | ✅ |
+| AUTH-01 | Unauthenticated user is redirected to `/login` from `/dashboard` | P0 | âœ… |
+| AUTH-02 | Unauthenticated user is redirected from _all 16 protected routes_ | P0 | âœ… |
+| AUTH-03 | Authenticated user can access `/dashboard` without redirect | P0 | âœ… |
+| AUTH-04 | Public routes `/` and `/login` are accessible without auth | P0 | âœ… |
+| AUTH-05 | After login, user is redirected to original requested path | P0 | âœ… |
+| AUTH-06 | Redirect preserves query parameters | P1 | âœ… |
+| AUTH-07 | Expired session shows login redirect | P1 | âœ… |
+| AUTH-08 | Login page is not accessible when already authenticated | P1 | âœ… |
+| AUTH-09 | Middleware returns 307 redirect (not 401/403) | P2 | âœ… |
 
 ### 2.2 Navigation & Routing (`navigation.spec.ts`)
 
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
-| NAV-01 | All 16 module pages load without JS errors | P0 | ✅ |
-| NAV-02 | Sidebar is visible on all dashboard pages | P0 | ✅ |
-| NAV-03 | Navbar is visible on all dashboard pages | P0 | ✅ |
-| NAV-04 | Sidebar navigation links navigate to correct URLs | P0 | ✅ |
-| NAV-05 | Page title matches module name (h1) | P1 | ✅ |
-| NAV-06 | Clicking active sidebar link does not cause full page reload | P1 | ✅ |
-| NAV-07 | Browser back/forward navigation works correctly | P1 | ✅ |
-| NAV-08 | Deep link to `/tasks/123` resolves (if detail pages exist) | P2 | ❌ (no detail pages) |
-| NAV-09 | All module pages have loading state on initial render | P1 | ✅ |
-| NAV-10 | 404 page renders for unknown routes | P1 | ✅ |
+| NAV-01 | All 16 module pages load without JS errors | P0 | âœ… |
+| NAV-02 | Sidebar is visible on all dashboard pages | P0 | âœ… |
+| NAV-03 | Navbar is visible on all dashboard pages | P0 | âœ… |
+| NAV-04 | Sidebar navigation links navigate to correct URLs | P0 | âœ… |
+| NAV-05 | Page title matches module name (h1) | P1 | âœ… |
+| NAV-06 | Clicking active sidebar link does not cause full page reload | P1 | âœ… |
+| NAV-07 | Browser back/forward navigation works correctly | P1 | âœ… |
+| NAV-08 | Deep link to `/tasks/123` resolves (if detail pages exist) | P2 | âŒ (no detail pages) |
+| NAV-09 | All module pages have loading state on initial render | P1 | âœ… |
+| NAV-10 | 404 page renders for unknown routes | P1 | âœ… |
 
 ### 2.3 PWA (Progressive Web App) (`pwa.spec.ts`)
 
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
-| PWA-01 | Web app manifest is served at `/manifest.json` | P0 | ✅ |
-| PWA-02 | Manifest has required fields (name, short_name, icons, start_url, display) | P0 | ✅ |
-| PWA-03 | Manifest icon files are accessible and valid PNGs | P0 | ✅ |
-| PWA-04 | Manifest start_url is `/dashboard` | P0 | ✅ |
-| PWA-05 | Service worker is registered on page load | P0 | ✅ |
-| PWA-06 | Service worker scope is `/` | P0 | ✅ |
-| PWA-07 | Service worker caches static assets | P1 | ✅ |
-| PWA-08 | PWA install prompt criteria are met (`display: standalone`) | P1 | ✅ |
-| PWA-09 | Theme color matches design token `#6366F1` | P1 | ✅ |
-| PWA-10 | Background color matches design token `#0A0B0F` | P1 | ✅ |
-| PWA-11 @serwist/next runtime caching policies are applied | P2 | ✅ |
+| PWA-01 | Web app manifest is served at `/manifest.json` | P0 | âœ… |
+| PWA-02 | Manifest has required fields (name, short_name, icons, start_url, display) | P0 | âœ… |
+| PWA-03 | Manifest icon files are accessible and valid PNGs | P0 | âœ… |
+| PWA-04 | Manifest start_url is `/dashboard` | P0 | âœ… |
+| PWA-05 | Service worker is registered on page load | P0 | âœ… |
+| PWA-06 | Service worker scope is `/` | P0 | âœ… |
+| PWA-07 | Service worker caches static assets | P1 | âœ… |
+| PWA-08 | PWA install prompt criteria are met (`display: standalone`) | P1 | âœ… |
+| PWA-09 | Theme color matches design token `#6366F1` | P1 | âœ… |
+| PWA-10 | Background color matches design token `#0A0B0F` | P1 | âœ… |
+| PWA-11 @serwist/next runtime caching policies are applied | P2 | âœ… |
 
 ### 2.4 Offline & Network Resilience (`offline.spec.ts`)
 
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
-| OFFL-01 | Offline banner appears when network is disconnected | P0 | ✅ |
-| OFFL-02 | Offline banner has correct styling (warning colors) | P1 | ✅ |
-| OFFL-03 | Offline banner disappears when network is restored | P0 | ✅ |
-| OFFL-04 | Previously cached dashboard page renders while offline | P1 | ✅ |
-| OFFL-05 | Offline navigation shows cached pages (not login redirect) | P1 | ✅ |
-| OFFL-06 | `useNetworkStatus` hook detects online→offline transition | P1 | ✅ |
-| OFFL-07 | Retry button on offline banner re-checks connectivity | P2 | ✅ |
-| OFFL-08 | Network status change fires within 5 seconds | P2 | ✅ |
+| OFFL-01 | Offline banner appears when network is disconnected | P0 | âœ… |
+| OFFL-02 | Offline banner has correct styling (warning colors) | P1 | âœ… |
+| OFFL-03 | Offline banner disappears when network is restored | P0 | âœ… |
+| OFFL-04 | Previously cached dashboard page renders while offline | P1 | âœ… |
+| OFFL-05 | Offline navigation shows cached pages (not login redirect) | P1 | âœ… |
+| OFFL-06 | `useNetworkStatus` hook detects onlineâ†’offline transition | P1 | âœ… |
+| OFFL-07 | Retry button on offline banner re-checks connectivity | P2 | âœ… |
+| OFFL-08 | Network status change fires within 5 seconds | P2 | âœ… |
 
 ### 2.5 UI Component Rendering (`ui.spec.ts`)
 
 | ID | Test Case | Priority | Automation |
 |----|-----------|----------|------------|
-| UI-01 | Checkbox renders unchecked, checked, and indeterminate states | P0 | ✅ |
-| UI-02 | Checkbox responds to click events | P0 | ✅ |
-| UI-03 | FormField renders label, helper text, and error message | P0 | ✅ |
-| UI-04 | FormField error state overrides helper text | P0 | ✅ |
-| UI-05 | FormField renders required indicator | P1 | ✅ |
-| UI-06 | DataTable renders with data rows | P0 | ✅ |
-| UI-07 | DataTable shows empty state when no data | P0 | ✅ |
-| UI-08 | DataTable shows loading skeleton | P0 | ✅ |
-| UI-09 | DataTable shows error state with retry button | P0 | ✅ |
-| UI-10 | DataTable pagination renders and functions | P1 | ✅ |
-| UI-11 | DataTable column sorting toggles asc/desc/none | P1 | ✅ |
-| UI-12 | DataTable row selection checkbox selects individual rows | P1 | ✅ |
-| UI-13 | DataTable select-all checkbox selects all rows | P1 | ✅ |
+| UI-01 | Checkbox renders unchecked, checked, and indeterminate states | P0 | âœ… |
+| UI-02 | Checkbox responds to click events | P0 | âœ… |
+| UI-03 | FormField renders label, helper text, and error message | P0 | âœ… |
+| UI-04 | FormField error state overrides helper text | P0 | âœ… |
+| UI-05 | FormField renders required indicator | P1 | âœ… |
+| UI-06 | DataTable renders with data rows | P0 | âœ… |
+| UI-07 | DataTable shows empty state when no data | P0 | âœ… |
+| UI-08 | DataTable shows loading skeleton | P0 | âœ… |
+| UI-09 | DataTable shows error state with retry button | P0 | âœ… |
+| UI-10 | DataTable pagination renders and functions | P1 | âœ… |
+| UI-11 | DataTable column sorting toggles asc/desc/none | P1 | âœ… |
+| UI-12 | DataTable row selection checkbox selects individual rows | P1 | âœ… |
+| UI-13 | DataTable select-all checkbox selects all rows | P1 | âœ… |
 
 ---
 
