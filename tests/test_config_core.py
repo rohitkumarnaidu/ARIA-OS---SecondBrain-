@@ -576,3 +576,301 @@ class TestRefreshJwtToken:
             refresh_jwt_token(token)
         assert exc.value.status_code == 401
         assert "Invalid or expired refresh token" in exc.value.detail
+
+
+# ===========================================================================
+# api_gateway — ApiGateway (authenticate, check, audit)
+# ===========================================================================
+
+
+class TestApiGateway:
+    """Enterprise API Gateway tests — key auth, rate limiting, audit logging."""
+
+    FAKE_KEY = "sb_test_gateway_key_12345"
+    USER_ID = "user-gateway-1"
+
+    def _mock_supabase(self, api_key_row=None):
+        supabase = MagicMock()
+
+        def from_side_effect(table):
+            b = MagicMock()
+            if table == "api_keys":
+                b.select.return_value.eq.return_value.limit.return_value.execute.return_value = MagicMock(
+                    data=[api_key_row] if api_key_row else []
+                )
+            else:
+                b.select.return_value.execute.return_value = MagicMock(data=[])
+            return b
+
+        supabase.from_ = from_side_effect
+        return supabase
+
+    def _make_request(self, api_key=None, client_ip="127.0.0.1", method="GET", path="/api/v1/tasks"):
+        from types import SimpleNamespace
+
+        request = MagicMock()
+        mock_client = MagicMock()
+        mock_client.host = client_ip
+        request.client = mock_client
+        request.headers = {}
+        if api_key:
+            request.headers["X-API-Key"] = api_key
+        request.state = SimpleNamespace()
+        request.method = method
+        request.url.path = path
+        return request
+
+    # ── authenticate ──────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_authenticate_valid_key(self):
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "pro",
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "is_active": True,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+
+            gateway = ApiGateway()
+            user_id, tier = await gateway.authenticate(self.FAKE_KEY)
+            assert user_id == self.USER_ID
+            assert tier == "pro"
+
+    @pytest.mark.asyncio
+    async def test_authenticate_invalid_key_raises_401(self):
+        supabase = self._mock_supabase(api_key_row=None)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+            from fastapi import HTTPException
+
+            gateway = ApiGateway()
+            with pytest.raises(HTTPException) as exc:
+                await gateway.authenticate("nonexistent_key")
+            assert exc.value.status_code == 401
+            assert "Invalid" in exc.value.detail
+
+    @pytest.mark.asyncio
+    async def test_authenticate_deactivated_key_raises_401(self):
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "free",
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "is_active": False,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+            from fastapi import HTTPException
+
+            gateway = ApiGateway()
+            with pytest.raises(HTTPException) as exc:
+                await gateway.authenticate(self.FAKE_KEY)
+            assert exc.value.status_code == 401
+            assert "deactivated" in exc.value.detail
+
+    @pytest.mark.asyncio
+    async def test_authenticate_expired_key_raises_401(self):
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "free",
+            "expires_at": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(),
+            "is_active": True,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+            from fastapi import HTTPException
+
+            gateway = ApiGateway()
+            with pytest.raises(HTTPException) as exc:
+                await gateway.authenticate(self.FAKE_KEY)
+            assert exc.value.status_code == 401
+            assert "expired" in exc.value.detail
+
+    @pytest.mark.asyncio
+    async def test_authenticate_no_expiry_succeeds(self):
+        """A key with expires_at=None should be valid."""
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "enterprise",
+            "expires_at": None,
+            "is_active": True,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+
+            gateway = ApiGateway()
+            user_id, tier = await gateway.authenticate(self.FAKE_KEY)
+            assert user_id == self.USER_ID
+            assert tier == "enterprise"
+
+    # ── check ─────────────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_check_no_api_key_sets_internal_tier(self):
+        request = self._make_request(api_key=None)
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        await gateway.check(request, "items")
+        assert request.state.tier == "internal"
+        assert request.state.rate_limit_remaining >= 0
+
+    @pytest.mark.asyncio
+    async def test_check_with_api_key(self):
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "pro",
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "is_active": True,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        request = self._make_request(api_key=self.FAKE_KEY)
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            from config.core.api_gateway import ApiGateway
+
+            gateway = ApiGateway()
+            await gateway.check(request, "items")
+            assert request.state.user_id == self.USER_ID
+            assert request.state.tier == "pro"
+
+    @pytest.mark.asyncio
+    async def test_check_require_auth_missing_key_raises_401(self):
+        request = self._make_request(api_key=None)
+        from config.core.api_gateway import ApiGateway
+        from fastapi import HTTPException
+
+        gateway = ApiGateway()
+        with pytest.raises(HTTPException) as exc:
+            await gateway.check(request, "items", require_auth=True)
+        assert exc.value.status_code == 401
+        assert "Missing X-API-Key" in exc.value.detail
+
+    @pytest.mark.asyncio
+    async def test_check_rate_limit_exceeded(self):
+        """Free tier (10 req/min) is exhausted on the 11th call."""
+        key_row = {
+            "user_id": self.USER_ID,
+            "tier": "free",
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
+            "is_active": True,
+        }
+        supabase = self._mock_supabase(api_key_row=key_row)
+        request = self._make_request(api_key=self.FAKE_KEY, client_ip="rate-test-ip")
+        from config.core.api_gateway import ApiGateway
+        from fastapi import HTTPException
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.get_supabase_client", return_value=supabase):
+            for _ in range(10):
+                await gateway.check(request, "items")
+            with pytest.raises(HTTPException) as exc:
+                await gateway.check(request, "items")
+            assert exc.value.status_code == 429
+            assert "Rate limit exceeded" in exc.value.detail
+
+    @pytest.mark.asyncio
+    async def test_check_sets_rate_limit_remaining(self):
+        request = self._make_request(api_key=None, client_ip="remaining-test")
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        await gateway.check(request, "items")
+        assert request.state.rate_limit_remaining == 9999
+
+    @pytest.mark.asyncio
+    async def test_check_no_client_falls_back_to_unknown(self):
+        """When request.client is None, falls back to 'unknown' IP."""
+        request = self._make_request(api_key=None)
+        request.client = None
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        await gateway.check(request, "items")
+        assert request.state.tier == "internal"
+
+    # ── audit ─────────────────────────────────────────────────────────
+
+    @pytest.mark.asyncio
+    async def test_audit_mutation_logs(self):
+        request = self._make_request(method="POST", path="/api/v1/tasks")
+        request.state.user_id = self.USER_ID
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.log_audit", new=AsyncMock()) as mock_log:
+            await gateway.audit(request, 201)
+            mock_log.assert_awaited_once()
+            _call = mock_log.await_args
+            assert _call is not None
+            _, kwargs = _call
+            assert kwargs["user_id"] == self.USER_ID
+            assert kwargs["resource"] == "tasks"
+
+    @pytest.mark.asyncio
+    async def test_audit_get_method_skips(self):
+        request = self._make_request(method="GET", path="/api/v1/tasks")
+        request.state.user_id = self.USER_ID
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.log_audit", new=AsyncMock()) as mock_log:
+            await gateway.audit(request, 200)
+            mock_log.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_audit_error_status_skips(self):
+        request = self._make_request(method="POST", path="/api/v1/tasks")
+        request.state.user_id = self.USER_ID
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.log_audit", new=AsyncMock()) as mock_log:
+            await gateway.audit(request, 500)
+            mock_log.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_audit_no_user_id_skips(self):
+        request = self._make_request(method="POST", path="/api/v1/tasks")
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.log_audit", new=AsyncMock()) as mock_log:
+            await gateway.audit(request, 201)
+            mock_log.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_audit_extracts_resource_from_path(self):
+        request = self._make_request(method="PUT", path="/api/v1/goals/g-42")
+        request.state.user_id = self.USER_ID
+        from config.core.api_gateway import ApiGateway
+
+        gateway = ApiGateway()
+        with patch("config.core.api_gateway.log_audit", new=AsyncMock()) as mock_log:
+            await gateway.audit(request, 200)
+            mock_log.assert_awaited_once()
+            _call = mock_log.await_args
+            assert _call is not None
+            _, kwargs = _call
+            assert kwargs["resource"] == "goals"
+
+    # ── singleton ─────────────────────────────────────────────────────
+
+    def test_gateway_singleton(self):
+        from config.core.api_gateway import ApiGateway, gateway
+
+        assert isinstance(gateway, ApiGateway)
+        assert hasattr(gateway, "_requests")
+
+    def test_tier_limits_attribute(self):
+        from config.core.api_gateway import ApiGateway
+
+        tiers = ApiGateway.TIERS
+        assert tiers["free"]["max_requests"] == 10
+        assert tiers["pro"]["max_requests"] == 100
+        assert tiers["enterprise"]["max_requests"] == 1000
+        assert tiers["internal"]["max_requests"] == 10000
