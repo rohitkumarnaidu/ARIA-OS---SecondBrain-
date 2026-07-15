@@ -1,3 +1,53 @@
+# =============================================================================
+# Second Brain OS API — FastAPI Application Entry Point
+#
+# This file configures the FastAPI application, registers all 31 routers under
+# /api/v1/, sets up middleware (CORS, rate limiting, CSRF, GZip, request ID),
+# defines health check endpoints, initializes Sentry/Logtail, and starts
+# background event processing services.
+#
+# Router registration table:
+#   File                          Prefix
+#   ─────────────────────────────────────────────
+#   app/api/tasks.py             /api/v1/tasks
+#   app/api/courses.py           /api/v1/courses
+#   app/api/goals.py             /api/v1/goals
+#   app/api/ideas.py             /api/v1/ideas
+#   app/api/chat.py              /api/v1/chat
+#   app/api/projects.py          /api/v1/projects
+#   app/api/resources.py         /api/v1/resources
+#   app/api/opportunities.py     /api/v1/opportunities
+#   app/api/income.py            /api/v1/income
+#   app/api/habits.py            /api/v1/habits
+#   app/api/sleep.py             /api/v1/sleep
+#   app/api/time.py              /api/v1/time
+#   app/api/automation.py        /api/v1/automation
+#   app/api/briefings.py         /api/v1/briefings
+#   app/api/reviews.py           /api/v1/reviews
+#   app/api/memory.py            /api/v1/memory
+#   app/api/roadmap.py           /api/v1/roadmap
+#   app/api/academics.py         /api/v1/academics
+#   app/api/videos.py            /api/v1/videos
+#   app/api/analytics.py         /api/v1/analytics
+#   app/api/predictions.py       /api/v1/predictions
+#   app/api/notifications.py     /api/v1/notifications
+#   app/api/nlp.py               /api/v1/nlp
+#   app/api/prompts.py           /api/v1/prompts
+#   app/api/feedback.py          /api/v1/feedback
+#   app/api/monitoring.py        /api/v1/monitoring
+#   app/api/data_export.py       /api/v1/data
+#   app/api/feature_flags.py     /api/v1/feature-flags
+#   app/api/auth.py              /api/v1/auth
+#   app/api/skills.py            /api/v1/skills
+#   app/api/learning.py          /api/v1/learning
+#
+# System endpoints (registered inline):
+#   GET /                         API status
+#   GET /health                   Health check
+#   GET /health/live              Liveness probe
+#   GET /health/ready             Readiness probe
+# =============================================================================
+
 import sys
 import uuid
 import logging
@@ -5,6 +55,7 @@ import time as _time
 from pathlib import Path
 from contextlib import asynccontextmanager
 
+# Add packages/ to sys.path so all internal imports resolve correctly
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "packages"))
 
 import sentry_sdk
@@ -18,10 +69,14 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from shared.utils.rate_limiter import RateLimiter
 from shared.utils.csrf import CSRFMiddleware
-from shared.utils.logger import logger, log_request, log_response
+from shared.utils.logger import logger, log_request, log_response, _logtail_handler
 from shared.utils.cache import cache
+from shared.utils.cache_middleware import ResponseCacheMiddleware
+from shared.utils.sanitizer import InputSanitizer
 from shared.utils.audit import audit_middleware_dispatch, MUTATION_METHODS
 from config.core.config import settings
+
+# Import all 31 API routers
 from app.api import (
     auth,
     tasks,
@@ -53,8 +108,27 @@ from app.api import (
     data_export,
     feature_flags,
     skills,
+    learning,
 )
 
+
+# ---------------------------------------------------------------------------
+# Application Lifespan (startup/shutdown)
+# ---------------------------------------------------------------------------
+# The lifespan context manager replaces the deprecated on_startup/on_shutdown
+# pattern. It runs once when the app starts and once when it shuts down.
+#
+# Startup tasks:
+#   1. Record start time for uptime calculation
+#   2. Initialize Sentry for error tracking (if DSN configured)
+#   3. Start Logtail background log flush loop
+#   4. Start event outbox and webhook delivery background pollers
+#
+# Shutdown tasks:
+#   1. Gracefully drain pending AI tasks (10s timeout)
+#   2. Stop event outbox and webhook delivery pollers
+#   3. Clear in-memory caches
+#   4. Stop Logtail background flush
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
@@ -81,6 +155,9 @@ async def lifespan(application: FastAPI):
             send_default_pii=False,
         )
         logger.info("Sentry initialized for backend")
+
+    # Start Logtail background flush loop
+    _logtail_handler.start_background_flush()
 
     # Start background event processing services
     try:
@@ -118,8 +195,18 @@ async def lifespan(application: FastAPI):
             logger.warn("Some AI tasks did not complete in time", count=len(pending_tasks))
 
     await cache.clear()
+    # Stop Logtail background flush
+    await _logtail_handler.stop_background_flush()
+
     logger.info("Second Brain OS API shutdown complete")
 
+
+# ---------------------------------------------------------------------------
+# FastAPI Application Configuration
+# ---------------------------------------------------------------------------
+# Title, description, and version are set from settings. OpenAPI tags organize
+# the 31 routers into logical groups for the auto-generated docs at /docs.
+# The lifespan context manager handles async startup/shutdown tasks.
 
 app = FastAPI(
     title="Second Brain OS API",
@@ -163,9 +250,26 @@ app = FastAPI(
             "name": "skills",
             "description": "Skills taxonomy, user skills, evidence, market intelligence, and learning paths",
         },
+        {"name": "learning", "description": "Learning insights and pattern detection from ARIA Learning Agent"},
         {"name": "system", "description": "Health check and system endpoints"},
     ],
 )
+
+# ---------------------------------------------------------------------------
+# Middleware Stack (executed in registration order)
+# ---------------------------------------------------------------------------
+# 1. ResponseCacheMiddleware — In-memory GET response caching (optional)
+# 2. RateLimiter            — Sliding-window IP-based rate limiting (100 req/min)
+# 3. CORSMiddleware         — Cross-Origin Resource Sharing (configurable origins)
+# 4. InputSanitizer         — Sanitize POST/PUT/PATCH JSON bodies (XSS prevention)
+# 5. GZipMiddleware         — Response compression for bodies >1000 bytes
+# 6. CSRFMiddleware         — CSRF token validation for state-changing requests
+#
+# Custom middleware (below, registered with @app.middleware):
+# 7. request_id_middleware     — X-Request-ID header generation + audit logging
+# 8. cache_control_middleware  — Cache-Control + security headers
+
+app.add_middleware(ResponseCacheMiddleware, default_ttl=60, max_size=256)
 
 app.add_middleware(
     RateLimiter,
@@ -181,10 +285,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(InputSanitizer)
+
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.add_middleware(CSRFMiddleware)
 
+
+# ---------------------------------------------------------------------------
+# Middleware: Request ID + Audit Trail
+# ---------------------------------------------------------------------------
+# Generates or propagates an X-Request-ID header for every request. Logs
+# request start/end with duration tracking. On mutation methods (POST, PUT,
+# PATCH, DELETE), dispatches an audit event if the user is authenticated.
+# Catches unhandled exceptions and returns a structured 500 error.
 
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
@@ -244,6 +358,16 @@ async def request_id_middleware(request: Request, call_next):
     return response
 
 
+# ---------------------------------------------------------------------------
+# Middleware: Cache-Control + Security Headers
+# ---------------------------------------------------------------------------
+# Sets Cache-Control headers based on path prefix:
+#   /static/, /assets/  → immutable, 1 year
+#   /health             → no-store (never cache)
+#   GET requests        → private, 60s, stale-while-revalidate=300
+#   Other               → no-store
+# Also sets security headers: X-Content-Type-Options, X-Frame-Options, XSS
+
 @app.middleware("http")
 async def cache_control_middleware(request: Request, call_next):
     response = await call_next(request)
@@ -262,8 +386,27 @@ async def cache_control_middleware(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
 
+    # Content Security Policy
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "img-src 'self' data: blob: https:; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "connect-src 'self' https:; "
+        "frame-ancestors 'none'; "
+        "form-action 'self'"
+    )
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+
     return response
 
+
+# ---------------------------------------------------------------------------
+# Router Registration (31 routers under /api/v1/)
+# ---------------------------------------------------------------------------
+# All routers accept auth via get_current_user dependency unless noted.
+# Each router's endpoints are documented in docs/engineering/api/openapi-reference.md.
 
 app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["tasks"])
 app.include_router(courses.router, prefix="/api/v1/courses", tags=["courses"])
@@ -295,7 +438,15 @@ app.include_router(data_export.router, prefix="/api/v1/data", tags=["data"])
 app.include_router(feature_flags.router, prefix="/api/v1/feature-flags", tags=["feature_flags"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(skills.router, prefix="/api/v1/skills", tags=["skills"])
+app.include_router(learning.router, prefix="/api/v1/learning", tags=["learning"])
 
+
+# ---------------------------------------------------------------------------
+# Global Exception Handler
+# ---------------------------------------------------------------------------
+# Catch-all for unhandled exceptions at the application level. Returns a
+# structured 500 error with a request ID for tracing. The request_id_middleware
+# also has its own exception handler for middleware-level errors.
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -318,8 +469,13 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
+# ---------------------------------------------------------------------------
+# System Endpoints
+# ---------------------------------------------------------------------------
+
 @app.get("/", tags=["system"])
 async def root():
+    """Return basic API status information (version, environment, docs URL)."""
     return {
         "message": "Second Brain OS API is running",
         "version": settings.app_version,
@@ -330,6 +486,7 @@ async def root():
 
 @app.get("/health", tags=["system"])
 async def health_check():
+    """Return overall health status, uptime, and registered endpoint count."""
     total_endpoints = len(app.routes)
     return {
         "status": "healthy",
@@ -343,6 +500,7 @@ async def health_check():
 
 @app.get("/health/ready", tags=["system"])
 async def readiness_check():
+    """Readiness probe — checks Supabase and AI provider connectivity."""
     deps = {
         "api": {"status": "ok"},
     }
@@ -382,4 +540,5 @@ async def readiness_check():
 
 @app.get("/health/live", tags=["system"])
 async def liveness_check():
+    """Liveness probe — returns 200 if the process is alive."""
     return {"status": "alive"}

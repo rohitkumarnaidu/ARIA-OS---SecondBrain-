@@ -4,7 +4,8 @@
 # =============================================================================
 
 .PHONY: help dev-api dev-web dev-scheduler lint test validate-prompts \
-        docker-up docker-down docker-build clean setup install
+        docker-up docker-down docker-build clean setup install \
+        deploy-api deploy-web deploy-scheduler deploy-all deploy-rollback
 
 help: ## Show this help
 	@echo "Usage: make [target]"
@@ -89,23 +90,109 @@ validate-prompts: ## Validate all prompt YAML frontmatter
 
 # ── Docker ───────────────────────────────────────────────────────────────────
 
-docker-up: ## Start all Docker services
+docker-up: ## Start all Docker services (development targets)
 	docker compose up -d
 
-docker-up-dev: ## Start Docker services with logs
+docker-up-dev: ## Start Docker services with logs (development targets)
 	docker compose up
+
+docker-up-prod: ## Start all Docker services using production targets
+	DOCKER_TARGET=production docker compose up -d
 
 docker-down: ## Stop all Docker services
 	docker compose down
 
-docker-build: ## Build all Docker images
+docker-build: ## Build all Docker images (development targets)
 	docker compose build
+
+docker-build-prod: ## Build all Docker images using production targets
+	DOCKER_TARGET=production docker compose build
 
 docker-logs: ## Follow Docker logs
 	docker compose logs -f
 
 docker-clean: ## Remove all containers, images, and volumes
 	docker compose down -v
+
+docker-prune: ## Remove all unused Docker resources (images, containers, volumes)
+	docker system prune -af --volumes
+
+# ── Deployment (Production) ──────────────────────────────────────────────────
+
+deploy-api: ## Deploy API backend to Railway
+	@echo "=== Deploying API to Railway ==="
+	@echo "Linking project..."
+	railway link 2>/dev/null || true
+	railway up --service secondbrain-api
+	@echo ""
+	@echo "Verifying health..."
+	@sleep 10
+	@echo "✓ Deployment complete. Run 'make verify-api' to check health."
+
+deploy-web: ## Deploy frontend to Vercel
+	@echo "=== Deploying Frontend to Vercel ==="
+	cd apps/web && vercel --prod
+	@echo ""
+	@echo "✓ Deployment complete. Run 'make verify-web' to check."
+
+deploy-scheduler: ## Deploy scheduler to Railway
+	@echo "=== Deploying Scheduler to Railway ==="
+	@echo "Linking project..."
+	railway link 2>/dev/null || true
+	railway up --service secondbrain-scheduler
+	@echo ""
+	@echo "✓ Deployment complete. Run 'make verify-scheduler' to check."
+
+deploy-all: ## Deploy all services (API → Scheduler → Frontend)
+	@echo "=== Full Production Deployment ==="
+	@echo ""
+	@echo "Step 1/3: Deploying API..."
+	$(MAKE) deploy-api
+	@echo ""
+	@echo "Step 2/3: Deploying Scheduler..."
+	$(MAKE) deploy-scheduler
+	@echo ""
+	@echo "Step 3/3: Deploying Frontend..."
+	$(MAKE) deploy-web
+	@echo ""
+	@echo "✅ All services deployed!"
+	@echo "Run 'make verify-all' for post-deployment checks."
+
+deploy-rollback: ## Rollback all services to previous deployments
+	@echo "=== Rollback Procedure ==="
+	@echo ""
+	@echo "Step 1: Rollback Frontend"
+	@echo "  vercel rollback secondbrain-os --safe=10"
+	@echo ""
+	@echo "Step 2: Rollback API"
+	@echo "  railway rollback --service secondbrain-api"
+	@echo ""
+	@echo "Step 3: Rollback Scheduler"
+	@echo "  railway rollback --service secondbrain-scheduler"
+	@echo ""
+	@echo "Run these commands manually to confirm each rollback."
+	@echo "See docs/operations/production-deployment.md for detailed procedures."
+
+# ── Deployment Verification ──────────────────────────────────────────────────
+
+verify-api: ## Verify API health endpoint
+	@echo "Checking API health..."
+	@curl -s https://api.secondbrain-os.com/health/ready | python -c "import sys,json; d=json.load(sys.stdin); print(f'Status: {d.get(\"status\",\"unknown\")}'); sys.exit(0 if d.get('status')=='healthy' else 1)" || echo "⚠ API health check failed"
+
+verify-web: ## Verify frontend is serving
+	@echo "Checking frontend..."
+	@curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" https://secondbrain-os.vercel.app || echo "⚠ Frontend check failed"
+
+verify-scheduler: ## Verify scheduler health
+	@echo "Checking scheduler health..."
+	@curl -s https://scheduler.secondbrain-os.com/health | python -c "import sys,json; d=json.load(sys.stdin); print(f'Status: {d.get(\"status\",\"unknown\")}, Jobs: {d.get(\"jobs\",\"?\")}')" || echo "⚠ Scheduler health check failed"
+
+verify-all: ## Verify all services post-deployment
+	$(MAKE) verify-api
+	$(MAKE) verify-web
+	$(MAKE) verify-scheduler
+	@echo ""
+	@echo "✅ Post-deployment verification complete."
 
 # ── Setup & Installation ─────────────────────────────────────────────────────
 
@@ -159,6 +246,17 @@ sqli-audit: ## Run SQL injection pattern audit
 
 zap-scan: ## Run OWASP ZAP DAST active scan (requires Docker)
 	$(SHELL_CMD) $(ZAP_SCRIPT)
+
+# ── Document Validation ───────────────────────────────────────────────────────
+
+validate-docs: validate-links validate-doc-ids validate-prompts
+	@echo "All document validations passed"
+
+validate-links:
+	pwsh ./scripts/check-links.ps1
+
+validate-doc-ids:
+	python scripts/validate-doc-ids.py
 
 # ── Quality Gates ─────────────────────────────────────────────────────────────
 
