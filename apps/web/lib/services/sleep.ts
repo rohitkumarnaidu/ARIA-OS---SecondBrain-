@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { SleepLog, SleepLogCreate } from '@/lib/types'
+import type { SleepLog, SleepLogCreate, WindDownData } from '@/lib/types'
 
 const BASE = '/api/v1/sleep'
 
@@ -8,4 +8,5 @@ export const sleepService = {
   get: (id: string) => api.get<SleepLog>(`${BASE}/${id}`),
   create: (data: SleepLogCreate) => api.post<SleepLog>(BASE, data),
   delete: (id: string) => api.delete<{ message: string }>(`${BASE}/${id}`),
+  getWindDown: () => api.get<WindDownData>(`${BASE}/wind-down`),
 }
