@@ -19,8 +19,8 @@ DELETE FROM daily_briefings WHERE user_id = uid;
 DELETE FROM weekly_reviews WHERE user_id = uid;
 DELETE FROM habit_logs WHERE user_id = uid;
 DELETE FROM sleep_logs WHERE user_id = uid;
-DELETE FROM time_entries WHERE user_id = uid;
-DELETE FROM income_entries WHERE user_id = uid;
+DELETE FROM time_logs WHERE user_id = uid;
+DELETE FROM income_logs WHERE user_id = uid;
 DELETE FROM opportunities WHERE user_id = uid;
 DELETE FROM resources WHERE user_id = uid;
 DELETE FROM ideas WHERE user_id = uid;
@@ -30,17 +30,16 @@ DELETE FROM courses WHERE user_id = uid;
 DELETE FROM tasks WHERE user_id = uid;
 DELETE FROM goals WHERE user_id = uid;
 DELETE FROM learning_progress WHERE user_id = uid;
-DELETE FROM memory WHERE user_id = uid;
-DELETE FROM users WHERE id = uid;
+DELETE FROM aria_memory WHERE user_id = uid;
+DELETE FROM users_profile WHERE user_id = uid;
 
--- 1. users
-INSERT INTO users (id, email, full_name, avatar_url, preferences, created_at, updated_at)
+-- 1. users_profile
+INSERT INTO users_profile (id, user_id, name, email, created_at, updated_at)
 VALUES (
+    gen_random_uuid()::text,
     uid,
-    'test@secondbrain.os',
     'Test User',
-    'https://api.dicebear.com/9.x/avataaars/svg?seed=test',
-    '{"theme":"dark","accent_color":"#6366F1","notifications_enabled":true}'::jsonb,
+    'test@secondbrain.os',
     now_ts, now_ts
 );
 
@@ -85,10 +84,10 @@ INSERT INTO sleep_logs (id, user_id, bedtime, wake_time, quality_rating, duratio
     (gen_random_uuid()::text, uid, (now_ts - INTERVAL '2 days') + TIME '00:15', now_ts - INTERVAL '1 day' + TIME '06:30', 3, 6.25, 62, 1.75, now_ts, now_ts),
     (gen_random_uuid()::text, uid, (now_ts - INTERVAL '3 days') + TIME '22:45', now_ts - INTERVAL '2 days' + TIME '06:45', 5, 8.0, 92, 0.0, now_ts, now_ts);
 
--- 8. income_entries (2)
-INSERT INTO income_entries (id, user_id, source_type, amount, date, description, hourly_rate, hours_worked, created_at, updated_at) VALUES
-    (gen_random_uuid()::text, uid, 'freelance', 500.00, now_ts - INTERVAL '5 days', 'Website redesign for client', 50.00, 10.0, now_ts - INTERVAL '5 days', now_ts),
-    (gen_random_uuid()::text, uid, 'part_time', 1200.00, now_ts - INTERVAL '30 days', 'Monthly part-time stipend', NULL, NULL, now_ts - INTERVAL '30 days', now_ts);
+-- 8. income_logs (2)
+INSERT INTO income_logs (id, user_id, amount, date, description, hours_spent, created_at) VALUES
+    (gen_random_uuid()::text, uid, 500.00, now_ts - INTERVAL '5 days', 'Website redesign for client', 10.0, now_ts - INTERVAL '5 days'),
+    (gen_random_uuid()::text, uid, 1200.00, now_ts - INTERVAL '30 days', 'Monthly part-time stipend', NULL, now_ts - INTERVAL '30 days');
 
 -- 9. projects
 INSERT INTO projects (id, user_id, title, description, phase, live_url, repo_url, created_at, updated_at) VALUES
@@ -106,9 +105,9 @@ INSERT INTO resources (id, user_id, title, url, resource_type, tags, created_at,
 INSERT INTO opportunities (id, user_id, title, company, url, opportunity_type, match_score, deadline, notes, created_at, updated_at) VALUES
     (gen_random_uuid()::text, uid, 'SWE Intern at Google', 'Google', 'https://google.com/careers', 'internship', 85, now_ts + INTERVAL '30 days', 'Strong match in ML skills', now_ts, now_ts);
 
--- 13. time_entries
-INSERT INTO time_entries (id, user_id, start_time, end_time, duration_minutes, activity_type, description, created_at) VALUES
-    (gen_random_uuid()::text, uid, now_ts - INTERVAL '3 hours', now_ts - INTERVAL '2 hours', 60, 'deep_work', 'Working on Second Brain OS', now_ts);
+-- 13. time_logs
+INSERT INTO time_logs (id, user_id, task_id, description, started_at, ended_at, duration_seconds, is_deep_work, created_at) VALUES
+    (gen_random_uuid()::text, uid, NULL, 'Working on Second Brain OS', now_ts - INTERVAL '3 hours', now_ts - INTERVAL '2 hours', 3600, TRUE, now_ts);
 
 -- 14. chat_messages
 INSERT INTO chat_messages (id, user_id, role, content, agent, created_at) VALUES
@@ -127,10 +126,10 @@ INSERT INTO weekly_reviews (id, user_id, week_start, review_data, created_at) VA
      '{"summary":"Good week","tasks_completed":12,"focus_score":72,"top_insight":"Increase deep work sessions"}'::jsonb,
      now_ts);
 
--- 17. memory
-INSERT INTO memory (id, user_id, key, value, created_at, updated_at) VALUES
-    (gen_random_uuid()::text, uid, 'preferred_learning_style', 'visual', now_ts, now_ts),
-    (gen_random_uuid()::text, uid, 'focus_peak_hours', '["09:00","12:00"]', now_ts, now_ts);
+-- 17. aria_memory
+INSERT INTO aria_memory (id, user_id, memory_type, content, confidence, created_at) VALUES
+    (gen_random_uuid()::text, uid, 'preference', 'Preferred learning style: visual', 0.9, now_ts),
+    (gen_random_uuid()::text, uid, 'pattern', 'Focus peak hours: 09:00-12:00', 0.8, now_ts);
 
 -- 18. learning_progress
 INSERT INTO learning_progress (id, user_id, date, metrics, created_at) VALUES
