@@ -651,6 +651,232 @@ class TestLogHelpers:
             mock_l.error.assert_called_once()
 
 
+from shared.utils.logger import LogtailHandler
+import httpx
+
+
+class TestLogtailHandler:
+    """Tests for LogtailHandler async log shipping."""
+
+    async def test_init_with_token(self):
+        with patch("shared.utils.logger.os.getenv", return_value="test-token"):
+            with patch("httpx.AsyncClient") as mock_http:
+                mock_client = MagicMock()
+                mock_http.return_value = mock_client
+                handler = LogtailHandler()
+                assert handler.token == "test-token"
+                assert handler.client is mock_client
+                mock_http.assert_called_once_with(
+                    base_url="https://in.logtail.com",
+                    timeout=5,
+                    headers={"Authorization": "Bearer test-token"},
+                )
+
+    async def test_init_without_token(self):
+        with patch("shared.utils.logger.os.getenv", return_value=None):
+            handler = LogtailHandler()
+            assert handler.token is None
+            assert handler.client is None
+
+    async def test_setup_import_error_fallback(self):
+        with patch("shared.utils.logger.os.getenv", return_value="test-token"):
+            with patch("builtins.__import__", side_effect=ImportError("no httpx")):
+                handler = LogtailHandler()
+                assert handler.token == "test-token"
+                assert handler.client is None
+
+    async def test_emit_no_client_returns_early(self):
+        handler = LogtailHandler()
+        handler.client = None
+        handler.batch = []
+        await handler.emit({"level": "INFO", "message": "test"})
+        assert len(handler.batch) == 0
+
+    async def test_emit_appends_to_batch(self):
+        handler = LogtailHandler()
+        handler.client = MagicMock()
+        handler.batch = []
+        await handler.emit({"level": "INFO"})
+        assert len(handler.batch) == 1
+
+    async def test_emit_triggers_flush_at_ten_logs(self):
+        handler = LogtailHandler()
+        handler.client = MagicMock()
+        handler._flush = AsyncMock()
+        for i in range(9):
+            await handler.emit({"msg": f"log-{i}"})
+        assert len(handler.batch) == 9
+        handler._flush.assert_not_called()
+        await handler.emit({"msg": "log-10"})
+        await asyncio.sleep(0)
+        handler._flush.assert_called_once()
+
+    async def test_flush_sends_batch(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        handler.client.post = AsyncMock()
+        handler.batch = [{"msg": "test"}]
+        await handler._flush()
+        assert len(handler.batch) == 0
+        handler.client.post.assert_awaited_once_with("/", json=[{"msg": "test"}])
+
+    async def test_flush_empty_batch_skips_post(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        handler.batch = []
+        await handler._flush()
+        handler.client.post.assert_not_called()
+
+    async def test_flush_http_error_handled(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.status_code = 500
+        mock_req = MagicMock(spec=httpx.Request)
+        handler.client.post = AsyncMock(
+            side_effect=httpx.HTTPStatusError("Server error", request=mock_req, response=mock_resp)
+        )
+        handler.batch = [{"msg": "test"}]
+        await handler._flush()
+        assert len(handler.batch) == 0
+
+    async def test_flush_generic_exception_handled(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        handler.client.post = AsyncMock(side_effect=Exception("network failure"))
+        handler.batch = [{"msg": "test"}]
+        await handler._flush()
+        assert len(handler.batch) == 0
+
+    async def test_flush_loop_sleeps_and_flushes(self):
+        handler = LogtailHandler()
+        handler.client = MagicMock()
+        call_count = 0
+
+        async def counting_flush():
+            nonlocal call_count
+            call_count += 1
+
+        handler._flush = counting_flush
+
+        real_sleep = asyncio.sleep
+
+        async def quick_sleep(_delay):
+            await real_sleep(0.001)
+
+        with patch.object(asyncio, "sleep", quick_sleep):
+            task = asyncio.create_task(handler._flush_loop())
+            await real_sleep(0.12)
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
+        assert call_count > 0
+
+    async def test_start_background_flush_creates_task(self):
+        handler = LogtailHandler()
+        handler.token = "test-token"
+        handler.client = MagicMock()
+        handler._flush_task = None
+        handler.start_background_flush()
+        assert handler._flush_task is not None
+        handler._flush_task.cancel()
+        try:
+            await handler._flush_task
+        except asyncio.CancelledError:
+            pass
+
+    async def test_start_background_flush_already_running(self):
+        handler = LogtailHandler()
+        existing = asyncio.create_task(asyncio.sleep(999))
+        handler._flush_task = existing
+        handler.start_background_flush()
+        assert handler._flush_task is existing
+        existing.cancel()
+        try:
+            await existing
+        except asyncio.CancelledError:
+            pass
+
+    async def test_stop_background_flush_cancels_and_closes(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        mock_aclose = AsyncMock()
+        handler.client.aclose = mock_aclose
+        handler._flush_task = asyncio.create_task(asyncio.sleep(999))
+        await handler.stop_background_flush()
+        assert handler._flush_task is None
+        assert handler.client is None
+        mock_aclose.assert_awaited_once()
+
+    async def test_stop_background_flush_no_client(self):
+        handler = LogtailHandler()
+        handler.client = None
+        handler._flush_task = asyncio.create_task(asyncio.sleep(999))
+        await handler.stop_background_flush()
+        assert handler._flush_task is None
+
+    async def test_stop_background_flush_no_task(self):
+        handler = LogtailHandler()
+        handler.client = AsyncMock()
+        mock_aclose = AsyncMock()
+        handler.client.aclose = mock_aclose
+        handler._flush_task = None
+        await handler.stop_background_flush()
+        mock_aclose.assert_awaited_once()
+
+
+class TestLoggerLogtailIntegration:
+    """Test Logger._log triggers logtail handler emit."""
+
+    def test_log_info_triggers_logtail_emit(self):
+        from shared.utils.logger import _logtail_handler, Logger
+
+        with patch.object(_logtail_handler, "client", MagicMock()):
+            with patch("shared.utils.logger.asyncio.ensure_future") as mock_ensure:
+                buf = io.StringIO()
+                old = sys.stdout
+                sys.stdout = buf
+                try:
+                    log = Logger(name="test-logtail-integration")
+                    log.info("hello from logtail test")
+                    mock_ensure.assert_called_once()
+                finally:
+                    sys.stdout = old
+
+    def test_log_error_triggers_logtail_emit(self):
+        from shared.utils.logger import _logtail_handler, Logger
+
+        with patch.object(_logtail_handler, "client", MagicMock()):
+            with patch("shared.utils.logger.asyncio.ensure_future") as mock_ensure:
+                buf = io.StringIO()
+                old = sys.stdout
+                sys.stdout = buf
+                try:
+                    log = Logger(name="test-logtail-err")
+                    log.error("error with logtail", error=ValueError("oops"))
+                    mock_ensure.assert_called_once()
+                finally:
+                    sys.stdout = old
+
+    def test_log_no_logtail_when_client_none(self):
+        from shared.utils.logger import _logtail_handler, Logger
+
+        with patch.object(_logtail_handler, "client", None):
+            with patch("shared.utils.logger.asyncio.ensure_future") as mock_ensure:
+                buf = io.StringIO()
+                old = sys.stdout
+                sys.stdout = buf
+                try:
+                    log = Logger(name="test-logtail-none")
+                    log.info("no logtail expected")
+                    mock_ensure.assert_not_called()
+                finally:
+                    sys.stdout = old
+
+
 from shared.utils.notifications import (
     send_push_notification,
     send_email_notification,
@@ -1397,7 +1623,7 @@ class TestAuditLog:
 # ──────────────────────────────────────────────
 
 
-from shared.utils.csrf import CSRFMiddleware, CSRF_HEADER
+from shared.utils.csrf import CSRFMiddleware
 
 
 class TestCSRFMiddleware:
@@ -1423,60 +1649,83 @@ class TestCSRFMiddleware:
         mock_request = MagicMock()
         mock_request.method = "POST"
         mock_request.headers = {"origin": "", "referer": ""}
+        mock_request.url = MagicMock(path="/test")
         csrf = CSRFMiddleware(MagicMock())
         call_next = AsyncMock(return_value=MagicMock(status_code=200))
         response = await csrf.dispatch(mock_request, call_next)
         assert response.status_code == 200
         call_next.assert_awaited_once()
 
-    async def test_missing_csrf_token_returns_403(self):
-        mock_request = MagicMock()
-        mock_request.method = "POST"
-        mock_request.headers = {"origin": "http://example.com", "referer": ""}
-        mock_request.state.request_id = "req-abc"
-        csrf = CSRFMiddleware(MagicMock())
-        call_next = AsyncMock(return_value=MagicMock())
-        response = await csrf.dispatch(mock_request, call_next)
-        assert response.status_code == 403
-        body = json.loads(response.body)
-        assert body["detail"] == "CSRF token required"
-        assert body["error_code"] == "CSRF_MISSING"
-        assert body["request_id"] == "req-abc"
-        call_next.assert_not_awaited()
+    async def test_disallowed_origin_returns_403(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mock_request = MagicMock()
+            mock_request.method = "POST"
+            mock_request.headers = {"origin": "http://evil.com", "referer": ""}
+            mock_request.state.request_id = "req-abc"
+            csrf = CSRFMiddleware(MagicMock())
+            call_next = AsyncMock(return_value=MagicMock())
+            response = await csrf.dispatch(mock_request, call_next)
+            assert response.status_code == 403
+            body = json.loads(response.body)
+            assert body["detail"] == "CSRF check failed: Origin/Referer not allowed"
+            assert body["error_code"] == "CSRF_ORIGIN_MISMATCH"
+            assert body["request_id"] == "req-abc"
+            call_next.assert_not_awaited()
 
-    async def test_present_csrf_token_allows(self):
-        mock_request = MagicMock()
-        mock_request.method = "POST"
-        mock_request.headers = {"origin": "http://example.com", "referer": "", CSRF_HEADER: "valid-token"}
-        csrf = CSRFMiddleware(MagicMock())
-        call_next = AsyncMock(return_value=MagicMock(status_code=200))
-        response = await csrf.dispatch(mock_request, call_next)
-        assert response.status_code == 200
-        call_next.assert_awaited_once()
+    async def test_allowed_origin_passes(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mock_request = MagicMock()
+            mock_request.method = "POST"
+            mock_request.headers = {"origin": "http://allowed.com", "referer": ""}
+            csrf = CSRFMiddleware(MagicMock())
+            call_next = AsyncMock(return_value=MagicMock(status_code=200))
+            response = await csrf.dispatch(mock_request, call_next)
+            assert response.status_code == 200
+            call_next.assert_awaited_once()
 
-    async def test_referer_triggers_csrf_check(self):
-        mock_request = MagicMock()
-        mock_request.method = "POST"
-        mock_request.headers = {"origin": "", "referer": "http://example.com/page"}
-        mock_request.state.request_id = "req-xyz"
-        csrf = CSRFMiddleware(MagicMock())
-        call_next = AsyncMock(return_value=MagicMock())
-        response = await csrf.dispatch(mock_request, call_next)
-        assert response.status_code == 403
-        call_next.assert_not_awaited()
+    async def test_referer_check_allowed_and_disallowed(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mock_request = MagicMock()
+            mock_request.method = "POST"
+            mock_request.headers = {"origin": "", "referer": "http://allowed.com/page"}
+            csrf = CSRFMiddleware(MagicMock())
+            call_next = AsyncMock(return_value=MagicMock(status_code=200))
+            response = await csrf.dispatch(mock_request, call_next)
+            assert response.status_code == 200
+            call_next.assert_awaited_once()
+
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mock_request = MagicMock()
+            mock_request.method = "POST"
+            mock_request.headers = {"origin": "", "referer": "http://evil.com/page"}
+            mock_request.state.request_id = "req-xyz"
+            csrf = CSRFMiddleware(MagicMock())
+            call_next = AsyncMock(return_value=MagicMock())
+            response = await csrf.dispatch(mock_request, call_next)
+            assert response.status_code == 403
+            body = json.loads(response.body)
+            assert body["error_code"] == "CSRF_ORIGIN_MISMATCH"
+            assert body["request_id"] == "req-xyz"
+            call_next.assert_not_awaited()
 
     async def test_request_id_empty_string_when_missing(self):
-        from types import SimpleNamespace
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            from types import SimpleNamespace
 
-        mock_request = MagicMock()
-        mock_request.method = "POST"
-        mock_request.headers = {"origin": "http://example.com", "referer": ""}
-        mock_request.state = SimpleNamespace()
-        csrf = CSRFMiddleware(MagicMock())
-        call_next = AsyncMock(return_value=MagicMock())
-        response = await csrf.dispatch(mock_request, call_next)
-        body = json.loads(response.body)
-        assert body.get("request_id", "") == ""
+            mock_request = MagicMock()
+            mock_request.method = "POST"
+            mock_request.headers = {"origin": "http://evil.com", "referer": ""}
+            mock_request.state = SimpleNamespace()
+            csrf = CSRFMiddleware(MagicMock())
+            call_next = AsyncMock(return_value=MagicMock())
+            response = await csrf.dispatch(mock_request, call_next)
+            body = json.loads(response.body)
+            assert body.get("request_id", "") == ""
 
 
 # ──────────────────────────────────────────────
@@ -1664,16 +1913,21 @@ class TestNotificationsEdgeCases:
 
     def test_send_email_with_resend_key(self):
         with patch("shared.utils.notifications.os.getenv", return_value="re_abc123"):
-            result = send_email_notification("user@test.com", "Subject", "Body")
-            assert result is True
+            with patch("shared.utils.notifications.httpx.post") as mock_post:
+                mock_response = MagicMock()
+                mock_response.is_success = True
+                mock_response.json.return_value = {"id": "msg-123"}
+                mock_post.return_value = mock_response
+                result = send_email_notification("user@test.com", "Subject", "Body")
+                assert result["success"] is True
 
     def test_send_push_notification_empty_title(self):
         result = send_push_notification("u1", "", "")
-        assert result is True
+        assert result["success"] is True
 
     def test_send_sms_notification_long_message(self):
         result = send_sms_notification("+1234567890", "x" * 500)
-        assert result is True
+        assert result["success"] is True
 
 
 # ──────────────────────────────────────────────
@@ -2756,6 +3010,603 @@ class TestFeatureFlagStore:
         store = FeatureFlagStore(refresh_interval_seconds=999)
         store.set("test", FeatureFlag("test", enabled=True, rollout_percentage=0))
         assert store.get_variant("test", "any-user") == "control"
+
+
+# ──────────────────────────────────────────────
+# cache_middleware.py
+# ──────────────────────────────────────────────
+
+
+
+class TestResponseCacheMiddleware:
+
+    async def test_init_defaults(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        assert mw.default_ttl == 60
+        assert mw.max_size == 256
+
+    async def test_init_custom_ttl(self):
+        mw = ResponseCacheMiddleware(MagicMock(), default_ttl=120, max_size=512)
+        assert mw.default_ttl == 120
+        assert mw.max_size == 512
+
+    async def test_skip_non_get(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "POST"
+        request.url.path = "/api/v1/tasks"
+        response = MagicMock()
+        call_next = AsyncMock(return_value=response)
+        result = await mw.dispatch(request, call_next)
+        assert result == response
+        call_next.assert_awaited_once()
+
+    async def test_skip_health_path(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/health"
+        response = MagicMock()
+        call_next = AsyncMock(return_value=response)
+        result = await mw.dispatch(request, call_next)
+        assert result == response
+
+    async def test_skip_chat_path(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/chat"
+        request.headers.get.return_value = ""
+        response = MagicMock()
+        call_next = AsyncMock(return_value=response)
+        result = await mw.dispatch(request, call_next)
+        assert result == response
+
+    async def test_skip_no_cache_header(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers.get.return_value = "no-cache"
+        response = MagicMock()
+        call_next = AsyncMock(return_value=response)
+        result = await mw.dispatch(request, call_next)
+        assert result == response
+
+    async def test_cache_hit(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers.get.return_value = ""
+        request.query_params.items.return_value = []
+        cached_body = b'{"data":"test"}'
+        with patch("shared.utils.cache_middleware.cache.get", AsyncMock(return_value={
+            "body": cached_body,
+            "status": 200,
+            "media_type": "application/json",
+            "headers": {"content-type": "application/json"},
+        })):
+            result = await mw.dispatch(request, AsyncMock())
+            assert result.status_code == 200
+            assert result.headers["X-Cache"] == "HIT"
+
+    async def test_cache_miss_stores(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers.get.return_value = ""
+        request.query_params.items.return_value = []
+
+        async def _iter():
+            yield b"ok"
+
+        response = MagicMock()
+        response.status_code = 200
+        response.headers.get.return_value = "2"
+        response.media_type = "text/plain"
+        response.body_iterator = _iter()
+        call_next = AsyncMock(return_value=response)
+        with patch("shared.utils.cache_middleware.cache.get", AsyncMock(return_value=None)):
+            with patch("shared.utils.cache_middleware.cache.set", AsyncMock()) as mock_set:
+                result = await mw.dispatch(request, call_next)
+                assert result.status_code == 200
+                mock_set.assert_awaited_once()
+
+    async def test_cache_skip_error_response(self):
+        mw = ResponseCacheMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.headers.get.return_value = ""
+        request.query_params.items.return_value = []
+        response = MagicMock()
+        response.status_code = 500
+        call_next = AsyncMock(return_value=response)
+        with patch("shared.utils.cache_middleware.cache.get", AsyncMock(return_value=None)):
+            result = await mw.dispatch(request, call_next)
+            assert result == response
+
+    def test_cache_key_format(self):
+        request = MagicMock()
+        request.method = "GET"
+        request.url.path = "/api/v1/tasks"
+        request.query_params.items.return_value = [("page", "1")]
+        key = ResponseCacheMiddleware._cache_key(request)
+        assert key.startswith("rm:")
+        assert len(key) == 35
+
+
+# ──────────────────────────────────────────────
+# csrf.py
+# ──────────────────────────────────────────────
+
+
+
+class TestCSRFMiddlewareV2:
+
+    async def test_skips_safe_methods(self):
+        mw = CSRFMiddleware(MagicMock())
+        for method in ("GET", "HEAD", "OPTIONS", "TRACE"):
+            request = MagicMock()
+            request.method = method
+            call_next = AsyncMock(return_value=MagicMock(status_code=200))
+            result = await mw.dispatch(request, call_next)
+            assert result.status_code == 200
+
+    async def test_blocks_disallowed_origin(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mw = CSRFMiddleware(MagicMock())
+            request = MagicMock()
+            request.method = "POST"
+            request.headers.get.side_effect = lambda h, d="": ("http://evil.com" if h == "origin" else d)
+            request.state.request_id = "req-123"
+            call_next = AsyncMock()
+            result = await mw.dispatch(request, call_next)
+            assert result.status_code == 403
+            body = json.loads(result.body)
+            assert body["error_code"] == "CSRF_ORIGIN_MISMATCH"
+            call_next.assert_not_awaited()
+
+    async def test_blocks_disallowed_referer(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mw = CSRFMiddleware(MagicMock())
+            request = MagicMock()
+            request.method = "POST"
+            request.headers.get.side_effect = lambda h, d="": ("http://evil.com/page" if h == "referer" else d)
+            request.state.request_id = "req-123"
+            call_next = AsyncMock()
+            result = await mw.dispatch(request, call_next)
+            assert result.status_code == 403
+            body = json.loads(result.body)
+            assert body["error_code"] == "CSRF_ORIGIN_MISMATCH"
+            call_next.assert_not_awaited()
+
+    async def test_allows_allowed_origin(self):
+        with patch("shared.utils.csrf.settings") as mock_settings:
+            mock_settings.cors_origins = "http://allowed.com"
+            mw = CSRFMiddleware(MagicMock())
+            request = MagicMock()
+            request.method = "POST"
+            request.headers.get.side_effect = lambda h, d="": ("http://allowed.com" if h == "origin" else d)
+            call_next = AsyncMock(return_value=MagicMock(status_code=200))
+            result = await mw.dispatch(request, call_next)
+            assert result.status_code == 200
+            call_next.assert_awaited_once()
+
+    async def test_allows_missing_origin_and_referer(self):
+        mw = CSRFMiddleware(MagicMock())
+        request = MagicMock()
+        request.method = "POST"
+        request.url = MagicMock(path="/test")
+        request.headers.get.return_value = ""
+        call_next = AsyncMock(return_value=MagicMock(status_code=200))
+        result = await mw.dispatch(request, call_next)
+        assert result.status_code == 200
+        call_next.assert_awaited_once()
+
+
+# ──────────────────────────────────────────────
+# sanitizer.py
+# ──────────────────────────────────────────────
+
+
+
+class TestSanitizer:
+
+    def test_sanitize_value_removes_script(self):
+        result = sanitize_value("<script>alert(1)</script>")
+        assert result == ""
+
+    def test_sanitize_value_allows_safe_text(self):
+        result = sanitize_value("Hello <b>world</b>")
+        assert "Hello" in result
+
+    def test_sanitize_value_removes_javascript(self):
+        result = sanitize_value("javascript:alert(1)")
+        assert "javascript" not in result.lower()
+
+    def test_sanitize_value_removes_event_handler(self):
+        result = sanitize_value('<div onclick="alert(1)">Click</div>')
+        assert "Click" in result
+
+    def test_sanitize_value_empty(self):
+        result = sanitize_value("")
+        assert result == ""
+
+    def test_sanitize_dict_clean(self):
+        result = sanitize_dict({"key": "hello"})
+        assert result == {"key": "hello"}
+
+    def test_sanitize_dict_empty(self):
+        result = sanitize_dict({})
+        assert result == {}
+
+    def test_sanitize_dict_nested(self):
+        result = sanitize_dict({"a": {"b": "<script>x</script>"}})
+        assert result["a"]["b"] == ""
+
+    def test_sanitize_dict_list(self):
+        result = sanitize_dict({"items": ["<script>a</script>", "hello"]})
+        assert result["items"][0] == ""
+        assert result["items"][1] == "hello"
+
+    def test_sanitize_dict_passes_through_non_string(self):
+        result = sanitize_dict({"num": 42, "flag": True, "none": None})
+        assert result == {"num": 42, "flag": True, "none": None}
+
+    async def test_input_sanitizer_skips_get(self):
+        mw = InputSanitizer(MagicMock())
+        request = MagicMock()
+        request.method = "GET"
+        call_next = AsyncMock(return_value="ok")
+        result = await mw.dispatch(request, call_next)
+        assert result == "ok"
+
+    async def test_input_sanitizer_sanitizes_json(self):
+        mw = InputSanitizer(MagicMock())
+        request = MagicMock()
+        request.method = "POST"
+        request.headers.get.return_value = "application/json"
+        request.json = AsyncMock(return_value={"title": "<script>alert(1)</script>", "desc": "hello"})
+        call_next = AsyncMock(return_value="ok")
+        result = await mw.dispatch(request, call_next)
+        assert result == "ok"
+        import json
+        assert json.loads(request._body) == {"title": "", "desc": "hello"}
+
+    async def test_input_sanitizer_non_json(self):
+        mw = InputSanitizer(MagicMock())
+        request = MagicMock()
+        request.method = "POST"
+        request.headers.get.return_value = "text/plain"
+        request.json = AsyncMock()
+        call_next = AsyncMock(return_value="ok")
+        result = await mw.dispatch(request, call_next)
+        assert result == "ok"
+        request.json.assert_not_called()
+
+
+# ──────────────────────────────────────────────
+# notifications.py
+# ──────────────────────────────────────────────
+
+
+
+class TestNotifications:
+
+    def test_send_push_notification(self):
+        with patch("builtins.print") as mock_print:
+            result = send_push_notification("user-1", "Title", "Body")
+            assert result["success"] is True
+            mock_print.assert_called_once_with("[PUSH] To user user-1: Title - Body")
+
+    def test_send_email_notification_no_key(self):
+        with patch("builtins.print") as mock_print:
+            with patch("shared.utils.notifications.os.getenv", return_value=None):
+                result = send_email_notification("a@b.com", "Subj", "Body")
+                assert result["success"] is True
+                mock_print.assert_called_once_with("[EMAIL] To a@b.com: Subj")
+
+    def test_send_email_notification_with_key(self):
+        with patch("builtins.print") as mock_print:
+            with patch("shared.utils.notifications.os.getenv", return_value="key-123"):
+                with patch("shared.utils.notifications.httpx.post") as mock_post:
+                    mock_response = MagicMock()
+                    mock_response.is_success = True
+                    mock_response.json.return_value = {"id": "msg-123"}
+                    mock_post.return_value = mock_response
+                    result = send_email_notification("a@b.com", "Subj", "Body")
+                    assert result["success"] is True
+                    assert result["message_id"] == "msg-123"
+
+    def test_send_sms_notification(self):
+        with patch("builtins.print") as mock_print:
+            result = send_sms_notification("+1234567890", "Message")
+            assert result["success"] is True
+            mock_print.assert_called_once_with("[SMS] To +1234567890: Message")
+
+    def test_notify_task_overdue(self):
+        with patch("shared.utils.notifications.send_email_notification") as mock:
+            notify_task_overdue("Test Task", "user@example.com")
+            mock.assert_called_once()
+            assert "Overdue" in mock.call_args[0][1]
+
+    def test_notify_critical_alert(self):
+        with patch("shared.utils.notifications.send_sms_notification") as mock:
+            notify_critical_alert("System down", "+1234567890")
+            mock.assert_called_once()
+            assert "ALERT" in mock.call_args[0][1]
+
+    def test_notify_habit_missed(self):
+        with patch("shared.utils.notifications.send_email_notification") as mock:
+            notify_habit_missed("Exercise", "user@example.com")
+            mock.assert_called_once()
+            assert "Missed" in mock.call_args[0][1]
+
+    def test_notify_bedtime_reminder(self):
+        with patch("shared.utils.notifications.send_email_notification") as mock:
+            notify_bedtime_reminder("user@example.com", "10:00 PM")
+            mock.assert_called_once()
+            assert "Bedtime" in mock.call_args[0][1]
+
+
+# ──────────────────────────────────────────────
+# retention.py
+# ──────────────────────────────────────────────
+
+
+
+class TestRetentionPolicies:
+
+    async def test_cleanup_old_audit_logs(self):
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = [{"id": "1"}]
+        mock_supabase.from_.return_value.delete.return_value.lt.return_value.execute.return_value = mock_response
+        with patch("shared.utils.retention.get_supabase_client", return_value=mock_supabase):
+            with patch("shared.utils.retention.logger") as mock_logger:
+                count = await cleanup_old_audit_logs(90)
+                assert count == 1
+                mock_logger.info.assert_called_once()
+
+    async def test_cleanup_old_audit_logs_none(self):
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = []
+        mock_supabase.from_.return_value.delete.return_value.lt.return_value.execute.return_value = mock_response
+        with patch("shared.utils.retention.get_supabase_client", return_value=mock_supabase):
+            count = await cleanup_old_audit_logs(90)
+            assert count == 0
+
+    async def test_cleanup_old_chat_messages(self):
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = [{"id": "1"}]
+        mock_supabase.from_.return_value.delete.return_value.lt.return_value.execute.return_value = mock_response
+        with patch("shared.utils.retention.get_supabase_client", return_value=mock_supabase):
+            count = await cleanup_old_chat_messages(90)
+            assert count == 1
+
+    async def test_cleanup_old_notifications(self):
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = [{"id": "1"}]
+        mock_supabase.from_.return_value.delete.return_value.lt.return_value.execute.return_value = mock_response
+        with patch("shared.utils.retention.get_supabase_client", return_value=mock_supabase):
+            count = await cleanup_old_notifications(30)
+            assert count == 1
+
+    async def test_run_data_retention_cleanup(self):
+        mock_supabase = MagicMock()
+        mock_response = MagicMock()
+        mock_response.data = [{"id": "1"}]
+        mock_supabase.from_.return_value.delete.return_value.lt.return_value.execute.return_value = mock_response
+        with patch("shared.utils.retention.get_supabase_client", return_value=mock_supabase):
+            result = await run_data_retention_cleanup(90, 90, 30)
+            assert result == {"audit_logs_removed": 1, "chat_messages_removed": 1, "notifications_removed": 1}
+
+
+# ──────────────────────────────────────────────
+# retry.py
+# ──────────────────────────────────────────────
+
+
+
+class TestRetryWithBackoff:
+
+    async def test_retry_with_backoff_success(self):
+        fn = AsyncMock(return_value="ok")
+        result = await retry_with_backoff(fn, max_retries=3)
+        assert result == "ok"
+        assert fn.await_count == 1
+
+    async def test_retry_with_backoff_exhausted(self):
+        fn = AsyncMock(side_effect=ValueError("fail"))
+        with pytest.raises(ValueError):
+            await retry_with_backoff(fn, max_retries=2, base_delay=0.01)
+        assert fn.await_count == 3
+
+    async def test_retry_with_backoff_fallback_line(self):
+        fn = AsyncMock(side_effect=ValueError("fail"))
+        with pytest.raises(TypeError):
+            await retry_with_backoff(fn, max_retries=-1)
+
+    async def test_retry_with_backoff_specific_exception(self):
+        fn = AsyncMock(side_effect=RuntimeError("fail"))
+        with pytest.raises(RuntimeError):
+            await retry_with_backoff(fn, max_retries=1, exceptions=(RuntimeError,), base_delay=0.01)
+        assert fn.await_count == 2
+
+    def test_retry_sync_with_backoff_exhausted(self):
+        call_count = 0
+
+        @retry_sync_with_backoff(max_retries=2, base_delay=0.01)
+        def failing_fn():
+            nonlocal call_count
+            call_count += 1
+            raise ValueError("fail")
+
+        with patch("time.sleep"):
+            with pytest.raises(ValueError):
+                failing_fn()
+            assert call_count == 3
+
+
+class TestCircuitBreaker:
+
+    async def test_init(self):
+        cb = CircuitBreaker(failure_threshold=3, recovery_timeout=30)
+        assert cb.failure_threshold == 3
+        assert cb.recovery_timeout == 30
+        assert cb.state == "closed"
+        assert cb.failure_count == 0
+
+    async def test_call_success(self):
+        cb = CircuitBreaker()
+        fn = AsyncMock(return_value="ok")
+        result = await cb.call(fn)
+        assert result == "ok"
+        assert cb.state == "closed"
+        assert cb.failure_count == 0
+
+    async def test_opens_after_threshold(self):
+        cb = CircuitBreaker(failure_threshold=2)
+        fn = AsyncMock(side_effect=ValueError("fail"))
+        for _ in range(2):
+            with pytest.raises(ValueError):
+                await cb.call(fn)
+        assert cb.state == "open"
+        assert cb.failure_count == 2
+
+    async def test_rejects_when_open(self):
+        cb = CircuitBreaker(failure_threshold=1, recovery_timeout=3600)
+        fn = AsyncMock(side_effect=ValueError("fail"))
+        with pytest.raises(ValueError):
+            await cb.call(fn)
+        with pytest.raises(CircuitBreakerOpenError):
+            await cb.call(fn)
+
+    async def test_half_open_success_closes(self):
+        cb = CircuitBreaker(failure_threshold=1, recovery_timeout=0)
+        fn = AsyncMock(side_effect=[ValueError("fail"), "ok"])
+        with pytest.raises(ValueError):
+            await cb.call(fn)
+        assert cb.state == "open"
+        result = await cb.call(fn)
+        assert result == "ok"
+        assert cb.state == "closed"
+        assert cb.failure_count == 0
+
+    async def test_half_open_failure_opens_again(self):
+        cb = CircuitBreaker(failure_threshold=1, recovery_timeout=0)
+        fn = AsyncMock(side_effect=[ValueError("fail1"), ValueError("fail2")])
+        with pytest.raises(ValueError):
+            await cb.call(fn)
+        assert cb.state == "open"
+        with pytest.raises(ValueError):
+            await cb.call(fn)
+        assert cb.state == "open"
+
+
+# ──────────────────────────────────────────────
+# security.py — sanitize_object
+# ──────────────────────────────────────────────
+
+
+class TestSecuritySanitizeObject:
+
+    def test_sanitize_object_string(self):
+        from shared.utils.security import sanitize_object
+        result = sanitize_object("<script>alert(1)</script>")
+        assert result == ""
+
+    def test_sanitize_object_dict(self):
+        from shared.utils.security import sanitize_object
+        result = sanitize_object({"a": "<script>alert(1)</script>", "b": "hello"})
+        assert result["a"] == ""
+        assert result["b"] == "hello"
+
+    def test_sanitize_object_list(self):
+        from shared.utils.security import sanitize_object
+        result = sanitize_object(["<script>a</script>", "hello"])
+        assert result[0] == ""
+        assert result[1] == "hello"
+
+    def test_sanitize_object_nested(self):
+        from shared.utils.security import sanitize_object
+        result = sanitize_object({"a": {"b": "<script>x</script>"}})
+        assert result["a"]["b"] == ""
+
+    def test_sanitize_object_non_string(self):
+        from shared.utils.security import sanitize_object
+        assert sanitize_object(42) == 42
+        assert sanitize_object(None) is None
+        assert sanitize_object(True) is True
+
+
+# ──────────────────────────────────────────────
+# validators.py — remaining coverage
+# ──────────────────────────────────────────────
+
+
+
+class TestValidatorsExtended:
+
+    def test_validate_task_input_valid(self):
+        errors = validate_task_input({"title": "Test", "status": "pending", "priority": "high"})
+        assert errors == []
+
+    def test_validate_task_input_missing_title(self):
+        errors = validate_task_input({"title": ""})
+        assert "title is required" in errors
+
+    def test_validate_task_input_invalid_status(self):
+        errors = validate_task_input({"title": "Task", "status": "invalid"})
+        assert any("status" in e for e in errors)
+
+    def test_validate_task_input_invalid_priority(self):
+        errors = validate_task_input({"title": "Task", "priority": "invalid"})
+        assert any("priority" in e for e in errors)
+
+    def test_validate_project_input_valid(self):
+        errors = validate_project_input({"title": "Project"})
+        assert errors == []
+
+    def test_validate_project_input_missing_title(self):
+        errors = validate_project_input({"title": ""})
+        assert "title is required" in errors
+
+    def test_validate_project_input_invalid_phase(self):
+        errors = validate_project_input({"title": "P", "phase": "invalid"})
+        assert any("phase" in e for e in errors)
+
+    def test_validate_date_range_valid(self):
+        assert validate_date_range("2026-01-01T00:00:00", "2026-12-31T00:00:00") is True
+
+    def test_validate_date_range_invalid_order(self):
+        assert validate_date_range("2026-12-31T00:00:00", "2026-01-01T00:00:00") is False
+
+    def test_validate_date_range_invalid_format(self):
+        assert validate_date_range("not-a-date", "2026-12-31T00:00:00") is False
+
+    def test_sanitize_and_validate_valid(self):
+        sanitized, errors = sanitize_and_validate({"title": "Task", "priority": "high"}, "task")
+        assert errors == []
+
+    def test_sanitize_and_validate_unknown_schema(self):
+        sanitized, errors = sanitize_and_validate({"x": "y"}, "unknown")
+        assert any("unknown" in e for e in errors)
+
+    def test_sanitize_and_validate_sanitizes(self):
+        sanitized, errors = sanitize_and_validate(
+            {"title": "<script>alert(1)</script>", "priority": "high"}, "task"
+        )
+        assert sanitized["title"] == ""
+        assert "title is required" in errors
 
 
 # ──────────────────────────────────────────────
