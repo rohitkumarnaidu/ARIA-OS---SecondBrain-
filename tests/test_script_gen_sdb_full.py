@@ -1,8 +1,7 @@
 """Tests for scripts/gen_sdb_full.py — SDB full generator."""
 
 import sys
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pytest
 
 
