@@ -1,25 +1,28 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import type { Activity } from '@/components/ai/AgentActivityFeed'
 
 interface AgentActivityOptions {
   maxActivities?: number
+  pollIntervalMs?: number
+  enabled?: boolean
 }
 
-const AGENT_ACTIONS: Record<string, string> = {
-  planner: 'Planning your schedule',
-  memory: 'Consolidating memories',
-  learning: 'Detecting patterns',
-  briefing: 'Generating morning briefing',
-  opportunity: 'Scanning opportunities',
-  sleep: 'Analyzing sleep patterns',
-  weekly_review: 'Generating weekly review',
-  nudge: 'Checking course progress',
-  roadmap: 'Optimizing skill roadmap',
+interface AgentActivityApiItem {
+  id: string
+  agent_name: string
+  status: string
+  started_at: string
+  completed_at?: string | null
+  duration_ms?: number | null
+  error_message?: string | null
+  input_summary?: string | null
+  output_summary?: string | null
 }
 
-const agentNameMap: Record<string, string> = {
+const AGENT_DISPLAY_NAMES: Record<string, string> = {
   planner: 'Planner',
   memory: 'Memory',
   learning: 'Learning',
@@ -31,81 +34,78 @@ const agentNameMap: Record<string, string> = {
   roadmap: 'Roadmap Optimizer',
 }
 
-let activityCounter = 0
+function formatAgentName(raw: string): string {
+  return AGENT_DISPLAY_NAMES[raw] || raw.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
 
-export function useAgentActivity({ maxActivities = 20 }: AgentActivityOptions = {}) {
+function buildAction(item: AgentActivityApiItem): string {
+  if (item.status === 'running') {
+    return `${formatAgentName(item.agent_name)} in progress`
+  }
+  if (item.status === 'failed') {
+    return item.error_message || `${formatAgentName(item.agent_name)} encountered an error`
+  }
+  return item.output_summary || `${formatAgentName(item.agent_name)} task completed`
+}
+
+function mapApiItem(item: AgentActivityApiItem): Activity {
+  return {
+    id: item.id,
+    agentName: formatAgentName(item.agent_name),
+    action: buildAction(item),
+    timestamp: item.started_at,
+    status: item.status as 'running' | 'completed' | 'failed',
+  }
+}
+
+export function useAgentActivity({
+  maxActivities = 20,
+  pollIntervalMs = 30000,
+  enabled = true,
+}: AgentActivityOptions = {}) {
+  const { user } = useAuth()
   const [activities, setActivities] = useState<Activity[]>([])
-  const pendingComplete = useRef<Map<string, NodeJS.Timeout>>(new Map())
+  const [loading, setLoading] = useState(false)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const addActivity = useCallback((agentId: string, action: string) => {
-    activityCounter++
-    const id = `act-${Date.now()}-${activityCounter}`
-    const agentName = agentNameMap[agentId] || agentId
-
-    const newActivity: Activity = {
-      id,
-      agentName,
-      action,
-      timestamp: new Date().toISOString(),
-      status: 'running',
+  const fetchActivities = useCallback(async () => {
+    if (!user?.id) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/v1/monitoring/activity?limit=${maxActivities}&offset=0`, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (!res.ok) {
+        setActivities([])
+        return
+      }
+      const json = await res.json()
+      const items: AgentActivityApiItem[] = json?.data ?? []
+      setActivities(items.map(mapApiItem))
+    } catch {
+      setActivities([])
+    } finally {
+      setLoading(false)
     }
-
-    setActivities(prev => [newActivity, ...prev].slice(0, maxActivities))
-    return id
-  }, [maxActivities])
-
-  const completeActivity = useCallback((activityId: string, status: 'completed' | 'failed' = 'completed') => {
-    setActivities(prev =>
-      prev.map(a => (a.id === activityId ? { ...a, status } : a))
-    )
-  }, [])
-
-  const agentStarted = useCallback((agentId: string, customAction?: string) => {
-    const action = customAction || AGENT_ACTIONS[agentId] || `${agentNameMap[agentId] || agentId} running`
-    const id = addActivity(agentId, action)
-
-    const timeout = setTimeout(() => {
-      completeActivity(id, 'completed')
-      pendingComplete.current.delete(id)
-    }, 3000 + Math.random() * 4000)
-
-    pendingComplete.current.set(id, timeout)
-    return id
-  }, [addActivity, completeActivity])
-
-  const agentFailed = useCallback((agentId: string, error?: string) => {
-    const action = error || AGENT_ACTIONS[agentId] || `${agentNameMap[agentId] || agentId} failed`
-    const id = addActivity(agentId, action)
-    completeActivity(id, 'failed')
-    return id
-  }, [addActivity, completeActivity])
-
-  const agentCompleted = useCallback((agentId: string, result?: string) => {
-    const action = result || AGENT_ACTIONS[agentId] || `${agentNameMap[agentId] || agentId} completed`
-    const id = addActivity(agentId, action)
-    completeActivity(id, 'completed')
-    return id
-  }, [addActivity, completeActivity])
-
-  const clearActivities = useCallback(() => {
-    pendingComplete.current.forEach(timeout => clearTimeout(timeout))
-    pendingComplete.current.clear()
-    setActivities([])
-  }, [])
+  }, [user?.id, maxActivities])
 
   useEffect(() => {
-    const timeouts = pendingComplete.current
+    if (!enabled) return
+    fetchActivities()
+    intervalRef.current = setInterval(fetchActivities, pollIntervalMs)
     return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout))
-      timeouts.clear()
+      if (intervalRef.current) clearInterval(intervalRef.current)
     }
+  }, [enabled, fetchActivities, pollIntervalMs])
+
+  const clearActivities = useCallback(() => {
+    setActivities([])
   }, [])
 
   return {
     activities,
-    agentStarted,
-    agentFailed,
-    agentCompleted,
+    loading,
+    refresh: fetchActivities,
     clearActivities,
   }
 }
