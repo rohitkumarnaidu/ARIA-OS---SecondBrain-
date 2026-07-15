@@ -39,7 +39,7 @@
 }%%
 flowchart LR
     Classify["Data Classification<br/>T1–T4"] --> Secure["Security Controls<br/>RLS · Encryption · Auth"]
-    Secure --> Store["Storage & Retention<br/>21 Tables · 18 Categories"]
+    Secure -->     Store["Storage & Retention<br/>27 Tables · 18 Categories"]
     Store --> Quality["Quality Management<br/>Accuracy · Completeness · Freshness"]
     Quality --> Audit["Audit & Lineage<br/>Immutable Log · Change Tracking"]
     Audit --> Retire["Retire & Purge<br/>Defensible Deletion · GDPR Compliance"]
@@ -52,7 +52,7 @@ flowchart LR
 
 Second Brain OS processes **18+ categories of personal data** across a monorepo architecture. This document defines the comprehensive data governance framework covering classification, lifecycle management, quality standards, retention policies, privacy controls, access controls, audit trails, backup/recovery, migration, lineage tracking, and stewardship.
 
-**Scope:** All data within the Second Brain OS ecosystem — Supabase PostgreSQL (21 tables), browser IndexedDB cache, Ollama local AI processing, and third-party API interactions (Claude, Resend, Twilio, Brave Search).
+**Scope:** All data within the Second Brain OS ecosystem — Supabase PostgreSQL (27 tables), browser IndexedDB cache, Ollama local AI processing, and third-party API interactions (Claude, Resend, Twilio, Brave Search).
 
 **Design Principles:**
 1. **User is data owner** — All data belongs to the user; no third party has data rights
@@ -79,7 +79,7 @@ Second Brain OS processes **18+ categories of personal data** across a monorepo 
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │
 │  │  Data       │  │  Data       │  │  Data       │  │  Data      │ │
 │  │  Retention  │  │  Privacy    │  │  Backup &   │  │  Lineage   │ │
-│  │  18 tables  │  │  Controls   │  │  Recovery   │  │  Tracking  │ │
+│  │  27 tables  │  │  Controls   │  │  Recovery   │  │  Tracking  │ │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘ │
 │                                                                     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │
@@ -1075,7 +1075,7 @@ For a single-developer system, training is self-directed with documented referen
 | Data classification accuracy | 100% | Quarterly audit | ✅ 100% |
 | Retention policy compliance | >99% | Monthly verification | ✅ ~100% |
 | Backup success rate | >99.5% | Weekly check | ✅ ~100% |
-| RLS coverage | 100% of tables | Monthly scan | ✅ 100% (21/21 tables) |
+| RLS coverage | 100% of tables | Monthly scan | ✅ 100% (27/27 tables) |
 | Audit log completeness | 100% of critical actions | Semi-annual review | ✅ 100% |
 | PIA completion (for new features) | 100% | Per PR | ✅ (single developer) |
 | Data quality score | >95% | Monthly quality check | ✅ ~98% |

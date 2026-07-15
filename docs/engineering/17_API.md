@@ -1,5 +1,48 @@
 # API Documentation
 
+> **⚠️ DEPRECATED — See OpenAPI Reference**
+
+> This document has been superseded by the human-readable [OpenAPI Reference](api/openapi-reference.md) which documents all 31 routers and ~120 endpoints from source code, and the auto-generated OpenAPI documentation at `/docs` when the server is running.
+
+> **⚠️ DEPRECATION NOTICE:** This document has been superseded by focused API architecture documents. Please refer to the following for specific topics:
+> - **Full API Reference**: [api/openapi-reference.md](api/openapi-reference.md) — Complete endpoint catalog for all 31 routers, request/response schemas, auth, pagination, and error formats (NEW)
+> - **Rate Limiting**: [api/rate-limiting.md](api/rate-limiting.md) — Sliding window limiter, per-endpoint limits, rate limit headers (NEW)
+> - **API Changelog**: [api/changelog.md](api/changelog.md) — Version history, migration guides, sunset policy (NEW)
+> - **REST Conventions**: [REST.md](REST.md) — Resource naming, HTTP methods, status codes, pagination, filtering
+> - **Error Codes**: [ErrorCodes.md](ErrorCodes.md) — Standardized error code catalog (50+ codes)
+> - **API Versioning**: [Versioning.md](Versioning.md) — URL-based versioning, deprecation headers, version lifecycle
+> - **Webhooks**: [Webhooks.md](Webhooks.md) — Future webhook system blueprint
+> - **Server Actions**: [ServerActions.md](ServerActions.md) — Next.js Server Actions integration pattern
+> - **Controllers**: [Controllers.md](Controllers.md) — Route handler pattern, thin controller design
+> - **Realtime**: [Realtime.md](Realtime.md) — Supabase Realtime subscriptions, polling fallback
+>
+> This document retains the endpoint catalog for reference but will not be updated with new endpoints. Future API additions should be documented in the focused docs above.
+
+## Document Control
+
+| Field | Value |
+|---|---|
+| **Document ID** | ENG-API-017 |
+| **Version** | 2.0.0 |
+| **Status** | Deprecated (see notice above) |
+| **Date** | 2026-07-10 |
+| **Classification** | Internal |
+| **Owner** | Developer |
+
+---
+
+## 1. Executive Summary
+
+This document catalogs all REST API endpoints available in Second Brain OS, including request/response schemas, authentication requirements, rate limits, and error responses. It covers 31 routers across 16 functional modules and supporting infrastructure.
+
+---
+
+## 2. Purpose
+
+Provide a comprehensive API reference for frontend developers, AI agents, and third-party integrations consuming the Second Brain OS API.
+
+---
+
 ## Base URL
 
 ```
@@ -1085,3 +1128,95 @@ supabase
 ```
 
 **Realtime Tables:** `tasks`, `chat_messages`, `opportunities`, `daily_briefings`, `goals`, `sleep_logs`, `time_logs`, `habits`
+
+---
+
+## Non-Functional Requirements
+
+| Requirement | Target | Measurement |
+|---|---|---|
+| API response time (p95) | < 500ms | Request ID logging |
+| Error response time | < 100ms | Error handler timing |
+| Pagination overhead | < 10ms | Range query timing |
+| Response size (list, 20 items) | < 50KB | Response body size |
+| OpenAPI spec generation | < 1s | FastAPI startup |
+| API uptime | > 99.9% | Health check polling |
+
+---
+
+## Performance Targets
+
+| Endpoint Category | p50 | p95 | p99 |
+|---|---|---|---|
+| Simple CRUD (GET list) | < 100ms | < 300ms | < 1s |
+| Single resource (GET by ID) | < 50ms | < 200ms | < 500ms |
+| Create/Update (POST/PUT) | < 200ms | < 500ms | < 2s |
+| Delete (DELETE) | < 100ms | < 300ms | < 1s |
+| AI-powered (chat, briefing) | < 10s | < 30s | < 60s |
+| Aggregations (stats, reports) | < 500ms | < 2s | < 5s |
+| Health checks | < 50ms | < 100ms | < 200ms |
+
+---
+
+## Edge Cases
+
+| Edge Case | Handling |
+|---|---|
+| Empty result set | Return `{ "data": [], "total": 0 }` |
+| Invalid UUID | 422 from Pydantic path validation |
+| Missing auth token | 401 with `WWW-Authenticate` header |
+| Expired JWT | 401 with `AUTH_TOKEN_EXPIRED` code |
+| Concurrent updates | Last-write-wins (Supabase default) |
+| Pagination past end | Empty array, not error |
+| Extra fields in request | Pydantic ignores by default |
+| Unicode in text fields | Full UTF-8 support |
+| Empty request body on POST | 422 from Pydantic |
+
+---
+
+## Failure Scenarios
+
+| Scenario | Impact | Recovery |
+|---|---|---|
+| Supabase connection timeout | 500 Internal Server Error | Retry with backoff |
+| AI provider unavailable | 503 with AI fallback message | Client uses offline mode |
+| Rate limit exceeded | 429 with `Retry-After` header | Client waits and retries |
+| Database migration in progress | Temporary 503 | Wait for migration to complete |
+| JWT secret mismatch | All requests return 401 | Check env var configuration |
+
+---
+
+## Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| API surface grows too large | Medium | Medium | Modular routers; versioning strategy |
+| Inconsistent error format across endpoints | Medium | Medium | Standard HTTPException pattern; error codes |
+| Breaking changes in patch releases | Low | High | Strict backward compatibility rules |
+| OpenAPI spec drifts from implementation | Low | Medium | Auto-generated from code (FastAPI) |
+| Rate limiting too aggressive for legitimate use | Low | Medium | Configurable via env vars |
+
+---
+
+## Related Documents
+
+| Document | Purpose |
+|---|---|
+| [Error Catalog](api/error-catalog.md) | Standardized error codes (AUTH_*, RESOURCE_*, AI_*, etc.) and recovery strategies |
+| [Webhook Guide](api/webhook-guide.md) | Real-time event notifications, payload schema, signature verification |
+| [Migration v1 to v2](api/migration-v1-to-v2.md) | Breaking changes, migration steps, rollback plan |
+| [OpenAPI Reference](api/openapi-reference.md) | Interactive API specification (auto-generated) |
+| [Rate Limiting](api/rate-limiting.md) | Per-endpoint rate limit policies and Retry-After headers |
+| [API Changelog](api/changelog.md) | Version history and deprecation notices |
+| [Data Flow Diagrams](../architecture/data-flow-diagrams.md) | Request lifecycle, authentication flow, circuit breaker patterns |
+| [AGENTS.md](../../AGENTS.md) | Master project reference — Section 8 (API Endpoint Reference), Section 24 (API Versioning) |
+
+---
+
+## Revision History
+
+| Version | Date | Author | Changes |
+|---|---|---|---|
+| 1.0.0 | 2026-06-11 | Developer | Initial API documentation |
+| 2.0.0 | 2026-07-10 | Developer | Added deprecation notice pointing to focused API docs (REST.md, RateLimiting.md, ErrorCodes.md, Versioning.md, Webhooks.md, ServerActions.md). Added enterprise sections: NFRs, Performance Targets, Edge Cases, Failure Scenarios, Risks. Added Document Control. |
+| 2.1.0 | 2026-07-12 | Developer | Added Related Documents section cross-referencing error-catalog.md, webhook-guide.md, migration-v1-to-v2.md, data-flow-diagrams.md |

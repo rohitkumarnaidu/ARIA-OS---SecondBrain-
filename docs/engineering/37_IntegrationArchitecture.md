@@ -1,8 +1,17 @@
-# Integration Architecture — Third-Party Services
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-INT-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Integration Architecture â€” Third-Party Services
 
 ## Overview
 
-Second Brain OS integrates with 9 external services to provide AI processing, web search, notifications, calendar sync, health data, and source control. All integrations follow a server-side only pattern — no API keys ever reach the client browser. External calls are made from either Next.js API Routes (server-side), Supabase Edge Functions (Deno), or FastAPI backend.
+Second Brain OS integrates with 9 external services to provide AI processing, web search, notifications, calendar sync, health data, and source control. All integrations follow a server-side only pattern â€” no API keys ever reach the client browser. External calls are made from either Next.js API Routes (server-side), Supabase Edge Functions (Deno), or FastAPI backend.
 
 ---
 
@@ -11,7 +20,7 @@ Second Brain OS integrates with 9 external services to provide AI processing, we
 ```mermaid
 graph TD
     subgraph OS["Second Brain OS"]
-        A["Next.js Server Routes<br/>/api/chat → Ollama/Claude<br/>/api/ai/video → Claude<br/>/api/calendar → Google<br/>/api/github → GitHub"]
+        A["Next.js Server Routes<br/>/api/chat â†’ Ollama/Claude<br/>/api/ai/video â†’ Claude<br/>/api/calendar â†’ Google<br/>/api/github â†’ GitHub"]
         B["Supabase Edge Functions<br/>(Deno Runtime)<br/>Brave Search, Resend,<br/>Twilio, Claude API"]
         C["FastAPI Backend<br/>Google Fit, GitHub,<br/>Calendar OAuth"]
     end
@@ -75,7 +84,7 @@ const { data, error } = await supabase
 
 ---
 
-## 2. Ollama (Local LLM — Primary AI)
+## 2. Ollama (Local LLM â€” Primary AI)
 
 ### Integration Pattern
 
@@ -148,7 +157,7 @@ sequenceDiagram
 
 ---
 
-## 3. Claude API (Anthropic — Fallback AI)
+## 3. Claude API (Anthropic â€” Fallback AI)
 
 ### Integration Pattern
 
@@ -215,7 +224,7 @@ const response = await fetch('https://api.anthropic.com/v1/messages', {
 | Habit Reports | Ollama | ~2/month | Rs. 0 |
 | Daily Briefing | Claude | 30/month | ~$0.60 |
 | Weekly Review | Claude | 4/month | ~$0.20 |
-| Opportunity Parser | Claude | 240/month (8×30) | ~$2.40 |
+| Opportunity Parser | Claude | 240/month (8Ã—30) | ~$2.40 |
 | Roadmap Analysis | Claude | 4/month | ~$0.20 |
 | **Total** | | | **~$3.40/month** |
 
@@ -370,7 +379,7 @@ const response = await fetch('https://api.resend.com/emails', {
   body: JSON.stringify({
     from: 'ARIA <aria@secondbrainos.app>',
     to: 'user@example.com',
-    subject: 'Your Morning Briefing — June 11, 2026',
+    subject: 'Your Morning Briefing â€” June 11, 2026',
     html: '<h1>Good Morning</h1><p>Your top 3 tasks today...</p>'
   })
 })
@@ -440,7 +449,7 @@ const response = await fetch(
 
 ```
 1. Frontend: GET /api/calendar/auth
-   → Redirect to Google OAuth consent screen
+   â†’ Redirect to Google OAuth consent screen
 2. User grants permission for calendar scope
 3. Google redirects to /api/calendar/callback with auth code
 4. Backend exchanges auth code for access_token + refresh_token
@@ -568,7 +577,7 @@ async function sendPushNotification(subscription: PushSubscription, title: strin
   try {
     await webpush.sendNotification(subscription, JSON.stringify({ title, body }));
   } catch (error) {
-    // Subscription expired or invalid → remove from database
+    // Subscription expired or invalid â†’ remove from database
     await supabase.from('users_profile')
       .update({ push_subscription: null })
       .eq('push_subscription->>endpoint', subscription.endpoint);
@@ -625,16 +634,16 @@ async function callExternalAPI<T>(
 
       // Handle specific HTTP errors
       if (response.status === 429) {
-        // Rate limited — wait and retry
+        // Rate limited â€” wait and retry
         await sleep(1000 * Math.pow(2, i));
         continue;
       }
       if (response.status === 401) {
-        // Auth error — refresh token or alert
+        // Auth error â€” refresh token or alert
         throw new AuthError('API key expired or invalid');
       }
       if (response.status >= 500) {
-        // Server error — retry with backoff
+        // Server error â€” retry with backoff
         await sleep(1000 * Math.pow(2, i));
         continue;
       }
