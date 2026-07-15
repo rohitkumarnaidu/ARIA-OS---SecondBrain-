@@ -1,0 +1,126 @@
+name: Weekly Dependency Scan
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  dependency-scan:
+    name: Comprehensive Dependency Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: npm audit
+        run: npm audit --audit-level=high
+        working-directory: apps/web
+        continue-on-error: true
+
+      - name: Install safety
+        run: pip install safety
+      - name: Safety check - API
+        run: safety check -r apps/api/requirements.txt --full-report
+        continue-on-error: true
+        id: safety-api
+      - name: Safety check - Scheduler
+        run: safety check -r services/scheduler/requirements.txt --full-report
+        continue-on-error: true
+        id: safety-scheduler
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: pip-audit - API
+        run: pip-audit -r apps/api/requirements.txt
+        continue-on-error: true
+        id: pipaudit-api
+      - name: pip-audit - Scheduler
+        run: pip-audit -r services/scheduler/requirements.txt
+        continue-on-error: true
+        id: pipaudit-scheduler
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Generate dependency report
+        run: python scripts/dependency-report.py
+        continue-on-error: true
+
+      - name: Upload dependency scan report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-scan-report
+          path: |
+            dependency-report.*
+            trivy-results.sarif
+          retention-days: 30
+
+      - name: Create Issue on Critical Vulnerabilities
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'dependency-report.json';
+
+            if (!fs.existsSync(reportPath)) {
+              console.log('No dependency-report.json found — skipping issue creation.');
+              return;
+            }
+
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            const critical = report.vulnerabilities
+              ? report.vulnerabilities.filter(v => (v.severity || '').toUpperCase() === 'CRITICAL')
+              : [];
+
+            if (critical.length === 0) {
+              console.log('No critical vulnerabilities found — no issue needed.');
+              return;
+            }
+
+            const body = [
+              '## Critical Dependency Vulnerabilities',
+              '',
+              `**Scan Date:** ${report.generated_at || new Date().toISOString()}`,
+              `**Total Critical:** ${critical.length}`,
+              '',
+              '### Vulnerabilities',
+              '',
+              '| Package | Installed | Scanner | Description |',
+              '|---------|-----------|---------|-------------|',
+              ...critical.map(v =>
+                `| ${v.package} | ${v.installed || '?'} | ${v.scanner || '?'} | ${(v.description || '').slice(0, 100)} |`
+              ),
+              '',
+              '---',
+              '> Generated automatically by the Weekly Dependency Scan workflow.',
+              '> Review the dependency-scan-report artifact for full details.',
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Critical Dependency Vulnerabilities — ${new Date().toISOString().split('T')[0]}`,
+              body: body,
+              labels: ['security', 'dependencies', 'automated'],
+            });
