@@ -23,6 +23,27 @@ const typeLabels: Record<string, string> = {
   career: 'Career',
 }
 
+function deadlineBadge(deadline?: string) {
+  if (!deadline) return null
+  const now = Date.now()
+  const deadlineMs = new Date(deadline).getTime()
+  const hoursLeft = (deadlineMs - now) / 3600000
+  if (hoursLeft <= 0 || hoursLeft > 48) return null
+
+  const urgent = hoursLeft < 24
+  return (
+    <span
+      className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+      style={{
+        backgroundColor: urgent ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+        color: urgent ? '#EF4444' : '#F59E0B',
+      }}
+    >
+      Closes in {Math.round(hoursLeft)}h
+    </span>
+  )
+}
+
 export function MatchCard({ match, onViewDetail }: MatchCardProps) {
   const colors = scoreColor(match.score)
 
@@ -66,6 +87,7 @@ export function MatchCard({ match, onViewDetail }: MatchCardProps) {
         )}>
           {match.status}
         </span>
+        {deadlineBadge(match.deadline)}
       </div>
       <p className="text-xs text-[var(--text-tertiary)] line-clamp-2 mb-3">
         {match.description}

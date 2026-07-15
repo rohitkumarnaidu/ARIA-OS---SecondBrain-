@@ -190,10 +190,11 @@ export function OpportunityDetail({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">
+              <label htmlFor="opportunity-status" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">
                 Status
               </label>
               <select
+                id="opportunity-status"
                 value={opportunity.status}
                 onChange={(e) => onStatusChange(opportunity.id, e.target.value as OpportunityStatus)}
                 className="w-full bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)]"
