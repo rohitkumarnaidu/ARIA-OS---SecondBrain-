@@ -1,4 +1,0 @@
-[run]
-omit =
-    scripts/add-react-memo.py
-    scripts/attack-scenarios.py
