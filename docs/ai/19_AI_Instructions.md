@@ -1,16 +1,16 @@
-# 19. AI Instructions — Enterprise Behavioral & Operational Framework
+﻿# 19. AI Instructions â€” Enterprise Behavioral & Operational Framework
 
 | Metadata | Value |
 |---|---|
-| **Document ID** | SB-AI-INSTRUCT-019 |
+| **Document ID** | AI-AIN-001 |
 | **Version** | 4.0.0 |
 | **Status** | Active |
-| **Classification** | Internal — Engineering & AI Operations |
+| **Classification** | Internal â€” Engineering & AI Operations |
 | **Owner** | AI Platform Team |
 | **Last Updated** | 2026-06-11 |
 | **Review Cycle** | Bi-weekly |
-| **Applicable To** | All agents (A00–A14), PromptLoader, LLM clients, scheduler jobs, prompt engineers |
-| **Document Size** | ~38KB, ~2400 lines |
+| **Applicable To** | All agents (A00–A17), PromptLoader, LLM clients, scheduler jobs, prompt engineers |
+| **Document Size** | ~38KB, ~2690 lines |
 | **Dependencies** | `AGENTS.md`, `docs/ai/20_Agent.md`, `packages/ai/prompt_loader.py`, `prompts/` directory |
 
 ---
@@ -23,7 +23,7 @@
 4. [Agent Framework & Orchestration](#4-agent-framework--orchestration)
 5. [Prompt Engineering Standards](#5-prompt-engineering-standards)
 6. [Model Selection Guidelines](#6-model-selection-guidelines)
-7. [AI Agent Registry — Full Specifications](#7-ai-agent-registry--full-specifications)
+7. [AI Agent Registry â€” Full Specifications](#7-ai-agent-registry--full-specifications)
 8. [Memory Management Instructions](#8-memory-management-instructions)
 9. [Knowledge Graph Instructions](#9-knowledge-graph-instructions)
 10. [Context Assembly Pipeline](#10-context-assembly-pipeline)
@@ -31,7 +31,7 @@
 12. [Performance & Cost Optimization](#12-performance--cost-optimization)
 13. [Testing & Validation Procedures](#13-testing--validation-procedures)
 14. [Troubleshooting Guide](#14-troubleshooting-guide)
-15. [Appendix — Version History](#15-appendix--version-history)
+15. [Appendix â€” Version History](#15-appendix--version-history)
 
 ---
 
@@ -107,10 +107,10 @@ flowchart LR
 
 ### 1.1 Document Purpose
 
-**19_AI_Instructions.md** is the definitive operational manual governing all artificial intelligence behavior within Second Brain OS (ARIA OS). It defines how the system's 15 AI agents think, respond, learn, fail, and improve — binding every LLM call, every prompt injection, every fallback path, and every cost decision to a unified behavioral framework.
+**19_AI_Instructions.md** is the definitive operational manual governing all artificial intelligence behavior within Second Brain OS (ARIA OS). It defines how the system's 17 AI agents think, respond, learn, fail, and improve â€” binding every LLM call, every prompt injection, every fallback path, and every cost decision to a unified behavioral framework.
 
 This document is the **single source of truth** for:
-- **AI Agents**: How each of the 15 agents must behave across contexts
+- **AI Agents**: How each of the 17 agents must behave across contexts
 - **Prompt Engineering**: Standards for creating, validating, and versioning prompt files
 - **Model Governance**: When to use Ollama (local) vs Claude (cloud) and how to switch
 - **Safety & Privacy**: Guardrails, injection detection, PII redaction, user data isolation
@@ -124,11 +124,11 @@ This document is the **single source of truth** for:
 ARIA OS follows a **graceful degradation-first** architecture. Every feature must work in three tiers:
 
 ```
-ALGORITHMIC → OLLAMA (local) → CLAUDE (cloud)
+ALGORITHMIC â†’ OLLAMA (local) â†’ CLAUDE (cloud)
 (fastest, cheapest)        (slowest, most expensive)
 ```
 
-This guarantees **zero downtime**: if the AI model is unavailable, the system falls back to algorithmic generation. The user never sees an error — only a slightly simpler response.
+This guarantees **zero downtime**: if the AI model is unavailable, the system falls back to algorithmic generation. The user never sees an error â€” only a slightly simpler response.
 
 ### 1.3 Key Design Decisions
 
@@ -137,7 +137,7 @@ This guarantees **zero downtime**: if the AI model is unavailable, the system fa
 | In-process agents (not microservices) | Lower latency, simpler deployment, no network overhead | ADR-004 |
 | PromptLoader singleton for all prompts | Centralized versioning, validation, caching | `packages/ai/prompt_loader.py` |
 | Ollama default, Claude fallback | Privacy (local), cost (free), with cloud for complex tasks | Section 6 |
-| 15 agents, 8 with LLM, 7 algorithmic | Only use AI when it adds value; algorithmic for deterministic tasks | Section 7 |
+| 17 agents, 13 with LLM, 4 algorithmic | Only use AI when it adds value; algorithmic for deterministic tasks | Section 7 |
 | Exponential backoff retry with 3 attempts | Resilient to transient failures without overloading backends | Section 12.4 |
 | Context truncation at 4000 tokens | Prevents token waste; keeps responses fast and cheap | Section 10.4 |
 | YAML frontmatter on all prompts | Self-documenting, versioned, machine-validatable prompts | Section 5.2 |
@@ -148,7 +148,7 @@ This guarantees **zero downtime**: if the AI model is unavailable, the system fa
 
 ### 2.1 Purpose
 
-This document defines the **complete AI behavioral framework** for Second Brain OS (ARIA OS). It governs every interaction between the system's 15 agents and the user, establishing binding rules for personality, accuracy, privacy, cost, performance, and safety.
+This document defines the **complete AI behavioral framework** for Second Brain OS (ARIA OS). It governs every interaction between the system's 17 agents and the user, establishing binding rules for personality, accuracy, privacy, cost, performance, and safety.
 
 ### 2.2 Audience
 
@@ -164,7 +164,7 @@ This document defines the **complete AI behavioral framework** for Second Brain 
 
 ### 2.3 Applicability
 
-These instructions apply to **ALL** AI agents (A00 through A14), whether they run on Ollama (local) or Claude (cloud). Any agent that calls an LLM must comply with every section below. Non-LLM agents (A04, A07, A11, A12) must comply with sections 2, 3, 4, 8, 11, 12, 13, and 14.
+These instructions apply to **ALL** AI agents (A00 through A17), whether they run on Ollama (local) or Claude (cloud). Any agent that calls an LLM must comply with every section below. Non-LLM agents (A04, A07, A11, A12) must comply with sections 2, 3, 4, 8, 11, 12, 13, and 14.
 
 | ID | Agent Name | LLM Required? | Sections Applicable |
 |---|---|---|---|
@@ -212,60 +212,60 @@ This document is organized into **15 sections** that can be read independently:
 ### 3.1 High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        USER INTERFACE                           │
-│                   (Next.js 14 Frontend)                         │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │ HTTP / WebSocket
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      FASTAPI BACKEND                            │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌──────────────────┐  ┌──────────────────┐  ┌────────────────┐ │
-│  │   REST Routers   │  │  Auth Middleware  │  │ Rate Limiter   │ │
-│  │  (13 modules)    │  │  (JWT validation) │  │ (100 req/min)  │ │
-│  └────────┬─────────┘  └──────────────────┘  └────────────────┘ │
-└───────────┼─────────────────────────────────────────────────────┘
-            │
-            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      AI ORCHESTRATION LAYER                      │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                     ARIA (A00)                             │ │
-│  │       Intent Classification → Agent Dispatch → Synthesis   │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│                           │                                      │
-│     ┌─────────────────────┼─────────────────────┐               │
-│     ▼                     ▼                     ▼               │
-│  ┌─────────┐     ┌──────────────┐     ┌────────────────┐       │
-│  │ Agent A01│ ... │   Agent A14  │     │  PromptLoader   │       │
-│  │ (Planner)│     │  (Nudge)     │     │  (Singleton)    │       │
-│  └────┬────┘     └──────┬───────┘     └────────┬───────┘       │
-│       │                 │                       │                │
-│       ▼                 ▼                       ▼                │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │                    LLM CLIENT LAYER                         │ │
-│  │  ┌──────────────────┐  ┌──────────────────────────────┐    │ │
-│  │  │   Injection      │  │   Model Router               │    │ │
-│  │  │   Detection      │  │   (Ollama → Claude → Algo)   │    │ │
-│  │  └──────────────────┘  └──────────────┬───────────────┘    │ │
-│  │  ┌──────────────────┐  ┌──────────────┴───────────────┐    │ │
-│  │  │   Toxicity       │  │   Schema Validator            │    │ │
-│  │  │   Filter         │  │   (Pydantic model check)      │    │ │
-│  │  └──────────────────┘  └──────────────────────────────┘    │ │
-│  └────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-            │
-            ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     DATA & INFRASTRUCTURE                        │
-├─────────────────────────────────────────────────────────────────┤
-│  ┌────────────┐  ┌────────────┐  ┌──────────┐  ┌──────────────┐│
-│  │  Supabase  │  │   Ollama   │  │  Claude  │  │  Scheduler   ││
-│  │ PostgreSQL │  │ (Local LLM)│  │ (Cloud)  │  │ (APScheduler)││
-│  └────────────┘  └────────────┘  └──────────┘  └──────────────┘│
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        USER INTERFACE                           â”‚
+â”‚                   (Next.js 14 Frontend)                         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚ HTTP / WebSocket
+                           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      FASTAPI BACKEND                            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚   REST Routers   â”‚  â”‚  Auth Middleware  â”‚  â”‚ Rate Limiter   â”‚ â”‚
+â”‚  â”‚  (13 modules)    â”‚  â”‚  (JWT validation) â”‚  â”‚ (100 req/min)  â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+            â”‚
+            â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      AI ORCHESTRATION LAYER                      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚                     ARIA (A00)                             â”‚ â”‚
+â”‚  â”‚       Intent Classification â†’ Agent Dispatch â†’ Synthesis   â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                           â”‚                                      â”‚
+â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”               â”‚
+â”‚     â–¼                     â–¼                     â–¼               â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚ Agent A01â”‚ ... â”‚   Agent A14  â”‚     â”‚  PromptLoader   â”‚       â”‚
+â”‚  â”‚ (Planner)â”‚     â”‚  (Nudge)     â”‚     â”‚  (Singleton)    â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚       â”‚                 â”‚                       â”‚                â”‚
+â”‚       â–¼                 â–¼                       â–¼                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚                    LLM CLIENT LAYER                         â”‚ â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚ â”‚
+â”‚  â”‚  â”‚   Injection      â”‚  â”‚   Model Router               â”‚    â”‚ â”‚
+â”‚  â”‚  â”‚   Detection      â”‚  â”‚   (Ollama â†’ Claude â†’ Algo)   â”‚    â”‚ â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚ â”‚
+â”‚  â”‚  â”‚   Toxicity       â”‚  â”‚   Schema Validator            â”‚    â”‚ â”‚
+â”‚  â”‚  â”‚   Filter         â”‚  â”‚   (Pydantic model check)      â”‚    â”‚ â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+            â”‚
+            â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     DATA & INFRASTRUCTURE                        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  Supabase  â”‚  â”‚   Ollama   â”‚  â”‚  Claude  â”‚  â”‚  Scheduler   â”‚â”‚
+â”‚  â”‚ PostgreSQL â”‚  â”‚ (Local LLM)â”‚  â”‚ (Cloud)  â”‚  â”‚ (APScheduler)â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 3.2 Core Architectural Principles
@@ -287,9 +287,9 @@ Step 2: FastAPI router receives request, extracts user_id from JWT
 Step 3: Rate limiter checks (100 req/min/IP)
 Step 4: Request routed to appropriate endpoint (e.g., /api/chat/)
 Step 5: ARIA orchestrator (A00) classifies intent:
-         - "planning" → route to Planner (A01)
-         - "memory" → route to Memory (A02)
-         - "daily briefing" → route to Briefing (A09)
+         - "planning" â†’ route to Planner (A01)
+         - "memory" â†’ route to Memory (A02)
+         - "daily briefing" â†’ route to Briefing (A09)
 Step 6: Sub-agent executed:
          a. Context assembly: Parallel Supabase queries fetch relevant data
          b. Prompt injection: Load agent prompt + guardrails via PromptLoader
@@ -312,7 +312,7 @@ Step 8: Feedback captured (implicit: did user re-roll? explicit: rating)
 | Scheduler | APScheduler | 3.x | Cron jobs for briefing, review, reminders |
 | Prompt Mgt | PromptLoader | Custom | YAML frontmatter parsing + validation |
 | Logging | structlog | 24.x | Structured JSON logging |
-| Monitoring | Custom metrics | — | Cost, latency, quality tracking |
+| Monitoring | Custom metrics | â€” | Cost, latency, quality tracking |
 
 ---
 
@@ -323,39 +323,39 @@ Step 8: Feedback captured (implicit: did user re-roll? explicit: rating)
 Every agent follows a standardized lifecycle managed by the `ObservableAgent` base class:
 
 ```
-                    ┌──────────────┐
-                    │   INIT       │ ← Load prompt from PromptLoader
-                    └──────┬───────┘
-                           ▼
-                    ┌──────────────┐
-                    │  CONTEXT     │ ← Assemble context from Supabase (parallel)
-                    │  ASSEMBLY    │
-                    └──────┬───────┘
-                           ▼
-                    ┌──────────────┐
-                    │  INJECTION   │ ← Detect prompt injection in user input
-                    │  CHECK       │
-                    └──────┬───────┘
-                           ▼ (if clean)
-                    ┌──────────────┐
-                    │  LLM CALL    │ ← generate_json() with retry + fallback
-                    │  (optional)  │     1. Ollama (local)
-                    └──────┬───────┘     2. Claude (cloud)
-                           ▼              3. Algorithmic (fallback)
-                    ┌──────────────┐
-                    │  SCHEMA      │ ← Validate output against Pydantic model
-                    │  VALIDATION  │     On failure: re-prompt or use unvalidated
-                    └──────┬───────┘
-                           ▼
-                    ┌──────────────┐
-                    │  TOXICITY    │ ← Filter output for harmful content
-                    │  FILTER      │
-                    └──────┬───────┘
-                           ▼
-                    ┌──────────────┐
-                    │  RESPONSE    │ ← Return to user + capture feedback
-                    │  + LOG       │
-                    └──────────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚   INIT       â”‚ â† Load prompt from PromptLoader
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  CONTEXT     â”‚ â† Assemble context from Supabase (parallel)
+                    â”‚  ASSEMBLY    â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  INJECTION   â”‚ â† Detect prompt injection in user input
+                    â”‚  CHECK       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼ (if clean)
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  LLM CALL    â”‚ â† generate_json() with retry + fallback
+                    â”‚  (optional)  â”‚     1. Ollama (local)
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜     2. Claude (cloud)
+                           â–¼              3. Algorithmic (fallback)
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  SCHEMA      â”‚ â† Validate output against Pydantic model
+                    â”‚  VALIDATION  â”‚     On failure: re-prompt or use unvalidated
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  TOXICITY    â”‚ â† Filter output for harmful content
+                    â”‚  FILTER      â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  RESPONSE    â”‚ â† Return to user + capture feedback
+                    â”‚  + LOG       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4.2 ObservableAgent Base Class
@@ -435,13 +435,13 @@ class ObservableAgent(ABC):
         return {"message": "I'm having trouble processing that right now.", "fallback": True}
 ```
 
-### 4.3 ARIA Orchestrator (A00) — Intent Classification
+### 4.3 ARIA Orchestrator (A00) â€” Intent Classification
 
 ARIA is the single entry point for all user-facing AI interactions. It classifies user intent and dispatches to sub-agents:
 
 ```python
 class ARIAOrchestrator(ObservableAgent):
-    """A00 — Central orchestrator for all AI interactions."""
+    """A00 â€” Central orchestrator for all AI interactions."""
 
     INTENT_PATTERNS = {
         "planning": r"\b(plan|schedule|organize|prioritize|today|tomorrow|this week)\b",
@@ -510,14 +510,14 @@ These agents run on schedules, not in response to user messages. They do not go 
 
 | Agent | Cron Schedule | Trigger Method |
 |---|---|---|
-| A04 — Reminder | Every 15 min | APScheduler job |
-| A06 — Opportunity Radar | Daily 6 AM | APScheduler job |
-| A09 — Daily Briefing | Daily 7 AM | APScheduler job |
-| A10 — Weekly Review | Sunday 8 PM | APScheduler job |
-| A11 — Missed Task Checker | Every 15 min | APScheduler job |
-| A12 — Habit Miss Checker | Daily midnight | APScheduler job |
-| A13 — Sleep & Bedtime | Daily 9:30 PM | APScheduler job |
-| A14 — Course Nudge | Daily 6 PM | APScheduler job |
+| A04 â€” Reminder | Every 15 min | APScheduler job |
+| A06 â€” Opportunity Radar | Daily 6 AM | APScheduler job |
+| A09 â€” Daily Briefing | Daily 7 AM | APScheduler job |
+| A10 â€” Weekly Review | Sunday 8 PM | APScheduler job |
+| A11 â€” Missed Task Checker | Every 15 min | APScheduler job |
+| A12 â€” Habit Miss Checker | Daily midnight | APScheduler job |
+| A13 â€” Sleep & Bedtime | Daily 9:30 PM | APScheduler job |
+| A14 â€” Course Nudge | Daily 6 PM | APScheduler job |
 
 ---
 
@@ -529,24 +529,24 @@ Every prompt file in the `prompts/` directory follows a strict architecture:
 
 ```
 prompts/
-├── system/                     # System prompts (always loaded, global)
-│   ├── aria_system.md          # Core ARIA orchestration prompt (12.5KB)
-│   └── guardrails.md           # Safety guardrails prompt (11.7KB)
-├── agents/                     # Per-agent prompt templates
-│   ├── briefing_agent.md       # 957 lines, 7 day profiles, 5 examples
-│   ├── weekly_review_agent.md  # 1264 lines, 5 review profiles, 4 examples
-│   ├── opportunity_radar_agent.md # 822 lines, category matching algorithm
-│   ├── memory_agent.md         # 821 lines, retention/discard logic
-│   ├── learning_agent.md       # 600+ lines, pattern detection
-│   ├── task_agent.md           # 700+ lines, breakdown + prioritization
-│   ├── sleep_agent.md          # 905 lines, 5 sleep profiles, wind-down
-│   └── nudge_agent.md          # 665 lines, 5 nudge scenarios, escalation
-└── templates/                  # Context builders, never sent directly to LLM
-    ├── context_assembly.md     # Data assembly for agent inputs
-    └── email_templates.md      # Digest and notification templates
+â”œâ”€â”€ system/                     # System prompts (always loaded, global)
+â”‚   â”œâ”€â”€ aria_system.md          # Core ARIA orchestration prompt (12.5KB)
+â”‚   â””â”€â”€ guardrails.md           # Safety guardrails prompt (11.7KB)
+â”œâ”€â”€ agents/                     # Per-agent prompt templates
+â”‚   â”œâ”€â”€ briefing_agent.md       # 957 lines, 7 day profiles, 5 examples
+â”‚   â”œâ”€â”€ weekly_review_agent.md  # 1264 lines, 5 review profiles, 4 examples
+â”‚   â”œâ”€â”€ opportunity_radar_agent.md # 822 lines, category matching algorithm
+â”‚   â”œâ”€â”€ memory_agent.md         # 821 lines, retention/discard logic
+â”‚   â”œâ”€â”€ learning_agent.md       # 600+ lines, pattern detection
+â”‚   â”œâ”€â”€ task_agent.md           # 700+ lines, breakdown + prioritization
+â”‚   â”œâ”€â”€ sleep_agent.md          # 905 lines, 5 sleep profiles, wind-down
+â”‚   â””â”€â”€ nudge_agent.md          # 665 lines, 5 nudge scenarios, escalation
+â””â”€â”€ templates/                  # Context builders, never sent directly to LLM
+    â”œâ”€â”€ context_assembly.md     # Data assembly for agent inputs
+    â””â”€â”€ email_templates.md      # Digest and notification templates
 ```
 
-### 5.2 YAML Frontmatter — Required Schema
+### 5.2 YAML Frontmatter â€” Required Schema
 
 Every prompt file MUST have valid YAML frontmatter with these fields:
 
@@ -560,7 +560,7 @@ Every prompt file MUST have valid YAML frontmatter with these fields:
 | `description` | string | System prompts | Min 10 chars | `Daily briefing generator` |
 | `tags` | array | System + Agent | Min 1 tag | `[briefing, daily, morning]` |
 | `last_updated` | date | Optional | ISO 8601 | `2026-06-11` |
-| `approved_by` | string | Optional | — | `developer` |
+| `approved_by` | string | Optional | â€” | `developer` |
 | `review_cycle` | string | Optional | Weekly, biweekly, monthly | `weekly` |
 
 **Example frontmatter:**
@@ -605,7 +605,7 @@ Every agent prompt must follow this structure in order:
  data source references, anti-hallucination rules)
 
 ## Few-Shot Examples
-(3-5 complete input → output examples with explanations)
+(3-5 complete input â†’ output examples with explanations)
 
 ## Edge Cases
 (Empty data, missing fields, contradictory data, errors, boundary conditions)
@@ -614,13 +614,13 @@ Every agent prompt must follow this structure in order:
 (What NOT to do, with examples of bad outputs and why they're bad)
 
 ## Quality Criteria
-(Checklist for self-verification before output — agent must check each item)
+(Checklist for self-verification before output â€” agent must check each item)
 
 ## Error Recovery
 (What to do when generation fails, token budget exceeded, schema validation fails)
 ```
 
-### 5.4 Prompt Loading — PromptLoader API
+### 5.4 Prompt Loading â€” PromptLoader API
 
 All agents load prompts through `PromptLoader` at `packages/ai/prompt_loader.py`:
 
@@ -634,13 +634,13 @@ entry = prompts.get_system("aria_system")           # Scoped to system/
 entry = prompts.get_template("context_assembly")    # Scoped to templates/
 
 # PromptEntry properties
-entry.frontmatter    # dict — parsed YAML frontmatter
-entry.body           # str — markdown body (the prompt content)
-entry.name           # str — filename stem (e.g., "briefing_agent")
-entry.file_path      # Path — full path to file
-entry.system_prompt  # str — alias for body (clarity)
-entry.agent_prompt   # str — alias for body (clarity)
-entry.render(**kwargs)  # str — body.format(**kwargs)
+entry.frontmatter    # dict â€” parsed YAML frontmatter
+entry.body           # str â€” markdown body (the prompt content)
+entry.name           # str â€” filename stem (e.g., "briefing_agent")
+entry.file_path      # Path â€” full path to file
+entry.system_prompt  # str â€” alias for body (clarity)
+entry.agent_prompt   # str â€” alias for body (clarity)
+entry.render(**kwargs)  # str â€” body.format(**kwargs)
 
 # Listing
 prompts.list_prompts()            # All keys
@@ -669,7 +669,7 @@ async def agent_function(user_id: str, context: dict) -> dict:
         # Fallback: inline hardcoded prompt (never fails)
         system_prompt = "You are an AI assistant that helps with productivity."
         user_prompt = f"User context: {context}"
-        logger.warning("[Agent] Using fallback prompt — prompt file not found")
+        logger.warning("[Agent] Using fallback prompt â€” prompt file not found")
 
     return await llm.generate_json(user_prompt, system=system_prompt)
 ```
@@ -678,9 +678,9 @@ async def agent_function(user_id: str, context: dict) -> dict:
 
 | Version Bump | When | Example |
 |---|---|---|
-| **Major** | Breaking output schema change | `2.0.0` → `3.0.0` |
-| **Minor** | New instructions, examples, edge cases | `2.1.0` → `2.2.0` |
-| **Patch** | Fix typos, clarify wording, adjust temperature | `2.1.0` → `2.1.1` |
+| **Major** | Breaking output schema change | `2.0.0` â†’ `3.0.0` |
+| **Minor** | New instructions, examples, edge cases | `2.1.0` â†’ `2.2.0` |
+| **Patch** | Fix typos, clarify wording, adjust temperature | `2.1.0` â†’ `2.1.1` |
 
 Review cycle defaults to **weekly** for all active prompts. During review:
 1. Check quality scores (target > 0.8)
@@ -689,7 +689,7 @@ Review cycle defaults to **weekly** for all active prompts. During review:
 4. Validate frontmatter after changes
 5. Bump version, run full test suite
 
-### 5.7 Prompt Validation — CI Enforcement
+### 5.7 Prompt Validation â€” CI Enforcement
 
 All prompts are validated by `scripts/validate_prompts.py`:
 
@@ -743,36 +743,36 @@ def validate_prompt(filepath: Path) -> list[str]:
 
 | Model | Type | Hosting | Cost | Speed | Quality | Best For |
 |---|---|---|---|---|---|---|
-| **Mistral 7B** | Local LLM | Ollama | Free | Fast (500ms–3s) | Good | Chat, task breakdown, quick analysis |
-| **Llama 3.1 8B** | Local LLM | Ollama | Free | Medium (1s–5s) | Better | Complex reasoning, briefings |
-| **CodeLlama 7B** | Local LLM | Ollama | Free | Fast (500ms–3s) | Good | Code generation, technical queries |
-| **Claude Sonnet 4** | Cloud LLM | Anthropic API | $0.003/K in, $0.015/K out | Slow (2s–10s) | Best | Weekly review, opportunity matching, deep analysis |
+| **Mistral 7B** | Local LLM | Ollama | Free | Fast (500msâ€“3s) | Good | Chat, task breakdown, quick analysis |
+| **Llama 3.1 8B** | Local LLM | Ollama | Free | Medium (1sâ€“5s) | Better | Complex reasoning, briefings |
+| **CodeLlama 7B** | Local LLM | Ollama | Free | Fast (500msâ€“3s) | Good | Code generation, technical queries |
+| **Claude Sonnet 4** | Cloud LLM | Anthropic API | $0.003/K in, $0.015/K out | Slow (2sâ€“10s) | Best | Weekly review, opportunity matching, deep analysis |
 
 ### 6.2 Model Selection Decision Tree
 
 ```
-User Request → ARIA
-        │
-        ▼
-┌─────────────────┐
-│ Is this a simple │
-│ factual query?   │──── Yes ──▶ Algorithmic (no AI needed)
-└─────────────────┘
-        │ No
-        ▼
-┌─────────────────┐
-│ Is Ollama        │
-│ available?       │──── No ──▶ ┌──────────────────┐
-└─────────────────┘            │ Is Claude         │
-        │ Yes                   │ available?        │── No ──▶ Algorithmic
-        ▼                       └──────────────────┘          (last resort)
-┌─────────────────┐                    │ Yes
-│ Complexity check│                    ▼
-│ (token estimate)│             ┌──────────────────┐
-└─────────────────┘             │ Use Claude        │
-        │                       │ Sonnet 4          │
-   ┌────┴────┐                  └──────────────────┘
-   ▼         ▼
+User Request â†’ ARIA
+        â”‚
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Is this a simple â”‚
+â”‚ factual query?   â”‚â”€â”€â”€â”€ Yes â”€â”€â–¶ Algorithmic (no AI needed)
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+        â”‚ No
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Is Ollama        â”‚
+â”‚ available?       â”‚â”€â”€â”€â”€ No â”€â”€â–¶ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜            â”‚ Is Claude         â”‚
+        â”‚ Yes                   â”‚ available?        â”‚â”€â”€ No â”€â”€â–¶ Algorithmic
+        â–¼                       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          (last resort)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                    â”‚ Yes
+â”‚ Complexity checkâ”‚                    â–¼
+â”‚ (token estimate)â”‚             â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜             â”‚ Use Claude        â”‚
+        â”‚                       â”‚ Sonnet 4          â”‚
+   â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+   â–¼         â–¼
 Simple    Complex
 (Ollama)  (Claude)
 ```
@@ -795,7 +795,7 @@ Simple    Complex
 | Roadmap generation | Claude Sonnet 4 | Ollama `llama3.1:8b` | Multi-step reasoning |
 | Career advice | Claude Sonnet 4 | Ollama `llama3.1:8b` | Nuanced judgment |
 
-### 6.4 Dual-Mode Architecture — Client Implementation
+### 6.4 Dual-Mode Architecture â€” Client Implementation
 
 ```python
 import os
@@ -807,7 +807,7 @@ logger = logging.getLogger(__name__)
 
 class LLMClient:
     """
-    Dual-mode LLM client: Ollama (local) → Claude (cloud) → Algorithmic (fallback).
+    Dual-mode LLM client: Ollama (local) â†’ Claude (cloud) â†’ Algorithmic (fallback).
     
     Usage:
         client = LLMClient()
@@ -834,7 +834,7 @@ class LLMClient:
         """
         Generate structured JSON response.
         
-        Flow: Ollama → Claude → raises ConnectionError
+        Flow: Ollama â†’ Claude â†’ raises ConnectionError
         """
         model = model or self.ollama_default
         
@@ -858,7 +858,7 @@ class LLMClient:
             except Exception as e:
                 self.stats["claude_errors"] += 1
                 logger.error(f"[LLM] Claude failed: {e}")
-                raise  # Let caller handle (→ algorithmic fallback)
+                raise  # Let caller handle (â†’ algorithmic fallback)
 
         raise ConnectionError("All AI models unavailable")
 
@@ -952,35 +952,35 @@ llm = LLMClient()  # Module-level singleton
 
 ---
 
-## 7. AI Agent Registry — Full Specifications
+## 7. AI Agent Registry â€” Full Specifications
 
 ### 7.1 Agent Summary Table
 
 | ID | Agent | Type | Trigger | LLM | Prompt File | Module | Status |
 |---|---|---|---|---|---|---|---|
-| A00 | ARIA (Orchestrator) | Orchestrator | User message | Yes | `system/aria_system.md` | — | Design |
-| A01 | Planner | Service | 7 AM + on-demand | Yes | — | — | Design |
-| A02 | Memory | Service | Every chat (bg) | Yes | `agents/memory_agent.md` | `memory_agent.py` | ✅ Live |
-| A03 | Learning | Service | Daily + on-demand | Yes | `agents/learning_agent.md` | `learning_agent.py` | ✅ Live |
-| A04 | Reminder | Cron | Every 15 min | No | — | — | ✅ Live |
-| A05 | Career | Service | Weekly + on-demand | Yes | — | — | Design |
-| A06 | Opportunity | Cron | 6 AM daily | Yes | `agents/opportunity_radar_agent.md` | `opportunity_agent.py` | ✅ Live |
-| A07 | Analytics | Service | Real-time + weekly | No | — | — | Design |
-| A08 | Roadmap | Service | On-demand + weekly | Yes | — | — | Design |
-| A09 | Daily Briefing | Cron | 7 AM daily | Yes | `agents/briefing_agent.md` | `briefing_agent.py` | ✅ Live |
-| A10 | Weekly Review | Cron | Sun 8 PM | Yes | `agents/weekly_review_agent.md` | `weekly_review_agent.py` | ✅ Live |
-| A11 | Missed Task Checker | Cron | Every 15 min | No | — | — | ✅ Live |
-| A12 | Habit Miss Checker | Cron | Midnight daily | No | — | — | ✅ Live |
-| A13 | Sleep & Bedtime | Cron | 9:30 PM + wake | Yes | `agents/sleep_agent.md` | `sleep_agent.py` | ✅ Live |
-| A14 | Course Progress Nudge | Cron | 6 PM daily | Yes | `agents/nudge_agent.md` | `nudge_agent.py` | ✅ Live |
+| A00 | ARIA (Orchestrator) | Orchestrator | User message | Yes | `system/aria_system.md` | â€” | Design |
+| A01 | Planner | Service | 7 AM + on-demand | Yes | â€” | â€” | Design |
+| A02 | Memory | Service | Every chat (bg) | Yes | `agents/memory_agent.md` | `memory_agent.py` | âœ… Live |
+| A03 | Learning | Service | Daily + on-demand | Yes | `agents/learning_agent.md` | `learning_agent.py` | âœ… Live |
+| A04 | Reminder | Cron | Every 15 min | No | â€” | â€” | âœ… Live |
+| A05 | Career | Service | Weekly + on-demand | Yes | â€” | â€” | Design |
+| A06 | Opportunity | Cron | 6 AM daily | Yes | `agents/opportunity_radar_agent.md` | `opportunity_agent.py` | âœ… Live |
+| A07 | Analytics | Service | Real-time + weekly | No | â€” | â€” | Design |
+| A08 | Roadmap | Service | On-demand + weekly | Yes | â€” | â€” | Design |
+| A09 | Daily Briefing | Cron | 7 AM daily | Yes | `agents/briefing_agent.md` | `briefing_agent.py` | âœ… Live |
+| A10 | Weekly Review | Cron | Sun 8 PM | Yes | `agents/weekly_review_agent.md` | `weekly_review_agent.py` | âœ… Live |
+| A11 | Missed Task Checker | Cron | Every 15 min | No | â€” | â€” | âœ… Live |
+| A12 | Habit Miss Checker | Cron | Midnight daily | No | â€” | â€” | âœ… Live |
+| A13 | Sleep & Bedtime | Cron | 9:30 PM + wake | Yes | `agents/sleep_agent.md` | `sleep_agent.py` | âœ… Live |
+| A14 | Course Progress Nudge | Cron | 6 PM daily | Yes | `agents/nudge_agent.md` | `nudge_agent.py` | âœ… Live |
 
 ### 7.2 Per-Agent Behavioral Specifications
 
-#### A00 — ARIA (Orchestrator)
+#### A00 â€” ARIA (Orchestrator)
 
 | Property | Value |
 |---|---|
-| **Role** | Central intelligence — classify intent, dispatch, synthesize |
+| **Role** | Central intelligence â€” classify intent, dispatch, synthesize |
 | **Model** | N/A (orchestrates, not generates) |
 | **Prompt** | `prompts/system/aria_system.md` (12.5KB) |
 | **Precision Required** | High |
@@ -991,7 +991,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Intent classification + routed response |
 | **Fallback** | Regex-based intent classification (no AI needed) |
 
-#### A01 — Planner
+#### A01 â€” Planner
 
 | Property | Value |
 |---|---|
@@ -1004,9 +1004,9 @@ llm = LLMClient()  # Module-level singleton
 | **Special Rules** | Never suggest impossible schedules; always account for existing commitments |
 | **Input** | Tasks, goals, calendar, time entries |
 | **Output** | Prioritized task list with estimated durations |
-| **Fallback** | Sort by priority → due date → estimated effort |
+| **Fallback** | Sort by priority â†’ due date â†’ estimated effort |
 
-#### A02 — Memory
+#### A02 â€” Memory
 
 | Property | Value |
 |---|---|
@@ -1021,7 +1021,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Structured memory insight (pattern, confidence, evidence) |
 | **Fallback** | Template-based pattern extraction |
 
-#### A03 — Learning
+#### A03 â€” Learning
 
 | Property | Value |
 |---|---|
@@ -1036,7 +1036,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Pattern description with statistical backing |
 | **Fallback** | Simple correlation analysis (Pearson on numeric metrics) |
 
-#### A04 — Reminder
+#### A04 â€” Reminder
 
 | Property | Value |
 |---|---|
@@ -1050,13 +1050,13 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Reminder notification with task details |
 | **Fallback** | N/A (already algorithmic) |
 
-#### A05 — Career
+#### A05 â€” Career
 
 | Property | Value |
 |---|---|
 | **Role** | Career planning, skill gap analysis, interview prep |
 | **Model** | Ollama `mistral:7b` |
-| **Prompt** | (Design — not yet created) |
+| **Prompt** | (Design â€” not yet created) |
 | **Precision Required** | High |
 | **Creativity Allowed** | Medium |
 | **Strictness** | Strict |
@@ -1065,7 +1065,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Career recommendations with skill gaps |
 | **Fallback** | Template-based gap analysis |
 
-#### A06 — Opportunity Radar
+#### A06 â€” Opportunity Radar
 
 | Property | Value |
 |---|---|
@@ -1080,7 +1080,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Ranked opportunities with match scores |
 | **Fallback** | Keyword-based matching with lower confidence |
 
-#### A07 — Analytics
+#### A07 â€” Analytics
 
 | Property | Value |
 |---|---|
@@ -1094,13 +1094,13 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Structured analytics report with charts data |
 | **Fallback** | N/A (already algorithmic) |
 
-#### A08 — Roadmap
+#### A08 â€” Roadmap
 
 | Property | Value |
 |---|---|
 | **Role** | Generate goal roadmaps with milestones and timelines |
 | **Model** | Claude Sonnet 4 (needs multi-step reasoning) |
-| **Prompt** | (Design — not yet created) |
+| **Prompt** | (Design â€” not yet created) |
 | **Precision Required** | High |
 | **Creativity Allowed** | Medium |
 | **Strictness** | Strict |
@@ -1109,7 +1109,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Milestone-based roadmap with deadlines |
 | **Fallback** | Linear milestone distribution based on goal priority |
 
-#### A09 — Daily Briefing
+#### A09 â€” Daily Briefing
 
 | Property | Value |
 |---|---|
@@ -1119,12 +1119,12 @@ llm = LLMClient()  # Module-level singleton
 | **Precision Required** | High |
 | **Creativity Allowed** | Low |
 | **Strictness** | Strict |
-| **Special Rules** | Must include sleep-adjusted recommendation; ARIA's Pick™ (one featured task) |
+| **Special Rules** | Must include sleep-adjusted recommendation; ARIA's Pickâ„¢ (one featured task) |
 | **Input** | Tasks, goals, habits, sleep, courses, opportunities |
 | **Output** | Structured briefing: ARIA's Pick, top tasks, sleep note, course focus |
 | **Fallback** | Template-based briefing with top-3 tasks sorted by priority |
 
-#### A10 — Weekly Review
+#### A10 â€” Weekly Review
 
 | Property | Value |
 |---|---|
@@ -1139,7 +1139,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Weekly review with patterns, wins, misses, recommendations |
 | **Fallback** | Pre-computed weekly stats with template commentary |
 
-#### A11 — Missed Task Checker
+#### A11 â€” Missed Task Checker
 
 | Property | Value |
 |---|---|
@@ -1153,7 +1153,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | List of missed tasks with overdue duration |
 | **Fallback** | N/A (already algorithmic) |
 
-#### A12 — Habit Miss Checker
+#### A12 â€” Habit Miss Checker
 
 | Property | Value |
 |---|---|
@@ -1167,7 +1167,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | List of unlogged habits |
 | **Fallback** | N/A (already algorithmic) |
 
-#### A13 — Sleep & Bedtime
+#### A13 â€” Sleep & Bedtime
 
 | Property | Value |
 |---|---|
@@ -1182,7 +1182,7 @@ llm = LLMClient()  # Module-level singleton
 | **Output** | Personalized wind-down message or sleep analysis |
 | **Fallback** | Template-based wind-down message with sleep data |
 
-#### A14 — Course Progress Nudge
+#### A14 â€” Course Progress Nudge
 
 | Property | Value |
 |---|---|
@@ -1203,18 +1203,18 @@ All agents communicate through data, not direct calls:
 
 ```
 ARIA (A00)
-  │
-  ├── User message → classify intent → dispatch to sub-agent
-  │
-  ├── Sub-agent reads/writes to Supabase tables
-  │   ├── tasks (for A01, A04, A11)
-  │   ├── memory (for A02)
-  │   ├── daily_briefings (for A09)
-  │   ├── weekly_reviews (for A10)
-  │   ├── sleep_logs (for A13)
-  │   └── courses + habit_logs (for A14)
-  │
-  └── Sub-agent returns structured response → ARIA formats
+  â”‚
+  â”œâ”€â”€ User message â†’ classify intent â†’ dispatch to sub-agent
+  â”‚
+  â”œâ”€â”€ Sub-agent reads/writes to Supabase tables
+  â”‚   â”œâ”€â”€ tasks (for A01, A04, A11)
+  â”‚   â”œâ”€â”€ memory (for A02)
+  â”‚   â”œâ”€â”€ daily_briefings (for A09)
+  â”‚   â”œâ”€â”€ weekly_reviews (for A10)
+  â”‚   â”œâ”€â”€ sleep_logs (for A13)
+  â”‚   â””â”€â”€ courses + habit_logs (for A14)
+  â”‚
+  â””â”€â”€ Sub-agent returns structured response â†’ ARIA formats
 ```
 
 **Rules:**
@@ -1230,33 +1230,33 @@ ARIA (A00)
 
 ### 8.1 Memory Architecture Overview
 
-Memory in ARIA OS is a **persistent, structured, and privacy-preserving** system managed by the Memory Agent (A02). It stores behavioral patterns, user preferences, and long-term context — not raw conversation logs.
+Memory in ARIA OS is a **persistent, structured, and privacy-preserving** system managed by the Memory Agent (A02). It stores behavioral patterns, user preferences, and long-term context â€” not raw conversation logs.
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│                    MEMORY SYSTEM                           │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  ┌───────────────────┐    ┌──────────────────────────────┐ │
-│  │   Short-Term      │    │      Long-Term Memory          │ │
-│  │   (Session)       │    │  (Supabase `memory` table)    │ │
-│  │                   │    │                               │ │
-│  │ • Current context │    │ • Behavioral patterns         │ │
-│  │ • Last 10 messages│    │ • User preferences            │ │
-│  │ • Active task IDs │    │ • Goal progress summaries     │ │
-│  │ • Recent errors   │    │ • Learning insights           │ │
-│  └───────────────────┘    │ • Productivity profiles       │ │
-│                            │ • Recurring recommendations   │ │
-│                            └──────────────────────────────┘ │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │           Memory Agent (A02)                          │  │
-│  │  Consolidates short-term → long-term every session    │  │
-│  │  Extracts patterns using LLM (Ollama)                 │  │
-│  │  Prunes outdated insights automatically               │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                            │
-└────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    MEMORY SYSTEM                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                            â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚   Short-Term      â”‚    â”‚      Long-Term Memory          â”‚ â”‚
+â”‚  â”‚   (Session)       â”‚    â”‚  (Supabase `memory` table)    â”‚ â”‚
+â”‚  â”‚                   â”‚    â”‚                               â”‚ â”‚
+â”‚  â”‚ â€¢ Current context â”‚    â”‚ â€¢ Behavioral patterns         â”‚ â”‚
+â”‚  â”‚ â€¢ Last 10 messagesâ”‚    â”‚ â€¢ User preferences            â”‚ â”‚
+â”‚  â”‚ â€¢ Active task IDs â”‚    â”‚ â€¢ Goal progress summaries     â”‚ â”‚
+â”‚  â”‚ â€¢ Recent errors   â”‚    â”‚ â€¢ Learning insights           â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ â€¢ Productivity profiles       â”‚ â”‚
+â”‚                            â”‚ â€¢ Recurring recommendations   â”‚ â”‚
+â”‚                            â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                            â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚           Memory Agent (A02)                          â”‚  â”‚
+â”‚  â”‚  Consolidates short-term â†’ long-term every session    â”‚  â”‚
+â”‚  â”‚  Extracts patterns using LLM (Ollama)                 â”‚  â”‚
+â”‚  â”‚  Prunes outdated insights automatically               â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 8.2 Memory Schema
@@ -1451,26 +1451,26 @@ async def recall_memory(user_id: str, query: str,
 
 The knowledge graph provides a **persistent, queryable map of user entities and their relationships**. It supplements the memory system by storing structured relationships between:
 
-- Tasks → Goals → Milestones
-- Courses → Skills → Career Goals
-- Habits → Productivity Patterns
-- Resources → Projects
-- Opportunities → Skills → Interests
+- Tasks â†’ Goals â†’ Milestones
+- Courses â†’ Skills â†’ Career Goals
+- Habits â†’ Productivity Patterns
+- Resources â†’ Projects
+- Opportunities â†’ Skills â†’ Interests
 
 ```
-User ──has──▶ Goal ──has──▶ Milestone
- │                │
- │                ├──has──▶ Task
- │                │
- │                └──requires──▶ Skill
- │
- ├──enrolled──▶ Course ──teaches──▶ Skill
- │
- ├──tracks──▶ Habit ──impacts──▶ Productivity
- │
- └──owns──▶ Resource ──used_in──▶ Project
-                │
-                └──related_to──▶ Opportunity
+User â”€â”€hasâ”€â”€â–¶ Goal â”€â”€hasâ”€â”€â–¶ Milestone
+ â”‚                â”‚
+ â”‚                â”œâ”€â”€hasâ”€â”€â–¶ Task
+ â”‚                â”‚
+ â”‚                â””â”€â”€requiresâ”€â”€â–¶ Skill
+ â”‚
+ â”œâ”€â”€enrolledâ”€â”€â–¶ Course â”€â”€teachesâ”€â”€â–¶ Skill
+ â”‚
+ â”œâ”€â”€tracksâ”€â”€â–¶ Habit â”€â”€impactsâ”€â”€â–¶ Productivity
+ â”‚
+ â””â”€â”€ownsâ”€â”€â–¶ Resource â”€â”€used_inâ”€â”€â–¶ Project
+                â”‚
+                â””â”€â”€related_toâ”€â”€â–¶ Opportunity
 ```
 
 ### 9.2 Knowledge Graph Schema
@@ -1532,10 +1532,10 @@ CREATE INDEX idx_kn_embedding ON knowledge_nodes
 | Task completed | Update node confidence to 1.0, add edge to `completed_with` | Real-time |
 | Course milestone reached | Create node + edge to skill | Real-time |
 | New resource saved | Create node + extract related entities via AI | On save |
-| Weekly review complete | Create cross-module edges (sleep → productivity, etc.) | Weekly |
-| User sets career goal | Create edges from skills → career goal | On change |
-| Habit streak milestone | Create edge from habit → productivity | Real-time |
-| Opportunity created | Create edges from opportunity ↔ matching skills | 6 AM daily |
+| Weekly review complete | Create cross-module edges (sleep â†’ productivity, etc.) | Weekly |
+| User sets career goal | Create edges from skills â†’ career goal | On change |
+| Habit streak milestone | Create edge from habit â†’ productivity | Real-time |
+| Opportunity created | Create edges from opportunity â†” matching skills | 6 AM daily |
 
 ### 9.4 Graph Query Patterns
 
@@ -1598,7 +1598,7 @@ async def get_node_cluster(user_id: str, node_id: str,
                             max_nodes: int = 20) -> list[dict]:
     """
     Get all nodes closely related to this node (1-2 hops).
-    Useful for context assembly — include related entities.
+    Useful for context assembly â€” include related entities.
     """
     related = await find_related_entities(user_id, None, node_id, max_depth=2)
     return related[:max_nodes]
@@ -1895,32 +1895,32 @@ async def truncate_context(context: AgentContext, max_tokens: int = 4000) -> Age
 
 ```
 User Input
-    │
-    ▼
-┌─────────────────────┐
-│ Injection Detection │── Matches ──▶ Block Request + Log Security Event
-│ (9 regex patterns)  │
-└──────────┬──────────┘
-           │ Clean
-           ▼
-┌─────────────────────┐
-│  Toxicity Filter    │── Detected ──▶ Block Output + Investigate Prompt
-│  (Output scanner)   │
-└──────────┬──────────┘
-           │ Clean
-           ▼
-┌─────────────────────┐
-│  PII Scanner        │── Detected ──▶ Redact + Log PII Event (P0)
-│  (Log redaction)    │
-└──────────┬──────────┘
-           │ Clean
-           ▼
-┌─────────────────────┐
-│  Prompt Guardrails  │── Violation ──▶ Block + Return Safe Response
-│  (System prompt)    │
-└──────────┬──────────┘
-           │ Passed
-           ▼
+    â”‚
+    â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Injection Detection â”‚â”€â”€ Matches â”€â”€â–¶ Block Request + Log Security Event
+â”‚ (9 regex patterns)  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚ Clean
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Toxicity Filter    â”‚â”€â”€ Detected â”€â”€â–¶ Block Output + Investigate Prompt
+â”‚  (Output scanner)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚ Clean
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  PII Scanner        â”‚â”€â”€ Detected â”€â”€â–¶ Redact + Log PII Event (P0)
+â”‚  (Log redaction)    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚ Clean
+           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Prompt Guardrails  â”‚â”€â”€ Violation â”€â”€â–¶ Block + Return Safe Response
+â”‚  (System prompt)    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚ Passed
+           â–¼
      Response Sent
 ```
 
@@ -2106,7 +2106,7 @@ class PIIRedactingLogger:
 | Never expose user data to other users | RLS policies; never bypassed in code | P0 |
 | Never store raw LLM responses long-term | Chat messages stored max 30 days; memory stores summaries only | P1 |
 | Never send user data to external services | Ollama is local; Claude API uses anonymous prompts | P1 |
-| Never cache sensitive queries | In-memory cache TTL ≤ 5 min; no disk persistence | P2 |
+| Never cache sensitive queries | In-memory cache TTL â‰¤ 5 min; no disk persistence | P2 |
 | Never bypass guardrails | All LLM calls go through injection detection + toxicity filter | P0 |
 | Never read `.env` or secrets | API keys loaded from environment, never from user input | P0 |
 
@@ -2129,11 +2129,11 @@ class PIIRedactingLogger:
 
 | Metric | Target | Warning | Critical | Measurement |
 |---|---|---|---|---|
-| Response time — Ollama (p95) | < 3s | > 5s | > 10s | Histogram per request |
-| Response time — Claude (p95) | < 5s | > 8s | > 15s | Histogram per request |
-| Response time — Algorithmic (p95) | < 100ms | > 200ms | > 500ms | Histogram per request |
-| AI availability — Ollama | 99.5% | < 99% | < 95% | Success / total requests |
-| AI availability — Claude | 99.9% | < 99.5% | < 98% | API success rate |
+| Response time â€” Ollama (p95) | < 3s | > 5s | > 10s | Histogram per request |
+| Response time â€” Claude (p95) | < 5s | > 8s | > 15s | Histogram per request |
+| Response time â€” Algorithmic (p95) | < 100ms | > 200ms | > 500ms | Histogram per request |
+| AI availability â€” Ollama | 99.5% | < 99% | < 95% | Success / total requests |
+| AI availability â€” Claude | 99.9% | < 99.5% | < 98% | API success rate |
 | Fallback activation rate | < 5% | > 10% | > 20% | Fallbacks / total requests |
 | JSON schema compliance | 100% | < 98% | < 95% | Valid / total structured outputs |
 | Toxicity block rate | 100% | < 99% | < 95% | Blocks / detected toxic outputs |
@@ -2145,37 +2145,37 @@ class PIIRedactingLogger:
 
 ```
 Total Response Time Budget: 3s (Ollama, p95)
-  ├── Context Assembly (Supabase queries):      500ms (max)
-  │     ├── tasks query:                        150ms
-  │     ├── goals query:                        100ms
-  │     ├── sleep query:                         80ms
-  │     ├── habits query:                        70ms
-  │     ├── courses query:                       60ms
-  │     └── memory query:                        40ms
-  ├── Injection Detection:                       50ms
-  ├── LLM Inference:                          2000ms (max)
-  │     ├── Tokenization (input):               100ms
-  │     ├── Model inference:                   1700ms
-  │     └── Output tokenization:                200ms
-  ├── Schema Validation:                         50ms
-  ├── Toxicity Filter:                           50ms
-  └── Response Assembly:                         50ms
+  â”œâ”€â”€ Context Assembly (Supabase queries):      500ms (max)
+  â”‚     â”œâ”€â”€ tasks query:                        150ms
+  â”‚     â”œâ”€â”€ goals query:                        100ms
+  â”‚     â”œâ”€â”€ sleep query:                         80ms
+  â”‚     â”œâ”€â”€ habits query:                        70ms
+  â”‚     â”œâ”€â”€ courses query:                       60ms
+  â”‚     â””â”€â”€ memory query:                        40ms
+  â”œâ”€â”€ Injection Detection:                       50ms
+  â”œâ”€â”€ LLM Inference:                          2000ms (max)
+  â”‚     â”œâ”€â”€ Tokenization (input):               100ms
+  â”‚     â”œâ”€â”€ Model inference:                   1700ms
+  â”‚     â””â”€â”€ Output tokenization:                200ms
+  â”œâ”€â”€ Schema Validation:                         50ms
+  â”œâ”€â”€ Toxicity Filter:                           50ms
+  â””â”€â”€ Response Assembly:                         50ms
 ```
 
 ### 12.3 Performance Optimization Checklist
 
 | Optimization | Impact | Priority | Status |
 |---|---|---|---|
-| Use smaller Ollama model for quick responses | -60% latency | High | ✅ Implemented |
-| Cache prompt file loading (PromptLoader singleton) | -200ms per call | High | ✅ Implemented |
-| Batch context reads from Supabase (asyncio.gather) | -500ms per call | High | ✅ Implemented |
-| Abort AI call if context > 6000 tokens | Avoids wasted compute | Medium | ✅ Implemented |
-| Stream long responses (>200 tokens) | Perceived latency -50% | Medium | ⚠ Partial (Ollama only) |
-| Pre-warm Ollama model on server start | -2s for first call | Medium | ❌ Not yet |
-| Concurrent Supabase queries within one table | -300ms per call | Low | ❌ Not yet |
-| Response compression (gzip) | -30% bandwidth | Low | ❌ Not yet |
-| Semantic caching of AI responses | -100% for repeated queries | Low | ❌ Not yet |
-| Model quantization (4-bit) | -40% inference time | Low | ❌ Not yet |
+| Use smaller Ollama model for quick responses | -60% latency | High | âœ… Implemented |
+| Cache prompt file loading (PromptLoader singleton) | -200ms per call | High | âœ… Implemented |
+| Batch context reads from Supabase (asyncio.gather) | -500ms per call | High | âœ… Implemented |
+| Abort AI call if context > 6000 tokens | Avoids wasted compute | Medium | âœ… Implemented |
+| Stream long responses (>200 tokens) | Perceived latency -50% | Medium | âš  Partial (Ollama only) |
+| Pre-warm Ollama model on server start | -2s for first call | Medium | âŒ Not yet |
+| Concurrent Supabase queries within one table | -300ms per call | Low | âŒ Not yet |
+| Response compression (gzip) | -30% bandwidth | Low | âŒ Not yet |
+| Semantic caching of AI responses | -100% for repeated queries | Low | âŒ Not yet |
+| Model quantization (4-bit) | -40% inference time | Low | âŒ Not yet |
 
 ### 12.4 Cost Optimization
 
@@ -2183,17 +2183,17 @@ Total Response Time Budget: 3s (Ollama, p95)
 
 | Agent | Avg Input Tokens | Avg Output Tokens | Model | Est. Cost/Ollama | Est. Cost/Claude | Frequency/Day |
 |---|---|---|---|---|---|---|
-| A00 — ARIA | 800 | 200 | N/A (orchestrator) | $0 | $0 | 20-50 |
-| A01 — Planner | 600 | 300 | Ollama mistral:7b | $0 | $0.006 | 5-15 |
-| A02 — Memory | 400 | 200 | Ollama mistral:7b | $0 | $0.004 | 20-50 |
-| A03 — Learning | 500 | 300 | Ollama mistral:7b | $0 | $0.005 | 2-5 |
-| A05 — Career | 700 | 400 | Ollama mistral:7b | $0 | $0.008 | 0-2 |
-| A06 — Opportunity | 600 | 1000 | Claude Sonnet 4 | $0 | $0.017 | 1 |
-| A08 — Roadmap | 800 | 600 | Claude Sonnet 4 | $0 | $0.011 | 0-1 |
-| A09 — Briefing | 800 | 600 | Ollama llama3.1:8b | $0 | $0.011 | 1 |
-| A10 — Weekly Review | 1500 | 800 | Claude Sonnet 4 | $0 | $0.016 | 1/week |
-| A13 — Sleep | 300 | 400 | Ollama mistral:7b | $0 | $0.007 | 1-2 |
-| A14 — Nudge | 400 | 200 | Ollama mistral:7b | $0 | $0.004 | 1 |
+| A00 â€” ARIA | 800 | 200 | N/A (orchestrator) | $0 | $0 | 20-50 |
+| A01 â€” Planner | 600 | 300 | Ollama mistral:7b | $0 | $0.006 | 5-15 |
+| A02 â€” Memory | 400 | 200 | Ollama mistral:7b | $0 | $0.004 | 20-50 |
+| A03 â€” Learning | 500 | 300 | Ollama mistral:7b | $0 | $0.005 | 2-5 |
+| A05 â€” Career | 700 | 400 | Ollama mistral:7b | $0 | $0.008 | 0-2 |
+| A06 â€” Opportunity | 600 | 1000 | Claude Sonnet 4 | $0 | $0.017 | 1 |
+| A08 â€” Roadmap | 800 | 600 | Claude Sonnet 4 | $0 | $0.011 | 0-1 |
+| A09 â€” Briefing | 800 | 600 | Ollama llama3.1:8b | $0 | $0.011 | 1 |
+| A10 â€” Weekly Review | 1500 | 800 | Claude Sonnet 4 | $0 | $0.016 | 1/week |
+| A13 â€” Sleep | 300 | 400 | Ollama mistral:7b | $0 | $0.007 | 1-2 |
+| A14 â€” Nudge | 400 | 200 | Ollama mistral:7b | $0 | $0.004 | 1 |
 
 #### Cost Optimization Rules
 
@@ -2202,9 +2202,9 @@ Total Response Time Budget: 3s (Ollama, p95)
 | **Always prefer Ollama** | Free, local, private | Default `USE_LOCAL_AI=true` |
 | **Reserve Claude for complex tasks** | $0.015/output K tokens is expensive | Routing table enforces Claude only for review, opportunity, roadmap |
 | **Batch context reads** | One Supabase query > 10 individual queries | `asyncio.gather()` in context assembly |
-| **Cache identical prompts** | `prompt_text + user_id` hash → 5 min TTL | `packages/shared/utils/cache.py` |
+| **Cache identical prompts** | `prompt_text + user_id` hash â†’ 5 min TTL | `packages/shared/utils/cache.py` |
 | **Token budget enforcement** | `max_tokens` in YAML frontmatter validated at runtime | LLM client checks budget |
-| **Abort on oversized context** | > 6000 tokens → truncate, don't send | Context assembly `truncate_context()` |
+| **Abort on oversized context** | > 6000 tokens â†’ truncate, don't send | Context assembly `truncate_context()` |
 | **Log token usage per session** | Track for cost analysis | `LLMClient.stats` counter |
 | **Use smaller models for simple tasks** | `mistral:7b` for chat, not `llama3.1:8b` | Model selection routing table |
 | **Streaming for long responses** | User perceives faster response | `stream=True` in Ollama calls |
@@ -2320,7 +2320,7 @@ cost_tracker = CostTracker()  # Singleton
 
 | Category | Scope | # Tests | Runner | CI Stage | Coverage Target |
 |---|---|---|---|---|---|
-| **Prompt frontmatter** | All 12+ prompt files have valid YAML | 16 | pytest | Prompts | 100% of prompts |
+| **Prompt frontmatter** | All 22 prompt files have valid YAML | 16 | pytest | Prompts | 100% of prompts |
 | **Agent prompt content** | Per-agent content checks, size, tags | 14 | pytest | Prompts | 100% of agents |
 | **LLM client** | Routing, fallback, retry, timeout | 8 | pytest | Backend | All error paths |
 | **Context assembly** | Truncation, data fetching, error handling | 10 | pytest | Backend | All truncation levels |
@@ -2448,7 +2448,7 @@ grep -r "sk-ant-" . --include="*.py" --include="*.md" --include="*.env" 2>/dev/n
 
 ```python
 #!/usr/bin/env python3
-"""scripts/validate_prompts.py — Validate all prompt YAML frontmatter."""
+"""scripts/validate_prompts.py â€” Validate all prompt YAML frontmatter."""
 
 import yaml
 import sys
@@ -2469,7 +2469,7 @@ def validate_prompt(filepath: Path) -> list[str]:
     # Split frontmatter
     parts = content.split("---", 2)
     if len(parts) < 3:
-        return [f"Malformed frontmatter — expected 3 parts separated by '---'"]
+        return [f"Malformed frontmatter â€” expected 3 parts separated by '---'"]
     
     _, fm_str, body = parts
     
@@ -2523,17 +2523,17 @@ def main():
         if errors:
             all_errors[filepath.relative_to(PROMPTS_DIR).as_posix()] = errors
             total_errors += len(errors)
-            print(f"❌ {filepath.relative_to(PROMPTS_DIR)}:")
+            print(f"âŒ {filepath.relative_to(PROMPTS_DIR)}:")
             for error in errors:
                 print(f"   - {error}")
         else:
-            print(f"✅ {filepath.relative_to(PROMPTS_DIR)}")
+            print(f"âœ… {filepath.relative_to(PROMPTS_DIR)}")
     
     if total_errors > 0:
-        print(f"\n❌ {total_errors} validation error(s) in {len(all_errors)} file(s)")
+        print(f"\nâŒ {total_errors} validation error(s) in {len(all_errors)} file(s)")
         sys.exit(1)
     
-    print(f"\n✅ All {len(prompt_files)} prompts valid")
+    print(f"\nâœ… All {len(prompt_files)} prompts valid")
     sys.exit(0)
 
 if __name__ == "__main__":
@@ -2544,7 +2544,7 @@ if __name__ == "__main__":
 
 ## 14. Troubleshooting Guide
 
-### 14.1 Quick Reference — Common Issues
+### 14.1 Quick Reference â€” Common Issues
 
 | Symptom | Likely Cause | Check First | Solution |
 |---|---|---|---|
@@ -2614,8 +2614,8 @@ for name in prompt_loader.list_prompts():
 
 | Tool | What to Check |
 |---|---|
-| Browser DevTools → Network tab | API response status codes, payloads, timing |
-| Browser DevTools → Console | JavaScript errors, React warnings |
+| Browser DevTools â†’ Network tab | API response status codes, payloads, timing |
+| Browser DevTools â†’ Console | JavaScript errors, React warnings |
 | React DevTools | Component state, props, re-renders |
 | `NEXT_PUBLIC_SUPABASE_URL` env var | Correct Supabase project URL |
 
@@ -2626,7 +2626,7 @@ for name in prompt_loader.list_prompts():
 | FastAPI `/docs` (Swagger UI) | Test API endpoints directly |
 | Backend logs (Railway/terminal) | `ERROR` level messages, tracebacks |
 | `ruff check / py_compile` | Syntax and import errors |
-| Python REPL | `from app.api.tasks import router` — check import path |
+| Python REPL | `from app.api.tasks import router` â€” check import path |
 
 #### AI Layer
 
@@ -2642,10 +2642,10 @@ for name in prompt_loader.list_prompts():
 
 | Tool | What to Check |
 |---|---|
-| Supabase Dashboard → Table Editor | Verify data exists for the user |
-| Supabase Dashboard → SQL Editor | Run ad-hoc queries |
-| Supabase Dashboard → Auth | Verify user has valid session |
-| Supabase Dashboard → RLS | Verify RLS policies are enabled |
+| Supabase Dashboard â†’ Table Editor | Verify data exists for the user |
+| Supabase Dashboard â†’ SQL Editor | Run ad-hoc queries |
+| Supabase Dashboard â†’ Auth | Verify user has valid session |
+| Supabase Dashboard â†’ RLS | Verify RLS policies are enabled |
 
 ### 14.4 Recovery Procedures
 
@@ -2675,16 +2675,18 @@ for name in prompt_loader.list_prompts():
 
 ---
 
-## 15. Appendix — Version History
+## 15. Appendix â€” Version History
 
 | Version | Date | Author | Summary of Changes |
 |---|---|---|---|
-| 1.0.0 | 2026-05-15 | AI Platform Team | Initial AI instructions document — 8 sections, basic behavior rules |
+| 1.0.0 | 2026-05-15 | AI Platform Team | Initial AI instructions document â€” 8 sections, basic behavior rules |
 | 2.0.0 | 2026-06-01 | AI Platform Team | Added dual-mode architecture (Ollama + Claude), context assembly pipeline, cost tracking, personality matrix |
 | 3.0.0 | 2026-06-11 | AI Platform Team | Enterprise upgrade: 22 sections, global behavior rules, personality matrix (7 dimensions), error handling hierarchy, data privacy (10 rules), safety guardrails (5 layers), model switching (6 routing rules), cost optimization (10 rules), performance SLAs (8 metrics), context truncation (8 priority levels), continuous improvement loop, incident response (4 severity levels + 4 playbooks), testing standards (7 categories), monitoring (10 metrics), quick-reference appendix, environment config |
-| 4.0.0 | 2026-06-11 | AI Platform Team | **Comprehensive enterprise upgrade**: Executive summary with design philosophy and key decisions; full AI system architecture overview with data flow diagrams; agent framework with standardized lifecycle, `ObservableAgent` base class, and ARIA orchestrator with intent classification and dispatch; expanded prompt engineering standards with full YAML frontmatter schema, PromptLoader API reference, versioning guidelines, and validation script; model selection guidelines with decision tree, detailed routing table (12 task types), and complete dual-mode client implementation; full AI agent registry (15 agents) with per-agent behavioral specification tables including input/output/fallback for each; memory management instructions with schema, 8 memory categories, consolidation pipeline, recall protocol, pruning rules (6 rules), and privacy guarantees; knowledge graph instructions with full schema (nodes + edges), 9 graph population triggers, 3 query patterns (BFS, shortest path, cluster), context enrichment, and maintenance schedule; context assembly pipeline with dataclass, parallel fetch implementation (11 concurrent queries), truncation strategy (8 priorities with token savings), and performance targets; guardrails and safety protocols with architecture diagram, injection detection (11 pattern categories + anomaly detection), output toxicity filter, PII redaction (6 patterns), absolute prohibitions table, and escalation path; performance and cost optimization with SLO table, latency budget breakdown, optimization checklist, per-agent token budgets, cost tracking implementation, and alerting thresholds; testing and validation procedures with 5 required test patterns (complete code), CI enforcement YAML, pre-commit checklist, and full frontmatter validation script; comprehensive troubleshooting guide with quick-reference table (17 common issues), diagnostic commands, 4-layer debugging guide (frontend/backend/AI/database), 6 recovery procedures, and alert conditions; expanded version history |
+| 4.0.0 | 2026-06-11 | AI Platform Team | **Comprehensive enterprise upgrade**: Executive summary with design philosophy and key decisions; full AI system architecture overview with data flow diagrams; agent framework with standardized lifecycle, `ObservableAgent` base class, and ARIA orchestrator with intent classification and dispatch; expanded prompt engineering standards with full YAML frontmatter schema, PromptLoader API reference, versioning guidelines, and validation script; model selection guidelines with decision tree, detailed routing table (12 task types), and complete dual-mode client implementation; full AI agent registry (17 agents) with per-agent behavioral specification tables including input/output/fallback for each; memory management instructions with schema, 8 memory categories, consolidation pipeline, recall protocol, pruning rules (6 rules), and privacy guarantees; knowledge graph instructions with full schema (nodes + edges), 9 graph population triggers, 3 query patterns (BFS, shortest path, cluster), context enrichment, and maintenance schedule; context assembly pipeline with dataclass, parallel fetch implementation (11 concurrent queries), truncation strategy (8 priorities with token savings), and performance targets; guardrails and safety protocols with architecture diagram, injection detection (11 pattern categories + anomaly detection), output toxicity filter, PII redaction (6 patterns), absolute prohibitions table, and escalation path; performance and cost optimization with SLO table, latency budget breakdown, optimization checklist, per-agent token budgets, cost tracking implementation, and alerting thresholds; testing and validation procedures with 5 required test patterns (complete code), CI enforcement YAML, pre-commit checklist, and full frontmatter validation script; comprehensive troubleshooting guide with quick-reference table (17 common issues), diagnostic commands, 4-layer debugging guide (frontend/backend/AI/database), 6 recovery procedures, and alert conditions; expanded version history |
 
 ---
 
-*End of Document — 19_AI_Instructions.md v4.0.0*
-*Total: ~2400 lines, ~38KB*
+*End of Document â€” 19_AI_Instructions.md v4.0.0*
+*Total: ~2690 lines, ~38KB*
+
+

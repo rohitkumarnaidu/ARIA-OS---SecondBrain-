@@ -1,13 +1,35 @@
+﻿> **âš ï¸ ARCHIVED â€” See individual agent docs**
+
+> This monolithic document (v3.0.0, 5,282 lines) has been replaced by individual agent specifications in `docs/ai/` and `docs/ai/skills/`. See the [AI Agent Index](../architecture/decision-log.md) for the current agent documentation structure.
+
+> **DEPRECATION NOTICE**: This monolithic agent specification (5,266 lines) is being phased out. It has been replaced by individual agent documentation files in `docs/ai/`. See each agent's dedicated doc for current specifications. This file is retained for historical reference and will be removed in Q1 2027.
+>
+> | Agent | New Location |
+> |---|---|
+> | ARIA Orchestrator | [Orchestrator Architecture](./ToolCalling.md) |
+> | Briefing Agent | [BriefingAgent.md](./BriefingAgent.md) |
+> | Weekly Review Agent | [WeeklyReviewAgent.md](./WeeklyReviewAgent.md) |
+> | Opportunity Radar Agent | [OpportunityRadarAgent.md](./OpportunityRadarAgent.md) |
+> | Opportunity Matching Agent | [OpportunityMatchingAgent.md](./OpportunityMatchingAgent.md) |
+> | Memory Agent | [MemoryAgent.md](./MemoryAgent.md) |
+> | Learning Agent | [LearningAgent.md](./LearningAgent.md) |
+> | Task Agent | [TaskAgent.md](./TaskAgent.md) |
+> | Sleep Agent | [SleepAgent.md](./SleepAgent.md) |
+> | Nudge Agent | [NudgeAgent.md](./NudgeAgent.md) |
+> | Roadmap Agent | [RoadmapAgent.md](./RoadmapAgent.md) |
+>
+> > **Note**: Beyond the 11 agents listed above, the Skills system adds 8 specialized sub-agents: skill_assessment, skill_career, skill_evidence, skill_intelligence, skill_market, skill_opportunity, skill_recommendation, and skill_roadmap. See `docs/ai/skills/` for their specifications.
+
 # Agent Architecture & Specification
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-AGENT-001 |
+| Document ID | AI-AGNT-001 |
 | Version | 3.0.0 |
-| Status | Final — Active |
-| Classification | Internal — Architecture |
+| Status | Final â€” Active |
+| Classification | Internal â€” Architecture |
 | Agent Count | 15 (1 Orchestrator + 14 Sub-Agents) |
 | Orchestrator | ARIA |
 | Last Reviewed | 2026-06-11 |
@@ -22,13 +44,13 @@
 ## Executive Summary
 
 ### Purpose
-This document defines the complete agent architecture for ARIA OS — the Second Brain's intelligent orchestration engine. It specifies 15 agents (1 orchestrator + 14 sub-agents) that collectively manage a BTech CSE student's productivity system across tasks, courses, goals, projects, income, habits, sleep, opportunities, and ideas.
+This document defines the complete agent architecture for ARIA OS â€” the Second Brain's intelligent orchestration engine. It specifies 15 agents (1 orchestrator + 14 sub-agents) that collectively manage a BTech CSE student's productivity system across tasks, courses, goals, projects, income, habits, sleep, opportunities, and ideas.
 
 ### Scope
 Covers all agent specifications: mission, responsibilities, I/O contracts, tools, memory architecture, prompts, guardrails, failure recovery, escalation rules, KPIs, observability, evaluation metrics, SLA frameworks, cost tracking, security compliance, testing strategy, deployment lifecycle, and operational runbooks.
 
 ### Architecture Philosophy
-- **In-Process Execution**: All agents run as in-process function calls (Python async), not microservices — minimizing latency and operational complexity
+- **In-Process Execution**: All agents run as in-process function calls (Python async), not microservices â€” minimizing latency and operational complexity
 - **Supabase as System of Record**: All agent data flows through Supabase tables; agents communicate via shared database, not direct calls
 - **LLM Independence**: Agents are designed to work with multiple LLM backends (Ollama, Claude, GPT) via a unified interface; algorithmic agents have zero LLM dependency
 - **Graceful Degradation**: Every agent must handle failure of its dependencies (LLM, DB, external APIs) and degrade gracefully with cached or simplified responses
@@ -175,7 +197,7 @@ graph TD
 
 | Agent | Depends On | Dependency Type | Notes |
 |---|---|---|---|
-| Planner (A01) | Sleep Agent (A13) | Soft — graceful fallback | Sleep score improves schedules |
+| Planner (A01) | Sleep Agent (A13) | Soft â€” graceful fallback | Sleep score improves schedules |
 | Learning (A03) | Planner (A01) | Soft | Study tasks integrated into schedule |
 | Career (A05) | Learning (A03) | Soft | Skills data flows from courses |
 | Analytics (A07) | All agents | Read-only | Aggregates metrics across all agents |
@@ -186,10 +208,10 @@ graph TD
 ---
 
 
-## 1. ARIA — Orchestrator Agent
+## 1. ARIA â€” Orchestrator Agent
 
 ### Mission
-Be the user's single point of intelligence. Receive every message, understand intent, delegate to sub-agents, synthesize outputs, and deliver a coherent, actionable response. ARIA does not act alone — it is the conductor of an orchestra of specialized agents.
+Be the user's single point of intelligence. Receive every message, understand intent, delegate to sub-agents, synthesize outputs, and deliver a coherent, actionable response. ARIA does not act alone â€” it is the conductor of an orchestra of specialized agents.
 
 ### Responsibilities
 - Intent classification: parse every user message into one or more agent intents
@@ -259,7 +281,7 @@ You have access to the user's complete life data through sub-agents. Your job is
 2. Call the right sub-agents in parallel when possible
 3. Synthesize their outputs into a single clear response
 4. Take actions when the user asks (create tasks, update goals, log habits)
-5. Never guess — if you don't have data, say so and offer to help find it
+5. Never guess â€” if you don't have data, say so and offer to help find it
 6. Be direct, honest, and slightly motivational. No fluff. No fake enthusiasm.
 
 Today is {current_date}. The user's current context:
@@ -272,7 +294,7 @@ Today is {current_date}. The user's current context:
 
 #### Guardrails Prompt
 ```
-GUARDRAILS — You MUST follow these rules:
+GUARDRAILS â€” You MUST follow these rules:
 1. NEVER delete data. Always ask before deleting tasks, courses, goals, or projects.
 2. NEVER share the user's data with anyone. You are single-user only.
 3. NEVER make up facts about the user. Use only data from sub-agents.
@@ -314,13 +336,13 @@ GUARDRAILS — You MUST follow these rules:
 
 ### Guardrails
 1. **No data deletion** without explicit user confirmation
-2. **No hallucinated user data** — use only agent-returned data
-3. **No fabricated capabilities** — don't claim features that aren't built
-4. **No off-topic conversations** — stay within productivity/student-life scope
-5. **No over-promising** — don't guarantee outcomes (internships, grades, income)
-6. **No false urgency** — don't create fake deadlines
-7. **No shame** — never guilt the user for missed tasks or skipped habits
-8. **Privacy boundary** — never reference other users' data
+2. **No hallucinated user data** â€” use only agent-returned data
+3. **No fabricated capabilities** â€” don't claim features that aren't built
+4. **No off-topic conversations** â€” stay within productivity/student-life scope
+5. **No over-promising** â€” don't guarantee outcomes (internships, grades, income)
+6. **No false urgency** â€” don't create fake deadlines
+7. **No shame** â€” never guilt the user for missed tasks or skipped habits
+8. **Privacy boundary** â€” never reference other users' data
 
 ### SLA
 
@@ -375,7 +397,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Test data requirements | Mock user with 10 tasks, 5 goals, 3 courses, sleep/habit logs, 7-day chat history |
 
 **Integration Test Scenarios:**
-1. Intent classification: user message → correct agent dispatch
+1. Intent classification: user message â†’ correct agent dispatch
 2. Parallel fan-out: 4 independent agents return within 5s
 3. Sequential pipeline: agent output feeds next agent correctly
 4. Error recovery: one agent fails, orchestrator continues without it
@@ -434,7 +456,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Test data requirements | Mock user with 10 tasks, 5 goals, 3 courses, sleep/habit logs, 7-day chat history |
 
 **Integration Test Scenarios:**
-1. Intent classification: user message → correct agent dispatch
+1. Intent classification: user message â†’ correct agent dispatch
 2. Parallel fan-out: 4 independent agents return within 5s
 3. Sequential pipeline: agent output feeds next agent correctly
 4. Error recovery: one agent fails, orchestrator continues without it
@@ -464,7 +486,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 
 | KPI | Target | Measurement |
 |---|---|---|
-| Response time (p95) | < 3s | Orchestrator → complete response |
+| Response time (p95) | < 3s | Orchestrator â†’ complete response |
 | Agent success rate | > 95% | Successful responses / total calls |
 | User satisfaction | > 4/5 | Implicit (follow-up rate) + explicit (thumbs up/down) |
 | Action accuracy | > 98% | Correct DB writes / total writes |
@@ -528,12 +550,12 @@ Optimize the user's daily schedule. Given all tasks, goals, courses, sleep data,
 | Focus recommendations | Chat response | Natural language |
 
 ### Tools
-- `get_pending_tasks(limit, sort_by)` — Query pending tasks with filters
-- `get_courses_in_progress()` — Active courses with daily targets
-- `calculate_free_time(start, end)` — Find unallocated blocks
-- `get_focus_hours(user_id)` — Analyze historical productive periods
-- `reschedule_task(task_id, new_due_date)` — Move task
-- `create_time_block(task_id, start, end)` — Log planned block
+- `get_pending_tasks(limit, sort_by)` â€” Query pending tasks with filters
+- `get_courses_in_progress()` â€” Active courses with daily targets
+- `calculate_free_time(start, end)` â€” Find unallocated blocks
+- `get_focus_hours(user_id)` â€” Analyze historical productive periods
+- `reschedule_task(task_id, new_due_date)` â€” Move task
+- `create_time_block(task_id, start, end)` â€” Log planned block
 
 ### Memory
 | Type | Retention | Use |
@@ -553,7 +575,7 @@ User Profile:
 - Sleep score today: {sleep_score}/100
 - Peak focus hours: {focus_start}:00 - {focus_end}:00
 - Energy level: {energy_level} (from sleep + past 3 days)
-- Available hours: {available_hours} ({start_time} → {end_time})
+- Available hours: {available_hours} ({start_time} â†’ {end_time})
 
 Tasks (sorted by priority):
 {task_list}
@@ -574,7 +596,7 @@ Rules:
 6. If sleep_score < 50: push hard tasks to afternoon, start with light work
 7. First task of the day: something quick (5-10 min) for momentum
 8. Reserve 30 min buffer for unexpected tasks/overruns
-9. Do not overschedule — leave 15% time free
+9. Do not overschedule â€” leave 15% time free
 ```
 
 ### Prompt Version Reference
@@ -784,8 +806,8 @@ Remember everything about the user that matters. Extract, store, and recall fact
 | Explicit memory commands | "Remember..." / "Don't forget..." / "Forget..." |
 | Task completion patterns | tasks (completed_at, missed_count, category) |
 | Schedule adherence | Planned vs actual daily comparison |
-| Sleep-productivity correlation | sleep_logs × time_entries |
-| Course dropout signals | courses (status → abandoned) |
+| Sleep-productivity correlation | sleep_logs Ã— time_entries |
+| Course dropout signals | courses (status â†’ abandoned) |
 
 ### Outputs
 | Output | Destination |
@@ -796,26 +818,26 @@ Remember everything about the user that matters. Extract, store, and recall fact
 | Memory consolidation | Batch UPDATE (merge, prune, decay) |
 
 ### Tools
-- `store_memory(category, content, importance)` — Write to `aria_memory`
-- `recall_memories(query, limit, min_importance)` — Retrieve relevant memories
-- `update_importance(memory_id, delta)` — Adjust importance score
-- `consolidate_memories()` — Merge similar entries
-- `decay_memories()` — Reduce importance of unused entries
-- `forget_memory(memory_id)` — Explicit deletion
-- `detect_patterns(metric, time_range)` — Behavioral analysis
+- `store_memory(category, content, importance)` â€” Write to `aria_memory`
+- `recall_memories(query, limit, min_importance)` â€” Retrieve relevant memories
+- `update_importance(memory_id, delta)` â€” Adjust importance score
+- `consolidate_memories()` â€” Merge similar entries
+- `decay_memories()` â€” Reduce importance of unused entries
+- `forget_memory(memory_id)` â€” Explicit deletion
+- `detect_patterns(metric, time_range)` â€” Behavioral analysis
 
 ### Memory
 
-The Memory Agent has its own meta-memory — it remembers what it remembered and how important each memory is.
+The Memory Agent has its own meta-memory â€” it remembers what it remembered and how important each memory is.
 
 | Table | Column | Purpose |
 |---|---|---|
 | `aria_memory` | id, user_id, category, content, importance, created_at, last_accessed | Core memory store |
-| — | category | Enum: preferences, facts, patterns, decisions, skills |
-| — | importance | Integer 1-10. 10 = critical, 1 = ephemeral |
-| — | last_accessed | Timestamp. Used for decay calculation |
+| â€” | category | Enum: preferences, facts, patterns, decisions, skills |
+| â€” | importance | Integer 1-10. 10 = critical, 1 = ephemeral |
+| â€” | last_accessed | Timestamp. Used for decay calculation |
 
-**Decay Formula:** `new_importance = original_importance × (1 - 0.01 × days_since_access)`
+**Decay Formula:** `new_importance = original_importance Ã— (1 - 0.01 Ã— days_since_access)`
 
 **Consolidation:** When 3+ memories share the same category + topic, merge into a single entry with average importance.
 
@@ -830,11 +852,11 @@ Conversation:
 {conversation_text}
 
 Extract facts in these categories:
-1. PREFERENCES — Things the user likes/dislikes about how they work
-2. FACTS — Specific personal information (schedule, constraints, relationships)
-3. DECISIONS — Choices the user made that reveal priorities
-4. PATTERNS — Repeated behaviors or stated tendencies
-5. SKILLS — Skills the user mentions having, learning, or wanting
+1. PREFERENCES â€” Things the user likes/dislikes about how they work
+2. FACTS â€” Specific personal information (schedule, constraints, relationships)
+3. DECISIONS â€” Choices the user made that reveal priorities
+4. PATTERNS â€” Repeated behaviors or stated tendencies
+5. SKILLS â€” Skills the user mentions having, learning, or wanting
 
 For each fact, output:
 { "category": "...", "content": "...", "importance": 1-10, "evidence": "quote from conversation" }
@@ -880,7 +902,7 @@ Memory agent operates in short bursts: ~1,000 tokens for extraction, ~500 for re
 2. Never store sensitive personal data (govt IDs, bank details)
 3. Never infer medical or mental health conditions
 4. Allow explicit deletion: "Forget that" must work immediately
-5. Importance score max 10 — no permanent memories
+5. Importance score max 10 â€” no permanent memories
 6. Daily memory extraction limited to 100 entries per user
 7. Memories must be attributable to a specific conversation
 
@@ -1078,13 +1100,13 @@ Optimize the user's learning journey. Track every course, video, book, and resou
 | Progress report | Weekly review section |
 
 ### Tools
-- `get_active_courses()` — All in-progress courses
-- `calculate_pace(course_id)` — Expected vs actual progress
-- `generate_study_task(course_id, minutes)` — Create study task
-- `get_skill_gaps(target_role)` — Compare current skills vs required
-- `recommend_next_courses(goals, history)` — Course suggestions
-- `log_study_session(course_id, duration, topics)` — Record study
-- `get_spaced_review_queue()` — Items due for review
+- `get_active_courses()` â€” All in-progress courses
+- `calculate_pace(course_id)` â€” Expected vs actual progress
+- `generate_study_task(course_id, minutes)` â€” Create study task
+- `get_skill_gaps(target_role)` â€” Compare current skills vs required
+- `recommend_next_courses(goals, history)` â€” Course suggestions
+- `log_study_session(course_id, duration, topics)` â€” Record study
+- `get_spaced_review_queue()` â€” Items due for review
 
 ### Memory
 | Memory Type | Retention | Use |
@@ -1115,7 +1137,7 @@ Rules:
 1. Allocate more time to courses with nearest deadlines
 2. Include spaced repetition for previously studied topics
 3. If focus_score < 50, suggest review/light study instead of new material
-4. Balance across courses — don't let any course get > 60% of study time
+4. Balance across courses â€” don't let any course get > 60% of study time
 5. Generate one study task per course per week minimum
 6. Add a 5-min review of yesterday's study to start each session
 ```
@@ -1158,7 +1180,7 @@ Generate a short, non-judgmental message that:
 1. Never suggest dropping a course unless it's > 50% behind schedule
 2. Never create more than 2 study tasks per day
 3. Always include the "why-enrolled" reason when reminding about a course
-4. Respect abandoned courses — don't repeatedly nudge
+4. Respect abandoned courses â€” don't repeatedly nudge
 5. Study tasks must be realistically sized (15-60 min, never > 90)
 6. Don't recommend courses the user has already completed
 
@@ -1311,7 +1333,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Study task generation | Count per course per day |
 | Behind-schedule alerts | Trigger count per course |
 | Spaced repetition completions | Review completion rate |
-| Course status changes | Enrollment → completion/abandonment |
+| Course status changes | Enrollment â†’ completion/abandonment |
 | Skill updates | Additions to skills array |
 
 ### Evaluation Metrics
@@ -1326,13 +1348,13 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 ## 5. Reminder Agent
 
 ### Mission
-Ensure nothing falls through the cracks. Monitor all time-sensitive items — tasks, habits, courses, opportunities, sleep — and deliver the right notification through the right channel at the right time. Zero silent failures.
+Ensure nothing falls through the cracks. Monitor all time-sensitive items â€” tasks, habits, courses, opportunities, sleep â€” and deliver the right notification through the right channel at the right time. Zero silent failures.
 
 ### Responsibilities
 - Check for overdue tasks every 15 minutes and reschedule
 - Monitor habit completion at midnight and send streak alerts
 - Send bedtime wind-down reminder at 9:30 PM
-- Escalate critical missed items through push → email → SMS channels
+- Escalate critical missed items through push â†’ email â†’ SMS channels
 - Respect user's quiet hours (no notifications during sleep)
 - Prevent notification fatigue by grouping and prioritizing alerts
 - Track reminder effectiveness and adjust channel/threshold over time
@@ -1360,14 +1382,14 @@ Ensure nothing falls through the cracks. Monitor all time-sensitive items — ta
 | Daily briefing ready | Push notification | Browser push |
 
 ### Tools
-- `check_overdue_tasks()` — Query tasks table
-- `check_habit_completion()` — Query habit_logs for today
-- `reschedule_task(task_id, new_date)` — Move overdue task
-- `send_push(user_id, title, body)` — Browser push notification
-- `send_email(user_id, subject, body)` — Via Resend API
-- `send_sms(user_id, body)` — Via Twilio API
-- `is_quiet_hours(user_id)` — Check DND window
-- `log_notification(user_id, type, channel, status)` — Audit trail
+- `check_overdue_tasks()` â€” Query tasks table
+- `check_habit_completion()` â€” Query habit_logs for today
+- `reschedule_task(task_id, new_date)` â€” Move overdue task
+- `send_push(user_id, title, body)` â€” Browser push notification
+- `send_email(user_id, subject, body)` â€” Via Resend API
+- `send_sms(user_id, body)` â€” Via Twilio API
+- `is_quiet_hours(user_id)` â€” Check DND window
+- `log_notification(user_id, type, channel, status)` â€” Audit trail
 
 ### Memory
 | Type | Retention | Use |
@@ -1384,7 +1406,7 @@ No LLM prompts. Reminder Agent is fully algorithmic for reliability.
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
@@ -1392,19 +1414,19 @@ No LLM prompts. Reminder Agent is fully algorithmic for reliability.
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
 ### Context Window
-N/A — fully rule-based
+N/A â€” fully rule-based
 
 ### Guardrails
 1. Never notify during quiet hours (configurable in user profile)
 2. Maximum 3 notifications per hour (prevents fatigue)
 3. Never send SMS before 8 AM or after 9 PM
-4. Missed task checker runs on overdue tasks only — not rescheduled ones
-5. Habit reminders are nudges, not guilt trips — use supportive language
+4. Missed task checker runs on overdue tasks only â€” not rescheduled ones
+5. Habit reminders are nudges, not guilt trips â€” use supportive language
 6. Task escalation only applies to priority >= high or missed >= 3 times
 7. Group notifications: if 3+ alerts pending, combine into one digest
 
@@ -1462,8 +1484,8 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 
 **Integration Test Scenarios:**
 1. Overdue tasks detected and rescheduled within 15-min cycle
-2. Escalation funnel: push → email → SMS triggered at correct miss count thresholds
-3. Quiet hours respected — no notifications sent during DND window
+2. Escalation funnel: push â†’ email â†’ SMS triggered at correct miss count thresholds
+3. Quiet hours respected â€” no notifications sent during DND window
 4. Batch notification groups 3+ alerts into single digest
 5. Hard deadline tasks never rescheduled, only escalated
 
@@ -1521,8 +1543,8 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 
 **Integration Test Scenarios:**
 1. Overdue tasks detected and rescheduled within 15-min cycle
-2. Escalation funnel: push → email → SMS triggered at correct miss count thresholds
-3. Quiet hours respected — no notifications sent during DND window
+2. Escalation funnel: push â†’ email â†’ SMS triggered at correct miss count thresholds
+3. Quiet hours respected â€” no notifications sent during DND window
 4. Batch notification groups 3+ alerts into single digest
 5. Hard deadline tasks never rescheduled, only escalated
 
@@ -1562,13 +1584,13 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Notifications sent | Count per channel per type per day |
 | Notification failures | Count per channel, grouped by error |
 | Task reschedules | Count per day, avg missed_count before reschedule |
-| Escalation events | Log each push → email → SMS transition |
+| Escalation events | Log each push â†’ email â†’ SMS transition |
 | Quiet hour checks | Log any notification attempted during DND |
 
 ### Evaluation Metrics
 | Metric | Method |
 |---|---|
-| Notification → action rate | % of notifications that lead to user action within 1 hour |
+| Notification â†’ action rate | % of notifications that lead to user action within 1 hour |
 | Reschedule accuracy | % of rescheduled tasks completed on new date |
 | Channel preference accuracy | User dismisses push vs opens email vs acts on SMS |
 | Over-notification rate | Days with user muting notifications |
@@ -1606,20 +1628,20 @@ Guide the user's career trajectory. Build a bridge between what the user is lear
 |---|---|
 | Skill gap analysis | Dashboard widget |
 | Course recommendations | Chat response |
-| LinkedIn post draft | Chat (user approves → posts) |
+| LinkedIn post draft | Chat (user approves â†’ posts) |
 | GitHub wrapped card | Monthly summary |
-| Income → skill map | Dashboard chart |
+| Income â†’ skill map | Dashboard chart |
 | Career path suggestion | Weekly review section |
 
 ### Tools
-- `get_skill_inventory()` — Read users_profile.skills
-- `get_target_role_requirements(role)` — External API (market data)
-- `calculate_skill_gaps(current, target)` — Diff analysis
-- `recommend_courses_for_gap(skill)` — Match to course DB
-- `generate_linkedin_post(template_type, data)` — Draft post
-- `get_github_stats(username)` — GitHub API wrapper
-- `map_income_to_skills(income_entries, skills)` — Correlation analysis
-- `detect_career_patterns(ideas, projects, courses)` — Behavioral analysis
+- `get_skill_inventory()` â€” Read users_profile.skills
+- `get_target_role_requirements(role)` â€” External API (market data)
+- `calculate_skill_gaps(current, target)` â€” Diff analysis
+- `recommend_courses_for_gap(skill)` â€” Match to course DB
+- `generate_linkedin_post(template_type, data)` â€” Draft post
+- `get_github_stats(username)` â€” GitHub API wrapper
+- `map_income_to_skills(income_entries, skills)` â€” Correlation analysis
+- `detect_career_patterns(ideas, projects, courses)` â€” Behavioral analysis
 
 ### Memory
 | Type | Retention | Use |
@@ -1646,12 +1668,12 @@ Market requirements for {target_role}:
 {market_requirements}
 
 Output:
-1. READINESS SCORE — 0-100 (based on skill overlap)
-2. SKILL GAPS — List of missing skills, sorted by market demand (high → low)
-3. QUICK WINS — 3 skills that can be acquired in < 2 weeks
-4. PROJECT SUGGESTION — One project that would demonstrate the top 3 missing skills
-5. TIMELINE — Realistic estimate to reach "ready to apply" status
-6. ALTERNATIVE PATHS — 2 adjacent roles that are closer to current skill set
+1. READINESS SCORE â€” 0-100 (based on skill overlap)
+2. SKILL GAPS â€” List of missing skills, sorted by market demand (high â†’ low)
+3. QUICK WINS â€” 3 skills that can be acquired in < 2 weeks
+4. PROJECT SUGGESTION â€” One project that would demonstrate the top 3 missing skills
+5. TIMELINE â€” Realistic estimate to reach "ready to apply" status
+6. ALTERNATIVE PATHS â€” 2 adjacent roles that are closer to current skill set
 ```
 
 #### LinkedIn Post Prompt
@@ -1699,7 +1721,7 @@ Constraints:
 1. Never claim the user has a skill they haven't verified
 2. Never recommend a career path that requires > 2 years of additional education
 3. LinkedIn posts must be approved by user before publishing
-4. Income data is private — never include in LinkedIn drafts
+4. Income data is private â€” never include in LinkedIn drafts
 5. Never compare user's progress to other students
 6. Career timeline estimates must include disclaimer: "based on current pace"
 7. Don't suggest career changes during exam weeks
@@ -1744,7 +1766,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | users_profile (skills), goals, projects, income_entries, courses, ideas |
 | Tables modified | users_profile (skills update), tasks |
-| Privacy considerations | Income data is private — never included in LinkedIn drafts. Skill inventory stored in users_profile with RLS. |
+| Privacy considerations | Income data is private â€” never included in LinkedIn drafts. Skill inventory stored in users_profile with RLS. |
 | RLS implications | RLS on all tables. Career agent reads only; writes to users_profile.skills require user action. |
 | Audit requirements | Skill changes logged with version history. LinkedIn draft generation creates no external record until approved. |
 
@@ -1803,7 +1825,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | users_profile (skills), goals, projects, income_entries, courses, ideas |
 | Tables modified | users_profile (skills update), tasks |
-| Privacy considerations | Income data is private — never included in LinkedIn drafts. Skill inventory stored in users_profile with RLS. |
+| Privacy considerations | Income data is private â€” never included in LinkedIn drafts. Skill inventory stored in users_profile with RLS. |
 | RLS implications | RLS on all tables. Career agent reads only; writes to users_profile.skills require user action. |
 | Audit requirements | Skill changes logged with version history. LinkedIn draft generation creates no external record until approved. |
 
@@ -1836,7 +1858,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Readiness score < 30 with < 1 year to graduation | Alert: "Career readiness is low. Consider intensive focus." |
 | 6 months with no new skill added | Suggest 3 quick-win skills |
 | 3 LinkedIn drafts rejected in a row | Ask user what kind of posts they'd feel comfortable with |
-| Income → skill map shows 0 monetized skills | Suggest freelancing in strongest skill |
+| Income â†’ skill map shows 0 monetized skills | Suggest freelancing in strongest skill |
 
 ### KPIs
 | KPI | Target |
@@ -1883,7 +1905,7 @@ Act as the user's personal job scout. Scan the internet every night for internsh
 |---|---|
 | User skills + interests | users_profile (skills, opportunity_preferences) |
 | Previously shown opportunities | opportunities table (created_at, status) |
-| User action history | opportunities (status=new → saved/applied/rejected) |
+| User action history | opportunities (status=new â†’ saved/applied/rejected) |
 | External scans | Brave Search API, RSS feeds, scrapers |
 | Current level/college | users_profile (year, college) |
 | Career target | goals (type=career_skills) |
@@ -1899,15 +1921,15 @@ Act as the user's personal job scout. Scan the internet every night for internsh
 | Profile refinement suggestion | Chat (after 2 months of data) |
 
 ### Tools
-- `search_internships(query, location)` — Brave Search API
-- `search_hackathons()` — Devfolio/MLH/HackerEarth RSS
-- `search_open_source()` — GitHub Good First Issues API
-- `search_fellowships()` — Scholarship/ fellowship databases
-- `search_freelance_demand()` — Fiverr/Upwork trends
-- `calculate_match_score(opportunity, user_skills)` — Scoring function
-- `get_user_action_history(opportunity_type)` — Behavior analysis
-- `update_opportunity_profile(feedback)` — Preference learning
-- `send_deadline_alert(opportunity_id)` — Push notification
+- `search_internships(query, location)` â€” Brave Search API
+- `search_hackathons()` â€” Devfolio/MLH/HackerEarth RSS
+- `search_open_source()` â€” GitHub Good First Issues API
+- `search_fellowships()` â€” Scholarship/ fellowship databases
+- `search_freelance_demand()` â€” Fiverr/Upwork trends
+- `calculate_match_score(opportunity, user_skills)` â€” Scoring function
+- `get_user_action_history(opportunity_type)` â€” Behavior analysis
+- `update_opportunity_profile(feedback)` â€” Preference learning
+- `send_deadline_alert(opportunity_id)` â€” Push notification
 
 ### Memory
 | Type | Retention | Use |
@@ -1942,7 +1964,7 @@ Calculate:
 4. HISTORY_BONUS: Has user applied to similar opportunities? (+0 to +20)
 5. PENALTY: Has user skipped this category 3+ times? (-15)
 
-FINAL SCORE: (SKILL_MATCH × 0.4) + (INTEREST_MATCH × 0.3) + (TIMING_MATCH × 0.2) + HISTORY_BONUS - PENALTY
+FINAL SCORE: (SKILL_MATCH Ã— 0.4) + (INTEREST_MATCH Ã— 0.3) + (TIMING_MATCH Ã— 0.2) + HISTORY_BONUS - PENALTY
 
 Also generate a 1-sentence personalized reason explaining WHY this matches.
 ```
@@ -1990,7 +2012,7 @@ Generate:
 3. Minimum match score of 40 to surface any opportunity
 4. Respect user's explicit "stop showing me [category]" requests
 5. Never scrape sites that prohibit automated access (check robots.txt)
-6. Opportunity descriptions must be factual — no embellishment
+6. Opportunity descriptions must be factual â€” no embellishment
 7. Deadline alerts only for opportunities with confirmed deadlines
 
 ### SLA
@@ -2199,13 +2221,13 @@ Turn raw data into actionable insights. Continuously analyze the user's behavior
 | Monthly summary | Email + app | Monthly |
 
 ### Tools
-- `calculate_productivity_score(user_id, date)` — Weighted score
-- `get_trend(metric, period)` — Time-series analysis
-- `detect_patterns(data, window)` — Behavioral pattern detection
-- `find_correlations(metric_a, metric_b)` — Cross-metric analysis
-- `predict_goal_completion(goal_id)` — Velocity projection
-- `get_anomalies(metric, threshold)` — Outlier detection
-- `analyze_idea_categories(ideas)` — Pattern extraction
+- `calculate_productivity_score(user_id, date)` â€” Weighted score
+- `get_trend(metric, period)` â€” Time-series analysis
+- `detect_patterns(data, window)` â€” Behavioral pattern detection
+- `find_correlations(metric_a, metric_b)` â€” Cross-metric analysis
+- `predict_goal_completion(goal_id)` â€” Velocity projection
+- `get_anomalies(metric, threshold)` â€” Outlier detection
+- `analyze_idea_categories(ideas)` â€” Pattern extraction
 
 ### Memory
 | Type | Retention | Use |
@@ -2223,14 +2245,14 @@ Turn raw data into actionable insights. Continuously analyze the user's behavior
 WEIGHTS:
 - Tasks completed: 35% (weighted by priority)
 - Study time target hit: 25% (daily goal achieved)
-- Sleep quality: 20% (score × 0.2)
+- Sleep quality: 20% (score Ã— 0.2)
 - Habits maintained: 20% (completed / total)
 
 FORMULA:
-task_score = (completed_tasks × priority_weight) / (total_tasks × max_weight) × 35
-study_score = (actual_minutes / target_minutes) × 25 (capped at 25)
-sleep_score = (sleep_score / 100) × 20
-habit_score = (habits_completed / habits_active) × 20
+task_score = (completed_tasks Ã— priority_weight) / (total_tasks Ã— max_weight) Ã— 35
+study_score = (actual_minutes / target_minutes) Ã— 25 (capped at 25)
+sleep_score = (sleep_score / 100) Ã— 20
+habit_score = (habits_completed / habits_active) Ã— 20
 
 total = min(task_score + study_score + sleep_score + habit_score, 100)
 ```
@@ -2249,11 +2271,11 @@ Previous patterns detected:
 {previous_patterns_json}
 
 Detect:
-1. ONE PATTERN — A behavioral pattern the user likely missed
-2. ONE CORRELATION — Two metrics that moved together (e.g., low sleep → low study)
-3. ONE WARNING — A negative trend if it continues (e.g., "3rd week of declining study")
-4. ONE OPPORTUNITY — Something the user did well that they can double down on
-5. GOAL VELOCITY — For each active goal: on track / slightly behind / significantly behind
+1. ONE PATTERN â€” A behavioral pattern the user likely missed
+2. ONE CORRELATION â€” Two metrics that moved together (e.g., low sleep â†’ low study)
+3. ONE WARNING â€” A negative trend if it continues (e.g., "3rd week of declining study")
+4. ONE OPPORTUNITY â€” Something the user did well that they can double down on
+5. GOAL VELOCITY â€” For each active goal: on track / slightly behind / significantly behind
 
 Format each as a single sentence. Be specific, reference actual numbers.
 No generic advice like "you should study more."
@@ -2268,7 +2290,7 @@ Anomaly thresholds:
 - |z| > 2.5: Flag as anomaly
 - |z| > 3.5: Flag as critical anomaly (generate alert)
 - Negative anomaly: dropped below threshold (bad)
-- Positive anomaly: rose above threshold (good — still flag)
+- Positive anomaly: rose above threshold (good â€” still flag)
 
 Metrics monitored:
 - tasks_completed, study_minutes, sleep_hours, sleep_score,
@@ -2279,7 +2301,7 @@ Metrics monitored:
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-05-01 |
 
@@ -2287,7 +2309,7 @@ Metrics monitored:
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-05-01 |
 
@@ -2295,12 +2317,12 @@ Metrics monitored:
 ~2,000 tokens (weekly data + trends + patterns)
 
 ### Guardrails
-1. All analytics are in-app only — no data sent to external analytics services
+1. All analytics are in-app only â€” no data sent to external analytics services
 2. Never share productivity comparisons with other users
 3. Anomaly alerts must be framed constructively, not critically
 4. Pattern detection confidence must be > 70% before surfacing
-5. Correlations are not causations — always present as "may be related"
-6. Predictions include confidence intervals — never present as certain
+5. Correlations are not causations â€” always present as "may be related"
+6. Predictions include confidence intervals â€” never present as certain
 7. Personal data (income, sleep, habits) never included in shareable exports unless explicitly approved
 
 ### SLA
@@ -2343,7 +2365,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | tasks, time_entries, sleep_logs, habit_logs, income_entries, goals, courses, ideas, chat_messages |
 | Tables modified | daily_briefings (productivity_score), weekly_reviews |
-| Privacy considerations | All analytics are in-app only — zero external data transmission. No individual metrics shared across users. Anomaly detection uses rolling windows, not population data. |
+| Privacy considerations | All analytics are in-app only â€” zero external data transmission. No individual metrics shared across users. Anomaly detection uses rolling windows, not population data. |
 | RLS implications | RLS on all source tables. Analytics writes only to user's own briefings/reviews. |
 | Audit requirements | Score calculations logged with full formula breakdown. Anomaly detections recorded with z-scores and thresholds. |
 
@@ -2402,7 +2424,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | tasks, time_entries, sleep_logs, habit_logs, income_entries, goals, courses, ideas, chat_messages |
 | Tables modified | daily_briefings (productivity_score), weekly_reviews |
-| Privacy considerations | All analytics are in-app only — zero external data transmission. No individual metrics shared across users. Anomaly detection uses rolling windows, not population data. |
+| Privacy considerations | All analytics are in-app only â€” zero external data transmission. No individual metrics shared across users. Anomaly detection uses rolling windows, not population data. |
 | RLS implications | RLS on all source tables. Analytics writes only to user's own briefings/reviews. |
 | Audit requirements | Score calculations logged with full formula breakdown. Anomaly detections recorded with z-scores and thresholds. |
 
@@ -2436,7 +2458,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Sleep debt > 15 hours | Alert: "Sleep debt critical. Prioritize rest." |
 | Study streak broken after 14+ days | Motivational notification |
 | Income drops > 50% week-over-week | Career agent alert |
-| Habit consistency < 20% for 2 weeks | "Simplify your habit set — reduce to 1-2 core habits" |
+| Habit consistency < 20% for 2 weeks | "Simplify your habit set â€” reduce to 1-2 core habits" |
 
 ### KPIs
 | KPI | Target |
@@ -2505,13 +2527,13 @@ Turn every goal into a concrete, visual, and adaptive plan. Build roadmaps that 
 | Scenario plan | Chat response |
 
 ### Tools
-- `parse_text_to_roadmap(text)` — NLP → node structure
-- `parse_image_to_roadmap(image)` — Claude Vision → node structure
-- `calculate_timeline(nodes, hours_per_day, days_per_week)` — Timeline projection
-- `reschedule_downstream(node_id, delay_days)` — Cascade reschedule
-- `check_relevance(milestone)` — Web search for skill/tech relevance
-- `generate_tasks_from_roadmap(goal_id)` — Task creation for each node
-- `run_scenario(hours_per_day, days_per_week, intensity)` — What-if simulation
+- `parse_text_to_roadmap(text)` â€” NLP â†’ node structure
+- `parse_image_to_roadmap(image)` â€” Claude Vision â†’ node structure
+- `calculate_timeline(nodes, hours_per_day, days_per_week)` â€” Timeline projection
+- `reschedule_downstream(node_id, delay_days)` â€” Cascade reschedule
+- `check_relevance(milestone)` â€” Web search for skill/tech relevance
+- `generate_tasks_from_roadmap(goal_id)` â€” Task creation for each node
+- `run_scenario(hours_per_day, days_per_week, intensity)` â€” What-if simulation
 
 ### Memory
 | Type | Retention | Use |
@@ -2610,12 +2632,12 @@ Output:
 ~2,500 tokens (goal + nodes + timeline + relevance data)
 
 ### Guardrails
-1. Roadmaps must be realistic — never promise "learn React in 1 week"
+1. Roadmaps must be realistic â€” never promise "learn React in 1 week"
 2. Hard deadline mode only activated when user confirms (not automatic)
 3. Node count capped at 20 per roadmap (keeps focus)
 4. Rescheduling can't push milestones earlier than original plan (only later)
-5. Relevance checks are suggestions — user decides whether to update
-6. Scenario planning is estimates with ±20% confidence interval
+5. Relevance checks are suggestions â€” user decides whether to update
+6. Scenario planning is estimates with Â±20% confidence interval
 7. Daily task generation from roadmaps: max 1 task per active goal per day
 
 ### SLA
@@ -2759,7 +2781,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Roadmap completion rate | > 60% of milestones hit on time |
 | Reschedule frequency | < 20% of milestones rescheduled |
 | Relevance action rate | > 50% of suggested updates accepted |
-| Task generation → completion | > 40% of generated tasks completed |
+| Task generation â†’ completion | > 40% of generated tasks completed |
 | User satisfaction | Roadmap helps > 80% of users feel more on track |
 
 ### Observability
@@ -2819,16 +2841,16 @@ Deliver a personalized morning briefing every day at 7 AM. Give the user the mos
 | Top-3 completion tracking | tasks (completed_at) | Monitored end-of-day |
 
 ### Tools
-- `get_pending_tasks(limit, sort_by)` — Query pending tasks
-- `get_active_goals()` — Active goals with progress
-- `get_courses_in_progress()` — Courses with daily targets
-- `get_last_night_sleep(user_id)` — Latest sleep log
-- `get_yesterday_habits(user_id)` — Habit completions
-- `get_new_opportunities(since)` — Opportunities since last briefing
-- `get_productivity_score(user_id, date)` — From Analytics Agent
-- `save_briefing(user_id, date, data)` — Write to daily_briefings
-- `send_push(user_id, title, body)` — Push notification
-- `mark_briefing_read(briefing_id)` — Track engagement
+- `get_pending_tasks(limit, sort_by)` â€” Query pending tasks
+- `get_active_goals()` â€” Active goals with progress
+- `get_courses_in_progress()` â€” Courses with daily targets
+- `get_last_night_sleep(user_id)` â€” Latest sleep log
+- `get_yesterday_habits(user_id)` â€” Habit completions
+- `get_new_opportunities(since)` â€” Opportunities since last briefing
+- `get_productivity_score(user_id, date)` â€” From Analytics Agent
+- `save_briefing(user_id, date, data)` â€” Write to daily_briefings
+- `send_push(user_id, title, body)` â€” Push notification
+- `mark_briefing_read(briefing_id)` â€” Track engagement
 
 ### Memory
 | Type | Retention | Use |
@@ -2864,14 +2886,14 @@ YESTERDAY'S SCORE: {productivity_score}
 YESTERDAY'S COMPLETION: {yesterday_completion}%
 
 OUTPUT RULES:
-1. Format: 1-sentence greeting → top pick with reason → 3 bullet tasks → course target → close
+1. Format: 1-sentence greeting â†’ top pick with reason â†’ 3 bullet tasks â†’ course target â†’ close
 2. Total briefing: 4-6 sentences (readable in < 30 seconds)
 3. If sleep_score < 40: acknowledge tiredness, recommend lighter start
 4. If sleep_score > 80: energetic tone, push for hard tasks first
 5. Never shame, never compare
 6. End with one forward-looking sentence
 7. ARIA's pick = single most impactful thing today
-8. Use natural, human language — not corporate or robotic
+8. Use natural, human language â€” not corporate or robotic
 ```
 
 #### Sleep-Adjustment Sub-Prompt
@@ -2913,7 +2935,7 @@ Adjust briefing:
 5. ARIA's pick must have a clear, data-backed reason
 6. Never surface more than 2 new opportunities in briefing
 7. Briefing tone adjusts to sleep score but never shames
-8. Course target must be realistic — never > 120 min unless user configured
+8. Course target must be realistic â€” never > 120 min unless user configured
 9. If score < 30: skip course target entirely, focus on rest
 
 ### SLA
@@ -2973,7 +2995,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 2. Top-3 task selection respects priority, deadline urgency, and energy level
 3. Sleep score < 40 produces lighter briefing with rest recommendation
 4. Empty task list generates briefing from goals/courses/habits only
-5. Briefing delivery at 7:00 AM ± 2 min cron trigger verification
+5. Briefing delivery at 7:00 AM Â± 2 min cron trigger verification
 
 ### SLA
 
@@ -3032,7 +3054,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 2. Top-3 task selection respects priority, deadline urgency, and energy level
 3. Sleep score < 40 produces lighter briefing with rest recommendation
 4. Empty task list generates briefing from goals/courses/habits only
-5. Briefing delivery at 7:00 AM ± 2 min cron trigger verification
+5. Briefing delivery at 7:00 AM Â± 2 min cron trigger verification
 
 ### Failure Recovery
 | Failure | Action |
@@ -3056,7 +3078,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 ### KPIs
 | KPI | Target |
 |---|---|
-| Briefing delivery time | 7:00 AM ± 2 min |
+| Briefing delivery time | 7:00 AM Â± 2 min |
 | Top-3 task completion rate | > 50% (at least top task done by end of day) |
 | Briefing read/open rate | > 80% |
 | ARIA's pick accuracy | User acts on pick > 40% of days |
@@ -3067,7 +3089,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Signal | Log |
 |---|---|
 | Briefing generation | Full JSON logged with timestamp |
-| Delivery latency | Cron trigger → push sent delta |
+| Delivery latency | Cron trigger â†’ push sent delta |
 | Top-3 completion | End-of-day diff: pick completion status |
 | Read status | Briefing opened vs delivered |
 | Sleep-adjustment triggers | Score-based tone changes applied |
@@ -3079,7 +3101,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Briefing quality score | User rates "this helped me today" (1-5, prompted weekly) |
 | Priority alignment | Was ARIA's pick completed first? |
 | Engagement trend | Briefing open rate over time (30-day moving average) |
-| Actionability rate | % of briefings where user completed ≥ 2 of 3 tasks |
+| Actionability rate | % of briefings where user completed â‰¥ 2 of 3 tasks |
 
 ---
 
@@ -3124,18 +3146,18 @@ Generate a narrative weekly review every Sunday at 8 PM. Help the user see the w
 | Learning signal | memory_agent input | {patterns, user_reactions} |
 
 ### Tools
-- `get_weekly_tasks(user_id, week_start)` — Task stats for the week
-- `get_weekly_sleep(user_id, week_start)` — Sleep aggregate
-- `get_weekly_habits(user_id, week_start)` — Habit consistency
-- `get_weekly_income(user_id, week_start)` — Income summary
-- `get_weekly_time_entries(user_id, week_start)` — Time breakdown
-- `get_goal_progress_delta(user_id, week_start)` — Goal velocity
-- `get_weekly_opportunities(user_id, week_start)` — New opportunities
-- `get_last_week_review(user_id)` — Previous week for comparison
-- `generate_pattern_insight(data)` — LLM pattern detection
-- `generate_recommendations(data, patterns)` — LLM action items
-- `send_email(user_id, subject, body)` — Via Resend API
-- `save_weekly_review(user_id, data)` — Write to weekly_reviews table
+- `get_weekly_tasks(user_id, week_start)` â€” Task stats for the week
+- `get_weekly_sleep(user_id, week_start)` â€” Sleep aggregate
+- `get_weekly_habits(user_id, week_start)` â€” Habit consistency
+- `get_weekly_income(user_id, week_start)` â€” Income summary
+- `get_weekly_time_entries(user_id, week_start)` â€” Time breakdown
+- `get_goal_progress_delta(user_id, week_start)` â€” Goal velocity
+- `get_weekly_opportunities(user_id, week_start)` â€” New opportunities
+- `get_last_week_review(user_id)` â€” Previous week for comparison
+- `generate_pattern_insight(data)` â€” LLM pattern detection
+- `generate_recommendations(data, patterns)` â€” LLM action items
+- `send_email(user_id, subject, body)` â€” Via Resend API
+- `save_weekly_review(user_id, data)` â€” Write to weekly_reviews table
 
 ### Memory
 | Type | Retention | Use |
@@ -3152,7 +3174,7 @@ Generate a narrative weekly review every Sunday at 8 PM. Help the user see the w
 ```
 Analyze {name}'s week and identify patterns.
 
-WEEK {week_number} ({start_date} → {end_date})
+WEEK {week_number} ({start_date} â†’ {end_date})
 
 METRICS THIS WEEK:
 - Tasks: {created} created, {completed} completed ({completion_rate}%)
@@ -3176,7 +3198,7 @@ PREVIOUS PATTERNS DETECTED:
 
 Detect exactly ONE pattern the user likely missed.
 Rules:
-1. Must be surprising and useful — not obvious ("you did fewer tasks")
+1. Must be surprising and useful â€” not obvious ("you did fewer tasks")
 2. Must cite specific numbers
 3. Must be actionable (user can do something about it)
 4. No generic advice like "you should study more"
@@ -3193,10 +3215,10 @@ CURRENT GOALS: {goals_json}
 DEADLINES THIS WEEK: {deadlines_json}
 
 Each recommendation must be:
-1. SPECIFIC — "Study Python for 25 min before breakfast" not "study more"
-2. MEASURABLE — has a clear success criterion
-3. TIME-BOUNDED — attached to a specific day/time window
-4. LOW FRICTION — takes < 5 min to start
+1. SPECIFIC â€” "Study Python for 25 min before breakfast" not "study more"
+2. MEASURABLE â€” has a clear success criterion
+3. TIME-BOUNDED â€” attached to a specific day/time window
+4. LOW FRICTION â€” takes < 5 min to start
 
 Format:
 {
@@ -3382,7 +3404,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Sleep debt > 15 hours accumulated | Sleep & Bedtime Agent alert |
 | 3+ courses behind schedule | Nudge: "You may be overcommitted on courses" |
 | No habit logged for 5+ consecutive days | Habit Miss Checker alert |
-| Zero chat interaction for 7 days | "We haven't talked in a week — everything okay?" |
+| Zero chat interaction for 7 days | "We haven't talked in a week â€” everything okay?" |
 
 ### KPIs
 | KPI | Target |
@@ -3420,14 +3442,14 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 ## 12. Missed Task Checker Agent
 
 ### Mission
-Every 15 minutes, find overdue tasks and reschedule them before they pile up. Ensure no task is ever silently forgotten. Operate silently and reliably — no notification fatigue, just quiet rescheduling until escalation is warranted.
+Every 15 minutes, find overdue tasks and reschedule them before they pile up. Ensure no task is ever silently forgotten. Operate silently and reliably â€” no notification fatigue, just quiet rescheduling until escalation is warranted.
 
 ### Responsibilities
 - Query all overdue pending tasks every 15 minutes (at :00, :15, :30, :45)
 - Increment missed_count for each overdue task found
 - Reschedule due_date to next available time slot (respecting user's schedule)
 - Escalate through channels based on missed_count threshold
-- Respect hard deadlines — never reschedule past exam/application dates
+- Respect hard deadlines â€” never reschedule past exam/application dates
 - Group notifications to prevent fatigue (batch multiple tasks into one alert)
 - Skip tasks already flagged as "rescheduled" in current cycle
 - Log all reschedule actions for audit and pattern analysis
@@ -3453,16 +3475,16 @@ Every 15 minutes, find overdue tasks and reschedule them before they pile up. En
 | Audit log entry | internal monitoring | Every reschedule action |
 
 ### Tools
-- `query_overdue_tasks()` — Find all overdue pending tasks
-- `get_next_available_slot(user_id, duration_minutes)` — Find nearest free time
-- `reschedule_task(task_id, new_due_date)` — Update task due_date
-- `increment_missed_count(task_id)` — +1 to missed_count
-- `send_push(user_id, title, body)` — Push notification
-- `send_email(user_id, subject, body)` — Email escalation
-- `send_sms(user_id, body)` — SMS critical alert
-- `is_quiet_hours(user_id)` — Check DND window
-- `log_audit_event(action, task_id, details)` — Audit trail
-- `get_task_by_id(task_id)` — Read full task record
+- `query_overdue_tasks()` â€” Find all overdue pending tasks
+- `get_next_available_slot(user_id, duration_minutes)` â€” Find nearest free time
+- `reschedule_task(task_id, new_due_date)` â€” Update task due_date
+- `increment_missed_count(task_id)` â€” +1 to missed_count
+- `send_push(user_id, title, body)` â€” Push notification
+- `send_email(user_id, subject, body)` â€” Email escalation
+- `send_sms(user_id, body)` â€” SMS critical alert
+- `is_quiet_hours(user_id)` â€” Check DND window
+- `log_audit_event(action, task_id, details)` â€” Audit trail
+- `get_task_by_id(task_id)` â€” Read full task record
 
 ### Memory
 | Type | Retention | Use |
@@ -3480,7 +3502,7 @@ No LLM prompts. Missed Task Checker is fully algorithmic for reliability and spe
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
@@ -3488,18 +3510,18 @@ No LLM prompts. Missed Task Checker is fully algorithmic for reliability and spe
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
 ### Context Window
-N/A — fully rule-based (runs every 15 min, < 100ms per cycle)
+N/A â€” fully rule-based (runs every 15 min, < 100ms per cycle)
 
 ### Guardrails
 1. Never reschedule tasks during user's quiet hours (unless urgent and missed >= 5)
 2. Never send more than 1 notification per task per 24h
 3. Batch notifications: if 3+ tasks trigger escalation, combine into one digest
-4. Hard deadline tasks are never rescheduled — only escalate
+4. Hard deadline tasks are never rescheduled â€” only escalate
 5. Missed_count resets when task status changes from pending to completed
 6. Never reschedule a task more than 3 times within the same week
 7. SMS escalation only between 8 AM and 9 PM
@@ -3562,8 +3584,8 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 **Integration Test Scenarios:**
 1. 15-min cycle runs at :00, :15, :30, :45 exactly (no missed cycles)
 2. Overdue task rescheduled to next available slot within user's schedule
-3. Escalation funnel (push→email→SMS) fires at correct miss count thresholds
-4. Hard deadline tasks never rescheduled — immediate escalation instead
+3. Escalation funnel (pushâ†’emailâ†’SMS) fires at correct miss count thresholds
+4. Hard deadline tasks never rescheduled â€” immediate escalation instead
 5. Circular dependency detection breaks chain without data corruption
 
 ### SLA
@@ -3621,8 +3643,8 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 **Integration Test Scenarios:**
 1. 15-min cycle runs at :00, :15, :30, :45 exactly (no missed cycles)
 2. Overdue task rescheduled to next available slot within user's schedule
-3. Escalation funnel (push→email→SMS) fires at correct miss count thresholds
-4. Hard deadline tasks never rescheduled — immediate escalation instead
+3. Escalation funnel (pushâ†’emailâ†’SMS) fires at correct miss count thresholds
+4. Hard deadline tasks never rescheduled â€” immediate escalation instead
 5. Circular dependency detection breaks chain without data corruption
 
 ### Failure Recovery
@@ -3651,7 +3673,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | KPI | Target |
 |---|---|
 | Check cycle time | 100% of 15-min cycles run (no missed cycles) |
-| Reschedule latency | Overdue → rescheduled within 15 min |
+| Reschedule latency | Overdue â†’ rescheduled within 15 min |
 | Reschedule accuracy | > 95% (user doesn't manually undo reschedule) |
 | Notification fatigue | < 2 notifications per user per day from this agent |
 | Escalation effectiveness | > 50% of escalated tasks completed within 24h |
@@ -3717,14 +3739,14 @@ Every midnight, check which habits were not completed. Protect streaks by alerti
 | Habit completion report | Weekly review data | Sunday aggregation |
 
 ### Tools
-- `get_active_habits(user_id)` — All active habits
-- `get_habit_logs_for_date(user_id, date)` — Today's logs
-- `update_streak(habit_id, new_streak)` — Update streak value
-- `update_best_streak(habit_id, best)` — Update best if needed
-- `recalculate_consistency(habit_id)` — Rolling 30-day %
-- `send_push(user_id, title, body)` — Push notification
-- `log_habit_check_event(habit_id, action)` — Audit trail
-- `get_streak_history(habit_id, days)` — Past streak data
+- `get_active_habits(user_id)` â€” All active habits
+- `get_habit_logs_for_date(user_id, date)` â€” Today's logs
+- `update_streak(habit_id, new_streak)` â€” Update streak value
+- `update_best_streak(habit_id, best)` â€” Update best if needed
+- `recalculate_consistency(habit_id)` â€” Rolling 30-day %
+- `send_push(user_id, title, body)` â€” Push notification
+- `log_habit_check_event(habit_id, action)` â€” Audit trail
+- `get_streak_history(habit_id, days)` â€” Past streak data
 
 ### Memory
 | Type | Retention | Use |
@@ -3742,7 +3764,7 @@ No LLM prompts. Habit Miss Checker is fully algorithmic.
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
@@ -3750,19 +3772,19 @@ No LLM prompts. Habit Miss Checker is fully algorithmic.
 
 | Field | Value |
 |---|---|
-| Prompt file path | `N/A — fully algorithmic` |
+| Prompt file path | `N/A â€” fully algorithmic` |
 | Current prompt version | 1.0.0 |
 | Last prompt update | 2026-04-01 |
 
 ### Context Window
-N/A — fully rule-based (midnight cron, < 200ms per user)
+N/A â€” fully rule-based (midnight cron, < 200ms per user)
 
 ### Guardrails
 1. Never send more than 1 habit notification per day (to avoid fatigue)
 2. Streak messages must be supportive, never shaming
 3. "Streak at risk" uses positive framing: "You're on day 5! Keep it going"
 4. Consistency percentage uses 30-day rolling window (not lifetime)
-5. Best streak is permanent — never decreases
+5. Best streak is permanent â€” never decreases
 6. New habits (< 7 days old) skip "streak at risk" notifications
 7. User can opt out of habit notifications per habit
 8. If consistency < 20% for 4 weeks, suggest reducing habit load
@@ -3809,7 +3831,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | habits, habit_logs, users_profile, notification_log |
 | Tables modified | habits (current_streak, best_streak, consistency_percentage), notification_log |
-| Privacy considerations | Reads only habit names and streak data — no personal content. Notifications are supportive, never shaming. |
+| Privacy considerations | Reads only habit names and streak data â€” no personal content. Notifications are supportive, never shaming. |
 | RLS implications | RLS on habits/habit_logs ensures user isolation. New habits skip notifications for 7 days. |
 | Audit requirements | Every streak update logged with old/new values. Break events recorded with re-engagement tracking. |
 
@@ -3868,7 +3890,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 |---|---|
 | Tables read | habits, habit_logs, users_profile, notification_log |
 | Tables modified | habits (current_streak, best_streak, consistency_percentage), notification_log |
-| Privacy considerations | Reads only habit names and streak data — no personal content. Notifications are supportive, never shaming. |
+| Privacy considerations | Reads only habit names and streak data â€” no personal content. Notifications are supportive, never shaming. |
 | RLS implications | RLS on habits/habit_logs ensures user isolation. New habits skip notifications for 7 days. |
 | Audit requirements | Every streak update logged with old/new values. Break events recorded with re-engagement tracking. |
 
@@ -3900,18 +3922,18 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 ### Escalation Rules
 | Condition | Escalation |
 |---|---|
-| 5+ consecutive misses on any habit | Suggest: "Simplify your habit set — focus on 1-2 core habits" |
+| 5+ consecutive misses on any habit | Suggest: "Simplify your habit set â€” focus on 1-2 core habits" |
 | Habit consistency < 10% for 4 weeks | Suggest archival: "Would you like to pause this habit?" |
-| All active habits missed for 3 consecutive days | Push: "Check in — everything okay?" |
+| All active habits missed for 3 consecutive days | Push: "Check in â€” everything okay?" |
 | User re-engages after 7+ day break | "Welcome back! Starting fresh." |
-| Best streak broken | "New record: {X} days! 🎉" |
+| Best streak broken | "New record: {X} days! ðŸŽ‰" |
 
 ### KPIs
 | KPI | Target |
 |---|---|
 | Habit consistency rate | > 60% across all active habits |
 | Streak recovery rate | > 40% of users re-engage after streak break |
-| Notification → action rate | > 30% of streak-at-risk notifications lead to habit logging |
+| Notification â†’ action rate | > 30% of streak-at-risk notifications lead to habit logging |
 | False streak breaks | < 2% (habit logged but not counted) |
 | Active habit retention | < 10% of habits archived per month |
 | Daily check completion | 100% of midnight cycles run |
@@ -3982,17 +4004,17 @@ At 9:30 PM every night, remind the user to wind down. Show tomorrow's first task
 | Sleep-productivity insight | Analytics Agent input | Weekly |
 
 ### Tools
-- `get_sleep_goal(user_id)` — Read configured bedtime/wake
-- `get_last_sleep_log(user_id)` — Latest sleep entry
-- `create_sleep_log(user_id, bedtime)` — Start sleep tracking
-- `update_sleep_log(log_id, wake_time, quality)` — Complete sleep log
-- `calculate_sleep_score(duration_hours, quality_rating)` — Score function
-- `calculate_sleep_debt(sleep_logs_7d)` — Debt calculation
-- `get_tomorrows_first_task(user_id)` — Highest priority pending
-- `send_push(user_id, title, body)` — Wind-down notification
-- `adjust_day_plan(planner_agent, score)` — Reduce heavy tasks
-- `get_bedtime_consistency(user_id, days)` — Std dev of bedtime
-- `correlate_sleep_productivity(user_id, days)` — Analytics query
+- `get_sleep_goal(user_id)` â€” Read configured bedtime/wake
+- `get_last_sleep_log(user_id)` â€” Latest sleep entry
+- `create_sleep_log(user_id, bedtime)` â€” Start sleep tracking
+- `update_sleep_log(log_id, wake_time, quality)` â€” Complete sleep log
+- `calculate_sleep_score(duration_hours, quality_rating)` â€” Score function
+- `calculate_sleep_debt(sleep_logs_7d)` â€” Debt calculation
+- `get_tomorrows_first_task(user_id)` â€” Highest priority pending
+- `send_push(user_id, title, body)` â€” Wind-down notification
+- `adjust_day_plan(planner_agent, score)` â€” Reduce heavy tasks
+- `get_bedtime_consistency(user_id, days)` â€” Std dev of bedtime
+- `correlate_sleep_productivity(user_id, days)` â€” Analytics query
 
 ### Memory
 | Type | Retention | Use |
@@ -4021,8 +4043,8 @@ Message rules:
 1. Max 2 sentences
 2. Show tomorrow's first task (built intention)
 3. If sleep debt > 5h: acknowledge and encourage earlier bedtime
-4. If sleep debt > 10h: gentle concern — "Your body needs rest"
-5. Never negative about sleep debt — "You can catch up tonight"
+4. If sleep debt > 10h: gentle concern â€” "Your body needs rest"
+5. Never negative about sleep debt â€” "You can catch up tonight"
 6. Tone: warm, calm, parent-like (not coach-like)
 7. No exclamation marks (sleep mode)
 ```
@@ -4080,11 +4102,11 @@ Output as JSON:
 
 ### Guardrails
 1. Never send wind-down notification during user's work/study hours
-2. Wind-down reminder is a nudge, not a command — never guilt about staying up
+2. Wind-down reminder is a nudge, not a command â€” never guilt about staying up
 3. Sleep score calculation must be transparent (show formula)
 4. Never share sleep data in weekly review without user's consent context
 5. Task reduction at score < 30 must be reversible (user can override)
-6. Bedtime consistency tracking is private — never compared to others
+6. Bedtime consistency tracking is private â€” never compared to others
 7. Sleep debt warning must be factual, not alarmist
 8. Wind-down messages never include any task-related urgency
 9. If user hasn't set sleep goals, skip all sleep-related features
@@ -4265,7 +4287,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 ## 15. Course Progress Nudge Agent
 
 ### Mission
-At 6 PM every day, check if courses are on track to meet their deadlines. Nudge before it's too late — but never nag. Give the user the data they need to make informed decisions about their study time allocation.
+At 6 PM every day, check if courses are on track to meet their deadlines. Nudge before it's too late â€” but never nag. Give the user the data they need to make informed decisions about their study time allocation.
 
 ### Responsibilities
 - For each in-progress course, compare actual progress vs required pace at 6 PM daily
@@ -4304,18 +4326,18 @@ At 6 PM every day, check if courses are on track to meet their deadlines. Nudge 
 | Nudge effectiveness log | internal monitoring | Action taken after nudge |
 
 ### Tools
-- `get_in_progress_courses(user_id)` — All active courses
-- `calculate_required_pace(course)` — Remaining / days_remaining
-- `get_study_time_for_course(course_id, period)` — Minutes studied
-- `get_user_study_budget(user_id)` — Daily study minutes available
-- `is_exam_blackout(user_id)` — Check exam period
-- `create_study_task(course_id, minutes)` — Insert into tasks
-- `send_push(user_id, title, body)` — Push notification
-- `send_email(user_id, subject, body)` — Urgent email
-- `mark_course_behind(course_id)` — Set behind flag
-- `check_abandonment_risk(course_id)` — No progress 7+ days
-- `log_nudge(course_id, action)` — Audit trail
-- `get_nudge_history(course_id, days)` — Past nudges
+- `get_in_progress_courses(user_id)` â€” All active courses
+- `calculate_required_pace(course)` â€” Remaining / days_remaining
+- `get_study_time_for_course(course_id, period)` â€” Minutes studied
+- `get_user_study_budget(user_id)` â€” Daily study minutes available
+- `is_exam_blackout(user_id)` â€” Check exam period
+- `create_study_task(course_id, minutes)` â€” Insert into tasks
+- `send_push(user_id, title, body)` â€” Push notification
+- `send_email(user_id, subject, body)` â€” Urgent email
+- `mark_course_behind(course_id)` â€” Set behind flag
+- `check_abandonment_risk(course_id)` â€” No progress 7+ days
+- `log_nudge(course_id, action)` â€” Audit trail
+- `get_nudge_history(course_id, days)` â€” Past nudges
 
 ### Memory
 | Type | Retention | Use |
@@ -4343,7 +4365,7 @@ Behind by: {gap_percent}%
 Urgency: < 2 weeks? {is_urgent}
 
 Nudge rules:
-1. Reference the "why enrolled" — connect to their motivation
+1. Reference the "why enrolled" â€” connect to their motivation
 2. State the gap factually: "You need X min/day to finish on time"
 3. Suggest a specific time adjustment: "Try adding 15 min after dinner"
 4. Offer options: adjust deadline, increase time, or pause (no shame)
@@ -4399,8 +4421,8 @@ For option 1, generate a daily study schedule:
 4. Never suggest studying > 120 min/day on a single course
 5. Nudge messages must include opt-out: "Want me to stop nudging about this course?"
 6. Study task creation: max 1 task per nudge, 15-60 min duration
-7. Abandonment is OK — always include "Would you like to pause this course?" option
-8. Never shame about missed study days — frame as "you have {X} days, here's a plan"
+7. Abandonment is OK â€” always include "Would you like to pause this course?" option
+8. Never shame about missed study days â€” frame as "you have {X} days, here's a plan"
 9. Catch-up plans must fit within user's stated daily study budget
 10. If user has 4+ courses behind, suggest pausing 1-2 rather than increasing pace
 
@@ -4537,8 +4559,8 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | Condition | Escalation |
 |---|---|
 | 3+ courses > 50% behind schedule | Alert: "You may be overcommitted. Consider pausing 1-2 courses." |
-| Single course > 80% behind with < 2 weeks | Urgent: "This course needs significant catch-up — want to adjust?" |
-| No study activity for 7+ days on any course | Check-in: "Haven't seen you study this week — everything OK?" |
+| Single course > 80% behind with < 2 weeks | Urgent: "This course needs significant catch-up â€” want to adjust?" |
+| No study activity for 7+ days on any course | Check-in: "Haven't seen you study this week â€” everything OK?" |
 | Course abandoned within 7 days of enrollment | Ask for reason, suggest alternative format (video/blog/cohort) |
 | 5+ consecutive daily nudges ignored | Escalate to planner: reduce course load automatically? |
 | Nudge fatigue detected (user ignores 3+ in a row) | Pause nudges for 7 days, then softer check-in |
@@ -4547,7 +4569,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 | KPI | Target |
 |---|---|
 | Course completion rate | > 60% of enrolled courses |
-| Nudge → study action rate | > 30% of nudges lead to study session within 24h |
+| Nudge â†’ study action rate | > 30% of nudges lead to study session within 24h |
 | Study task completion rate | > 50% of study tasks created are completed |
 | Behind-schedule detection accuracy | < 10% false positives (course marked behind but on track) |
 | Abandonment prevention | > 20% of at-risk courses saved by nudge |
@@ -4577,7 +4599,7 @@ See: `docs/operations/39_Runbooks.md` for full runbook documentation.
 
 ---
 
-## Agent Registry — Complete
+## Agent Registry â€” Complete
 
 | ID | Agent | Type | Trigger | LLM Required | Priority | Status | Prompt Version | SLA Tier | Monthly Cost | Test Coverage | Security Review | Data Classification |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -4722,12 +4744,12 @@ Each agent has a circuit breaker that prevents cascading failures:
 ```
 State Machine:
 CLOSED (normal)
-  → failure threshold exceeded → OPEN
+  â†’ failure threshold exceeded â†’ OPEN
 OPEN (fast-fail all calls)
-  → half-open wait expires → HALF_OPEN
+  â†’ half-open wait expires â†’ HALF_OPEN
 HALF_OPEN (test with limited calls)
-  → success threshold met → CLOSED
-  → failure → OPEN again
+  â†’ success threshold met â†’ CLOSED
+  â†’ failure â†’ OPEN again
 ```
 
 ### Bulkhead Pattern for Resource Isolation
@@ -4768,7 +4790,7 @@ The orchestrator maintains an internal registry populated at import time. This e
 
 ### Inter-Agent Coordination Rules
 
-1. Agents do NOT call each other directly — all coordination through orchestrator
+1. Agents do NOT call each other directly â€” all coordination through orchestrator
 2. Data flows through Supabase tables, not in-memory agent-to-agent
 3. Cron agents write to tables; orchestrator reads from tables for user-facing responses
 4. Memory Agent runs on every chat interaction (background, non-blocking)
@@ -4818,7 +4840,7 @@ RETRY_CONFIG = {
     "base_delay_ms": 1000,
     "max_delay_ms": 10000,
     "multiplier": 2.0,
-    "jitter": True,  # Random ±10% to prevent thundering herd
+    "jitter": True,  # Random Â±10% to prevent thundering herd
     "retryable_errors": [
         "TIMEOUT",
         "RATE_LIMIT",
@@ -4830,8 +4852,8 @@ RETRY_CONFIG = {
 
 # Backoff sequence (with jitter):
 # Attempt 1: 1.0s
-# Attempt 2: 2.0s ±10%
-# Attempt 3: 4.0s ±10%
+# Attempt 2: 2.0s Â±10%
+# Attempt 3: 4.0s Â±10%
 # Max total wait: ~7.0s before giving up
 ```
 
@@ -4866,7 +4888,7 @@ When an agent fails after exhausting all retries, the request is sent to a Dead 
 | SEV-2 | Medium | Single agent failing, notification channel degraded | < 1 hour | Dev channel |
 | SEV-3 | Low | Non-critical agent degraded, occasional timeout spikes | < 24 hours | Jira ticket |
 
-### Error Handling — Unified
+### Error Handling â€” Unified
 
 | Error | Agent Behavior | User Experience | Log Level | Severity | Recovery Action |
 |---|---|---|---|---|---|
@@ -4919,9 +4941,9 @@ The following panels must be configured in the Agent Monitoring Dashboard:
 
 | Layer | Tool | Retention | Contents |
 |---|---|---|---|
-| Application logs | Structured JSON → stdout | 30 days | Agent, level, message, request_id, user_id, duration_ms, error |
-| Agent call logs | Structured JSON → stdout | 30 days | agent_id, call_type, input_tokens, output_tokens, duration_ms, success |
-| Error logs | Structured JSON → separate file | 90 days | Stack traces, context snapshots, request payloads |
+| Application logs | Structured JSON â†’ stdout | 30 days | Agent, level, message, request_id, user_id, duration_ms, error |
+| Agent call logs | Structured JSON â†’ stdout | 30 days | agent_id, call_type, input_tokens, output_tokens, duration_ms, success |
+| Error logs | Structured JSON â†’ separate file | 90 days | Stack traces, context snapshots, request payloads |
 | Audit logs | agent_audit table (Supabase) | 1 year | Action, user_id, table, old_values, new_values, timestamp |
 | Access logs | Supabase query logs | 90 days | All SQL queries, query duration, rows returned |
 | LLM call logs | agent_llm_logs table | 90 days | prompt_hash, response, tokens, model, latency |
@@ -5008,8 +5030,8 @@ graph TD
     O[<b>1. OBSERVE</b><br/>Collect KPIs, errors, feedback, latency, cost<br/>Sources: Grafana, structured logs, surveys]
     A[<b>2. ANALYZE</b><br/>Find underperformers, failure patterns, cost anomalies<br/>Tools: A/B results, latency heatmaps, clustering<br/>Gate: statistical significance n&gt;100 p&lt;0.05]
     I[<b>3. ITERATE</b><br/>Update prompts, thresholds, guardrails, logic<br/>Prompt changes via A/B testing<br/>Code changes via feature branch + PR]
-    V[<b>4. VALIDATE</b><br/>Staging deployment → E2E → Performance benchmark<br/>Regression: KPIs must not degrade &gt;5%]
-    D[<b>5. DEPLOY</b><br/>Canary → 10% → 50% → 100% rollout<br/>Auto-rollback, 24h monitoring per stage]
+    V[<b>4. VALIDATE</b><br/>Staging deployment â†’ E2E â†’ Performance benchmark<br/>Regression: KPIs must not degrade &gt;5%]
+    D[<b>5. DEPLOY</b><br/>Canary â†’ 10% â†’ 50% â†’ 100% rollout<br/>Auto-rollback, 24h monitoring per stage]
 
     O --> A --> I --> V --> D
 
@@ -5046,7 +5068,7 @@ graph TD
 
 | Stage | Traffic % | Duration | Rollback Condition | Validation |
 |---|---|---|---|---|
-| Stage 0 (Dev) | — | PR review | Test failures | All unit + integration tests pass |
+| Stage 0 (Dev) | â€” | PR review | Test failures | All unit + integration tests pass |
 | Stage 1 (Canary) | 10% | 24 hours | Error rate > 5% OR latency > 2x baseline | Health check passes, no SEV-2+ alerts |
 | Stage 2 (Expanding) | 50% | 24 hours | Error rate > 3% OR latency > 1.5x baseline | KPI dashboard green |
 | Stage 3 (Full) | 100% | 7 days | Any SEV-1 incident within 48h | Monitoring period complete |
@@ -5192,41 +5214,41 @@ graph TB
 
 | Agent | Code File | Lines | Implementation Status | Priority to Ship |
 |---|---|---|---|---|
-| ARIA (Orchestrator) | \chat.py\ + \main.py\ | — | Part of chat pipeline | P0 |
-| Planner Agent | — | — | Enterprise spec complete, code not started | P1 |
+| ARIA (Orchestrator) | \chat.py\ + \main.py\ | â€” | Part of chat pipeline | P0 |
+| Planner Agent | â€” | â€” | Enterprise spec complete, code not started | P1 |
 | Memory Agent | \memory_agent.py\ | ~91 | LLM-integrated (Ollama/Claude), full enterprise spec | P0 |
 | Learning Agent | \learning_agent.py\ | ~83 | LLM-integrated (Ollama/Claude), full enterprise spec | P1 |
-| Reminder Agent | \crons/\ (6 files) | — | All 6 crons implemented + registered in scheduler | P0 |
-| Career Agent | — | — | Enterprise spec complete, code not started | P2 |
+| Reminder Agent | \crons/\ (6 files) | â€” | All 6 crons implemented + registered in scheduler | P0 |
+| Career Agent | â€” | â€” | Enterprise spec complete, code not started | P2 |
 | Opportunity Agent | \opportunity_agent.py\ | ~138 | LLM-integrated (Ollama/Claude), full enterprise spec | P0 |
-| Analytics Agent | — | — | Enterprise spec complete, code not started | P1 |
-| Roadmap Agent | — | — | Enterprise spec complete, code not started | P1 |
+| Analytics Agent | â€” | â€” | Enterprise spec complete, code not started | P1 |
+| Roadmap Agent | â€” | â€” | Enterprise spec complete, code not started | P1 |
 | Daily Briefing Agent | \riefing_agent.py\ | ~85 | LLM-integrated (Ollama/Claude), full enterprise spec | P0 |
 | Weekly Review Agent | \crons/weekly_review.py\ | 109 | Complete implementation | P0 |
 | Missed Task Checker | \crons/missed_task_checker.py\ | ~27 | Implemented (overdue detection + missed_count increment) | P0 |
 | Habit Miss Checker | \crons/habit_checker.py\ | ~28 | Implemented (daily habit completion check) | P1 |
 | Sleep & Bedtime Agent | \crons/sleep_reminder.py\ | ~25 | Implemented (sleep log check + bedtime reminder) | P1 |
-| Course Progress Nudge | — | — | Enterprise spec complete, code not started | P1 |
+| Course Progress Nudge | â€” | â€” | Enterprise spec complete, code not started | P1 |
 
 ### Implementation Roadmap
 
 | Phase | Agent | Effort (Dev Days) | Dependencies | Business Value | Target Ship |
 |---|---|---|---|---|---|
-| **Phase 1** | Reminder (A04) | 5 | None | High — immediate productivity | DONE |
-| (Foundation) | Missed Task (A11) | 3 | None | High — prevents task loss | DONE |
-| | Habit Miss (A12) | 2 | None | Medium — streak protection | DONE |
-| | Sleep & Bedtime (A13) | 3 | Sleep table | Medium — sleep foundation | DONE |
-| | Weekly Review (A10) | 5 | All tables | High — reflection loop | DONE |
-| **Phase 2** | Daily Briefing (A09) | 5 | Tasks, Sleep, Opportunities | High — morning context | Sprint 1 |
-| (Daily Ops) | Course Nudge (A14) | 3 | Courses table | Medium — learning momentum | Sprint 1 |
-| | Opportunity (A06) | 8 | External APIs | High — career discovery | Sprint 2 |
-| | Memory (A02) | 10 | Chat, DB | High — personalization | Sprint 2 |
-| **Phase 3** | ARIA Orchestrator (A00) | 15 | All agents | Critical — core UX | Sprint 3 |
-| (Core UX) | Planner (A01) | 10 | Tasks, Goals, Sleep | High — daily planning | Sprint 3 |
-| | Analytics (A07) | 8 | All tables | Medium — insights | Sprint 4 |
-| **Phase 4** | Learning (A03) | 10 | Courses, Tasks | High — study optimization | Sprint 4 |
-| (Advanced) | Roadmap (A08) | 10 | Goals, Planner | Medium — goal planning | Sprint 5 |
-| | Career (A05) | 8 | Skills, Projects, Income | Medium — career growth | Sprint 5 |
+| **Phase 1** | Reminder (A04) | 5 | None | High â€” immediate productivity | DONE |
+| (Foundation) | Missed Task (A11) | 3 | None | High â€” prevents task loss | DONE |
+| | Habit Miss (A12) | 2 | None | Medium â€” streak protection | DONE |
+| | Sleep & Bedtime (A13) | 3 | Sleep table | Medium â€” sleep foundation | DONE |
+| | Weekly Review (A10) | 5 | All tables | High â€” reflection loop | DONE |
+| **Phase 2** | Daily Briefing (A09) | 5 | Tasks, Sleep, Opportunities | High â€” morning context | Sprint 1 |
+| (Daily Ops) | Course Nudge (A14) | 3 | Courses table | Medium â€” learning momentum | Sprint 1 |
+| | Opportunity (A06) | 8 | External APIs | High â€” career discovery | Sprint 2 |
+| | Memory (A02) | 10 | Chat, DB | High â€” personalization | Sprint 2 |
+| **Phase 3** | ARIA Orchestrator (A00) | 15 | All agents | Critical â€” core UX | Sprint 3 |
+| (Core UX) | Planner (A01) | 10 | Tasks, Goals, Sleep | High â€” daily planning | Sprint 3 |
+| | Analytics (A07) | 8 | All tables | Medium â€” insights | Sprint 4 |
+| **Phase 4** | Learning (A03) | 10 | Courses, Tasks | High â€” study optimization | Sprint 4 |
+| (Advanced) | Roadmap (A08) | 10 | Goals, Planner | Medium â€” goal planning | Sprint 5 |
+| | Career (A05) | 8 | Skills, Projects, Income | Medium â€” career growth | Sprint 5 |
 | **Total** | | **105** | | | |
 
 ### Effort Estimate Breakdown
@@ -5242,20 +5264,20 @@ graph TB
 | Term | Definition |
 |---|---|
 | **Agent** | A specialized software component that performs a specific domain task (planning, memory, learning, etc.) |
-| **ARIA** | Adaptive Responsive Intelligent Assistant — the orchestrator agent that coordinates all sub-agents |
+| **ARIA** | Adaptive Responsive Intelligent Assistant â€” the orchestrator agent that coordinates all sub-agents |
 | **Bulkhead** | Architectural pattern that isolates resources (thread pools, memory) into separate pools to prevent cascading failures |
 | **Circuit Breaker** | Failure detection pattern that opens the circuit after N consecutive failures, preventing repeated calls to a failing service |
 | **Cron Agent** | An agent triggered by a time-based schedule (e.g., every 15 min, daily at 7 AM) rather than direct user action |
-| **DLQ** | Dead Letter Queue — storage for failed agent requests that exceed retry limits, for later reprocessing or inspection |
+| **DLQ** | Dead Letter Queue â€” storage for failed agent requests that exceed retry limits, for later reprocessing or inspection |
 | **Graceful Degradation** | The ability to maintain partial functionality when a dependency fails, rather than failing entirely |
 | **Guardrails** | Hard constraints that prevent an agent from taking undesirable actions (e.g., never delete data, never hallucinate facts) |
-| **Idempotent** | An operation that produces the same result whether executed once or multiple times — safe to retry |
+| **Idempotent** | An operation that produces the same result whether executed once or multiple times â€” safe to retry |
 | **LLM** | Large Language Model (Ollama, Claude, GPT) used for natural language understanding and generation |
 | **Observability** | The ability to measure and understand system state through logs, metrics, and traces |
 | **Orchestrator** | The central coordinator agent (ARIA) that routes requests, dispatches sub-agents, and synthesizes responses |
-| **RLS** | Row-Level Security — PostgreSQL feature that restricts data access to the owning user_id |
+| **RLS** | Row-Level Security â€” PostgreSQL feature that restricts data access to the owning user_id |
 | **Service Agent** | An agent that runs on-demand in response to a user request, as opposed to a scheduled cron agent |
-| **SLA** | Service Level Agreement — performance targets (response time, success rate, availability) for each agent |
+| **SLA** | Service Level Agreement â€” performance targets (response time, success rate, availability) for each agent |
 | **Supabase** | Backend-as-a-Service providing PostgreSQL database, authentication, and storage |
 | **System Prompt** | The base instruction given to an LLM defining its role, behavior, and constraints |
 | **Tenant Isolation** | Separation of data between different users via RLS policies, ensuring user A cannot access user B's data |
@@ -5263,4 +5285,4 @@ graph TB
 ---
 
 *Document Version 3.0.0 | Last Updated: 2026-06-11 | Next Review: 2026-09-11*
-*Document ID: SB-AGENT-001 | Classification: Internal — Architecture*
+*Document ID: SB-AGENT-001 | Classification: Internal â€” Architecture*

@@ -1,4 +1,4 @@
-# AI Models — Enterprise Reference
+﻿# AI Models â€” Enterprise Reference
 
 ---
 
@@ -6,10 +6,10 @@
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | ARIA-ARCH-MDL-001 |
+| **Document ID** | AI-MDL-001 |
 | **Version** | 1.0.0 |
 | **Status** | APPROVED |
-| **Classification** | INTERNAL — Engineering |
+| **Classification** | INTERNAL â€” Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Owner** | AI Architecture Team |
 | **Review Cycle** | Quarterly |
@@ -113,12 +113,12 @@ sequenceDiagram
 
 ### Why Model Selection Matters
 
-Second Brain OS runs 8 active AI agents (with 15 planned) across a spectrum of use cases — from generating 957-line daily briefings to 200-token sleep nudges. Each use case has different requirements for latency, quality, cost, and availability. A single-model approach would be either too expensive (Claude on every task) or too low-quality (Ollama for complex reasoning). 
+Second Brain OS runs 8 active AI agents (with 15 planned) across a spectrum of use cases â€” from generating 957-line daily briefings to 200-token sleep nudges. Each use case has different requirements for latency, quality, cost, and availability. A single-model approach would be either too expensive (Claude on every task) or too low-quality (Ollama for complex reasoning). 
 
 The dual-model architecture (Ollama local + Claude cloud fallback) provides:
 1. **Cost-efficient daily operation**: ~95% of requests handled locally by Ollama (Mistral 7B) at near-zero cost
 2. **High-quality fallback**: Complex tasks and edge cases routed to Claude Sonnet 4 (~$0.003-0.015/request)
-3. **Offline capability**: All 8 agents function fully offline with Ollama
+3. **Offline capability**: All 11 agents function fully offline with Ollama
 4. **Graceful degradation**: When both models fail, algorithmic fallbacks ensure continued operation
 
 ### Key Design Decisions
@@ -128,9 +128,9 @@ The dual-model architecture (Ollama local + Claude cloud fallback) provides:
 | **Default model** | Mistral 7B (via Ollama) | Best quality-to-size ratio for 7B class; runs on consumer GPUs (6GB VRAM); Apache 2.0 license |
 | **Cloud fallback** | Claude Sonnet 4 (20250514) | Best-in-class instruction following; 200K context window; lowest hallucination rate in its class |
 | **Local LLM server** | Ollama | Lightweight (~100MB binary); model management built-in; REST API compatible with OpenAI spec |
-| **Quantization** | Q4_K_M (4-bit) for Mistral 7B | 4.1GB → 2.5GB VRAM; < 5% quality loss vs FP16 |
+| **Quantization** | Q4_K_M (4-bit) for Mistral 7B | 4.1GB â†’ 2.5GB VRAM; < 5% quality loss vs FP16 |
 | **Embedding model** | nomic-embed-text (768d) | Best MTEB score among local models (62.3); 300MB; runs on CPU |
-| **Fallback chain logic** | Ollama → Claude → Algorithmic | Ensures zero downtime; algorithmic fallback is always available |
+| **Fallback chain logic** | Ollama â†’ Claude â†’ Algorithmic | Ensures zero downtime; algorithmic fallback is always available |
 
 ### Architecture Principles
 
@@ -197,9 +197,9 @@ The dual-model architecture (Ollama local + Claude cloud fallback) provides:
 | **Cost per 1K in tokens** | $0 | $0 | $0.003 | $0.0008 | $0.00015 |
 | **Cost per 1K out tokens** | $0 | $0 | $0.015 | $0.004 | $0.0006 |
 | **Avg cost per request** | $0 | $0 | $0.003-0.015 | $0.001-0.004 | $0.0003-0.001 |
-| **Offline capable** | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **Offline capable** | âœ… | âœ… | âŒ | âŒ | âŒ |
 | **License** | Apache 2.0 | Llama 3 | Proprietary | Proprietary | Proprietary |
-| **JSON mode** | ✅ (prompted) | ✅ (prompted) | ✅ (native) | ✅ (native) | ✅ (native) |
+| **JSON mode** | âœ… (prompted) | âœ… (prompted) | âœ… (native) | âœ… (native) | âœ… (native) |
 
 ### Quality Comparison by Agent Task
 
@@ -224,24 +224,24 @@ The dual-model architecture (Ollama local + Claude cloud fallback) provides:
 
 | Agent | Default Model | Fallback Model | Rationale |
 |---|---|---|---|
-| **A01 — Task Agent** | Mistral 7B | Claude Haiku 3.5 | Structured JSON output; simple reasoning |
-| **A02 — Memory Agent** | Mistral 7B | Claude Haiku 3.5 | Short outputs; pattern extraction |
-| **A03 — Learning Agent** | Mistral 7B | Claude Sonnet 4 | Longer analysis; pattern detection |
-| **A04 — Reminder** | None (rule-based) | None | Rule-based; no AI required |
-| **A06 — Opportunity Agent** | Mistral 7B | Claude Sonnet 4 | Complex matching; career advice |
-| **A09 — Briefing Agent** | Mistral 7B | Claude Sonnet 4 | Long form (957 lines); needs quality |
-| **A10 — Weekly Review Agent** | Mistral 7B | Claude Sonnet 4 | Longest output (1264 lines); needs coherence |
-| **A11 — Missed Task Checker** | None (rule-based) | None | Simple SQL query + notification |
-| **A12 — Habit Miss Checker** | None (rule-based) | None | Simple SQL query + notification |
-| **A13 — Sleep Agent** | Mistral 7B | Claude Haiku 3.5 | Short, templated outputs |
-| **A14 — Nudge Agent** | Mistral 7B | Claude Haiku 3.5 | Short nudges; simple reasoning |
-| **A00 — ARIA Chat** | Mistral 7B | Claude Sonnet 4 | Conversational; needs highest quality |
+| **A01 â€” Task Agent** | Mistral 7B | Claude Haiku 3.5 | Structured JSON output; simple reasoning |
+| **A02 â€” Memory Agent** | Mistral 7B | Claude Haiku 3.5 | Short outputs; pattern extraction |
+| **A03 â€” Learning Agent** | Mistral 7B | Claude Sonnet 4 | Longer analysis; pattern detection |
+| **A04 â€” Reminder** | None (rule-based) | None | Rule-based; no AI required |
+| **A06 â€” Opportunity Agent** | Mistral 7B | Claude Sonnet 4 | Complex matching; career advice |
+| **A09 â€” Briefing Agent** | Mistral 7B | Claude Sonnet 4 | Long form (957 lines); needs quality |
+| **A10 â€” Weekly Review Agent** | Mistral 7B | Claude Sonnet 4 | Longest output (1264 lines); needs coherence |
+| **A11 â€” Missed Task Checker** | None (rule-based) | None | Simple SQL query + notification |
+| **A12 â€” Habit Miss Checker** | None (rule-based) | None | Simple SQL query + notification |
+| **A13 â€” Sleep Agent** | Mistral 7B | Claude Haiku 3.5 | Short, templated outputs |
+| **A14 â€” Nudge Agent** | Mistral 7B | Claude Haiku 3.5 | Short nudges; simple reasoning |
+| **A00 â€” ARIA Chat** | Mistral 7B | Claude Sonnet 4 | Conversational; needs highest quality |
 
 ### Token Consumption by Agent (Average per Request)
 
 ```
 Agent              Input Tokens    Output Tokens    Total/Request    Daily Requests    Daily Total
-─────────────────────────────────────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Briefing (A09)      2,800            800             3,600            1                 3,600
 Weekly Review(A10)  3,200            1,200           4,400            0.14 (weekly)     630
 Memory (A02)        1,200            300             1,500            ~20               30,000
@@ -352,10 +352,10 @@ curl -fsSL https://ollama.com/install.sh | sh
 ollama serve &
 
 # Pull models
-ollama pull mistral                    # 4.1GB (FP16) — default
-ollama pull mistral:7b-q4_K_M         # 2.5GB (Q4) — recommended for 6GB VRAM
-ollama pull nomic-embed-text           # 274MB — embeddings
-ollama pull llama3.1:8b                # 4.7GB (Q4) — alternative
+ollama pull mistral                    # 4.1GB (FP16) â€” default
+ollama pull mistral:7b-q4_K_M         # 2.5GB (Q4) â€” recommended for 6GB VRAM
+ollama pull nomic-embed-text           # 274MB â€” embeddings
+ollama pull llama3.1:8b                # 4.7GB (Q4) â€” alternative
 
 # Verify models installed
 ollama list
@@ -368,7 +368,7 @@ curl http://localhost:11434/api/tags
 
 | Quantization | Size | Quality Loss | VRAM | Recommended For |
 |---|---|---|---|---|
-| **Q4_K_M** | 2.5GB | < 5% | 4GB | Default — best quality/size ratio |
+| **Q4_K_M** | 2.5GB | < 5% | 4GB | Default â€” best quality/size ratio |
 | Q5_K_M | 3.0GB | < 2% | 5GB | High-quality laptops (8GB VRAM) |
 | Q8_0 | 4.5GB | < 1% | 6GB | Desktop GPUs (12GB+ VRAM) |
 | FP16 | 8.5GB | 0% | 10GB | Server-grade GPUs |
@@ -379,7 +379,7 @@ curl http://localhost:11434/api/tags
 
 ```
 Model               FP16        Q8_0        Q5_K_M      Q4_K_M      Q3_K_M
-────────────────────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Mistral 7B          14.1 GB     4.5 GB      3.0 GB      2.5 GB      2.0 GB
 Llama 3.1 8B        16.0 GB     5.4 GB      3.8 GB      3.2 GB      2.5 GB
 Phi-3 Medium 14B    28.0 GB     9.0 GB      6.5 GB      5.5 GB      4.5 GB
@@ -560,36 +560,36 @@ class CostEstimator:
 ### Fallback Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         MODEL FALLBACK CHAIN                                   │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  REQUEST                                                                      │
-│    │                                                                          │
-│    ▼                                                                          │
-│  ┌─────────────────────┐                                                      │
-│  │  LINK 1: Ollama      │─────────────────── Success ──────▶ Return response  │
-│  │  (Mistral 7B, local) │                                                      │
-│  │  Timeout: 30s        │                                                      │
-│  │  Retries: 1          │                                                      │
-│  └─────────┬───────────┘                                                      │
-│            │ Fail                                                              │
-│            ▼                                                                   │
-│  ┌─────────────────────┐                                                      │
-│  │  LINK 2: Claude      │─────────────────── Success ──────▶ Return response  │
-│  │  (Sonnet 4, cloud)  │                                                      │
-│  │  Timeout: 60s        │                                                      │
-│  │  Retries: 2          │                                                      │
-│  └─────────┬───────────┘                                                      │
-│            │ Fail                                                              │
-│            ▼                                                                   │
-│  ┌─────────────────────┐                                                      │
-│  │  LINK 3: Algorithmic │─────────────────── Success ──────▶ Return degraded   │
-│  │  (Rule-based fallback)│                              response               │
-│  │  Always available    │                                                      │
-│  └─────────────────────┘                                                      │
-│                                                                               │
-└──────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                         MODEL FALLBACK CHAIN                                   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                               â”‚
+â”‚  REQUEST                                                                      â”‚
+â”‚    â”‚                                                                          â”‚
+â”‚    â–¼                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                                                      â”‚
+â”‚  â”‚  LINK 1: Ollama      â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Success â”€â”€â”€â”€â”€â”€â–¶ Return response  â”‚
+â”‚  â”‚  (Mistral 7B, local) â”‚                                                      â”‚
+â”‚  â”‚  Timeout: 30s        â”‚                                                      â”‚
+â”‚  â”‚  Retries: 1          â”‚                                                      â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                                      â”‚
+â”‚            â”‚ Fail                                                              â”‚
+â”‚            â–¼                                                                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                                                      â”‚
+â”‚  â”‚  LINK 2: Claude      â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Success â”€â”€â”€â”€â”€â”€â–¶ Return response  â”‚
+â”‚  â”‚  (Sonnet 4, cloud)  â”‚                                                      â”‚
+â”‚  â”‚  Timeout: 60s        â”‚                                                      â”‚
+â”‚  â”‚  Retries: 2          â”‚                                                      â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                                      â”‚
+â”‚            â”‚ Fail                                                              â”‚
+â”‚            â–¼                                                                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                                                      â”‚
+â”‚  â”‚  LINK 3: Algorithmic â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Success â”€â”€â”€â”€â”€â”€â–¶ Return degraded   â”‚
+â”‚  â”‚  (Rule-based fallback)â”‚                              response               â”‚
+â”‚  â”‚  Always available    â”‚                                                      â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                                      â”‚
+â”‚                                                                               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Fallback Chain Implementation
@@ -805,16 +805,16 @@ for r in results:
 
 | Scenario | Approach | Rationale |
 |---|---|---|
-| Response tone too formal | ✏️ Prompt engineer | Add tone instruction to system prompt |
-| Wrong output format | ✏️ Prompt engineer | Strengthen JSON schema in prompt |
-| Missing entity recognition | ✏️ Prompt engineer | Add few-shot examples |
-| Hallucinating specific facts | ✏️ Prompt engineer | Add verification step to chain-of-thought |
-| Consistent task breakdown style needed | 🔧 Fine-tune (LoRA) | Prompt engineering insufficient for consistent structural output |
-| Domain-specific terminology | 🔧 Fine-tune (LoRA) | Model needs to learn new vocabulary |
-| Agent-specific voice/personality | ✏️ Prompt engineer | Voice is easier to prompt-engineer than fine-tune |
-| Multi-step reasoning failures | ✏️ Prompt engineer + Chain-of-thought | CoT prompting often matches fine-tuned performance |
-| Summarization of specific document types | 🔧 Fine-tune (LoRA) | Format-specific summarization benefits from fine-tuning |
-| Classification accuracy < 90% | 🔧 Fine-tune (LoRA) | Classification is a strong fine-tuning use case |
+| Response tone too formal | âœï¸ Prompt engineer | Add tone instruction to system prompt |
+| Wrong output format | âœï¸ Prompt engineer | Strengthen JSON schema in prompt |
+| Missing entity recognition | âœï¸ Prompt engineer | Add few-shot examples |
+| Hallucinating specific facts | âœï¸ Prompt engineer | Add verification step to chain-of-thought |
+| Consistent task breakdown style needed | ðŸ”§ Fine-tune (LoRA) | Prompt engineering insufficient for consistent structural output |
+| Domain-specific terminology | ðŸ”§ Fine-tune (LoRA) | Model needs to learn new vocabulary |
+| Agent-specific voice/personality | âœï¸ Prompt engineer | Voice is easier to prompt-engineer than fine-tune |
+| Multi-step reasoning failures | âœï¸ Prompt engineer + Chain-of-thought | CoT prompting often matches fine-tuned performance |
+| Summarization of specific document types | ðŸ”§ Fine-tune (LoRA) | Format-specific summarization benefits from fine-tuning |
+| Classification accuracy < 90% | ðŸ”§ Fine-tune (LoRA) | Classification is a strong fine-tuning use case |
 
 ### LoRA Fine-Tuning Setup
 
@@ -863,12 +863,12 @@ DATASET_REQUIREMENTS = """
     {
       "instruction": "Generate a daily briefing for the user based on their current data.",
       "input": "Tasks: 9 pending (3 overdue). Courses: 2 behind schedule. Sleep: 6.2h avg (poor). Habits: LeetCode streak 12 days (logged today).",
-      "output": "{\"date\": \"2026-06-11\", \"sleep_quality\": \"poor\", \"task_summary\": {\"total\": 9, \"overdue\": 3, \"urgent\": 1}, \"top_priority\": \"Complete React dashboard\", \"energy_adjustment\": \"Focus on shallow work until 10 AM\", \"nudge\": \"Your LeetCode streak is impressive — don't break it today. 15 minutes minimum.\"}"
+      "output": "{\"date\": \"2026-06-11\", \"sleep_quality\": \"poor\", \"task_summary\": {\"total\": 9, \"overdue\": 3, \"urgent\": 1}, \"top_priority\": \"Complete React dashboard\", \"energy_adjustment\": \"Focus on shallow work until 10 AM\", \"nudge\": \"Your LeetCode streak is impressive â€” don't break it today. 15 minutes minimum.\"}"
     },
     {
       "instruction": "Generate a daily briefing for the user based on their current data.",
       "input": "Tasks: 4 pending, none overdue. Courses: on track. Sleep: 7.8h (excellent). Habits: all logged.",
-      "output": "{\"date\": \"2026-06-10\", \"sleep_quality\": \"excellent\", \"task_summary\": {\"total\": 4, \"overdue\": 0, \"urgent\": 0}, \"top_priority\": \"Prepare for DSA exam\", \"energy_adjustment\": \"Full energy — tackle hardest task first\", \"nudge\": \"Great momentum. Use the extra energy to get ahead on course work.\"}"
+      "output": "{\"date\": \"2026-06-10\", \"sleep_quality\": \"excellent\", \"task_summary\": {\"total\": 4, \"overdue\": 0, \"urgent\": 0}, \"top_priority\": \"Prepare for DSA exam\", \"energy_adjustment\": \"Full energy â€” tackle hardest task first\", \"nudge\": \"Great momentum. Use the extra energy to get ahead on course work.\"}"
     }
   ]
 }
@@ -894,40 +894,40 @@ DATASET_REQUIREMENTS = """
 
 ```
 NEW MODEL AVAILABLE
-    │
-    ▼
-┌──────────────────────────────────────┐
-│ 1. Benchmark on Second Brain tasks    │
-│    - Run 20 representative test cases │
-│    - Compare: output quality, latency │
-│    - Compare: VRAM usage, cost        │
-└──────────────┬───────────────────────┘
-               ▼
-┌──────────────────────────────────────┐
-│ 2. Quality improvement threshold     │
-│    > 10% on relevant benchmarks?     │
-│    OR > 15% cost reduction?          │
-└──────────────┬───────────────────────┘
-               │
-        ┌──────┴──────┐
-        ▼              ▼
+    â”‚
+    â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 1. Benchmark on Second Brain tasks    â”‚
+â”‚    - Run 20 representative test cases â”‚
+â”‚    - Compare: output quality, latency â”‚
+â”‚    - Compare: VRAM usage, cost        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 2. Quality improvement threshold     â”‚
+â”‚    > 10% on relevant benchmarks?     â”‚
+â”‚    OR > 15% cost reduction?          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â”‚
+        â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”
+        â–¼              â–¼
       YES             NO
-        │              │
-        ▼              ▼
-┌──────────────┐  ┌──────────────────┐
-│ 3. Shadow    │  │ Keep current     │
-│    deploy    │  │ model. Re-       │
-│    for 1     │  │ evaluate next    │
-│    week with │  │ quarter.         │
-│    logging   │                     │
-└──────┬───────┘                     │
-       │                             │
-       ▼                             │
-┌──────────────┐                     │
-│ 4. Promote   │                     │
-│    to daily  │                     │
-│    agents    │                     │
-└──────────────┘                     │
+        â”‚              â”‚
+        â–¼              â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ 3. Shadow    â”‚  â”‚ Keep current     â”‚
+â”‚    deploy    â”‚  â”‚ model. Re-       â”‚
+â”‚    for 1     â”‚  â”‚ evaluate next    â”‚
+â”‚    week with â”‚  â”‚ quarter.         â”‚
+â”‚    logging   â”‚                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜                     â”‚
+       â”‚                             â”‚
+       â–¼                             â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                     â”‚
+â”‚ 4. Promote   â”‚                     â”‚
+â”‚    to daily  â”‚                     â”‚
+â”‚    agents    â”‚                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                     â”‚
 ```
 
 ---
@@ -947,7 +947,7 @@ NEW MODEL AVAILABLE
 | Sleep | 2 | 1,100 | 2,200 | $0 |
 | Nudge | 1 | 1,400 | 1,400 | $0 |
 | ARIA Chat | 10 | 2,100 | 21,000 | $0 |
-| **Total Ollama** | **45** | **—** | **70,930** | **$0** |
+| **Total Ollama** | **45** | **â€”** | **70,930** | **$0** |
 
 ### Cost Breakdown with Claude Fallback (5% of requests)
 
