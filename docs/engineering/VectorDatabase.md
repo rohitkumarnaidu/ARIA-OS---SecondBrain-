@@ -1,20 +1,20 @@
-# Vector Database Strategy
+﻿# Vector Database Strategy
 
 ## Document Control
 
 | Property | Value |
 |---|---|
-| **Document ID** | DOC-ENG-009 |
+| **Document ID** | ENG-VDB-001 |
 | **Version** | 1.0.0 |
 | **Status** | Draft |
 | **Author** | AI Engineering Team |
 | **Last Updated** | 2026-06-11 |
-| **Approved By** | — |
-| **Supersedes** | — |
+| **Approved By** | â€” |
+| **Supersedes** | â€” |
 
 ---
 
-### Architecture Diagram — Vector DB Architecture & Embedding Pipeline
+### Architecture Diagram â€” Vector DB Architecture & Embedding Pipeline
 
 ```mermaid
 %%{
@@ -45,14 +45,14 @@ graph LR
         Chat["Chat Messages"]
     end
     subgraph Pipeline["Embedding Pipeline"]
-        TextPrep["Text Preprocessing<br/>Clean · Chunk · Normalize"]
+        TextPrep["Text Preprocessing<br/>Clean Â· Chunk Â· Normalize"]
         EmbedModel["Embedding Model<br/>Ollama nomic-embed-text<br/>768d Vectors"]
-        BatchProc["Batch Processor<br/>Async · Rate Limited"]
+        BatchProc["Batch Processor<br/>Async Â· Rate Limited"]
     end
     subgraph Storage["Vector Storage"]
         PGDB["Supabase PostgreSQL"]
-        PGVec["pgvector Extension<br/>768d · IVFFlat Index"]
-        Metadata["Metadata Store<br/>Source · Timestamp · User"]
+        PGVec["pgvector Extension<br/>768d Â· IVFFlat Index"]
+        Metadata["Metadata Store<br/>Source Â· Timestamp Â· User"]
     end
     subgraph Query["Query Interface"]
         RPC["RPC match_vectors<br/>Similarity Search"]
@@ -71,7 +71,7 @@ graph LR
     HybridQ --> Cache
 ```
 
-### Architecture Diagram — Vector Search Flow
+### Architecture Diagram â€” Vector Search Flow
 
 ```mermaid
 %%{
@@ -114,7 +114,7 @@ sequenceDiagram
 
 ## 1. Executive Summary
 
-Vector embeddings are the foundation of semantic understanding in Second Brain OS. They enable ARIA to go beyond keyword matching and understand the meaning and intent behind user queries. Every piece of content — tasks, goals, ideas, chat messages, learning materials, opportunities — is represented as a vector embedding that captures its semantic content.
+Vector embeddings are the foundation of semantic understanding in Second Brain OS. They enable ARIA to go beyond keyword matching and understand the meaning and intent behind user queries. Every piece of content â€” tasks, goals, ideas, chat messages, learning materials, opportunities â€” is represented as a vector embedding that captures its semantic content.
 
 **Why a vector database strategy matters:**
 
@@ -183,7 +183,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | Requirement | Value | Rationale |
 |---|---|---|
 | **Scale** | < 10,000 vectors | Single-user system. Even with 3 years of daily use, the total vector count for a user is estimated at 50K chat messages + 5K other content. At 384 dims, 100K vectors = ~150 MB. |
-| **Dimensions** | ≤ 384 | Using nomic-embed-text (768 dims) or all-MiniLM-L6-v2 (384 dims). Lower dimensions mean faster search, smaller storage, and lower memory. |
+| **Dimensions** | â‰¤ 384 | Using nomic-embed-text (768 dims) or all-MiniLM-L6-v2 (384 dims). Lower dimensions mean faster search, smaller storage, and lower memory. |
 | **Query latency** | < 100ms P95 | User-facing semantic search must feel instant. Background search (memory consolidation) can tolerate up to 500ms. |
 | **Accuracy** | Recall@10 > 0.85 | At least 85% of relevant results should appear in the top 10 for typical queries. |
 | **Filtering** | Required | Every query must filter by `user_id`. Additional filters by `content_type`, date range, and JSONB metadata. |
@@ -208,7 +208,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | **Maintenance** | Manual or scheduled `REINDEX`. Requires monitoring of index build times. |
 | **License** | PostgreSQL license (permissive). |
 
-**Verdict**: ✅ Recommended
+**Verdict**: âœ… Recommended
 
 ### 4.2 Pinecone
 
@@ -222,7 +222,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | **Hybrid search** | Sparse-dense hybrid requires Pinecone's paid tier. |
 | **Maturity** | Very mature. Used in production at scale. |
 
-**Verdict**: ❌ Unnecessary for < 10K vectors on a single-user system.
+**Verdict**: âŒ Unnecessary for < 10K vectors on a single-user system.
 
 ### 4.3 Weaviate
 
@@ -235,7 +235,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | **Maturity** | Mature. 10K+ stars on GitHub. |
 | **Operational overhead** | Requires Docker Compose, persistent volume, backup strategy. |
 
-**Verdict**: ❌ Over-engineered for the scale. Additional operational burden vs. pgvector.
+**Verdict**: âŒ Over-engineered for the scale. Additional operational burden vs. pgvector.
 
 ### 4.4 Qdrant
 
@@ -247,7 +247,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | **Performance** | Very fast. Rust-based. |
 | **Operational overhead** | Another service to deploy, monitor, and back up. |
 
-**Verdict**: ❌ Same issue as Weaviate — unnecessary complexity for sub-10K vectors.
+**Verdict**: âŒ Same issue as Weaviate â€” unnecessary complexity for sub-10K vectors.
 
 ### 4.5 Chroma
 
@@ -259,17 +259,17 @@ Based on semantic similarity to the user's current focus, the system can recomme
 | **Filtering** | Limited metadata filtering. |
 | **Maturity** | Alpha/beta. Not recommended for production. |
 
-**Verdict**: ❌ Not production-grade. Suitable for prototyping only.
+**Verdict**: âŒ Not production-grade. Suitable for prototyping only.
 
 ### Decision Matrix
 
 | Criteria | pgvector | Pinecone | Weaviate | Qdrant | Chroma |
 |---|---|---|---|---|---|
-| No new infrastructure | ✅ | ❌ | ❌ | ❌ | ✅ |
-| Production-ready | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Supabase integration | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Hybrid search | ✅ | ⚠️ (paid) | ✅ | ⚠️ (newer) | ❌ |
-| Arbitrary metadata filter | ✅ | ⚠️ (limited) | ✅ | ✅ | ❌ |
+| No new infrastructure | âœ… | âŒ | âŒ | âŒ | âœ… |
+| Production-ready | âœ… | âœ… | âœ… | âœ… | âŒ |
+| Supabase integration | âœ… | âŒ | âŒ | âŒ | âŒ |
+| Hybrid search | âœ… | âš ï¸ (paid) | âœ… | âš ï¸ (newer) | âŒ |
+| Arbitrary metadata filter | âœ… | âš ï¸ (limited) | âœ… | âœ… | âŒ |
 | Operational overhead | Low | Low | Medium | Medium | Low |
 | Cost | $0 (existing DB) | $70+/mo | Variable | Variable | $0 |
 
@@ -283,7 +283,7 @@ Based on semantic similarity to the user's current focus, the system can recomme
 
 ### Why pgvector?
 
-1. **No additional infrastructure**: The data already lives in Supabase PostgreSQL. Adding pgvector means adding one SQL extension and a few tables — no new service deployment, no new API keys, no new backup procedures.
+1. **No additional infrastructure**: The data already lives in Supabase PostgreSQL. Adding pgvector means adding one SQL extension and a few tables â€” no new service deployment, no new API keys, no new backup procedures.
 2. **Single source of truth**: Content (tasks, messages, etc.) and their embeddings live in the same database. No dual-write problem, no consistency issues, no sync lag.
 3. **Supabase-native**: Supabase has pgvector pre-installed and documented. Vector operations use the same PostgREST API as the rest of the system.
 4. **SQL filtering**: Full power of PostgreSQL WHERE clauses for metadata filtering. Combine `content_type = 'task' AND user_id = '...'` with vector search in a single query.
@@ -323,7 +323,7 @@ Two models are available locally via Ollama. Both run on the user's machine with
 
 | Strategy | When | Mechanism |
 |---|---|---|
-| **Real-time** | On content creation/update | New task created → embed immediately → store in vectors table. Latency: 200-500ms. |
+| **Real-time** | On content creation/update | New task created â†’ embed immediately â†’ store in vectors table. Latency: 200-500ms. |
 | **Batch** | On scheduled intervals | Every 6 hours, collect un-embedded content, batch embed, bulk insert. Efficient for large backfills. |
 | **Lazy** | On first query | Embed at query time if not already embedded. Trade-off: first query is slow. |
 
@@ -540,7 +540,7 @@ $$ LANGUAGE plpgsql;
 ### 9.1 Full Pipeline
 
 ```
-User Query → 1. Embed Query → 2. Vector Search → 3. Metadata Filter → 4. Hybrid Re-rank → 5. Return Results
+User Query â†’ 1. Embed Query â†’ 2. Vector Search â†’ 3. Metadata Filter â†’ 4. Hybrid Re-rank â†’ 5. Return Results
 ```
 
 ### Step 1: Embed Query
@@ -897,7 +897,7 @@ CREATE INDEX idx_vectors_content ON vectors (content_type, content_id);
 CREATE INDEX idx_vectors_metadata ON vectors USING gin (metadata);
 CREATE INDEX idx_chat_embeddings_user ON chat_embeddings (user_id);
 
--- Vector indexes (IVFFlat — for < 50K vectors)
+-- Vector indexes (IVFFlat â€” for < 50K vectors)
 CREATE INDEX idx_vectors_embedding ON vectors
     USING ivfflat (embedding vector_cosine_ops)
     WITH (lists = 100);

@@ -4,10 +4,10 @@
 
 | Metadata | Value |
 |---|---|
-| **Document ID** | ENG-ARCH-004 |
+| **Document ID** | ENG-MSR-001 |
 | **Status** | Draft |
 | **Version** | 1.0.0 |
-| **Last Updated** | 2026-06-11 |
+| **Last Updated** | 2026-07-11 |
 | **Author** | ARIA OS Engineering |
 | **Approval** | Pending |
 | **ADR References** | ADR-004 (Monolith First), ADR-007 (Microservices Migration Path) |
@@ -530,3 +530,8 @@ Phase 7: Full Migration (Q2 2027)
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0.0 | 2026-06-11 | ARIA OS Engineering | Initial draft |
+| 1.0.1 | 2026-07-11 | Developer | Added ADR-004 disclaimer |
+
+---
+
+> **Note:** This document describes a possible microservices architecture. Per ADR-004, the current implementation uses in-process agents. See `docs/engineering/adr/ADR-004-in-process-agents.md`.
