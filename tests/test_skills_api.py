@@ -1,7 +1,7 @@
 """Tests for skills.py API router — calls route functions directly."""
 
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import MagicMock, patch
 from apps.api.app.api.skills import (
     list_categories, create_category, get_category, update_category, delete_category,
     list_skills, create_skill, get_skill, update_skill, delete_skill,
@@ -60,6 +60,9 @@ class MockQueryBuilder:
     def gte(self, *a, **kw): return self
     def lte(self, *a, **kw): return self
     def text_search(self, *a, **kw): return self
+    def in_(self, *a, **kw): return self
+    def not_(self, *a, **kw): return self
+    def is_(self, *a, **kw): return self
     def from_(self, *a, **kw): return self
     def insert(self, d): return MockQueryBuilder(self._return_data, self._error_message)
     def update(self, d): return MockQueryBuilder(self._return_data, self._error_message)
