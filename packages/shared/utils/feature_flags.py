@@ -100,6 +100,10 @@ class FeatureFlagStore:
         with self._lock:
             return self._flags.pop(key, None) is not None
 
+    def get_flag(self, key: str) -> Optional[FeatureFlag]:
+        with self._lock:
+            return self._flags.get(key)
+
     def all_flags(self) -> Dict[str, FeatureFlag]:
         with self._lock:
             return dict(self._flags)
