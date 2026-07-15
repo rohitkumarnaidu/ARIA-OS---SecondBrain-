@@ -4,7 +4,7 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-CA-001 |
+| Document ID | PRD-CA-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |

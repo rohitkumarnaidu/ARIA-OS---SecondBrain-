@@ -4,10 +4,10 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-AUDIT-001 |
-| Version | 4.0.0 |
+| Document ID | PRD-AUD-001 |
+| Version | 1.1.0 |
 | Status | Final |
-| Date | 2026-06-11 |
+| Date | 2026-07-11 |
 | Project Name | Second Brain OS (ARIA OS) |
 | Current Version | v0.2.0 (pre-alpha) |
 | Current Branch | `main` |
@@ -16,6 +16,15 @@
 | Uncommitted Changes | Enterprise doc upgrades (40+ new/upgraded docs)
 | Total Files Tracked | 300+ (including ~120 doc files) |
 | Total Lines | ~41,000 (incl. lock file) / ~12,000 code-only / ~16 MB docs
+
+> **⚠️ HISTORICAL BASELINE — June 2026**
+> This document is a static snapshot captured on 2026-06-11 during initial project auditing.
+> Many metrics below are stale. For current project statistics, see:
+> - [AGENTS.md](../../AGENTS.md) — Canonical source of truth for all project metrics
+> - [IMPLEMENTATION_STATUS.md](../operations/IMPLEMENTATION_STATUS.md) — Live feature tracking
+>
+> **Key metric drift:** 300+ files → **330+ files** | ~12K code lines → **~20K Python + ~30K TypeScript**
+> **Tests:** ~50 → **2,411 Python + ~1,900 frontend** | **Coverage:** N/A → **95.56%**
 
 ---
 

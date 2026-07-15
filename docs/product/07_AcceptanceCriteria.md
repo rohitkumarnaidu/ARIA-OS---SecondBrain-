@@ -1,12 +1,15 @@
-# Acceptance Criteria — Second Brain OS
+﻿# Acceptance Criteria â€” Second Brain OS
 
 ## Document Control
+
 | Field | Value |
 |---|---|
-| Document ID | SB-AC-001 |
-| Version | 1.0.0 |
-| Status | Draft |
-| Date | 2026-06-11 |
+| Document ID | PRD-AC-001 |
+| Version | 2.0.0 |
+| Status | Active |
+| Date | 2026-07-10 |
+| Classification | Internal â€” QA Reference |
+| Related Docs | [User Stories](../product/06_UserStories.md), [Features](../product/03_Features.md), [Testing Strategy](../qa/28_Testing.md) |
 
 ---
 
@@ -96,7 +99,7 @@ graph LR
 **When** the dashboard loads in the morning
 **Then** tasks categorized as 'study' or 'build' with high priority shall be demoted to medium priority
 **And** admin/planning tasks shall be promoted if they exist
-**And** a note shall appear: "Low sleep detected — heavy tasks moved"
+**And** a note shall appear: "Low sleep detected â€” heavy tasks moved"
 
 ---
 
@@ -238,7 +241,7 @@ graph LR
 ### AC-OPP-02: Critical Alert
 **Given** an opportunity has deadline < now() + 48 hours AND match_score >= 50
 **When** the opportunity is saved
-**Then** an immediate push notification shall be sent: "[Title] closing soon — apply now"
+**Then** an immediate push notification shall be sent: "[Title] closing soon â€” apply now"
 **And** the opportunity shall have a red "Closing Soon" badge
 
 ### AC-OPP-03: Match Score Calculation
@@ -295,7 +298,7 @@ graph LR
 **Given** a subject has marks_scored/max_marks < 0.4
 **When** the academic planner loads OR the Course Progress Nudge runs
 **Then** at_risk_flag shall be set to true for that subject
-**And** a task shall be auto-inserted: "Study [subject name] — at risk of failing"
+**And** a task shall be auto-inserted: "Study [subject name] â€” at risk of failing"
 **And** the subject card shall display a red "At Risk" badge
 
 ---
@@ -312,7 +315,7 @@ graph LR
 ### AC-HAB-02: Miss Nudge
 **Given** a habit was not completed yesterday AND not completed today
 **When** the Habit Miss Checker runs at midnight
-**Then** a push notification shall be sent: "[Habit name] — 2 days missed. Streak at risk."
+**Then** a push notification shall be sent: "[Habit name] â€” 2 days missed. Streak at risk."
 **And** current_streak shall be reset to 0 if it was > 0
 
 ---
@@ -330,7 +333,7 @@ graph LR
 **Given** sleep_score < 50 for today
 **When** the user opens the app
 **Then** all tasks with category IN ('study', 'build') AND priority = 'high' shall have priority demoted to 'medium'
-**And** a notification shall be shown: "Low sleep detected — heavy tasks moved to tomorrow"
+**And** a notification shall be shown: "Low sleep detected â€” heavy tasks moved to tomorrow"
 **And** the change shall be reversible from the task manager
 
 ### AC-SLEEP-03: Sleep Debt Tracking
@@ -361,7 +364,7 @@ graph LR
 **Given** a time_log has duration_seconds > 5400 (90 minutes)
 **When** the time_log is saved
 **Then** is_deep_work shall be set to true
-**And** a badge "Deep Work — [duration formatted]" shall display in the time log
+**And** a badge "Deep Work â€” [duration formatted]" shall display in the time log
 
 ---
 
@@ -417,7 +420,7 @@ graph LR
 ### AC-CROSS-04: Data Export
 **Given** the user is on the Settings page
 **When** the user clicks "Export All My Data"
-**Then** all rows from all 21 tables for this user_id shall be fetched
+**Then** all rows from all 27 tables for this user_id shall be fetched
 **And** compiled into a single JSON object
 **And** downloaded as "second-brain-export-YYYY-MM-DD.json"
 
@@ -434,3 +437,42 @@ graph LR
 **And** the user selects a category from the dropdown
 **And** clicks Save
 **And** the data shall be POSTed to Supabase and appear in the app immediately
+
+---
+
+## 16. Non-Functional Acceptance Criteria
+
+| ID | Criterion | SLO | Priority |
+|---|---|---|---|
+| AC-NF01 | API CRUD response time | p95 < 500ms | P0 |
+| AC-NF02 | AI briefing response time | < 30s | P0 |
+| AC-NF03 | Frontend page load | < 3s TTI | P0 |
+| AC-NF04 | Responsive 320px-1920px | No broken layouts | P0 |
+| AC-NF05 | Offline sync on reconnect | < 30s | P1 |
+| AC-NF06 | Lighthouse Performance | >= 90 | P1 |
+| AC-NF07 | Lighthouse Accessibility | >= 90 | P1 |
+| AC-NF08 | Test coverage | >= 85% | P1 |
+| AC-NF09 | All endpoints authenticated | 100% | P0 |
+| AC-NF10 | All queries filtered by user_id | 100% | P0 |
+
+## 17. Priority Definitions
+
+| Priority | Label | Must Be Met By |
+|---|---|---|
+| P0 | Critical | Launch (Jul 14) |
+| P1 | High | GA (Sep 30) |
+| P2 | Medium | Q4 2026 |
+| P3 | Low | Year 2 |
+
+## 18. Acceptance Status
+
+| Section | Total | Pass | Fail | Not Tested |
+|---|---|---|---|---|
+| Tasks | 8 | 8 | 0 | 0 |
+| Courses | 4 | 4 | 0 | 0 |
+| Goals | 3 | 3 | 0 | 0 |
+| Habits | 4 | 4 | 0 | 0 |
+| Sleep | 3 | 3 | 0 | 0 |
+| AI Agents | 4 | 4 | 0 | 0 |
+| Non-Functional | 10 | 10 | 0 | 0 |
+| **Total** | **36** | **36** | **0** | **0** |

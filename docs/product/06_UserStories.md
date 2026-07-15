@@ -1,9 +1,9 @@
-# User Stories — Second Brain OS
+﻿# User Stories â€” Second Brain OS
 
 ## Document Control
 | Field | Value |
 |---|---|
-| Document ID | SB-US-001 |
+| Document ID | PRD-US-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -94,7 +94,7 @@ flowchart TD
 | US-IDEA-01 | BTech CSE student | capture any idea instantly with just a few words | my 2 AM startup ideas survive until morning | High |
 | US-IDEA-02 | BTech CSE student | have ARIA check if my idea already exists online | I don't spend weeks validating something that already exists | High |
 | US-IDEA-03 | BTech CSE student | get market analysis and feasibility notes for each idea | I know which ideas are worth pursuing without manual research | Medium |
-| US-IDEA-04 | BTech CSE student | move ideas through a clear pipeline (Raw → Researching → Validating → Building → Archived) | I know exactly where each idea stands and nothing lingers in limbo | High |
+| US-IDEA-04 | BTech CSE student | move ideas through a clear pipeline (Raw â†’ Researching â†’ Validating â†’ Building â†’ Archived) | I know exactly where each idea stands and nothing lingers in limbo | High |
 | US-IDEA-05 | BTech CSE student | get a 2-week no-money validation plan for any idea | I start validating immediately instead of overthinking | Medium |
 | US-IDEA-06 | BTech CSE student | see which types of problems I keep noticing after 6 months | I discover my natural path and focus my energy there | Low |
 
@@ -141,7 +141,7 @@ flowchart TD
 
 | ID | As a... | I want to... | So that... | Priority |
 |---|---|---|---|---|
-| US-PROJ-01 | BTech CSE student | track my projects through clear phases (Planning → Design → Build → Test → Launch → Maintain) | I always know what stage each project is in | High |
+| US-PROJ-01 | BTech CSE student | track my projects through clear phases (Planning â†’ Design â†’ Build â†’ Test â†’ Launch â†’ Maintain) | I always know what stage each project is in | High |
 | US-PROJ-02 | BTech CSE student | be required to define the next action for every project | I never have a project stuck because I don't know what to do next | High |
 | US-PROJ-03 | BTech CSE student | log blockers and get ARIA suggestions to unblock | I don't stay stuck for weeks on solvable problems | Medium |
 | US-PROJ-04 | BTech CSE student | connect my GitHub repo and have ARIA check commit activity | I stay accountable to actually coding, not just planning | Medium |

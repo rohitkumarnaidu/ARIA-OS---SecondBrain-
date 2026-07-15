@@ -1,4 +1,4 @@
-# Business Requirements Document (BRD) — Second Brain OS (ARIA OS)
+﻿# Business Requirements Document (BRD) â€” Second Brain OS (ARIA OS)
 
 ---
 
@@ -6,11 +6,11 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-BRD-001 |
+| Document ID | PRD-BRD-001 |
 | Version | 3.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Business Requirements |
+| Classification | Internal â€” Business Requirements |
 | Owner | Product Lead |
 | Next Review | 2026-09-11 |
 
@@ -68,20 +68,20 @@ init: {
 }
 %%
 graph TD
-  subgraph Users["👥 Users"]
+  subgraph Users["ðŸ‘¥ Users"]
     U1[BTech CSE Students]
     U2[Self-Taught Programmers]
     U3[Working Professionals]
   end
 
-  subgraph Value["💎 Value Proposition"]
+  subgraph Value["ðŸ’Ž Value Proposition"]
     V1[Unified Surface<br/>15 Modules, 1 App]
     V2[Active Push AI<br/>Zero-Config Intelligence]
     V3[Zero Cost<br/>Rs. 0/month Forever]
     V4[Privacy First<br/>Local AI, No Tracking]
   end
 
-  subgraph Modules["📦 15 Functional Modules"]
+  subgraph Modules["ðŸ“¦ 15 Functional Modules"]
     M1[Tasks - Courses - Goals]
     M2[Habits - Sleep - Time]
     M3[Income - Projects - Ideas]
@@ -90,14 +90,14 @@ graph TD
     M6[YouTube - Academics]
   end
 
-  subgraph AI["🤖 AI Layer"]
+  subgraph AI["ðŸ¤– AI Layer"]
     A1[ARIA Orchestrator]
-    A2[8 Specialized Sub-Agents]
-    A3[Ollama Local → Claude Cloud]
+    A2[11 Agents]
+    A3[Ollama Local â†’ Claude Cloud]
     A4[Algorithmic Fallbacks]
   end
 
-  subgraph Business["📊 Business Outcomes"]
+  subgraph Business["ðŸ“Š Business Outcomes"]
     B1[DAU > 100<br/>6 Months]
     B2[Retention > 60%<br/>30-Day]
     B3[Task Completion > 78%<br/>Post-AI]
@@ -137,31 +137,31 @@ init: {
 }
 %%
 flowchart LR
-  subgraph Input["📥 Input"]
+  subgraph Input["ðŸ“¥ Input"]
     I1[Student Pain Points<br/>Fragmention, Overwhelm]
     I2[Market Gap<br/>No Student-First AI Tool]
   end
 
-  subgraph Process["⚙️ Process"]
+  subgraph Process["âš™ï¸ Process"]
     P1[Build 15 Modules<br/>Monorepo Architecture]
     P2[Train AI Agents<br/>8 Specialized Sub-Agents]
     P3[Zero-Cost Infra<br/>Vercel + Supabase + Ollama]
     P4[Community GTM<br/>College Ambassadors]
   end
 
-  subgraph Output["📤 Output"]
+  subgraph Output["ðŸ“¤ Output"]
     O1[ARIA OS Platform<br/>Working Product]
     O2[Documentation<br/>120+ Docs, 16 MB]
     O3[Open Source<br/>MIT Licensed]
   end
 
-  subgraph Outcome["💥 Outcome"]
+  subgraph Outcome["ðŸ’¥ Outcome"]
     OC1[DAU 100+<br/>Retention > 60%]
     OC2[PMF Validated<br/>Community Grown]
     OC3[Rs. 0 Infrastructure<br/>Sustainable Forever]
   end
 
-  subgraph Impact["🌍 Impact"]
+  subgraph Impact["ðŸŒ Impact"]
     IM1[25K+ Students<br/>Year 5]
     IM2[Productivity x3<br/>Measured]
     IM3[New Category<br/>Personal AI OS]
@@ -182,12 +182,12 @@ flowchart LR
 
 **Second Brain OS (ARIA OS)** is a personal AI productivity system purpose-built for BTech CSE students in India. It addresses the critical gap between student potential and student execution by providing an integrated, AI-powered system that manages courses, tasks, ideas, opportunities, projects, income, habits, sleep, and time across 15 unified modules.
 
-The product operates at **Rs. 0/month** using free-tier infrastructure (Vercel, Supabase, Ollama, Brave Search), making it accessible to every student regardless of financial background. The ARIA AI agent — a collection of 8 specialized sub-agents — provides proactive intelligence through daily briefings, opportunity scanning, learning pattern detection, and behavioral nudges. Every feature has a deterministic, algorithm-driven fallback to ensure the system works even without AI.
+The product operates at **Rs. 0/month** using free-tier infrastructure (Vercel, Supabase, Ollama, Brave Search), making it accessible to every student regardless of financial background. The ARIA AI agent â€” a collection of 11 agents â€” provides proactive intelligence through daily briefings, opportunity scanning, learning pattern detection, and behavioral nudges. Every feature has a deterministic, algorithm-driven fallback to ensure the system works even without AI.
 
 **Key business metrics:**
 - **Target market**: ~600,000 serviceable users (BTech CSE students + self-taught programmers)
-- **Entry strategy**: Single-user, privacy-first, Rs. 0 forever — no subscription, no ads, no data selling
-- **Monetization**: Indirect (portfolio value) → Donations (Year 1) → Premium AI credits (Year 2) → Enterprise licensing (Year 3+)
+- **Entry strategy**: Single-user, privacy-first, Rs. 0 forever â€” no subscription, no ads, no data selling
+- **Monetization**: Indirect (portfolio value) â†’ Donations (Year 1) â†’ Premium AI credits (Year 2) â†’ Enterprise licensing (Year 3+)
 - **Development investment**: ~455 hours over 12 months, solo developer (part-time), Rs. 0 infrastructure cost
 - **Success threshold**: 100 daily active users with >60% 30-day retention proves product-market fit
 
@@ -236,21 +236,21 @@ BTech CSE students in India face a **systematic failure of information and oppor
 | Domain | Problem | Quantitative Impact |
 |---|---|---|
 | **Course Management** | Students enroll in 4-7 online courses per semester but complete <30% | Rs. 3,000-15,000/year in wasted course fees |
-| **Task Management** | No unified priority system — tasks accumulate in inboxes, forgotten | 65% of tasks remain incomplete |
+| **Task Management** | No unified priority system â€” tasks accumulate in inboxes, forgotten | 65% of tasks remain incomplete |
 | **Idea Capture** | Creative insights (startup ideas, project concepts) captured but lost within 24 hours | ~80% of ideas never executed |
 | **Opportunity Discovery** | Internships, hackathons, fellowships discovered after deadlines or not at all | 5-15 missed opportunities/year |
 | **Skill Application** | Skills studied in courses never applied to real projects, forgotten within 6 months | Years of learning time wasted |
-| **Time Awareness** | No consistent time tracking — students cannot optimize what they do not measure | 10-15 hrs/week unaccounted |
-| **Income Optimization** | Freelance/part-time income untracked — students do not know effective hourly rate | Systematic underpricing |
+| **Time Awareness** | No consistent time tracking â€” students cannot optimize what they do not measure | 10-15 hrs/week unaccounted |
+| **Income Optimization** | Freelance/part-time income untracked â€” students do not know effective hourly rate | Systematic underpricing |
 | **Health & Habits** | Sleep and health deprioritized during academic pressure | Burnout cycles, health deterioration |
 
 ### 3.2 Why Existing Solutions Fail
 
 | Solution | Gap | Why It Doesn't Work for Students |
 |---|---|---|
-| **Notion** | Generic — no student-specific features | Requires custom setup, expensive templates, no AI agent |
-| **Todoist** | Passive — no push intelligence | No course tracking, no opportunity radar, no AI |
-| **Motion** | Expensive — $19/month ($1,600/year) | Priced out of student budgets |
+| **Notion** | Generic â€” no student-specific features | Requires custom setup, expensive templates, no AI agent |
+| **Todoist** | Passive â€” no push intelligence | No course tracking, no opportunity radar, no AI |
+| **Motion** | Expensive â€” $19/month ($1,600/year) | Priced out of student budgets |
 | **ChatGPT/Claude** | No persistent memory, no proactive push | Requires manual prompting every time |
 | **Obsidian** | High learning curve, no actions | Graph is passive, no execution engine |
 | **College ERP** | Poor UX, no cross-system integration | Data locked in institutional silos |
@@ -260,25 +260,25 @@ BTech CSE students in India face a **systematic failure of information and oppor
 If the problem is not solved, each student loses:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                 ANNUAL COST OF INACTION                         │
-│                    (Per Student)                                │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Waste Category                      Financial    Opportunity   │
-│  ──────────────────────────────────────────────────────────    │
-│  Wasted course fees                  Rs. 5,000    —             │
-│  Missed internship income                         Rs. 50,000+  │
-│  Missed freelance income                          Rs. 30,000+  │
-│  Lost project opportunities                       Rs. 20,000+  │
-│  Skill decay (re-learning cost)      Rs. 2,000    —             │
-│  Time lost to disorganization                    Rs. 15,000+   │
-│  ──────────────────────────────────────────────────────────    │
-│  TOTAL                               Rs. 7,000    Rs. 115,000+ │
-│                                                                 │
-│  Combined estimated loss per student: ~Rs. 1.2 lakhs/year      │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 ANNUAL COST OF INACTION                         â”‚
+â”‚                    (Per Student)                                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                 â”‚
+â”‚  Waste Category                      Financial    Opportunity   â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€    â”‚
+â”‚  Wasted course fees                  Rs. 5,000    â€”             â”‚
+â”‚  Missed internship income                         Rs. 50,000+  â”‚
+â”‚  Missed freelance income                          Rs. 30,000+  â”‚
+â”‚  Lost project opportunities                       Rs. 20,000+  â”‚
+â”‚  Skill decay (re-learning cost)      Rs. 2,000    â€”             â”‚
+â”‚  Time lost to disorganization                    Rs. 15,000+   â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€    â”‚
+â”‚  TOTAL                               Rs. 7,000    Rs. 115,000+ â”‚
+â”‚                                                                 â”‚
+â”‚  Combined estimated loss per student: ~Rs. 1.2 lakhs/year      â”‚
+â”‚                                                                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 For the 500,000 BTech CSE students enrolled annually, the aggregate loss exceeds **Rs. 600 crore/year**.
@@ -306,11 +306,11 @@ The SAM filters TAM by criteria that directly affect adoption probability:
 
 | Filter | Rationale | Reduction Factor | Remaining |
 |---|---|---|---|
-| TAM | — | — | 7,200,000 |
+| TAM | â€” | â€” | 7,200,000 |
 | Currently enrolled or recently graduated (0-2 yrs) | Product is optimized for college-to-early-career transition | 70% | 5,040,000 |
-| Actively seeking productivity improvement | Self-selection — students who already use tools or feel the pain | 40% | 2,016,000 |
-| Comfortable with self-hosted / open-source tools | Technical requirement — deployment via CLI, GitHub | 50% | 1,008,000 |
-| Willing to try a new non-brand tool | Early adopter mindset — not locked into existing tools | 60% | 604,800 |
+| Actively seeking productivity improvement | Self-selection â€” students who already use tools or feel the pain | 40% | 2,016,000 |
+| Comfortable with self-hosted / open-source tools | Technical requirement â€” deployment via CLI, GitHub | 50% | 1,008,000 |
+| Willing to try a new non-brand tool | Early adopter mindset â€” not locked into existing tools | 60% | 604,800 |
 | **Serviceable Addressable Market** | | | **~600,000** |
 
 ### 4.3 Serviceable Obtainable Market (SOM)
@@ -327,12 +327,12 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 
 **SOM expansion drivers:**
 - **Year 1**: Dogfooding + 2-3 close friends (organic, zero marketing)
-- **Year 2**: GitHub release → Hacker News / Reddit viral potential
+- **Year 2**: GitHub release â†’ Hacker News / Reddit viral potential
 - **Year 3**: Community growth + Word of mouth + Product Hunt
 - **Year 4**: Institutional partnerships + International expansion
 - **Year 5**: Plugin ecosystem + Mobile app + Brand recognition
 
-### 4.4 Market Sizing — Revenue-Adjusted
+### 4.4 Market Sizing â€” Revenue-Adjusted
 
 | Year | Users | Revenue Model | Est. Annual Revenue |
 |---|---|---|---|
@@ -355,10 +355,10 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 | **Demographics** | Male, 19, 2nd Year CSE, Tier-2 city |
 | **Behavior** | Enrolls in 4-7 courses simultaneously. 200+ browser tabs. Buys courses on sale. |
 | **Tech Setup** | Windows laptop (8GB RAM), mid-range Android, unreliable hostel Wi-Fi |
-| **Monthly Spend** | Rs. 2,000 from parents — zero budget for software |
+| **Monthly Spend** | Rs. 2,000 from parents â€” zero budget for software |
 | **Pain Points** | Course abandonment, idea loss, task overwhelm, missed deadlines |
-| **Emotional State** | Guilt cycles — excited about new courses, guilty about unfinished ones |
-| **Adoption Trigger** | Misses an internship deadline → "I need a system that won't let me miss things" |
+| **Emotional State** | Guilt cycles â€” excited about new courses, guilty about unfinished ones |
+| **Adoption Trigger** | Misses an internship deadline â†’ "I need a system that won't let me miss things" |
 | **Monthly Value** | Would pay Rs. 0 (cannot pay). Value delivered: Rs. 5,000-10,000/month in saved fees + found opportunities |
 
 #### Persona B: "The Solo Builder" (Priya)
@@ -368,10 +368,10 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 | **Demographics** | Female, 20, 3rd Year CSE, Tier-1 city |
 | **Behavior** | Building a SaaS product. Freelances on Upwork (Rs. 5,000-15,000/month). Ships 1-2 projects/year. |
 | **Tech Setup** | MacBook Air, good Android phone, stable internet |
-| **Monthly Spend** | Rs. 5,000-15,000 from freelancing — willing to spend on tools that increase earning |
+| **Monthly Spend** | Rs. 5,000-15,000 from freelancing â€” willing to spend on tools that increase earning |
 | **Pain Points** | Time fragmentation across income streams, underpricing, no project structure |
-| **Emotional State** | Driven but tired — knows she could earn more if optimized |
-| **Adoption Trigger** | Discovers effective hourly rate is Rs. 75 → "I need to know this before every project" |
+| **Emotional State** | Driven but tired â€” knows she could earn more if optimized |
+| **Adoption Trigger** | Discovers effective hourly rate is Rs. 75 â†’ "I need to know this before every project" |
 | **Monthly Value** | Would pay Rs. 99/month if premium features needed. Value delivered: Rs. 5,000-10,000/month in rate optimization |
 
 #### Persona C: "The Idea Generator" (Rohan)
@@ -381,10 +381,10 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 | **Demographics** | Male, 18, 1st Year CSE, Tier-2 city |
 | **Behavior** | 50+ startup ideas in various notes. Zero shipped. Buys domain names on impulse. |
 | **Tech Setup** | Old Windows laptop, budget Android phone |
-| **Monthly Spend** | Rs. 1,000 from parents — prioritizes food and data over software |
+| **Monthly Spend** | Rs. 1,000 from parents â€” prioritizes food and data over software |
 | **Pain Points** | Idea overwhelm, no validation process, cannot decide what to build |
-| **Emotional State** | Excitement → overwhelm → abandonment → repeat |
-| **Adoption Trigger** | Forgets a brilliant idea → "I need to capture and evaluate systematically" |
+| **Emotional State** | Excitement â†’ overwhelm â†’ abandonment â†’ repeat |
+| **Adoption Trigger** | Forgets a brilliant idea â†’ "I need to capture and evaluate systematically" |
 | **Monthly Value** | Would pay Rs. 0. Value delivered: Structured pipeline from idea to execution |
 
 ### 5.2 Secondary Personas
@@ -414,18 +414,18 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 | **Enterprise team lead** | Product is single-user. No team features. No org-wide deployment. |
 | **Non-technical user** | Requires CLI, GitHub, self-hosting. Below minimum technical literacy threshold. |
 | **K-12 student** | Academic system (semesters, CGPA) does not apply. Content too advanced. |
-| **Senior professional (>5 years exp)** | Needs are around management, leadership, networking — not covered. |
+| **Senior professional (>5 years exp)** | Needs are around management, leadership, networking â€” not covered. |
 | **Social user** | No friends, no leaderboards, no sharing. Product is intentionally private. |
 
 ### 5.4 User Segment Prioritization
 
 | Priority | Segment | Rationale |
 |---|---|---|
-| **P0** | Persona A — Overloaded Optimist | Largest segment. Highest pain. Zero willingness to pay → perfect for Rs. 0 model. |
-| **P1** | Persona B — Solo Builder | Higher engagement potential. May convert to premium. Drives income modules. |
-| **P1** | Persona C — Idea Generator | Needs structure most. Drives idea pipeline and roadmap modules. |
-| **P2** | Persona D — Self-Taught Switcher | Growing segment. Requires minor adaptations. |
-| **P3** | Persona E — Fresh Graduate | Valuable but currently out of focus. Revisit in Year 2. |
+| **P0** | Persona A â€” Overloaded Optimist | Largest segment. Highest pain. Zero willingness to pay â†’ perfect for Rs. 0 model. |
+| **P1** | Persona B â€” Solo Builder | Higher engagement potential. May convert to premium. Drives income modules. |
+| **P1** | Persona C â€” Idea Generator | Needs structure most. Drives idea pipeline and roadmap modules. |
+| **P2** | Persona D â€” Self-Taught Switcher | Growing segment. Requires minor adaptations. |
+| **P3** | Persona E â€” Fresh Graduate | Valuable but currently out of focus. Revisit in Year 2. |
 
 ---
 
@@ -448,22 +448,22 @@ The SOM represents realistic adoption targets given the solo-developer, no-marke
 
 ```
 INTEREST
-    │
-High    │ Early Testers (S-03)           Student Users (S-01)
-        │                                 Developer (S-02)
-        │
-        │ College Faculty (S-04)          
-        │ Startup Employers (S-05)        
-        │
-Medium  │                                 Open Source Community (S-06)
-        │
-        │ GitHub Sponsors (S-07)          Future Investors (S-08)
-        │
-Low     └──────────────────────────────────────────► POWER
+    â”‚
+High    â”‚ Early Testers (S-03)           Student Users (S-01)
+        â”‚                                 Developer (S-02)
+        â”‚
+        â”‚ College Faculty (S-04)          
+        â”‚ Startup Employers (S-05)        
+        â”‚
+Medium  â”‚                                 Open Source Community (S-06)
+        â”‚
+        â”‚ GitHub Sponsors (S-07)          Future Investors (S-08)
+        â”‚
+Low     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–º POWER
             Low              Medium          High
 ```
 
-**Primary focus quadrant (High Power, High Interest):** Student Users + Developer — these drive all product decisions.
+**Primary focus quadrant (High Power, High Interest):** Student Users + Developer â€” these drive all product decisions.
 
 ### 6.3 Stakeholder Success Criteria
 
@@ -485,10 +485,10 @@ Each requirement is classified by priority:
 
 | Priority | Definition | Timeline |
 |---|---|---|
-| **P0** | Critical path — system does not function without it | Alpha (Month 3) |
-| **P1** | Important — core value proposition depends on it | Beta (Month 6) |
-| **P2** | Valuable — enhances experience, deferred if necessary | GA (Month 12) |
-| **P3** | Future — desirable but not committed | Post-GA |
+| **P0** | Critical path â€” system does not function without it | Alpha (Month 3) |
+| **P1** | Important â€” core value proposition depends on it | Beta (Month 6) |
+| **P2** | Valuable â€” enhances experience, deferred if necessary | GA (Month 12) |
+| **P3** | Future â€” desirable but not committed | Post-GA |
 
 ### 7.2 Module: Dashboard
 
@@ -518,7 +518,7 @@ Each requirement is classified by priority:
 | FR-TK-05 | Edit task (all fields) with update history | P0 | Edit modal; version history tracked |
 | FR-TK-06 | Delete task with confirmation | P0 | Soft delete (archived for 30 days) |
 | FR-TK-07 | View tasks by status (pending/completed/archived) | P0 | Filter tabs; counts for each status |
-| FR-TK-08 | View tasks by priority (sorted high→low) | P0 | Priority sort; urgent tasks visually distinct |
+| FR-TK-08 | View tasks by priority (sorted highâ†’low) | P0 | Priority sort; urgent tasks visually distinct |
 | FR-TK-09 | View tasks by due date (nearest first) | P0 | Default view; past-due tasks at top |
 | FR-TK-10 | Auto-reschedule overdue tasks based on priority | P1 | Algorithm moves tasks to today/tomorrow; reschedule logged |
 | FR-TK-11 | Link task to goal (goal_id foreign key) | P1 | Task shows in goal roadmap; goal progress updates |
@@ -528,7 +528,7 @@ Each requirement is classified by priority:
 | FR-TK-15 | Recurring tasks (daily, weekly, custom) | P2 | Recurrence rule; auto-creation on completion |
 | FR-TK-16 | Task dependencies (task B cannot start until task A is complete) | P2 | Dependency graph; visual indicator |
 | FR-TK-17 | Estimated time vs actual time tracking | P2 | Pomodoro timer integration; variance report |
-| FR-TK-18 | Task completion streak (consecutive days with ≥1 task done) | P2 | Streak counter; reset on miss day |
+| FR-TK-18 | Task completion streak (consecutive days with â‰¥1 task done) | P2 | Streak counter; reset on miss day |
 
 ### 7.4 Module: Courses
 
@@ -560,7 +560,7 @@ Each requirement is classified by priority:
 | FR-GL-05 | Link tasks to goal (task references goal_id) | P0 | Tasks shown in goal detail |
 | FR-GL-06 | Link courses to goal | P1 | Courses shown in goal detail |
 | FR-GL-07 | Goal progress % (auto-calculated from milestones + tasks) | P0 | Real-time update; visual progress bar |
-| FR-GL-08 | AI goal breakdown (text → milestone plan) | P1 | "I want to build X" → structured roadmap |
+| FR-GL-08 | AI goal breakdown (text â†’ milestone plan) | P1 | "I want to build X" â†’ structured roadmap |
 | FR-GL-09 | Goal categories (career, skills, health, finance, project) | P1 | Category filter; predefined |
 | FR-GL-10 | Quarterly goal review with AI insights | P2 | AI analyzes progress vs plan; suggests adjustments |
 | FR-GL-11 | Goal archive for completed/deprioritized goals | P1 | Archived goals viewable but not active |
@@ -578,7 +578,7 @@ Each requirement is classified by priority:
 | FR-YT-06 | Filter by watch status (to-watch/watching/watched/expired) | P0 | Filter tabs with counts |
 | FR-YT-07 | Link video to goal or course | P1 | Reference goal_id or course_id |
 | FR-YT-08 | Mark video as watched with rating (1-5) | P0 | Rating star input |
-| FR-YT-09 | Save via browser extension (one-click) | P0 | Extension button → auto-save with metadata |
+| FR-YT-09 | Save via browser extension (one-click) | P0 | Extension button â†’ auto-save with metadata |
 | FR-YT-10 | AI topic tagging (auto-categorization) | P2 | Tags generated from transcript |
 | FR-YT-11 | Watch queue optimization (AI suggests what to watch when) | P2 | Based on goals, course progress, time available |
 
@@ -592,27 +592,27 @@ Each requirement is classified by priority:
 | FR-RS-04 | Natural language search across resources | P1 | Semantic search (pgvector); falls back to full-text |
 | FR-RS-05 | Link resource to goal or course | P1 | Reference goal_id or course_id |
 | FR-RS-06 | Save from browser extension | P0 | One-click; auto-detect type |
-| FR-RS-07 | Resurface engine — show relevant resources contextually | P2 | When working on linked goal, surface resources |
+| FR-RS-07 | Resurface engine â€” show relevant resources contextually | P2 | When working on linked goal, surface resources |
 | FR-RS-08 | Resource archive with read/unread status | P0 | Status toggle |
 | FR-RS-09 | Reading list with priority ordering | P1 | Drag-to-reorder; manual prioritization |
 | FR-RS-10 | Resource notes (personal annotations) | P1 | Markdown editor per resource |
 | FR-RS-11 | Bookmark import (Chrome bookmarks, Pocket) | P2 | CSV/JSON import |
-| FR-RS-12 | Collaborative resource list (shared with specific users) | P3 | Future — deferred to collaboration phase |
+| FR-RS-12 | Collaborative resource list (shared with specific users) | P3 | Future â€” deferred to collaboration phase |
 
 ### 7.8 Module: Ideas
 
 | ID | Requirement | Priority | Acceptance Criteria |
 |---|---|---|---|
-| FR-ID-01 | Capture idea with title, description (min 10 chars) | P0 | Quick capture → title + description form |
-| FR-ID-02 | Status pipeline: raw → validating → building → shipped → archived | P0 | Status dropdown; pipeline visualization |
-| FR-ID-03 | AI market check — "Has this been built? Market size?" | P1 | Ollama-based analysis; falls back to manual |
+| FR-ID-01 | Capture idea with title, description (min 10 chars) | P0 | Quick capture â†’ title + description form |
+| FR-ID-02 | Status pipeline: raw â†’ validating â†’ building â†’ shipped â†’ archived | P0 | Status dropdown; pipeline visualization |
+| FR-ID-03 | AI market check â€” "Has this been built? Market size?" | P1 | Ollama-based analysis; falls back to manual |
 | FR-ID-04 | Link idea to goal or skill | P1 | Reference goal_id or skill_id |
 | FR-ID-05 | Idea scoring (effort: 1-5, impact: 1-5, confidence: 1-5) | P1 | Score = effort * impact * confidence / 125 (normalized) |
 | FR-ID-06 | Sort by score (highest first) | P1 | Default sort; manual override |
-| FR-ID-07 | AI action suggestion — "What's the next step for this idea?" | P2 | Based on status; suggests concrete actions |
+| FR-ID-07 | AI action suggestion â€” "What's the next step for this idea?" | P2 | Based on status; suggests concrete actions |
 | FR-ID-08 | Quick capture from mobile/browser/voice | P0 | Multiple entry points; unified storage |
 | FR-ID-09 | Idea age indicator (days since capture) | P1 | Visual badge; ideas >30 days in "raw" get nudge |
-| FR-ID-10 | Google Keep / Apple Notes import | P3 | Future — deferred |
+| FR-ID-10 | Google Keep / Apple Notes import | P3 | Future â€” deferred |
 
 ### 7.9 Module: Opportunities
 
@@ -621,15 +621,15 @@ Each requirement is classified by priority:
 | FR-OP-01 | Daily 6 AM scan of 6 categories (internships, hackathons, fellowships, open-source, freelance, grants) | P0 | Cron job executes; results stored |
 | FR-OP-02 | Skill match score (0-100) for each opportunity | P0 | Algorithm: match user skills with required skills |
 | FR-OP-03 | Deadline urgency indicator | P0 | Color-coded: green (>14 days), yellow (7-14), red (<7), critical (<48h) |
-| FR-OP-04 | History personalization — hide already-seen opportunities | P0 | Deduplication; seen_at tracking |
+| FR-OP-04 | History personalization â€” hide already-seen opportunities | P0 | Deduplication; seen_at tracking |
 | FR-OP-05 | Opportunities dashboard with filters | P0 | Filter by category, match score, deadline, status |
-| FR-OP-06 | Apply tracking — mark as applied/interviewed/rejected/accepted | P0 | Status pipeline |
+| FR-OP-06 | Apply tracking â€” mark as applied/interviewed/rejected/accepted | P0 | Status pipeline |
 | FR-OP-07 | Critical deadline alerts (push + email for <48 hours) | P1 | Multi-channel notification |
-| FR-OP-08 | Opportunity profile editor — fine-tune radar sources | P1 | Add/remove categories, keywords, minimum match score |
+| FR-OP-08 | Opportunity profile editor â€” fine-tune radar sources | P1 | Add/remove categories, keywords, minimum match score |
 | FR-OP-09 | Application documents tracker (resume, portfolio, SOP links) | P1 | Save links per opportunity |
-| FR-OP-10 | AI opportunity match analysis — "Why this matches you" | P2 | Generated by learning agent |
-| FR-OP-11 | Application success rate analytics | P2 | Applied → accepted rate; identify best-performing resume |
-| FR-OP-12 | Warm lead pipeline — companies that previously accepted | P3 | Future |
+| FR-OP-10 | AI opportunity match analysis â€” "Why this matches you" | P2 | Generated by learning agent |
+| FR-OP-11 | Application success rate analytics | P2 | Applied â†’ accepted rate; identify best-performing resume |
+| FR-OP-12 | Warm lead pipeline â€” companies that previously accepted | P3 | Future |
 
 ### 7.10 Module: Income
 
@@ -641,26 +641,26 @@ Each requirement is classified by priority:
 | FR-IC-04 | Calculate effective hourly rate (amount / hours worked) | P1 | Auto-calculated when hours entered |
 | FR-IC-05 | Monthly income summary with trend chart | P0 | Bar chart; month-over-month comparison |
 | FR-IC-06 | Year-to-date total | P1 | Running total |
-| FR-IC-07 | Income by skill — which skills earn most? | P1 | Pie chart or ranked list |
+| FR-IC-07 | Income by skill â€” which skills earn most? | P1 | Pie chart or ranked list |
 | FR-IC-08 | Weekly income review email | P2 | Automated weekly summary |
 | FR-IC-09 | Income goal setting (monthly target) | P2 | Goal vs actual tracking |
-| FR-IC-10 | Tax estimation (basic — applicable for freelance income) | P3 | Future |
+| FR-IC-10 | Tax estimation (basic â€” applicable for freelance income) | P3 | Future |
 
 ### 7.11 Module: Projects
 
 | ID | Requirement | Priority | Acceptance Criteria |
 |---|---|---|---|
 | FR-PR-01 | Create project with name, description, goals | P0 | Required: name; optional: description, goals |
-| FR-PR-02 | Phase tracking (planning → building → testing → launched → maintaining) | P0 | Kanban-style phase view |
-| FR-PR-03 | Next action rule — auto-suggest next step | P1 | Algorithm: based on current phase, last action, elapsed time |
-| FR-PR-04 | Blocker logging — describe what's blocking | P1 | Blocker form; escalation if >3 days unresolved |
+| FR-PR-02 | Phase tracking (planning â†’ building â†’ testing â†’ launched â†’ maintaining) | P0 | Kanban-style phase view |
+| FR-PR-03 | Next action rule â€” auto-suggest next step | P1 | Algorithm: based on current phase, last action, elapsed time |
+| FR-PR-04 | Blocker logging â€” describe what's blocking | P1 | Blocker form; escalation if >3 days unresolved |
 | FR-PR-05 | GitHub repo link integration | P1 | URL validation; commit count display |
 | FR-PR-06 | Weekly commit check (alert if no commits in 7 days) | P1 | Automated check; notification on stagnation |
-| FR-PR-07 | Skill profile auto-update (GitHub languages → skills) | P2 | Parse languages from repos; suggest skill additions |
+| FR-PR-07 | Skill profile auto-update (GitHub languages â†’ skills) | P2 | Parse languages from repos; suggest skill additions |
 | FR-PR-08 | Project URL (deployed link, demo) | P0 | URL field |
 | FR-PR-09 | LinkedIn post generator on milestone | P2 | AI draft based on milestone description |
 | FR-PR-10 | Project portfolio view (public-facing, optional) | P3 | Future |
-| FR-PR-11 | AI project health assessment | P2 | Analyzes: commits, blockers, phase progress → health score |
+| FR-PR-11 | AI project health assessment | P2 | Analyzes: commits, blockers, phase progress â†’ health score |
 
 ### 7.12 Module: Academics
 
@@ -669,13 +669,13 @@ Each requirement is classified by priority:
 | FR-AC-01 | Add semester with subjects + credits | P0 | Semesters ordered; subjects have name, code, credits |
 | FR-AC-02 | Input marks/grades per subject | P0 | Grade input (S/A/B/C/D/F or numeric) |
 | FR-AC-03 | CGPA calculation with projections | P0 | Formula: sum(grade_points * credits) / sum(credits) |
-| FR-AC-04 | CGPA projection — "If I get X grade in remaining subjects, CGPA = Y" | P1 | What-if analysis |
+| FR-AC-04 | CGPA projection â€” "If I get X grade in remaining subjects, CGPA = Y" | P1 | What-if analysis |
 | FR-AC-05 | At-risk subject alerts (current performance < minimum required) | P1 | Threshold-based alerts |
 | FR-AC-06 | Semester timeline view (exam dates, submission deadlines) | P1 | Calendar view |
 | FR-AC-07 | Grade distribution across semesters (trend chart) | P2 | Bar chart: CGPA per semester |
 | FR-AC-08 | Backlog tracking (subjects failed and needs retake) | P1 | Separate backlog list; retake planning |
 | FR-AC-09 | Attendance tracking (percentage per subject) | P2 | Threshold alert if <75% |
-| FR-AC-10 | Subject → skill mapping (what skills does each subject teach?) | P2 | Manual mapping; links to skill profile |
+| FR-AC-10 | Subject â†’ skill mapping (what skills does each subject teach?) | P2 | Manual mapping; links to skill profile |
 
 ### 7.13 Module: Habits
 
@@ -685,7 +685,7 @@ Each requirement is classified by priority:
 | FR-HB-02 | Log habit completion for current day | P0 | One-tap completion; timestamp |
 | FR-HB-03 | Streak tracking (consecutive days/weeks) | P0 | Auto-calculated; reset on miss |
 | FR-HB-04 | Consistency rate (completed / expected over 30 days) | P1 | Percentage; displayed as progress bar |
-| FR-HB-05 | Miss detection — alert if habit not logged by cutoff time | P1 | Notification if not completed by configurable time |
+| FR-HB-05 | Miss detection â€” alert if habit not logged by cutoff time | P1 | Notification if not completed by configurable time |
 | FR-HB-06 | Link habit to goal (habit supports goal progress) | P1 | Goal_id reference |
 | FR-HB-07 | Weekly habit summary (which habits maintained, which slipped) | P1 | Automated weekly report |
 | FR-HB-08 | Recovery rate tracking (streak recovery after miss) | P2 | Alternative metric: "how many days to restart after break" |
@@ -702,9 +702,9 @@ Each requirement is classified by priority:
 | FR-SL-04 | Sleep debt tracking (recommended 8h vs actual) | P1 | Running debt balance |
 | FR-SL-05 | Weekly sleep average chart | P1 | Line chart: average duration per night |
 | FR-SL-06 | Wind-down message at 9:30 PM (AI-generated) | P1 | Based on tomorrow's schedule, today's exertion |
-| FR-SL-07 | Task adjustment based on sleep — if sleep <5h, lower today's expectations | P1 | Algorithm: reduce task count; remove non-essential |
+| FR-SL-07 | Task adjustment based on sleep â€” if sleep <5h, lower today's expectations | P1 | Algorithm: reduce task count; remove non-essential |
 | FR-SL-08 | Google Fit / Apple Health integration (optional) | P2 | Import sleep data from watch/phone |
-| FR-SL-09 | Sleep insights — correlations with productivity | P2 | "When you sleep >7h, you complete 40% more tasks" |
+| FR-SL-09 | Sleep insights â€” correlations with productivity | P2 | "When you sleep >7h, you complete 40% more tasks" |
 | FR-SL-10 | Bedtime reminder (customizable schedule) | P0 | Push notification at configurable time |
 
 ### 7.15 Module: Time Tracking
@@ -729,10 +729,10 @@ Each requirement is classified by priority:
 | FR-AI-01 | Chat panel UI with message history | P0 | Scrollable messages; user + AI bubbles |
 | FR-AI-02 | Ollama integration (Mistral 7B) as primary LLM | P0 | API call to local Ollama; timeout 30s |
 | FR-AI-03 | Claude API fallback when Ollama unavailable | P1 | Automatic fallback; token budget management |
-| FR-AI-04 | Persistent memory (aria_memory table) — remembers user facts | P0 | Key-value storage; retrieval on context assembly |
-| FR-AI-05 | Chat-triggered actions — "Add task: ..." creates task | P1 | Natural language intent parsing; action execution |
+| FR-AI-04 | Persistent memory (aria_memory table) â€” remembers user facts | P0 | Key-value storage; retrieval on context assembly |
+| FR-AI-05 | Chat-triggered actions â€” "Add task: ..." creates task | P1 | Natural language intent parsing; action execution |
 | FR-AI-06 | Chat-triggered goal updates, resource saves | P1 | Similar to FR-AI-05; multi-intent support |
-| FR-AI-07 | Context builder — assemble user state into prompt | P0 | Serialize profile, goals, tasks, courses |
+| FR-AI-07 | Context builder â€” assemble user state into prompt | P0 | Serialize profile, goals, tasks, courses |
 | FR-AI-08 | Streaming responses (typing indicator) | P1 | Server-sent events; progressive rendering |
 | FR-AI-09 | Message history persistence (chat_messages table) | P0 | All messages saved; viewable in chat |
 | FR-AI-10 | Context-aware responses (references user's active goals) | P1 | Context builder includes active goals in system prompt |
@@ -749,8 +749,8 @@ Each requirement is classified by priority:
 | FR-AU-06 | Sleep wind-down (9:30 PM) | P1 | Cron: triggers sleep_agent; sends notification |
 | FR-AU-07 | Course progress nudge (6 PM) | P1 | Cron: checks course progress; sends nudge if stagnant |
 | FR-AU-08 | Learning progress snapshot (daily midnight) | P1 | Cron: captures current state to learning_progress |
-| FR-AU-09 | Email digest — weekly summary (Sunday 6 PM) | P2 | Cron: compiles weekly metrics; sends via Resend |
-| FR-AU-10 | Missed task escalation (push → email → SMS) | P2 | Cron: escalation ladder; SMS via Twilio |
+| FR-AU-09 | Email digest â€” weekly summary (Sunday 6 PM) | P2 | Cron: compiles weekly metrics; sends via Resend |
+| FR-AU-10 | Missed task escalation (push â†’ email â†’ SMS) | P2 | Cron: escalation ladder; SMS via Twilio |
 
 ### 7.18 Module: Settings & Profile
 
@@ -758,7 +758,7 @@ Each requirement is classified by priority:
 |---|---|---|---|
 | FR-ST-01 | User profile with name, email, skills list | P0 | Edit all fields; skills autocomplete |
 | FR-ST-02 | Notification preferences (push/email/SMS per event type) | P1 | Granular toggle per notification type |
-| FR-ST-03 | Theme toggle (dark/light — dark is default) | P0 | Persisted in user_preferences |
+| FR-ST-03 | Theme toggle (dark/light â€” dark is default) | P0 | Persisted in user_preferences |
 | FR-ST-04 | Data export (JSON + CSV) | P1 | Export all tables; download link |
 | FR-ST-05 | Account deletion with data purge | P0 | Confirmation flow; soft delete with 30-day recovery |
 | FR-ST-06 | API key management (for future API access) | P3 | Future |
@@ -772,11 +772,11 @@ Each requirement is classified by priority:
 
 | ID | Requirement | Target | Measurement | Violation Consequence |
 |---|---|---|---|---|
-| NFR-P-01 | API P95 response time | <200ms | Prometheus + Grafana (or Supabase analytics) | P1 bug — immediate investigation |
-| NFR-P-02 | API P99 response time | <500ms | Same as above | P1 bug — investigate within 24h |
+| NFR-P-01 | API P95 response time | <200ms | Prometheus + Grafana (or Supabase analytics) | P1 bug â€” immediate investigation |
+| NFR-P-02 | API P99 response time | <500ms | Same as above | P1 bug â€” investigate within 24h |
 | NFR-P-03 | AI response time (P95) | <3s | Client-side timing | Fallback to algorithmic response |
 | NFR-P-04 | AI response timeout | 30s max | Abort controller | Graceful error + fallback |
-| NFR-P-05 | Page load time (first meaningful paint) | <1.5s on LTE | Lighthouse | P2 bug — optimize within sprint |
+| NFR-P-05 | Page load time (first meaningful paint) | <1.5s on LTE | Lighthouse | P2 bug â€” optimize within sprint |
 | NFR-P-06 | Lighthouse performance score | >90 | Lighthouse CI | Blocking (pre-GA) |
 | NFR-P-07 | Lighthouse accessibility score | >85 | Lighthouse CI | P2 bug |
 | NFR-P-08 | Lighthouse SEO score | >90 | Lighthouse CI | P2 bug |
@@ -784,7 +784,7 @@ Each requirement is classified by priority:
 | NFR-P-10 | Time to interactive | <2.5s on mid-range Android | Web Vitals | P1 bug |
 | NFR-P-11 | Database query P95 | <100ms | Supabase query analytics | Add index / optimize query |
 | NFR-P-12 | Static asset size (JS bundle) | <200KB gzipped | Next.js bundle analyzer | Code split / lazy load |
-| NFR-P-13 | CRON job execution time | <60s per job | APScheduler logs | P1 bug — optimize or split |
+| NFR-P-13 | CRON job execution time | <60s per job | APScheduler logs | P1 bug â€” optimize or split |
 | NFR-P-14 | Supabase storage read time | <500ms for typical query | Client timing | P2 bug |
 
 ### 8.2 Availability Requirements
@@ -801,7 +801,7 @@ Each requirement is classified by priority:
 
 | ID | Requirement | Target | Verification |
 |---|---|---|---|
-| NFR-S-01 | Row-Level Security on ALL database tables | 100% of 21 tables | Automated RLS audit script |
+| NFR-S-01 | Row-Level Security on ALL database tables | 100% of 27 tables | Automated RLS audit script |
 | NFR-S-02 | No API keys in client-side code | Zero exposure | CI scan for API key patterns |
 | NFR-S-03 | Authentication via Supabase Auth (Google OAuth) | All users authenticated | Bypassing auth returns 401 |
 | NFR-S-04 | JWT validation on every API request | 100% of protected endpoints | Integration test per endpoint |
@@ -827,9 +827,9 @@ Each requirement is classified by priority:
 
 | ID | Requirement | Target | Implementation |
 |---|---|---|---|
-| NFR-R-01 | Graceful degradation — all features work without AI | 100% feature coverage | Algorithmic fallback for every AI feature |
-| NFR-R-02 | Offline CRUD — all write operations work offline | Tasks, courses, habits, income, ideas | IndexedDB + background sync |
-| NFR-R-03 | Crash recovery — no data loss on browser crash | IndexedDB persistence | Pre-save to localStorage as backup |
+| NFR-R-01 | Graceful degradation â€” all features work without AI | 100% feature coverage | Algorithmic fallback for every AI feature |
+| NFR-R-02 | Offline CRUD â€” all write operations work offline | Tasks, courses, habits, income, ideas | IndexedDB + background sync |
+| NFR-R-03 | Crash recovery â€” no data loss on browser crash | IndexedDB persistence | Pre-save to localStorage as backup |
 | NFR-R-04 | API idempotency on POST (retry-safe) | No duplicate records on retry | Idempotency key on sensitive endpoints |
 | NFR-R-05 | Database connection pooling | Handle 20 concurrent connections | Supabase pooler |
 | NFR-R-06 | Error logging with context | All errors logged with user, action, timestamp | Structured JSON logging |
@@ -865,10 +865,10 @@ Each requirement is classified by priority:
 | ID | Requirement | Target | Implementation |
 |---|---|---|---|
 | NFR-D-01 | Database backup daily | Point-in-time recovery | Supabase backup (automatic) |
-| NFR-D-02 | Data retention — user data kept until account deletion | Deletion = permanent erase | Cascade delete on user deletion |
-| NFR-D-03 | Data portability — export in JSON + CSV | All tables exportable | Export endpoint |
-| NFR-D-04 | Archival policy — logs kept for 90 days | Older logs purged | Cron job for archive |
-| NFR-D-05 | PII minimization — only essential data collected | No location, no contacts, no device data | Data audit |
+| NFR-D-02 | Data retention â€” user data kept until account deletion | Deletion = permanent erase | Cascade delete on user deletion |
+| NFR-D-03 | Data portability â€” export in JSON + CSV | All tables exportable | Export endpoint |
+| NFR-D-04 | Archival policy â€” logs kept for 90 days | Older logs purged | Cron job for archive |
+| NFR-D-05 | PII minimization â€” only essential data collected | No location, no contacts, no device data | Data audit |
 
 ---
 
@@ -941,13 +941,13 @@ Each requirement is classified by priority:
 
 | Dependency | Risk | Mitigation |
 |---|---|---|
-| **Ollama (local AI)** | High — may not run on low-RAM devices | Claude fallback + algorithmic fallback |
-| **Supabase free tier** | Medium — limits may be reached | Cache aggressively; paginate; compress |
-| **Vercel free tier** | Low — generous limits | Optimize bandwidth (100GB/month) |
-| **Railway free tier** | Medium — may deprecate free plan | Maintain Dockerfile for alternative hosts |
-| **Claude API credits** | Medium — $5 exhausts quickly | Ollama for 80% of calls; token budget limits |
-| **Brave Search free tier** | Medium — 2000 queries/month limit | Cache results for 24h; reduce scan diversity |
-| **Browser extension stores** | Low — may reject extension | WXT cross-browser; sideload guide |
+| **Ollama (local AI)** | High â€” may not run on low-RAM devices | Claude fallback + algorithmic fallback |
+| **Supabase free tier** | Medium â€” limits may be reached | Cache aggressively; paginate; compress |
+| **Vercel free tier** | Low â€” generous limits | Optimize bandwidth (100GB/month) |
+| **Railway free tier** | Medium â€” may deprecate free plan | Maintain Dockerfile for alternative hosts |
+| **Claude API credits** | Medium â€” $5 exhausts quickly | Ollama for 80% of calls; token budget limits |
+| **Brave Search free tier** | Medium â€” 2000 queries/month limit | Cache results for 24h; reduce scan diversity |
+| **Browser extension stores** | Low â€” may reject extension | WXT cross-browser; sideload guide |
 
 ---
 
@@ -965,11 +965,11 @@ Each requirement is classified by priority:
 | **Courses** | Courses started per semester | >4 | COUNT(courses.created_at in semester) | Semester date filter |
 | **Goals** | Goals with >50% progress | >3 | COUNT(progress >= 50) | Scheduled query |
 | **YouTube Vault** | Weekly videos saved | >3 | COUNT(resources WHERE type = 'video') | Weekly aggregate |
-| **Resources** | Resource → goal link rate | >50% | COUNT(goal_id IS NOT NULL) / COUNT(*) | Scheduled query |
+| **Resources** | Resource â†’ goal link rate | >50% | COUNT(goal_id IS NOT NULL) / COUNT(*) | Scheduled query |
 | **Ideas** | Ideas moved to "building" per month | >1 | COUNT(status = 'building') per month | Monthly aggregate |
 | **Opportunities** | Opportunities applied to per week | >2 | COUNT(status = 'applied') | Weekly aggregate |
 | **Opportunities** | Radar match relevance | >60% with match_score >= 50 | opportunities.match_score distribution | Distribution query |
-| **Income** | Weeks with ≥1 income entry | >70% | COUNT(DISTINCT iso_week) / total_weeks | Weekly cron |
+| **Income** | Weeks with â‰¥1 income entry | >70% | COUNT(DISTINCT iso_week) / total_weeks | Weekly cron |
 | **Projects** | Projects with >2 phases completed | >2 | COUNT(phases WHERE status = 'completed') >= 2 | Scheduled |
 | **Academics** | CGPA projection accuracy | Within 0.2 of actual | ABS(projected - actual) | After each semester |
 | **Habits** | Average habit consistency | >50% | (completed_logs / expected_logs) * 100 for last 30 days | Daily cron |
@@ -1000,28 +1000,28 @@ Each requirement is classified by priority:
 ### 11.3 KPI Dashboard
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                KPI DASHBOARD — EXECUTIVE VIEW                   │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  GROWTH                ENGAGEMENT             QUALITY           │
-│  ┌────────────────┐   ┌────────────────┐   ┌────────────────┐   │
-│  │ DAU: 42/100    │   │ Task Comp/Wk   │   │ API P95: 145ms │   │
-│  │ MAU: 89/200    │   │   18.3/15 ✓    │   │     ✓ <200ms   │   │
-│  │ Retention:     │   │ Briefing Read  │   │ Lighthouse:    │   │
-│  │   72%/60% ✓    │   │   84%/80% ✓    │   │   92/90 ✓      │   │
-│  │ Referral:      │   │ Radar App/Wk   │   │ CI Pass:       │   │
-│  │   0.35/0.3 ✓   │   │   2.4/2 ✓      │   │   97%/95% ✓    │   │
-│  └────────────────┘   └────────────────┘   └────────────────┘   │
-│                                                                 │
-│  COST                    MODULE HEALTH                          │
-│  ┌────────────────┐   ┌────────────────────────────────────┐   │
-│  │ Infrastructure │   │ Tasks: ● Courses: ● Goals: ●       │   │
-│  │ Rs. 47/month ✓ │   │ Radar: ○ Briefing: ● Review: ●    │   │
-│  │ Budget: Rs. 100│   │ Sleep: ● Habits: ● Income: ○      │   │
-│  └────────────────┘   └────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                KPI DASHBOARD â€” EXECUTIVE VIEW                   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                 â”‚
+â”‚  GROWTH                ENGAGEMENT             QUALITY           â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ DAU: 42/100    â”‚   â”‚ Task Comp/Wk   â”‚   â”‚ API P95: 145ms â”‚   â”‚
+â”‚  â”‚ MAU: 89/200    â”‚   â”‚   18.3/15 âœ“    â”‚   â”‚     âœ“ <200ms   â”‚   â”‚
+â”‚  â”‚ Retention:     â”‚   â”‚ Briefing Read  â”‚   â”‚ Lighthouse:    â”‚   â”‚
+â”‚  â”‚   72%/60% âœ“    â”‚   â”‚   84%/80% âœ“    â”‚   â”‚   92/90 âœ“      â”‚   â”‚
+â”‚  â”‚ Referral:      â”‚   â”‚ Radar App/Wk   â”‚   â”‚ CI Pass:       â”‚   â”‚
+â”‚  â”‚   0.35/0.3 âœ“   â”‚   â”‚   2.4/2 âœ“      â”‚   â”‚   97%/95% âœ“    â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                 â”‚
+â”‚  COST                    MODULE HEALTH                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Infrastructure â”‚   â”‚ Tasks: â— Courses: â— Goals: â—       â”‚   â”‚
+â”‚  â”‚ Rs. 47/month âœ“ â”‚   â”‚ Radar: â—‹ Briefing: â— Review: â—    â”‚   â”‚
+â”‚  â”‚ Budget: Rs. 100â”‚   â”‚ Sleep: â— Habits: â— Income: â—‹      â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1064,7 +1064,7 @@ Each requirement is classified by priority:
 | R-01 (Churn) | User retention cohort analysis | Weekly | If 30-day retention <40%, investigate onboarding |
 | R-02 (API costs) | API usage dashboard | Monthly | If costs exceed Rs. 100/month, restrict Claude usage |
 | R-04 (Supabase) | Supabase status page | Daily | If limits reach 80%, archive old data |
-| R-08 (Security) | CI security scan | Per commit | Any finding → immediate fix within 24h |
+| R-08 (Security) | CI security scan | Per commit | Any finding â†’ immediate fix within 24h |
 | R-11 (Adoption) | User signup analytics | Weekly | If <5 new users/week post-launch, revise GTM |
 
 ---
@@ -1075,9 +1075,9 @@ Each requirement is classified by priority:
 
 | Requirement | Compliance Approach | Status |
 |---|---|---|
-| **Indian IT Act 2000 (Section 43A)** — Reasonable security practices for sensitive data | RLS on all tables; encryption in transit (HTTPS); no client-side secrets | ✅ Designed-in |
-| **Digital Personal Data Protection Act 2023 (India)** — User consent, data minimization, right to erasure | Explicit consent on signup; data minimization (no unnecessary PII); account deletion = full erasure | ✅ Designed-in |
-| **GDPR (future international expansion)** — Data portability, right to be forgotten | JSON/CSV export; account deletion cascades to all tables | ✅ Export ready; GDPR notice needed post-EU expansion |
+| **Indian IT Act 2000 (Section 43A)** â€” Reasonable security practices for sensitive data | RLS on all tables; encryption in transit (HTTPS); no client-side secrets | âœ… Designed-in |
+| **Digital Personal Data Protection Act 2023 (India)** â€” User consent, data minimization, right to erasure | Explicit consent on signup; data minimization (no unnecessary PII); account deletion = full erasure | âœ… Designed-in |
+| **GDPR (future international expansion)** â€” Data portability, right to be forgotten | JSON/CSV export; account deletion cascades to all tables | âœ… Export ready; GDPR notice needed post-EU expansion |
 
 ### 13.2 Accessibility
 
@@ -1111,15 +1111,15 @@ Each requirement is classified by priority:
 
 | Phase | Weeks | Hours | Category | Cost (Opportunity) |
 |---|---|---|---|---|
-| Phase 1 — Core Foundation | 3 | 45 | Infrastructure, auth, CRUD | Rs. 0 (student time) |
-| Phase 2 — Save Everything | 3 | 40 | Content modules, extension | Rs. 0 |
-| Phase 3 — ARIA & Core AI | 4 | 50 | AI integration, prompts | Rs. 0 |
-| Phase 4 — Advanced AI | 5 | 55 | Agents, radar, context | Rs. 0 |
-| Phase 5 — Roadmap Engine | 3 | 40 | Visual builder, AI parsing | Rs. 0 |
-| Phase 6 — Full Life Tracking | 8 | 60 | Income, projects, academics, habits | Rs. 0 |
-| Phase 7 — Monitoring | 4 | 45 | Reminders, sleep, time | Rs. 0 |
-| Phase 8 — Polish & PWA | 2 | 30 | Offline, performance, security | Rs. 0 |
-| Phase 9 — Public Release | 5 | 50 | GitHub, community, docs | Rs. 0 |
+| Phase 1 â€” Core Foundation | 3 | 45 | Infrastructure, auth, CRUD | Rs. 0 (student time) |
+| Phase 2 â€” Save Everything | 3 | 40 | Content modules, extension | Rs. 0 |
+| Phase 3 â€” ARIA & Core AI | 4 | 50 | AI integration, prompts | Rs. 0 |
+| Phase 4 â€” Advanced AI | 5 | 55 | Agents, radar, context | Rs. 0 |
+| Phase 5 â€” Roadmap Engine | 3 | 40 | Visual builder, AI parsing | Rs. 0 |
+| Phase 6 â€” Full Life Tracking | 8 | 60 | Income, projects, academics, habits | Rs. 0 |
+| Phase 7 â€” Monitoring | 4 | 45 | Reminders, sleep, time | Rs. 0 |
+| Phase 8 â€” Polish & PWA | 2 | 30 | Offline, performance, security | Rs. 0 |
+| Phase 9 â€” Public Release | 5 | 50 | GitHub, community, docs | Rs. 0 |
 | Buffer / Exam Weeks | 8 | 40 | Contingency | Rs. 0 |
 | **Total** | **48 weeks** | **~455 hours** | | **Rs. 0** |
 
@@ -1130,7 +1130,7 @@ Each requirement is classified by priority:
 | **Vercel (Frontend)** | 100GB bandwidth, 100GB hours | <5GB bandwidth, <50GB hours | Rs. 0 |
 | **Railway (Backend)** | $5 credit/month (or free tier) | ~$0-3/month equivalent | Rs. 0-250 |
 | **Supabase (Database)** | 500MB database, 50MB transfer/day | <200MB database, <10MB transfer/day | Rs. 0 |
-| **Ollama (AI)** | Local machine — free | Running on developer's laptop | Rs. 0 |
+| **Ollama (AI)** | Local machine â€” free | Running on developer's laptop | Rs. 0 |
 | **Claude API** | $5 free credits | ~$2-3/month (fallback only) | Rs. 0 (until credits exhaust) |
 | **Brave Search** | 2000 queries/month | ~500-1000 queries/month | Rs. 0 |
 | **Resend (Email)** | 3000 emails/month | ~300-1000 emails/month | Rs. 0 |
@@ -1164,19 +1164,19 @@ Each requirement is classified by priority:
 
 | Phase | Start | End | Duration | Weeks | Milestone |
 |---|---|---|---|---|---|
-| Phase 1 — Core Foundation | Jul 6, 2026 | Jul 26, 2026 | 3 weeks | 1-3 | Working app with login, tasks, courses, dashboard |
-| Phase 2 — Save Everything | Jul 27, 2026 | Aug 16, 2026 | 3 weeks | 4-6 | Content capture modules, browser extension |
-| Phase 3 — ARIA & Core AI | Aug 17, 2026 | Sep 13, 2026 | 4 weeks | 7-10 | ARIA chat, daily briefing, weekly review |
-| **ALPHA** | **Sep 13, 2026** | — | — | 10 | All 15 modules + basic AI |
-| Phase 4 — Advanced AI | Sep 14, 2026 | Oct 18, 2026 | 5 weeks | 11-15 | Learning agent, radar, context engine, sleep, nudge |
-| **BETA** | **Oct 18, 2026** | — | — | 15 | Advanced AI complete |
-| Phase 5 — Roadmap Engine | Oct 19, 2026 | Nov 8, 2026 | 3 weeks | 16-18 | Visual roadmap builder, AI parsing |
-| Phase 6 — Full Life Tracking | Nov 9, 2026 | Jan 3, 2027 | 8 weeks | 19-26 | Income, projects, academics, habits |
-| Phase 7 — Monitoring & Automation | Jan 4, 2027 | Jan 31, 2027 | 4 weeks | 27-30 | Reminders, sleep, time tracking |
-| Phase 8 — Polish & Production | Feb 1, 2027 | Feb 14, 2027 | 2 weeks | 30-31 | PWA, offline, security audit |
-| **GA CANDIDATE** | **Feb 14, 2027** | — | — | 31 | Stable, complete feature set |
-| Phase 9 — Public Release | Feb 15, 2027 | Mar 21, 2027 | 5 weeks | 32-36 | GitHub public, community infrastructure |
-| **GA LAUNCH** | **Mar 21, 2027** | — | — | 36 | Public availability |
+| Phase 1 â€” Core Foundation | Jul 6, 2026 | Jul 26, 2026 | 3 weeks | 1-3 | Working app with login, tasks, courses, dashboard |
+| Phase 2 â€” Save Everything | Jul 27, 2026 | Aug 16, 2026 | 3 weeks | 4-6 | Content capture modules, browser extension |
+| Phase 3 â€” ARIA & Core AI | Aug 17, 2026 | Sep 13, 2026 | 4 weeks | 7-10 | ARIA chat, daily briefing, weekly review |
+| **ALPHA** | **Sep 13, 2026** | â€” | â€” | 10 | All 15 modules + basic AI |
+| Phase 4 â€” Advanced AI | Sep 14, 2026 | Oct 18, 2026 | 5 weeks | 11-15 | Learning agent, radar, context engine, sleep, nudge |
+| **BETA** | **Oct 18, 2026** | â€” | â€” | 15 | Advanced AI complete |
+| Phase 5 â€” Roadmap Engine | Oct 19, 2026 | Nov 8, 2026 | 3 weeks | 16-18 | Visual roadmap builder, AI parsing |
+| Phase 6 â€” Full Life Tracking | Nov 9, 2026 | Jan 3, 2027 | 8 weeks | 19-26 | Income, projects, academics, habits |
+| Phase 7 â€” Monitoring & Automation | Jan 4, 2027 | Jan 31, 2027 | 4 weeks | 27-30 | Reminders, sleep, time tracking |
+| Phase 8 â€” Polish & Production | Feb 1, 2027 | Feb 14, 2027 | 2 weeks | 30-31 | PWA, offline, security audit |
+| **GA CANDIDATE** | **Feb 14, 2027** | â€” | â€” | 31 | Stable, complete feature set |
+| Phase 9 â€” Public Release | Feb 15, 2027 | Mar 21, 2027 | 5 weeks | 32-36 | GitHub public, community infrastructure |
+| **GA LAUNCH** | **Mar 21, 2027** | â€” | â€” | 36 | Public availability |
 | Buffer / Mobile Preview | Mar 22, 2027 | May 16, 2027 | 8 weeks | 37-44 | Contingency + mobile app preview |
 | Post-GA Stabilization | May 17, 2027 | Jun 27, 2027 | 6 weeks | 45-50 | Bug fixes, performance optimization, v2 planning |
 
@@ -1192,11 +1192,11 @@ Each requirement is classified by priority:
 | **M6: Daily Briefing** | Sep 6, 2026 | 7 AM AI briefing | Briefing generates daily, delivers in-app + email |
 | **M7: Weekly Review** | Sep 13, 2026 | Sunday AI review | Review generates with narrative + data |
 | **M8: ALPHA** | Sep 13, 2026 | Complete system | 30 tests pass; developer using daily for 1 week |
-| **M9: Opportunity Radar** | Oct 4, 2026 | Daily opportunity scans | ≥3 relevant matches found daily |
+| **M9: Opportunity Radar** | Oct 4, 2026 | Daily opportunity scans | â‰¥3 relevant matches found daily |
 | **M10: Context Engine** | Oct 11, 2026 | Full context assembly | AI responses include user goals, tasks, courses |
 | **M11: Sleep + Nudge** | Oct 18, 2026 | Automated agents | Wind-down 9:30 PM; nudge 6 PM |
-| **M12: BETA** | Oct 18, 2026 | Advanced AI | 8 agents operational; 30+ tests |
-| **M13: Roadmap Builder** | Nov 8, 2026 | Visual + AI roadmap | Drag-drop + text→roadmap both work |
+| **M12: BETA** | Oct 18, 2026 | Advanced AI | 11 agents operational; 30+ tests |
+| **M13: Roadmap Builder** | Nov 8, 2026 | Visual + AI roadmap | Drag-drop + textâ†’roadmap both work |
 | **M14: Income + Projects** | Dec 6, 2026 | Income/project tracking | Log income, track project phases |
 | **M15: Academics + CGPA** | Dec 20, 2026 | Academic planning | CGPA projected within 0.2 of actual |
 | **M16: Habits + Streaks** | Jan 3, 2027 | Habit engine | Streaks tracked; consistency reports |
@@ -1224,9 +1224,9 @@ Each requirement is classified by priority:
 | Term | Definition |
 |---|---|
 | **ARIA** | AI-powered orchestration agent that coordinates sub-agents and user interaction across all 15 modules |
-| **Sub-Agent** | Specialized AI module (briefing, memory, learning, opportunity, sleep, nudge, etc.) — 8 total |
-| **Second Brain OS** | Full product name — the personal AI productivity system |
-| **Zero-Miss** | System property where no task, deadline, or commitment silently expires — every item is either done, rescheduled, or explicitly dropped |
+| **Sub-Agent** | Specialized AI module (briefing, memory, learning, opportunity, sleep, nudge, etc.) â€” 8 total |
+| **Second Brain OS** | Full product name â€” the personal AI productivity system |
+| **Zero-Miss** | System property where no task, deadline, or commitment silently expires â€” every item is either done, rescheduled, or explicitly dropped |
 | **Opportunity Radar** | Daily 6 AM automated scan of 6 categories (internships, hackathons, fellowships, open-source, freelance, grants) matched to user skills |
 | **Resurface Engine** | Algorithm that identifies and re-presents saved content (resources, ideas) at contextually relevant moments based on active goals |
 | **Context Engine** | Pipeline that assembles user data (profile, goals, tasks, courses, skills) into LLM-optimized system prompts for ARIA |
@@ -1237,35 +1237,35 @@ Each requirement is classified by priority:
 
 | Term | Definition |
 |---|---|
-| **PMF** | Product-Market Fit — state where a product satisfies strong market demand |
-| **DAU** | Daily Active Users — unique users who log in within a 24-hour period |
-| **MAU** | Monthly Active Users — unique users who log in within a 30-day period |
-| **DAU/MAU** | Engagement ratio — percentage of monthly users who use the product daily |
-| **NPS** | Net Promoter Score — user satisfaction metric (-100 to +100) based on "how likely to recommend" |
-| **TAM** | Total Addressable Market — total revenue opportunity available if 100% market share |
-| **SAM** | Serviceable Addressable Market — segment of TAM within product's reach |
-| **SOM** | Serviceable Obtainable Market — realistic adoption given constraints |
+| **PMF** | Product-Market Fit â€” state where a product satisfies strong market demand |
+| **DAU** | Daily Active Users â€” unique users who log in within a 24-hour period |
+| **MAU** | Monthly Active Users â€” unique users who log in within a 30-day period |
+| **DAU/MAU** | Engagement ratio â€” percentage of monthly users who use the product daily |
+| **NPS** | Net Promoter Score â€” user satisfaction metric (-100 to +100) based on "how likely to recommend" |
+| **TAM** | Total Addressable Market â€” total revenue opportunity available if 100% market share |
+| **SAM** | Serviceable Addressable Market â€” segment of TAM within product's reach |
+| **SOM** | Serviceable Obtainable Market â€” realistic adoption given constraints |
 | **Retention** | Percentage of users who return after a given period (Day 1, Day 7, Day 30) |
 | **Churn** | Percentage of users who stop using the product within a given period |
-| **LTV** | Lifetime Value — total value a user generates over their relationship with the product |
-| **CAC** | Customer Acquisition Cost — cost to acquire one user (Rs. 0 for organic) |
-| **GTM** | Go-To-Market strategy — plan for reaching target users and achieving adoption |
-| **SLA** | Service Level Agreement — commitment to uptime, response time, etc. |
-| **OKR** | Objectives and Key Results — goal-setting framework |
+| **LTV** | Lifetime Value â€” total value a user generates over their relationship with the product |
+| **CAC** | Customer Acquisition Cost â€” cost to acquire one user (Rs. 0 for organic) |
+| **GTM** | Go-To-Market strategy â€” plan for reaching target users and achieving adoption |
+| **SLA** | Service Level Agreement â€” commitment to uptime, response time, etc. |
+| **OKR** | Objectives and Key Results â€” goal-setting framework |
 
 ### 16.3 Technical Terms
 
 | Term | Definition |
 |---|---|
-| **RLS** | Row-Level Security — PostgreSQL policy ensuring users can only access their own data |
-| **JWT** | JSON Web Token — authentication token format used by Supabase Auth |
-| **PWA** | Progressive Web Application — installable web app with offline support |
+| **RLS** | Row-Level Security â€” PostgreSQL policy ensuring users can only access their own data |
+| **JWT** | JSON Web Token â€” authentication token format used by Supabase Auth |
+| **PWA** | Progressive Web Application â€” installable web app with offline support |
 | **IndexedDB** | Browser-based NoSQL database for offline data storage |
 | **Service Worker** | Browser script that enables offline functionality and push notifications |
-| **Ollama** | Local LLM server — runs Mistral 7B and other models on consumer hardware |
+| **Ollama** | Local LLM server â€” runs Mistral 7B and other models on consumer hardware |
 | **WXT** | Cross-browser extension framework (Chrome + Firefox from single codebase) |
 | **APScheduler** | Python task scheduler for cron jobs (daily briefing, radar, etc.) |
-| **P95/P99** | 95th/99th percentile response time — 95% of requests are faster than this value |
+| **P95/P99** | 95th/99th percentile response time â€” 95% of requests are faster than this value |
 | **pgvector** | PostgreSQL extension for vector similarity search (used for semantic search) |
 
 ### 16.4 Metric Terms
@@ -1288,20 +1288,20 @@ Each requirement is classified by priority:
 ### Appendix A: Requirements Traceability Matrix
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│            REQUIREMENTS TRACEABILITY MATRIX (SAMPLE)           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  BRD ID  │ Module   │ Priority │ SRS ID  │ Test ID │ Status   │
-│  ────────┼──────────┼──────────┼─────────┼─────────┼──────────│
-│  FR-TK-01│ Tasks    │ P0       │ SRS-4.1 │ T-TK-01 │ Planned  │
-│  FR-TK-02│ Tasks    │ P0       │ SRS-4.2 │ T-TK-02 │ Planned  │
-│  FR-CR-01│ Courses  │ P0       │ SRS-5.1 │ T-CR-01 │ Planned  │
-│  FR-AI-01│ Chat     │ P0       │ SRS-12.1│ T-AI-01 │ Planned  │
-│  NFR-P-01│ All      │ P0       │ SRS-2.1 │ T-PF-01 │ Planned  │
-│  NFR-S-01│ All      │ P0       │ SRS-3.1 │ T-SC-01 │ Planned  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚            REQUIREMENTS TRACEABILITY MATRIX (SAMPLE)           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                 â”‚
+â”‚  BRD ID  â”‚ Module   â”‚ Priority â”‚ SRS ID  â”‚ Test ID â”‚ Status   â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”‚
+â”‚  FR-TK-01â”‚ Tasks    â”‚ P0       â”‚ SRS-4.1 â”‚ T-TK-01 â”‚ Planned  â”‚
+â”‚  FR-TK-02â”‚ Tasks    â”‚ P0       â”‚ SRS-4.2 â”‚ T-TK-02 â”‚ Planned  â”‚
+â”‚  FR-CR-01â”‚ Courses  â”‚ P0       â”‚ SRS-5.1 â”‚ T-CR-01 â”‚ Planned  â”‚
+â”‚  FR-AI-01â”‚ Chat     â”‚ P0       â”‚ SRS-12.1â”‚ T-AI-01 â”‚ Planned  â”‚
+â”‚  NFR-P-01â”‚ All      â”‚ P0       â”‚ SRS-2.1 â”‚ T-PF-01 â”‚ Planned  â”‚
+â”‚  NFR-S-01â”‚ All      â”‚ P0       â”‚ SRS-3.1 â”‚ T-SC-01 â”‚ Planned  â”‚
+â”‚                                                                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix B: Document References
@@ -1315,7 +1315,7 @@ Each requirement is classified by priority:
 | Agent Architecture | `docs/ai/20_Agent.md` | AI agent design, prompt files |
 | Design System | `docs/design/10_DesignSystem.md` | UI/UX design tokens, components |
 | Competitive Analysis | `docs/product/CompetitiveAnalysis.md` | Market positioning, competitor comparison |
-| AGENTS.md | `AGENTS.md` | Master reference — all AI agent instructions |
+| AGENTS.md | `AGENTS.md` | Master reference â€” all AI agent instructions |
 | ADR-002 | `docs/engineering/adr/ADR-002.md` | Single-user architecture decision |
 | ADR-004 | `docs/engineering/adr/ADR-004.md` | In-process agent architecture decision |
 
@@ -1333,11 +1333,11 @@ Each requirement is classified by priority:
 |---|---|
 | Rs. 0-290/month infrastructure; 455 hours development (opportunity cost: Rs. 0) | Rs. 0 (Year 1); donations (Year 2); premium AI + marketplace (Year 3); enterprise (Year 4+) |
 
-### Appendix D: Glossary — Quick Reference Card
+### Appendix D: Glossary â€” Quick Reference Card
 
 | Term | Quick Definition |
 |---|---|
-| ARIA | AI orchestrator — 8 sub-agents |
+| ARIA | AI orchestrator â€” 11 agents |
 | Zero-Miss | No task silently expires |
 | Radar | Daily opportunity scanner |
 | Resurface | Context-aware content recall |
