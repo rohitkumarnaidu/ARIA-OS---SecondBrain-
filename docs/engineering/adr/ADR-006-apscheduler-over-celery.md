@@ -1,3 +1,12 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-ADR06-001 |
+| Version | 1.0.0 |
+| Status | Accepted |
+| Last Updated | 2026-07-11 |
+
 # ADR-006: APScheduler over Celery
 
 ## Status
@@ -50,17 +59,17 @@ Run APScheduler's `AsyncIOScheduler` as a standalone Python service at `services
 ## Consequences
 
 ### Positive
-- No Redis or RabbitMQ dependency — the scheduler embeds its own trigger store in memory
-- Simple setup — one file (`services/scheduler/main.py`), two imports (`AsyncIOScheduler`, `CronTrigger`)
-- Async-native — jobs are `async def` functions that call agents directly without wrapping sync code
-- Python-only stack — no Docker dependency for the scheduler service
+- No Redis or RabbitMQ dependency â€” the scheduler embeds its own trigger store in memory
+- Simple setup â€” one file (`services/scheduler/main.py`), two imports (`AsyncIOScheduler`, `CronTrigger`)
+- Async-native â€” jobs are `async def` functions that call agents directly without wrapping sync code
+- Python-only stack â€” no Docker dependency for the scheduler service
 - Fine-grained cron expressions via `CronTrigger` (e.g., `CronTrigger(hour=7, minute=0, day_of_week='mon-fri')`)
 
 ### Negative
-- No built-in retry with exponential backoff — a failed job is simply logged and skipped (must implement retry manually)
-- No distributed execution — the scheduler runs on a single machine; if it goes down, no jobs run until it's restarted
-- In-memory job store by default — scheduled jobs are lost on restart unless a persistent job store (SQLAlchemy/SQLite) is configured
-- No built-in deduplication — if the scheduler starts twice, jobs run twice
+- No built-in retry with exponential backoff â€” a failed job is simply logged and skipped (must implement retry manually)
+- No distributed execution â€” the scheduler runs on a single machine; if it goes down, no jobs run until it's restarted
+- In-memory job store by default â€” scheduled jobs are lost on restart unless a persistent job store (SQLAlchemy/SQLite) is configured
+- No built-in deduplication â€” if the scheduler starts twice, jobs run twice
 
 ### Neutral
 - APScheduler supports persistent job stores (SQLite, PostgreSQL via SQLAlchemy) if needed later

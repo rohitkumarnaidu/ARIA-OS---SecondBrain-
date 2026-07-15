@@ -1,28 +1,28 @@
-# Workflow Engine
+﻿# Workflow Engine
 
 ## Document Control
 
 | Property | Value |
 |---|---|
-| **Document ID** | DOC-ENG-010 |
+| **Document ID** | ENG-WFE-001 |
 | **Version** | 1.0.0 |
 | **Status** | Draft |
 | **Author** | AI Engineering Team |
-| **Last Updated** | 2026-06-11 |
-| **Approved By** | — |
-| **Supersedes** | — |
+| **Last Updated** | 2026-07-11 |
+| **Approved By** | â€” |
+| **Supersedes** | â€” |
 
 ---
 
 ## 1. Executive Summary
 
-A workflow engine is the runtime that executes multi-step, stateful sequences of operations — called workflows — on behalf of the user or the system. In Second Brain OS, workflows power every automated process: the daily briefing, habit checks, weekly reviews, opportunity scanning, memory consolidation, and agent-to-agent coordination.
+A workflow engine is the runtime that executes multi-step, stateful sequences of operations â€” called workflows â€” on behalf of the user or the system. In Second Brain OS, workflows power every automated process: the daily briefing, habit checks, weekly reviews, opportunity scanning, memory consolidation, and agent-to-agent coordination.
 
 **Why a workflow engine matters:**
 
-- **From hard-coded to declarative**: Currently, every automated sequence is hard-coded in Python (e.g., the Briefing Agent hard-codes check tasks → check sleep → check learning → compose). This is brittle — changing a sequence requires code changes, redeployment, and risk of breaking unrelated logic.
+- **From hard-coded to declarative**: Currently, every automated sequence is hard-coded in Python (e.g., the Briefing Agent hard-codes check tasks â†’ check sleep â†’ check learning â†’ compose). This is brittle â€” changing a sequence requires code changes, redeployment, and risk of breaking unrelated logic.
 - **Observability**: A workflow engine provides built-in tracing, timing, and failure tracking for every step. Currently, if a step fails, the entire sequence fails silently or raises an unhandled exception.
-- **Retry and recovery**: A workflow engine handles retries, backoff, and state persistence automatically. Currently, if the Briefing Agent crashes mid-way, there is no resume — the user gets nothing.
+- **Retry and recovery**: A workflow engine handles retries, backoff, and state persistence automatically. Currently, if the Briefing Agent crashes mid-way, there is no resume â€” the user gets nothing.
 - **User-facing workflows**: Beyond system automation, the workflow engine powers user-facing flows like Onboard new user (5 steps across 3 agents) or Weekly review (7 steps across 4 agents).
 
 This document defines the workflow types, the current state (no engine), the workflow definition format, engine architecture, step catalog, state management, error handling, observability, and the future vision for a visual workflow builder.
@@ -63,8 +63,8 @@ Triggered by agent-to-agent coordination. An agent may invoke a workflow as part
 | Workflow | Trigger | Steps | Use Case |
 |---|---|---|---|
 | Learning progress check | Learning Agent detects lagging course | 3 | Notify + reschedule |
-| Opportunity match | Radar Agent finds new opportunity | 4 | Score → notify → store |
-| Task escalation | Task Agent detects overdue task | 3 | Check → move → notify |
+| Opportunity match | Radar Agent finds new opportunity | 4 | Score â†’ notify â†’ store |
+| Task escalation | Task Agent detects overdue task | 3 | Check â†’ move â†’ notify |
 
 ### 2.4 Scheduled Workflows
 
@@ -90,7 +90,7 @@ Currently, Second Brain OS has **no workflow engine**. Automated sequences are i
 
 ```python
 # apps/api/app/services/daily_briefing.py
-# Hard-coded workflow — no engine, no state, no resume
+# Hard-coded workflow â€” no engine, no state, no resume
 
 async def generate_daily_briefing(user_id: str):
     """Generates the daily briefing. One big function."""

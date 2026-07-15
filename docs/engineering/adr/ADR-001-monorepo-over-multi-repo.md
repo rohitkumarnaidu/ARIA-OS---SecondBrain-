@@ -1,3 +1,13 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-ADR-001 |
+| Version | 1.0.0 |
+| Status | Accepted |
+| Last Updated | 2026-07-11 |
+| Author | Developer |
+
 # ADR-001: Monorepo over Multi-Repo
 
 ## Status
