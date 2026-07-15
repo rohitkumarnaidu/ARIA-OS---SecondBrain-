@@ -7,7 +7,7 @@ import { clsx } from 'clsx'
 import {
   LayoutDashboard, CheckSquare, BookOpen, Youtube,
   FileText, Lightbulb, Target, Radar, Wallet,
-  FolderKanban, GraduationCap, Moon, Clock, MessageCircle, Zap, Terminal,
+  FolderKanban, GraduationCap, Moon, Clock, MessageCircle,   Zap, Flag, Terminal, Brain,
   Plus, ChevronRight, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 
@@ -41,6 +41,8 @@ const navGroups = [
     items: [
       { label: 'Chat', href: '/chat', icon: MessageCircle },
       { label: 'Automation', href: '/automation', icon: Zap },
+      { label: 'Learning Insights', href: '/learning', icon: Brain },
+      { label: 'Feature Flags', href: '/flags', icon: Flag },
     ],
   },
 ] as const
