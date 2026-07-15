@@ -1,15 +1,57 @@
-# Operations Runbooks
+﻿# Operations Runbooks
 
 | Field | Value |
 |---|---|
-| Document ID | SB-RUNBOOKS-001 |
+| Document ID | OPS-RUN-001 |
 | Version | 2.1.0 |
 | Status | Active |
 | Last Updated | 2026-06-21 |
-| Classification | Internal — Operations |
+| Classification | Internal â€” Operations |
 | Owner | DevOps Lead |
 | Review Cycle | Quarterly (Q1, Q2, Q3, Q4) |
 | Drill Frequency | Monthly (rotate through runbooks) |
+
+---
+
+## Table of Contents
+
+1. [Architecture Overview](#0-architecture-overview)
+   - [System Components](#01-system-components)
+   - [Data Flow](#02-data-flow)
+   - [Key Design Decisions](#03-key-design-decisions)
+   - [Technology Stack](#04-technology-stack)
+2. [Overview & Philosophy](#1-overview--philosophy)
+   - [What is a Runbook?](#11-what-is-a-runbook)
+   - [Why Runbooks Matter](#12-why-runbooks-matter)
+   - [When to Use a Runbook](#13-when-to-use-a-runbook)
+   - [Runbook Lifecycle](#14-runbook-lifecycle)
+3. [Runbook Format Standard](#2-runbook-format-standard)
+4. [Incident Severity Definitions](#3-incident-severity-definitions)
+5. [Runbooks](#4-runbooks)
+   - [RB-001: API Service Down](#rb-001-api-service-down)
+   - [RB-002: Frontend Down](#rb-002-frontend-down)
+   - [RB-003: Database Slow / Corrupt](#rb-003-database-slow--corrupt)
+   - [RB-004: AI Service Not Responding](#rb-004-ai-service-not-responding)
+   - [RB-005: Authentication Failures](#rb-005-authentication-failures)
+   - [RB-006: High Error Rate](#rb-006-high-error-rate)
+   - [RB-007: Cache / Memory Issues](#rb-007-cache--memory-issues)
+   - [RB-008: Rate Limiting Issues](#rb-008-rate-limiting-issues)
+   - [RB-009: Database Connection Pool Exhaustion](#rb-009-database-connection-pool-exhaustion)
+   - [RB-010: Scheduler / Cron Job Failure](#rb-010-scheduler--cron-job-failure)
+   - [RB-011: Daily Health Check (Routine)](#rb-011-daily-health-check-routine)
+   - [RB-012: High API Latency](#rb-012-high-api-latency)
+   - [RB-013: Deployment Rollback](#rb-013-deployment-rollback)
+6. [Runbook Maintenance](#5-runbook-maintenance)
+7. [Runbook Automation](#6-runbook-automation)
+8. [Runbook Drills & Training](#7-runbook-drills--training)
+9. [Runbook Index](#8-runbook-index)
+10. [Appendix A: Common Commands Reference](#appendix-a-common-commands-reference)
+11. [Appendix B: Incident Severity Decision Tree](#appendix-b-incident-severity-decision-tree)
+12. [Appendix C: Escalation Matrix](#appendix-c-escalation-matrix)
+13. [Appendix D: Related Runbooks](#appendix-d-related-runbooks)
+    - [AI-Specific Runbooks](#ai-specific-runbooks)
+    - [Firefighter Runbooks](#firefighter-runbooks)
+13. [Revision History](#revision-history)
 
 ---
 
@@ -18,56 +60,56 @@
 ### 0.1 System Components
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                        Users (Browser)                        │
-└──────────────────────────┬───────────────────────────────────┘
-                           │ HTTPS
-                           ▼
-┌──────────────────────────────────────────────────────────────┐
-│                     Vercel Edge Network                        │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │              Next.js 14 Frontend (SPA)                  │   │
-│  │  Pages: Dashboard, Tasks, Courses, Goals, Habits,       │   │
-│  │  Sleep, Income, Projects, Ideas, Resources,             │   │
-│  │  Opportunities, Time, Chat, Automation, Academics       │   │
-│  │  State: Zustand stores + React Query                    │   │
-│  └──────────────────────┬─────────────────────────────────┘   │
-└─────────────────────────┼─────────────────────────────────────┘
-                          │ HTTP (API calls)
-                          ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    Railway (FastAPI Backend)                    │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │  26 Routers under /api/v1/ (~118 endpoints)             │   │
-│  │  Middleware: Auth, Rate Limiter, Audit Logging, CSRF,   │   │
-│  │             GZip, CORS, Request ID, Graceful Shutdown   │   │
-│  │  AI Agents: 10 async agent modules via PromptLoader    │   │
-│  │  Circuit Breaker: 5 failures → 60s cooldown             │   │
-│  │  LLM Client: Ollama (primary) → Claude (fallback)       │   │
-│  └──────────────────────┬─────────────────────────────────┘   │
-└─────────────────────────┼─────────────────────────────────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          ▼               ▼               ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│  Supabase    │ │   Ollama     │ │   Claude     │
-│  PostgreSQL  │ │ Mistral 7B   │ │ Sonnet 4     │
-│  18 tables   │ │ (local)      │ │ (cloud API)  │
-│  RLS + PITR  │ │   ─────     │ │  ─────────  │
-│              │ │ APScheduler  │ │ Anthropic    │
-│              │ │ 7 cron jobs  │ │              │
-└──────────────┘ └──────────────┘ └──────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        Users (Browser)                        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚ HTTPS
+                           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     Vercel Edge Network                        â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚              Next.js 14 Frontend (SPA)                  â”‚   â”‚
+â”‚  â”‚  Pages: Dashboard, Tasks, Courses, Goals, Habits,       â”‚   â”‚
+â”‚  â”‚  Sleep, Income, Projects, Ideas, Resources,             â”‚   â”‚
+â”‚  â”‚  Opportunities, Time, Chat, Automation, Academics       â”‚   â”‚
+â”‚  â”‚  State: Zustand stores + React Query                    â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚ HTTP (API calls)
+                          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    Railway (FastAPI Backend)                    â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  26 Routers under /api/v1/ (~118 endpoints)             â”‚   â”‚
+â”‚  â”‚  Middleware: Auth, Rate Limiter, Audit Logging, CSRF,   â”‚   â”‚
+â”‚  â”‚             GZip, CORS, Request ID, Graceful Shutdown   â”‚   â”‚
+â”‚  â”‚  AI Agents: 11 async agent modules via PromptLoader    â”‚   â”‚
+â”‚  â”‚  Circuit Breaker: 5 failures â†’ 60s cooldown             â”‚   â”‚
+â”‚  â”‚  LLM Client: Ollama (primary) â†’ Claude (fallback)       â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                          â”‚
+          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+          â–¼               â–¼               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Supabase    â”‚ â”‚   Ollama     â”‚ â”‚   Claude     â”‚
+â”‚  PostgreSQL  â”‚ â”‚ Mistral 7B   â”‚ â”‚ Sonnet 4     â”‚
+â”‚  27 tables   â”‚ â”‚ (local)      â”‚ â”‚ (cloud API)  â”‚
+â”‚  RLS + PITR  â”‚ â”‚   â”€â”€â”€â”€â”€     â”‚ â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
+â”‚              â”‚ â”‚ APScheduler  â”‚ â”‚ Anthropic    â”‚
+â”‚              â”‚ â”‚ 15 cron jobs â”‚ â”‚              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 0.2 Data Flow
 
 ```
-User Action → Frontend API Call → FastAPI Router → Supabase Query / AI Agent Call → Response
-                                      │
-                                      ├─ Auth check (JWT) → 401 if invalid
-                                      ├─ Rate limit check → 429 if exceeded
-                                      ├─ Audit log write (all mutations)
-                                      └─ Response compression (GZip)
+User Action â†’ Frontend API Call â†’ FastAPI Router â†’ Supabase Query / AI Agent Call â†’ Response
+                                      â”‚
+                                      â”œâ”€ Auth check (JWT) â†’ 401 if invalid
+                                      â”œâ”€ Rate limit check â†’ 429 if exceeded
+                                      â”œâ”€ Audit log write (all mutations)
+                                      â””â”€ Response compression (GZip)
 ```
 
 ### 0.3 Key Design Decisions
@@ -89,9 +131,9 @@ User Action → Frontend API Call → FastAPI Router → Supabase Query / AI Age
 | Database | PostgreSQL 15 (via Supabase) | Supabase Cloud |
 | AI (local) | Ollama + Mistral 7B | Dev machine / Docker |
 | AI (cloud) | Claude Sonnet 4 via Anthropic API | Anthropic |
-| Scheduler | APScheduler (7 cron jobs) | Railway |
-| CI/CD | GitHub Actions (6 jobs) | GitHub |
-| Monitoring | Logtail / Sentry (planned) | — |
+| Scheduler | APScheduler (15 cron jobs) | Railway |
+| CI/CD | GitHub Actions (14 jobs) | GitHub |
+| Monitoring | Logtail / Sentry (planned) | â€” |
 
 ---
 
@@ -137,11 +179,11 @@ Every runbook in this document follows the **SDVRP** format:
 
 | Section | Code | Description | Required |
 |---|---|---|---|
-| **Symptoms** | S | Observable indicators that this runbook is needed | ✅ |
-| **Diagnosis** | D | Commands and checks to confirm the root cause | ✅ |
-| **Resolution** | R | Step-by-step actions to resolve the issue | ✅ |
-| **Verification** | V | How to confirm the issue is fully resolved | ✅ |
-| **Post-Mortem** | P | What to document after resolution (5 Whys, timeline) | ✅ |
+| **Symptoms** | S | Observable indicators that this runbook is needed | âœ… |
+| **Diagnosis** | D | Commands and checks to confirm the root cause | âœ… |
+| **Resolution** | R | Step-by-step actions to resolve the issue | âœ… |
+| **Verification** | V | How to confirm the issue is fully resolved | âœ… |
+| **Post-Mortem** | P | What to document after resolution (5 Whys, timeline) | âœ… |
 
 ### 2.1 Metadata Header
 
@@ -173,8 +215,8 @@ Drill Result: Pass / Fail / Untested
 
 ### 3.1 Severity Escalation Rules
 
-- If SEV-2 unresolved after 2 hours → auto-escalate to SEV-1
-- If SEV-3 unresolved after 12 hours → auto-escalate to SEV-2
+- If SEV-2 unresolved after 2 hours â†’ auto-escalate to SEV-1
+- If SEV-3 unresolved after 12 hours â†’ auto-escalate to SEV-2
 - Any SEV-1 incident triggers immediate post-mortem within 24 hours
 - Three SEV-2 incidents in one week triggers a root cause analysis
 
@@ -274,7 +316,7 @@ cd apps/api
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-**Step R2: If Restart Fails — Check Dependencies**
+**Step R2: If Restart Fails â€” Check Dependencies**
 ```bash
 # Check if ports are in use
 netstat -ano | Select-String "8000"
@@ -283,7 +325,7 @@ netstat -ano | Select-String "8000"
 python -c "import os; print('SUPABASE_URL' in os.environ)"
 ```
 
-**Step R3: If Dependency Issue — Verify .env**
+**Step R3: If Dependency Issue â€” Verify .env**
 ```bash
 python -c "
 import os
@@ -298,14 +340,14 @@ else:
 
 **Step R4: Rollback to Previous Deployment**
 ```bash
-# Railway: Dashboard → Deployments → Find last working → ... → Rollback
+# Railway: Dashboard â†’ Deployments â†’ Find last working â†’ ... â†’ Rollback
 # CLI:
 railway rollback --service api
 ```
 
-**Step R5: Emergency — Scale Up Resources**
+**Step R5: Emergency â€” Scale Up Resources**
 ```bash
-# Railway: Dashboard → Service → Settings → Scale
+# Railway: Dashboard â†’ Service â†’ Settings â†’ Scale
 # Increase from 1 instance to 2
 ```
 
@@ -370,7 +412,7 @@ Drill Result: Pass
 
 **Step D1: Check Vercel Status**
 ```bash
-# Vercel dashboard → Deployments
+# Vercel dashboard â†’ Deployments
 # https://vercel.com/<team>/<project>/deployments
 
 # Latest deployment status via CLI
@@ -426,7 +468,7 @@ vercel --prod
 vercel rollback <deployment-id>
 ```
 
-**Step R2: If Build Fails — Fix Build Errors**
+**Step R2: If Build Fails â€” Fix Build Errors**
 ```bash
 # Build locally to reproduce
 cd apps/web
@@ -449,7 +491,7 @@ Get-Content apps/web/.env.local | ForEach-Object {
 }
 ```
 
-**Step R4: DNS Propagation — Wait or Force**
+**Step R4: DNS Propagation â€” Wait or Force**
 ```bash
 # DNS changes can take up to 48 hours
 # Check TTL:
@@ -461,7 +503,7 @@ nslookup -type=SOA app.ariaos.app
 **Step R5: CDN Purge**
 ```bash
 # Vercel: Automatic with deployment
-# Cloudflare: Dashboard → Caching → Purge Everything
+# Cloudflare: Dashboard â†’ Caching â†’ Purge Everything
 # Or API:
 curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/purge_cache" \
   -H "Authorization: Bearer $CF_TOKEN" \
@@ -480,7 +522,7 @@ curl -s https://app.ariaos.app | Select-String "Next.js"
 # Expected: match found
 
 # 3. API calls work from browser
-# Open DevTools → Network tab → Reload page → Check for API 200s
+# Open DevTools â†’ Network tab â†’ Reload page â†’ Check for API 200s
 
 # 4. Lighthouse check
 npx lighthouse https://app.ariaos.app --quiet --chrome-flags="--headless"
@@ -522,7 +564,7 @@ Drill Result: Pass
 ```bash
 # Check Supabase status
 curl -s https://status.supabase.com | Select-String "All Systems Operational"
-# If not operational → wait for Supabase to resolve
+# If not operational â†’ wait for Supabase to resolve
 ```
 
 **Step D2: Check Slow Queries**
@@ -850,7 +892,7 @@ print(f'Response: {result}')
 "
 ```
 
-**Step R4: Emergency — Algorithmic Fallback**
+**Step R4: Emergency â€” Algorithmic Fallback**
 ```python
 # Every agent has algorithmic fallback if both Ollama and Claude fail
 # Example from briefing_agent.py:
@@ -861,7 +903,7 @@ async def generate_daily_briefing(user_id: str) -> dict:
         user = construct_user_prompt(user_id)
         return await llm.generate_json(user, system=system)
     else:
-        # Algorithmic fallback — no AI needed
+        # Algorithmic fallback â€” no AI needed
         return generate_briefing_algorithmically(user_id)
 ```
 
@@ -883,7 +925,7 @@ curl -s http://localhost:11434/api/generate -d '{"model":"mistral","prompt":"Hi"
 # Expected: True
 
 # 2. Claude API responds
-# Repeat Step D2 — expected: non-empty response
+# Repeat Step D2 â€” expected: non-empty response
 
 # 3. PromptLoader returns content
 python -c "from ai.prompt_loader import prompts; p=prompts.get_agent('briefing_agent'); print(bool(p and len(p.body) > 100))"
@@ -940,7 +982,7 @@ Drill Result: Pass
 
 **Step D1: Check Supabase Auth Configuration**
 ```bash
-# Supabase Dashboard → Authentication → Settings
+# Supabase Dashboard â†’ Authentication â†’ Settings
 # Verify:
 # - Site URL: https://app.ariaos.app
 # - Redirect URLs: https://app.ariaos.app/auth/callback
@@ -954,7 +996,7 @@ Drill Result: Pass
 python -c "
 import os
 # The JWT_SECRET in .env must match Supabase project JWT secret
-# Found in: Supabase Dashboard → Settings → API → JWT Secret
+# Found in: Supabase Dashboard â†’ Settings â†’ API â†’ JWT Secret
 jwt = os.getenv('JWT_SECRET')
 print(f'JWT_SECRET configured: {bool(jwt)}')
 print(f'Length: {len(jwt) if jwt else 0}')
@@ -981,7 +1023,7 @@ print(f'Google OAuth endpoints available: {bool(d.get(\"authorization_endpoint\"
 **Step D4: Check Rate Limits**
 ```bash
 # Check if auth rate limiting is triggered
-# Supabase Dashboard → Authentication → Rate Limits
+# Supabase Dashboard â†’ Authentication â†’ Rate Limits
 # Default: 30 requests per minute per IP
 
 # Check for 429 errors
@@ -1013,14 +1055,14 @@ print(f'Refresh endpoint status: {resp.status_code}')
 ```bash
 # Check that JWT_SECRET in backend .env matches Supabase's JWT secret
 # If mismatch:
-# 1. Copy JWT Secret from Supabase Dashboard → Settings → API
+# 1. Copy JWT Secret from Supabase Dashboard â†’ Settings â†’ API
 # 2. Update .env: JWT_SECRET=<copied-value>
 # 3. Restart API: railway up --service api
 ```
 
 **Step R2: Check Google OAuth Credentials in Supabase**
 ```bash
-# Supabase Dashboard → Authentication → Providers → Google
+# Supabase Dashboard â†’ Authentication â†’ Providers â†’ Google
 # Verify:
 # - Enabled: ON
 # - Client ID: correct (from GCP)
@@ -1037,7 +1079,7 @@ DELETE FROM auth.refresh_tokens WHERE created_at < NOW() - INTERVAL '30 days';
 
 **Step R4: Update Redirect URLs**
 ```bash
-# Supabase Dashboard → Authentication → Settings
+# Supabase Dashboard â†’ Authentication â†’ Settings
 # Ensure these Redirect URLs are configured:
 # https://app.ariaos.app/auth/callback
 # http://localhost:3000/auth/callback (dev)
@@ -1064,8 +1106,8 @@ async def auth_exception_handler(request, exc):
 #### Verification
 ```bash
 # 1. Login flow works end-to-end
-# Open browser → Navigate to app.ariaos.app → Click "Sign in with Google"
-# Expected: OAuth popup → Redirect back to app → Dashboard visible
+# Open browser â†’ Navigate to app.ariaos.app â†’ Click "Sign in with Google"
+# Expected: OAuth popup â†’ Redirect back to app â†’ Dashboard visible
 
 # 2. API returns data for authenticated user
 TOKEN=$(curl -s -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
@@ -1118,8 +1160,8 @@ Drill Result: Pass
 **Step D1: Check Deployment Timeline**
 ```bash
 # Correlate error spike with recent deployments
-# Vercel: Deployments tab → Find deployment just before error spike
-# Railway: Deployments tab → Find deployment just before error spike
+# Vercel: Deployments tab â†’ Find deployment just before error spike
+# Railway: Deployments tab â†’ Find deployment just before error spike
 
 git log --oneline --since="24 hours ago"
 # Expected: recent commits that may have introduced the bug
@@ -1172,8 +1214,8 @@ git log --all --oneline -- 'supabase/migrations/*.sql'
 
 **Step R1: Rollback to Last Known Good**
 ```bash
-# Railway: Dashboard → Deployments → Find last green deployment → ... → Rollback
-# Vercel: Dashboard → Deployments → Find last green deployment → ... → Rollback
+# Railway: Dashboard â†’ Deployments â†’ Find last green deployment â†’ ... â†’ Rollback
+# Vercel: Dashboard â†’ Deployments â†’ Find last green deployment â†’ ... â†’ Rollback
 
 # CLI rollback
 railway rollback --service api
@@ -1260,7 +1302,7 @@ Runbook: RB-006
 Root Cause: <specific bug identified>
 Fix: <description of fix>
 Deployments Involved: <from SHA to SHA>
-Error Rate: <before>% → <after>%
+Error Rate: <before>% â†’ <after>%
 Action Items:
   - <preventive measure 1>
   - <preventive measure 2>
@@ -1505,7 +1547,7 @@ print('Most requested endpoints (last 1000 requests):')
 for ep, count in endpoint_counts.most_common(10):
     print(f'  {ep}: {count} requests')
     if count > 200:
-        print(f'    ⚠️ Possible abuse on {ep}')
+        print(f'    âš ï¸ Possible abuse on {ep}')
 "
 ```
 
@@ -1553,7 +1595,7 @@ async def check_rate_limit(request: Request, endpoint: str, user_id: str = None)
     # ... existing rate limit logic ...
 ```
 
-**Step R4: Permanent Fix — Adjust Limits Based on Usage Patterns**
+**Step R4: Permanent Fix â€” Adjust Limits Based on Usage Patterns**
 ```python
 # In config, set appropriate limits per endpoint
 RATE_LIMIT_CONFIG = {
@@ -1698,7 +1740,7 @@ async def track_db_connections(request: Request, call_next):
 #### Verification
 ```bash
 # 1. Connection count normal
-# Re-run D1 — expected: < 80% of pool limit
+# Re-run D1 â€” expected: < 80% of pool limit
 
 # 2. API responds without errors
 curl -s -o /dev/null -w "%{http_code}" https://api.ariaos.app/api/tasks
@@ -1837,7 +1879,7 @@ for job in scheduler.get_jobs():
 ```
 ---
 ID: RB-011
-Title: Daily Health Check — Routine Maintenance
+Title: Daily Health Check â€” Routine Maintenance
 Severity: SEV-4 (Routine)
 Category: Operations
 Auto-Remediation: N/A
@@ -1848,7 +1890,7 @@ Drill Result: Pass
 
 #### Symptoms (Trigger)
 - This is a **scheduled** runbook, run daily at 9:00 AM IST
-- No incident needed — proactive maintenance
+- No incident needed â€” proactive maintenance
 
 #### Check List
 
@@ -1920,7 +1962,7 @@ git log --oneline --since="24 hours ago"
 | Cron failures | Restart scheduler | RB-010 |
 | Database size > 80% | Archive old data | RB-003 |
 | AI service down | Restart or fallback | RB-004 |
-| Free tier > 80% used | Plan upgrade or optimize | — |
+| Free tier > 80% used | Plan upgrade or optimize | â€” |
 
 #### Log
 ```bash
@@ -1954,7 +1996,7 @@ Drill Result: Pass
 ```
 
 #### Symptoms
-- Frontend feels sluggish — API calls take > 2 seconds
+- Frontend feels sluggish â€” API calls take > 2 seconds
 - Monitoring dashboard shows p95 latency > 2s (target: < 500ms)
 - Browser DevTools Network tab shows slow API responses
 - Users report "app is slow" or timeouts
@@ -2011,7 +2053,7 @@ print(f'Total entries: {len(cache.cache)}')
 import logging
 logging.getLogger('supabase').setLevel(logging.DEBUG)
 
-# Count queries per request — if a single page load does > 10 queries, investigate
+# Count queries per request â€” if a single page load does > 10 queries, investigate
 ```
 
 **Step D5: Check External Dependencies**
@@ -2069,14 +2111,14 @@ async def list_tasks(
 
 **Step R4: Enable GZip Compression**
 ```python
-# In main.py — already enabled if using GZip middleware
+# In main.py â€” already enabled if using GZip middleware
 from fastapi.middleware.gzip import GZipMiddleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 ```
 
 **Step R5: Increase Railway Resources**
 ```bash
-# Railway Dashboard → Service → Settings → Scale
+# Railway Dashboard â†’ Service â†’ Settings â†’ Scale
 # Increase from 512 MB to 1 GB RAM
 # Or increase from 1 to 2 instances
 ```
@@ -2084,13 +2126,13 @@ app.add_middleware(GZipMiddleware, minimum_size=1000)
 #### Verification
 ```bash
 # 1. p95 latency back under 500ms
-# Re-run Step D1 — Expected: no endpoints > 500ms p95
+# Re-run Step D1 â€” Expected: no endpoints > 500ms p95
 
 # 2. Cache hit ratio > 60%
-# Re-run Step D3 — Expected: > 60%
+# Re-run Step D3 â€” Expected: > 60%
 
 # 3. Slow queries eliminated
-# Re-run Step D2 — Expected: no queries > 200ms mean
+# Re-run Step D2 â€” Expected: no queries > 200ms mean
 
 # 4. Frontend feels responsive
 curl -w "p95: %{time_total}s\n" -o /dev/null -s https://api.secondbrainos.com/api/tasks
@@ -2169,7 +2211,7 @@ curl -s https://api.secondbrainos.com/health/ready | python -m json.tool
 **Step R1: Rollback Frontend (Vercel)**
 ```bash
 # Method 1: Vercel Dashboard (30 seconds)
-# Deployments → Find last known-good → "Promote to Production"
+# Deployments â†’ Find last known-good â†’ "Promote to Production"
 
 # Method 2: Vercel CLI
 vercel list --token $VERCEL_TOKEN
@@ -2183,7 +2225,7 @@ git push origin main
 **Step R2: Rollback Backend (Railway)**
 ```bash
 # Method 1: Railway Dashboard
-# Deployments → Find last known-good → "Rollback to this deploy"
+# Deployments â†’ Find last known-good â†’ "Rollback to this deploy"
 
 # Method 2: Railway CLI
 railway rollback --service api 1
@@ -2223,7 +2265,7 @@ curl -s https://api.secondbrainos.com/api/health | Select-String "healthy"
 # Expected: "healthy"
 
 # 2. Error rate back to baseline
-# Check monitoring dashboard → Expected: < 0.5%
+# Check monitoring dashboard â†’ Expected: < 0.5%
 
 # 3. Core features work
 curl -s -o /dev/null -w "%{http_code}" https://api.secondbrainos.com/api/tasks
@@ -2234,7 +2276,7 @@ curl -s -o /dev/null -w "%{http_code}" https://app.secondbrainos.com
 # Expected: 200
 
 # 5. CI/CD pipeline green
-# Check GitHub Actions → Expected: all jobs passing
+# Check GitHub Actions â†’ Expected: all jobs passing
 ```
 
 #### Post-Mortem
@@ -2479,14 +2521,44 @@ graph TD
 | Engineering Lead (needs product decision) | Product Lead | Phone | After 2 hours |
 | Any (for SEV-1) | All stakeholders | PagerDuty broadcast | Immediate |
 
+## Appendix D: Related Runbooks
+
+### AI-Specific Runbooks
+
+Refer to `docs/ai/AIIncidentResponse.md` for AI-specific incident response procedures:
+
+| Runbook | Scenario | AI Severity |
+|---|---|---|
+| RB-AI-001 | Prompt Injection Attack Detected | P0-AI |
+| RB-AI-002 | Hallucination Outbreak | P1-AI |
+| RB-AI-003 | Bias Detected in Responses | P1-AI |
+| RB-AI-004 | Data Leakage (Cross-User Context) | P0-AI |
+| RB-AI-005 | AI Provider Failover Chain | P1-AI |
+| RB-AI-006 | Token Budget Exceeded | P2-AI |
+
+### Firefighter Runbooks
+
+Refer to `docs/operations/firefighter-runbooks.md` for quick-incident checklists:
+
+| Scenario | Primary Reference |
+|---|---|
+| AI Provider Down | Firefighter Scenario 1 + RB-004 |
+| Database Unreachable | Firefighter Scenario 2 + RB-003 |
+| High Error Rate | Firefighter Scenario 3 + RB-006 |
+| Rate Limit Exhausted | Firefighter Scenario 4 + RB-008 |
+| Scheduler Not Firing | Firefighter Scenario 5 + RB-010 |
+| Security Breach (Suspected) | Firefighter Scenario 6 + SEC-POLICY-IR-001 |
+| Error Budget Exhausted | Firefighter Scenario 7 + [Error Budget Policy](error-budget.md) |
+
 ---
 
 ## Revision History
 
 | Version | Date | Author | Changes |
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | 1.0.0 | 2026-05-01 | DevOps Lead | Initial runbooks (RB-001 through RB-011) |
 | 1.1.0 | 2026-05-15 | DevOps Lead | Added RB-009 (Connection Pool), verified all drills |
 | 1.2.0 | 2026-06-01 | DevOps Lead | Updated all runbooks with drill results, added auto-remediation |
 | 2.0.0 | 2026-06-11 | DevOps Lead | Enterprise upgrade: SDVRP format, severity definitions, automation, drills, escalation matrix, decision trees |
 | 2.1.0 | 2026-06-21 | DevOps Lead | Added Architecture Overview (Sec 0), P0-P4 severity naming, RB-012 (High Latency), RB-013 (Deployment Rollback) |
+| **2.2.0** | **2026-07-11** | **Developer** | **Added Appendix D cross-referencing AI incident response runbooks (AI-IR-001) and firefighter runbooks (OPS-FRB-001)** |

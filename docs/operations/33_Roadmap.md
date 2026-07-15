@@ -1,12 +1,12 @@
-# Product Roadmap
+﻿# Product Roadmap
 
 | Field | Value |
 |---|---|
-| Document ID | SB-ROADMAP-001 |
+| Document ID | OPS-RMP-001 |
 | Version | 2.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Strategic Planning |
+| Classification | Internal â€” Strategic Planning |
 | Owner | Product Lead |
 | Review Cycle | Bi-weekly (stakeholder review every 2 weeks) |
 
@@ -14,48 +14,48 @@
 
 ## 1. Executive Summary
 
-This roadmap defines the product evolution of **Second Brain OS (ARIA OS)** — a personal AI productivity system for BTech CSE students. The roadmap spans **Q2 2026 through Q2 2027**, organized across four strategic pillars: Intelligence, Speed & Offline, Privacy & Trust, and Student-Specific Design.
+This roadmap defines the product evolution of **Second Brain OS (ARIA OS)** â€” a personal AI productivity system for BTech CSE students. The roadmap spans **Q2 2026 through Q2 2027**, organized across four strategic pillars: Intelligence, Speed & Offline, Privacy & Trust, and Student-Specific Design.
 
-**Current phase:** Build Phase 1-8 (17-week MVP) → V2 Post-Launch roadmap begins Q3 2026.
+**Current phase:** Build Phase 1-8 (17-week MVP) â†’ V2 Post-Launch roadmap begins Q3 2026.
 
 **Key milestones:**
 - **Q2 2026:** MVP launch with 15 modules, core CRUD, basic AI agents (6 live)
-- **Q3 2026:** Intelligence Phase — long-term memory, predictive prioritization, ML models
-- **Q4 2026:** Ecosystem Phase — mobile app, browser extension, calendar sync, public API
-- **Q1 2027:** Community Phase — template marketplace, benchmarking, plugin system
-- **Q2 2027:** Monetization Phase — freemium model, team plans, placement module
+- **Q3 2026:** Intelligence Phase â€” long-term memory, predictive prioritization, ML models
+- **Q4 2026:** Ecosystem Phase â€” mobile app, browser extension, calendar sync, public API
+- **Q1 2027:** Community Phase â€” template marketplace, benchmarking, plugin system
+- **Q2 2027:** Monetization Phase â€” freemium model, team plans, placement module
 
 ---
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 gantt
-    title Product Roadmap — Second Brain OS
+    title Product Roadmap â€” Second Brain OS
     dateFormat  YYYY-MM-DD
     axisFormat  %Y Q%q
 
-    section 🏗️ Foundation
+    section ðŸ—ï¸ Foundation
     MVP Launch (15 Modules, 6 AI Agents)    :done, mvp, 2026-04-01, 2026-06-30
     Core Stabilization & Bug Fixes          :done, after mvp, 30d
 
-    section 🧠 Intelligence
+    section ðŸ§  Intelligence
     Long-Term Memory                        :active, mem, 2026-07-01, 2026-09-30
     Predictive Prioritization (ML)          :active, 2026-08-01, 2026-10-31
     Learning Agent (Pattern Detection)      :active, 2026-07-15, 2026-09-15
     Proactive Nudges                        :2026-09-01, 2026-11-30
 
-    section 🌐 Ecosystem
+    section ðŸŒ Ecosystem
     Mobile App (React Native / PWA)         :mobile, 2026-10-01, 2026-12-31
     Browser Extension                       :2026-11-01, 2027-01-31
     Calendar Sync                           :2026-10-15, 2026-12-15
     Public API (v2)                         :2026-11-01, 2027-02-28
 
-    section 👥 Community
+    section ðŸ‘¥ Community
     Template Marketplace                    :2027-01-01, 2027-03-31
     Plugin System                           :2027-02-01, 2027-04-30
     Benchmarking Dashboard                  :2027-01-15, 2027-03-15
 
-    section 💰 Monetization
+    section ðŸ’° Monetization
     Freemium Model                          :2027-04-01, 2027-06-30
     Team Plans                              :2027-04-15, 2027-06-30
     Placement Module                        :crit, 2027-05-01, 2027-06-30
@@ -120,14 +120,14 @@ Every feature in the roadmap is scored using the RICE framework to ensure object
 ### 3.1 RICE Formula
 
 ```
-RICE Score = (Reach × Impact × Confidence) / Effort
+RICE Score = (Reach Ã— Impact Ã— Confidence) / Effort
 ```
 
 | Component | Definition | Scale |
 |---|---|---|
-| **Reach** | How many users will this feature impact per quarter? | 1 (few) — 5 (all users) |
-| **Impact** | How much will this improve the user experience or KPIs? | 1 (minimal) — 5 (transformative) |
-| **Confidence** | How certain are we of the Reach and Impact estimates? | 1 (guess) — 5 (data-backed) |
+| **Reach** | How many users will this feature impact per quarter? | 1 (few) â€” 5 (all users) |
+| **Impact** | How much will this improve the user experience or KPIs? | 1 (minimal) â€” 5 (transformative) |
+| **Confidence** | How certain are we of the Reach and Impact estimates? | 1 (guess) â€” 5 (data-backed) |
 | **Effort** | Total engineering + design effort in person-weeks | Continuous (lower is better) |
 
 ### 3.2 Active Feature Scores (Q2 2026)
@@ -135,7 +135,7 @@ RICE Score = (Reach × Impact × Confidence) / Effort
 | Feature | Reach | Impact | Confidence | Effort (wks) | RICE Score | Priority |
 |---|---|---|---|---|---|---|
 | Cron job automation (6 jobs) | 5 | 5 | 5 | 2 | 62.5 | P0 |
-| AI agent integration (6 → 15 agents) | 5 | 5 | 4 | 4 | 25.0 | P0 |
+| AI agent integration (6 â†’ 15 agents) | 5 | 5 | 4 | 4 | 25.0 | P0 |
 | Push notifications | 5 | 4 | 4 | 3 | 26.7 | P0 |
 | Offline PWA mode | 4 | 5 | 3 | 5 | 12.0 | P1 |
 | GitHub integration | 3 | 3 | 4 | 2 | 18.0 | P1 |
@@ -146,8 +146,8 @@ RICE Score = (Reach × Impact × Confidence) / Effort
 ### 3.3 Scoring Guidelines
 
 - **P0 (RICE > 20):** Must-have for current quarter. Blocking if delayed.
-- **P1 (RICE 10–20):** Should-have. High value but not blocking.
-- **P2 (RICE 5–10):** Nice-to-have. Schedule-flexible.
+- **P1 (RICE 10â€“20):** Should-have. High value but not blocking.
+- **P2 (RICE 5â€“10):** Nice-to-have. Schedule-flexible.
 - **P3 (RICE < 5):** Backlog. Revisit next quarter.
 
 ---
@@ -166,7 +166,7 @@ RICE Score = (Reach × Impact × Confidence) / Effort
 
 ---
 
-## 5. Current Quarter Roadmap (Q2 2026 — Apr to Jun)
+## 5. Current Quarter Roadmap (Q2 2026 â€” Apr to Jun)
 
 ### 5.1 Overview
 
@@ -180,10 +180,10 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 
 | Feature | Status | RICE Score | Owner | Target Date | Dependencies |
 |---|---|---|---|---|---|
-| Phase 1: Core Foundation (Weeks 1-2) | Launched | — | — | 2026-04-14 | — |
-| Phase 2: Save Everything (Weeks 3-4) | Launched | — | — | 2026-04-28 | Phase 1 |
-| Phase 3: ARIA & Memory (Weeks 5-6) | Launched | — | — | 2026-05-12 | Phase 2 |
-| Phase 4: Opportunity Radar (Weeks 7-9) | Launched | — | — | 2026-06-02 | Phase 3 |
+| Phase 1: Core Foundation (Weeks 1-2) | Launched | â€” | â€” | 2026-04-14 | â€” |
+| Phase 2: Save Everything (Weeks 3-4) | Launched | â€” | â€” | 2026-04-28 | Phase 1 |
+| Phase 3: ARIA & Memory (Weeks 5-6) | Launched | â€” | â€” | 2026-05-12 | Phase 2 |
+| Phase 4: Opportunity Radar (Weeks 7-9) | Launched | â€” | â€” | 2026-06-02 | Phase 3 |
 | Phase 5: Roadmap Engine (Weeks 10-11) | In Testing | 32.0 | Dev Lead | 2026-06-16 | Phase 4 |
 | Phase 6: Full Tracking (Weeks 12-13) | In Development | 28.5 | Dev Lead | 2026-06-30 | Phase 5 |
 | Phase 7: Monitoring (Weeks 14-15) | Planned | 22.0 | Ops Lead | 2026-07-14 | Phase 6 |
@@ -232,7 +232,7 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 
 ### 5.5 Risk Factors & Mitigation (Q2 2026)
 
-| Risk | Probability | Impact | RPN (P × I) | Mitigation |
+| Risk | Probability | Impact | RPN (P Ã— I) | Mitigation |
 |---|---|---|---|---|
 | Ollama instability on dev machines | Medium | High | 12 | Claude fallback, containerized Ollama |
 | Supabase free tier limits exceeded | Medium | High | 12 | Query optimization, data archiving, cache |
@@ -242,7 +242,7 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 
 ---
 
-## 6. Next Quarter Roadmap (Q3 2026 — Jul to Sep)
+## 6. Next Quarter Roadmap (Q3 2026 â€” Jul to Sep)
 
 ### 6.1 Theme: Intelligence Phase
 
@@ -277,19 +277,19 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 
 | Role | Allocation | Change from Q2 |
 |---|---|---|
-| Engineering Lead | 100% | — |
-| Frontend Engineer | 100% | — |
-| Backend Engineer | 100% | — |
+| Engineering Lead | 100% | â€” |
+| Frontend Engineer | 100% | â€” |
+| Backend Engineer | 100% | â€” |
 | AI/ML Engineer | 100% | +50% (increase) |
 | DevOps/Infrastructure | 50% | +25% (increase) |
 | QA Engineer | 50% | +25% (increase) |
-| Product Manager | 50% | — |
+| Product Manager | 50% | â€” |
 
 ---
 
-## 7. Future Roadmap (Q4 2026 — Q2 2027)
+## 7. Future Roadmap (Q4 2026 â€” Q2 2027)
 
-### 7.1 Q4 2026: Ecosystem Phase (Oct — Dec)
+### 7.1 Q4 2026: Ecosystem Phase (Oct â€” Dec)
 
 **Theme:** Extend reach beyond the web app.
 
@@ -304,7 +304,7 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 | Hackathon sprint mode | 18.0 | Task v2 in place |
 | Notification system (email + push) | 28.0 | Scheduler stable |
 
-### 7.2 Q1 2027: Community Phase (Jan — Mar)
+### 7.2 Q1 2027: Community Phase (Jan â€” Mar)
 
 **Theme:** Build a community around the product.
 
@@ -317,7 +317,7 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 | Plugin system for custom modules | 32.0 | Public API, sandboxing |
 | Multi-modal AI (image + document understanding) | 24.0 | AI agent v2 |
 
-### 7.3 Q2 2027: Monetization Phase (Apr — Jun)
+### 7.3 Q2 2027: Monetization Phase (Apr â€” Jun)
 
 **Theme:** Sustainable revenue generation.
 
@@ -337,14 +337,14 @@ Q2 2026 is the **MVP Launch Quarter**. The primary goal is to ship a functional,
 
 ```
 Phase 1: Core (W1-2)
-  └── Phase 2: Save Everything (W3-4)
-       └── Phase 3: ARIA & Memory (W5-6)
-            ├── Phase 4: Opportunity Radar (W7-9)
-            │    └── Phase 6: Full Tracking (W12-13)
-            ├── Phase 5: Roadmap Engine (W10-11)
-            │    └── Phase 6: Full Tracking (W12-13)
-            └── Phase 7: Monitoring (W14-15)
-                 └── Phase 8: Polish & PWA (W16-17)
+  â””â”€â”€ Phase 2: Save Everything (W3-4)
+       â””â”€â”€ Phase 3: ARIA & Memory (W5-6)
+            â”œâ”€â”€ Phase 4: Opportunity Radar (W7-9)
+            â”‚    â””â”€â”€ Phase 6: Full Tracking (W12-13)
+            â”œâ”€â”€ Phase 5: Roadmap Engine (W10-11)
+            â”‚    â””â”€â”€ Phase 6: Full Tracking (W12-13)
+            â””â”€â”€ Phase 7: Monitoring (W14-15)
+                 â””â”€â”€ Phase 8: Polish & PWA (W16-17)
 ```
 
 ### 8.2 Cross-Module Dependencies
@@ -377,16 +377,16 @@ Phase 1: Core (W1-2)
 
 | Metric | Current | Q2 2026 Target | Q3 2026 Target | Q4 2026 Target |
 |---|---|---|---|---|
-| DAU/MAU ratio | — | > 30% | > 40% | > 50% |
-| Tasks completed/week | — | > 10 | > 15 | > 25 |
-| Courses completed/month | — | > 0.5 | > 1 | > 2 |
-| Opportunities applied/month | — | > 1 | > 3 | > 5 |
-| Avg session duration | — | > 5 min | > 10 min | > 15 min |
-| User retention (30-day) | — | > 50% | > 60% | > 70% |
+| DAU/MAU ratio | â€” | > 30% | > 40% | > 50% |
+| Tasks completed/week | â€” | > 10 | > 15 | > 25 |
+| Courses completed/month | â€” | > 0.5 | > 1 | > 2 |
+| Opportunities applied/month | â€” | > 1 | > 3 | > 5 |
+| Avg session duration | â€” | > 5 min | > 10 min | > 15 min |
+| User retention (30-day) | â€” | > 50% | > 60% | > 70% |
 | Lighthouse performance | ~75 | > 85 | > 90 | > 95 |
 | PWA installs | 0 | > 100 | > 500 | > 2000 |
 | Agent response success rate | ~60% | > 85% | > 95% | > 98% |
-| Bug reports/week | — | < 10 | < 5 | < 3 |
+| Bug reports/week | â€” | < 10 | < 5 | < 3 |
 
 ### 9.2 Engineering KPIs
 
@@ -437,7 +437,7 @@ The following requests have been evaluated and explicitly deferred or rejected f
 
 | Feature Request | Reason for Deferral | Potential Quarter | Votes |
 |---|---|---|---|
-| AI-generated wallpaper/themes | Low RICE (1 × 2 × 2 / 2 = 2.0) | Q2 2027 | 3 |
+| AI-generated wallpaper/themes | Low RICE (1 Ã— 2 Ã— 2 / 2 = 2.0) | Q2 2027 | 3 |
 | NFT integration for projects | Low relevance to target users | Rejected | 1 |
 | Cryptocurrency portfolio tracking | Scope creep, not student-focused | Rejected | 2 |
 | Social media scheduler | Existing tools dominate this space | Q2 2027 | 4 |

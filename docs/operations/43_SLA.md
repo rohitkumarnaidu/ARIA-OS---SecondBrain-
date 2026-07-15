@@ -1,13 +1,13 @@
-# Service Level Agreement (SLA) & Support Operations Plan
+﻿# Service Level Agreement (SLA) & Support Operations Plan
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SLA-001 |
+| Document ID | OPS-SLA-001 |
 | Version | 1.0.0 |
 | Status | Draft |
-| Classification | Internal — Confidential |
+| Classification | Internal â€” Confidential |
 | Effective Date | 2026-06-11 |
 | Next Review | 2026-09-11 |
 | Owner | Developer (single maintainer) |
@@ -19,7 +19,7 @@
 
 ### 1.1 Purpose
 
-This Service Level Agreement (SLA) defines the performance commitments, availability targets, and support operations framework for Second Brain OS — a personal AI productivity system serving a single user/developer. While the system is designed for individual use, this document applies enterprise-grade SLA discipline to ensure reliability, accountability, and continuous improvement.
+This Service Level Agreement (SLA) defines the performance commitments, availability targets, and support operations framework for Second Brain OS â€” a personal AI productivity system serving a single user/developer. While the system is designed for individual use, this document applies enterprise-grade SLA discipline to ensure reliability, accountability, and continuous improvement.
 
 ### 1.2 Scope
 
@@ -27,13 +27,13 @@ The SLA covers all production services listed in Section 2. It does not cover lo
 
 ### 1.3 Audience
 
-**Primary:** The sole developer and user of Second Brain OS. All SLA commitments are made to and by the same individual. The purpose of this document is self-accountability — to formalize reliability targets and ensure the system meets professional standards despite being a solo project.
+**Primary:** The sole developer and user of Second Brain OS. All SLA commitments are made to and by the same individual. The purpose of this document is self-accountability â€” to formalize reliability targets and ensure the system meets professional standards despite being a solo project.
 
 **Secondary:** Future contributors, employers, or portfolio reviewers evaluating the operational maturity of this project.
 
 ### 1.4 SLA Philosophy
 
-This SLA recognizes a fundamental constraint: the project is maintained by a single individual with academic commitments (BTech CSE), operating on free-tier infrastructure. Commitments are realistic — they acknowledge that:
+This SLA recognizes a fundamental constraint: the project is maintained by a single individual with academic commitments (BTech CSE), operating on free-tier infrastructure. Commitments are realistic â€” they acknowledge that:
 
 - Response times are best-effort during exams and personal events
 - Free-tier services impose hard limits (Supabase 500MB, Resend 3000 emails/mo)
@@ -47,26 +47,26 @@ Despite these constraints, the SLA targets industry-standard metrics wherever fe
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 graph TD
-    Services["🌐 Service Inventory<br/>(S1-S7)"] --> HealthChecks["🩺 Health Check Endpoints<br/>GET /health /live /ready"]
+    Services["ðŸŒ Service Inventory<br/>(S1-S7)"] --> HealthChecks["ðŸ©º Health Check Endpoints<br/>GET /health /live /ready"]
     HealthChecks --> StatusOK{"Status OK?"}
-    StatusOK -->|Yes| LogHealth["✅ Log: Healthy"]
-    StatusOK -->|No| Incident["🚨 Incident Detected"]
+    StatusOK -->|Yes| LogHealth["âœ… Log: Healthy"]
+    StatusOK -->|No| Incident["ðŸš¨ Incident Detected"]
     Incident --> Severity{"Severity<br/>Assessment"}
-    Severity -->|P0 Critical| P0["🔴 P0 — 15min Response"]
-    Severity -->|P1 High| P1["🟠 P1 — 30min Response"]
-    Severity -->|P2 Medium| P2["🟡 P2 — 2hr Response"]
-    Severity -->|P3 Low| P3["🟢 P3 — 24hr Response"]
-    P0 --> Escalate["📞 Escalate to Developer"]
+    Severity -->|P0 Critical| P0["ðŸ”´ P0 â€” 15min Response"]
+    Severity -->|P1 High| P1["ðŸŸ  P1 â€” 30min Response"]
+    Severity -->|P2 Medium| P2["ðŸŸ¡ P2 â€” 2hr Response"]
+    Severity -->|P3 Low| P3["ðŸŸ¢ P3 â€” 24hr Response"]
+    P0 --> Escalate["ðŸ“ž Escalate to Developer"]
     P1 --> Escalate
-    P2 --> Issue["📝 Create GitHub Issue"]
+    P2 --> Issue["ðŸ“ Create GitHub Issue"]
     P3 --> Issue
-    Escalate --> Mitigate["🔧 Mitigate / Rollback"]
-    Mitigate --> Resolve["✅ Resolution Confirmed"]
-    Resolve --> Postmortem["📋 Postmortem (48hr)"]
-    Postmortem --> Monitor["🔁 Enhanced Monitoring"]
+    Escalate --> Mitigate["ðŸ”§ Mitigate / Rollback"]
+    Mitigate --> Resolve["âœ… Resolution Confirmed"]
+    Resolve --> Postmortem["ðŸ“‹ Postmortem (48hr)"]
+    Postmortem --> Monitor["ðŸ” Enhanced Monitoring"]
     Monitor --> HealthChecks
-    Issue --> Sprint["📋 Sprint Planning"]
-    Sprint --> Fix["🔧 Fix Scheduled"]
+    Issue --> Sprint["ðŸ“‹ Sprint Planning"]
+    Sprint --> Fix["ðŸ”§ Fix Scheduled"]
     Fix --> HealthChecks
 ```
 
@@ -96,34 +96,34 @@ graph TD
 ### 2.3 Service Dependency Map
 
 ```
-                    ┌─────────────┐
-                    │  S7: Auth   │
-                    │  (Supabase) │
-                    └──────┬──────┘
-                           │ depends
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  S7: Auth   â”‚
+                    â”‚  (Supabase) â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚ depends
                            v
-┌──────────┐    ┌──────────────────┐    ┌──────────────┐
-│  S1: Web │◄──►│   S2: Backend    │◄──►│  S3: DB      │
-│ (Next.js)│    │   (FastAPI)      │    │ (PostgreSQL) │
-└──────────┘    └────────┬─────────┘    └──────────────┘
-                         │
-              ┌──────────┼──────────┐
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  S1: Web â”‚â—„â”€â”€â–ºâ”‚   S2: Backend    â”‚â—„â”€â”€â–ºâ”‚  S3: DB      â”‚
+â”‚ (Next.js)â”‚    â”‚   (FastAPI)      â”‚    â”‚ (PostgreSQL) â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
               v          v          v
-        ┌─────────┐ ┌─────────┐ ┌─────────┐
-        │ S4: AI  │ │ S5:     │ │ S6:     │
-        │(Ollama/ │ │Scheduler│ │ Email   │
-        │ Claude) │ │(APSched)│ │(Resend) │
-        └─────────┘ └─────────┘ └─────────┘
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚ S4: AI  â”‚ â”‚ S5:     â”‚ â”‚ S6:     â”‚
+        â”‚(Ollama/ â”‚ â”‚Schedulerâ”‚ â”‚ Email   â”‚
+        â”‚ Claude) â”‚ â”‚(APSched)â”‚ â”‚(Resend) â”‚
+        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Failure Propagation:**
-- S3 (DB) failure → S2, S1, S5, S6, S7 all fail → **P0**
-- S7 (Auth) failure → S1, S2 all unreachable → **P0**
-- S2 (API) failure → S1, S5, S6 fail → **P1** (S3, S7 unaffected)
-- S4 (AI) failure → Only AI features degraded → **P1** (all CRUD unaffected)
-- S5 (Scheduler) failure → Background jobs missed → **P2**
-- S6 (Email) failure → Notifications delayed → **P2**
-- S1 (Frontend) failure → API still serves, but UI unavailable → **P1**
+- S3 (DB) failure â†’ S2, S1, S5, S6, S7 all fail â†’ **P0**
+- S7 (Auth) failure â†’ S1, S2 all unreachable â†’ **P0**
+- S2 (API) failure â†’ S1, S5, S6 fail â†’ **P1** (S3, S7 unaffected)
+- S4 (AI) failure â†’ Only AI features degraded â†’ **P1** (all CRUD unaffected)
+- S5 (Scheduler) failure â†’ Background jobs missed â†’ **P2**
+- S6 (Email) failure â†’ Notifications delayed â†’ **P2**
+- S1 (Frontend) failure â†’ API still serves, but UI unavailable â†’ **P1**
 
 ### 2.4 Technology Stack Reference
 
@@ -143,8 +143,8 @@ graph TD
 | Email | Resend API | Latest | Managed |
 | Auth | Supabase Auth (Google OAuth) | Managed | Managed |
 | Monitoring | BetterUptime + Custom cron | Free | Python |
-| Logging | Custom JSON logger | — | Python |
-| Cache | In-memory (TTL) | — | Python |
+| Logging | Custom JSON logger | â€” | Python |
+| Cache | In-memory (TTL) | â€” | Python |
 
 ---
 
@@ -154,37 +154,37 @@ graph TD
 
 | Service | Metric | Target | Measurement Method | Reporting Period | Measurement Window |
 |---|---|---|---|---|---|
-| Frontend (S1) | Uptime | ≥ 99.5% | BetterUptime HTTP checks (1-min interval) | Monthly | Rolling 30 days |
-| Frontend (S1) | Page Load (p95) | ≤ 3 seconds | Lighthouse / PerfMonitor (see `apps/web/lib/performance.ts`) | Monthly | Last 1000 loads |
+| Frontend (S1) | Uptime | â‰¥ 99.5% | BetterUptime HTTP checks (1-min interval) | Monthly | Rolling 30 days |
+| Frontend (S1) | Page Load (p95) | â‰¤ 3 seconds | Lighthouse / PerfMonitor (see `apps/web/lib/performance.ts`) | Monthly | Last 1000 loads |
 | Frontend (S1) | Error Rate | < 1% of page views | Frontend error logger to Supabase analytics | Monthly | Last 1000 page views |
-| Backend API (S2) | Uptime | ≥ 99.9% | BetterUptime HTTP checks (1-min interval) | Monthly | Rolling 30 days |
-| Backend API (S2) | Response Time (p95) | ≤ 500 ms | Metrics middleware (`apps/api/middleware/metrics.py`) | Monthly | Last 1000 requests per endpoint |
+| Backend API (S2) | Uptime | â‰¥ 99.9% | BetterUptime HTTP checks (1-min interval) | Monthly | Rolling 30 days |
+| Backend API (S2) | Response Time (p95) | â‰¤ 500 ms | Metrics middleware (`apps/api/middleware/metrics.py`) | Monthly | Last 1000 requests per endpoint |
 | Backend API (S2) | Error Rate (5xx) | < 0.5% | Error handler + logger | Monthly | Rolling 30 days |
-| Database (S3) | Uptime | ≥ 99.95% | Supabase status page + custom /api/health DB check | Monthly | Rolling 30 days |
-| Database (S3) | Query Latency (p95) | ≤ 200 ms | Query tracker (`QueryTracker` middleware) | Monthly | Last 1000 queries |
-| Database (S3) | Connection Availability | ≥ 99% | Health endpoint DB check | Monthly | Rolling 30 days |
-| AI Services (S4) | Uptime (Claude fallback) | ≥ 99% | Health endpoint AI check | Monthly | Rolling 30 days |
-| AI Services (S4) | Response Time (p95) | ≤ 10s (Claude) / ≤ 30s (Ollama) | API middleware timing | Monthly | Last 100 AI calls |
-| AI Services (S4) | Fallback Activation | ≤ 30s to switch Ollama→Claude | Health check cron | Per event | N/A |
-| Scheduler (S5) | Job Execution Rate | ≥ 98% on-time | Scheduler execution log to DB | Monthly | All scheduled jobs |
-| Scheduler (S5) | Max Job Lag | ≤ 5 minutes | Compare scheduled vs actual execution time | Monthly | All delayed jobs |
-| Email (S6) | Delivery Rate | ≥ 99% (Resend reported) | Resend dashboard delivery logs | Monthly | All sent emails |
-| Email (S6) | Delivery Latency (p95) | ≤ 60 seconds | Application-sent vs Resend-accepted timestamp | Monthly | Last 100 emails |
-| Auth (S7) | Uptime | ≥ 99.95% | Supabase status page | Monthly | Rolling 30 days |
-| Auth (S7) | Login Success Rate | ≥ 99% | Auth event logging | Monthly | All login attempts |
-| Auth (S7) | Session Validation (p95) | ≤ 200 ms | API middleware auth check timing | Monthly | Last 1000 validations |
+| Database (S3) | Uptime | â‰¥ 99.95% | Supabase status page + custom /api/health DB check | Monthly | Rolling 30 days |
+| Database (S3) | Query Latency (p95) | â‰¤ 200 ms | Query tracker (`QueryTracker` middleware) | Monthly | Last 1000 queries |
+| Database (S3) | Connection Availability | â‰¥ 99% | Health endpoint DB check | Monthly | Rolling 30 days |
+| AI Services (S4) | Uptime (Claude fallback) | â‰¥ 99% | Health endpoint AI check | Monthly | Rolling 30 days |
+| AI Services (S4) | Response Time (p95) | â‰¤ 10s (Claude) / â‰¤ 30s (Ollama) | API middleware timing | Monthly | Last 100 AI calls |
+| AI Services (S4) | Fallback Activation | â‰¤ 30s to switch Ollamaâ†’Claude | Health check cron | Per event | N/A |
+| Scheduler (S5) | Job Execution Rate | â‰¥ 98% on-time | Scheduler execution log to DB | Monthly | All scheduled jobs |
+| Scheduler (S5) | Max Job Lag | â‰¤ 5 minutes | Compare scheduled vs actual execution time | Monthly | All delayed jobs |
+| Email (S6) | Delivery Rate | â‰¥ 99% (Resend reported) | Resend dashboard delivery logs | Monthly | All sent emails |
+| Email (S6) | Delivery Latency (p95) | â‰¤ 60 seconds | Application-sent vs Resend-accepted timestamp | Monthly | Last 100 emails |
+| Auth (S7) | Uptime | â‰¥ 99.95% | Supabase status page | Monthly | Rolling 30 days |
+| Auth (S7) | Login Success Rate | â‰¥ 99% | Auth event logging | Monthly | All login attempts |
+| Auth (S7) | Session Validation (p95) | â‰¤ 200 ms | API middleware auth check timing | Monthly | Last 1000 validations |
 
 ### 3.2 SLO Calculation Methodology
 
-**Uptime:** `(Total minutes in period - Downtime minutes) / Total minutes in period × 100`
+**Uptime:** `(Total minutes in period - Downtime minutes) / Total minutes in period Ã— 100`
 
 - Downtime is measured from first failed health check to first successful health check after recovery
 - Periods as short as 1 minute are counted (no grace period for brief blips)
-- Scheduled maintenance with ≥ 24h notice is excluded from uptime calculation
+- Scheduled maintenance with â‰¥ 24h notice is excluded from uptime calculation
 
-**Response Time (p95):** The 95th percentile of all measured response times — meaning 95% of requests are faster than this value and 5% are slower. Calculated from the last 1000 data points per service.
+**Response Time (p95):** The 95th percentile of all measured response times â€” meaning 95% of requests are faster than this value and 5% are slower. Calculated from the last 1000 data points per service.
 
-**Error Rate:** `(Total error responses / Total requests) × 100`
+**Error Rate:** `(Total error responses / Total requests) Ã— 100`
 
 - Frontend: JavaScript errors logged via `logger.warn`/`logger.error`
 - Backend: HTTP 5xx responses
@@ -196,9 +196,9 @@ To prevent rapid SLO consumption, the following burn rate alerts trigger at:
 
 | Burn Rate | Time to Exhaust SLO | Alert | Action |
 |---|---|---|---|
-| 10× (fast burn) | ~3 days | P1 incident | Immediate investigation |
-| 2× (medium burn) | ~15 days | P2 incident | Investigation within 8 hours |
-| 1× (slow burn) | ~30 days | P3 ticket | Scheduled review |
+| 10Ã— (fast burn) | ~3 days | P1 incident | Immediate investigation |
+| 2Ã— (medium burn) | ~15 days | P2 incident | Investigation within 8 hours |
+| 1Ã— (slow burn) | ~30 days | P3 ticket | Scheduled review |
 
 ---
 
@@ -220,20 +220,20 @@ To prevent rapid SLO consumption, the following burn rate alerts trigger at:
 
 **Full System (all services operational):**
 ```
-0.995 × 0.999 × 0.9995 × 0.99 × 0.98 × 0.995 × 0.9995 = 0.9576 ≈ 95.76%
+0.995 Ã— 0.999 Ã— 0.9995 Ã— 0.99 Ã— 0.98 Ã— 0.995 Ã— 0.9995 = 0.9576 â‰ˆ 95.76%
 
 Max monthly full-system downtime: ~30.8 hours
 ```
 
 **Core System (P0 services: API + DB + Auth):**
 ```
-0.999 × 0.9995 × 0.9995 = 0.998 ≈ 99.8%
+0.999 Ã— 0.9995 Ã— 0.9995 = 0.998 â‰ˆ 99.8%
 
 Max monthly core downtime: ~1.4 hours
 ```
 
 **Notes:**
-- Combined availability is a theoretical worst-case — service failures are rarely correlated
+- Combined availability is a theoretical worst-case â€” service failures are rarely correlated
 - Supabase and Vercel have their own SLA commitments (Supabase: 99.95%, Vercel: 99.99%)
 - Local Ollama AI is excluded from combined calculations (availability = developer's machine uptime)
 - The 95.76% figure acknowledges the single-developer/free-tier reality; the core system target of 99.8% is where engineering effort is focused
@@ -245,7 +245,7 @@ The following are excluded from all availability calculations and SLA commitment
 1. **Scheduled Maintenance:** Announced at least 24 hours in advance (see Section 8)
 2. **Emergency Maintenance:** Announced as soon as possible, duration capped at 2 hours
 3. **Force Majeure:** Natural disasters, war, pandemic, government action, power grid failure, internet backbone disruption
-4. **Third-Party Outages:** Supabase, Vercel, Railway, Anthropic (Claude), Resend, Google (OAuth), GitHub — any failure originating upstream of our control
+4. **Third-Party Outages:** Supabase, Vercel, Railway, Anthropic (Claude), Resend, Google (OAuth), GitHub â€” any failure originating upstream of our control
 5. **Local Dependencies:** Ollama AI unavailability when the developer's machine is off, sleeping, or on different network
 6. **Free Tier Limits:** Service degradation caused by hitting free-tier caps (Supabase 500MB storage, Resend 3000 emails/mo, Vercel 100GB bandwidth)
 7. **Self-Inflicted:** Downtime caused by the developer's own actions (debugging, experimental deploys, breaking changes)
@@ -255,17 +255,17 @@ The following are excluded from all availability calculations and SLA commitment
 
 ### 4.4 Service Credits Structure
 
-Since Second Brain OS is a free, self-hosted personal productivity system, traditional monetary credits are inapplicable. Instead, service credits take the form of **service extensions** — additional development attention, new features, or accelerated issue resolution.
+Since Second Brain OS is a free, self-hosted personal productivity system, traditional monetary credits are inapplicable. Instead, service credits take the form of **service extensions** â€” additional development attention, new features, or accelerated issue resolution.
 
 | Monthly Uptime (Core System) | Service Credit |
 |---|---|
-| ≥ 99.8% | No credit (meets target) |
-| 99.0% – 99.7% | 1 dedicated development session (2h) for feature requests |
-| 95.0% – 98.9% | 2 development sessions + priority bug fix in next sprint |
+| â‰¥ 99.8% | No credit (meets target) |
+| 99.0% â€“ 99.7% | 1 dedicated development session (2h) for feature requests |
+| 95.0% â€“ 98.9% | 2 development sessions + priority bug fix in next sprint |
 | < 95.0% | Full week of reliability-focused improvements + post-mortem + public incident report |
 | < 90.0% | Architecture review and migration planning session |
 
-**Credit Claim Process:** Since the developer and user are the same person, credits are self-assessed during the monthly SLA review. No claim form is necessary — the developer simply acknowledges the shortfall in the review document and allocates the corresponding credit.
+**Credit Claim Process:** Since the developer and user are the same person, credits are self-assessed during the monthly SLA review. No claim form is necessary â€” the developer simply acknowledges the shortfall in the review document and allocates the corresponding credit.
 
 ---
 
@@ -275,10 +275,10 @@ Since Second Brain OS is a free, self-hosted personal productivity system, tradi
 
 | Day | Support Level | Rationale |
 |---|---|---|
-| Monday – Friday (09:00 – 22:00 IST) | Normal (standard response targets) | Developer is actively working on or near system |
-| Monday – Friday (22:00 – 09:00 IST) | Best-effort (2× standard response times) | Off-hours, sleep |
-| Saturday – Sunday (10:00 – 20:00 IST) | Best-effort | Weekend availability varies |
-| Saturday – Sunday (20:00 – 10:00 IST) | Email-only (no guaranteed response) | Personal time |
+| Monday â€“ Friday (09:00 â€“ 22:00 IST) | Normal (standard response targets) | Developer is actively working on or near system |
+| Monday â€“ Friday (22:00 â€“ 09:00 IST) | Best-effort (2Ã— standard response times) | Off-hours, sleep |
+| Saturday â€“ Sunday (10:00 â€“ 20:00 IST) | Best-effort | Weekend availability varies |
+| Saturday â€“ Sunday (20:00 â€“ 10:00 IST) | Email-only (no guaranteed response) | Personal time |
 | Exam weeks (as declared) | Email-only | Academic priority (see Section 8.4) |
 | Public holidays (India) | Email-only | Personal time |
 
@@ -288,12 +288,12 @@ Since Second Brain OS is a free, self-hosted personal productivity system, tradi
 
 | Severity | Initial Response | Status Update Frequency | Resolution Target | Workaround Target |
 |---|---|---|---|---|
-| P0 (Critical) | ≤ 30 minutes | Every 30 minutes | ≤ 4 hours | ≤ 1 hour |
-| P1 (High) | ≤ 2 hours | Every 2 hours | ≤ 8 hours | ≤ 4 hours |
-| P2 (Medium) | ≤ 8 hours | Daily | ≤ 48 hours | ≤ 24 hours |
-| P3 (Low) | ≤ 24 hours | Weekly (sprint cycle) | Next release | N/A (cosmetic) |
+| P0 (Critical) | â‰¤ 30 minutes | Every 30 minutes | â‰¤ 4 hours | â‰¤ 1 hour |
+| P1 (High) | â‰¤ 2 hours | Every 2 hours | â‰¤ 8 hours | â‰¤ 4 hours |
+| P2 (Medium) | â‰¤ 8 hours | Daily | â‰¤ 48 hours | â‰¤ 24 hours |
+| P3 (Low) | â‰¤ 24 hours | Weekly (sprint cycle) | Next release | N/A (cosmetic) |
 
-**Response Definition:** Initial acknowledgment of the incident — not necessarily resolution. This could be as simple as: "Incident acknowledged. Investigating."
+**Response Definition:** Initial acknowledgment of the incident â€” not necessarily resolution. This could be as simple as: "Incident acknowledged. Investigating."
 
 **Resolution Definition:** Service restored to normal operation. A workaround that restores functionality counts as resolution; permanent fix may follow in a subsequent release.
 
@@ -353,11 +353,11 @@ As a single-developer project, the escalation matrix is intentionally flat:
 
 ### 6.1 Severity Definitions
 
-#### P0 — Critical (System Down)
+#### P0 â€” Critical (System Down)
 
 **Definition:** Complete service unavailability. Core data access is broken. User cannot log in, access personal data, or use any productivity feature. No workaround exists.
 
-**Response Target:** ≤ 30 minutes | **Resolution Target:** ≤ 4 hours
+**Response Target:** â‰¤ 30 minutes | **Resolution Target:** â‰¤ 4 hours
 
 **Concrete Examples for This System:**
 - **Auth Failure:** Supabase Auth service unreachable; Google OAuth redirects return 500; no user can log in
@@ -366,11 +366,11 @@ As a single-developer project, the escalation matrix is intentionally flat:
 - **Security Breach:** Unauthorized access detected; API keys leaked; user data exfiltrated; session tokens compromised
 - **Persistence Layer Failure:** All CRUD operations fail across all 13 modules; the system cannot read or write any user data
 
-#### P1 — High (Degraded Experience)
+#### P1 â€” High (Degraded Experience)
 
 **Definition:** Core features are unavailable or severely degraded. User can log in but major functionality is broken. A partial workaround may exist.
 
-**Response Target:** ≤ 2 hours | **Resolution Target:** ≤ 8 hours
+**Response Target:** â‰¤ 2 hours | **Resolution Target:** â‰¤ 8 hours
 
 **Concrete Examples for This System:**
 - **Frontend Unavailable:** Vercel deployment fails; Next.js app returns 500 or blank page; API is healthy but UI cannot render
@@ -381,14 +381,14 @@ As a single-developer project, the escalation matrix is intentionally flat:
 - **API Performance Degradation:** Response times > 3 seconds for all endpoints; user experience significantly impacted
 - **PWA Failure:** Service worker not installing; offline mode unavailable; app cannot be installed on devices
 
-#### P2 — Medium (Partial Degradation)
+#### P2 â€” Medium (Partial Degradation)
 
 **Definition:** Non-critical features are broken or degraded. A reasonable workaround exists. Core functionality is unaffected.
 
-**Response Target:** ≤ 8 hours | **Resolution Target:** ≤ 48 hours
+**Response Target:** â‰¤ 8 hours | **Resolution Target:** â‰¤ 48 hours
 
 **Concrete Examples for This System:**
-- **Email Notifications Delayed:** Resend API has intermittent failures; daily briefing emails arrive 2–4 hours late
+- **Email Notifications Delayed:** Resend API has intermittent failures; daily briefing emails arrive 2â€“4 hours late
 - **AI Feature Intermittent:** Ollama is slow or unresponsive intermittently; Claude fallback works but response times exceed 15 seconds
 - **Scheduler Job Missed:** One non-critical cron job fails (e.g., system health report email); other jobs execute normally
 - **Search Degraded:** Full-text search across tasks/courses returns incomplete results or times out
@@ -396,11 +396,11 @@ As a single-developer project, the escalation matrix is intentionally flat:
 - **Browser Extension Issue:** PWA save prompt not appearing; bookmarklet not correctly capturing current page
 - **Lighthouse Score Drop:** Performance or accessibility score drops below 80 due to unoptimized asset or missing metadata
 
-#### P3 — Low (Cosmetic / Quality of Life)
+#### P3 â€” Low (Cosmetic / Quality of Life)
 
 **Definition:** Cosmetic issues, minor bugs, or quality-of-life improvements. No impact on user workflow. No workaround needed.
 
-**Response Target:** ≤ 24 hours | **Resolution Target:** Next release (sprint-based)
+**Response Target:** â‰¤ 24 hours | **Resolution Target:** Next release (sprint-based)
 
 **Concrete Examples for This System:**
 - **UI Typo:** Incorrect label, spelling error, or inconsistent terminology in the interface
@@ -491,8 +491,8 @@ Since this is a solo project, "meetings" are structured self-reviews.
 
 | SLO Miss Condition | Credit Earned | Application |
 |---|---|---|
-| Core system (P0) uptime < 99.8% but ≥ 99.0% | 1 development session (2h) | Feature request of choice |
-| Core system uptime < 99.0% but ≥ 95.0% | 2 development sessions + priority bug | Highest-priority open issue |
+| Core system (P0) uptime < 99.8% but â‰¥ 99.0% | 1 development session (2h) | Feature request of choice |
+| Core system uptime < 99.0% but â‰¥ 95.0% | 2 development sessions + priority bug | Highest-priority open issue |
 | Core system uptime < 95.0% | Full reliability sprint + post-mortem | Documented in public |
 | Any single P0 SLO missed (response or resolution) | 1 development session | Feature request of choice |
 | AI uptime < 99.0% (Claude fallback) for 3 consecutive months | AI architecture review | Scheduled review |
@@ -510,7 +510,7 @@ Since this is a solo project, "meetings" are structured self-reviews.
 |---|---|
 | Definition | Planned maintenance with known start/end time, scope, and expected impact |
 | Minimum Notice | 24 hours for standard maintenance; 48 hours for breaking changes |
-| Preferred Window | Saturdays 06:00–08:00 IST (lowest usage period) |
+| Preferred Window | Saturdays 06:00â€“08:00 IST (lowest usage period) |
 | Maximum Duration | 2 hours per maintenance window |
 | Frequency | Maximum 2 scheduled maintenance events per month |
 | Documentation | All maintenance events logged in `docs/operations/maintenance_log.md` |
@@ -555,23 +555,23 @@ Since this is a solo project, "meetings" are structured self-reviews.
 
 | Type | Notice Period | Notification Method | Status Page Update |
 |---|---|---|---|
-| Scheduled (standard) | ≥ 24 hours | Email | Yes |
-| Scheduled (breaking) | ≥ 48 hours | Email + calendar invite | Yes |
+| Scheduled (standard) | â‰¥ 24 hours | Email | Yes |
+| Scheduled (breaking) | â‰¥ 48 hours | Email + calendar invite | Yes |
 | Emergency | ASAP (may be retroactive) | Email (immediate) | Yes |
-| Free-tier limit cleanup | ≥ 1 hour (automated) | Email (automated alert) | Optional |
+| Free-tier limit cleanup | â‰¥ 1 hour (automated) | Email (automated alert) | Optional |
 
-### 8.4 Blackout Periods — Exam Weeks & Project Deadlines
+### 8.4 Blackout Periods â€” Exam Weeks & Project Deadlines
 
-The following periods are designated as **blackout periods** where no scheduled maintenance is performed, and incident response targets are relaxed (2× standard response/resolution times):
+The following periods are designated as **blackout periods** where no scheduled maintenance is performed, and incident response targets are relaxed (2Ã— standard response/resolution times):
 
 | Period | Typical Dates (IST Academic Calendar) | Type |
 |---|---|---|
-| Mid-semester exams | September (weeks 2–3) | Exams |
-| End-semester exams | December (weeks 2–4) | Exams |
-| Semester break | January (weeks 1–2) | Personal time |
-| Mid-semester exams (even sem) | March (weeks 2–3) | Exams |
-| End-semester exams (even sem) | May (weeks 2–4) | Exams |
-| Summer break | June–July (flexible) | Personal time |
+| Mid-semester exams | September (weeks 2â€“3) | Exams |
+| End-semester exams | December (weeks 2â€“4) | Exams |
+| Semester break | January (weeks 1â€“2) | Personal time |
+| Mid-semester exams (even sem) | March (weeks 2â€“3) | Exams |
+| End-semester exams (even sem) | May (weeks 2â€“4) | Exams |
+| Summer break | Juneâ€“July (flexible) | Personal time |
 | Major project submission | As declared (min 1 week notice) | Project deadline |
 | Personal events | As declared (min 48h notice) | Personal |
 
@@ -634,7 +634,7 @@ Since this is a personal project with a single user, the vulnerability disclosur
 | Third-party breach (Supabase/Vercel/Anthropic) | Within 24 hours of provider notification | N/A | Provider email |
 | Free-tier limit reached | Automated alert at 80% threshold | N/A | Cost monitor cron |
 
-**Self-Notification Channels (Primary → Secondary):**
+**Self-Notification Channels (Primary â†’ Secondary):**
 1. BetterUptime push notification (mobile)
 2. Email alert (admin@ariaos.app)
 3. SMS (future Twilio integration)
@@ -645,12 +645,12 @@ Referenced from the Disaster Recovery Plan (`docs/operations/41_DisasterRecovery
 
 | Data Class | RPO (Recovery Point Objective) | RTO (Recovery Time Objective) | Method |
 |---|---|---|---|
-| User data (tasks, habits, logs, entries) | ≤ 24 hours | ≤ 4 hours | Daily `pg_dump` to local storage |
-| Auth data (users, sessions) | ≤ 5 minutes (Supabase managed) | ≤ 1 hour | Supabase Auth (managed) |
-| AI memory / context | ≤ 24 hours | ≤ 8 hours | Supabase table backup |
-| Source code | Real-time (per commit) | ≤ 1 hour | GitHub repository |
-| Environment variables | Per change | ≤ 30 minutes | Encrypted `.env` file |
-| Chat history | ≤ 7 days | ≤ 24 hours | Periodic JSON export |
+| User data (tasks, habits, logs, entries) | â‰¤ 24 hours | â‰¤ 4 hours | Daily `pg_dump` to local storage |
+| Auth data (users, sessions) | â‰¤ 5 minutes (Supabase managed) | â‰¤ 1 hour | Supabase Auth (managed) |
+| AI memory / context | â‰¤ 24 hours | â‰¤ 8 hours | Supabase table backup |
+| Source code | Real-time (per commit) | â‰¤ 1 hour | GitHub repository |
+| Environment variables | Per change | â‰¤ 30 minutes | Encrypted `.env` file |
+| Chat history | â‰¤ 7 days | â‰¤ 24 hours | Periodic JSON export |
 
 **Backup Verification:**
 - Automated backup integrity check runs daily (`scripts/verify_backup.sh`)
@@ -724,7 +724,7 @@ Ollama runs on the developer's local machine and is subject to:
 **Mitigations:**
 - Automatic fallback to Claude API when Ollama is unreachable
 - Automatic fallback to algorithmic mode if both AI providers are unavailable
-- Graceful degradation — all non-AI features continue functioning normally
+- Graceful degradation â€” all non-AI features continue functioning normally
 
 ### 10.4 Force Majeure
 
@@ -766,100 +766,100 @@ Second Brain OS operates entirely on free-tier infrastructure. The following lim
 ### Appendix A: Service Component Dependency Map
 
 ```
-                                ┌─────────────────────────────────────────────────────────────┐
-                                │                    SECOND BRAIN OS                           │
-                                │                  ┌───────────────────┐                      │
-                                │                  │   S7: Supabase    │                      │
-                                │                  │   Auth (P0)       │                      │
-                                │                  └────────┬──────────┘                      │
-                                │                           │                                 │
-                                │                           v                                 │
-                                │  ┌─────────────────────────────────────────────────────┐    │
-                                │  │              S3: Supabase PostgreSQL (P0)          │    │
-                                │  │  ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐│    │
-                                │  │  │tasks │habits│courses│goals │ideas │income │...  ││    │
-                                │  │  └──────┴──────┴──────┴──────┴──────┴──────┴──────┘│    │
-                                │  └───────────────────┬─────────────────────────────────┘    │
-                                │                      │                                      │
-                                │                      v                                      │
-                                │  ┌─────────────────────────────────────────────────────┐    │
-                                │  │  S2: FastAPI Backend on Railway (P0)               │    │
-                                │  │  ┌──────────┬──────────┬──────────┬──────────┐     │    │
-                                │  │  │ REST API │ Rate     │ Error    │ Metrics  │     │    │
-                                │  │  │ Routers  │ Limiter  │ Handler  │ Middleware│    │    │
-                                │  │  └──────────┴──────────┴──────────┴──────────┘     │    │
-                                │  └──────┬──────────────────────────────────┬──────────┘    │
-                                │         │                                  │                │
-                                │         v                                  v                │
-                                │  ┌──────────────┐              ┌──────────────────┐        │
-                                │  │ S5: Scheduler │             │ S4: AI Service   │        │
-                                │  │ (APScheduler) │             │  ┌──────────┐   │        │
-                                │  │  (P2)         │──────►──────│  │ Ollama   │   │        │
-                                │  │               │             │  │ (Local)  │   │        │
-                                │  └──────┬────────┘             │  ├──────────┤   │        │
-                                │         │                      │  │  Claude  │   │        │
-                                │         v                      │  │ (Cloud)  │   │        │
-                                │  ┌──────────────┐              │  └──────────┘   │        │
-                                │  │ S6: Resend   │              └──────────────────┘        │
-                                │  │ Email (P2)   │                                         │
-                                │  └──────────────┘                                         │
-                                │                                                           │
-                                │  ┌─────────────────────────────────────────────────────┐    │
-                                │  │  S1: Next.js Frontend on Vercel (P1)               │    │
-                                │  │  Pages │ Components │ Zustand │ Framer Motion │ 3D  │    │
-                                │  └─────────────────────────────────────────────────────┘    │
-                                └─────────────────────────────────────────────────────────────┘
+                                â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                â”‚                    SECOND BRAIN OS                           â”‚
+                                â”‚                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                      â”‚
+                                â”‚                  â”‚   S7: Supabase    â”‚                      â”‚
+                                â”‚                  â”‚   Auth (P0)       â”‚                      â”‚
+                                â”‚                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                      â”‚
+                                â”‚                           â”‚                                 â”‚
+                                â”‚                           v                                 â”‚
+                                â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+                                â”‚  â”‚              S3: Supabase PostgreSQL (P0)          â”‚    â”‚
+                                â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”â”‚    â”‚
+                                â”‚  â”‚  â”‚tasks â”‚habitsâ”‚coursesâ”‚goals â”‚ideas â”‚income â”‚...  â”‚â”‚    â”‚
+                                â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”˜â”‚    â”‚
+                                â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+                                â”‚                      â”‚                                      â”‚
+                                â”‚                      v                                      â”‚
+                                â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+                                â”‚  â”‚  S2: FastAPI Backend on Railway (P0)               â”‚    â”‚
+                                â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚    â”‚
+                                â”‚  â”‚  â”‚ REST API â”‚ Rate     â”‚ Error    â”‚ Metrics  â”‚     â”‚    â”‚
+                                â”‚  â”‚  â”‚ Routers  â”‚ Limiter  â”‚ Handler  â”‚ Middlewareâ”‚    â”‚    â”‚
+                                â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚    â”‚
+                                â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+                                â”‚         â”‚                                  â”‚                â”‚
+                                â”‚         v                                  v                â”‚
+                                â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”        â”‚
+                                â”‚  â”‚ S5: Scheduler â”‚             â”‚ S4: AI Service   â”‚        â”‚
+                                â”‚  â”‚ (APScheduler) â”‚             â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚        â”‚
+                                â”‚  â”‚  (P2)         â”‚â”€â”€â”€â”€â”€â”€â–ºâ”€â”€â”€â”€â”€â”€â”‚  â”‚ Ollama   â”‚   â”‚        â”‚
+                                â”‚  â”‚               â”‚             â”‚  â”‚ (Local)  â”‚   â”‚        â”‚
+                                â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜             â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”‚        â”‚
+                                â”‚         â”‚                      â”‚  â”‚  Claude  â”‚   â”‚        â”‚
+                                â”‚         v                      â”‚  â”‚ (Cloud)  â”‚   â”‚        â”‚
+                                â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”              â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚        â”‚
+                                â”‚  â”‚ S6: Resend   â”‚              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜        â”‚
+                                â”‚  â”‚ Email (P2)   â”‚                                         â”‚
+                                â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                         â”‚
+                                â”‚                                                           â”‚
+                                â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+                                â”‚  â”‚  S1: Next.js Frontend on Vercel (P1)               â”‚    â”‚
+                                â”‚  â”‚  Pages â”‚ Components â”‚ Zustand â”‚ Framer Motion â”‚ 3D  â”‚    â”‚
+                                â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+                                â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
 External Dependencies (excluded from SLA):
-  ┌────────────┐  ┌────────────┐  ┌───────────────┐  ┌──────────┐
-  │ Google     │  │ Supabase   │  │ Anthropic     │  │ Resend   │
-  │ OAuth      │  │ Infra      │  │ Claude API    │  │ API      │
-  └────────────┘  └────────────┘  └───────────────┘  └──────────┘
+  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+  â”‚ Google     â”‚  â”‚ Supabase   â”‚  â”‚ Anthropic     â”‚  â”‚ Resend   â”‚
+  â”‚ OAuth      â”‚  â”‚ Infra      â”‚  â”‚ Claude API    â”‚  â”‚ API      â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix B: Escalation Contact Tree
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                   ESCALATION CONTACT TREE                      │
-│                      Second Brain OS                           │
-├──────────────────────────────────────────────────────────────┤
-│                                                                │
-│  PRIMARY CONTACT (All Incidents)                               │
-│  ┌──────────────────────────────────────────────────────────┐ │
-│  │ Developer (Self)                                          │ │
-│  │ Email: admin@ariaos.app                                   │ │
-│  │ Phone: [On-file — set in env: ADMIN_PHONE]               │ │
-│  │ Availability: Per Section 5.1 Support Hours               │ │
-│  └──────────────────────────────────────────────────────────┘ │
-│                     │                                          │
-│                     v                                          │
-│  CLOUD PROVIDER ESCALATIONS (Infrastructure Issues Only)       │
-│  ┌──────────────┬──────────────────┬────────────────────────┐ │
-│  │ Supabase     │ Vercel           │ Railway                │ │
-│  │ Support:     │ Support:         │ Support:               │ │
-│  │ supabase.com │ vercel.com       │ railway.app            │ │
-│  │ /support     │ /support         │ /support               │ │
-│  │ Account:     │ Account:         │ Account:               │ │
-│  │ [Project Ref]│ [Email on file]  │ [Email on file]        │ │
-│  └──────────────┴──────────────────┴────────────────────────┘ │
-│                                                                │
-│  API PROVIDER ESCALATIONS (Service-Specific)                   │
-│  ┌──────────────┬──────────────────┐                           │
-│  │ Anthropic    │ Resend           │                           │
-│  │ (Claude)     │ (Email)          │                           │
-│  │ support@     │ support@         │                           │
-│  │ anthropic.com│ resend.com       │                           │
-│  └──────────────┴──────────────────┘                           │
-│                                                                │
-│  INCIDENT FLOW:                                                │
-│  1. Automated alert triggers (BetterUptime / cron)             │
-│  2. Developer receives notification (email/SMS)                │
-│  3. Developer acknowledges within severity target              │
-│  4. Developer investigates and resolves                        │
-│  5. If platform issue: escalate to cloud provider              │
-│  6. Document in incident log + post-mortem (if applicable)     │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   ESCALATION CONTACT TREE                      â”‚
+â”‚                      Second Brain OS                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                â”‚
+â”‚  PRIMARY CONTACT (All Incidents)                               â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ Developer (Self)                                          â”‚ â”‚
+â”‚  â”‚ Email: admin@ariaos.app                                   â”‚ â”‚
+â”‚  â”‚ Phone: [On-file â€” set in env: ADMIN_PHONE]               â”‚ â”‚
+â”‚  â”‚ Availability: Per Section 5.1 Support Hours               â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                     â”‚                                          â”‚
+â”‚                     v                                          â”‚
+â”‚  CLOUD PROVIDER ESCALATIONS (Infrastructure Issues Only)       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ Supabase     â”‚ Vercel           â”‚ Railway                â”‚ â”‚
+â”‚  â”‚ Support:     â”‚ Support:         â”‚ Support:               â”‚ â”‚
+â”‚  â”‚ supabase.com â”‚ vercel.com       â”‚ railway.app            â”‚ â”‚
+â”‚  â”‚ /support     â”‚ /support         â”‚ /support               â”‚ â”‚
+â”‚  â”‚ Account:     â”‚ Account:         â”‚ Account:               â”‚ â”‚
+â”‚  â”‚ [Project Ref]â”‚ [Email on file]  â”‚ [Email on file]        â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                                â”‚
+â”‚  API PROVIDER ESCALATIONS (Service-Specific)                   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                           â”‚
+â”‚  â”‚ Anthropic    â”‚ Resend           â”‚                           â”‚
+â”‚  â”‚ (Claude)     â”‚ (Email)          â”‚                           â”‚
+â”‚  â”‚ support@     â”‚ support@         â”‚                           â”‚
+â”‚  â”‚ anthropic.comâ”‚ resend.com       â”‚                           â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                           â”‚
+â”‚                                                                â”‚
+â”‚  INCIDENT FLOW:                                                â”‚
+â”‚  1. Automated alert triggers (BetterUptime / cron)             â”‚
+â”‚  2. Developer receives notification (email/SMS)                â”‚
+â”‚  3. Developer acknowledges within severity target              â”‚
+â”‚  4. Developer investigates and resolves                        â”‚
+â”‚  5. If platform issue: escalate to cloud provider              â”‚
+â”‚  6. Document in incident log + post-mortem (if applicable)     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix C: Incident Report Template
@@ -871,7 +871,7 @@ External Dependencies (excluded from SLA):
 - **Date:** {YYYY-MM-DD}
 - **Duration:** {X hours Y minutes}
 - **Severity:** {P0 / P1 / P2 / P3}
-- **Service Affected:** {S1–S7}
+- **Service Affected:** {S1â€“S7}
 - **Detection Method:** {BetterUptime / Self-detected / Monitoring cron / User report}
 - **Incident Commander:** Developer (self)
 
@@ -889,7 +889,7 @@ External Dependencies (excluded from SLA):
 
 ## 3. Impact
 - **User Impact:** {Description of what the user experienced}
-- **Data Loss:** {Yes/No — if yes, quantify}
+- **Data Loss:** {Yes/No â€” if yes, quantify}
 - **Cascading Failures:** {List any secondary services affected}
 
 ## 4. Root Cause
@@ -928,8 +928,8 @@ External Dependencies (excluded from SLA):
 ## 9. SLO Impact
 | Metric | Target | Actual | Miss? |
 |---|---|---|---|
-| {e.g., API Response Time p95} | ≤ 500 ms | {actual} | {Yes/No} |
-| {e.g., API Uptime} | ≥ 99.9% | {actual} | {Yes/No} |
+| {e.g., API Response Time p95} | â‰¤ 500 ms | {actual} | {Yes/No} |
+| {e.g., API Uptime} | â‰¥ 99.9% | {actual} | {Yes/No} |
 
 ---
 
@@ -942,9 +942,9 @@ External Dependencies (excluded from SLA):
 
 | Condition | Credit | Redemption |
 |---|---|---|
-| Core uptime ≥ 99.8% (met) | None | N/A |
-| Core uptime 99.0% – 99.7% | 1 dev session (2h) | Feature request |
-| Core uptime 95.0% – 98.9% | 2 dev sessions + priority bug | Feature + top bug fix |
+| Core uptime â‰¥ 99.8% (met) | None | N/A |
+| Core uptime 99.0% â€“ 99.7% | 1 dev session (2h) | Feature request |
+| Core uptime 95.0% â€“ 98.9% | 2 dev sessions + priority bug | Feature + top bug fix |
 | Core uptime < 95.0% | Full reliability sprint + post-mortem | Reliability improvements |
 | P0 response time miss (> 30 min) | 1 dev session | Feature request |
 | P0 resolution time miss (> 4h) | 1 dev session + root cause fix | Root cause fix prioritized |
@@ -961,8 +961,8 @@ External Dependencies (excluded from SLA):
 | Version | Date | Author | Changes | Sections Affected |
 |---|---|---|---|---|
 | 1.0.0 | 2026-06-11 | Developer | Initial SLA document | All |
-| — | — | — | — | — |
-| — | — | — | — | — |
+| â€” | â€” | â€” | â€” | â€” |
+| â€” | â€” | â€” | â€” | â€” |
 
 **Planned Review Schedule:**
 | Review | Due Date | Type |
@@ -976,4 +976,4 @@ External Dependencies (excluded from SLA):
 
 *This SLA is a living document. It reflects the reality of a single-developer, free-tier project while maintaining the rigor and structure of an enterprise operations plan. When in doubt, prioritize reliability over velocity, documentation over assumptions, and user experience over feature count.*
 
-*— Developer, Second Brain OS*
+*â€” Developer, Second Brain OS*

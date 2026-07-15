@@ -1,13 +1,13 @@
-# Observability
+﻿# Observability
 
 ## Document Control
 
 | Metadata | Value |
 |----------|-------|
-| **Document ID** | OPS-031 |
+| **Document ID** | OPS-OBS-001 |
 | **Version** | 2.0 |
 | **Status** | Approved |
-| **Classification** | Internal — Operations |
+| **Classification** | Internal â€” Operations |
 | **Owner** | SRE / Platform Engineering |
 | **Last Updated** | 2026-06-11 |
 | **Review Cycle** | Quarterly |
@@ -36,7 +36,7 @@ Every observability investment is measured against these four indicators:
 | **Saturation** | How "full" the system is (resource utilization) | DB ~40%, memory ~50% | < 80% on all resources |
 
 ### Strategic Approach
-We use a **batteries-included but vendor-light** approach — leveraging Supabase, PostgreSQL, and file-based storage for most observability needs, with minimal dependency on external SaaS tools. This keeps costs predictable while providing sufficient visibility for a solo engineering team.
+We use a **batteries-included but vendor-light** approach â€” leveraging Supabase, PostgreSQL, and file-based storage for most observability needs, with minimal dependency on external SaaS tools. This keeps costs predictable while providing sufficient visibility for a solo engineering team.
 
 ---
 
@@ -59,7 +59,7 @@ Numerical representations of system state over time. Metrics answer: *"What is h
 ### Pillar 3: Tracing
 End-to-end tracking of a single request across service boundaries. Traces answer: *"Why did it happen?"*
 
-- **Primary focus**: Request correlation across frontend → API → DB → AI
+- **Primary focus**: Request correlation across frontend â†’ API â†’ DB â†’ AI
 - **Storage**: Correlation IDs in log entries; trace context propagated via headers
 - **Standard**: W3C Trace Context (traceparent header)
 
@@ -243,7 +243,7 @@ Every log entry includes:
 
 ### OpenTelemetry Strategy
 
-**(Future — Phase 2)**
+**(Future â€” Phase 2)**
 
 | Component | OTLP Exporter | Status |
 |-----------|---------------|--------|
@@ -422,62 +422,62 @@ class EnhancedLogger(Logger):
 ### Dashboard 1: System Health (Real-time)
 
 ```
-Panel: API Response Times           — line chart, p50/p95/p99 over 1h
-Panel: Error Rate                   — line chart, by status code over 1h
-Panel: Active Users                 — gauge, last 5min
-Panel: DB Performance               — line chart, query times over 1h
-Panel: DB Connection Pool           — gauge, usage %
-Panel: Cron Status                  — status table, last run per cron
-Panel: AI Usage                     — gauge, tokens used today
-Panel: AI Cost                      — area chart, estimated daily cost
-Panel: Cache Hit Rate               — gauge, %
-Panel: Memory Usage (API)           — gauge, RSS / limit
+Panel: API Response Times           â€” line chart, p50/p95/p99 over 1h
+Panel: Error Rate                   â€” line chart, by status code over 1h
+Panel: Active Users                 â€” gauge, last 5min
+Panel: DB Performance               â€” line chart, query times over 1h
+Panel: DB Connection Pool           â€” gauge, usage %
+Panel: Cron Status                  â€” status table, last run per cron
+Panel: AI Usage                     â€” gauge, tokens used today
+Panel: AI Cost                      â€” area chart, estimated daily cost
+Panel: Cache Hit Rate               â€” gauge, %
+Panel: Memory Usage (API)           â€” gauge, RSS / limit
 ```
 
 ### Dashboard 2: User Analytics (Daily)
 
 ```
-Panel: DAU/MAU                      — bar chart, daily active users
-Panel: Feature Adoption             — heatmap, modules used per day
-Panel: Task Completion              — line chart, created vs completed
-Panel: Scheduler Runs               — table, last 24h cron executions
-Panel: Top Errors                   — table, most frequent errors
-Panel: Session Duration             — histogram, average session length
-Panel: Page Load Times              — line chart, by route
-Panel: New Registrations            — line chart, daily signups
+Panel: DAU/MAU                      â€” bar chart, daily active users
+Panel: Feature Adoption             â€” heatmap, modules used per day
+Panel: Task Completion              â€” line chart, created vs completed
+Panel: Scheduler Runs               â€” table, last 24h cron executions
+Panel: Top Errors                   â€” table, most frequent errors
+Panel: Session Duration             â€” histogram, average session length
+Panel: Page Load Times              â€” line chart, by route
+Panel: New Registrations            â€” line chart, daily signups
 ```
 
 ### Dashboard 3: Cost & Capacity (Weekly)
 
 ```
-Panel: AI Cost Estimate             — area chart, daily cost in USD
-Panel: API Cost by Endpoint         — bar chart, most expensive endpoints
-Panel: Storage Usage                — gauge, DB size / 500MB limit
-Panel: Bandwidth Usage              — gauge, Vercel bandwidth / 100GB
-Panel: Email Usage                  — gauge, emails sent / 3000 limit
-Panel: Token Usage by Model         — stacked area, Claude vs Ollama
-Panel: Rate Limit Hits              — bar chart, by endpoint
-Panel: Growth Trends                — line chart, week-over-week growth
+Panel: AI Cost Estimate             â€” area chart, daily cost in USD
+Panel: API Cost by Endpoint         â€” bar chart, most expensive endpoints
+Panel: Storage Usage                â€” gauge, DB size / 500MB limit
+Panel: Bandwidth Usage              â€” gauge, Vercel bandwidth / 100GB
+Panel: Email Usage                  â€” gauge, emails sent / 3000 limit
+Panel: Token Usage by Model         â€” stacked area, Claude vs Ollama
+Panel: Rate Limit Hits              â€” bar chart, by endpoint
+Panel: Growth Trends                â€” line chart, week-over-week growth
 ```
 
 ### Dashboard 4: Event Pipeline (Real-time)
 
 ```
-Panel: Event Throughput             — line chart, events/sec by category
-Panel: Event Success Rate           — gauge, %
-Panel: Failed Events by Type        — bar chart, top 10
-Panel: DLQ Size                     — gauge, current count
-Panel: Event Latency (p50/p95)      — line chart
-Panel: Active Retries               — gauge
-Panel: Event Volume by Hour         — heatmap, 7-day view
-Panel: Top Error Sources            — bar chart, by source component
+Panel: Event Throughput             â€” line chart, events/sec by category
+Panel: Event Success Rate           â€” gauge, %
+Panel: Failed Events by Type        â€” bar chart, top 10
+Panel: DLQ Size                     â€” gauge, current count
+Panel: Event Latency (p50/p95)      â€” line chart
+Panel: Active Retries               â€” gauge
+Panel: Event Volume by Hour         â€” heatmap, 7-day view
+Panel: Top Error Sources            â€” bar chart, by source component
 ```
 
 ---
 
 ## Alerting Rules
 
-### Critical Alerts (Pager/Email — within 15 min)
+### Critical Alerts (Pager/Email â€” within 15 min)
 
 | Rule ID | Metric | Condition | Severity | Notification | Description |
 |---------|--------|-----------|----------|--------------|-------------|
@@ -490,7 +490,7 @@ Panel: Top Error Sources            — bar chart, by source component
 | ALR-007 | DLQ Accumulation | > 10 events in DLQ | Critical | Email + SMS | Events failing permanently |
 | ALR-008 | Data Loss Signal | Unexpected DELETE pattern | Critical | Email + SMS | Potential data integrity issue |
 
-### Warning Alerts (Email — within 1 hour)
+### Warning Alerts (Email â€” within 1 hour)
 
 | Rule ID | Metric | Condition | Severity | Notification | Description |
 |---------|--------|-----------|----------|--------------|-------------|
@@ -503,7 +503,7 @@ Panel: Top Error Sources            — bar chart, by source component
 | ALR-107 | Storage Threshold | > 80% of DB limit | Warning | Email | Storage approaching limit |
 | ALR-108 | Retry Storm | > 50 events retrying | Warning | Email | Possible systemic failure |
 
-### Informational Alerts (Log — daily digest)
+### Informational Alerts (Log â€” daily digest)
 
 | Rule ID | Metric | Condition | Severity | Notification | Description |
 |---------|--------|-----------|----------|--------------|-------------|
@@ -551,28 +551,28 @@ Panel: Top Error Sources            — bar chart, by source component
 - Static dashboards in documentation
 - React to incidents after they happen
 
-### Level 2: Reactive (Target — Q3 2026)
+### Level 2: Reactive (Target â€” Q3 2026)
 - Automated log aggregation to searchable store
 - Correlation IDs across all services
 - Basic alerting on known failure modes
 - Metrics snapshots to database
 - Dashboard with real-time data (not static)
 
-### Level 3: Proactive (Target — Q4 2026)
+### Level 3: Proactive (Target â€” Q4 2026)
 - Alerting with auto-escalation
 - Distributed tracing (W3C Trace Context)
 - Service-level dashboards for all components
 - Trending and anomaly detection
 - Proactive capacity planning
 
-### Level 4: Predictive (Target — Q1 2027)
+### Level 4: Predictive (Target â€” Q1 2027)
 - ML-based anomaly detection in metrics
 - Automated root cause suggestions
 - Pre-deployment run analysis
 - Cost optimization recommendations
 - User-experience-level SLO tracking
 
-### Level 5: Autonomous (Target — Q2 2027)
+### Level 5: Autonomous (Target â€” Q2 2027)
 - Self-healing (auto-rollback, auto-scale)
 - Automated incident remediation
 - Predictive capacity scaling
@@ -589,16 +589,16 @@ Panel: Top Error Sources            — bar chart, by source component
 | Application logs | ~200 MB | ~6 GB | 90 days | ~$0.60 (Supabase) |
 | Error logs (Supabase) | ~10 MB | ~300 MB | 90 days | ~$0.03 (included) |
 | Metrics snapshots (1-min) | ~50 MB | ~1.5 GB | 90 days | ~$0.15 (Supabase) |
-| Trace context (in logs) | Included in logs | — | — | — |
+| Trace context (in logs) | Included in logs | â€” | â€” | â€” |
 | Frontend error logs | ~5 MB | ~150 MB | 30 days | ~$0.02 (included) |
-| **Total** | **~265 MB** | **~7.95 GB** | — | **~$0.80/month** |
+| **Total** | **~265 MB** | **~7.95 GB** | â€” | **~$0.80/month** |
 
 ### Cost Optimization Strategies
 
 1. **Log sampling**: DEBUG logs at 1:100 sample rate in production
-2. **Metrics aggregation**: 1-min raw → 1-hour aggregated (keep raw 7 days, hourly 90 days)
+2. **Metrics aggregation**: 1-min raw â†’ 1-hour aggregated (keep raw 7 days, hourly 90 days)
 3. **Retention tiers**: Critical errors kept 90 days, INFO logs 30 days, DEBUG logs 7 days
-4. **Supabase usage**: Leverage included storage (500MB free) — stay within free tier
+4. **Supabase usage**: Leverage included storage (500MB free) â€” stay within free tier
 5. **Cardinality control**: Limit label cardinality to < 100 unique values per metric
 
 ### Cardinality Guidelines
@@ -606,7 +606,7 @@ Panel: Top Error Sources            — bar chart, by source component
 | Metric Label | Max Unique Values | Guidance |
 |-------------|-------------------|----------|
 | `endpoint` | 50 | Keep paths normalized, strip IDs |
-| `user_id` | DO NOT USE | Will explode cardinality — use `user_id_hash` instead |
+| `user_id` | DO NOT USE | Will explode cardinality â€” use `user_id_hash` instead |
 | `status_code` | 10 | Group by category (2xx/4xx/5xx) if needed |
 | `error_type` | 20 | Normalize error messages to types |
 | `table_name` | 20 | Fixed set of tables |
@@ -615,11 +615,11 @@ Panel: Top Error Sources            — bar chart, by source component
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (Current — Q3 2026)
+### Phase 1: Foundation (Current â€” Q3 2026)
 - [x] Structured JSON logging
 - [x] API request/response logging
 - [x] Request tracing middleware
-- [ ] Frontend error logging → `/api/logs/frontend`
+- [ ] Frontend error logging â†’ `/api/logs/frontend`
 - [ ] Log retention/purge cron job
 - [ ] Metrics snapshot table and cron
 
@@ -769,16 +769,16 @@ curl -s http://localhost:8000/api/logs/frontend/stats?period=24h
 
 | Term | Definition |
 |------|------------|
-| **Cardinality** | Number of unique combinations of label values in a metric — high cardinality causes performance issues |
+| **Cardinality** | Number of unique combinations of label values in a metric â€” high cardinality causes performance issues |
 | **Golden Signals** | The four key metrics for monitoring: latency, traffic, errors, saturation |
-| **OTLP** | OpenTelemetry Protocol — standard for exporting telemetry data |
+| **OTLP** | OpenTelemetry Protocol â€” standard for exporting telemetry data |
 | **Span** | A named, timed operation representing a unit of work in a trace |
 | **Trace** | A tree of spans showing the path of a request through distributed services |
 | **W3C Trace Context** | Standard HTTP headers (`traceparent`, `tracestate`) for propagating trace context |
-| **p50/p95/p99** | Percentile latency measurements — 50th, 95th, and 99th percentile |
-| **SLI** | Service Level Indicator — a specific metric measuring a aspect of reliability |
-| **SLO** | Service Level Objective — a target value for an SLI |
-| **SLA** | Service Level Agreement — a contractual commitment to meet SLOs |
+| **p50/p95/p99** | Percentile latency measurements â€” 50th, 95th, and 99th percentile |
+| **SLI** | Service Level Indicator â€” a specific metric measuring a aspect of reliability |
+| **SLO** | Service Level Objective â€” a target value for an SLI |
+| **SLA** | Service Level Agreement â€” a contractual commitment to meet SLOs |
 
 ### Appendix F: Revision History
 

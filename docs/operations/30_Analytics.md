@@ -1,14 +1,14 @@
-# Enterprise Analytics Architecture
+﻿# Enterprise Analytics Architecture
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-OPS-ANL-001 |
+| Document ID | OPS-ANL-001 |
 | Version | 3.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Product & Engineering |
+| Classification | Internal â€” Product & Engineering |
 | Owner | Product Lead |
 | Next Review | 2026-09-11 |
 
@@ -39,16 +39,16 @@
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 graph TD
-    Events["📡 User Events"] --> Collect["📥 Event Collection SDK"]
-    Collect --> Validate["✅ Event Validation"]
-    Validate --> Enrich["🔧 Data Enrichment"]
-    Enrich --> Store["💾 Supabase Storage<br/>(analytics_events)"]
-    Store --> Aggregate["📊 SQL Aggregation<br/>(Supabase Views)"]
-    Store --> RawQuery["🔍 Raw Query API"]
-    Aggregate --> Dashboard["📈 Dashboard & Insights"]
-    Aggregate --> Export["📤 JSON/CSV Export"]
+    Events["ðŸ“¡ User Events"] --> Collect["ðŸ“¥ Event Collection SDK"]
+    Collect --> Validate["âœ… Event Validation"]
+    Validate --> Enrich["ðŸ”§ Data Enrichment"]
+    Enrich --> Store["ðŸ’¾ Supabase Storage<br/>(analytics_events)"]
+    Store --> Aggregate["ðŸ“Š SQL Aggregation<br/>(Supabase Views)"]
+    Store --> RawQuery["ðŸ” Raw Query API"]
+    Aggregate --> Dashboard["ðŸ“ˆ Dashboard & Insights"]
+    Aggregate --> Export["ðŸ“¤ JSON/CSV Export"]
     RawQuery --> Dashboard
-    Dashboard --> Feedback["🔄 Feedback Loop"]
+    Dashboard --> Feedback["ðŸ”„ Feedback Loop"]
     Feedback --> Events
 ```
 
@@ -75,10 +75,10 @@ Second Brain OS (ARIA OS) implements a **privacy-first, zero-telemetry analytics
 
 **Data Flow:**
 ```
-User Action → Frontend Event → POST /api/analytics/events → Supabase analytics_events
-                                                                    ↓
+User Action â†’ Frontend Event â†’ POST /api/analytics/events â†’ Supabase analytics_events
+                                                                    â†“
                                                               SQL Aggregation
-                                                                    ↓
+                                                                    â†“
                                                          Dashboards & Reports
 ```
 
@@ -89,48 +89,48 @@ User Action → Frontend Event → POST /api/analytics/events → Supabase analy
 ### 2.1 High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER (Browser / Mobile)                   │
-│                                                                          │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ Page Views  │  │ User Actions │  │ Feature Use  │  │ Error Events │  │
-│  └──────┬──────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
-│         │                │                  │                │           │
-│         └────────────────┼──────────────────┴────────────────┘           │
-│                          │                                              │
-│                   ┌──────▼──────┐                                        │
-│                   │ Event Buffer │  (batch: max 10 events / 5 seconds)   │
-│                   └──────┬──────┘                                        │
-│                          │ POST /api/analytics/events                   │
-└──────────────────────────┼──────────────────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────────────────┐
-│                        API LAYER (FastAPI)                               │
-│                                                                          │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────────┐   │
-│  │ Event Validation │  │ User-ID Enrich   │  │ Rate Limit Check     │   │
-│  └──────┬───────────┘  └──────┬───────────┘  └────────┬─────────────┘   │
-│         │                    │                         │                 │
-│         └────────────────────┼─────────────────────────┘                 │
-│                              │                                           │
-│                     ┌────────▼────────┐                                  │
-│                     │ Consent Filter   │  (drop if no consent)            │
-│                     └────────┬────────┘                                  │
-└──────────────────────────────┼──────────────────────────────────────────┘
-                               │
-┌──────────────────────────────▼──────────────────────────────────────────┐
-│                      DATA LAYER (Supabase PostgreSQL)                    │
-│                                                                          │
-│  ┌────────────────────────┐  ┌──────────────────┐  ┌────────────────┐   │
-│  │ analytics_events (raw) │→│ agg_daily_events  │→│ materialized   │   │
-│  │ 90-day TTL             │  │ (view)            │  │ views          │   │
-│  └────────────────────────┘  └──────────────────┘  └────────────────┘   │
-│                                                                          │
-│  ┌────────────────────────┐  ┌──────────────────┐                       │
-│  │ user_analytics_prefs   │  │ consent_records  │                       │
-│  │ (per-user settings)    │  │ (audit trail)    │                       │
-│  └────────────────────────┘  └──────────────────┘                       │
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        CLIENT LAYER (Browser / Mobile)                   â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Page Views  â”‚  â”‚ User Actions â”‚  â”‚ Feature Use  â”‚  â”‚ Error Events â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚         â”‚                â”‚                  â”‚                â”‚           â”‚
+â”‚         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜           â”‚
+â”‚                          â”‚                                              â”‚
+â”‚                   â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”                                        â”‚
+â”‚                   â”‚ Event Buffer â”‚  (batch: max 10 events / 5 seconds)   â”‚
+â”‚                   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜                                        â”‚
+â”‚                          â”‚ POST /api/analytics/events                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        API LAYER (FastAPI)                               â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Event Validation â”‚  â”‚ User-ID Enrich   â”‚  â”‚ Rate Limit Check     â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚         â”‚                    â”‚                         â”‚                 â”‚
+â”‚         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                 â”‚
+â”‚                              â”‚                                           â”‚
+â”‚                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”                                  â”‚
+â”‚                     â”‚ Consent Filter   â”‚  (drop if no consent)            â”‚
+â”‚                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      DATA LAYER (Supabase PostgreSQL)                    â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ analytics_events (raw) â”‚â†’â”‚ agg_daily_events  â”‚â†’â”‚ materialized   â”‚   â”‚
+â”‚  â”‚ 90-day TTL             â”‚  â”‚ (view)            â”‚  â”‚ views          â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                       â”‚
+â”‚  â”‚ user_analytics_prefs   â”‚  â”‚ consent_records  â”‚                       â”‚
+â”‚  â”‚ (per-user settings)    â”‚  â”‚ (audit trail)    â”‚                       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.2 Design Decisions
@@ -423,7 +423,7 @@ export class AnalyticsSDK {
         console.warn('[Analytics] Failed to send events:', resp.status)
       }
     } catch (err) {
-      // Silent fail — analytics should never break the app
+      // Silent fail â€” analytics should never break the app
       console.warn('[Analytics] Network error:', err)
     }
   }
@@ -467,14 +467,14 @@ export const analytics = new AnalyticsSDK()
 ### 3.4 Consent Filtering Pipeline
 
 ```
-Event Received → Check user_analytics_prefs.analytics_consent
-                     │
-                     ├── false ───→ event.consent_category == 'essential'?
-                     │                  │
-                     │                  ├── yes → store event
-                     │                  └── no  → drop event (silently)
-                     │
-                     └── true ────→ store event with consent_category
+Event Received â†’ Check user_analytics_prefs.analytics_consent
+                     â”‚
+                     â”œâ”€â”€ false â”€â”€â”€â†’ event.consent_category == 'essential'?
+                     â”‚                  â”‚
+                     â”‚                  â”œâ”€â”€ yes â†’ store event
+                     â”‚                  â””â”€â”€ no  â†’ drop event (silently)
+                     â”‚
+                     â””â”€â”€ true â”€â”€â”€â”€â†’ store event with consent_category
 ```
 
 ### 3.5 Collection Failure Modes
@@ -511,9 +511,9 @@ All event names follow the format: `{domain}_{action}_{context}`
 | `auth_login_started` | essential | `provider: string` | User clicks "Sign in" |
 | `auth_login_completed` | essential | `provider: string` | OAuth callback succeeds |
 | `auth_login_failed` | essential | `error: string` | OAuth callback fails |
-| `auth_logout` | essential | — | User clicks "Sign out" |
-| `auth_session_expired` | essential | — | 7-day inactivity timeout |
-| `auth_token_refreshed` | essential | — | Background token refresh |
+| `auth_logout` | essential | â€” | User clicks "Sign out" |
+| `auth_session_expired` | essential | â€” | 7-day inactivity timeout |
+| `auth_token_refreshed` | essential | â€” | Background token refresh |
 
 #### 4.2.2 Task Module Events
 
@@ -521,13 +521,13 @@ All event names follow the format: `{domain}_{action}_{context}`
 |---|---|---|---|
 | `task_created` | analytics | `priority: string, has_due_date: bool` | Task form submitted |
 | `task_updated` | analytics | `changed_fields: string[]` | Task edit saved |
-| `task_deleted` | analytics | — | Task deleted |
+| `task_deleted` | analytics | â€” | Task deleted |
 | `task_completed` | analytics | `priority: string, was_overdue: bool` | Task marked done |
-| `task_viewed_detail` | analytics | — | Task detail page opened |
+| `task_viewed_detail` | analytics | â€” | Task detail page opened |
 | `task_batch_completed` | analytics | `count: int` | Bulk complete action |
 | `task_filter_used` | analytics | `filter_type: string` | Filter/sort applied |
-| `task_dependency_added` | analytics | — | Blocking relation created |
-| `task_subtask_added` | analytics | — | Subtask created |
+| `task_dependency_added` | analytics | â€” | Blocking relation created |
+| `task_subtask_added` | analytics | â€” | Subtask created |
 
 #### 4.2.3 Course Module Events
 
@@ -535,7 +535,7 @@ All event names follow the format: `{domain}_{action}_{context}`
 |---|---|---|---|
 | `course_created` | analytics | `subject: string` | New course added |
 | `course_progress_updated` | analytics | `progress_pct: float` | Progress slider moved |
-| `course_deadline_set` | analytics | — | Due date assigned |
+| `course_deadline_set` | analytics | â€” | Due date assigned |
 | `course_grade_recorded` | analytics | `grade: string` | Grade entered |
 | `course_goal_set` | analytics | `target_grade: string` | Target grade set |
 
@@ -547,22 +547,22 @@ All event names follow the format: `{domain}_{action}_{context}`
 | `habit_logged` | analytics | `habit_name: string` | Daily habit check-in |
 | `habit_streak_milestone` | analytics | `streak_days: int` | 7/14/21/30 day streak |
 | `habit_broken_streak` | analytics | `streak_days: int` | Missed a day |
-| `habit_archived` | analytics | — | Habit removed |
+| `habit_archived` | analytics | â€” | Habit removed |
 
 #### 4.2.5 AI Module Events
 
 | Event Name | Category | Properties | Trigger |
 |---|---|---|---|
 | `ai_briefing_generated` | functional | `content_length: int, model: string` | Daily briefing created |
-| `ai_briefing_viewed` | functional | — | User opens briefing |
+| `ai_briefing_viewed` | functional | â€” | User opens briefing |
 | `ai_weekly_review_generated` | functional | `content_length: int` | Weekly review created |
 | `ai_chat_message_sent` | functional | `message_length: int` | User sends chat |
 | `ai_chat_message_received` | functional | `response_length: int, latency_ms: int` | AI responds |
 | `ai_opportunity_found` | functional | `match_score: float` | New opportunity detected |
-| `ai_memory_consolidated` | functional | — | Background memory job |
-| `ai_sleep_winddown_sent` | functional | — | Sleep wind-down generated |
+| `ai_memory_consolidated` | functional | â€” | Background memory job |
+| `ai_sleep_winddown_sent` | functional | â€” | Sleep wind-down generated |
 | `ai_nudge_sent` | functional | `nudge_type: string` | Course/habit nudge |
-| `ai_model_fallback` | essential | `from_model: string, to_model: string` | Ollama → Claude switch |
+| `ai_model_fallback` | essential | `from_model: string, to_model: string` | Ollama â†’ Claude switch |
 
 #### 4.2.6 UI/UX Events
 
@@ -703,7 +703,7 @@ interface StandardProperties {
 
 **"Tasks Completed Per Active User Per Week"**
 
-This metric captures the core value proposition — users who consistently complete tasks are getting the most value from the system.
+This metric captures the core value proposition â€” users who consistently complete tasks are getting the most value from the system.
 
 ```sql
 SELECT
@@ -749,11 +749,11 @@ ORDER BY week DESC;
 ### 6.5 Metric Computation Pipeline
 
 ```
-Raw Events → Stage 1: Clean & Validate → Stage 2: Enrich (user_id, session) → Stage 3: Classify
-    ↓
-Stage 4: Aggregate (hourly/daily views) → Stage 5: Materialize (materialized views for dashboards)
-    ↓
-Stage 6: Alert (threshold breaches) → Stage 7: Report (weekly/monthly snapshots)
+Raw Events â†’ Stage 1: Clean & Validate â†’ Stage 2: Enrich (user_id, session) â†’ Stage 3: Classify
+    â†“
+Stage 4: Aggregate (hourly/daily views) â†’ Stage 5: Materialize (materialized views for dashboards)
+    â†“
+Stage 6: Alert (threshold breaches) â†’ Stage 7: Report (weekly/monthly snapshots)
 ```
 
 ```sql
@@ -785,20 +785,20 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv_daily_product_metrics;
 ### 7.1 Dashboard Architecture
 
 ```
-Supabase PostgreSQL → SQL Views → Supabase Studio / Custom Frontend
-       │                                       │
-       │  Materialized Views                   │
-       │  (fast aggregation)                   │
-       │                                       │
-       └──→ agg_daily_events (view)            │
-       └──→ mv_daily_product_metrics (mat)     │
-       └──→ mv_weekly_cohort_retention (mat)   │
-       └──→ user_analytics_prefs               │
-                                                │
-                                     ┌──────────▼──────────┐
-                                     │  /insights Dashboard │
-                                     │  (Next.js protected) │
-                                     └─────────────────────┘
+Supabase PostgreSQL â†’ SQL Views â†’ Supabase Studio / Custom Frontend
+       â”‚                                       â”‚
+       â”‚  Materialized Views                   â”‚
+       â”‚  (fast aggregation)                   â”‚
+       â”‚                                       â”‚
+       â””â”€â”€â†’ agg_daily_events (view)            â”‚
+       â””â”€â”€â†’ mv_daily_product_metrics (mat)     â”‚
+       â””â”€â”€â†’ mv_weekly_cohort_retention (mat)   â”‚
+       â””â”€â”€â†’ user_analytics_prefs               â”‚
+                                                â”‚
+                                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                     â”‚  /insights Dashboard â”‚
+                                     â”‚  (Next.js protected) â”‚
+                                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.2 Dashboard Sections
@@ -806,41 +806,41 @@ Supabase PostgreSQL → SQL Views → Supabase Studio / Custom Frontend
 #### 7.2.1 Overview Dashboard
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│  OVERVIEW DASHBOARD                      Last 30 days │ Custom │       │
-├─────────────────────────────────────────────────────────────────────────┤
-│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌──────────────────┐  │
-│  │ DAU    │  │ Tasks  │  │ Habits │  │ Errors │  │ 7-Day Trend      │  │
-│  │ 3      │  │ 42     │  │ 18     │  │ 0.8%   │  │ ▁▃▆▅▇▆█           │  │
-│  │ +12% Wo│  │ +8% Wo │  │ -3% Wo │  │ ▼0.2%  │  │                  │  │
-│  └────────┘  └────────┘  └────────┘  └────────┘  └──────────────────┘  │
-├─────────────────────────────────────────────────────────────────────────┤
-│  DAILY ACTIVE USERS                              Last 30 days          │
-│  ┌─────────────────────────────────────────────────────────────────────┐│
-│  │  ██                                                                 ││
-│  │  ██ ██                                                             ││
-│  │  ██ ██ ██   ██                                                     ││
-│  │  ██ ██ ██ ██ ██ ██   ██ ██                                         ││
-│  │  ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██  ││
-│  └─────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────┤
-│  MODULE BREAKDOWN                           Last 7 days │ Compare │   │
-│  ┌─────────────────────────────────────────────────────────────────────┐│
-│  │ Module          Events    Users    Change      Engagement           ││
-│  │ ─────────────────────────────────────────────────────────────       ││
-│  │ Tasks           342       7        +15%        ████████░░ 80%       ││
-│  │ Habits          156       5        -8%         ████░░░░░░ 40%       ││
-│  │ AI Chat         89        3        +45%        ██░░░░░░░░ 20%       ││
-│  │ Courses         67        4        +5%         ███░░░░░░░ 30%       ││
-│  │ Sleep           45        3        +10%        ██░░░░░░░░ 20%       ││
-│  └─────────────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  OVERVIEW DASHBOARD                      Last 30 days â”‚ Custom â”‚       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ DAU    â”‚  â”‚ Tasks  â”‚  â”‚ Habits â”‚  â”‚ Errors â”‚  â”‚ 7-Day Trend      â”‚  â”‚
+â”‚  â”‚ 3      â”‚  â”‚ 42     â”‚  â”‚ 18     â”‚  â”‚ 0.8%   â”‚  â”‚ â–â–ƒâ–†â–…â–‡â–†â–ˆ           â”‚  â”‚
+â”‚  â”‚ +12% Woâ”‚  â”‚ +8% Wo â”‚  â”‚ -3% Wo â”‚  â”‚ â–¼0.2%  â”‚  â”‚                  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  DAILY ACTIVE USERS                              Last 30 days          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  â–ˆâ–ˆ                                                                 â”‚â”‚
+â”‚  â”‚  â–ˆâ–ˆ â–ˆâ–ˆ                                                             â”‚â”‚
+â”‚  â”‚  â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ   â–ˆâ–ˆ                                                     â”‚â”‚
+â”‚  â”‚  â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ   â–ˆâ–ˆ â–ˆâ–ˆ                                         â”‚â”‚
+â”‚  â”‚  â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ â–ˆâ–ˆ  â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  MODULE BREAKDOWN                           Last 7 days â”‚ Compare â”‚   â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚ Module          Events    Users    Change      Engagement           â”‚â”‚
+â”‚  â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€       â”‚â”‚
+â”‚  â”‚ Tasks           342       7        +15%        â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘ 80%       â”‚â”‚
+â”‚  â”‚ Habits          156       5        -8%         â–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘ 40%       â”‚â”‚
+â”‚  â”‚ AI Chat         89        3        +45%        â–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 20%       â”‚â”‚
+â”‚  â”‚ Courses         67        4        +5%         â–ˆâ–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘â–‘ 30%       â”‚â”‚
+â”‚  â”‚ Sleep           45        3        +10%        â–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘ 20%       â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 #### 7.2.2 Module Detail Dashboard
 
 ```typescript
-// pages/insights/tasks.tsx — Task-specific metrics
+// pages/insights/tasks.tsx â€” Task-specific metrics
 interface TaskMetrics {
   created_today: number
   completed_today: number
@@ -898,14 +898,14 @@ interface ChartConfig {
 }
 
 // Available chart components:
-// - TimeSeriesChart — Line chart for trends over time
-// - BarChart — Grouped/stacked bar chart for comparisons
-// - PieChart — Distribution visualization
-// - FunnelChart — Conversion funnel visualization
-// - HeatmapGrid — Calendar heatmap (like GitHub contributions)
-// - MetricCard — Single KPI with comparison arrow
-// - ProgressBar — Percentage bar
-// - ComparisonTable — Tabular data with WoW/MoM changes
+// - TimeSeriesChart â€” Line chart for trends over time
+// - BarChart â€” Grouped/stacked bar chart for comparisons
+// - PieChart â€” Distribution visualization
+// - FunnelChart â€” Conversion funnel visualization
+// - HeatmapGrid â€” Calendar heatmap (like GitHub contributions)
+// - MetricCard â€” Single KPI with comparison arrow
+// - ProgressBar â€” Percentage bar
+// - ComparisonTable â€” Tabular data with WoW/MoM changes
 ```
 
 ---
@@ -917,19 +917,19 @@ interface ChartConfig {
 #### 8.1.1 Task Completion Funnel
 
 ```
-Stage 1: Task Created ─── 100%
-    │
-    ▼
-Stage 2: Task Viewed (detail) ─── 75%
-    │
-    ▼
-Stage 3: Subtask Added ─── 30%
-    │
-    ▼
-Stage 4: Task Completed ─── 60% (of created)
-    │
-    ▼
-Stage 5: Task Completed On Time ─── 40% (of completed)
+Stage 1: Task Created â”€â”€â”€ 100%
+    â”‚
+    â–¼
+Stage 2: Task Viewed (detail) â”€â”€â”€ 75%
+    â”‚
+    â–¼
+Stage 3: Subtask Added â”€â”€â”€ 30%
+    â”‚
+    â–¼
+Stage 4: Task Completed â”€â”€â”€ 60% (of created)
+    â”‚
+    â–¼
+Stage 5: Task Completed On Time â”€â”€â”€ 40% (of completed)
 ```
 
 ```sql
@@ -962,49 +962,49 @@ FROM funnel;
 #### 8.1.2 Habit Formation Funnel
 
 ```
-Stage 1: Habit Created ─── 100%
-    │
-    ▼
-Stage 2: First Log (D1) ─── 80%
-    │
-    ▼
-Stage 3: Day 7 Streak ─── 45%
-    │
-    ▼
-Stage 4: Day 14 Streak ─── 25%
-    │
-    ▼
-Stage 5: Day 30 Streak ─── 10%
+Stage 1: Habit Created â”€â”€â”€ 100%
+    â”‚
+    â–¼
+Stage 2: First Log (D1) â”€â”€â”€ 80%
+    â”‚
+    â–¼
+Stage 3: Day 7 Streak â”€â”€â”€ 45%
+    â”‚
+    â–¼
+Stage 4: Day 14 Streak â”€â”€â”€ 25%
+    â”‚
+    â–¼
+Stage 5: Day 30 Streak â”€â”€â”€ 10%
 ```
 
 #### 8.1.3 AI Feature Adoption Funnel
 
 ```
-Stage 1: User Signs Up ─── 100%
-    │
-    ▼
-Stage 2: Uses Any Feature ─── 95%
-    │
-    ▼
-Stage 3: Encounters AI Feature ─── 60%
-    │
-    ▼
-Stage 4: Uses AI Feature ─── 35% (of Stage 2)
-    │
-    ▼
-Stage 5: Regular AI User (3+/week) ─── 15% (of Stage 2)
+Stage 1: User Signs Up â”€â”€â”€ 100%
+    â”‚
+    â–¼
+Stage 2: Uses Any Feature â”€â”€â”€ 95%
+    â”‚
+    â–¼
+Stage 3: Encounters AI Feature â”€â”€â”€ 60%
+    â”‚
+    â–¼
+Stage 4: Uses AI Feature â”€â”€â”€ 35% (of Stage 2)
+    â”‚
+    â–¼
+Stage 5: Regular AI User (3+/week) â”€â”€â”€ 15% (of Stage 2)
 ```
 
 ### 8.2 Funnel Metrics & Targets
 
 | Funnel | Stage | Current Rate | Target | Improvement Levers |
 |---|---|---|---|---|
-| **Task** | Created → Completed | 60% | 75% | Better reminders, subtask encouragement |
-| **Task** | Completed → On Time | 40% | 60% | Smarter due date suggestions, priority nudges |
-| **Habit** | Created → Day 7 | 45% | 60% | Reminders, accountability partners |
-| **Habit** | Day 7 → Day 30 | 22% | 40% | Streak visualizations, milestone rewards |
-| **AI** | Signs Up → AI User | 35% | 50% | Guided onboarding, "try AI" prompt on day 2 |
-| **AI** | AI User → Regular | 43% | 60% | Better insights, personalized digests |
+| **Task** | Created â†’ Completed | 60% | 75% | Better reminders, subtask encouragement |
+| **Task** | Completed â†’ On Time | 40% | 60% | Smarter due date suggestions, priority nudges |
+| **Habit** | Created â†’ Day 7 | 45% | 60% | Reminders, accountability partners |
+| **Habit** | Day 7 â†’ Day 30 | 22% | 40% | Streak visualizations, milestone rewards |
+| **AI** | Signs Up â†’ AI User | 35% | 50% | Guided onboarding, "try AI" prompt on day 2 |
+| **AI** | AI User â†’ Regular | 43% | 60% | Better insights, personalized digests |
 
 ---
 
@@ -1059,14 +1059,14 @@ ORDER BY c.cohort_week, a.week_number;
 ```
 WEEKLY COHORT RETENTION
                     Week 0   Week 1   Week 2   Week 3   Week 4   Week 8   Week 12
-─────────────────────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 2026-W15 (size: 5)   100%     80%      60%      40%      40%      20%      20%
 2026-W16 (size: 3)   100%     67%      33%      33%      33%      33%      33%
-2026-W17 (size: 7)   100%     71%      57%      43%      29%      —        —
-2026-W18 (size: 4)   100%     75%      50%      50%      —        —        —
-2026-W19 (size: 6)   100%     83%      67%      —        —        —        —
-2026-W20 (size: 5)   100%     60%      —        —        —        —        —
-2026-W21 (size: 4)   100%     —        —        —        —        —        —
+2026-W17 (size: 7)   100%     71%      57%      43%      29%      â€”        â€”
+2026-W18 (size: 4)   100%     75%      50%      50%      â€”        â€”        â€”
+2026-W19 (size: 6)   100%     83%      67%      â€”        â€”        â€”        â€”
+2026-W20 (size: 5)   100%     60%      â€”        â€”        â€”        â€”        â€”
+2026-W21 (size: 4)   100%     â€”        â€”        â€”        â€”        â€”        â€”
 ```
 
 ### 9.3 Power User Curve
@@ -1091,10 +1091,10 @@ ORDER BY action_count;
 ```
 
 **Interpretation:**
-- **Super Users (100+ actions/week):** Highly engaged, likely power users — study their behavior
-- **Regular Users (20-100 actions/week):** Core user base — target for retention
+- **Super Users (100+ actions/week):** Highly engaged, likely power users â€” study their behavior
+- **Regular Users (20-100 actions/week):** Core user base â€” target for retention
 - **Casual Users (5-20 actions/week):** Need engagement nudges
-- **Dormant Users (< 5 actions/week):** At risk of churn — re-engagement campaign
+- **Dormant Users (< 5 actions/week):** At risk of churn â€” re-engagement campaign
 
 ---
 
@@ -1232,28 +1232,28 @@ def calculate_significance(
 
 ```
 1. IDEATE
-   └── Hypothesis: "Guided onboarding will increase D1 retention by 15%"
+   â””â”€â”€ Hypothesis: "Guided onboarding will increase D1 retention by 15%"
    
 2. DESIGN
-   └── Define: Variants, metrics, sample size (n=100 per variant), duration (2 weeks)
+   â””â”€â”€ Define: Variants, metrics, sample size (n=100 per variant), duration (2 weeks)
    
 3. IMPLEMENT
-   └── Code: Feature flag, variant assignment, event tracking
+   â””â”€â”€ Code: Feature flag, variant assignment, event tracking
    
 4. LAUNCH
-   └── Deploy: Start experiment, track exposure events
+   â””â”€â”€ Deploy: Start experiment, track exposure events
    
 5. MONITOR
-   └── Check: Sample ratio, data quality, early effects (daily)
+   â””â”€â”€ Check: Sample ratio, data quality, early effects (daily)
    
 6. ANALYZE
-   └── Compute: Significance test, segment analysis, guardrail metrics
+   â””â”€â”€ Compute: Significance test, segment analysis, guardrail metrics
    
 7. DECIDE
-   └── Outcome: Launch / Iterate / Kill
+   â””â”€â”€ Outcome: Launch / Iterate / Kill
    
 8. DOCUMENT
-   └── Write: Experiment report (hypothesis, results, learnings, next steps)
+   â””â”€â”€ Write: Experiment report (hypothesis, results, learnings, next steps)
 ```
 
 ---
@@ -1264,7 +1264,7 @@ def calculate_significance(
 
 | Format | Use Case | Implementation |
 |---|---|---|
-| **JSON** | Full data portability, re-import | `GET /api/dsr/export` → JSON file |
+| **JSON** | Full data portability, re-import | `GET /api/dsr/export` â†’ JSON file |
 | **CSV** | Spreadsheet analysis | `GET /api/analytics/export?format=csv` |
 | **SQLite** | Offline analysis (future) | Full DB dump with RLS filtering |
 
@@ -1571,16 +1571,16 @@ GROUP BY u.id"
 ### 14.1 Automated Validation Pipeline
 
 ```
-Client fires event → Client-side validation → POST to API
-                                                   │
-                                          ┌────────▼────────┐
-                                          │ Server-side      │
-                                          │ Pydantic check   │
-                                          └────────┬────────┘
-                                                   │ Pass?
-                                          ┌────────┴────────┐
-                                          │ YES      │ NO   │
-                                          ▼          ▼      ▼
+Client fires event â†’ Client-side validation â†’ POST to API
+                                                   â”‚
+                                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                          â”‚ Server-side      â”‚
+                                          â”‚ Pydantic check   â”‚
+                                          â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                   â”‚ Pass?
+                                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                          â”‚ YES      â”‚ NO   â”‚
+                                          â–¼          â–¼      â–¼
                                      Store event   Log     Drop
                                      + enrich      error   event
 ```
@@ -1671,10 +1671,10 @@ WEEKLY PRODUCT REPORT: W25 2026
 Generated: 2026-06-22
 
 EXECUTIVE SUMMARY
-- DAU: 5 (▲ 15% WoW)
-- Tasks Completed: 42 (▲ 8% WoW)
-- AI Feature Adoption: 35% (▼ 2% WoW)
-- Error Rate: 0.8% (▼ 0.2%)
+- DAU: 5 (â–² 15% WoW)
+- Tasks Completed: 42 (â–² 8% WoW)
+- AI Feature Adoption: 35% (â–¼ 2% WoW)
+- Error Rate: 0.8% (â–¼ 0.2%)
 
 KEY METRICS
 Metric              This Week   Last Week   WoW Change
@@ -1701,9 +1701,9 @@ Completion Rate        60%         60%         0%
 On Time Rate           65%         62%         +3%
 
 NOTABLE CHANGES
-- AI chat usage jumped 46% — likely due to new onboarding nudge
-- Habit logging declined 22% — investigate if reminder cron missed
-- Task completion rate stable at 60% — target 75%
+- AI chat usage jumped 46% â€” likely due to new onboarding nudge
+- Habit logging declined 22% â€” investigate if reminder cron missed
+- Task completion rate stable at 60% â€” target 75%
 
 ACTION ITEMS
 1. Investigate habit reminder cron (missed triggers?)
@@ -1750,14 +1750,14 @@ async def generate_weekly_report():
 
 | Capability | Status | Notes |
 |---|---|---|
-| Event collection pipeline | ✅ Implemented | Client SDK + API endpoint |
-| Event taxonomy | ✅ Defined | 50+ events across all modules |
-| Analytics consent system | ✅ Implemented | Granular opt-in/opt-out |
-| Data retention policy | ✅ Enforced | 90-day raw events |
-| PII scrubbing | ✅ Implemented | Automated on ingestion |
-| Basic dashboards | ⚠️ Partial | SQL queries available |
-| Weekly report generation | ⚠️ Partial | Manual compilation |
-| A/B testing framework | 🔄 Planned | Framework designed |
+| Event collection pipeline | âœ… Implemented | Client SDK + API endpoint |
+| Event taxonomy | âœ… Defined | 50+ events across all modules |
+| Analytics consent system | âœ… Implemented | Granular opt-in/opt-out |
+| Data retention policy | âœ… Enforced | 90-day raw events |
+| PII scrubbing | âœ… Implemented | Automated on ingestion |
+| Basic dashboards | âš ï¸ Partial | SQL queries available |
+| Weekly report generation | âš ï¸ Partial | Manual compilation |
+| A/B testing framework | ðŸ”„ Planned | Framework designed |
 
 ### 16.2 Short-Term (Q3 2026)
 
@@ -1824,7 +1824,7 @@ async def generate_weekly_report():
 | Metric | Per User (Monthly) | 10 Users | 100 Users | 1000 Users |
 |---|---|---|---|---|
 | Events generated | ~500 | 5,000 | 50,000 | 500,000 |
-| Storage per event | ~500 bytes | — | — | — |
+| Storage per event | ~500 bytes | â€” | â€” | â€” |
 | Monthly raw storage | ~250 KB | 2.5 MB | 25 MB | 250 MB |
 | Index overhead | ~400 KB | 4 MB | 40 MB | 400 MB |
 | **Total monthly** | **~650 KB** | **6.5 MB** | **65 MB** | **650 MB** |

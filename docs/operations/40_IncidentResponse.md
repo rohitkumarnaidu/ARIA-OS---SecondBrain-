@@ -1,18 +1,16 @@
-# Incident Response
+﻿# Incident Response
 
-## Document Control
-
-| Metadata | Value |
-|----------|-------|
-| **Document ID** | OPS-040 |
-| **Version** | 2.0 |
-| **Status** | Approved |
-| **Classification** | Internal — Operations |
-| **Owner** | SRE / Platform Engineering |
-| **Last Updated** | 2026-06-11 |
-| **Review Cycle** | Quarterly |
-| **Next Review** | 2026-09-11 |
-| **Approved By** | CTO / Tech Lead |
+| Field | Value |
+|---|---|
+| Document ID | OPS-IR-001 |
+| Version | 2.1.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+| Classification | Internal â€” Operations |
+| Owner | SRE / Platform Engineering |
+| Review Cycle | Quarterly |
+| Next Review | 2026-09-11 |
+| Approved By | CTO / Tech Lead |
 
 ---
 
@@ -27,7 +25,7 @@ Applies to all production environments (staging and production). Covers all serv
 ### Stakeholders
 | Role | Incident Response Responsibility |
 |------|--------------------------------|
-| On-Call Engineer (Primary) | First responder — acknowledge, investigate, triage |
+| On-Call Engineer (Primary) | First responder â€” acknowledge, investigate, triage |
 | On-Call Engineer (Secondary) | Backup responder, assist with investigation |
 | CTO / Tech Lead | Escalation point, business-impact decisions |
 | Product Owner | User communication, feature prioritization for fixes |
@@ -37,8 +35,8 @@ Applies to all production environments (staging and production). Covers all serv
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| MTTD (Mean Time to Detect) | < 5 min for SEV-1 | Alert → Acknowledge |
-| MTTR (Mean Time to Resolve) | < 2 hr for SEV-1 | Alert → Resolution |
+| MTTD (Mean Time to Detect) | < 5 min for SEV-1 | Alert â†’ Acknowledge |
+| MTTR (Mean Time to Resolve) | < 2 hr for SEV-1 | Alert â†’ Resolution |
 | MTBF (Mean Time Between Failures) | > 14 days | Rolling 90-day window |
 | SLA Compliance | > 99.5% uptime | Monthly calculation |
 | Post-Mortem Completion | Within 5 business days | SEV-1/SEV-2 incidents |
@@ -80,7 +78,7 @@ stateDiagram-v2
 1. Declare the incident with severity level
 2. Notify stakeholders per severity communication plan
 3. Set up incident channel (Slack/Discord) with all responders
-4. Begin investigation — gather logs, metrics, traces
+4. Begin investigation â€” gather logs, metrics, traces
 5. Record timeline entries as investigation progresses
 6. Update status page if applicable
 
@@ -246,9 +244,9 @@ flowchart TD
 ### Timeout Escalation Rules
 
 If a responder does not acknowledge within the severity response time:
-1. Primary misses SEV-1 15min ack → Auto-escalate to Secondary
-2. Secondary misses 15min → Auto-escalate to CTO
-3. CTO misses 15min → Auto-escalate to Founder
+1. Primary misses SEV-1 15min ack â†’ Auto-escalate to Secondary
+2. Secondary misses 15min â†’ Auto-escalate to CTO
+3. CTO misses 15min â†’ Auto-escalate to Founder
 
 ---
 
@@ -354,18 +352,18 @@ All systems are operating normally.
 
 | Step | When | Owner | Duration |
 |------|------|-------|----------|
-| Incident closed | T+0 | IC | — |
+| Incident closed | T+0 | IC | â€” |
 | Draft post-mortem started | T+24h | IC | 1 hour |
 | Peer review | T+48h | Secondary | 30 min |
-| Finalized | T+72h | IC | — |
-| Action items assigned | T+96h | IC | — |
+| Finalized | T+72h | IC | â€” |
+| Action items assigned | T+96h | IC | â€” |
 | Retrospective meeting | T+5 days | All | 1 hour |
 
 ### 5 Whys Root Cause Analysis Template
 
 ```
 5 Whys Analysis
-─────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Incident: {title}
 Date: {YYYY-MM-DD}
 
@@ -410,11 +408,11 @@ Systemic Category: {Code / Config / Process / People / External}
 ## 5 Whys Root Cause Analysis
 **Problem**: {What went wrong}
 
-1. Why did {symptom} happen? → {answer}
-2. Why did {cause #1} happen? → {answer}
-3. Why did {cause #2} happen? → {answer}
-4. Why did {cause #3} happen? → {answer}
-5. Why did {cause #4} happen? → {answer}
+1. Why did {symptom} happen? â†’ {answer}
+2. Why did {cause #1} happen? â†’ {answer}
+3. Why did {cause #2} happen? â†’ {answer}
+4. Why did {cause #3} happen? â†’ {answer}
+5. Why did {cause #4} happen? â†’ {answer}
 
 **Root Cause**: {Systemic root cause}
 
@@ -451,7 +449,7 @@ Systemic Category: {Code / Config / Process / People / External}
 - MTTD: {minutes}
 - MTTR: {minutes}
 - User Impact: {X users affected for Y minutes}
-- Data Loss: {Yes/No — details if yes}
+- Data Loss: {Yes/No â€” details if yes}
 ```
 
 ---
@@ -466,7 +464,7 @@ Systemic Category: {Code / Config / Process / People / External}
 | **MTTR** (Mean Time to Resolve) | Average time from alert to resolution | Sum of resolution times / Number of incidents |
 | **MTBF** (Mean Time Between Failures) | Average uptime between incidents | Total uptime / Number of incidents |
 | **MTTA** (Mean Time to Acknowledge) | Average time from alert to engineer ack | Sum of (ack_time - alert_time) / Incidents |
-| **SLA Compliance** | Percentage of uptime meeting the 99.5% target | (Total time - Downtime) / Total time × 100 |
+| **SLA Compliance** | Percentage of uptime meeting the 99.5% target | (Total time - Downtime) / Total time Ã— 100 |
 | **Incident Rate** | Incidents per week/month | Count of incidents / Time period |
 
 ### Tracking Table
@@ -493,14 +491,14 @@ CREATE TABLE incident_metrics (
 ### Dashboard: Incident Metrics
 
 ```
-Panel 1: MTTD Trend              — line chart, 30-day rolling average
-Panel 2: MTTR Trend              — line chart, 30-day rolling average
-Panel 3: MTBF                    — gauge, current days since last incident
-Panel 4: Incidents by Severity   — bar chart, SEV-1/2/3/4 per month
-Panel 5: Incidents by Category   — pie chart, root cause categories
-Panel 6: SLA Uptime              — gauge, current month uptime %
-Panel 7: Active Incidents        — table, currently open incidents
-Panel 8: Post-Mortem Completion  — gauge, % completed within 5 days
+Panel 1: MTTD Trend              â€” line chart, 30-day rolling average
+Panel 2: MTTR Trend              â€” line chart, 30-day rolling average
+Panel 3: MTBF                    â€” gauge, current days since last incident
+Panel 4: Incidents by Severity   â€” bar chart, SEV-1/2/3/4 per month
+Panel 5: Incidents by Category   â€” pie chart, root cause categories
+Panel 6: SLA Uptime              â€” gauge, current month uptime %
+Panel 7: Active Incidents        â€” table, currently open incidents
+Panel 8: Post-Mortem Completion  â€” gauge, % completed within 5 days
 ```
 
 ### SLA Targets
@@ -752,7 +750,7 @@ sequenceDiagram
 ### Action Item Lifecycle
 
 1. **Capture**: Action items identified during post-mortem are recorded in the project management system
-2. **Classify**: Each item gets a type — Monitoring, Testing, Process, Documentation, Code
+2. **Classify**: Each item gets a type â€” Monitoring, Testing, Process, Documentation, Code
 3. **Prioritize**: Items are prioritized based on risk reduction
 4. **Assign**: Owner and due date assigned during the retrospective
 5. **Track**: Status tracked weekly during team sync
@@ -850,24 +848,43 @@ Incidents drive system improvements:
 
 | Metric | Full Name | Purpose | Formula | Target |
 |--------|-----------|---------|---------|--------|
-| MTTD | Mean Time to Detect | How fast we learn about problems | Σ(acknowledged_at - started_at) / n | < 5 min (SEV-1) |
-| MTTA | Mean Time to Acknowledge | How fast responders pick up alerts | Σ(acknowledged_at - alert_at) / n | < 15 min (SEV-1) |
-| MTTR | Mean Time to Resolve | How fast we fix problems | Σ(resolved_at - acknowledged_at) / n | < 2 hr (SEV-1) |
+| MTTD | Mean Time to Detect | How fast we learn about problems | Î£(acknowledged_at - started_at) / n | < 5 min (SEV-1) |
+| MTTA | Mean Time to Acknowledge | How fast responders pick up alerts | Î£(acknowledged_at - alert_at) / n | < 15 min (SEV-1) |
+| MTTR | Mean Time to Resolve | How fast we fix problems | Î£(resolved_at - acknowledged_at) / n | < 2 hr (SEV-1) |
 | MTBF | Mean Time Between Failures | How reliable the system is | Total uptime / n_incidents | > 14 days |
-| SLA | Service Level Agreement | Contracted uptime percentage | (Total - Downtime) / Total × 100 | > 99.5% |
+| SLA | Service Level Agreement | Contracted uptime percentage | (Total - Downtime) / Total Ã— 100 | > 99.5% |
 
 ### Appendix D: Runbook Update Guidelines
 
 After every SEV-1 or SEV-2 incident:
-1. If the fix was not in any existing runbook → add a new scenario
-2. If the fix was in a runbook but unclear → improve the runbook
-3. If the fix was in a runbook but the engineer didn't find it → improve discoverability
-4. If a new monitoring alert would have caught this sooner → add the alert
+1. If the fix was not in any existing runbook â†’ add a new scenario
+2. If the fix was in a runbook but unclear â†’ improve the runbook
+3. If the fix was in a runbook but the engineer didn't find it â†’ improve discoverability
+4. If a new monitoring alert would have caught this sooner â†’ add the alert
 
-### Appendix E: Revision History
+### Appendix E: Related Documents
+
+| Document | Path | Purpose |
+|---|---|---|
+| AI Incident Response | `docs/ai/AIIncidentResponse.md` | AI-specific P0-P3 severity definitions, 6 AI runbooks, detection mechanisms, post-mortem template |
+| Firefighter Runbooks | `docs/operations/firefighter-runbooks.md` | 6 quick-fire scenarios (AI down, DB down, rate limits, scheduler, errors, security breach) |
+| Operations Runbooks | `docs/operations/39_Runbooks.md` | 13 full runbooks (RB-001 to RB-013) with SDVRP format, escalation matrix, decision trees |
+| Security IR Playbook | `docs/security/policies/incident-response.md` | Security-specific IR playbook with breach response, evidence collection, legal notification |
+| Postmortem Template | `docs/postmortems/template.md` | Standard incident postmortem template with timeline, root cause, action items |
+| Postmortem Drill #001 | `docs/postmortems/drill-001.md` | Example postmortem: AI provider failure during peak hours |
+
+### Appendix F: Revision History
 
 | Version | Date | Author | Summary of Changes |
 |---------|------|--------|-------------------|
 | 1.0 | 2026-01-15 | Platform Engineering | Initial incident response document |
 | 1.1 | 2026-03-01 | Platform Engineering | Added AI service failure scenario |
 | 2.0 | 2026-06-11 | Platform Engineering | Full enterprise upgrade: executive summary, 5-phase incident lifecycle, role definitions for solo dev, 5 Whys root cause analysis template, incident metrics (MTTD/MTTR/MTBF/SLA) with tracking table, tabletop exercise plan, continuous improvement feedback loop, communication templates for all severity levels, appendices with checklist and metric definitions |
+| **2.1** | **2026-07-11** | **Developer** | **Added Appendix E (Related Documents) cross-referencing AI incident response, firefighter runbooks, and security playbook** |
+
+### Cross-References
+
+| Related Document | Section | Purpose |
+|---|---|---|
+| `docs/security/24_Security.md` | Section 12 â€” Incident Response Plan | Security-specific incident response plan aligned with this document |
+| `docs/ai/AIIncidentResponse.md` | Full Document | AI-specific runbooks for ARIA agent failures, fallback chains, and model degradation |
