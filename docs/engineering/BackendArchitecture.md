@@ -1,9 +1,15 @@
-# Backend Architecture
+﻿# Backend Architecture
 
-**Document ID:** BE-ARCH-001  
-**Version:** 1.0.0  
-**Last Updated:** 2026-06-11  
-**Applies To:** `apps/api/` — FastAPI backend  
+## Document Control
+
+| Field | Value |
+|---|---|
+| **Document ID** | ENG-BAC-001 |
+| **Version** | 1.1.0 |
+| **Status** | Approved |
+| **Date** | 2026-07-10 |
+| **Classification** | Internal |
+| **Owner** | Developer |
 
 ---
 
@@ -21,12 +27,20 @@
 10. [Background Tasks](#10-background-tasks)
 11. [Database Access Layer](#11-database-access-layer)
 12. [Logging](#12-logging)
-13. [Testing Strategy](#13-testing-strategy)
-14. [API Documentation](#14-api-documentation)
-15. [Performance Optimization](#15-performance-optimization)
-16. [Security Middleware](#16-security-middleware)
-17. [Graceful Shutdown](#17-graceful-shutdown)
-18. [Architecture Diagrams](#18-architecture-diagrams)
+13. [Non-Functional Requirements](#13-non-functional-requirements)
+14. [Testing Strategy](#14-testing-strategy)
+15. [API Documentation](#15-api-documentation)
+16. [Performance Optimization](#16-performance-optimization)
+17. [Security Middleware](#17-security-middleware)
+18. [Graceful Shutdown](#18-graceful-shutdown)
+19. [Performance Targets](#19-performance-targets)
+20. [Edge Cases](#20-edge-cases)
+21. [Failure Scenarios](#21-failure-scenarios)
+22. [Risks & Mitigations](#22-risks--mitigations)
+23. [Architecture Diagrams](#23-architecture-diagrams)
+24. [Cross-References](#24-cross-references)
+25. [Backend Component Dependency Diagram](#25-backend-component-dependency-diagram)
+26. [Request Data Flow Diagram](#26-request-data-flow-diagram)
 
 ---
 
@@ -38,13 +52,13 @@ Second Brain OS chose **FastAPI** over alternatives for the following reasons:
 
 | Criterion | FastAPI | Flask | Django REST | Express.js |
 |---|---|---|---|---|
-| Async native | ✅ First-class | ❌ (via extensions) | ❌ (via channels) | ✅ (callback) |
-| Auto OpenAPI/Swagger | ✅ Built-in | ❌ (flasgger) | ✅ (DRF-YASG) | ✅ (swagger-jsdoc) |
-| Pydantic validation | ✅ Native | ❌ (marshmallow) | ✅ (DRF serializers) | ❌ (Joi/Zod) |
-| Dependency injection | ✅ `Depends()` | ❌ (manual) | ✅ (class-based) | ❌ (middleware) |
+| Async native | âœ… First-class | âŒ (via extensions) | âŒ (via channels) | âœ… (callback) |
+| Auto OpenAPI/Swagger | âœ… Built-in | âŒ (flasgger) | âœ… (DRF-YASG) | âœ… (swagger-jsdoc) |
+| Pydantic validation | âœ… Native | âŒ (marshmallow) | âœ… (DRF serializers) | âŒ (Joi/Zod) |
+| Dependency injection | âœ… `Depends()` | âŒ (manual) | âœ… (class-based) | âŒ (middleware) |
 | Performance (req/s) | ~15,000+ | ~3,000 | ~1,500 | ~25,000 |
-| Type hints | ✅ Mandatory | ❌ Optional | ✅ Optional | ❌ (TypeScript) |
-| Background tasks | ✅ Built-in | ❌ (celery) | ❌ (celery) | ❌ (bull) |
+| Type hints | âœ… Mandatory | âŒ Optional | âœ… Optional | âŒ (TypeScript) |
+| Background tasks | âœ… Built-in | âŒ (celery) | âŒ (celery) | âŒ (bull) |
 | File structure | Unopinionated | Unopinionated | Opinionated | Unopinionated |
 
 **Decision:** FastAPI for its async-first design, automatic OpenAPI docs, Pydantic integration, and dependency injection system. Performance is sufficient for a single-user B2C app (peak ~50 concurrent requests).
@@ -67,7 +81,7 @@ Second Brain OS chose **FastAPI** over alternatives for the following reasons:
 
 ```mermaid
 graph TD
-    subgraph API["apps/api/ — FastAPI Backend"]
+    subgraph API["apps/api/ â€” FastAPI Backend"]
         ENTRY["main.py<br/>App Entry + Middleware + Routers"]
         REQ["requirements.txt"]
         DOCKER["Dockerfile"]
@@ -86,11 +100,11 @@ graph TD
     APP --> MID
     APP --> EXC
 
-    subgraph PKG["packages/ — Shared Libraries"]
+    subgraph PKG["packages/ â€” Shared Libraries"]
         CFG["config/<br/>Pydantic Settings + Supabase + Auth"]
         DB["database/schemas/<br/>Pydantic Models (13 tables)"]
         UTIL["shared/utils/<br/>Logger + Cache + Rate Limiter + Security"]
-        AI["ai/<br/>LLM Client + PromptLoader + 8 Agents"]
+        AI["ai/<br/>LLM Client + PromptLoader + 11 Agents"]
     end
 
     PKG --> CFG
@@ -482,7 +496,7 @@ export function useAuth() {
 ```
 
 ```typescript
-// apps/web/lib/userStore.ts — Sign In
+// apps/web/lib/userStore.ts â€” Sign In
 signIn: async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -527,7 +541,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 **Every database query MUST filter by `user_id`.** RLS is enabled in Supabase as a defense-in-depth measure, but explicit filtering prevents bugs during development.
 
 ```python
-# ✅ CORRECT: Always filter by user_id
+# âœ… CORRECT: Always filter by user_id
 @router.get("/")
 async def get_tasks(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
@@ -539,7 +553,7 @@ async def get_tasks(current_user=Depends(get_current_user)):
     )
     return response.data
 
-# ❌ WRONG: Missing user_id filter (exposes cross-user data)
+# âŒ WRONG: Missing user_id filter (exposes cross-user data)
 @router.get("/")
 async def get_tasks(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
@@ -566,9 +580,9 @@ ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
 ```mermaid
 flowchart LR
-    L1["Layer 1: Pydantic Validation<br/>(automatic)"] --> L1E["Invalid request body<br/>→ 422 Validation Error"]
-    L2["Layer 2: HTTPException<br/>(explicit)"] --> L2E["Business logic errors<br/>→ 400, 401, 404, 429"]
-    L3["Layer 3: Global Exception Handler<br/>(catch-all)"] --> L3E["Unhandled exceptions<br/>→ 500 Internal Server Error (logged)"]
+    L1["Layer 1: Pydantic Validation<br/>(automatic)"] --> L1E["Invalid request body<br/>â†’ 422 Validation Error"]
+    L2["Layer 2: HTTPException<br/>(explicit)"] --> L2E["Business logic errors<br/>â†’ 400, 401, 404, 429"]
+    L3["Layer 3: Global Exception Handler<br/>(catch-all)"] --> L3E["Unhandled exceptions<br/>â†’ 500 Internal Server Error (logged)"]
 ```
 
 ### 8.2 HTTPException Usage
@@ -576,20 +590,20 @@ flowchart LR
 ```python
 from fastapi import HTTPException
 
-# 400 — Bad Request (validation error, duplicate, etc.)
+# 400 â€” Bad Request (validation error, duplicate, etc.)
 raise HTTPException(status_code=400, detail="Task title already exists")
 
-# 401 — Unauthorized (missing/invalid token)
+# 401 â€” Unauthorized (missing/invalid token)
 raise HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Could not validate credentials",
     headers={"WWW-Authenticate": "Bearer"},
 )
 
-# 404 — Not Found
+# 404 â€” Not Found
 raise HTTPException(status_code=404, detail="Task not found")
 
-# 429 — Rate Limited
+# 429 â€” Rate Limited
 raise HTTPException(
     status_code=429,
     detail=f"Rate limit exceeded. Max {self.max_requests} req/{self.window_seconds}s",
@@ -599,7 +613,7 @@ raise HTTPException(
 ### 8.3 Global Exception Handler
 
 ```python
-# main.py — For unhandled exceptions
+# main.py â€” For unhandled exceptions
 import traceback
 from fastapi import Request
 from fastapi.responses import JSONResponse
@@ -710,7 +724,7 @@ class TaskResponse(BaseModel):
 ```python
 # FastAPI automatically validates at these injection points:
 
-# 1. Request body → TaskCreate Pydantic model
+# 1. Request body â†’ TaskCreate Pydantic model
 async def create_task(task: TaskCreate):  # 422 if invalid
 
 # 2. URL path params
@@ -860,7 +874,7 @@ response = supabase.from_("tasks").delete().eq("id", task_id).eq("user_id", user
 Currently, each module page makes a single query to fetch its data. For the dashboard (which aggregates from multiple tables):
 
 ```python
-# Dashboard — multiple queries (acceptable for single-user app)
+# Dashboard â€” multiple queries (acceptable for single-user app)
 @router.get("/api/dashboard/summary")
 async def dashboard_summary(current_user=Depends(get_current_user)):
     supabase = get_supabase_client()
@@ -939,9 +953,26 @@ async def add_correlation_id(request: Request, call_next):
 
 ---
 
-## 13. Testing Strategy
+## 13. Non-Functional Requirements
 
-### 13.1 Testing Layers
+| Requirement | Target | Measurement |
+|---|---|---|
+| API response time (p95) | < 500ms | Request ID logging |
+| AI response time | < 30s | LLM client timing |
+| DB query time | < 200ms | Supabase dashboard |
+| API availability | > 99.9% | Health check polling |
+| Rate limit | 100 req/min per IP | Rate limiter |
+| Max concurrent users | 100 | Connection pool sizing |
+| Auth validation overhead | < 50ms | JWT decode timing |
+| Error response generation | < 10ms | Error handler timing |
+| Startup time | < 3s | FastAPI lifespan |
+| Graceful shutdown | < 30s | Timeout config |
+
+---
+
+## 14. Testing Strategy
+
+### 14.1 Testing Layers
 
 | Layer | Tool | Scope | Coverage Target |
 |---|---|---|---|
@@ -949,8 +980,9 @@ async def add_correlation_id(request: Request, call_next):
 | API | pytest + TestClient | Every endpoint, every status code | 85%+ |
 | Integration | pytest + Supabase local | Cross-table flows | 70%+ |
 | Prompt | pytest | Prompt frontmatter validation | 100% |
+| E2E | Playwright | Full-stack user flows | Critical paths |
 
-### 13.2 Running Tests
+### 14.2 Running Tests
 
 ```bash
 # All tests
@@ -969,7 +1001,7 @@ pytest -xvs
 pytest --cov=packages/ai --cov=apps/api
 ```
 
-### 13.3 API Test Example
+### 14.3 API Test Example
 
 ```python
 # tests/test_tasks_api.py
@@ -998,13 +1030,29 @@ def test_create_task_invalid_title():
     assert "title" in str(response.json()["detail"])
 ```
 
-### 13.4 Current Test Suite (30 tests)
+### 14.4 Current Test Suite (2795+ tests)
 
 ```bash
 tests/
-├── conftest.py                       # Adds packages/ to sys.path
-├── test_prompt_loader.py              # 16 tests: PromptLoader, frontmatter, rendering
-└── test_agent_prompts.py              # 14 tests: per-agent content, size, tags
+â”œâ”€â”€ conftest.py                              # Adds packages/ to sys.path
+â”œâ”€â”€ test_prompt_loader.py                    # 31 tests: PromptLoader, frontmatter, rendering
+â”œâ”€â”€ test_agent_prompts.py                    # 42 tests: per-agent content, size, tags
+â”œâ”€â”€ test_api_endpoints.py                    # 132 tests: API endpoint behavior
+â”œâ”€â”€ test_api_routes_advanced.py              # 380 tests: advanced route + auth flows
+â”œâ”€â”€ test_api_endpoints_expanded.py           # 80 tests: feature flags + skills
+â”œâ”€â”€ test_skills_api.py                       # 160 tests: skills CRUD with 400/404
+â”œâ”€â”€ test_agents.py                           # 86 tests: per-agent logic, fallback
+â”œâ”€â”€ test_ai_modules.py                       # 55 tests: orchestrator, context assembly
+â”œâ”€â”€ test_llm_client.py                       # 51 tests: retry, circuit breaker, JSON
+â”œâ”€â”€ test_scheduler.py                        # 57 tests: cron job registration
+â”œâ”€â”€ test_schemas.py                          # 97 tests: Pydantic model validation
+â”œâ”€â”€ test_shared_utils.py                     # 244 tests: cache, security, validators
+â”œâ”€â”€ test_config_core.py                      # 28 tests: config, supabase, auth
+â”œâ”€â”€ test_database_schemas.py                 # 196 tests: data export, audit, schemas
+â”œâ”€â”€ test_main_routes.py                      # 28 tests: health, CORS, middleware
+â”œâ”€â”€ test_validate_script.py                  # 23 tests: validation script
+â”œâ”€â”€ test_scripts.py                          # 48 tests: gen_sdb_full, etc.
+â”œâ”€â”€ test_integration.py                      # 5 tests: cross-module flows
 ```
 
 ---
@@ -1090,12 +1138,12 @@ def get_supabase_client():
 
 | Optimization | Status | Impact |
 |---|---|---|
-| `SELECT *` only with needed fields | ✅ Implemented | Low |
-| User ID filtering in WHERE clause | ✅ Implemented | High (indexed) |
-| Indexed columns (id, user_id, status) | ✅ Supabase default | High |
-| Text search with GIN indexes | 📋 Phase 2 | High |
-| Pagination with `.range()` | 📋 Phase 2 | Medium |
-| Aggregation queries with `.select(..., count="exact")` | ✅ Implemented | Medium |
+| `SELECT *` only with needed fields | âœ… Implemented | Low |
+| User ID filtering in WHERE clause | âœ… Implemented | High (indexed) |
+| Indexed columns (id, user_id, status) | âœ… Supabase default | High |
+| Text search with GIN indexes | ðŸ“‹ Phase 2 | High |
+| Pagination with `.range()` | ðŸ“‹ Phase 2 | Medium |
+| Aggregation queries with `.select(..., count="exact")` | âœ… Implemented | Medium |
 
 ### 15.3 N+1 Prevention
 
@@ -1257,18 +1305,86 @@ if __name__ == "__main__":
 
 ---
 
-## 18. Architecture Diagrams
+## 19. Performance Targets
+
+| Metric | Target | Measurement |
+|---|---|---|
+| API p95 latency (simple CRUD) | < 200ms | Request ID logging |
+| API p95 latency (aggregations) | < 500ms | Request ID logging |
+| AI response time | < 30s | LLM client timing |
+| DB query time | < 200ms | Supabase dashboard |
+| Cache hit rate | > 60% | Cache metrics |
+| Frontend TTI | < 3s | Lighthouse |
+| Bundle size (gzip) | < 300KB | next/bundle-analyzer |
+| Prompt load time | < 100ms | PromptLoader init |
+| Rate limiter overhead | < 2ms per request | Middleware timing |
+
+---
+
+## 20. Edge Cases
+
+| Edge Case | Handling |
+|---|---|
+| Empty database (new user) | All list endpoints return empty arrays |
+| Missing auth token | 401 with `WWW-Authenticate` header |
+| Invalid UUID in path | 422 from Pydantic path validation |
+| Concurrent update conflict | Last-write-wins (Supabase default) |
+| AI provider unavailable | Algorithmic fallback (graceful degradation) |
+| Supabase connection failure | 500 with retry hint |
+| Rate limit exceeded | 429 with `Retry-After` header |
+| Extremely large payload | Pydantic `Field(max_length=...)` truncation |
+| Unicode/special characters | Full UTF-8 support; XSS sanitizer |
+| Malformed JSON body | 422 with parse error details |
+| Pagination beyond total results | Empty array, not error |
+| Request timeout | 504 Gateway Timeout |
+| Circuit breaker open | 503 with retry-after header |
+
+---
+
+## 21. Failure Scenarios
+
+| Scenario | Impact | Recovery |
+|---|---|---|
+| Server process crash | All API endpoints unavailable | Process monitor auto-restart (Railway) |
+| Supabase outage | Database reads/writes fail | Retry with backoff; error response to client |
+| Ollama service down | AI features fall back to algorithmic mode | Automatic recovery when Ollama restarts |
+| Claude API rate limit | Fallback AI unavailable | Circuit breaker prevents repeated failures |
+| JWT secret rotation | All existing tokens invalid | Clients re-authenticate |
+| Disk full (logs) | Logging stops; application may crash | Log rotation; alert on threshold |
+| Memory exhaustion | OOM kill by Railway | Memory limits in Railway config |
+| Dependency version conflict | Import errors at startup | Lock files (requirements.txt, package-lock.json) |
+| Database migration failure | Schema mismatch | Rollback migration; fix and re-apply |
+| DNS resolution failure | External API calls fail | Retry with backoff; alert on repeated failure |
+
+---
+
+## 22. Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| Single-user design limits scaling | Medium | High | Architecture supports multi-user via RLS; UI needs work |
+| Local AI (Ollama) dependency | High | Medium | Claude API fallback already implemented |
+| Supabase Free tier resource limits | Medium | High | Monitor usage; upgrade to Pro if needed |
+| In-memory rate limiter lost on restart | Medium | Low | Acceptable for single-user; Redis for multi-user |
+| No automated backup for user data | Low | High | Supabase handles backups for Pro tier |
+| Frontend fetches directly from Supabase | Medium | Medium | RLS prevents data leaks; audit for consistency |
+| Third-party API deprecation | Low | Medium | Abstract external APIs behind service layer |
+| AI costs if Claude becomes default | Low | Medium | Default to Ollama (free); Claude is fallback only |
+
+---
+
+## 23. Architecture Diagrams
 
 ### 18.1 Full System Architecture
 
 ```mermaid
 graph TB
     subgraph CLIENT["CLIENT (Next.js 14)"]
-        BR["Browser → Edge Middleware<br/>(auth check) → App Router<br/>→ Module Pages → Zustand<br/>Stores → Supabase SDK / fetch()"]
+        BR["Browser â†’ Edge Middleware<br/>(auth check) â†’ App Router<br/>â†’ Module Pages â†’ Zustand<br/>Stores â†’ Supabase SDK / fetch()"]
     end
 
     subgraph BACKEND["BACKEND (FastAPI)"]
-        subgraph API["API Layer (13 routers)"]
+        subgraph API["API Layer (31 routers)"]
             TASKS["Tasks<br/>6 eps"]
             COURSES["Courses<br/>5 eps"]
             GOALS["Goals<br/>5 eps"]
@@ -1285,7 +1401,7 @@ graph TB
         end
 
         subgraph MIDDLEWARE["Middleware Stack"]
-            RL["RateLimiter → CORS →<br/>Request Logging →<br/>Global Exception Handler"]
+            RL["RateLimiter â†’ CORS â†’<br/>Request Logging â†’<br/>Global Exception Handler"]
         end
 
         subgraph DI["Dependency Injection Layer"]
@@ -1301,13 +1417,13 @@ graph TB
         subgraph AI_LAYER["AI Layer"]
             OLLAMA["Ollama (Local)<br/>Mistral 7B / Llama 3.1"]
             CLAUDE["Claude API (Cloud)<br/>Sonnet 4 (fallback)"]
-            PROMPTS["PromptLoader →<br/>prompts/ directory<br/>YAML frontmatter"]
+            PROMPTS["PromptLoader â†’<br/>prompts/ directory<br/>YAML frontmatter"]
             OLLAMA --> PROMPTS
             CLAUDE --> PROMPTS
         end
     end
 
-    subgraph SCHEDULER["SCHEDULER (APScheduler — separate service)"]
+    subgraph SCHEDULER["SCHEDULER (APScheduler â€” separate service)"]
         S1["Daily Briefing<br/>7 AM"]
         S2["Opportunity Radar<br/>6 AM"]
         S3["Weekly Review<br/>Sun 8 PM"]
@@ -1329,10 +1445,10 @@ graph TB
 ```mermaid
 flowchart TD
     REQ["Request"] --> EM["Edge Middleware (Next.js)"]
-    EM --> EM1["Auth check → redirect if unauthorized"]
+    EM --> EM1["Auth check â†’ redirect if unauthorized"]
     EM1 --> EM2["Security headers"]
     EM2 --> FM["FastAPI Route Match"]
-    FM --> FM1["/api/tasks → tasks.router"]
+    FM --> FM1["/api/tasks â†’ tasks.router"]
     FM1 --> RLM["Rate Limiter Middleware"]
     RLM --> RLM1["Per-IP sliding window check<br/>429 if exceeded"]
     RLM1 --> CORS["CORS Middleware"]
@@ -1340,14 +1456,140 @@ flowchart TD
     CORS1 --> LOG["Request Logging"]
     LOG --> LOG1["Structured JSON log"]
     LOG1 --> DI["Dependency Injection"]
-    DI --> DIA["Depends(get_current_user)<br/>→ JWT decode → Supabase auth check"]
-    DIA --> DIB["Depends(get_supabase_client)<br/>→ Cached client"]
-    DIB --> DIC["Body validation<br/>→ Pydantic model parse"]
+    DI --> DIA["Depends(get_current_user)<br/>â†’ JWT decode â†’ Supabase auth check"]
+    DIA --> DIB["Depends(get_supabase_client)<br/>â†’ Cached client"]
+    DIB --> DIC["Body validation<br/>â†’ Pydantic model parse"]
     DIC --> EH["Endpoint Handler"]
-    EH --> EH1["Business logic → Supabase query<br/>→ Transform → Return"]
+    EH --> EH1["Business logic â†’ Supabase query<br/>â†’ Transform â†’ Return"]
     EH1 --> RES["Response"]
     RES --> RES1["Pydantic serialization (response_model)<br/>Security headers<br/>Correlation ID"]
     RES1 --> CLI["Client"]
+```
+
+---
+
+## 24. Cross-References
+
+| Document | Description |
+|---|---|
+| [C4 Architecture](/docs/architecture/README.md) | C4 model: system context, containers, component diagram, deployment |
+| [12_Architecture.md](12_Architecture.md) | Original architecture doc: data flows, offline strategy, security |
+| [Schema.md](Schema.md) | Complete column-level database schema |
+| [Decision Log](/docs/architecture/decision-log.md) | All 15 ADRs indexed and cross-referenced |
+| [AGENTS.md Â§6](/AGENTS.md) | Project structure |
+| [AGENTS.md §8](/AGENTS.md) | API endpoint reference (31 routers) |
+| [AGENTS.md Â§12](/AGENTS.md) | Common patterns for adding endpoints |
+
+---
+
+## 25. Backend Component Dependency Diagram
+
+```mermaid
+graph TB
+    subgraph BACKEND["FastAPI Backend â€” Component Dependencies"]
+        direction TB
+
+        subgraph ENTRY["Entry Point"]
+            MAIN["main.py<br/>FastAPI App + Lifespan<br/>Middleware + Router Registration"]
+        end
+
+        subgraph ROUTERS["API Routers (31)"]
+            CRUD["CRUD Routers<br/>tasks, courses, goals, habits,<br/>sleep, income, projects,<br/>ideas, resources, opportunities"]
+            AI_ROUTERS["AI-Enabled Routers<br/>chat, automation, briefings,<br/>reviews, memory, roadmap,<br/>analytics, predictions"]
+            INFRA["Infrastructure Routers<br/>auth, notifications, nlp,<br/>prompts, feedback, monitoring,<br/>data, feature-flags, skills,<br/>learning"]
+        end
+
+        subgraph SHARED["Shared Packages"]
+            SCHEMAS["database/schemas/<br/>Pydantic Models"]
+            CONFIG["config/core/<br/>Settings + Supabase + Auth"]
+            UTILS["shared/utils/<br/>Logger + Cache + Retry<br/>+ Security + Audit"]
+        end
+
+        subgraph AI["AI Layer"]
+            PROMPT_LOADER["PromptLoader<br/>prompts/ directory"]
+            LLM["LLMClient<br/>Ollama + Claude + Groq<br/>+ Circuit Breakers"]
+            AGENTS["Agent Modules (11)<br/>briefing, memory, learning,<br/>task, sleep, nudge, etc."]
+        end
+
+        subgraph EXTERNAL["External Dependencies"]
+            DB["Supabase PostgreSQL<br/>18+ Tables + RLS"]
+            OLLAMA["Ollama (local)<br/>Mistral 7B"]
+            CLAUDE["Claude API<br/>Sonnet 4 (fallback)"]
+            SENTRY["Sentry<br/>Error Tracking"]
+        end
+    end
+
+    MAIN --> ROUTERS
+    ROUTERS -->|"import"| SCHEMAS
+    ROUTERS -->|"Depends()"| CONFIG
+    ROUTERS -->|"call"| AGENTS
+    ROUTERS --> UTILS
+    AGENTS --> PROMPT_LOADER
+    AGENTS --> LLM
+    CONFIG -->|"supabase-py"| DB
+    AI_ROUTERS --> AGENTS
+    LLM --> OLLAMA
+    LLM --> CLAUDE
+    MAIN -->|"sentry_sdk"| SENTRY
+
+    style ENTRY fill:#13151A,stroke:#6366F1,color:#F1F5F9
+    style ROUTERS fill:#13151A,stroke:#00FFA3,color:#F1F5F9
+    style SHARED fill:#13151A,stroke:#F59E0B,color:#F1F5F9
+    style AI fill:#13151A,stroke:#34D399,color:#F1F5F9
+    style EXTERNAL fill:#13151A,stroke:#818CF8,color:#F1F5F9
+```
+
+---
+
+## 26. Request Data Flow Diagram
+
+```mermaid
+sequenceDiagram
+    actor U as User (Browser)
+    participant FE as Next.js Frontend
+    participant MW as FastAPI Middleware
+    participant EP as Route Handler
+    participant SVC as Service/Agent
+    participant LLM as AI LLMClient
+    participant DB as Supabase
+
+    U->>FE: Click / navigate
+    FE->>MW: HTTP Request (fetch /api/v1/tasks)
+    MW->>MW: 1. RateLimiter (100 req/min per IP)
+    MW->>MW: 2. CORSMiddleware (origin check)
+    MW->>MW: 3. Request Logging (structured JSON)
+    MW->>MW: 4. CSRFMiddleware (mutation methods)
+    MW->>MW: 5. Request ID (X-Request-ID)
+    MW->>MW: 6. Cache Control Headers
+
+    MW->>EP: Route matched â†’ Handler function
+    EP->>EP: get_current_user() â†’ JWT decode + Supabase auth check
+    EP->>EP: get_supabase_client() â†’ cached singleton
+
+    alt CRUD Request (tasks, courses, etc.)
+        EP->>DB: supabase.table().select().eq("user_id", user_id).execute()
+        DB-->>EP: Filtered data
+        EP-->>MW: Pydantic-validated response
+    else AI Request (chat, briefing, etc.)
+        EP->>SVC: Call agent function (e.g., briefing_agent.generate())
+        SVC->>LLM: llm.generate_json(prompt, system)
+        alt Ollama Available
+            LLM->>LLM: Ollama provider (local, free)
+        else Ollama Unavailable
+            LLM->>LLM: Claude fallback (cloud, $0.003)
+        end
+        LLM-->>SVC: Structured JSON response
+        SVC->>DB: Persist result (briefing, memory, etc.)
+        SVC-->>EP: Agent result with _quality tag
+        EP-->>MW: AI-enhanced response
+    end
+
+    MW->>MW: 7. Security Headers (HSTS, XSS, Frame)
+    MW->>MW: 8. Audit Trail (mutation methods)
+    MW-->>FE: HTTP Response
+    FE-->>U: Rendered UI
+
+    Note over MW,DB: Total p95 latency < 500ms (CRUD) / < 30s (AI)
 ```
 
 ---
@@ -1357,3 +1599,5 @@ flowchart TD
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0.0 | 2026-06-11 | Developer | Initial backend architecture documentation |
+| 1.1.0 | 2026-07-10 | Developer | Added enterprise sections: NFRs, Performance Targets, Edge Cases, Failure Scenarios, Risks & Mitigations. Expanded Testing Strategy with current test inventory (2795+ tests). Updated ToC. |
+| 1.2.0 | 2026-07-10 | Developer | Added component dependency diagram, request data flow diagram, and cross-reference section per ARCH-REQ-001 |

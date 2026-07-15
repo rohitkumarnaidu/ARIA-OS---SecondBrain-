@@ -1,4 +1,13 @@
-# Enterprise Plan — Second Brain OS (ARIA OS)
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-EPL-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Enterprise Plan â€” Second Brain OS (ARIA OS)
 
 **Version:** 1.0.0  
 **Status:** Active  
@@ -13,9 +22,9 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 
 **Current health:**
 - Build: 0 errors | Lint: 0 warnings | Prompts: 14/14 validated
-- 21 stores → 21 services → 28 dashboard routes (all wired)
-- 10 AI agents with try/except + circuit breaker protection
-- 13 backend routers with REST standards (201, 204, pagination)
+- 21 stores â†’ 21 services â†’ 28 dashboard routes (all wired)
+- 11 AI agents (plus 8 skill sub-agents) with try/except + circuit breaker protection
+- 31 backend routers with REST standards (201, 204, pagination)
 - 78 catch blocks with proper TypeScript narrowing
 
 ---
@@ -25,17 +34,17 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 ### 1.1 Documentation Sync
 | Task | Files | Effort |
 |---|---|---|
-| Update AGENTS.md line counts to match actual prompt files | `AGENTS.md` §9.4 | 15 min |
+| Update AGENTS.md line counts to match actual prompt files | `AGENTS.md` Â§9.4 | 15 min |
 | Bump AGENTS.md version to 5.0.0 reflecting all fixes | `AGENTS.md` header | 5 min |
 
 ### 1.2 Backend Polish
 | Task | Files | Effort |
 |---|---|---|
 | Change `created_at`/`updated_at` from `str` to `datetime` in Response schemas | `packages/database/schemas/*.py` (~13 files) | 30 min |
-| Fix `auth.py` `datetime.utcnow()` → `datetime.now(datetime.UTC)` | `packages/config/core/auth.py:13,15` | 5 min |
+| Fix `auth.py` `datetime.utcnow()` â†’ `datetime.now(datetime.UTC)` | `packages/config/core/auth.py:13,15` | 5 min |
 | Fix `logger.py` `datetime.utcnow()` deprecation | `packages/shared/utils/logger.py:24` | 5 min |
 | Fix `logger.py` ERROR/WARN logged at INFO level | `packages/shared/utils/logger.py:29` | 5 min |
-| Fix `supabase.py` import (`import supabase` → `from supabase import create_client`) | `packages/config/core/supabase.py:1` | 5 min |
+| Fix `supabase.py` import (`import supabase` â†’ `from supabase import create_client`) | `packages/config/core/supabase.py:1` | 5 min |
 | Add empty URL/key guard in supabase client | `packages/config/core/supabase.py:10` | 5 min |
 
 ### 1.3 Pre-commit & Dev Tooling
@@ -60,8 +69,8 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 ### 2.1 Scheduler Upgrade
 | Task | Files | Effort |
 |---|---|---|
-| Replace `print()` with structured logging in all 7 cron jobs | `services/scheduler/crons/*.py` | 1 hour |
-| Fix `asyncio.get_event_loop().run_forever()` → `asyncio.run(main())` | `services/scheduler/main.py:94` | 15 min |
+| Replace `print()` with structured logging in all 15 cron jobs | `services/scheduler/crons/*.py` | 1 hour |
+| Fix `asyncio.get_event_loop().run_forever()` â†’ `asyncio.run(main())` | `services/scheduler/main.py:94` | 15 min |
 | Add scheduler health check endpoint | `services/scheduler/main.py` | 30 min |
 
 ### 2.2 Docker Production Profile
@@ -130,9 +139,9 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 
 | Tier | Hours | Impact |
 |---|---|---|
-| **Tier 1** — Production Hardening | **1.5h** | Fixes all remaining lint/type warnings, doc drift, deprecations |
-| **Tier 2** — Quality & Monitoring | **8h** | Scheduler reliability, Docker production readiness, test coverage |
-| **Tier 3** — Scale & Infrastructure | **15h** | IaC, observability, edge optimization, security |
+| **Tier 1** â€” Production Hardening | **1.5h** | Fixes all remaining lint/type warnings, doc drift, deprecations |
+| **Tier 2** â€” Quality & Monitoring | **8h** | Scheduler reliability, Docker production readiness, test coverage |
+| **Tier 3** â€” Scale & Infrastructure | **15h** | IaC, observability, edge optimization, security |
 | **Total** | **~24.5h** | Production enterprise MVP |
 
 ---
@@ -147,13 +156,13 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 | API REST compliance (201, 204, pagination) | **100%** | 100% |
 | AI agent LLM call safety | **100%** | 100% |
 | Store wiring coverage | **28/28 routes** | 28/28 routes |
-| Type alignmnt (frontend ↔ backend) | **100%** | 100% |
+| Type alignmnt (frontend â†” backend) | **100%** | 100% |
 | `any` types (high severity) | **0** | 0 |
 | `catch(err: any)` | **0** | 0 |
-| Docker production build | **broken** (fixed in this session) | ✅ working |
+| Docker production build | **broken** (fixed in this session) | âœ… working |
 | Frontend CI coverage enforcement | **80% lines** | 80% lines |
-| Scheduler coverage | **0% → added** | ≥70% |
-| Integration tests | **0** | ≥2 |
+| Scheduler coverage | **0% â†’ added** | â‰¥70% |
+| Integration tests | **0** | â‰¥2 |
 | E2E tests in CI | **7 specs (not wired)** | all 7 running |
 | IaC (Terraform/K8s) | **empty** | provisioned |
 | Observability | **basic logging** | Sentry + Logtail + Grafana |
@@ -168,21 +177,21 @@ The codebase has been hardened across **11 dimensions**. All **5 critical** and 
 
 | ADR | Status | Notes |
 |---|---|---|
-| ADR-001: Monorepo | ✅ Adopted | Confirmed |
-| ADR-002: Supabase | ✅ Adopted | Confirmed |
-| ADR-003: Ollama → Claude | ✅ Adopted | Circuit breaker + provider failover in place |
-| ADR-004: In-process agents | ✅ Adopted | All 10 agents run as async functions |
-| ADR-005: Zustand | ✅ Adopted | 21 stores, 21 services |
-| ADR-006: APScheduler | ✅ Adopted | 7 cron jobs running |
-| ADR-007: PWA | ✅ Adopted | Service worker + manifest |
-| ADR-008: No event bus | ✅ Adopted | Deferred to post-MVP |
+| ADR-001: Monorepo | âœ… Adopted | Confirmed |
+| ADR-002: Supabase | âœ… Adopted | Confirmed |
+| ADR-003: Ollama â†’ Claude | âœ… Adopted | Circuit breaker + provider failover in place |
+| ADR-004: In-process agents | âœ… Adopted | All 11 agents run as async functions |
+| ADR-005: Zustand | âœ… Adopted | 21 stores, 21 services |
+| ADR-006: APScheduler | âœ… Adopted | 15 cron jobs running |
+| ADR-007: PWA | âœ… Adopted | Service worker + manifest |
+| ADR-008: No event bus | âœ… Adopted | Deferred to post-MVP |
 
 ---
 
 ## Next Actions
 
-1. **Tier 1.1** — Update AGENTS.md line counts (5 min)
-2. **Tier 1.2** — Fix datetime types in backend schemas (30 min)
-3. **Tier 1.3** — Pin Prettier stable + expand Bandit (10 min)
-4. **Tier 1.4** — Remove unused type exports (5 min)
+1. **Tier 1.1** â€” Update AGENTS.md line counts (5 min)
+2. **Tier 1.2** â€” Fix datetime types in backend schemas (30 min)
+3. **Tier 1.3** â€” Pin Prettier stable + expand Bandit (10 min)
+4. **Tier 1.4** â€” Remove unused type exports (5 min)
 5. Begin **Tier 2** scheduler upgrade

@@ -19,7 +19,7 @@
 
 ## 1. Executive Summary
 
-Second Brain OS relies on scheduled background jobs to deliver a proactive, automated user experience. The scheduling system ensures that daily briefings, radar scans, habit tracking, sleep analysis, task reconciliation, and weekly reviews execute reliably without user intervention.
+Second Brain OS relies on scheduled background jobs to deliver a proactive, automated user experience. The scheduling system runs 15 cron jobs including daily briefings, opportunity radar scans, habit tracking, sleep reminders, course nudges, missed task reconciliation, weekly reviews, skill intelligence refresh, memory consolidation, deadline alerts, health checks, and more — all executing reliably without user intervention.
 
 Currently, all cron jobs run via **APScheduler's `AsyncIOScheduler`** inside the `services/scheduler/main.py` service. Jobs are defined in-process with Python `asyncio` coroutines. The scheduler connects to **Supabase** for job state persistence and publishes results back via direct API calls to the FastAPI backend or Supabase database writes.
 
@@ -112,28 +112,48 @@ gantt
     axisFormat %H:%M
 
     section High Priority
-    Opportunity Radar     :crit, radar_scan, 06:00, 2m
-    Daily Briefing        :crit, morning_briefing, 07:00, 1m
+    Opportunity Radar       :crit, radar_scan, 06:00, 2m
+    Daily Briefing          :crit, morning_briefing, 07:00, 1m
+    Skill Intel Refresh     :crit, skill_intel, 05:00, 2m
+    Deadline Alert (hourly) :crit, deadline_alert, 01:00, 1m
 
     section Medium Priority
-    Missed Tasks Review   :missed_tasks_review, 00:00, 1m
-    Habits Reminder       :habits_check, 20:00, 1m
-    Weekly Review (Sun)   :weekly_review, 20:00, 3m
+    Missed Tasks Review     :missed_tasks_review, 00:00, 1m
+    Habits Reminder         :habits_check, 20:00, 1m
+    Weekly Review (Sun)     :weekly_review, 20:00, 3m
+    Course Nudge            :course_nudge, 18:00, 1m
+    Skill Analytics Snapshot :skill_analytics, 23:30, 1m
 
     section Low Priority
-    Sleep Log Check       :sleep_analysis, 22:30, 1m
+    Sleep Log Check         :sleep_analysis, 22:30, 1m
+    Skill Evidence Expiry   :skill_evidence, 03:00, 1m
+    Skill MV Refresh        :skill_mv, 04:00, 1m
+    Skill Retention Cleanup :skill_retention, 02:30, 1m
+    Memory Consolidation    :memory_consolidation, 02:00, 1m
+
+    section Continuous
+    Health Check            :health_check, 00:00, 1m
 ```
 
 ## 3. Cron Job Catalog
 
 | Job ID | Name | Schedule (IST) | Cron Expression | Handler | Avg Duration | Priority |
-|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|
 | `morning_briefing` | Daily Briefing | 7:00 AM daily | `0 7 * * *` | `generate_briefing` | ~45s | High |
 | `radar_scan` | Opportunity Radar | 6:00 AM daily | `0 6 * * *` | `scan_opportunity_radar` | ~120s | High |
+| `skill_intelligence_refresh` | Skill Intelligence Refresh | 5:00 AM daily | `0 5 * * *` | `refresh_skill_intelligence` | ~90s | High |
+| `deadline_alert` | Deadline Alert | Every hour | `0 * * * *` | `check_deadline_alerts` | ~20s | High |
 | `habits_check` | Habits Reminder | 8:00 PM daily | `0 20 * * *` | `check_habits_completion` | ~15s | Medium |
 | `missed_tasks_review` | Missed Tasks | 12:00 AM daily | `0 0 * * *` | `review_missed_tasks` | ~30s | Medium |
-| `sleep_analysis` | Sleep Log Check | 10:30 PM daily | `30 22 * * *` | `prompt_sleep_log` | ~10s | Low |
+| `course_nudge` | Course Progress Nudge | 6:00 PM daily | `0 18 * * *` | `send_course_nudge` | ~20s | Medium |
+| `skill_analytics_snapshot` | Skill Analytics Snapshot | 11:30 PM daily | `30 23 * * *` | `snapshot_skill_analytics` | ~45s | Medium |
 | `weekly_review` | Weekly Review | Sunday 8:00 PM | `0 20 * * 0` | `generate_weekly_review` | ~180s | Medium |
+| `sleep_analysis` | Sleep Log Check | 10:30 PM daily | `30 22 * * *` | `prompt_sleep_log` | ~10s | Low |
+| `skill_evidence_expiry` | Skill Evidence Expiry | 3:00 AM daily | `0 3 * * *` | `expire_skill_evidence` | ~30s | Low |
+| `skill_mv_refresh` | Skill MV Refresh | 4:00 AM daily | `0 4 * * *` | `refresh_skill_mv` | ~60s | Low |
+| `skill_retention_cleanup` | Skill Retention Cleanup | 2:30 AM daily | `30 2 * * *` | `cleanup_skill_retention` | ~20s | Low |
+| `memory_consolidation` | Memory Consolidation | Sunday 2:00 AM | `0 2 * * 0` | `consolidate_memory` | ~120s | Low |
+| `health_check` | Health Check | Every 5 minutes | `*/5 * * * *` | `run_health_check` | ~5s | Low |
 
 ### 3.1 Job Dependency Graph
 
@@ -388,12 +408,21 @@ async def generate_briefing():
 
 ```python
 RETRY_POLICY = {
-    "morning_briefing":  {"max_retries": 2, "backoff_seconds": 30, "dead_letter": True},
-    "radar_scan":        {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
-    "habits_check":      {"max_retries": 1, "backoff_seconds": 15, "dead_letter": False},
-    "missed_tasks_review":{"max_retries": 2, "backoff_seconds": 30, "dead_letter": True},
-    "sleep_analysis":    {"max_retries": 1, "backoff_seconds": 10, "dead_letter": False},
-    "weekly_review":     {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    "morning_briefing":        {"max_retries": 2, "backoff_seconds": 30, "dead_letter": True},
+    "radar_scan":              {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    "habits_check":            {"max_retries": 1, "backoff_seconds": 15, "dead_letter": False},
+    "missed_tasks_review":     {"max_retries": 2, "backoff_seconds": 30, "dead_letter": True},
+    "sleep_analysis":          {"max_retries": 1, "backoff_seconds": 10, "dead_letter": False},
+    "weekly_review":           {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    "course_nudge":            {"max_retries": 2, "backoff_seconds": 30, "dead_letter": False},
+    "skill_intelligence_refresh":{"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    "skill_evidence_expiry":   {"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    "skill_analytics_snapshot":{"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    "skill_mv_refresh":        {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    "skill_retention_cleanup": {"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    "deadline_alert":          {"max_retries": 1, "backoff_seconds": 15, "dead_letter": False},
+    "health_check":            {"max_retries": 1, "backoff_seconds": 10, "dead_letter": False},
+    "memory_consolidation":    {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
 }
 ```
 
@@ -622,15 +651,22 @@ For a full production system, **Celery Beat** (scheduler) + **Celery Workers** (
 ```
 
 | Expression | Meaning |
-|---|---|
+|---|---|---|
 | `0 7 * * *` | Every day at 7:00 AM |
 | `0 6 * * *` | Every day at 6:00 AM |
+| `0 5 * * *` | Every day at 5:00 AM |
 | `0 20 * * *` | Every day at 8:00 PM |
+| `0 18 * * *` | Every day at 6:00 PM |
 | `0 0 * * *` | Every day at midnight |
 | `30 22 * * *` | Every day at 10:30 PM |
+| `30 23 * * *` | Every day at 11:30 PM |
+| `0 3 * * *` | Every day at 3:00 AM |
+| `0 4 * * *` | Every day at 4:00 AM |
+| `30 2 * * *` | Every day at 2:30 AM |
+| `0 2 * * 0` | Every Sunday at 2:00 AM |
 | `0 20 * * 0` | Every Sunday at 8:00 PM |
+| `0 * * * *` | Every hour |
 | `*/5 * * * *` | Every 5 minutes |
-| `0 */2 * * *` | Every 2 hours |
 
 ### Appendix B: Full Job Configuration (Python)
 
@@ -688,6 +724,87 @@ JOB_REGISTRY: dict[str, dict] = {
         "max_instances": 1,
         "coalesce": True,
         "misfire_grace_time": 3600,
+        "retry_policy": {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    },
+    "course_nudge": {
+        "handler": "services.scheduler.handlers.nudge.send_course_nudge",
+        "trigger": CronTrigger(hour=18, minute=0, timezone="Asia/Kolkata"),
+        "timeout": 60,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 300,
+        "retry_policy": {"max_retries": 2, "backoff_seconds": 30, "dead_letter": False},
+    },
+    "skill_intelligence_refresh": {
+        "handler": "services.scheduler.handlers.skills.refresh_skill_intelligence",
+        "trigger": CronTrigger(hour=5, minute=0, timezone="Asia/Kolkata"),
+        "timeout": 180,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 600,
+        "retry_policy": {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    },
+    "skill_evidence_expiry": {
+        "handler": "services.scheduler.handlers.skills.expire_skill_evidence",
+        "trigger": CronTrigger(hour=3, minute=0, timezone="Asia/Kolkata"),
+        "timeout": 60,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 300,
+        "retry_policy": {"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    },
+    "skill_analytics_snapshot": {
+        "handler": "services.scheduler.handlers.skills.snapshot_skill_analytics",
+        "trigger": CronTrigger(hour=23, minute=30, timezone="Asia/Kolkata"),
+        "timeout": 90,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 300,
+        "retry_policy": {"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    },
+    "skill_mv_refresh": {
+        "handler": "services.scheduler.handlers.skills.refresh_skill_mv",
+        "trigger": CronTrigger(hour=4, minute=0, timezone="Asia/Kolkata"),
+        "timeout": 120,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 600,
+        "retry_policy": {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
+    },
+    "skill_retention_cleanup": {
+        "handler": "services.scheduler.handlers.skills.cleanup_skill_retention",
+        "trigger": CronTrigger(hour=2, minute=30, timezone="Asia/Kolkata"),
+        "timeout": 60,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 300,
+        "retry_policy": {"max_retries": 1, "backoff_seconds": 30, "dead_letter": False},
+    },
+    "deadline_alert": {
+        "handler": "services.scheduler.handlers.tasks.check_deadline_alerts",
+        "trigger": CronTrigger(hour="*", minute=0, timezone="Asia/Kolkata"),
+        "timeout": 60,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 120,
+        "retry_policy": {"max_retries": 1, "backoff_seconds": 15, "dead_letter": False},
+    },
+    "health_check": {
+        "handler": "services.scheduler.handlers.health.run_health_check",
+        "trigger": CronTrigger(minute="*/5", timezone="Asia/Kolkata"),
+        "timeout": 15,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 30,
+        "retry_policy": {"max_retries": 1, "backoff_seconds": 10, "dead_letter": False},
+    },
+    "memory_consolidation": {
+        "handler": "services.scheduler.handlers.memory.consolidate_memory",
+        "trigger": CronTrigger(hour=2, minute=0, day_of_week="sun", timezone="Asia/Kolkata"),
+        "timeout": 300,
+        "max_instances": 1,
+        "coalesce": True,
+        "misfire_grace_time": 1800,
         "retry_policy": {"max_retries": 2, "backoff_seconds": 60, "dead_letter": True},
     },
 }
