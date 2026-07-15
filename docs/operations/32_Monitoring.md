@@ -1,7 +1,7 @@
----
+﻿---
 version: 2.0.0
 status: active
-classification: Internal — Engineering
+classification: Internal â€” Engineering
 author: AI Agent System
 last_updated: 2026-06-11
 review_cycle: monthly
@@ -20,10 +20,10 @@ related_docs:
 
 | Field | Value |
 |---|---|
-| Document ID | SB-OPS-MON-001 |
+| Document ID | OPS-MON-001 |
 | Version | 2.0.0 |
 | Status | Active |
-| Classification | Internal — Engineering |
+| Classification | Internal â€” Engineering |
 | Last Updated | 2026-06-11 |
 | Review Cycle | Monthly |
 | Owner | Engineering Team |
@@ -36,10 +36,10 @@ related_docs:
 This document defines the complete monitoring and observability strategy for Second Brain OS. The system uses lightweight, free-tier tools exclusively to maintain the Rs. 0 / $0 budget commitment while providing adequate coverage across five pillars: **system health**, **application performance**, **user experience**, **AI reliability**, and **cost tracking**.
 
 **Monitoring Philosophy:**
-- **Alert on symptoms, not causes** — Notify when users are impacted, not when internal metrics fluctuate
-- **Free-tier first** — Every tool must have a viable free tier; paid upgrades are justified only by proven need
-- **Self-healing over paging** — Automate recovery before alerting humans
-- **Progressive escalation** — Warn → Alert → Critical → Page with increasing urgency
+- **Alert on symptoms, not causes** â€” Notify when users are impacted, not when internal metrics fluctuate
+- **Free-tier first** â€” Every tool must have a viable free tier; paid upgrades are justified only by proven need
+- **Self-healing over paging** â€” Automate recovery before alerting humans
+- **Progressive escalation** â€” Warn â†’ Alert â†’ Critical â†’ Page with increasing urgency
 
 **Coverage Summary:**
 
@@ -122,8 +122,8 @@ flowchart LR
 | API metrics | Custom middleware | Unlimited | New Relic (100GB/mo free) |
 | Error tracking | Custom logger | Unlimited | Sentry (5k events/mo free) |
 | Logging | Custom structured logger | Unlimited | Logtail (1GB/mo free) |
-| Cost tracking | Custom cron | Unlimited | — |
-| Performance | Supabase Insights | Built-in | — |
+| Cost tracking | Custom cron | Unlimited | â€” |
+| Performance | Supabase Insights | Built-in | â€” |
 | Alerting | Custom AlertManager | Unlimited | PagerDuty (5 users free) |
 | Dashboards | Built-in status page | Unlimited | Grafana (free tier) |
 
@@ -148,7 +148,7 @@ A dedicated `/api/health` endpoint provides a comprehensive system health check.
     "database": {
       "status": "healthy" | "degraded" | "unhealthy",
       "latency_ms": 12,
-      "details": "Connected to supabase. 18 tables accessible."
+      "details": "Connected to supabase. 27 tables accessible."
     },
     "supabase_auth": {
       "status": "healthy",
@@ -490,7 +490,7 @@ async def metrics_middleware(request: Request, call_next):
 ### 3.2 Database Query Performance
 
 **Supabase Query Performance Insights** (built-in):
-- Navigate to: Supabase Dashboard → Database → Query Performance
+- Navigate to: Supabase Dashboard â†’ Database â†’ Query Performance
 - Shows: slowest queries, most frequent queries, query plans
 - Retention: 24 hours of query history
 
@@ -657,9 +657,9 @@ The application monitors three Core Web Vitals metrics:
 
 | Metric | Good | Needs Improvement | Poor | Measurement |
 |---|---|---|---|---|
-| **LCP** (Largest Contentful Paint) | ≤ 2.5s | 2.5s – 4.0s | > 4.0s | Page load speed |
-| **FID** (First Input Delay) | ≤ 100ms | 100ms – 300ms | > 300ms | Interactivity |
-| **CLS** (Cumulative Layout Shift) | ≤ 0.1 | 0.1 – 0.25 | > 0.25 | Visual stability |
+| **LCP** (Largest Contentful Paint) | â‰¤ 2.5s | 2.5s â€“ 4.0s | > 4.0s | Page load speed |
+| **FID** (First Input Delay) | â‰¤ 100ms | 100ms â€“ 300ms | > 300ms | Interactivity |
+| **CLS** (Cumulative Layout Shift) | â‰¤ 0.1 | 0.1 â€“ 0.25 | > 0.25 | Visual stability |
 
 **Implementation via `next/web-vitals`:**
 ```typescript
@@ -756,8 +756,8 @@ The health endpoint tracks two AI services separately:
 
 | Service | Health Check | Latency Budget | Fallback |
 |---|---|---|---|
-| **Ollama** (local) | `GET http://localhost:11434/api/tags` | 5s | → Claude API |
-| **Claude API** (cloud) | `POST https://api.anthropic.com/v1/messages` (ping) | 10s | → Algorithmic fallback |
+| **Ollama** (local) | `GET http://localhost:11434/api/tags` | 5s | â†’ Claude API |
+| **Claude API** (cloud) | `POST https://api.anthropic.com/v1/messages` (ping) | 10s | â†’ Algorithmic fallback |
 | **Prompt validation** | `python scripts/validate_prompts.py` | 30s (cron) | Skip, log warning |
 
 ### 5.2 Prompt Validation as Monitoring
@@ -1207,7 +1207,7 @@ Alert ID: {alert['id']}
         try:
             color = {"warning": "#F59E0B", "error": "#EF4444", "critical": "#DC2626"}
             blocks = [
-                {"type": "header", "text": {"type": "plain_text", "text": f"🚨 {alert['title']}"}},
+                {"type": "header", "text": {"type": "plain_text", "text": f"ðŸš¨ {alert['title']}"}},
                 {"type": "section", "text": {"type": "mrkdwn", "text": alert['message']}},
                 {"type": "context", "elements": [
                     {"type": "mrkdwn", "text": f"*Severity:* {alert['severity'].upper()} | *Alert ID:* `{alert['id']}` | *Time:* {alert['timestamp']}"}
@@ -1254,64 +1254,64 @@ alert_manager = AlertManager()
 A `/status` route provides a real-time operational dashboard:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  SECOND BRAIN OS — STATUS DASHBOARD                [Refresh]   │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │  OVERALL STATUS: HEALTHY          Uptime: 10d 3h 42m       ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ API          │  │ Database     │  │ AI Service   │          │
-│  │ ● Healthy    │  │ ● Healthy    │  │ ● Degraded   │          │
-│  │ 142ms avg    │  │ 12ms latency │  │ Ollama down  │          │
-│  │ 847 req/24h  │  │ 18 tables    │  │ Claude active│          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ Cache        │  │ Auth         │  │ Scheduler    │          │
-│  │ ● Healthy    │  │ ● Healthy    │  │ ● Healthy    │          │
-│  │ 127 entries  │  │ 45ms latency │  │ Last tick: 2m│          │
-│  │ 68% hit rate │  │ JWT valid    │  │ 6 jobs active│          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │  PERFORMANCE (Last 24h)                                      ││
-│  │  ┌──────────────────────────────────────────────────────────┐││
-│  │  │ Requests:  2,847                                         │││
-│  │  │ Errors:    23    (0.8%)                                  │││
-│  │  │ Avg Resp:  142ms                                         │││
-│  │  │ p95 Resp:  389ms                                         │││
-│  │  │ p99 Resp:  1,234ms                                       │││
-│  │  └──────────────────────────────────────────────────────────┘││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │  CRON JOBS                                                   ││
-│  │  ● Daily Briefing    OK      Last: 7:00 AM                   ││
-│  │  ● Opportunity Radar OK      Last: 6:00 AM                   ││
-│  │  ● Weekly Review     OK      Last: Sun 8:00 PM               ││
-│  │  ● Uptime Check      OK      Last: 2 min ago                 ││
-│  │  ● Cost Monitor      OK      Last: 12:00 AM                  ││
-│  │  ● Prompt Validator  OK      Last: 12:00 AM                  ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │  COST STATUS (This Month)                                    ││
-│  │  DB Storage:    123MB / 500MB     ████████░░░  24.6%         ││
-│  │  Bandwidth:     12.4GB / 100GB    ██░░░░░░░░░  12.4%         ││
-│  │  Emails:        156 / 3,000       █░░░░░░░░░░   5.2%         ││
-│  │  Claude API:    $0.00 / $5.00     ░░░░░░░░░░░   0.0%         ││
-│  └─────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  ┌─────────────────────────────────────────────────────────────┐│
-│  │  RECENT ALERTS (Last 24h)                                    ││
-│  │  09:15:23  WARN  AI service degraded (Ollama not running)    ││
-│  │  08:30:01  INFO  Daily cost report generated                  ││
-│  │  07:00:00  INFO  Daily briefing generated successfully        ││
-│  └─────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  SECOND BRAIN OS â€” STATUS DASHBOARD                [Refresh]   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  OVERALL STATUS: HEALTHY          Uptime: 10d 3h 42m       â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”          â”‚
+â”‚  â”‚ API          â”‚  â”‚ Database     â”‚  â”‚ AI Service   â”‚          â”‚
+â”‚  â”‚ â— Healthy    â”‚  â”‚ â— Healthy    â”‚  â”‚ â— Degraded   â”‚          â”‚
+â”‚  â”‚ 142ms avg    â”‚  â”‚ 12ms latency â”‚  â”‚ Ollama down  â”‚          â”‚
+â”‚  â”‚ 847 req/24h  â”‚  â”‚ 27 tables    â”‚  â”‚ Claude activeâ”‚          â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”          â”‚
+â”‚  â”‚ Cache        â”‚  â”‚ Auth         â”‚  â”‚ Scheduler    â”‚          â”‚
+â”‚  â”‚ â— Healthy    â”‚  â”‚ â— Healthy    â”‚  â”‚ â— Healthy    â”‚          â”‚
+â”‚  â”‚ 127 entries  â”‚  â”‚ 45ms latency â”‚  â”‚ Last tick: 2mâ”‚          â”‚
+â”‚  â”‚ 68% hit rate â”‚  â”‚ JWT valid    â”‚  â”‚ 15 jobs activeâ”‚          â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  PERFORMANCE (Last 24h)                                      â”‚â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚â”‚
+â”‚  â”‚  â”‚ Requests:  2,847                                         â”‚â”‚â”‚
+â”‚  â”‚  â”‚ Errors:    23    (0.8%)                                  â”‚â”‚â”‚
+â”‚  â”‚  â”‚ Avg Resp:  142ms                                         â”‚â”‚â”‚
+â”‚  â”‚  â”‚ p95 Resp:  389ms                                         â”‚â”‚â”‚
+â”‚  â”‚  â”‚ p99 Resp:  1,234ms                                       â”‚â”‚â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  CRON JOBS                                                   â”‚â”‚
+â”‚  â”‚  â— Daily Briefing    OK      Last: 7:00 AM                   â”‚â”‚
+â”‚  â”‚  â— Opportunity Radar OK      Last: 6:00 AM                   â”‚â”‚
+â”‚  â”‚  â— Weekly Review     OK      Last: Sun 8:00 PM               â”‚â”‚
+â”‚  â”‚  â— Uptime Check      OK      Last: 2 min ago                 â”‚â”‚
+â”‚  â”‚  â— Cost Monitor      OK      Last: 12:00 AM                  â”‚â”‚
+â”‚  â”‚  â— Prompt Validator  OK      Last: 12:00 AM                  â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  COST STATUS (This Month)                                    â”‚â”‚
+â”‚  â”‚  DB Storage:    123MB / 500MB     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘  24.6%         â”‚â”‚
+â”‚  â”‚  Bandwidth:     12.4GB / 100GB    â–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  12.4%         â”‚â”‚
+â”‚  â”‚  Emails:        156 / 3,000       â–ˆâ–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘   5.2%         â”‚â”‚
+â”‚  â”‚  Claude API:    $0.00 / $5.00     â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘   0.0%         â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚  â”‚  RECENT ALERTS (Last 24h)                                    â”‚â”‚
+â”‚  â”‚  09:15:23  WARN  AI service degraded (Ollama not running)    â”‚â”‚
+â”‚  â”‚  08:30:01  INFO  Daily cost report generated                  â”‚â”‚
+â”‚  â”‚  07:00:00  INFO  Daily briefing generated successfully        â”‚â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 9.2 Supabase Dashboard (For Ad-hoc Analysis)
@@ -1592,13 +1592,13 @@ async def login(credentials: LoginRequest):
 
 When monitoring detects a critical issue, it triggers the incident response process:
 
-1. **Detection** → AlertManager sends CRITICAL alert
-2. **Diagnosis** → Runbook consulted (see `docs/operations/39_Runbooks.md`)
-3. **Mitigation** → Auto-recovery or manual intervention
-4. **Resolution** → Service restored, incident logged
-5. **Post-mortem** → RCA documented (see `docs/operations/40_IncidentResponse.md`)
+1. **Detection** â†’ AlertManager sends CRITICAL alert
+2. **Diagnosis** â†’ Runbook consulted (see `docs/operations/39_Runbooks.md`)
+3. **Mitigation** â†’ Auto-recovery or manual intervention
+4. **Resolution** â†’ Service restored, incident logged
+5. **Post-mortem** â†’ RCA documented (see `docs/operations/40_IncidentResponse.md`)
 
-**Alert → Runbook Mapping:**
+**Alert â†’ Runbook Mapping:**
 
 | Alert Title | Runbook Section |
 |---|---|
@@ -1618,7 +1618,7 @@ When monitoring detects a critical issue, it triggers the incident response proc
 | Tool | Configuration | Verification |
 |---|---|---|
 | Better Uptime | Add URLs in dashboard, configure heartbeat | Check status page |
-| Supabase Insights | Built-in, no setup needed | Open Dashboard → Database → Query Performance |
+| Supabase Insights | Built-in, no setup needed | Open Dashboard â†’ Database â†’ Query Performance |
 | Metrics Middleware | Added to `apps/api/main.py` | `/api/health` returns metrics |
 | Cost Monitor | `services/scheduler/crons/cost_monitor.py` | Check logs for daily report |
 | Alert Manager | Set env vars: `ADMIN_EMAIL`, `SLACK_WEBHOOK_URL` | `python -c "from shared.utils.alerting import alert_manager; print(alert_manager.admin_email)"` |

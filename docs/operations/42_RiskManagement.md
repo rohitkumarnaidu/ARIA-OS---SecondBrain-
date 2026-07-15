@@ -1,14 +1,14 @@
-# Risk Management Plan
+﻿# Risk Management Plan
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-RM-001 |
+| Document ID | OPS-RM-001 |
 | Version | 1.0.0 |
 | Date | 2026-06-11 |
 | Status | Draft |
-| Classification | Internal — Confidential |
+| Classification | Internal â€” Confidential |
 | Owner | Solo Developer |
 | Framework Reference | ISO 31005:2018, NIST SP 800-30 Rev. 1 |
 
@@ -38,7 +38,7 @@
 
 ### 1.1 Purpose
 
-This Risk Management Plan establishes a systematic framework for identifying, assessing, responding to, and monitoring risks across the Second Brain OS project. The plan ensures that the solo developer can make informed decisions about which risks to accept, mitigate, transfer, or avoid — recognizing that a single-developer student project has limited capacity for risk treatment but zero tolerance for catastrophic data loss or security breaches.
+This Risk Management Plan establishes a systematic framework for identifying, assessing, responding to, and monitoring risks across the Second Brain OS project. The plan ensures that the solo developer can make informed decisions about which risks to accept, mitigate, transfer, or avoid â€” recognizing that a single-developer student project has limited capacity for risk treatment but zero tolerance for catastrophic data loss or security breaches.
 
 ### 1.2 Scope
 
@@ -57,7 +57,7 @@ This Risk Management Plan establishes a systematic framework for identifying, as
 
 ### 1.3 Methodology
 
-This plan follows the **ISO 31005:2018** risk management process (risk identification, analysis, evaluation, treatment, monitoring) mapped to the **NIST SP 800-30 Rev. 1** framework for risk assessment. Risk scoring uses a 5×5 likelihood-impact matrix with discrete numerical values (1–5 per axis) to produce a composite score (1–25). Qualitative labels (Low, Medium, High, Critical) derive from score ranges.
+This plan follows the **ISO 31005:2018** risk management process (risk identification, analysis, evaluation, treatment, monitoring) mapped to the **NIST SP 800-30 Rev. 1** framework for risk assessment. Risk scoring uses a 5Ã—5 likelihood-impact matrix with discrete numerical values (1â€“5 per axis) to produce a composite score (1â€“25). Qualitative labels (Low, Medium, High, Critical) derive from score ranges.
 
 ---
 
@@ -72,7 +72,7 @@ Because this is a single-developer project, governance is streamlined:
 | Risk Owner | All risk identification, assessment, treatment, and monitoring | Solo Developer |
 | Decision Authority | Risk acceptance decisions, resource allocation for mitigation | Solo Developer |
 | Auditor | Periodic self-review of risk controls | Solo Developer (quarterly self-audit) |
-| Escalation Point | Not applicable — no management chain | N/A |
+| Escalation Point | Not applicable â€” no management chain | N/A |
 
 Governance is enforced through:
 - **Automated controls**: CI/CD pipelines (lint, type-check, test), Supabase RLS validation scripts, automated backups
@@ -83,13 +83,13 @@ Governance is enforced through:
 
 | Domain | Risk Appetite | Rationale |
 |---|---|---|
-| **Data Loss** | Zero tolerance — Avoid | User-generated data (tasks, goals, journals) is irreplaceable. Any permanent data loss is unacceptable |
-| **Security Breach** | Zero tolerance — Avoid | Credential leaks, auth bypass, or unauthorized data access destroys user trust in a personal AI system |
-| **AI Hallucination** | Low tolerance — Mitigate | Hallucinated task suggestions or course advice is annoying but not life-critical. Must have clear disclaimers and human-in-the-loop |
-| **Service Uptime** | Moderate tolerance — Accept | A personal productivity app can have brief downtime (RTO: 2 hours SEV-1). Solo developer cannot guarantee 99.9% uptime |
-| **Feature Completeness** | High tolerance — Accept | Scope creep is expected. Features ship when ready. Delayed features are acceptable |
-| **Cloud Costs** | Low tolerance — Monitor | Hard budget cap of ₹500/month (~$6 USD). Any cost overrun triggers immediate review |
-| **Dependency Vulnerabilities** | Low tolerance — Mitigate | `npm audit` and `pip-audit` must pass before merge. Critical CVEs patched within 48 hours |
+| **Data Loss** | Zero tolerance â€” Avoid | User-generated data (tasks, goals, journals) is irreplaceable. Any permanent data loss is unacceptable |
+| **Security Breach** | Zero tolerance â€” Avoid | Credential leaks, auth bypass, or unauthorized data access destroys user trust in a personal AI system |
+| **AI Hallucination** | Low tolerance â€” Mitigate | Hallucinated task suggestions or course advice is annoying but not life-critical. Must have clear disclaimers and human-in-the-loop |
+| **Service Uptime** | Moderate tolerance â€” Accept | A personal productivity app can have brief downtime (RTO: 2 hours SEV-1). Solo developer cannot guarantee 99.9% uptime |
+| **Feature Completeness** | High tolerance â€” Accept | Scope creep is expected. Features ship when ready. Delayed features are acceptable |
+| **Cloud Costs** | Low tolerance â€” Monitor | Hard budget cap of â‚¹500/month (~$6 USD). Any cost overrun triggers immediate review |
+| **Dependency Vulnerabilities** | Low tolerance â€” Mitigate | `npm audit` and `pip-audit` must pass before merge. Critical CVEs patched within 48 hours |
 
 ### 2.3 Risk Scoring Criteria
 
@@ -98,10 +98,10 @@ Governance is enforced through:
 | Score | Label | Description | Frequency Guide |
 |---|---|---|---|
 | 1 | Rare | May occur only in exceptional circumstances | > 2 years |
-| 2 | Unlikely | Could occur at some time, but not expected | 6–24 months |
-| 3 | Possible | Might occur at some point | 1–6 months |
-| 4 | Likely | Will probably occur in most circumstances | Weekly–monthly |
-| 5 | Almost Certain | Expected to occur repeatedly | Daily–weekly |
+| 2 | Unlikely | Could occur at some time, but not expected | 6â€“24 months |
+| 3 | Possible | Might occur at some point | 1â€“6 months |
+| 4 | Likely | Will probably occur in most circumstances | Weeklyâ€“monthly |
+| 5 | Almost Certain | Expected to occur repeatedly | Dailyâ€“weekly |
 
 #### Impact (1-5)
 
@@ -113,14 +113,14 @@ Governance is enforced through:
 | 4 | Major | Core functionality down, data loss limited to one session, reputational damage | Database corruption, auth outage, backup failure |
 | 5 | Catastrophic | Complete data loss, security breach, permanent service termination | Credential leak, GDPR violation, total DB loss |
 
-#### Risk Score = Likelihood × Impact
+#### Risk Score = Likelihood Ã— Impact
 
 | Score Range | Priority | Color |
 |---|---|---|
-| 1–9 | Low | Green |
-| 10–14 | Medium | Amber |
-| 15–19 | High | Orange |
-| 20–25 | Critical | Red |
+| 1â€“9 | Low | Green |
+| 10â€“14 | Medium | Amber |
+| 15â€“19 | High | Orange |
+| 20â€“25 | Critical | Red |
 
 ---
 
@@ -184,7 +184,7 @@ Governance is enforced through:
 | AI-01 | Model Hallucination | ARIA agent fabricates task suggestions, course recommendations, or productivity advice that is incorrect or harmful |
 | AI-02 | Prompt Injection | User injects malicious prompt via task description or note content that manipulates ARIA into executing unintended actions |
 | AI-03 | Model Bias | Ollama or Claude generates biased responses in course recommendations or opportunity radar based on skewed training data |
-| AI-04 | AI Cost Spikes | Runaway agent loop — ARIA enters infinite reflection cycle consuming Claude API tokens. Monthly bill spikes from $0 to $50+ |
+| AI-04 | AI Cost Spikes | Runaway agent loop â€” ARIA enters infinite reflection cycle consuming Claude API tokens. Monthly bill spikes from $0 to $50+ |
 | AI-05 | Local AI Unavailability | Ollama service crashes, GPU out of memory, model not loaded. Fallback to Claude API increases cost and latency |
 
 ---
@@ -198,43 +198,43 @@ Governance is enforced through:
 | RISK-003 | Technical | RLS policy gap exposes user data to other users | 2 | 5 | 10 | Medium | Developer | RLS policy review checklist in PR template. Automated test queries for cross-user data access | Revoke service_role key usage. Audit logs to identify exposure scope. Notify affected users |
 | RISK-004 | Technical | Next.js major version upgrade breaks existing pages and API routes | 2 | 3 | 6 | Low | Developer | Pin Next.js to stable minor. Run full build + type-check before upgrade. Read changelog for breaking changes | Rollback via Git revert. Maintain working branch on old version |
 | RISK-005 | Technical | Supabase API deprecation removes endpoint used by app | 3 | 3 | 9 | Low | Developer | Monitor Supabase changelog and deprecation notices. Abstract Supabase calls behind repository layer | Migrate to new API endpoint. Fallback to direct PostgreSQL queries via pg library |
-| RISK-006 | Operational | Developer incapacitated (illness, burnout) — no one can maintain the system | 3 | 4 | 12 | Medium | Developer | Document all runbooks, env setup, and recovery procedures. Keep `AGENTS.md` current for AI-assisted recovery | Grant trusted collaborator (GitHub read-only) access. Document emergency key rotation steps |
-| RISK-007 | Operational | Production-only deployment — untested change breaks core feature | 4 | 3 | 12 | Medium | Developer | Run full test suite + lint + type-check in CI before deploy. Use feature flags for risky changes. Staged rollout via Vercel preview deploys | Revert the deployment. Use Vercel instant rollback to previous stable deploy |
+| RISK-006 | Operational | Developer incapacitated (illness, burnout) â€” no one can maintain the system | 3 | 4 | 12 | Medium | Developer | Document all runbooks, env setup, and recovery procedures. Keep `AGENTS.md` current for AI-assisted recovery | Grant trusted collaborator (GitHub read-only) access. Document emergency key rotation steps |
+| RISK-007 | Operational | Production-only deployment â€” untested change breaks core feature | 4 | 3 | 12 | Medium | Developer | Run full test suite + lint + type-check in CI before deploy. Use feature flags for risky changes. Staged rollout via Vercel preview deploys | Revert the deployment. Use Vercel instant rollback to previous stable deploy |
 | RISK-008 | Operational | CI/CD pipeline (GitHub Actions) fails blocking all deployments | 3 | 2 | 6 | Low | Developer | Use redundant runner (GitHub hosted). Cache dependencies to reduce flakiness | Re-run failed jobs. If runner outage, deploy manually from local machine |
 | RISK-009 | Operational | Automated backup cron fails silently for weeks | 4 | 4 | 16 | High | Developer | Backup job sends success/failure notification to developer email. Weekly manual backup verification | Restore from previous verified backup. Fix cron configuration. Re-run backup |
 | RISK-010 | Security | Supabase service_role key or Claude API key committed to public repo | 3 | 5 | 15 | High | Developer | `.env` in `.gitignore`. Pre-commit hook with `git-secrets` or `trufflehog`. No secrets in client-side bundle | Rotate ALL keys immediately. Audit git history with BFG Repo-Cleaner. Revoke exposed keys in Supabase dashboard + Anthropic console |
-| RISK-011 | Security | JWT secret weak or exposed — unauthorized user gains access to any account | 2 | 5 | 10 | Medium | Developer | Use cryptographically random 256-bit JWT secret stored in Supabase secrets manager. Never log or expose the secret | Rotate JWT secret. Force all sessions to re-authenticate. Audit access logs for unauthorized activity |
+| RISK-011 | Security | JWT secret weak or exposed â€” unauthorized user gains access to any account | 2 | 5 | 10 | Medium | Developer | Use cryptographically random 256-bit JWT secret stored in Supabase secrets manager. Never log or expose the secret | Rotate JWT secret. Force all sessions to re-authenticate. Audit access logs for unauthorized activity |
 | RISK-012 | Security | XSS vulnerability in user-generated content (task descriptions, notes) | 3 | 3 | 9 | Low | Developer | Sanitize all user input with DOMPurify on frontend. Never use `dangerouslySetInnerHTML`. Content Security Policy headers | Patch the vulnerable component. Scan for stored XSS payloads in database |
 | RISK-013 | Security | CORS misconfiguration exposes FastAPI backend to untrusted origins | 2 | 3 | 6 | Low | Developer | Explicit allowlist of origins (`http://localhost:3000`, production domain). No wildcard CORS in production | Update CORS configuration. Audit logs for unauthorized cross-origin requests |
-| RISK-014 | Business | Scope creep — 15 modules remain perpetually in "partial" state, no feature reaches completion | 4 | 3 | 12 | Medium | Developer | Strict MVP prioritization. Complete one module at a time before starting next. Use `IMPLEMENTATION_STATUS.md` to track completion | Quarterly scope review. De-scope underperforming modules. Ship 80% features to production |
-| RISK-015 | Business | Cloud cost overrun — Claude API or Supabase exceeds free tier budget | 4 | 3 | 12 | Medium | Developer | Set hard monthly budget caps. Monitor costs weekly. Use local Ollama as default AI, Claude only for fallback | Implement token limits per session. Switch fully to Ollama. Rate-limit AI calls |
-| RISK-016 | Business | Project abandonment — motivation fades, project joins unfinished personal project graveyard | 3 | 4 | 12 | Medium | Developer | Ship working product early (MVP). Real usage creates momentum. Document wins in changelog. Public roadmap for accountability | Accept that the project served its learning purpose. Archive the repo with README |
-| RISK-017 | Business | Feature bloat — too many features confuse the single user (the developer) | 3 | 2 | 6 | Low | Developer | Keep UI focused: dashboard shows top 5 modules. De-prioritize low-value features. "Done is better than perfect" | Review and remove unused UI sections. Consolidate modules |
-| RISK-018 | Data | Privacy breach — personal journals, tasks, or habits data exposed through application bug | 2 | 5 | 10 | Medium | Developer | RLS policies on all tables. All queries filtered by `user_id`. No logging of sensitive fields. Audit access regularly | Immediately revoke any exposed access. Identify scope via logs. Notify user of breach. Rotate all credentials |
-| RISK-019 | Data | GDPR / DPDP Act non-compliance — no data export or deletion mechanism | 3 | 3 | 9 | Low | Developer | Implement "Export My Data" (JSON download) and "Delete My Account" (cascade delete all user rows) endpoints | Provide data deletion within 30 days of request. Manual DB cleanup if automated script fails |
+| RISK-014 | Business | Scope creep â€” 15 modules remain perpetually in "partial" state, no feature reaches completion | 4 | 3 | 12 | Medium | Developer | Strict MVP prioritization. Complete one module at a time before starting next. Use `IMPLEMENTATION_STATUS.md` to track completion | Quarterly scope review. De-scope underperforming modules. Ship 80% features to production |
+| RISK-015 | Business | Cloud cost overrun â€” Claude API or Supabase exceeds free tier budget | 4 | 3 | 12 | Medium | Developer | Set hard monthly budget caps. Monitor costs weekly. Use local Ollama as default AI, Claude only for fallback | Implement token limits per session. Switch fully to Ollama. Rate-limit AI calls |
+| RISK-016 | Business | Project abandonment â€” motivation fades, project joins unfinished personal project graveyard | 3 | 4 | 12 | Medium | Developer | Ship working product early (MVP). Real usage creates momentum. Document wins in changelog. Public roadmap for accountability | Accept that the project served its learning purpose. Archive the repo with README |
+| RISK-017 | Business | Feature bloat â€” too many features confuse the single user (the developer) | 3 | 2 | 6 | Low | Developer | Keep UI focused: dashboard shows top 5 modules. De-prioritize low-value features. "Done is better than perfect" | Review and remove unused UI sections. Consolidate modules |
+| RISK-018 | Data | Privacy breach â€” personal journals, tasks, or habits data exposed through application bug | 2 | 5 | 10 | Medium | Developer | RLS policies on all tables. All queries filtered by `user_id`. No logging of sensitive fields. Audit access regularly | Immediately revoke any exposed access. Identify scope via logs. Notify user of breach. Rotate all credentials |
+| RISK-019 | Data | GDPR / DPDP Act non-compliance â€” no data export or deletion mechanism | 3 | 3 | 9 | Low | Developer | Implement "Export My Data" (JSON download) and "Delete My Account" (cascade delete all user rows) endpoints | Provide data deletion within 30 days of request. Manual DB cleanup if automated script fails |
 | RISK-020 | Data | Schema migration drops column or table, causing unrecoverable data loss | 2 | 5 | 10 | Medium | Developer | Always backup database before migration. Never DROP column without 2-step: SET DEFAULT NULL first, then DROP in next migration | Restore from pre-migration backup. Re-run migration with corrected schema |
 | RISK-021 | AI | ARIA agent hallucinates incorrect academic/career advice | 4 | 3 | 12 | Medium | Developer | Clear disclaimers on all AI-generated content. Human-in-the-loop before any automated action. Confidence scoring on responses | User can dismiss/flag hallucinated content. Log all hallucinations for model improvement |
 | RISK-022 | AI | Prompt injection via user-generated content manipulates ARIA into unintended actions | 3 | 4 | 12 | Medium | Developer | Input sanitization before sending to LLM. System prompt with strict role boundaries. Separate user content from instructions | Review agent actions logs. Rate-limit agent-initiated changes. Manual override kill switch |
-| RISK-023 | AI | AI cost spike — runaway reflection loop consumes $50+ in Claude API tokens in hours | 3 | 4 | 12 | Medium | Developer | Hard token budget per session (e.g., 100K tokens). Max iterations limit (3). Circuit breaker if cost exceeds threshold in 1 hour | Kill all active agent processes. Rotate API key temporarily. Switch to Ollama-only mode |
-| RISK-024 | AI | Ollama local model crashes or GPU out-of-memory — AI features unavailable | 3 | 2 | 6 | Low | Developer | Graceful fallback to Claude API with user notification. Auto-restart Ollama service. Monitor GPU memory | Restart Ollama process. Reduce model size if OOM persists. Accept degraded AI experience |
-| RISK-025 | AI | Model bias in opportunity radar — recommendations skewed toward certain fields or demographics | 2 | 3 | 6 | Low | Developer | Diversify prompt examples across fields. Manual review of opportunity radar output. User override on recommendations | Accept that personal AI has inherent bias from single-user training. Document limitations |
+| RISK-023 | AI | AI cost spike â€” runaway reflection loop consumes $50+ in Claude API tokens in hours | 3 | 4 | 12 | Medium | Developer | Hard token budget per session (e.g., 100K tokens). Max iterations limit (3). Circuit breaker if cost exceeds threshold in 1 hour | Kill all active agent processes. Rotate API key temporarily. Switch to Ollama-only mode |
+| RISK-024 | AI | Ollama local model crashes or GPU out-of-memory â€” AI features unavailable | 3 | 2 | 6 | Low | Developer | Graceful fallback to Claude API with user notification. Auto-restart Ollama service. Monitor GPU memory | Restart Ollama process. Reduce model size if OOM persists. Accept degraded AI experience |
+| RISK-025 | AI | Model bias in opportunity radar â€” recommendations skewed toward certain fields or demographics | 2 | 3 | 6 | Low | Developer | Diversify prompt examples across fields. Manual review of opportunity radar output. User override on recommendations | Accept that personal AI has inherent bias from single-user training. Document limitations |
 
 ---
 
 ## 5. Risk Response Strategies
 
-### 5.1 Critical (Score 20–25)
+### 5.1 Critical (Score 20â€“25)
 
 *No risks currently score in this range. If any risk reaches Critical, the response is immediate intervention.*
 
 **Strategies:**
-1. **Immediate service suspension** — Take the affected service offline to prevent further damage
-2. **Root cause analysis** — Isolate the issue. For data loss: stop all writes. For security breach: rotate all credentials
-3. **Emergency restore** — Execute disaster recovery plan (SB-DR-001) step by step
-4. **Post-mortem within 24 hours** — Document what happened, why, and how to prevent recurrence
-5. **Re-evaluation of all controls** — Full audit of the affected risk category before resuming service
+1. **Immediate service suspension** â€” Take the affected service offline to prevent further damage
+2. **Root cause analysis** â€” Isolate the issue. For data loss: stop all writes. For security breach: rotate all credentials
+3. **Emergency restore** â€” Execute disaster recovery plan (SB-DR-001) step by step
+4. **Post-mortem within 24 hours** â€” Document what happened, why, and how to prevent recurrence
+5. **Re-evaluation of all controls** â€” Full audit of the affected risk category before resuming service
 
-### 5.2 High (Score 15–19)
+### 5.2 High (Score 15â€“19)
 
 **Strategy: Mitigate / Reduce**
 
@@ -246,7 +246,7 @@ Governance is enforced through:
 | H-04 | Feature flags for high-risk deployments | RISK-007 | Use environment variables as feature flags. New features behind `FEATURE_FLAG_*` disabled in production |
 | H-05 | Token budget enforcement with circuit breaker | RISK-023 | Implement `MAX_TOKENS_PER_SESSION` and `MAX_AGENT_ITERATIONS` in FastAPI backend. Circuit breaker trips at 80% of monthly budget |
 
-### 5.3 Medium (Score 10–14)
+### 5.3 Medium (Score 10â€“14)
 
 **Strategy: Transfer / Share**
 
@@ -259,7 +259,7 @@ Governance is enforced through:
 | M-05 | Budget alerts on all cloud services | RISK-015 | Set Supabase spend alerts at $5. Set Anthropic usage limits at $10/month. Weekly cost review in calendar |
 | M-06 | RLS policy test suite | RISK-003, RISK-018 | Write integration tests that verify a user cannot access another user's data. Run in CI before deploy |
 
-### 5.4 Low (Score 1–9)
+### 5.4 Low (Score 1â€“9)
 
 **Strategy: Accept / Monitor**
 
@@ -285,8 +285,8 @@ Governance is enforced through:
 | 3 | RISK-023 | 12 | Mitigate | 1. Implement `MAX_TOKENS_PER_SESSION = 100000` in AI agent config<br>2. Set `MAX_AGENT_ITERATIONS = 3` circuit breaker<br>3. Add Anthropic usage dashboard (cost tracking)<br>4. Auto-disable AI features if daily cost > $2 | Week 1: token limits<br>Week 2: circuit breaker<br>Week 3: monitoring dashboard | AI costs never exceed $10/month. Runaway loops auto-terminate |
 | 4 | RISK-006 | 12 | Mitigate | 1. Create `ONBOARDING.md` with full environment setup (5 min)<br>2. Store recovery passwords in encrypted KeePass DB<br>3. Give one trusted friend read-only GitHub access<br>4. Document emergency key rotation in `docs/operations/` | Week 1: onboarding docs<br>Week 2: password manager<br>Week 3: emergency procedures | Another person could restore service within 1 hour using docs |
 | 5 | RISK-007 | 12 | Mitigate | 1. Ensure CI runs full test suite before merge<br>2. Enable Vercel preview deployments for all PRs<br>3. Use feature flags for new modules<br>4. Document rollback procedure in runbook | Week 1: CI checks<br>Week 2: preview deploys<br>Week 3: feature flags | Zero production-only bugs. Rollback completes in < 5 minutes |
-| 6 | RISK-014 | 12 | Accept/Manage | 1. One module at a time completion policy<br>2. Mark modules "Complete" only when all sub-features ship<br>3. Monthly review of `IMPLEMENTATION_STATUS.md` | Ongoing | At least 2 modules move from ⚠️ to ✅ per month |
-| 7 | RISK-015 | 12 | Mitigate | 1. Set Supabase spend alert at $5<br>2. Default AI to local Ollama, Claude as fallback only<br>3. Weekly cost check in calendar (5 min every Monday) | Week 1: alerts setup<br>Week 2: AI routing config<br>Ongoing: weekly review | Monthly cloud costs stay under ₹500 ($6). No surprise bills |
+| 6 | RISK-014 | 12 | Accept/Manage | 1. One module at a time completion policy<br>2. Mark modules "Complete" only when all sub-features ship<br>3. Monthly review of `IMPLEMENTATION_STATUS.md` | Ongoing | At least 2 modules move from âš ï¸ to âœ… per month |
+| 7 | RISK-015 | 12 | Mitigate | 1. Set Supabase spend alert at $5<br>2. Default AI to local Ollama, Claude as fallback only<br>3. Weekly cost check in calendar (5 min every Monday) | Week 1: alerts setup<br>Week 2: AI routing config<br>Ongoing: weekly review | Monthly cloud costs stay under â‚¹500 ($6). No surprise bills |
 | 8 | RISK-021 | 12 | Mitigate | 1. Add "AI-generated" disclaimer badge on all ARIA suggestions<br>2. Require user confirmation before AI takes actions<br>3. Log all AI responses for quality review<br>4. Confidence threshold: hide suggestions below 60% confidence | Week 1: disclaimers<br>Week 2: confirmation flow<br>Week 3: logging | < 1% of AI suggestions flagged as incorrect by user |
 | 9 | RISK-022 | 12 | Mitigate | 1. Input sanitization before LLM prompt construction<br>2. System prompt with strict boundaries: "You cannot delete data, only suggest"<br>3. Rate limit agent-initiated actions (max 5/min)<br>4. Kill-switch endpoint to disable all agent features | Week 1: sanitization<br>Week 2: prompt hardening<br>Week 3: kill switch | Zero successful prompt injection attempts |
 | 10 | RISK-001 | 10 | Mitigate | 1. Verify daily backup cron is running<br>2. Test restore on development environment monthly<br>3. Enable Supabase PITR if within budget<br>4. Document restore procedure step-by-step with commands | Week 1: backup verification<br>Weekly: restore test plan<br>Monthly: full DR drill | Restore from backup completed in < 30 minutes. RPO < 24 hours |
@@ -299,24 +299,24 @@ Governance is enforced through:
 
 | Risk Priority | Review Frequency | Method | Duration |
 |---|---|---|---|
-| Critical (20–25) | Immediate — within 6 hours of identification | Emergency review + post-mortem | As needed |
-| High (15–19) | Monthly | Risk register review + control effectiveness check | 30 minutes |
-| Medium (10–14) | Quarterly | Full risk register review + new risk identification | 1 hour |
-| Low (1–9) | Biannual | Spot-check + update if project context changed | 15 minutes |
+| Critical (20â€“25) | Immediate â€” within 6 hours of identification | Emergency review + post-mortem | As needed |
+| High (15â€“19) | Monthly | Risk register review + control effectiveness check | 30 minutes |
+| Medium (10â€“14) | Quarterly | Full risk register review + new risk identification | 1 hour |
+| Low (1â€“9) | Biannual | Spot-check + update if project context changed | 15 minutes |
 | All Risks | Quarterly | Comprehensive risk reassessment + treatment plan update | 2 hours |
 
 ### 7.2 Trigger Events for Automatic Risk Review
 
 The following events trigger an immediate ad-hoc risk review regardless of cadence:
 
-1. **Security incident** (any SEV-1 or SEV-2 security event) — Full security risk review
-2. **Cloud cost anomaly** (monthly bill exceeds ₹500 / $6) — Cost risk review + budget re-optimization
-3. **Third-party API deprecation notice** (Supabase, Anthropic, Vercel, Railway) — Technical risk review
-4. **Major dependency CVE** (CVSS ≥ 7.0 in production dependency) — Immediate patch + risk reassessment
-5. **Data loss event** (any data loss, even a single row) — Full data risk review + backup verification audit
-6. **New feature launch** (module moving from ⚠️ to ✅) — Feature-specific risk assessment
-7. **Architecture change** (database schema change, new AI provider, new cloud service) — Technical risk review
-8. **Development hiatus** (> 14 days no commits) — Operational risk review before resuming development
+1. **Security incident** (any SEV-1 or SEV-2 security event) â€” Full security risk review
+2. **Cloud cost anomaly** (monthly bill exceeds â‚¹500 / $6) â€” Cost risk review + budget re-optimization
+3. **Third-party API deprecation notice** (Supabase, Anthropic, Vercel, Railway) â€” Technical risk review
+4. **Major dependency CVE** (CVSS â‰¥ 7.0 in production dependency) â€” Immediate patch + risk reassessment
+5. **Data loss event** (any data loss, even a single row) â€” Full data risk review + backup verification audit
+6. **New feature launch** (module moving from âš ï¸ to âœ…) â€” Feature-specific risk assessment
+7. **Architecture change** (database schema change, new AI provider, new cloud service) â€” Technical risk review
+8. **Development hiatus** (> 14 days no commits) â€” Operational risk review before resuming development
 
 ### 7.3 Key Risk Indicators (KRIs)
 
@@ -327,7 +327,7 @@ The following events trigger an immediate ad-hoc risk review regardless of caden
 | AI Token Consumption | Daily Claude API tokens used | > 50,000/day | Medium | Anthropic usage dashboard |
 | API Response Time | p95 latency of FastAPI endpoints | > 2000ms | Medium | Vercel Analytics |
 | Auth Failure Rate | Failed login attempts per hour | > 10/hour | High | Supabase Auth logs |
-| Monthly Cloud Cost | Total spend across all services | > ₹500 ($6) | Critical | Provider billing dashboards |
+| Monthly Cloud Cost | Total spend across all services | > â‚¹500 ($6) | Critical | Provider billing dashboards |
 | Dependency Vulnerabilities | Open `npm audit` / `pip-audit` findings | > 0 at High/Critical | High | Dependabot alerts |
 | Deployment Failure Rate | Failed Vercel/Railway deploys per month | > 2/month | Low | GitHub Actions + deployment logs |
 
@@ -335,10 +335,10 @@ The following events trigger an immediate ad-hoc risk review regardless of caden
 
 | Risk Score | Escalation Action | Response Time | Notification |
 |---|---|---|---|
-| 1–9 | Logged in risk register. No action required | — | None |
-| 10–14 | Add to risk register with treatment plan. Review next quarter | 7 days | Calendar entry for quarterly review |
-| 15–19 | Create treatment plan with specific actions. Begin mitigation within 48 hours | 48 hours | Email alert to developer |
-| 20–25 | Immediate service suspension if applicable. Full emergency response. Post-mortem within 24 hours | Immediate | SMS + Email to developer |
+| 1â€“9 | Logged in risk register. No action required | â€” | None |
+| 10â€“14 | Add to risk register with treatment plan. Review next quarter | 7 days | Calendar entry for quarterly review |
+| 15â€“19 | Create treatment plan with specific actions. Begin mitigation within 48 hours | 48 hours | Email alert to developer |
+| 20â€“25 | Immediate service suspension if applicable. Full emergency response. Post-mortem within 24 hours | Immediate | SMS + Email to developer |
 
 ---
 
@@ -347,13 +347,13 @@ The following events trigger an immediate ad-hoc risk review regardless of caden
 ### 8.1 Standard Risk Report Template
 
 ```markdown
-# Risk Report — [YYYY-MM-DD]
+# Risk Report â€” [YYYY-MM-DD]
 
 ## Summary
 - Total risks identified: XX
 - Critical: X | High: X | Medium: X | Low: X
 - New risks since last report: X
-- Risk score trend: ↑ / → / ↓
+- Risk score trend: â†‘ / â†’ / â†“
 - Month-over-month change: +X / -X / 0
 
 ## Top 5 Risks by Score
@@ -376,8 +376,8 @@ The following events trigger an immediate ad-hoc risk review regardless of caden
 ## KRI Dashboard
 | KRI | Current Value | Threshold | Status |
 |---|---|---|---|
-| Backup Failures | 0 | > 0 | ✅ Healthy |
-| Monthly Cost | ₹XX | ₹500 | ✅ / ⚠️ / 🔴 |
+| Backup Failures | 0 | > 0 | âœ… Healthy |
+| Monthly Cost | â‚¹XX | â‚¹500 | âœ… / âš ï¸ / ðŸ”´ |
 
 ## Action Items
 - [ ] Action 1
@@ -410,10 +410,10 @@ All risk reports are stored in the project repository:
 
 | Guardrail | Implementation | Location |
 |---|---|---|
-| Confidence scoring | ARIA assigns 0–100 confidence to each suggestion. Below 60: hidden from user | `packages/ai/agents/aria.py` |
+| Confidence scoring | ARIA assigns 0â€“100 confidence to each suggestion. Below 60: hidden from user | `packages/ai/agents/aria.py` |
 | Human-in-the-loop | All AI-initiated actions (task creation, schedule changes) require user confirmation | `apps/web/app/api/aria/confirm/route.ts` |
 | Source attribution | AI suggestions cite their source (calendar data, task history, course schedule) | `packages/ai/agents/base.py` |
-| Disclaimers | "AI-generated suggestion — verify before acting" badge on all AI output | `packages/ui/components/ai-badge.tsx` |
+| Disclaimers | "AI-generated suggestion â€” verify before acting" badge on all AI output | `packages/ui/components/ai-badge.tsx` |
 | Hallucination logging | Every AI response logged with user feedback (thumbs up/down) for quality improvement | `packages/ai/audit/logger.py` |
 | Response validation | Pydantic models validate AI output structure before it reaches the user | `packages/database/schemas/ai.py` |
 
@@ -480,59 +480,59 @@ AI_CONFIG = {
 
 | ID | Category | Risk Description | L | I | Score | Priority | Owner | Mitigation | Contingency |
 |---|---|---|---|---|---|---|---|---|---|
-| RISK-001 | Technical | Supabase database corruption or deletion — permanent data loss | 2 | 5 | 10 | Medium | Developer | Daily pg_dump to cloud storage. RLS prevents bulk delete | Restore from latest backup with integrity check |
+| RISK-001 | Technical | Supabase database corruption or deletion â€” permanent data loss | 2 | 5 | 10 | Medium | Developer | Daily pg_dump to cloud storage. RLS prevents bulk delete | Restore from latest backup with integrity check |
 | RISK-002 | Technical | npm/PyPI critical CVE exploited in production | 3 | 4 | 12 | Medium | Developer | Weekly audit in CI. Dependabot alerts. Pin versions | Patch within 48h. Rollback if unavailable |
 | RISK-003 | Technical | RLS policy gap exposes cross-user data | 2 | 5 | 10 | Medium | Developer | RLS review in PR template. Cross-user test queries | Revoke service_role key. Audit scope. Notify |
 | RISK-004 | Technical | Next.js major upgrade breaks routes | 2 | 3 | 6 | Low | Developer | Pin to stable minor. Full build before upgrade | Git revert. Maintain old version branch |
 | RISK-005 | Technical | Supabase API deprecation removes endpoint | 3 | 3 | 9 | Low | Developer | Monitor changelog. Repository layer abstraction | Migrate to new endpoint. Fallback to direct pg |
-| RISK-006 | Operational | Developer incapacitated — no maintenance possible | 3 | 4 | 12 | Medium | Developer | Document runbooks. AGENTS.md for AI recovery | Trusted collaborator read-only access |
+| RISK-006 | Operational | Developer incapacitated â€” no maintenance possible | 3 | 4 | 12 | Medium | Developer | Document runbooks. AGENTS.md for AI recovery | Trusted collaborator read-only access |
 | RISK-007 | Operational | Production-only deployment breaks core feature | 4 | 3 | 12 | Medium | Developer | Full CI checks. Preview deploys. Feature flags | Vercel instant rollback |
 | RISK-008 | Operational | CI/CD pipeline fails blocking deploys | 3 | 2 | 6 | Low | Developer | Redundant runners. Dependency caching | Manual deploy from local |
 | RISK-009 | Operational | Backup cron fails silently for weeks | 4 | 4 | 16 | High | Developer | Email notification on failure. Weekly verification | Restore from previous verified backup |
 | RISK-010 | Security | Service_role key or API key committed to repo | 3 | 5 | 15 | High | Developer | pre-commit gitleaks. CI secret scan. env in gitignore | Rotate ALL keys. BFG git history clean |
-| RISK-011 | Security | Weak JWT secret — unauthorized account access | 2 | 5 | 10 | Medium | Developer | 256-bit random secret in Supabase secrets. No logging | Rotate secret. Force re-auth. Audit logs |
+| RISK-011 | Security | Weak JWT secret â€” unauthorized account access | 2 | 5 | 10 | Medium | Developer | 256-bit random secret in Supabase secrets. No logging | Rotate secret. Force re-auth. Audit logs |
 | RISK-012 | Security | XSS in user-generated content | 3 | 3 | 9 | Low | Developer | DOMPurify sanitization. CSP headers. No dangerouslySetInnerHTML | Patch component. Scan for stored payloads |
 | RISK-013 | Security | CORS misconfiguration exposes backend | 2 | 3 | 6 | Low | Developer | Explicit origin allowlist. No wildcard CORS | Update config. Audit cross-origin requests |
-| RISK-014 | Business | Scope creep — modules perpetually partial | 4 | 3 | 12 | Medium | Developer | One module at a time. Status tracking. Quarterly scope review | De-scope underperformers. Ship 80% features |
-| RISK-015 | Business | Cloud cost exceeds ₹500/month budget | 4 | 3 | 12 | Medium | Developer | Budget alerts. Local AI default. Weekly cost review | Full Ollama switch. Rate-limit AI calls |
-| RISK-016 | Business | Project abandonment — motivation fades | 3 | 4 | 12 | Medium | Developer | Ship MVP early. Public roadmap. Document wins | Archive repo with README |
+| RISK-014 | Business | Scope creep â€” modules perpetually partial | 4 | 3 | 12 | Medium | Developer | One module at a time. Status tracking. Quarterly scope review | De-scope underperformers. Ship 80% features |
+| RISK-015 | Business | Cloud cost exceeds â‚¹500/month budget | 4 | 3 | 12 | Medium | Developer | Budget alerts. Local AI default. Weekly cost review | Full Ollama switch. Rate-limit AI calls |
+| RISK-016 | Business | Project abandonment â€” motivation fades | 3 | 4 | 12 | Medium | Developer | Ship MVP early. Public roadmap. Document wins | Archive repo with README |
 | RISK-017 | Business | Feature bloat confuses single user | 3 | 2 | 6 | Low | Developer | Focused dashboard. De-prioritize low-value features | Remove unused sections |
-| RISK-018 | Data | Privacy breach — personal data exposed via bug | 2 | 5 | 10 | Medium | Developer | RLS on all tables. user_id filtering. No sensitive field logging | Revoke access. Log audit. Notify. Rotate creds |
+| RISK-018 | Data | Privacy breach â€” personal data exposed via bug | 2 | 5 | 10 | Medium | Developer | RLS on all tables. user_id filtering. No sensitive field logging | Revoke access. Log audit. Notify. Rotate creds |
 | RISK-019 | Data | GDPR/DPDP Act non-compliance | 3 | 3 | 9 | Low | Developer | Export data endpoint. Delete account endpoint | Manual cleanup within 30 days |
 | RISK-020 | Data | Schema migration drops column causing data loss | 2 | 5 | 10 | Medium | Developer | Backup before migration. Two-step column removal | Restore from pre-migration backup |
 | RISK-021 | AI | ARIA hallucinates incorrect advice | 4 | 3 | 12 | Medium | Developer | Disclaimers. Human-in-the-loop. Confidence scoring | User dismiss/flag. Log for improvement |
 | RISK-022 | AI | Prompt injection via user content | 3 | 4 | 12 | Medium | Developer | Input sanitization. Strict system prompt. Rate limits | Review action logs. Kill switch |
-| RISK-023 | AI | AI cost spike — runaway loop consumes $50+ | 3 | 4 | 12 | Medium | Developer | Token budget per session. Max 3 iterations. Circuit breaker | Kill agent processes. Rotate key. Ollama-only |
-| RISK-024 | AI | Ollama crash / OOM — AI features unavailable | 3 | 2 | 6 | Low | Developer | Graceful fallback to Claude. Auto-restart. GPU monitor | Restart Ollama. Reduce model size |
+| RISK-023 | AI | AI cost spike â€” runaway loop consumes $50+ | 3 | 4 | 12 | Medium | Developer | Token budget per session. Max 3 iterations. Circuit breaker | Kill agent processes. Rotate key. Ollama-only |
+| RISK-024 | AI | Ollama crash / OOM â€” AI features unavailable | 3 | 2 | 6 | Low | Developer | Graceful fallback to Claude. Auto-restart. GPU monitor | Restart Ollama. Reduce model size |
 | RISK-025 | AI | Model bias in opportunity radar recommendations | 2 | 3 | 6 | Low | Developer | Diverse prompt examples. User feedback loop. Bias audit logging | Accept limitations. Document bias sources |
 
-### Appendix B: Risk Scoring Matrix (5×5 Heat Map)
+### Appendix B: Risk Scoring Matrix (5Ã—5 Heat Map)
 
-| Likelihood \ Impact | 1 — Insignificant | 2 — Minor | 3 — Moderate | 4 — Major | 5 — Catastrophic |
+| Likelihood \ Impact | 1 â€” Insignificant | 2 â€” Minor | 3 â€” Moderate | 4 â€” Major | 5 â€” Catastrophic |
 |---|---|---|---|---|---|
-| **5 — Almost Certain** | 5 Low | 10 Medium | 15 High | 20 Critical | 25 Critical |
-| **4 — Likely** | 4 Low | 8 Low | 12 Medium | 16 High | 20 Critical |
-| **3 — Possible** | 3 Low | 6 Low | 9 Low | 12 Medium | 15 High |
-| **2 — Unlikely** | 2 Low | 4 Low | 6 Low | 8 Low | 10 Medium |
-| **1 — Rare** | 1 Low | 2 Low | 3 Low | 4 Low | 5 Low |
+| **5 â€” Almost Certain** | 5 Low | 10 Medium | 15 High | 20 Critical | 25 Critical |
+| **4 â€” Likely** | 4 Low | 8 Low | 12 Medium | 16 High | 20 Critical |
+| **3 â€” Possible** | 3 Low | 6 Low | 9 Low | 12 Medium | 15 High |
+| **2 â€” Unlikely** | 2 Low | 4 Low | 6 Low | 8 Low | 10 Medium |
+| **1 â€” Rare** | 1 Low | 2 Low | 3 Low | 4 Low | 5 Low |
 
 **Color Legend:**
 
 | Score | Priority | Action |
 |---|---|---|
-| 20–25 | 🔴 Critical | Immediate action. Service suspension if needed. Emergency response |
-| 15–19 | 🟠 High | Mitigation within 48 hours. Treatment plan required |
-| 10–14 | 🟡 Medium | Treatment plan within 7 days. Monitor quarterly |
-| 1–9 | 🟢 Low | Accept. Monitor on regular cadence |
+| 20â€“25 | ðŸ”´ Critical | Immediate action. Service suspension if needed. Emergency response |
+| 15â€“19 | ðŸŸ  High | Mitigation within 48 hours. Treatment plan required |
+| 10â€“14 | ðŸŸ¡ Medium | Treatment plan within 7 days. Monitor quarterly |
+| 1â€“9 | ðŸŸ¢ Low | Accept. Monitor on regular cadence |
 
 **Current Risk Distribution on Matrix:**
 
 ```
-                 Impact →
+                 Impact â†’
                  1     2     3     4     5
                +-----+-----+-----+-----+-----+
 Likelihood   5 |     |     |     |     |     |
-     ↓         +-----+-----+-----+-----+-----+
+     â†“         +-----+-----+-----+-----+-----+
              4 |     |     |014  |009  |     |
                |     |     |015  |     |     |
                |     |     |007  |     |     |
@@ -559,7 +559,7 @@ gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %b %d
 
-    section Week 1 (Jun 12–18)
+    section Week 1 (Jun 12â€“18)
     RISK-009: Add backup failure notifications       :active, r9a, 2026-06-12, 3d
     RISK-010: Install pre-commit + gitleaks           :active, r10a, 2026-06-12, 2d
     RISK-023: Implement MAX_TOKENS_PER_SESSION        :active, r23a, 2026-06-14, 3d
@@ -570,7 +570,7 @@ gantt
     RISK-022: Input sanitization for LLM prompts      :active, r22a, 2026-06-14, 3d
     RISK-001: Verify daily backup cron is running      :active, r1a, 2026-06-12, 1d
 
-    section Week 2 (Jun 19–25)
+    section Week 2 (Jun 19â€“25)
     RISK-009: Weekly verification script              :active, r9b, 2026-06-19, 4d
     RISK-010: Create rotate_keys.py                   :active, r10b, 2026-06-19, 3d
     RISK-023: Circuit breaker implementation          :active, r23b, 2026-06-19, 3d
@@ -581,7 +581,7 @@ gantt
     RISK-022: Strict system prompt hardening           :active, r22b, 2026-06-19, 3d
     RISK-001: Test restore on dev environment          :active, r1b, 2026-06-22, 4d
 
-    section Week 3 (Jun 26–Jul 2)
+    section Week 3 (Jun 26â€“Jul 2)
     RISK-009: Checksum verification + runbook          :active, r9c, 2026-06-26, 4d
     RISK-010: Git history audit with BFG              :active, r10c, 2026-06-26, 3d
     RISK-023: Cost monitoring dashboard                :active, r23c, 2026-06-26, 4d
@@ -610,7 +610,7 @@ gantt
 | **Bus Factor** | The minimum number of team members that need to be hit by a bus (or become unavailable) before the project stalls |
 | **CORS** | Cross-Origin Resource Sharing. HTTP header mechanism that allows a server to indicate which origins are permitted to load resources |
 | **CVE** | Common Vulnerability and Exposures. Publicly disclosed cybersecurity vulnerabilities |
-| **CVSS** | Common Vulnerability Scoring System. Open standard for communicating severity of vulnerabilities (0–10 scale) |
+| **CVSS** | Common Vulnerability Scoring System. Open standard for communicating severity of vulnerabilities (0â€“10 scale) |
 | **DPDP Act** | India's Digital Personal Data Protection Act, 2023. Regulates processing of digital personal data |
 | **GDPR** | General Data Protection Regulation. EU regulation on data protection and privacy |
 | **JWT** | JSON Web Token. Compact URL-safe token format used for authentication |
@@ -629,4 +629,4 @@ gantt
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0.0 | 2026-06-11 | Developer | Initial risk management plan — 25 risks identified across 6 categories. Full treatment plan for top 10 risks |
+| 1.0.0 | 2026-06-11 | Developer | Initial risk management plan â€” 25 risks identified across 6 categories. Full treatment plan for top 10 risks |

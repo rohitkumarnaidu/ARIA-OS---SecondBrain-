@@ -4,25 +4,36 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-DR-001 |
-| Version | 1.0.0 |
-| Status | Draft |
+| Document ID | OPS-DR-001 |
+| Version | 2.0.0 |
+| Status | Approved |
 | Classification | Internal — Confidential |
+| Owner | Developer |
+| Last Updated | 2026-07-11 |
+| Next Review | 2026-10-11 |
+| Review Cycle | Quarterly |
+| Approving Authority | Developer |
+| Location | `docs/operations/41_DisasterRecovery.md` |
+| Supporting Documents | `docs/devops/backup-verification-procedure.md`, `docs/operations/40_IncidentResponse.md`, `docs/operations/39_Runbooks.md` |
 
 ---
 
 ## Table of Contents
 
 1. [Executive Summary](#1-executive-summary)
-2. [Recovery Objectives](#2-recovery-objectives)
-3. [Risk Assessment & Scenarios](#3-risk-assessment--scenarios)
-4. [Backup Architecture](#4-backup-architecture)
-5. [Recovery Procedures](#5-recovery-procedures)
-6. [Business Continuity Procedures](#6-business-continuity-procedures)
-7. [Communication Plan](#7-communication-plan)
-8. [Testing & Validation](#8-testing--validation)
-9. [Roles & Responsibilities](#9-roles--responsibilities)
-10. [Appendices](#10-appendices)
+2. [DR Team & Roles](#2-dr-team--roles)
+3. [Recovery Prioritization Matrix](#3-recovery-prioritization-matrix)
+4. [Recovery Objectives](#4-recovery-objectives)
+5. [Risk Assessment & Scenarios](#5-risk-assessment--scenarios)
+6. [Backup Architecture](#6-backup-architecture)
+7. [Step-by-Step Recovery Procedures](#7-step-by-step-recovery-procedures)
+8. [Business Continuity Procedures](#8-business-continuity-procedures)
+9. [Communication Plan](#9-communication-plan)
+10. [Post-Recovery Verification](#10-post-recovery-verification)
+11. [DR Test Schedule](#11-dr-test-schedule)
+12. [DR Test Template](#12-dr-test-template)
+13. [Commands Cheat Sheet](#13-commands-cheat-sheet)
+14. [Appendices](#14-appendices)
 
 ---
 
@@ -52,355 +63,434 @@ This Disaster Recovery (DR) and Business Continuity Plan (BCP) documents the pro
 - The project is maintained by a single developer (no on-call rotation)
 - Cost is a constraint — recovery solutions must fit within free/low-cost tiers
 - No dedicated staging environment exists (prod-only recovery)
+- Developer workstation has local clones, Python and Node runtimes, and necessary CLI tools installed
 
 ---
 
-## 2. Recovery Objectives
+## 2. DR Team & Roles
 
-### 2.1 Recovery Time Objective (RTO)
+### 2.1 Team Roster
+
+| Role | Person | Responsibilities | Backup |
+|---|---|---|---|
+| Incident Commander | Developer (self) | Lead recovery, make decisions, declare severity | Self |
+| Technical Lead | Developer (self) | Execute recovery procedures, run commands | Self |
+| Communications | Developer (self) | Document timeline, update logs | Self |
+| Post-Mortem Lead | Developer (self) | Write incident report, track action items | Self |
+
+> **Single-developer note:** All roles are filled by the same person. Role separation exists to ensure systematic thinking during incidents. Use the checklist in Section 12 to maintain procedural discipline.
+
+### 2.2 Escalation Chain
+
+| Level | Contact | Method | Response Time |
+|---|---|---|---|
+| Level 0 — Self-resolution | Developer | Immediate action | — |
+| Level 1 — Cloud provider support | Supabase / Vercel / Railway | Dashboard ticket or email | < 1 hour for billing issues |
+| Level 2 — External consultant | Freelance backup (if contracted) | Email / phone | < 24 hours |
+| Level 3 — Service deprecation | Migrate to alternative provider | Per migration plan | Weeks |
+
+### 2.3 DR Plan Maintenance
+
+| Task | Frequency | Owner |
+|---|---|---|
+| Review DR plan | Quarterly | Developer |
+| Update backup scripts | Monthly | Developer |
+| Rotate API keys | Quarterly | Developer |
+| Test recovery procedures | Quarterly | Developer |
+| Update contacts in communication plan | Semi-annually | Developer |
+| Review RTO/RPO targets | Annually | Developer |
+
+---
+
+## 3. Recovery Prioritization Matrix
+
+| Module | RTO | RPO | Priority | Recovery Procedure |
+|---|---|---|---|---|
+| Database (Supabase) | 4 hours | 1 hour | P0 | Point-in-time recovery via Supabase dashboard or pg_dump restore |
+| Auth Service | 2 hours | N/A | P0 | Supabase reconnection, verify Google OAuth config, re-deploy if needed |
+| AI Service | 1 hour | N/A | P1 | Ollama restart, Claude API failover, algorithmic fallback |
+| API Backend (Railway) | 2 hours | N/A | P0 | Redeploy from last known good deployment or rollback |
+| Frontend (Vercel) | 1 hour | N/A | P0 | Rollback to previous deployment via Vercel dashboard or CLI |
+| Scheduler | 4 hours | 1 day | P2 | Restart APScheduler service, backfill missed cron jobs |
+| Email (Resend) | 8 hours | N/A | P2 | Verify API key, check dashboard, queue and retry |
+| Analytics | 24 hours | 1 week | P3 | Rebuild from logs if needed |
+
+### 3.1 Recovery Priority Definitions
+
+- **P0 — Critical:** Complete service outage, data loss, or security breach. Immediate action required.
+- **P1 — High:** Major feature unavailable. Action within 1 hour.
+- **P2 — Medium:** Partial degradation. Action within 4 hours.
+- **P3 — Low:** Non-critical. Action within 24 hours.
+
+---
+
+## 4. Recovery Objectives
+
+### 4.1 Recovery Time Objectives (RTO)
 
 | Tier | Service | RTO | Description |
 |---|---|---|---|
-| P0 | User Authentication | 4 hours | Login, session management |
+| P0 | User Authentication | 2 hours | Login, session management |
 | P0 | Database (read/write) | 4 hours | All CRUD operations on user data |
-| P0 | Core API (tasks, habits, etc.) | 8 hours | All 13 FastAPI routers |
-| P1 | Frontend | 8 hours | Next.js application |
-| P1 | AI Features | 24 hours | Chat, briefing, agents |
-| P2 | Scheduler / Cron | 48 hours | APScheduler jobs |
-| P2 | Email Notifications | 48 hours | Resend integration |
+| P0 | Core API (tasks, habits, etc.) | 2 hours | All FastAPI routers |
+| P1 | Frontend | 1 hour | Next.js application |
+| P1 | AI Features | 1 hour | Chat, briefing, agents |
+| P2 | Scheduler / Cron | 4 hours | APScheduler jobs |
+| P2 | Email Notifications | 8 hours | Resend integration |
 | P3 | 3D Background / Effects | Best effort | Three.js visual effects |
 
-### 2.2 Recovery Point Objective (RPO)
+### 4.2 Recovery Point Objectives (RPO)
 
 | Data Class | RPO | Method |
 |---|---|---|
-| User data (tasks, habits, logs, entries) | 24 hours | Daily Supabase backup |
-| Auth data (users, sessions) | 0 hours | Supabase managed (real-time) |
-| Chat history | 7 days | Periodic export |
+| User data (tasks, habits, logs, entries) | 1 hour | Automated Supabase backups + pg_dump |
+| Auth data (users, sessions) | 0 hours | Supabase managed (real-time replication) |
+| Chat history | 7 days | Periodic JSON export |
 | AI memory / context | 24 hours | Supabase table backup |
 | Source code | Real-time | GitHub commits |
-| Environment variables | Manual | Encrypted `.env` backup |
+| Environment variables | Manual | Encrypted `.env` backup (GPG) |
 | Configuration files | Per release | GitHub repository |
-
-### 2.3 Criticality Classification
-
-```mermaid
-graph TD
-    subgraph P0[CRITICAL P0]
-        D1[Supabase Database]
-        D2[Supabase Auth]
-        D3[GitHub Repository]
-        D4[API Endpoints all 13 routers]
-        D5[Environment Secrets]
-    end
-    subgraph P1[HIGH P1]
-        D6[Frontend Deployment Vercel]
-        D7[AI Client Configuration]
-        D8[Email Service Configuration]
-    end
-    subgraph P2[MEDIUM P2]
-        D9[APScheduler Jobs]
-        D10[Analytics Data]
-        D11[Log Files]
-        D12[Design Assets]
-    end
-    subgraph P3[LOW P3]
-        D13[Three.js 3D Backgrounds]
-        D14[Documentation Files]
-        D15[Archived Data]
-        D16[Old DB Snapshots]
-    end
-```
 
 ---
 
-## 3. Risk Assessment & Scenarios
+## 5. Risk Assessment & Scenarios
 
-### 3.1 Failure Scenarios
+### 5.1 Failure Scenarios
 
 | Scenario | Probability | Impact | RTO | Recovery Strategy |
 |---|---|---|---|---|
-| Supabase DB corruption | Low | Critical | 4h | Restore from daily backup |
-| Supabase DB deletion | Very Low | Critical | 4h | Restore from Supabase point-in-time |
-| Vercel deployment failure | Medium | High | 2h | Rollback to previous deployment |
-| Railway service down | Low | High | 4h | Redeploy on alternative platform |
-| GitHub repository loss | Very Low | Critical | 8h | Restore from local clones |
-| API key rotation/leak | Low | Critical | 1h | Rotate keys, redeploy |
-| Local dev machine failure | Medium | Medium | 24h | Clone repo, set up new environment |
-| AI model provider outage | Medium | Low | — | Fallback to local Ollama or algorithmic mode |
-| Email provider outage | Low | Low | — | Queue emails, retry |
-| DNS/Custom domain expiry | Low | Medium | 24h | Auto-renewal, manual intervention |
+| Supabase DB corruption | Low | Critical | 4h | Point-in-time recovery or pg_dump restore |
+| Supabase DB deletion | Very Low | Critical | 4h | Restore from Supabase PITR (if available) or latest pg_dump |
+| Vercel deployment failure | Medium | High | 1h | Rollback to previous deployment |
+| Railway service down | Low | High | 2h | Redeploy on Railway or local fallback |
+| GitHub repository loss | Very Low | Critical | 8h | Restore from local clones + push to new remote |
+| API key rotation/leak | Low | Critical | 1h | Revoke, rotate, redeploy |
+| Local dev machine failure | Medium | Medium | 24h | Clone repo, install deps, configure .env |
+| AI model provider outage | Medium | Low | 1h | Ollama → Claude → algorithmic fallback chain |
+| Email provider outage | Low | Low | — | Queue emails, retry on restore |
+| DNS/Custom domain expiry | Low | Medium | 24h | Auto-renewal or manual intervention at registrar |
 
-### 3.2 Probability Matrix
-
-```mermaid
-graph LR
-    subgraph Likelihood[LIKELIHOOD]
-        VL[Very Low]
-        L[Low]
-        M[Medium]
-        H[High]
-        VH[Very High]
-    end
-
-    CRITICAL[CRITICAL] --> VL
-    CRITICAL --> L
-    CRITICAL --> M
-    CRITICAL --> H
-    CRITICAL --> VH
-
-    VL --- DB_Del[DB del]
-    VL --- Repo_Loss[Repo loss]
-    L --- DB_Corr[DB corr]
-    L --- MC_Fail[M/C fail]
-    L --- AI_Out[AI out]
-    L --- Email_Out[Email out]
-    L --- DNS_Exp[DNS exp]
-    M --- API_Leak[API leak]
-    H --- Deploy_Fail[Deploy fail]
-```
-
-### 3.3 Single Point of Failure Analysis
+### 5.2 Single Point of Failure Analysis
 
 | SPOF | Risk | Mitigation |
 |---|---|---|
-| Single developer | Knowledge loss, single point of failure | Document all procedures in runbooks |
-| Supabase as sole database | No read replica, no failover | Leverage Supabase's built-in HA |
-| Single Railway instance | No auto-scaling, no multi-region | Document migration plan to Render |
-| Local Ollama AI | System unavailable if laptop is off | Claude API as fallback |
-| Free-tier hosting limits | Rate limiting, storage caps | Monitor usage, plan upgrade triggers |
-| No CI/CD pipeline | Manual deployments error-prone | GitHub Actions plan in backlog |
-| Single environment (prod) | No staging for testing | Vercel preview deployments for frontend |
+| Single developer | Knowledge loss, single point of failure | Document all procedures in runbooks and this DR plan |
+| Supabase as sole database | No read replica, no failover | Leverage Supabase's built-in HA and automated backups |
+| Single Railway instance | No auto-scaling, no multi-region | Document migration plan to alternative platform |
+| Local Ollama AI | System unavailable if laptop is off | Claude API as cloud fallback |
+| Free-tier hosting limits | Rate limiting, storage caps | Monitor usage monthly; plan upgrade triggers |
+| Single environment (prod) | No staging for testing | Vercel preview deployments for frontend testing |
 
 ---
 
-## 4. Backup Architecture
+## 6. Backup Architecture
 
-### 4.1 Backup Schedule
+### 6.1 Backup Schedule
 
-| DATA | FREQUENCY | METHOD | RETENTION |
-|------|-----------|--------|-----------|
-| PostgreSQL DB | Daily | pg_dump | 30 days |
-| Auth & Users | Real-time | Supabase | Unlimited |
+| Data | Frequency | Method | Retention |
+|---|---|---|---|
+| PostgreSQL DB | Daily (automated) | Supabase daily backup + pg_dump | 30 days (local) + Supabase retention |
+| Auth & Users | Real-time | Supabase managed | Unlimited (Supabase) |
 | Source Code | Per commit | GitHub | Unlimited |
-| Env Variables | Per change | Encrypted | Per version |
+| Environment Variables | Per change | GPG-encrypted file | Per version |
 | Chat History | Weekly | JSON export | 90 days |
 | Config Files | Per release | GitHub | Unlimited |
-| Design Assets | Weekly | Manual | 90 days |
-| Logs | No backup | — | 7 days |
+| Design Assets | Weekly | Manual backup | 90 days |
+| Logs | Not backed up | — | 7 days (streaming) |
 
-### 4.2 Database Backup Procedure
-
-```sql
--- Daily backup script (to be run via cron or Supabase dashboard)
--- Method 1: pg_dump via Supabase CLI (recommended)
-supabase db dump --file backups/sb_daily_$(date +%Y%m%d).sql
-
--- Method 2: Supabase dashboard manual export
--- Settings → Database → Database backup → Create backup
-
--- Method 3: Python script for automated backups
--- scripts/backup_db.py
-/*
-import subprocess, datetime
-date = datetime.datetime.now().strftime("%Y%m%d")
-cmd = f"pg_dump $SUPABASE_DB_URL > backups/sb_{date}.sql"
-subprocess.run(cmd, shell=True, check=True)
-*/
-
--- Recovery:
--- psql $SUPABASE_DB_URL < backups/sb_20260611.sql
-```
-
-### 4.3 Backup Storage
+### 6.2 Backup Storage Locations
 
 | Backup Type | Primary Storage | Secondary Storage |
 |---|---|---|
-| Database dumps | Local `backups/` directory | GitHub repo (backup branch) |
-| `.env` files | `~/.config/secondbrain/.env.encrypted` | — |
-| Source code | GitHub (main branch) | Local `.git` clone |
+| Database dumps | Local `backups/` directory | GitHub backup branch (encrypted) |
+| `.env` files | `~/.config/secondbrain/.env.encrypted` | USB/external drive (quarterly) |
+| Source code | GitHub (main branch) | Local `.git` clone(s) |
 | Design assets | `docs/design/` in repo | Figma (if applicable) |
 
-### 4.4 Backup Verification
+### 6.3 Database Backup Commands
 
 ```bash
-# Verify backup integrity — run after each backup
-scripts/verify_backup.sh
-# Steps:
-# 1. Check file size > 1KB
-# 2. pg_restore --list (validates SQL syntax)
-# 3. Check row counts for critical tables
-# 4. Log result to backups/audit.log
+# pg_dump — full database export
+pg_dump "$SUPABASE_DB_URL" > "backups/sb_$(date +%Y%m%d_%H%M%S).sql"
+
+# Supabase CLI dump
+supabase db dump --file "backups/sb_supabase_$(date +%Y%m%d).sql"
+
+# Verify backup integrity
+wc -l "backups/sb_latest.sql"
+head -5 "backups/sb_latest.sql"    # Should show CREATE/COPY statements
 ```
 
 ---
 
-## 5. Recovery Procedures
+## 7. Step-by-Step Recovery Procedures
 
-### 5.1 Database Recovery
+### 7.1 Database Corruption (P0)
 
-```
-Scenario: Supabase database is corrupted or deleted
-
-Step 1: Identify the incident
-  ├── Check Supabase dashboard → Database → Health
-  ├── Check error logs in Railway
-  └── Confirm with supabase-py client error
-
-Step 2: Initiate recovery
-  ├── Option A: Supabase Point-in-Time Recovery (preferred)
-  │   └── Dashboard → Database → Backups → PITR
-  │   └── RPO: Last 5 minutes (pro plan) or 24h (free plan)
-  │
-  ├── Option B: Manual pg_dump restore
-  │   ├── Locate latest backup: backups/sb_YYYYMMDD.sql
-  │   ├── psql $SUPABASE_DB_URL < backups/sb_20260611.sql
-  │   └── Verify row counts match expected
-
-Step 3: Verify recovery
-  ├── Run health check: curl /api/health
-  ├── Check 5 random rows from critical tables
-  └── Confirm auth users still exist
-
-Step 4: Document incident
-  └── Update docs/operations/40_IncidentResponse.md
-```
-
-### 5.2 Application Recovery (Backend)
+**Scenario:** Supabase PostgreSQL database is corrupted, has missing tables, or returns query errors.
 
 ```
-Scenario: FastAPI backend is down or corrupt
-
 Step 1: Diagnose
-  ├── Check Railway dashboard → Deployments → Logs
-  ├── Verify environment variables are set
-  └── Check Python startup errors
+  ├── Check Supabase dashboard → Database → Health
+  ├── Run: curl -s http://localhost:8000/api/health
+  ├── Check Railway logs for database errors
+  └── Verify with: psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM tasks;"
 
-Step 2: Redeploy
-  ├── Option A: Rollback to previous deployment
-  │   └── Railway → Deployments → Select previous → Redeploy
+Step 2: Initiate Point-in-Time Recovery (PITR)
+  ├── Option A: Supabase Dashboard PITR
+  │   ├── Navigate to: Database → Backups → Point-in-Time Recovery
+  │   ├── Select target time (before corruption occurred)
+  │   ├── Confirm and wait for restoration
+  │   └── Note: Available on Pro plan; free plan uses daily backups
   │
-  ├── Option B: Deploy from latest code
-  │   └── git pull origin main
-  │   └── Railway → Connect repo → Deploy
+  └── Option B: Manual pg_dump Restore
+      ├── Locate latest uncorrupted backup:
+      │   ls -lt backups/sb_*.sql | head -5
+      ├── Verify backup timestamp matches pre-corruption window
+      ├── Restore:
+      │   psql "$SUPABASE_DB_URL" < backups/sb_20260710_120000.sql
+      └── If restore fails, try second-most-recent backup
 
-Step 3: Local fallback (if Railway is down)
-  ├── cd apps/api
-  ├── pip install -r requirements.txt  
-  ├── uvicorn main:app --host 0.0.0.0 --port 8000
-  └── Point frontend to localhost:8000
+Step 3: Verify Recovery
+  ├── Run: curl -s http://localhost:8000/api/health
+  ├── Check row counts for critical tables:
+  │   psql "$SUPABASE_DB_URL" -c "
+  │     SELECT 'tasks' as tbl, count(*) FROM tasks
+  │     UNION ALL SELECT 'habits', count(*) FROM habits
+  │     UNION ALL SELECT 'goals', count(*) FROM goals;"
+  ├── Verify auth users exist:
+  │   psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM auth.users;"
+  └── Test one CRUD operation per module via API
+
+Step 4: Document
+  └── Log in: docs/operations/40_IncidentResponse.md
+  └── Update backup verification: docs/devops/backup-verification-procedure.md
+```
+
+### 7.2 Full System Outage (P0)
+
+**Scenario:** Frontend, backend, and/or database are all unreachable.
+
+```
+Step 1: Frontend Recovery (Vercel)
+  ├── Check: Vercel Dashboard → Deployments → Status
+  ├── Rollback:
+  │   vercel rollback --safe=10
+  │   # Or via Dashboard: Deployments → ... → Rollback to Previous
+  └── Verify: Visit production URL, confirm page loads
+
+Step 2: Backend Recovery (Railway)
+  ├── Check: Railway Dashboard → Deployments → Logs
+  ├── Rollback:
+  │   railway redeploy --deployment <last-known-good>
+  │   # Or via Dashboard: Deployments → Select previous → Redeploy
+  └── Verify: curl -s http://localhost:8000/api/health | jq .
+
+Step 3: Database Recovery
+  ├── Check: Supabase Dashboard → Database → Health
+  ├── If corrupted → follow Section 7.1 (Database Corruption recovery)
+  └── Verify: API returns correct data for CRUD endpoints
+
+Step 4: AI Service Recovery
+  ├── Check AI health:
+  │   curl -s http://localhost:11434/api/tags  # Ollama
+  ├── If Ollama down → start it:
+  │   ollama serve &
+  │   ollama pull mistral  # if model missing
+  └── Verify: POST /api/v1/chat with a test message
+
+Step 5: Scheduler Recovery
+  ├── Restart scheduler service:
+  │   cd services/scheduler && python main.py &
+  └── Verify: Check logs for job execution
+```
+
+### 7.3 AI Provider Failure (P1)
+
+**Scenario:** Ollama local, Claude API, or both are unavailable.
+
+**Fallback Chain:**
+1. Default: **Ollama** (local, free)
+2. Fallback: **Claude API** (cloud, ~$0.015/request)
+3. Last resort: **Algorithmic fallback** (no AI, deterministic logic)
+
+```
+Step 1: Detect
+  ├── Chat returns 503 or timeout
+  ├── Briefing generation fails
+  └── Agent tasks return errors in logs
+
+Step 2: Diagnose
+  ├── Check Ollama:
+  │   curl -s http://localhost:11434/api/tags
+  │   # If connection refused → Ollama is down
+  ├── Check Claude:
+  │   curl -s https://api.anthropic.com/v1/messages -H "x-api-key: $CLAUDE_API_KEY"
+  │   # Check billing at console.anthropic.com
+  └── Check environment:
+      echo $USE_LOCAL_AI  # "True" means Ollama primary
+
+Step 3: Restore
+  ├── If Ollama down:
+  │   ollama serve                    # Start service
+  │   ollama pull mistral             # Download model if missing
+  │   Verify: curl http://localhost:11434/api/tags
+  │
+  ├── If Claude API exhausted:
+  │   Top up billing at console.anthropic.com
+  │   Or set USE_LOCAL_AI=True temporarily
+  │
+  └── If both down:
+      System enters degraded mode (algorithmic fallback)
+      All AI features use template-based responses
 
 Step 4: Verify
-  ├── curl http://localhost:8000/api/health
-  ├── Test one CRUD endpoint per module
-  └── Confirm AI client initializes
+  ├── curl -s http://localhost:8000/api/v1/chat -X POST -d '{"message":"hello"}'
+  └── Check response contains valid data (not an error message)
 ```
 
-### 5.3 Application Recovery (Frontend)
+### 7.4 Auth Provider Failure (P0)
+
+**Scenario:** Supabase Auth is down, users cannot log in, or OAuth is broken.
 
 ```
-Scenario: Next.js frontend fails or corrupt
-
 Step 1: Diagnose
-  ├── Check Vercel dashboard → Deployments → Build logs
-  ├── Verify NEXT_PUBLIC_* env vars are set in Vercel
-  └── Check for TypeScript/Next.js build errors
+  ├── Check: Supabase Dashboard → Authentication → Settings
+  ├── Verify: Google OAuth redirect URIs are correct
+  ├── Check: JWT_SECRET matches between Supabase and .env
+  └── Test: Try login with email/password (if configured)
 
 Step 2: Recover
-  ├── Option A: Rollback Vercel deployment
-  │   └── Vercel Dashboard → Deployments → ... → Rollback
+  ├── If Supabase Auth service issue:
+  │   Wait for Supabase to resolve (check status.supabase.com)
+  │   No self-service fix available
   │
-  ├── Option B: Force redeploy
-  │   └── Vercel Dashboard → Deploy → Redeploy
-  │   └── Or: git push (triggers auto-deploy)
+  ├── If configuration issue (wrong redirect URI, expired secret):
+  │   Update OAuth provider settings in Supabase Dashboard
+  │   Update JWT_SECRET if rotated
+  │   Redeploy backend: railway redeploy
+  │   Redeploy frontend: Vercel auto-deploy (or manual)
   │
-  ├── Option C: Local build test
-  │   └── npm run build → Fix errors → git push
+  └── If Google OAuth quota exceeded:
+      Log into Google Cloud Console → APIs & Services
+      Check OAuth consent screen quota
+      Request increase if needed
 
 Step 3: Verify
-  └── Visit production URL → Test 3 core pages
+  ├── Navigate to login page, complete OAuth flow
+  ├── Verify JWT token is returned
+  └── Confirm API calls succeed with new token
 ```
 
-### 5.4 API Key / Secret Leak Recovery
+### 7.5 Scheduler Not Running (P2)
+
+**Scenario:** APScheduler service is stopped, cron jobs are not triggering.
 
 ```
-Scenario: API key or secret is compromised
+Step 1: Diagnose
+  ├── Check if scheduler process is running:
+  │   ps aux | grep scheduler
+  │   # Windows: Get-Process -Name python | Where-Object {$_.CommandLine -match "scheduler"}
+  ├── Check scheduler logs:
+  │   tail -100 services/scheduler/logs/scheduler.log
+  └── Check Railway dashboard if deployed there
 
+Step 2: Restart
+  ├── Local deployment:
+  │   cd services/scheduler
+  │   source venv/bin/activate    (or .\venv\Scripts\Activate on Windows)
+  │   python main.py &
+  │
+  └── Railway deployment:
+      Railway Dashboard → Services → Scheduler → Restart
+
+Step 3: Backfill Missed Jobs
+  ├── Briefing (missed 7 AM):
+  │   curl -X POST http://localhost:8000/api/v1/automation/trigger/briefing
+  │
+  ├── Opportunity radar (missed 6 AM):
+  │   curl -X POST http://localhost:8000/api/v1/automation/trigger/radar
+  │
+  ├── Weekly review (missed Sunday 8 PM):
+  │   curl -X POST http://localhost:8000/api/v1/automation/trigger/weekly-review
+  │
+  ├── Sleep analysis (missed 9:30 PM):
+  │   curl -X POST http://localhost:8000/api/v1/automation/trigger/sleep-analysis
+  │
+  └── Nudges (missed 6 PM):
+      curl -X POST http://localhost:8000/api/v1/automation/trigger/nudges
+
+Step 4: Verify
+  ├── Check scheduler logs for job execution
+  ├── Verify briefings were generated:
+  │   curl -s http://localhost:8000/api/v1/briefings/today
+  └── Set cron health check:
+      Monitor that jobs run on next scheduled interval
+```
+
+### 7.6 API Key / Secret Leak (P0)
+
+```
 Step 1: Immediate containment
   ├── Revoke compromised key at source
-  │   ├── Supabase: Dashboard → Settings → API → Regenerate
-  │   ├── Claude: Anthropic console → API Keys → Delete
-  │   └── Resend: Dashboard → API Keys → Rotate
+  │   Supabase: Dashboard → Settings → API → Regenerate anon key
+  │   Claude: console.anthropic.com → API Keys → Delete
+  │   Resend: Dashboard → API Keys → Rotate
+  │
+  ├── Check GitHub for committed secrets (even in history):
+  │   git log --all -p | grep -E "(SUPABASE|CLAUDE|JWT_SECRET|RESEND)"
+  │   # If found, use git filter-branch or BFG Repo-Cleaner
 
-Step 2: Redeploy with new keys
+Step 2: Rotate and redeploy
+  ├── Generate new keys at respective provider dashboards
   ├── Update .env files locally
   ├── Update Railway environment variables
   ├── Update Vercel environment variables
   └── Trigger redeploy of both services
 
 Step 3: Audit
-  ├── Check GitHub for committed secrets
-  ├── Run git secrets --scan (if configured)
-  └── Check access logs for unusual activity
+  ├── Check access logs for unusual activity
+  ├── Review recent deployments for unauthorized changes
+  └── Run git secrets --scan if available
 
 Step 4: Post-mortem
-  ├── Add pre-commit hook for secret scanning
-  └── Update AGENTS.md with warning
-```
-
-### 5.5 AI Service Failure Recovery
-
-```
-Scenario: Ollama or Claude API is unavailable
-
-Step 1: Detect
-  ├── API returns 503 / timeout in /api/chat
-  ├── Briefing generation fails
-  └── Agent tasks return errors
-
-Step 2: Fallback chain
-  ├── Default: Ollama (local)
-  │   └── If down → Claude API (cloud)
-  │   └── If down → Algorithmic fallback (no AI)
-  │
-  ├── Algorithmic fallback features:
-  │   ├── Task prioritization (Eisenhower matrix)
-  │   ├── Habit streaks (simple calc)
-  │   ├── Daily briefing (template-based)
-  │   └── Chat response ("AI is offline. Please try again later.")
-
-Step 3: Restore
-  ├── Ollama: 
-  │   ├── ollama serve (start service)
-  │   ├── ollama pull mistral (download model)
-  │   └── Verify: curl http://localhost:11434/api/tags
-  │
-  ├── Claude:
-  │   └── Check billing, rate limits at console.anthropic.com
-
-Step 4: Monitor
-  └── Set up cron to check AI health every hour
+  ├── Add or update pre-commit hooks for secret scanning
+  └── Document in Incident Response log
 ```
 
 ---
 
-## 6. Business Continuity Procedures
+## 8. Business Continuity Procedures
 
-### 6.1 Degraded Mode Operations
+### 8.1 Degraded Mode Operations
 
 The system is designed to operate in three modes:
 
-```mermaid
-stateDiagram-v2
-    [*] --> FullMode: All systems operational
-    FullMode --> DegradedMode: AI provider unreachable > 30s
-    DegradedMode --> EmergencyMode: Backend unavailable > 5min
-    EmergencyMode --> DegradedMode: Backend restored
-    DegradedMode --> FullMode: AI provider restored
 ```
+Full Mode → All systems operational
+  ↓ (AI provider unreachable > 30s)
+Degraded Mode → AI disabled, template-based responses
+  ↓ (Backend unavailable > 5min)
+Emergency Mode → Static frontend with outage message
+  ↓ (Backend restored)
+Degraded Mode → Full functionality except AI
+  ↓ (AI provider restored)
+Full Mode → All systems operational
 ```
 
-### 6.2 Communication During Outage
+### 8.2 Degraded Mode Capabilities
+
+| Feature | Full Mode | Degraded Mode (No AI) | Emergency Mode (No Backend) |
+|---|---|---|---|
+| Task CRUD | Full | Full | Read-only (cached) |
+| Habit tracking | Full | Full | Read-only (cached) |
+| Dashboard | Live data | Live data | Cached snapshot |
+| AI Chat | LLM responses | "AI offline" message | Unavailable |
+| Daily Briefing | AI-generated | Template-based | Unavailable |
+| Agent Operations | Full AI | Algorithmic fallback | Unavailable |
+| Authentication | Full | Full | Unavailable |
+
+### 8.3 Communication During Outage
 
 | Phase | Channel | Message | Timing |
 |---|---|---|---|
@@ -408,57 +498,32 @@ stateDiagram-v2
 | Diagnosis | Internal | "Investigating {issue}" | Within 5 min |
 | Resolution | — | Working on fix | Within 15 min |
 | Recovery | — | "{Service} restored" | Within RTO |
-| Post-mortem | doc | Incident report in 40_IncidentResponse.md | Within 24h |
-
-### 6.3 Data Integrity Checks
-
-After any recovery operation, run these checks:
-
-```bash
-# scripts/verify_data_integrity.sh
-
-# 1. Check row counts
-echo "Row counts:"
-echo "Tasks: $(curl -s /api/tasks | jq length)"
-echo "Habits: $(curl -s /api/habits | jq length)"
-echo "Users: $(curl -s /api/users | jq length)"
-
-# 2. Check recent data
-echo "Recent tasks (last 24h):"
-curl -s "/api/tasks?since=$(date -d '24 hours ago' +%Y-%m-%d)" | jq length
-
-# 3. Check foreign key integrity
-echo "Orphan records check..."
-# SQL: SELECT count(*) FROM tasks WHERE user_id NOT IN (SELECT id FROM auth.users)
-
-# 4. Check auth still works
-curl -s -X POST /api/auth/verify | jq .valid
-```
+| Post-mortem | Incident doc | Report in `40_IncidentResponse.md` | Within 24h |
 
 ---
 
-## 7. Communication Plan
+## 9. Communication Plan
 
-### 7.1 Internal Communication
+### 9.1 Notification Procedures
 
 | Scenario | Notify | Method | Template |
 |---|---|---|---|
-| Database failure | Developer (self) | Email + SMS | See 7.3 |
-| API failure | Developer | Email | See 7.3 |
-| Frontend failure | Developer | Email | See 7.3 |
-| Security incident | Developer (immediate) | SMS | See 7.3 |
-| Scheduled maintenance | Developer (24h prior) | Calendar | See 7.3 |
+| Database failure | Developer (self) | Terminal alert + email | Section 9.3 |
+| API failure | Developer | Terminal alert + email | Section 9.3 |
+| Frontend failure | Developer | Terminal alert + email | Section 9.3 |
+| Security incident | Developer (immediate) | Push notification + SMS | Section 9.3 |
+| Scheduled maintenance | Developer (24h prior) | Calendar event | — |
 
-### 7.2 Escalation Chain
+### 9.2 Escalation Chain
 
 ```
-Priority 0 (Critical): Developer → Self-resolution
-Priority 1 (High):    Developer → Cloud provider support
-Priority 2 (Medium):  Developer → Next business day resolution
-Priority 3 (Low):     Developer → Logged as tech debt
+P0 (Critical): Developer → Self-resolution (immediate)
+P1 (High):     Developer → Self-resolution (< 4 hours)
+P2 (Medium):   Developer → Next business day resolution
+P3 (Low):      Developer → Logged as tech debt
 ```
 
-### 7.3 Communication Templates
+### 9.3 Communication Templates
 
 **Incident Detection:**
 ```
@@ -492,111 +557,341 @@ Action Items: [list]
 
 ---
 
-## 8. Testing & Validation
+## 10. Post-Recovery Verification
 
-### 8.1 DR Test Schedule
+After any recovery operation, run the following checks in order:
 
-| Test | Frequency | Type | Success Criteria |
-|---|---|---|---|
-| Database restore | Monthly | Manual | Full restore verified in < 2h |
-| API key rotation | Quarterly | Manual | New keys work, old keys fail |
-| AI fallback test | Monthly | Automated | Degraded mode activates correctly |
-| Backup integrity | Weekly | Automated | All backups > 1KB, valid SQL |
-| Full recovery drill | Quarterly | Manual | Complete system restored in < 8h |
-| Local dev rebuild | Per release | Manual | Fresh clone + setup works in < 30min |
+### 10.1 Verification Checklist
 
-### 8.2 DR Test Procedure (Quarterly)
+```
+Phase 1: Health Checks
+  [ ] curl -s http://localhost:8000/api/health | jq .status == "healthy"
+  [ ] curl -s http://localhost:8000/api/health/live | jq .status == "ok"
+  [ ] curl -s http://localhost:8000/api/health/ready | jq .dependencies.supabase.status == "ok"
+  [ ] Production URL loads in browser (200 OK)
+  [ ] No 5xx errors in logs
 
-```bash
-# Quarterly Recovery Drill — Step by Step
+Phase 2: Data Integrity
+  [ ] Task count matches expected range:
+      psql "$DB_URL" -c "SELECT count(*) FROM tasks;"
+  [ ] Habit logs for today exist:
+      psql "$DB_URL" -c "SELECT count(*) FROM habit_logs WHERE date = CURRENT_DATE;"
+  [ ] No orphan records:
+      psql "$DB_URL" -c "
+        SELECT count(*) FROM tasks t
+        LEFT JOIN auth.users u ON t.user_id = u.id
+        WHERE u.id IS NULL;"
+  [ ] Foreign keys are intact
 
-# Phase 1: Simulate failure (manual)
-echo "Phase 1: Simulating database failure..."
-# Rename SUPABASE_URL to break connection
+Phase 3: Functional Verification
+  [ ] Login works (OAuth flow completes)
+  [ ] Task CRUD (create → read → update → delete)
+  [ ] Habit log creation
+  [ ] AI chat responds (may be template in degraded mode)
+  [ ] Dashboard loads with correct data
 
-# Phase 2: Detect and diagnose
-echo "Phase 2: Detecting outage..."
-curl http://localhost:8000/api/health
-
-# Phase 3: Initiate recovery
-echo "Phase 3: Restoring from backup..."
-pg_restore -d $SUPABASE_URL backups/sb_latest.sql
-
-# Phase 4: Verify
-echo "Phase 4: Verifying data integrity..."
-scripts/verify_data_integrity.sh
-
-# Phase 5: Document
-echo "Phase 5: Documenting drill results..."
-echo "Drill date: $(date)" >> docs/operations/drill_log.md
-echo "Result: SUCCESS/FAILURE" >> docs/operations/drill_log.md
+Phase 4: System Verification
+  [ ] All environment variables are set (compare against .env.encrypted)
+  [ ] Cron jobs are running (check scheduler logs)
+  [ ] AI model is responsive (ollama ps)
+  [ ] Latest backup ran successfully
 ```
 
-### 8.3 Test Success Metrics
+### 10.2 Data Integrity SQL Queries
+
+```sql
+-- Run after every recovery
+SELECT 'tasks' AS table_name, COUNT(*) AS row_count FROM tasks
+UNION ALL SELECT 'habits', COUNT(*) FROM habits
+UNION ALL SELECT 'habit_logs', COUNT(*) FROM habit_logs
+UNION ALL SELECT 'goals', COUNT(*) FROM goals
+UNION ALL SELECT 'courses', COUNT(*) FROM courses
+UNION ALL SELECT 'sleep_logs', COUNT(*) FROM sleep_logs
+UNION ALL SELECT 'income_entries', COUNT(*) FROM income_entries
+UNION ALL SELECT 'ideas', COUNT(*) FROM ideas
+UNION ALL SELECT 'projects', COUNT(*) FROM projects
+UNION ALL SELECT 'resources', COUNT(*) FROM resources
+UNION ALL SELECT 'opportunities', COUNT(*) FROM opportunities
+UNION ALL SELECT 'time_entries', COUNT(*) FROM time_entries
+ORDER BY table_name;
+
+-- Check for orphaned records
+SELECT 'orphan_tasks' AS check_name, COUNT(*) FROM tasks t
+  LEFT JOIN auth.users u ON t.user_id = u.id WHERE u.id IS NULL
+UNION ALL
+SELECT 'orphan_habits', COUNT(*) FROM habits h
+  LEFT JOIN auth.users u ON h.user_id = u.id WHERE u.id IS NULL;
+```
+
+---
+
+## 11. DR Test Schedule
+
+### 11.1 Test Cadence
+
+| Test | Frequency | Type | Success Criteria | Last Run | Next Run |
+|---|---|---|---|---|---|
+| Database restore | Monthly | Manual | Full restore in < 2 hours | Not run | 2026-08-01 |
+| API key rotation | Quarterly | Manual | New keys work, old keys fail | Not run | 2026-10-01 |
+| AI fallback test | Monthly | Semi-automated | Degraded mode activates in < 30s | Not run | 2026-08-01 |
+| Backup integrity | Weekly | Automated | All backups > 1KB, valid SQL | Not run | 2026-07-18 |
+| Full recovery drill | Quarterly | Manual | Complete system restored in < 4 hours | Not run | 2026-10-01 |
+| Local dev rebuild | Per release | Manual | Fresh clone + setup in < 30 min | Not run | Next release |
+| Auth failover | Quarterly | Manual | Login works after simulated auth failure | Not run | 2026-10-01 |
+| Scheduler restart | Monthly | Manual | Jobs resume and backfill correctly | Not run | 2026-08-01 |
+
+### 11.2 DR Test Procedure (Quarterly Full Drill)
+
+```bash
+# Phase 1: Simulate failure
+echo "[DR DRILL] Phase 1: Simulating database failure..."
+echo "  Action: Revoke SUPABASE_URL in Railway temporarily"
+echo "  Expected: API health returns 503"
+
+# Phase 2: Detect and diagnose
+echo "[DR DRILL] Phase 2: Detecting outage..."
+curl -s http://localhost:8000/api/health | jq .
+echo "  Verify: Response indicates database connection failure"
+
+# Phase 3: Initiate recovery
+echo "[DR DRILL] Phase 3: Restoring from backup..."
+echo "  Action: Restore SUPABASE_URL, trigger pg_dump restore"
+echo "  Timer started: $(date)"
+
+# Phase 4: Verify
+echo "[DR DRILL] Phase 4: Verifying data integrity..."
+echo "  Action: Run verification SQL queries"
+echo "  Timer stopped: $(date)"
+
+# Phase 5: Document
+echo "[DR DRILL] Phase 5: Documenting results..."
+echo "Date: $(date)" >> docs/operations/drill_log.md
+echo "Result: SUCCESS/FAILURE" >> docs/operations/drill_log.md
+echo "Duration: XX minutes" >> docs/operations/drill_log.md
+echo "Issues: [none/describe]" >> docs/operations/drill_log.md
+```
+
+### 11.3 Test Success Metrics
 
 | Metric | Target | Current | Status |
 |---|---|---|---|
-| Database restore time | < 2 hours | — | ❌ Not tested |
-| Full recovery time | < 8 hours | — | ❌ Not tested |
-| Backup integrity rate | 100% | — | ❌ Not tested |
-| AI fallback activation | < 30s | — | ❌ Not tested |
-| Data loss per incident | < 24h RPO | — | ❌ Not tested |
+| Database restore time | < 2 hours | — | Untested |
+| Full recovery time | < 4 hours | — | Untested |
+| Backup integrity rate | 100% | — | Untested |
+| AI fallback activation | < 30s | — | Untested |
+| Data loss per incident | < 1 hour RPO | — | Untested |
 
 ---
 
-## 9. Roles & Responsibilities
+## 12. DR Test Template
 
-### 9.1 Team Structure
+Use this template for every DR drill:
 
-| Role | Person | Responsibilities |
-|---|---|---|
-| Incident Commander | Developer (self) | Lead recovery, make decisions |
-| Technical Lead | Developer (self) | Execute recovery procedures |
-| Communications | Developer (self) | Document and notify |
-| Post-Mortem Lead | Developer (self) | Write incident report |
+```markdown
+# DR Drill Report
 
-> **Note:** As a single-developer project, all roles are filled by the same person. The role separation exists to ensure systematic thinking during incidents.
+**Drill ID:** DR-{YYYY}-{NNN}
+**Date:** YYYY-MM-DD
+**Type:** [Database Restore / Full Recovery / AI Fallback / Key Rotation / Scheduler Restart]
+**Duration:** XX minutes
+**Conducted by:** Developer
 
-### 9.2 DR Maintenance
+## Scenario
+{description of simulated failure}
 
-| Task | Frequency | Owner |
-|---|---|---|
-| Review DR plan | Quarterly | Developer |
-| Update backup scripts | Monthly | Developer |
-| Rotate API keys | Quarterly | Developer |
-| Test recovery procedures | Quarterly | Developer |
-| Update contacts in communication plan | Semi-annually | Developer |
-| Review RTO/RPO targets | Annually | Developer |
+## Procedure Followed
+1. {step}
+2. {step}
+3. {step}
+
+## Results
+
+| Metric | Target | Actual | Pass/Fail |
+|---|---|---|---|
+| Time to detect | < 5 min | XX min | ✅ / ❌ |
+| Time to recover | < RTO | XX min | ✅ / ❌ |
+| Data loss | < RPO | XX min | ✅ / ❌ |
+| Verification passed | All checks | X/Y passed | ✅ / ❌ |
+
+## Issues Encountered
+- {issue 1}
+- {issue 2}
+
+## Improvements Identified
+- {improvement 1}
+- {improvement 2}
+
+## Action Items
+- [ ] {action} — Owner, Due date
+
+## Log Location
+`docs/operations/drill_log.md`
+```
 
 ---
 
-## 10. Appendices
+## 13. Commands Cheat Sheet
+
+### 13.1 Database
+
+```bash
+# Health check
+curl -s http://localhost:8000/api/health | jq .
+
+# pg_dump backup
+pg_dump "$SUPABASE_DB_URL" > backups/sb_$(date +%Y%m%d_%H%M%S).sql
+
+# pg_restore
+psql "$SUPABASE_DB_URL" < backups/sb_latest.sql
+
+# Row counts
+psql "$SUPABASE_DB_URL" -c "SELECT schemaname, tablename, n_live_tup FROM pg_stat_user_tables ORDER BY n_live_tup DESC;"
+
+# Orphan check
+psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM tasks t LEFT JOIN auth.users u ON t.user_id = u.id WHERE u.id IS NULL;"
+```
+
+### 13.2 Backend (Railway)
+
+```bash
+# Health check
+curl -s http://localhost:8000/api/health
+
+# Rollback Railway
+railway redeploy --deployment <id>
+
+# Local fallback
+cd apps/api
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+### 13.3 Frontend (Vercel)
+
+```bash
+# Health check (browser or curl)
+curl -s -o /dev/null -w "%{http_code}" https://secondbrain-os.vercel.app
+
+# Rollback
+vercel rollback
+# Or: Vercel Dashboard → Deployments → ... → Rollback
+
+# Force redeploy (no code change needed)
+vercel --prod
+```
+
+### 13.4 AI Service
+
+```bash
+# Check Ollama
+curl -s http://localhost:11434/api/tags | jq .
+curl -s http://localhost:11434/api/generate -d '{"model":"mistral","prompt":"hello"}'
+
+# Start Ollama
+ollama serve
+
+# Pull model
+ollama pull mistral
+
+# Check Claude
+curl -s https://api.anthropic.com/v1/messages \
+  -H "x-api-key: $CLAUDE_API_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -d '{"model":"claude-sonnet-4-20250514","max_tokens":10,"messages":[{"role":"user","content":"hi"}]}'
+```
+
+### 13.5 Scheduler
+
+```bash
+# Start scheduler
+cd services/scheduler && python main.py
+
+# Manual job triggers
+curl -X POST http://localhost:8000/api/v1/automation/trigger/briefing
+curl -X POST http://localhost:8000/api/v1/automation/trigger/radar
+curl -X POST http://localhost:8000/api/v1/automation/trigger/weekly-review
+curl -X POST http://localhost:8000/api/v1/automation/trigger/sleep-bodtime
+curl -X POST http://localhost:8000/api/v1/automation/trigger/nudges
+
+# Check scheduler logs
+tail -f services/scheduler/logs/scheduler.log
+```
+
+### 13.6 Environment & Secrets
+
+```bash
+# Encrypt .env
+gpg -c .env.production
+
+# Decrypt .env
+gpg -d .env.production.gpg > .env.production
+
+# Check for secrets in git history
+git log --all -p | grep -E "(SUPABASE|CLAUDE|JWT_SECRET|RESEND)"
+```
+
+### 13.7 Git & Rollback
+
+```bash
+# Full code rollback
+git revert HEAD --no-edit
+git push origin main
+
+# List recent tags
+git tag -l 'v*' --sort=-version:refname
+
+# Create hotfix branch
+git checkout -b hotfix/XX-description
+```
+
+---
+
+## 14. Appendices
 
 ### Appendix A: Quick Reference Card
 
-```mermaid
-graph TD
-    subgraph DR_Quick_Reference[DR Quick Reference]
-        DB[DB DOWN] --> DB1[pg_restore]
-        DB1 --> DB2[verify]
-        DB2 --> DB3[redeploy]
-        API[API DOWN] --> API1[Railway rollback]
-        API1 --> API2[verify]
-        FE[FRONTEND] --> FE1[Vercel rollback]
-        FE1 --> FE2[verify]
-        KL[KEY LEAK] --> KL1[Revoke]
-        KL1 --> KL2[rotate]
-        KL2 --> KL3[redeploy]
-        KL3 --> KL4[audit]
-        AI[AI DOWN] --> AI1[Check Ollama]
-        AI1 --> AI2[replace Claude]
-        AI2 --> AI3[algorithmic]
-        LF[LOCAL FAIL] --> LF1[git clone]
-        LF1 --> LF2[pip install]
-        LF2 --> LF3[npm install]
-        LF3 --> LF4[run]
-    end
 ```
+┌────────────────────────────────────────────────────────────────────┐
+│          DISASTER RECOVERY — QUICK REFERENCE                        │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  DATABASE DOWN:                                                    │
+│  1. psql "$DB_URL" < backups/sb_latest.sql                         │
+│  2. Verify row counts                                              │
+│  3. Test CRUD via API                                              │
+│                                                                    │
+│  API DOWN:                                                         │
+│  1. Railway Dashboard → Rollback                                   │
+│  2. Verify: curl /api/health                                       │
+│                                                                    │
+│  FRONTEND DOWN:                                                    │
+│  1. Vercel Dashboard → Rollback                                    │
+│  2. Verify: production URL loads                                   │
+│                                                                    │
+│  AUTH DOWN:                                                        │
+│  1. Check Supabase Auth status                                     │
+│  2. Verify OAuth redirect URIs                                     │
+│  3. Redeploy if config changed                                     │
+│                                                                    │
+│  AI DOWN:                                                          │
+│  1. ollama serve (if local)                                        │
+│  2. Check Claude billing                                           │
+│  3. System falls back automatically                                │
+│                                                                    │
+│  KEY LEAK:                                                         │
+│  1. Revoke at source                                               │
+│  2. Rotate key                                                     │
+│  3. Update .env + redeploy                                         │
+│  4. Audit git history                                              │
+│                                                                    │
+│  FULL OUTAGE:                                                      │
+│  1. Frontend rollback (1h RTO)                                     │
+│  2. Backend rollback (2h RTO)                                      │
+│  3. Database restore (4h RTO)                                      │
+│  4. AI restart (1h RTO)                                            │
+│  5. Scheduler restart (4h RTO)                                     │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Appendix B: Critical Contacts
@@ -608,26 +903,38 @@ graph TD
 | Railway Support | railway.app/support | Email on account |
 | Anthropic (Claude) | support@anthropic.com | API key owner email |
 | Resend (Email) | resend.com/support | Account email |
+| GitHub Support | support.github.com | Account email |
+| Google Cloud (OAuth) | cloud.google.com/support | Project ID from console |
+| Domain Registrar | Per registrar | Account email |
 
-### Appendix C: Recovery Scripts Overview
+### Appendix C: Recovery Scripts Reference
 
 | Script | Location | Purpose |
 |---|---|---|
-| `scripts/backup_db.py` | `scripts/` | Automated pg_dump backup |
-| `scripts/verify_backup.sh` | `scripts/` | Verify backup file integrity |
-| `scripts/verify_data_integrity.sh` | `scripts/` | Check DB health after restore |
-| `scripts/deploy_rollback.sh` | `scripts/` | Rollback to previous deployment |
-| `scripts/rotate_keys.py` | `scripts/` | Rotate all API keys |
+| `scripts/backup_db.py` | `scripts/` | Automated pg_dump backup with timestamp |
+| `scripts/verify_backup.sh` | `scripts/` | Verify backup file integrity (size, checksum, SQL syntax) |
+| `scripts/verify_data_integrity.sh` | `scripts/` | Check DB health after restore (row counts, orphans) |
+| `scripts/deploy_rollback.sh` | `scripts/` | Rollback to previous deployment (Vercel + Railway) |
+| `scripts/rotate_keys.py` | `scripts/` | Rotate all API keys with confirmation prompts |
 
-### Appendix D: Environment Snapshot Template
+### Appendix D: DR Plan Distribution
+
+| Copy | Location | Encrypted |
+|---|---|---|
+| Primary | `docs/operations/41_DisasterRecovery.md` | No |
+| Backup verification | `docs/devops/backup-verification-procedure.md` | No |
+| Offline | `~/Documents/ops/secondbrain-dr-plan.md` | Recommended (GPG) |
+
+### Appendix E: Environment Snapshot Template
 
 ```env
-# Fill this out and store encrypted at ~/.config/secondbrain/
-# Last updated: 2026-06-11
+# Second Brain OS — Production Environment Snapshot
+# Store encrypted: gpg -c .env.production
+# Last updated: YYYY-MM-DD
 
 # --- Supabase ---
 SUPABASE_URL=
-SUPABASE_KEY=
+SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_KEY=
 
 # --- Auth ---
@@ -643,18 +950,15 @@ USE_LOCAL_AI=True
 # --- Email ---
 RESEND_API_KEY=
 
-# --- SMS (future) ---
-# TWILIO_ACCOUNT_SID=
-# TWILIO_AUTH_TOKEN=
-
 # --- App ---
 APP_NAME="Second Brain OS"
-DEBUG=True
+NEXT_PUBLIC_APP_URL=https://secondbrain-os.vercel.app
 CORS_ORIGINS=http://localhost:3000
 ```
 
-### Appendix E: Revision History
+### Appendix F: Revision History
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 1.0.0 | 2026-06-11 | Developer | Initial disaster recovery plan |
+| 2.0.0 | 2026-07-11 | Developer | Complete rewrite: added DR team roster with solo-dev notation, Recovery Prioritization Matrix with RTO/RPO/Priority/Procedure, step-by-step recovery for 6 failure scenarios (DB corruption, full outage, AI failure, auth failure, scheduler not running, key leak), commands cheat sheet for all services, post-recovery verification checklist with SQL queries, quarterly DR test schedule with template, degraded mode capabilities table, communication templates, and quick reference card. Updated RTOs based on production deployment reality. |
