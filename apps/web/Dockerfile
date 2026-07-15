@@ -15,21 +15,21 @@ LABEL org.opencontainers.image.source="https://github.com/secondbrain-os/secondb
 LABEL org.opencontainers.image.vendor="Second Brain OS"
 
 # ---- Stage 1: Production Dependencies (only runtime deps) ----
-FROM node:20-alpine AS deps-prod
+FROM node:26-alpine AS deps-prod
 WORKDIR /app
 
 COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --omit=dev --legacy-peer-deps
 
 # ---- Stage 2: Build Dependencies (including devDeps for build) ----
-FROM node:20-alpine AS deps
+FROM node:26-alpine AS deps
 WORKDIR /app
 
 COPY apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
 # ---- Stage 3: Build ----
-FROM node:20-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -40,7 +40,7 @@ ENV NEXT_PUBLIC_PWA_ENABLED=true
 RUN npm run build
 
 # ---- Stage 4: Production ----
-FROM node:20-alpine AS production
+FROM node:26-alpine AS production
 WORKDIR /app
 
 COPY --from=labels /dev/null /dev/null
@@ -66,7 +66,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
 CMD ["node", "server.js"]
 
 # ---- Stage 5: Development (hot-reload) ----
-FROM node:20-alpine AS development
+FROM node:26-alpine AS development
 WORKDIR /app
 
 ENV NODE_ENV=development
