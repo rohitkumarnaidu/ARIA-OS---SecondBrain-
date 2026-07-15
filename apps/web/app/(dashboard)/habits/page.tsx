@@ -280,23 +280,24 @@ export default function HabitsPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">
+                  <label htmlFor="habit-name" className="block text-sm font-medium text-text-primary mb-2">
                     Habit Name <span className="text-accent-error">*</span>
                   </label>
                   <input
+                    id="habit-name"
                     type="text"
                     value={newHabit.name}
                     onChange={e => setNewHabit({ ...newHabit, name: e.target.value })}
                     className="input"
                     placeholder="e.g., Morning coding"
-                    autoFocus
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Frequency</label>
+                    <label htmlFor="habit-frequency" className="block text-sm font-medium text-text-primary mb-2">Frequency</label>
                     <select
+                      id="habit-frequency"
                       value={newHabit.frequency}
                       onChange={e => setNewHabit({ ...newHabit, frequency: e.target.value })}
                       className="input"
@@ -307,8 +308,9 @@ export default function HabitsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Time (min)</label>
+                    <label htmlFor="habit-time-min" className="block text-sm font-medium text-text-primary mb-2">Time (min)</label>
                     <input
+                      id="habit-time-min"
                       type="number"
                       value={newHabit.time_target_minutes}
                       onChange={e => setNewHabit({ ...newHabit, time_target_minutes: parseInt(e.target.value) || 30 })}
