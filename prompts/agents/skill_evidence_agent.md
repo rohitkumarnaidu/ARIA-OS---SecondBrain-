@@ -6,6 +6,8 @@ max_tokens: 4096
 temperature: 0.2
 description: Verify and score evidence items submitted for skill proficiency claims.
 tags: [skills, evidence, verification]
+approved_by: developer
+review_cycle: weekly
 last_updated: 2026-06-24
 ---
 
