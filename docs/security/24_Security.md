@@ -1,14 +1,14 @@
-# Enterprise Security Architecture
+﻿# Enterprise Security Architecture
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SEC-001 |
+| Document ID | SEC-SEC-001 |
 | Version | 3.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-11 |
-| Classification | Internal — Security Team |
+| Classification | Internal â€” Security Team |
 | Owner | Security Lead |
 
 ---
@@ -40,7 +40,7 @@ Second Brain OS (ARIA OS) is a personal productivity platform handling sensitive
 
 **Trust Scope:** Single-user B2C productivity tool with optional AI processing.
 
-**Security Posture:** Defense-in-depth with 7 security layers — authentication, authorization, transport, application, data, infrastructure, and AI.
+**Security Posture:** Defense-in-depth with 7 security layers â€” authentication, authorization, transport, application, data, infrastructure, and AI.
 
 **Key Risks Mitigated:**
 - Unauthorized access to user data (primary risk)
@@ -49,7 +49,7 @@ Second Brain OS (ARIA OS) is a personal productivity platform handling sensitive
 - Credential theft and session hijacking
 - Supply chain vulnerabilities
 
-**Current Maturity Level:** Level 2 (Managed) — progressing toward Level 3 (Defined) per NIST CSF.
+**Current Maturity Level:** Level 2 (Managed) â€” progressing toward Level 3 (Defined) per NIST CSF.
 
 ---
 
@@ -59,13 +59,13 @@ Second Brain OS (ARIA OS) is a personal productivity platform handling sensitive
 
 | Principle | Definition | Application in ARIA OS |
 |---|---|---|
-| **Defense in Depth** | Multiple independent security layers; failure of one does not compromise the system | 7-layer model: Auth → RLS → Rate Limit → Validation → CORS → Encryption → Monitoring |
-| **Least Privilege** | Every entity operates with the minimum permissions necessary | RLS on all 21 tables; service roles limited; API tokens scoped |
-| **Zero Trust** | Never trust, always verify — every request authenticated and authorized regardless of origin | Every API call validates JWT + user_id; internal services also authenticate |
+| **Defense in Depth** | Multiple independent security layers; failure of one does not compromise the system | 7-layer model: Auth â†’ RLS â†’ Rate Limit â†’ Validation â†’ CORS â†’ Encryption â†’ Monitoring |
+| **Least Privilege** | Every entity operates with the minimum permissions necessary | RLS on all 27 tables; service roles limited; API tokens scoped |
+| **Zero Trust** | Never trust, always verify â€” every request authenticated and authorized regardless of origin | Every API call validates JWT + user_id; internal services also authenticate |
 | **Secure by Default** | Security is opt-out, not opt-in | RLS enabled at table creation; HTTPS enforced; headers set globally |
 | **Privacy by Design** | Data protection integrated into architecture, not bolted on | Data minimization; no telemetry; user-owned analytics |
 | **Fail Secure** | On failure, default to denying access | Auth failures return 401; RLS failures return empty sets; validation errors reject |
-| **Separation of Duties** | No single entity has end-to-end control | OAuth (Google) ≠ Data (Supabase) ≠ AI (Ollama/Claude) |
+| **Separation of Duties** | No single entity has end-to-end control | OAuth (Google) â‰  Data (Supabase) â‰  AI (Ollama/Claude) |
 
 #### 7-Layer Defense Model
 
@@ -151,7 +151,7 @@ graph TD
 
 | Component | Spoofing | Tampering | Repudiation | Information Disclosure | DoS | Elevation of Privilege |
 |---|---|---|---|---|---|---|
-| **Supabase Auth** | OAuth token forgery | — | Auth audit logs | Token leakage | Rate limiting | JWT secret compromise |
+| **Supabase Auth** | OAuth token forgery | â€” | Auth audit logs | Token leakage | Rate limiting | JWT secret compromise |
 | **FastAPI Backend** | JWT replay | Request body manipulation | Request logging | Error message leakage | Unvalidated input floods | RLS bypass |
 | **Next.js Frontend** | XSS, CSRF | DOM manipulation | Client logs | Source map exposure | Client-side resource exhaustion | Privilege escalation via API |
 | **Ollama AI** | Model prompt injection | Model output poisoning | No audit | Context leakage (cross-user) | Resource exhaustion | Sandbox escape |
@@ -164,39 +164,39 @@ graph TD
 
 ```
 Goal: Exfiltrate user data from ARIA OS
-├── 1. Compromise Authentication
-│   ├── 1.1 Steal JWT token
-│   │   ├── 1.1.1 XSS to read localStorage
-│   │   └── 1.1.2 MitM on non-HTTPS connection
-│   ├── 1.2 Brute-force credentials (not applicable — OAuth only)
-│   └── 1.3 OAuth token interception
-│       └── 1.3.1 Malicious OAuth redirect URI
-├── 2. Bypass Authorization
-│   ├── 2.1 RLS policy bypass via SQL injection
-│   ├── 2.2 user_id manipulation in API request
-│   └── 2.3 Service role key exposure
-├── 3. Intercept Data in Transit
-│   ├── 3.1 TLS downgrade attack
-│   └── 3.2 Certificate spoofing
-└── 4. Access Backend Infrastructure
-    ├── 4.1 Railway console compromise
-    ├── 4.2 Environment variable leakage
-    └── 4.3 Dependency vulnerability exploitation
+â”œâ”€â”€ 1. Compromise Authentication
+â”‚   â”œâ”€â”€ 1.1 Steal JWT token
+â”‚   â”‚   â”œâ”€â”€ 1.1.1 XSS to read localStorage
+â”‚   â”‚   â””â”€â”€ 1.1.2 MitM on non-HTTPS connection
+â”‚   â”œâ”€â”€ 1.2 Brute-force credentials (not applicable â€” OAuth only)
+â”‚   â””â”€â”€ 1.3 OAuth token interception
+â”‚       â””â”€â”€ 1.3.1 Malicious OAuth redirect URI
+â”œâ”€â”€ 2. Bypass Authorization
+â”‚   â”œâ”€â”€ 2.1 RLS policy bypass via SQL injection
+â”‚   â”œâ”€â”€ 2.2 user_id manipulation in API request
+â”‚   â””â”€â”€ 2.3 Service role key exposure
+â”œâ”€â”€ 3. Intercept Data in Transit
+â”‚   â”œâ”€â”€ 3.1 TLS downgrade attack
+â”‚   â””â”€â”€ 3.2 Certificate spoofing
+â””â”€â”€ 4. Access Backend Infrastructure
+    â”œâ”€â”€ 4.1 Railway console compromise
+    â”œâ”€â”€ 4.2 Environment variable leakage
+    â””â”€â”€ 4.3 Dependency vulnerability exploitation
 ```
 
 #### 3.3.2 AI Prompt Injection Attack Tree
 
 ```
 Goal: Inject malicious prompt to AI model
-├── 1. Direct Injection (via chat interface)
-│   ├── 1.1 System prompt override attempt
-│   └── 1.2 Role-play jailbreak
-├── 2. Indirect Injection (via data)
-│   ├── 2.1 Malicious task description parsed by briefing agent
-│   └── 2.2 Malicious course content parsed by learning agent
-└── 3. Context Leakage
-    ├── 3.1 Prompt extraction via "repeat your instructions"
-    └── 3.2 Data exfiltration via formatted output
+â”œâ”€â”€ 1. Direct Injection (via chat interface)
+â”‚   â”œâ”€â”€ 1.1 System prompt override attempt
+â”‚   â””â”€â”€ 1.2 Role-play jailbreak
+â”œâ”€â”€ 2. Indirect Injection (via data)
+â”‚   â”œâ”€â”€ 2.1 Malicious task description parsed by briefing agent
+â”‚   â””â”€â”€ 2.2 Malicious course content parsed by learning agent
+â””â”€â”€ 3. Context Leakage
+    â”œâ”€â”€ 3.1 Prompt extraction via "repeat your instructions"
+    â””â”€â”€ 3.2 Data exfiltration via formatted output
 ```
 
 ---
@@ -229,7 +229,7 @@ sequenceDiagram
 | Client Type | Public (no client secret) | SPA cannot store secrets; PKCE provides equivalent security |
 | Scopes | `openid`, `profile`, `email` | Minimum necessary for user identification |
 | Redirect URIs | `https://*.supabase.co/auth/v1/callback` | Restrict to known callback endpoints |
-| Consent Screen | Internal (testing) → External (production) | Prevent unverified app warnings |
+| Consent Screen | Internal (testing) â†’ External (production) | Prevent unverified app warnings |
 
 ### 4.3 JWT Token Handling
 
@@ -346,10 +346,10 @@ async def get_current_user(
 
 | Layer | Protection | Status |
 |---|---|---|
-| **Supabase Auth** | SameSite=Lax cookies; OAuth state parameter with PKCE | ✅ Active |
-| **FastAPI Backend** | CORS validation (origin whitelist); Origin header check | ✅ Active |
-| **Next.js Frontend** | Supabase client handles CSRF via auth state; fetch credentials: 'include' | ✅ Active |
-| **Custom API** | Optional double-submit cookie pattern (planned) | 🔄 Planned |
+| **Supabase Auth** | SameSite=Lax cookies; OAuth state parameter with PKCE | âœ… Active |
+| **FastAPI Backend** | CORS validation (origin whitelist); Origin header check | âœ… Active |
+| **Next.js Frontend** | Supabase client handles CSRF via auth state; fetch credentials: 'include' | âœ… Active |
+| **Custom API** | Optional double-submit cookie pattern (planned) | ðŸ”„ Planned |
 
 ### 4.6 Authentication Security Checklist
 
@@ -389,36 +389,36 @@ graph LR
     style F fill:#1A1D24,stroke:#6366F1,color:#F1F5F9
 ```
 
-### 5.2 Row-Level Security (RLS) — Deep Dive
+### 5.2 Row-Level Security (RLS) â€” Deep Dive
 
 #### 5.2.1 Complete Table RLS Inventory
 
 | # | Table | RLS Policy | user_id Column | Additional Policies |
 |---|---|---|---|---|
-| 1 | `users` | `auth.uid() = id` | `id` | — |
-| 2 | `tasks` | `auth.uid() = user_id` | `user_id` | — |
+| 1 | `users` | `auth.uid() = id` | `id` | â€” |
+| 2 | `tasks` | `auth.uid() = user_id` | `user_id` | â€” |
 | 3 | `subtasks` | `auth.uid() = user_id` | `user_id` | via task join |
-| 4 | `task_dependencies` | `auth.uid() = user_id` | `user_id` | — |
-| 5 | `courses` | `auth.uid() = user_id` | `user_id` | — |
-| 6 | `videos` | `auth.uid() = user_id` | `user_id` | — |
-| 7 | `resources` | `auth.uid() = user_id` | `user_id` | — |
-| 8 | `ideas` | `auth.uid() = user_id` | `user_id` | — |
-| 9 | `goals` | `auth.uid() = user_id` | `user_id` | — |
-| 10 | `opportunities` | `auth.uid() = user_id` | `user_id` | — |
-| 11 | `income_entries` | `auth.uid() = user_id` | `user_id` | — |
-| 12 | `projects` | `auth.uid() = user_id` | `user_id` | — |
-| 13 | `subjects` | `auth.uid() = user_id` | `user_id` | — |
-| 14 | `marks` | `auth.uid() = user_id` | `user_id` | — |
-| 15 | `habits` | `auth.uid() = user_id` | `user_id` | — |
-| 16 | `habit_logs` | `auth.uid() = user_id` | `user_id` | — |
-| 17 | `sleep_logs` | `auth.uid() = user_id` | `user_id` | — |
-| 18 | `time_entries` | `auth.uid() = user_id` | `user_id` | — |
-| 19 | `chat_messages` | `auth.uid() = user_id` | `user_id` | — |
-| 20 | `memory` | `auth.uid() = user_id` | `user_id` | — |
-| 21 | `learning_progress` | `auth.uid() = user_id` | `user_id` | — |
-| 22 | `daily_briefings` | `auth.uid() = user_id` | `user_id` | — |
-| 23 | `weekly_reviews` | `auth.uid() = user_id` | `user_id` | — |
-| 24 | `analytics_events` | `auth.uid() = user_id` | `user_id` | — |
+| 4 | `task_dependencies` | `auth.uid() = user_id` | `user_id` | â€” |
+| 5 | `courses` | `auth.uid() = user_id` | `user_id` | â€” |
+| 6 | `videos` | `auth.uid() = user_id` | `user_id` | â€” |
+| 7 | `resources` | `auth.uid() = user_id` | `user_id` | â€” |
+| 8 | `ideas` | `auth.uid() = user_id` | `user_id` | â€” |
+| 9 | `goals` | `auth.uid() = user_id` | `user_id` | â€” |
+| 10 | `opportunities` | `auth.uid() = user_id` | `user_id` | â€” |
+| 11 | `income_entries` | `auth.uid() = user_id` | `user_id` | â€” |
+| 12 | `projects` | `auth.uid() = user_id` | `user_id` | â€” |
+| 13 | `subjects` | `auth.uid() = user_id` | `user_id` | â€” |
+| 14 | `marks` | `auth.uid() = user_id` | `user_id` | â€” |
+| 15 | `habits` | `auth.uid() = user_id` | `user_id` | â€” |
+| 16 | `habit_logs` | `auth.uid() = user_id` | `user_id` | â€” |
+| 17 | `sleep_logs` | `auth.uid() = user_id` | `user_id` | â€” |
+| 18 | `time_entries` | `auth.uid() = user_id` | `user_id` | â€” |
+| 19 | `chat_messages` | `auth.uid() = user_id` | `user_id` | â€” |
+| 20 | `memory` | `auth.uid() = user_id` | `user_id` | â€” |
+| 21 | `learning_progress` | `auth.uid() = user_id` | `user_id` | â€” |
+| 22 | `daily_briefings` | `auth.uid() = user_id` | `user_id` | â€” |
+| 23 | `weekly_reviews` | `auth.uid() = user_id` | `user_id` | â€” |
+| 24 | `analytics_events` | `auth.uid() = user_id` | `user_id` | â€” |
 
 #### 5.2.2 Standard RLS Policy Template
 
@@ -487,15 +487,15 @@ async def get_task(
 
 | Use Case | Service Role Access | Audit |
 |---|---|---|
-| Cron jobs (scheduler) | ✅ Yes — SELECT all users' data | Full audit logging |
-| Daily briefing generation | ✅ Yes — READ tasks/courses for all users | Per-job logging |
-| Account deletion (admin) | ✅ Yes — DELETE across all tables | Manual trigger + log |
-| Opportunity radar | ✅ Yes — READ profile for matching | Per-job logging |
-| User-facing API | ❌ No — uses authenticated role | N/A |
+| Cron jobs (scheduler) | âœ… Yes â€” SELECT all users' data | Full audit logging |
+| Daily briefing generation | âœ… Yes â€” READ tasks/courses for all users | Per-job logging |
+| Account deletion (admin) | âœ… Yes â€” DELETE across all tables | Manual trigger + log |
+| Opportunity radar | âœ… Yes â€” READ profile for matching | Per-job logging |
+| User-facing API | âŒ No â€” uses authenticated role | N/A |
 
 **Principle:** Service role used exclusively by internal cron jobs and admin operations. Never exposed to client-side code. Restrict service role key to backend environment only.
 
-### 5.5 Role-Based Access Control (RBAC) — Future
+### 5.5 Role-Based Access Control (RBAC) â€” Future
 
 | Role | Permissions | Scope |
 |---|---|---|
@@ -550,21 +550,21 @@ CREATE TABLE encrypted_memory (
 
 | Field | Sensitivity | Encrypt Now? | Target Date |
 |---|---|---|---|
-| Email address | High | ✅ Yes | Q3 2026 |
-| Chat message content | Medium | 🔄 Planned | Q4 2026 |
-| AI memory content | Medium | 🔄 Planned | Q4 2026 |
-| Task titles | Low | ❌ No | — |
-| Course names | Low | ❌ No | — |
+| Email address | High | âœ… Yes | Q3 2026 |
+| Chat message content | Medium | ðŸ”„ Planned | Q4 2026 |
+| AI memory content | Medium | ðŸ”„ Planned | Q4 2026 |
+| Task titles | Low | âŒ No | â€” |
+| Course names | Low | âŒ No | â€” |
 
 ### 6.3 Encryption in Transit
 
 | Connection | Protocol | Cipher | Certificate |
 |---|---|---|---|
-| Browser → Vercel (Frontend) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Let's Encrypt (auto) |
-| Vercel → Railway (Backend) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Railway internal CA |
-| Railway → Supabase (Database) | TLS 1.3 | TLS_CHACHA20_POLY1305_SHA256 | Supabase managed |
-| Backend → Ollama (Local) | Localhost (no TLS) | N/A | Trusted network |
-| Backend → Claude API (Fallback) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Anthropic managed |
+| Browser â†’ Vercel (Frontend) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Let's Encrypt (auto) |
+| Vercel â†’ Railway (Backend) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Railway internal CA |
+| Railway â†’ Supabase (Database) | TLS 1.3 | TLS_CHACHA20_POLY1305_SHA256 | Supabase managed |
+| Backend â†’ Ollama (Local) | Localhost (no TLS) | N/A | Trusted network |
+| Backend â†’ Claude API (Fallback) | TLS 1.3 | TLS_AES_256_GCM_SHA384 | Anthropic managed |
 
 ```python
 # Enforce TLS in HTTPX client for all external calls
@@ -635,7 +635,7 @@ def validate_email(email: str) -> bool:
     return bool(re.match(pattern, email))
 
 def validate_url(url: str) -> bool:
-    """Strict URL validation — HTTPS only."""
+    """Strict URL validation â€” HTTPS only."""
     pattern = r'^https://[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/.*)?$'
     return bool(re.match(pattern, url))
 
@@ -948,7 +948,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
 // next.config.js
 const cspDirectives = {
   'default-src': ["'self'"],
-  'script-src': ["'self'", "'unsafe-eval'", "'unsafe-inline'"],  // Not ideal — improve
+  'script-src': ["'self'", "'unsafe-eval'", "'unsafe-inline'"],  // Not ideal â€” improve
   'style-src': ["'self'", "'unsafe-inline'"],
   'img-src': ["'self'", "data:", "https:", "blob:"],
   'font-src': ["'self'", "https://fonts.gstatic.com"],
@@ -1051,15 +1051,15 @@ const supabase = createClient(
 
 | Measure | Implementation | Status |
 |---|---|---|
-| `X-Frame-Options: DENY` | Prevents all iframe embedding | ✅ Active |
-| `frame-src: 'none'` | CSP directive blocks framing | ✅ Active |
-| `window.top` check | JavaScript check in sensitive pages | 🔄 Planned |
+| `X-Frame-Options: DENY` | Prevents all iframe embedding | âœ… Active |
+| `frame-src: 'none'` | CSP directive blocks framing | âœ… Active |
+| `window.top` check | JavaScript check in sensitive pages | ðŸ”„ Planned |
 
 ### 8.5 Frontend Security Checklist
 
 - [ ] CSP headers configured and tested
 - [ ] All third-party scripts audited (Google Fonts only)
-- [ ] React rendered on server (Next.js SSR) — no client-side template injection
+- [ ] React rendered on server (Next.js SSR) â€” no client-side template injection
 - [ ] No inline event handlers in HTML (`onclick`, etc.)
 - [ ] `dangerouslySetInnerHTML` avoided or sanitized via DOMPurify
 - [ ] localStorage not used for sensitive data (migrating to httpOnly cookies)
@@ -1098,7 +1098,7 @@ flowchart LR
     style I fill:#1A1D24,stroke:#F59E0B,color:#F1F5F9
 ```
 
-### 9.2 Local Ollama (Default) — Data Isolation
+### 9.2 Local Ollama (Default) â€” Data Isolation
 
 | Concern | Mitigation |
 |---|---|
@@ -1108,7 +1108,7 @@ flowchart LR
 | **Cross-User Leakage** | Single-user system; no cross-user context mixing |
 | **Model Persistence** | No training on user data; inference only |
 
-### 9.3 Claude API (Fallback) — Data Handling
+### 9.3 Claude API (Fallback) â€” Data Handling
 
 | Concern | Mitigation |
 |---|---|
@@ -1123,11 +1123,11 @@ flowchart LR
 #### 9.4.1 System Prompt Hardening
 
 ```python
-# packages/ai/prompt_loader.py — Guardrails enforcement
+# packages/ai/prompt_loader.py â€” Guardrails enforcement
 class PromptGuardrails:
     """Prevents prompt injection by enforcing system prompt boundaries."""
 
-    SYSTEM_PROMPT_CLOSING = "\n\n[SYSTEM PROMPT END — DO NOT MODIFY]"
+    SYSTEM_PROMPT_CLOSING = "\n\n[SYSTEM PROMPT END â€” DO NOT MODIFY]"
 
     @staticmethod
     def assemble_secure_prompt(
@@ -1195,8 +1195,8 @@ class OutputFilter:
 - [ ] System prompt delimiters prevent override
 - [ ] User input length limited (4000 chars max)
 - [ ] Output filtered for sensitive data (keys, tokens)
-- [ ] Local Ollama default — no data leaves machine
-- [ ] Claude API DPA in place — documented data handling
+- [ ] Local Ollama default â€” no data leaves machine
+- [ ] Claude API DPA in place â€” documented data handling
 - [ ] No AI training on user data
 - [ ] AI responses logged for abuse monitoring (anonymized)
 - [ ] Model jailbreak prompts logged for analysis
@@ -1242,7 +1242,7 @@ graph LR
 | Feature | Configuration | Purpose |
 |---|---|---|
 | **Container Isolation** | Automatic | Each service runs in isolated container |
-| **Private Networking** | Railway internal network | Backend ←→ DB traffic stays internal |
+| **Private Networking** | Railway internal network | Backend â†â†’ DB traffic stays internal |
 | **TLS Termination** | Edge TLS | Encrypted traffic to backend |
 | **Environment Variables** | Encrypted at rest | Secrets not exposed in logs |
 | **Deployment Rollback** | One-click | Instant recovery from bad deployment |
@@ -1252,7 +1252,7 @@ graph LR
 ### 10.4 Docker Container Security
 
 ```dockerfile
-# apps/api/Dockerfile — Multi-stage build with security focus
+# apps/api/Dockerfile â€” Multi-stage build with security focus
 FROM python:3.11-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -1345,7 +1345,7 @@ updates:
 | `RESEND_API_KEY` | Railway env vars | Backend only | Monthly |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Vercel env vars | Frontend (inherently public) | Per project |
 
-**Note:** Public keys (`NEXT_PUBLIC_*`) are exposed to client-side code by design (Supabase anon key has RLS enforcement — no data access without user auth).
+**Note:** Public keys (`NEXT_PUBLIC_*`) are exposed to client-side code by design (Supabase anon key has RLS enforcement â€” no data access without user auth).
 
 ---
 
@@ -1355,10 +1355,10 @@ updates:
 
 | Network Zone | Components | Access | TLS |
 |---|---|---|---|---|
-| **Public Zone** | Vercel Edge, Domain DNS | Internet | ✅ TLS 1.3 |
-| **Application Zone** | Railway FastAPI, Scheduler | Vercel only (via Railway URL) | ✅ TLS 1.3 |
-| **Data Zone** | Supabase PostgreSQL | Railway only | ✅ TLS 1.3 |
-| **Local Zone** | Ollama | Localhost only | ❌ No TLS (localhost) |
+| **Public Zone** | Vercel Edge, Domain DNS | Internet | âœ… TLS 1.3 |
+| **Application Zone** | Railway FastAPI, Scheduler | Vercel only (via Railway URL) | âœ… TLS 1.3 |
+| **Data Zone** | Supabase PostgreSQL | Railway only | âœ… TLS 1.3 |
+| **Local Zone** | Ollama | Localhost only | âŒ No TLS (localhost) |
 
 #### Trust Boundaries
 
@@ -1447,7 +1447,7 @@ stateDiagram-v2
 
     note right of DETECTION: Automated detection<br/>or manual report
     note right of TRIAGE: Severity S0-S4 assigned
-    note right of CONTAINMENT: Contain → Eradicate → Recover
+    note right of CONTAINMENT: Contain â†’ Eradicate â†’ Recover
     note right of POST_MORTEM: Within 48 hours<br/>for S0/S1 incidents
 ```
 
@@ -1525,10 +1525,10 @@ stateDiagram-v2
 ## Timeline
 | Time (UTC) | Event |
 |---|---|
-| 00:00 | Detection — {how detected} |
-| 00:15 | Containment — {action taken} |
-| 01:30 | Eradication — {action taken} |
-| 02:00 | Recovery — {action taken} |
+| 00:00 | Detection â€” {how detected} |
+| 00:15 | Containment â€” {action taken} |
+| 01:30 | Eradication â€” {action taken} |
+| 02:00 | Recovery â€” {action taken} |
 | 48:00 | Post-mortem completed |
 
 ## Root Cause Analysis
@@ -1581,26 +1581,26 @@ stateDiagram-v2
 
 | SOC 2 Trust Service Criteria | ARIA OS Coverage | Gap |
 |---|---|---|
-| **Security** — Protected against unauthorized access | RLS, Auth, Encryption, Rate Limiting | No penetration test (Q4 2026) |
-| **Availability** — Available for operation and use | Uptime monitoring, health checks | No formal SLA documented |
-| **Processing Integrity** — Processing complete, valid, accurate | Pydantic validation, RLS integrity | No processing auditing |
-| **Confidentiality** — Information designated as confidential protected | RLS, Encryption, Access controls | No formal classification |
-| **Privacy** — Personal information collected, used, retained, disclosed | GDPR compliance, data minimization | Full privacy program (Q1 2027) |
+| **Security** â€” Protected against unauthorized access | RLS, Auth, Encryption, Rate Limiting | No penetration test (Q4 2026) |
+| **Availability** â€” Available for operation and use | Uptime monitoring, health checks | No formal SLA documented |
+| **Processing Integrity** â€” Processing complete, valid, accurate | Pydantic validation, RLS integrity | No processing auditing |
+| **Confidentiality** â€” Information designated as confidential protected | RLS, Encryption, Access controls | No formal classification |
+| **Privacy** â€” Personal information collected, used, retained, disclosed | GDPR compliance, data minimization | Full privacy program (Q1 2027) |
 
 ### 13.3 GDPR Mapping
 
 | GDPR Requirement | ARIA OS Status | Evidence |
 |---|---|---|
-| Article 5: Principles | ✅ Compliant | Data minimization, purpose limitation |
-| Article 6: Lawful Processing | ✅ Compliant | Consent + contract basis |
-| Article 7: Consent | ✅ Compliant | Google OAuth consent screen |
-| Article 15: Right of Access | ✅ Compliant | Data export feature |
-| Article 17: Right to Erasure | ✅ Compliant | Account deletion within 48 hours |
-| Article 20: Data Portability | ✅ Compliant | JSON/CSV export |
-| Article 25: Privacy by Design | ✅ Compliant | RLS, no telemetry, minimal collection |
-| Article 32: Security | ✅ Compliant | Encryption, RLS, rate limiting |
-| Article 33: Breach Notification | ⚠️ Partially | Procedures documented; notification not automated |
-| Article 35: DPIA | ⚠️ Partially | Informal assessment; formal DPIA needed |
+| Article 5: Principles | âœ… Compliant | Data minimization, purpose limitation |
+| Article 6: Lawful Processing | âœ… Compliant | Consent + contract basis |
+| Article 7: Consent | âœ… Compliant | Google OAuth consent screen |
+| Article 15: Right of Access | âœ… Compliant | Data export feature |
+| Article 17: Right to Erasure | âœ… Compliant | Account deletion within 48 hours |
+| Article 20: Data Portability | âœ… Compliant | JSON/CSV export |
+| Article 25: Privacy by Design | âœ… Compliant | RLS, no telemetry, minimal collection |
+| Article 32: Security | âœ… Compliant | Encryption, RLS, rate limiting |
+| Article 33: Breach Notification | âš ï¸ Partially | Procedures documented; notification not automated |
+| Article 35: DPIA | âš ï¸ Partially | Informal assessment; formal DPIA needed |
 
 ---
 
@@ -1610,7 +1610,7 @@ stateDiagram-v2
 
 ```mermaid
 flowchart TD
-    A["Git Push → PR Created"]
+    A["Git Push â†’ PR Created"]
     B["Security Gate Review"]
     C["Security Lint<br/>(SAST)"]
     D["Dependency Check<br/>(SCA)"]
@@ -1645,7 +1645,7 @@ flowchart TD
 ### 14.2 CI Security Jobs
 
 ```yaml
-# .github/workflows/ci.yml — Security Jobs
+# .github/workflows/ci.yml â€” Security Jobs
 security-sast:
   name: Security Linting (SAST)
   runs-on: ubuntu-latest
@@ -1825,18 +1825,32 @@ For every PR, reviewers must check:
 
 | Term | Definition |
 |---|---|
-| **RLS** | Row-Level Security — PostgreSQL feature limiting data access by user |
-| **PKCE** | Proof Key for Code Exchange — OAuth security extension for public clients |
-| **JWT** | JSON Web Token — compact, URL-safe token format for auth claims |
-| **CSP** | Content Security Policy — HTTP header preventing XSS and data injection |
-| **HSTS** | HTTP Strict Transport Security — forces HTTPS connections |
-| **SAST** | Static Application Security Testing — analyzes source code for vulnerabilities |
-| **DAST** | Dynamic Application Security Testing — tests running application for vulnerabilities |
-| **SCA** | Software Composition Analysis — scans dependencies for known vulnerabilities |
-| **DPIA** | Data Protection Impact Assessment — GDPR-required privacy risk assessment |
-| **TDE** | Transparent Data Encryption — encrypts database at rest |
+| **RLS** | Row-Level Security â€” PostgreSQL feature limiting data access by user |
+| **PKCE** | Proof Key for Code Exchange â€” OAuth security extension for public clients |
+| **JWT** | JSON Web Token â€” compact, URL-safe token format for auth claims |
+| **CSP** | Content Security Policy â€” HTTP header preventing XSS and data injection |
+| **HSTS** | HTTP Strict Transport Security â€” forces HTTPS connections |
+| **SAST** | Static Application Security Testing â€” analyzes source code for vulnerabilities |
+| **DAST** | Dynamic Application Security Testing â€” tests running application for vulnerabilities |
+| **SCA** | Software Composition Analysis â€” scans dependencies for known vulnerabilities |
+| **DPIA** | Data Protection Impact Assessment â€” GDPR-required privacy risk assessment |
+| **TDE** | Transparent Data Encryption â€” encrypts database at rest |
 
-### Appendix E: Document Change Log
+### Appendix E: Cross-References to Security Sub-Documents
+
+| Document | Purpose |
+|---|---|
+| [SDL](sdl.md) | Secure Development Lifecycle — all 7 phases mapped to CI/CD pipeline |
+| [FastAPI Hardening](hardening/fastapi.md) | Backend-specific security checklist (rate limiting, CORS, JWT, CSRF) |
+| [Supabase Hardening](hardening/supabase.md) | Database-specific security (RLS policies, network restrictions, backups) |
+| [Next.js Hardening](hardening/nextjs.md) | Frontend-specific security (CSP, XSS, auth middleware, service worker) |
+| [Supply Chain Security](../engineering/supply-chain-security.md) | Dependency scanning, Trivy, Dependabot configuration |
+| [Secrets Management](../engineering/secrets-management.md) | Environment variable security, key rotation, secret scanning |
+| [Threat Model](ThreatModel.md) | STRIDE threat model, attack trees, risk ratings |
+| [Incident Response Policy](policies/incident-response.md) | Full incident response playbook with severity matrix |
+| [Data Classification Policy](policies/data-classification.md) | T1–T4 data tier definitions and handling requirements |
+
+### Appendix F: Document Change Log
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
