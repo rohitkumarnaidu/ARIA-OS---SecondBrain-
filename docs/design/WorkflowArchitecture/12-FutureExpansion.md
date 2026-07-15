@@ -1,4 +1,13 @@
-# Part XII — Future Expansion
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF12-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part XII â€” Future Expansion
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
 > Related: `InformationArchitecture.md` (module registry pattern), `DesignStrategy.md` (expansion principles), `00_ProjectVision.md` (product roadmap).
@@ -73,7 +82,7 @@ Every new module must provide consistency across 9 layers.
 
 ```
 Layer                 Location                                 Pattern
-─────────────────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 1. Route              apps/web/app/[module]/page.tsx           'use client'
 2. State              apps/web/stores/[module]-store.ts        Zustand (local)
 3. Data Model         packages/database/schemas/[module].py    Pydantic BaseModel
@@ -126,13 +135,13 @@ The system guarantees that adding a new module will never break existing functio
 | Commitment | Description |
 |---|---|
 | **No existing component modification** | Never modify `@/components/ui/*` for a new module |
-| **No token removal or rename** | Design tokens are additive only — never removed or renamed |
+| **No token removal or rename** | Design tokens are additive only â€” never removed or renamed |
 | **No layout shift** | New module adds nav items without rearranging existing ones |
 | **No API breaking change** | New endpoints don't modify existing endpoint contracts |
 | **No data model migration** | New tables never require changes to existing table schemas |
 | **Module can be disabled** | Every module can be toggled off independently in Settings |
 | **No global CSS pollution** | Module styles scoped to module's component tree |
-| **No bundle size impact** | Modules are lazy-loaded — 0kb impact unless visited |
+| **No bundle size impact** | Modules are lazy-loaded â€” 0kb impact unless visited |
 
 ### Migration Path for Breaking Changes
 

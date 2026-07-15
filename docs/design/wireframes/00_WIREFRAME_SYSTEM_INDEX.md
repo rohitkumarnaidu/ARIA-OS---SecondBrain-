@@ -1,12 +1,12 @@
-# Second Brain OS — Complete Enterprise Wireframe System
+﻿# Second Brain OS â€” Complete Enterprise Wireframe System
 
 | Field | Value |
 |---|---|
-| Document ID | SB-WIREFRAME-SYS-001 |
+| Document ID | DSG-WIX-001 |
 | Version | 2.0.0 |
 | Status | Complete |
 | Date | 2026-06-11 |
-| Classification | Enterprise UX — Structural Wireframes |
+| Classification | Enterprise UX â€” Structural Wireframes |
 | Scope | 20 Modules, 3 Breakpoints, All States, 7 Wireframe Parts |
 
 ---
@@ -31,48 +31,48 @@ This wireframe system is organized into 8 documents (this index + 7 parts):
 ## System Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    SECOND BRAIN OS (ARIA OS)                     │
-│                  Enterprise Wireframe System                     │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   DESKTOP    │  │   TABLET     │  │   MOBILE     │          │
-│  │  1024px+     │  │  768-1023px  │  │  320-767px   │          │
-│  │              │  │              │  │              │          │
-│  │ ┌──┬───────┐ │  │ ┌─┬────────┐│  │ ┌──────────┐│          │
-│  │ │  │       │ │  │ │ │        ││  │ │  TopBar   ││          │
-│  │ │S │Content│ │  │ │I│Content ││  │ ├──────────┤│          │
-│  │ │i │ Area  │ │  │ │c│  Area  ││  │ │          ││          │
-│  │ │d │       │ │  │ │o│        ││  │ │ Content  ││          │
-│  │ │e │       │ │  │ │n│        ││  │ │          ││          │
-│  │ │b │       │ │  │ │ │        ││  │ │          ││          │
-│  │ │a │       │ │  │ │ │        ││  │ ├──────────┤│          │
-│  │ │r │       │ │  │ └─┴────────┘│  │ │ BottomNav││          │
-│  │ └──┴───────┘ │  └──────────────┘  │ └──────────┘│          │
-│  └──────────────┘                     └──────────────┘          │
-│                                                                  │
-│  15 Modules × 3 Breakpoints × Multiple Views = 120+ Wireframes  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    SECOND BRAIN OS (ARIA OS)                     â”‚
+â”‚                  Enterprise Wireframe System                     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”          â”‚
+â”‚  â”‚   DESKTOP    â”‚  â”‚   TABLET     â”‚  â”‚   MOBILE     â”‚          â”‚
+â”‚  â”‚  1024px+     â”‚  â”‚  768-1023px  â”‚  â”‚  320-767px   â”‚          â”‚
+â”‚  â”‚              â”‚  â”‚              â”‚  â”‚              â”‚          â”‚
+â”‚  â”‚ â”Œâ”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â” â”‚  â”‚ â”Œâ”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚          â”‚
+â”‚  â”‚ â”‚  â”‚       â”‚ â”‚  â”‚ â”‚ â”‚        â”‚â”‚  â”‚ â”‚  TopBar   â”‚â”‚          â”‚
+â”‚  â”‚ â”‚S â”‚Contentâ”‚ â”‚  â”‚ â”‚Iâ”‚Content â”‚â”‚  â”‚ â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤â”‚          â”‚
+â”‚  â”‚ â”‚i â”‚ Area  â”‚ â”‚  â”‚ â”‚câ”‚  Area  â”‚â”‚  â”‚ â”‚          â”‚â”‚          â”‚
+â”‚  â”‚ â”‚d â”‚       â”‚ â”‚  â”‚ â”‚oâ”‚        â”‚â”‚  â”‚ â”‚ Content  â”‚â”‚          â”‚
+â”‚  â”‚ â”‚e â”‚       â”‚ â”‚  â”‚ â”‚nâ”‚        â”‚â”‚  â”‚ â”‚          â”‚â”‚          â”‚
+â”‚  â”‚ â”‚b â”‚       â”‚ â”‚  â”‚ â”‚ â”‚        â”‚â”‚  â”‚ â”‚          â”‚â”‚          â”‚
+â”‚  â”‚ â”‚a â”‚       â”‚ â”‚  â”‚ â”‚ â”‚        â”‚â”‚  â”‚ â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤â”‚          â”‚
+â”‚  â”‚ â”‚r â”‚       â”‚ â”‚  â”‚ â””â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚  â”‚ â”‚ BottomNavâ”‚â”‚          â”‚
+â”‚  â”‚ â””â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚          â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          â”‚
+â”‚                                                                  â”‚
+â”‚  15 Modules Ã— 3 Breakpoints Ã— Multiple Views = 120+ Wireframes  â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
 
-## Wireframe Document System — Module Coverage Map
+## Wireframe Document System â€” Module Coverage Map
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','lineColor':'#00FFA3','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','fontFamily':'DM Sans'}}}%%
 graph TD
-    Index["00 — SYSTEM INDEX<br/>Doc Map + Hierarchy + Flows"]:::index
+    Index["00 â€” SYSTEM INDEX<br/>Doc Map + Hierarchy + Flows"]:::index
 
-    Index --> Shell["01 — App Shell & Nav<br/>7 Components, 3 Breakpoints"]:::doc
-    Index --> Dash["02 — Dashboard<br/>Bento Grid, 7 Widget Sections"]:::doc
-    Index --> Tasks["03 — Tasks & Courses<br/>List / Board / Calendar / Detail"]:::doc
-    Index --> Knowledge["04 — Knowledge & Ideas<br/>Vault / Pipeline / Canvas"]:::doc
-    Index --> Opps["05 — Opportunities<br/>Discovery / Board / Income"]:::doc
-    Index --> Analytics["06 — Analytics & AI<br/>Reports / Chat / Settings / Sleep / Habits"]:::doc
-    Index --> Supp["07 — Supplement<br/>Time / Academics / YT / Auto / Learn / Mem / AI"]:::doc
+    Index --> Shell["01 â€” App Shell & Nav<br/>7 Components, 3 Breakpoints"]:::doc
+    Index --> Dash["02 â€” Dashboard<br/>Bento Grid, 7 Widget Sections"]:::doc
+    Index --> Tasks["03 â€” Tasks & Courses<br/>List / Board / Calendar / Detail"]:::doc
+    Index --> Knowledge["04 â€” Knowledge & Ideas<br/>Vault / Pipeline / Canvas"]:::doc
+    Index --> Opps["05 â€” Opportunities<br/>Discovery / Board / Income"]:::doc
+    Index --> Analytics["06 â€” Analytics & AI<br/>Reports / Chat / Settings / Sleep / Habits"]:::doc
+    Index --> Supp["07 â€” Supplement<br/>Time / Academics / YT / Auto / Learn / Mem / AI"]:::doc
 
     Shell --> Desktop["Desktop 1440px+"]:::bp
     Shell --> Tablet["Tablet 768-1023px"]:::bp
@@ -102,156 +102,156 @@ graph TD
 ## Complete Page Hierarchy
 
 ```
-L0 — Application Shell
-│
-├── L1 — Authentication
-│   ├── Login Page
-│   └── OAuth Callback
-│
-├── L1 — Dashboard (Home)
-│   ├── L2 — Morning Briefing (expanded)
-│   ├── L2 — Widget Configuration
-│   └── L2 — Layout Presets
-│
-├── L1 — Tasks
-│   ├── L2 — List View
-│   │   └── L3 — Task Detail (split/full)
-│   │       └── L4 — Edit Modal
-│   ├── L2 — Board View (Kanban)
-│   │   └── L3 — Task Detail
-│   ├── L2 — Calendar View
-│   │   ├── L3 — Month View
-│   │   ├── L3 — Week View
-│   │   └── L3 — Day View
-│   └── L4 — Create Task Modal
-│
-├── L1 — Courses
-│   ├── L2 — Library View (Grid/List)
-│   ├── L2 — Course Detail
-│   │   ├── L3 — Overview Tab
-│   │   ├── L3 — Lessons Tab
-│   │   ├── L3 — Notes Tab
-│   │   └── L3 — Analytics Tab
-│   ├── L2 — Progress Tracking
-│   └── L4 — Add Course Modal
-│
-├── L1 — Knowledge Vault (Resources)
-│   ├── L2 — Resource Grid/List
-│   ├── L2 — Search Results
-│   ├── L2 — Knowledge Graph
-│   ├── L3 — Resource Detail
-│   └── L4 — Add Resource Modal
-│
-├── L1 — Idea Vault (Ideas)
-│   ├── L2 — Capture View
-│   ├── L2 — Pipeline Board
-│   ├── L2 — Analysis View
-│   ├── L3 — Idea Detail
-│   │   ├── L3 — AI Analysis Panel
-│   │   └── L3 — Validation Checklist
-│   └── L4 — Quick Capture Modal
-│
-├── L1 — Roadmap Engine (Goals)
-│   ├── L2 — Canvas View
-│   ├── L2 — Timeline View (Gantt)
-│   ├── L2 — Milestones View
-│   ├── L2 — Dependencies View
-│   ├── L3 — Goal Detail
-│   │   ├── L3 — Overview Tab
-│   │   ├── L3 — Tasks Tab
-│   │   ├── L3 — Milestones Tab
-│   │   └── L3 — Dependencies Tab
-│   └── L4 — Create Goal Modal
-│
-├── L1 — Opportunity Radar
-│   ├── L2 — Discovery View (Grid/List)
-│   ├── L2 — Recommendations
-│   ├── L2 — Filter Panel
-│   ├── L3 — Opportunity Detail
-│   │   ├── L3 — Match Breakdown
-│   │   ├── L3 — Application Tracking
-│   │   └── L3 — AI Insights
-│   └── L4 — Add Opportunity Modal
-│
-├── L1 — Projects
-│   ├── L2 — Board View (Kanban)
-│   ├── L2 — Timeline View (Gantt)
-│   ├── L2 — Grid View
-│   ├── L3 — Project Detail
-│   │   ├── L3 — Overview Tab
-│   │   ├── L3 — Tasks Tab
-│   │   ├── L3 — Milestones Tab
-│   │   ├── L3 — Files Tab
-│   │   └── L3 — Analytics Tab
-│   └── L4 — Create Project Modal
-│
-├── L1 — Income Dashboard
-│   ├── L2 — Overview
-│   ├── L2 — Sources
-│   ├── L2 — Analytics
-│   ├── L3 — Source Detail
-│   └── L4 — Log Income Modal
-│
-├── L1 — Habits
-│   ├── L2 — Tracker View (Calendar/Grid)
-│   ├── L3 — Habit Detail
-│   └── L4 — Add Habit Modal
-│
-├── L1 — Sleep
-│   ├── L2 — Log View
-│   ├── L2 — Analytics
-│   └── L4 — Log Sleep Modal
-│
-├── L1 — Time Tracking
-│   ├── L2 — Timer View (Pomodoro)
-│   ├── L2 — Entries Log
-│   ├── L2 — Statistics
-│   └── L4 — Manual Entry Modal
-│
-├── L1 — Academics
-│   ├── L2 — Semester View
-│   ├── L2 — Subject Detail
-│   └── L4 — Add Subject Modal
-│
-├── L1 — YouTube
-│   ├── L2 — Library View
-│   ├── L3 — Video Detail
-│   └── L4 — Add Video Modal
-│
-├── L1 — Analytics
-│   ├── L2 — Overview
-│   ├── L2 — Reports
-│   │   ├── L3 — Report Generator
-│   │   └── L3 — Generated Report
-│   └── L2 — AI Insights
-│
-├── L1 — AI Assistant (ARIA Chat)
-│   ├── L2 — Chat View
-│   │   ├── L3 — Chat Thread
-│   │   └── L3 — Context Panel
-│   └── L2 — Chat History
-│
-├── L1 — Automation
-│   ├── L2 — Rules List
-│   ├── L3 — Rule Detail
-│   └── L4 — Create Rule Modal
-│
-├── L1 — Settings
-│   ├── L2 — Profile
-│   ├── L2 — Appearance
-│   ├── L2 — Notifications
-│   ├── L2 — AI & Intelligence
-│   ├── L2 — Integrations
-│   ├── L2 — Data & Privacy
-│   ├── L2 — Keyboard Shortcuts
-│   └── L2 — About
-│
-└── System Overlays (L4)
-    ├── Command Center (Cmd+K)
-    ├── Global Search
-    ├── Notification Panel
-    ├── Quick Create (⊕)
-    └── AI Quick Ask
+L0 â€” Application Shell
+â”‚
+â”œâ”€â”€ L1 â€” Authentication
+â”‚   â”œâ”€â”€ Login Page
+â”‚   â””â”€â”€ OAuth Callback
+â”‚
+â”œâ”€â”€ L1 â€” Dashboard (Home)
+â”‚   â”œâ”€â”€ L2 â€” Morning Briefing (expanded)
+â”‚   â”œâ”€â”€ L2 â€” Widget Configuration
+â”‚   â””â”€â”€ L2 â€” Layout Presets
+â”‚
+â”œâ”€â”€ L1 â€” Tasks
+â”‚   â”œâ”€â”€ L2 â€” List View
+â”‚   â”‚   â””â”€â”€ L3 â€” Task Detail (split/full)
+â”‚   â”‚       â””â”€â”€ L4 â€” Edit Modal
+â”‚   â”œâ”€â”€ L2 â€” Board View (Kanban)
+â”‚   â”‚   â””â”€â”€ L3 â€” Task Detail
+â”‚   â”œâ”€â”€ L2 â€” Calendar View
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Month View
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Week View
+â”‚   â”‚   â””â”€â”€ L3 â€” Day View
+â”‚   â””â”€â”€ L4 â€” Create Task Modal
+â”‚
+â”œâ”€â”€ L1 â€” Courses
+â”‚   â”œâ”€â”€ L2 â€” Library View (Grid/List)
+â”‚   â”œâ”€â”€ L2 â€” Course Detail
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Overview Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Lessons Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Notes Tab
+â”‚   â”‚   â””â”€â”€ L3 â€” Analytics Tab
+â”‚   â”œâ”€â”€ L2 â€” Progress Tracking
+â”‚   â””â”€â”€ L4 â€” Add Course Modal
+â”‚
+â”œâ”€â”€ L1 â€” Knowledge Vault (Resources)
+â”‚   â”œâ”€â”€ L2 â€” Resource Grid/List
+â”‚   â”œâ”€â”€ L2 â€” Search Results
+â”‚   â”œâ”€â”€ L2 â€” Knowledge Graph
+â”‚   â”œâ”€â”€ L3 â€” Resource Detail
+â”‚   â””â”€â”€ L4 â€” Add Resource Modal
+â”‚
+â”œâ”€â”€ L1 â€” Idea Vault (Ideas)
+â”‚   â”œâ”€â”€ L2 â€” Capture View
+â”‚   â”œâ”€â”€ L2 â€” Pipeline Board
+â”‚   â”œâ”€â”€ L2 â€” Analysis View
+â”‚   â”œâ”€â”€ L3 â€” Idea Detail
+â”‚   â”‚   â”œâ”€â”€ L3 â€” AI Analysis Panel
+â”‚   â”‚   â””â”€â”€ L3 â€” Validation Checklist
+â”‚   â””â”€â”€ L4 â€” Quick Capture Modal
+â”‚
+â”œâ”€â”€ L1 â€” Roadmap Engine (Goals)
+â”‚   â”œâ”€â”€ L2 â€” Canvas View
+â”‚   â”œâ”€â”€ L2 â€” Timeline View (Gantt)
+â”‚   â”œâ”€â”€ L2 â€” Milestones View
+â”‚   â”œâ”€â”€ L2 â€” Dependencies View
+â”‚   â”œâ”€â”€ L3 â€” Goal Detail
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Overview Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Tasks Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Milestones Tab
+â”‚   â”‚   â””â”€â”€ L3 â€” Dependencies Tab
+â”‚   â””â”€â”€ L4 â€” Create Goal Modal
+â”‚
+â”œâ”€â”€ L1 â€” Opportunity Radar
+â”‚   â”œâ”€â”€ L2 â€” Discovery View (Grid/List)
+â”‚   â”œâ”€â”€ L2 â€” Recommendations
+â”‚   â”œâ”€â”€ L2 â€” Filter Panel
+â”‚   â”œâ”€â”€ L3 â€” Opportunity Detail
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Match Breakdown
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Application Tracking
+â”‚   â”‚   â””â”€â”€ L3 â€” AI Insights
+â”‚   â””â”€â”€ L4 â€” Add Opportunity Modal
+â”‚
+â”œâ”€â”€ L1 â€” Projects
+â”‚   â”œâ”€â”€ L2 â€” Board View (Kanban)
+â”‚   â”œâ”€â”€ L2 â€” Timeline View (Gantt)
+â”‚   â”œâ”€â”€ L2 â€” Grid View
+â”‚   â”œâ”€â”€ L3 â€” Project Detail
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Overview Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Tasks Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Milestones Tab
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Files Tab
+â”‚   â”‚   â””â”€â”€ L3 â€” Analytics Tab
+â”‚   â””â”€â”€ L4 â€” Create Project Modal
+â”‚
+â”œâ”€â”€ L1 â€” Income Dashboard
+â”‚   â”œâ”€â”€ L2 â€” Overview
+â”‚   â”œâ”€â”€ L2 â€” Sources
+â”‚   â”œâ”€â”€ L2 â€” Analytics
+â”‚   â”œâ”€â”€ L3 â€” Source Detail
+â”‚   â””â”€â”€ L4 â€” Log Income Modal
+â”‚
+â”œâ”€â”€ L1 â€” Habits
+â”‚   â”œâ”€â”€ L2 â€” Tracker View (Calendar/Grid)
+â”‚   â”œâ”€â”€ L3 â€” Habit Detail
+â”‚   â””â”€â”€ L4 â€” Add Habit Modal
+â”‚
+â”œâ”€â”€ L1 â€” Sleep
+â”‚   â”œâ”€â”€ L2 â€” Log View
+â”‚   â”œâ”€â”€ L2 â€” Analytics
+â”‚   â””â”€â”€ L4 â€” Log Sleep Modal
+â”‚
+â”œâ”€â”€ L1 â€” Time Tracking
+â”‚   â”œâ”€â”€ L2 â€” Timer View (Pomodoro)
+â”‚   â”œâ”€â”€ L2 â€” Entries Log
+â”‚   â”œâ”€â”€ L2 â€” Statistics
+â”‚   â””â”€â”€ L4 â€” Manual Entry Modal
+â”‚
+â”œâ”€â”€ L1 â€” Academics
+â”‚   â”œâ”€â”€ L2 â€” Semester View
+â”‚   â”œâ”€â”€ L2 â€” Subject Detail
+â”‚   â””â”€â”€ L4 â€” Add Subject Modal
+â”‚
+â”œâ”€â”€ L1 â€” YouTube
+â”‚   â”œâ”€â”€ L2 â€” Library View
+â”‚   â”œâ”€â”€ L3 â€” Video Detail
+â”‚   â””â”€â”€ L4 â€” Add Video Modal
+â”‚
+â”œâ”€â”€ L1 â€” Analytics
+â”‚   â”œâ”€â”€ L2 â€” Overview
+â”‚   â”œâ”€â”€ L2 â€” Reports
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Report Generator
+â”‚   â”‚   â””â”€â”€ L3 â€” Generated Report
+â”‚   â””â”€â”€ L2 â€” AI Insights
+â”‚
+â”œâ”€â”€ L1 â€” AI Assistant (ARIA Chat)
+â”‚   â”œâ”€â”€ L2 â€” Chat View
+â”‚   â”‚   â”œâ”€â”€ L3 â€” Chat Thread
+â”‚   â”‚   â””â”€â”€ L3 â€” Context Panel
+â”‚   â””â”€â”€ L2 â€” Chat History
+â”‚
+â”œâ”€â”€ L1 â€” Automation
+â”‚   â”œâ”€â”€ L2 â€” Rules List
+â”‚   â”œâ”€â”€ L3 â€” Rule Detail
+â”‚   â””â”€â”€ L4 â€” Create Rule Modal
+â”‚
+â”œâ”€â”€ L1 â€” Settings
+â”‚   â”œâ”€â”€ L2 â€” Profile
+â”‚   â”œâ”€â”€ L2 â€” Appearance
+â”‚   â”œâ”€â”€ L2 â€” Notifications
+â”‚   â”œâ”€â”€ L2 â€” AI & Intelligence
+â”‚   â”œâ”€â”€ L2 â€” Integrations
+â”‚   â”œâ”€â”€ L2 â€” Data & Privacy
+â”‚   â”œâ”€â”€ L2 â€” Keyboard Shortcuts
+â”‚   â””â”€â”€ L2 â€” About
+â”‚
+â””â”€â”€ System Overlays (L4)
+    â”œâ”€â”€ Command Center (Cmd+K)
+    â”œâ”€â”€ Global Search
+    â”œâ”€â”€ Notification Panel
+    â”œâ”€â”€ Quick Create (âŠ•)
+    â””â”€â”€ AI Quick Ask
 ```
 
 **Total Routes:** 25+ top-level, 60+ sub-views, 15+ modals
@@ -369,98 +369,98 @@ L0 — Application Shell
 
 ```
 1. SINGLE COLUMN (Mobile default)
-┌──────────────────────────┐
-│        Top Bar           │
-├──────────────────────────┤
-│                          │
-│      Content Area        │
-│     (full width)         │
-│                          │
-│                          │
-├──────────────────────────┤
-│      Bottom Nav          │
-└──────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚        Top Bar           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                          â”‚
+â”‚      Content Area        â”‚
+â”‚     (full width)         â”‚
+â”‚                          â”‚
+â”‚                          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚      Bottom Nav          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-2. TWO COLUMN — Sidebar + Content (Desktop default)
-┌────┬─────────────────────┐
-│    │      Top Bar        │
-│    ├─────────────────────┤
-│ S  │                     │
-│ i  │   Content Area      │
-│ d  │                     │
-│ e  │                     │
-│ b  │                     │
-│ a  │                     │
-│ r  │                     │
-└────┴─────────────────────┘
+2. TWO COLUMN â€” Sidebar + Content (Desktop default)
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    â”‚      Top Bar        â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ S  â”‚                     â”‚
+â”‚ i  â”‚   Content Area      â”‚
+â”‚ d  â”‚                     â”‚
+â”‚ e  â”‚                     â”‚
+â”‚ b  â”‚                     â”‚
+â”‚ a  â”‚                     â”‚
+â”‚ r  â”‚                     â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-3. THREE COLUMN — Sidebar + Content + Context Panel
-┌────┬───────────────┬─────┐
-│    │   Top Bar     │     │
-│    ├───────────────┤     │
-│ S  │               │ C   │
-│ i  │  Content      │ o   │
-│ d  │               │ n   │
-│ e  │               │ t   │
-│ b  │               │ e   │
-│ a  │               │ x   │
-│ r  │               │ t   │
-└────┴───────────────┴─────┘
+3. THREE COLUMN â€” Sidebar + Content + Context Panel
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”
+â”‚    â”‚   Top Bar     â”‚     â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤     â”‚
+â”‚ S  â”‚               â”‚ C   â”‚
+â”‚ i  â”‚  Content      â”‚ o   â”‚
+â”‚ d  â”‚               â”‚ n   â”‚
+â”‚ e  â”‚               â”‚ t   â”‚
+â”‚ b  â”‚               â”‚ e   â”‚
+â”‚ a  â”‚               â”‚ x   â”‚
+â”‚ r  â”‚               â”‚ t   â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”˜
 
-4. SPLIT VIEW — List + Detail (Tasks, Resources)
-┌────┬────────┬────────────┐
-│    │  Top   │  Bar       │
-│    ├────────┼────────────┤
-│ S  │ List   │  Detail    │
-│ i  │ Panel  │  Panel     │
-│ d  │ (40%)  │  (60%)     │
-│ e  │        │            │
-│ b  │ Items  │  Selected  │
-│ a  │  ...   │  Item      │
-│ r  │  ...   │  Content   │
-└────┴────────┴────────────┘
+4. SPLIT VIEW â€” List + Detail (Tasks, Resources)
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    â”‚  Top   â”‚  Bar       â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ S  â”‚ List   â”‚  Detail    â”‚
+â”‚ i  â”‚ Panel  â”‚  Panel     â”‚
+â”‚ d  â”‚ (40%)  â”‚  (60%)     â”‚
+â”‚ e  â”‚        â”‚            â”‚
+â”‚ b  â”‚ Items  â”‚  Selected  â”‚
+â”‚ a  â”‚  ...   â”‚  Item      â”‚
+â”‚ r  â”‚  ...   â”‚  Content   â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-5. BENTO GRID — Dashboard Cards
-┌────┬──────────────────────────┐
-│    │        Top Bar           │
-│    ├──────────────────────────┤
-│ S  │ ┌──────────────────────┐ │
-│ i  │ │   Hero / Briefing    │ │
-│ d  │ ├─────┬─────┬────┬────┤ │
-│ e  │ │  M  │  M  │ M  │ M  │ │
-│ b  │ ├─────┴─────┼────┴────┤ │
-│ a  │ │  Wide     │  Wide   │ │
-│ r  │ ├─────┬─────┼────┬────┤ │
-│    │ │  S  │  S  │ S  │ S  │ │
-│    │ └─────┴─────┴────┴────┘ │
-└────┴──────────────────────────┘
+5. BENTO GRID â€” Dashboard Cards
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    â”‚        Top Bar           â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ S  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ i  â”‚ â”‚   Hero / Briefing    â”‚ â”‚
+â”‚ d  â”‚ â”œâ”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”¤ â”‚
+â”‚ e  â”‚ â”‚  M  â”‚  M  â”‚ M  â”‚ M  â”‚ â”‚
+â”‚ b  â”‚ â”œâ”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¤ â”‚
+â”‚ a  â”‚ â”‚  Wide     â”‚  Wide   â”‚ â”‚
+â”‚ r  â”‚ â”œâ”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”¤ â”‚
+â”‚    â”‚ â”‚  S  â”‚  S  â”‚ S  â”‚ S  â”‚ â”‚
+â”‚    â”‚ â””â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”´â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-6. FULL CANVAS — Focus/Roadmap/Graph
-┌────┬──────────────────────────┐
-│    │        Top Bar           │
-│    ├──────────────────────────┤
-│ S  │ ┌────────────────────┐   │
-│ i  │ │                    │   │
-│ d  │ │   Canvas Area      │   │
-│ e  │ │   (interactive)    │   │
-│ b  │ │                    │   │
-│ a  │ │        [Controls]  │   │
-│ r  │ │   [Minimap]        │   │
-│    │ └────────────────────┘   │
-└────┴──────────────────────────┘
+6. FULL CANVAS â€” Focus/Roadmap/Graph
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    â”‚        Top Bar           â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ S  â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚ i  â”‚ â”‚                    â”‚   â”‚
+â”‚ d  â”‚ â”‚   Canvas Area      â”‚   â”‚
+â”‚ e  â”‚ â”‚   (interactive)    â”‚   â”‚
+â”‚ b  â”‚ â”‚                    â”‚   â”‚
+â”‚ a  â”‚ â”‚        [Controls]  â”‚   â”‚
+â”‚ r  â”‚ â”‚   [Minimap]        â”‚   â”‚
+â”‚    â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-7. GANTT / TIMELINE — Goals, Projects
-┌────┬─────────────────────────────┐
-│    │         Top Bar             │
-│    ├──────┬──────────────────────┤
-│ S  │ Name │   Time Axis →→→     │
-│ i  ├──────┼──────────────────────┤
-│ d  │ G1   │ ████████            │
-│ e  │ G2   │     ██████████      │
-│ b  │ G3   │          ████      │
-│ a  │ M1   │ ◆                   │
-│ r  │ M2   │         ◆          │
-└────┴──────┴──────────────────────┘
+7. GANTT / TIMELINE â€” Goals, Projects
+â”Œâ”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚    â”‚         Top Bar             â”‚
+â”‚    â”œâ”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ S  â”‚ Name â”‚   Time Axis â†’â†’â†’     â”‚
+â”‚ i  â”œâ”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ d  â”‚ G1   â”‚ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ            â”‚
+â”‚ e  â”‚ G2   â”‚     â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ      â”‚
+â”‚ b  â”‚ G3   â”‚          â–ˆâ–ˆâ–ˆâ–ˆ      â”‚
+â”‚ a  â”‚ M1   â”‚ â—†                   â”‚
+â”‚ r  â”‚ M2   â”‚         â—†          â”‚
+â””â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Responsive Breakpoint Behavior
@@ -480,33 +480,33 @@ L0 — Application Shell
 ### Information Priority Model
 
 ```
-P0 — CRITICAL (Always visible, above fold)
-├── Today's date / greeting
-├── Top 3 priority tasks
-├── Overdue items count
-├── Active timer / focus state
-└── Urgent notifications
+P0 â€” CRITICAL (Always visible, above fold)
+â”œâ”€â”€ Today's date / greeting
+â”œâ”€â”€ Top 3 priority tasks
+â”œâ”€â”€ Overdue items count
+â”œâ”€â”€ Active timer / focus state
+â””â”€â”€ Urgent notifications
 
-P1 — PRIMARY (Visible without scrolling on desktop)
-├── Task summary (due today, completed)
-├── Habit checklist (today's habits)
-├── Quick action buttons
-├── AI top recommendation
-└── Sleep score / streak
+P1 â€” PRIMARY (Visible without scrolling on desktop)
+â”œâ”€â”€ Task summary (due today, completed)
+â”œâ”€â”€ Habit checklist (today's habits)
+â”œâ”€â”€ Quick action buttons
+â”œâ”€â”€ AI top recommendation
+â””â”€â”€ Sleep score / streak
 
-P2 — SECONDARY (Below fold, one scroll)
-├── Course progress
-├── Goal progress
-├── Weekly trend charts
-├── Opportunity alerts
-└── Income summary
+P2 â€” SECONDARY (Below fold, one scroll)
+â”œâ”€â”€ Course progress
+â”œâ”€â”€ Goal progress
+â”œâ”€â”€ Weekly trend charts
+â”œâ”€â”€ Opportunity alerts
+â””â”€â”€ Income summary
 
-P3 — TERTIARY (Requires navigation or expansion)
-├── Full analytics
-├── Historical data
-├── Settings
-├── Archived items
-└── Knowledge graph
+P3 â€” TERTIARY (Requires navigation or expansion)
+â”œâ”€â”€ Full analytics
+â”œâ”€â”€ Historical data
+â”œâ”€â”€ Settings
+â”œâ”€â”€ Archived items
+â””â”€â”€ Knowledge graph
 ```
 
 ### Content Density Zones
@@ -516,7 +516,7 @@ P3 — TERTIARY (Requires navigation or expansion)
 | Dashboard Hero | High | 15-20 data points | Morning briefing |
 | Dashboard Cards | High | 4-6 metrics per card | Productivity overview |
 | List Views | High | 15-20 rows visible | Task list |
-| Board Views | Medium | 5 columns × 3-5 cards | Kanban boards |
+| Board Views | Medium | 5 columns Ã— 3-5 cards | Kanban boards |
 | Detail Views | Low | 1 item, full context | Task detail |
 | Canvas Views | Variable | User-controlled zoom | Roadmap canvas |
 | Creation Forms | Low | 5-8 fields visible | Create task modal |
@@ -529,49 +529,49 @@ P3 — TERTIARY (Requires navigation or expansion)
 ### Interaction Priority Levels
 
 ```
-TIER 1 — Primary Actions (Most prominent, always accessible)
-┌─────────────────────────────────────────────────┐
-│ • Complete task (checkbox)                       │
-│ • Start focus timer                              │
-│ • Log habit (one-tap)                            │
-│ • Quick create (⊕ button / FAB)                 │
-│ • Navigate between modules (sidebar/tabs)        │
-│ • Global search (Cmd+K)                          │
-│ • Send chat message                              │
-└─────────────────────────────────────────────────┘
+TIER 1 â€” Primary Actions (Most prominent, always accessible)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â€¢ Complete task (checkbox)                       â”‚
+â”‚ â€¢ Start focus timer                              â”‚
+â”‚ â€¢ Log habit (one-tap)                            â”‚
+â”‚ â€¢ Quick create (âŠ• button / FAB)                 â”‚
+â”‚ â€¢ Navigate between modules (sidebar/tabs)        â”‚
+â”‚ â€¢ Global search (Cmd+K)                          â”‚
+â”‚ â€¢ Send chat message                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-TIER 2 — Secondary Actions (Accessible, not competing with Tier 1)
-┌─────────────────────────────────────────────────┐
-│ • View detail (click item)                       │
-│ • Switch view (List/Board/Calendar)              │
-│ • Apply filter                                   │
-│ • Sort list                                      │
-│ • Accept AI suggestion                           │
-│ • Mark lesson complete                           │
-│ • Drag card on board                             │
-│ • Expand/collapse section                        │
-└─────────────────────────────────────────────────┘
+TIER 2 â€” Secondary Actions (Accessible, not competing with Tier 1)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â€¢ View detail (click item)                       â”‚
+â”‚ â€¢ Switch view (List/Board/Calendar)              â”‚
+â”‚ â€¢ Apply filter                                   â”‚
+â”‚ â€¢ Sort list                                      â”‚
+â”‚ â€¢ Accept AI suggestion                           â”‚
+â”‚ â€¢ Mark lesson complete                           â”‚
+â”‚ â€¢ Drag card on board                             â”‚
+â”‚ â€¢ Expand/collapse section                        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-TIER 3 — Tertiary Actions (Available on demand)
-┌─────────────────────────────────────────────────┐
-│ • Edit item details                              │
-│ • Bulk select & operate                          │
-│ • Customize dashboard layout                     │
-│ • Change settings                                │
-│ • Export data                                    │
-│ • Delete item (requires confirmation)            │
-│ • Link items cross-module                        │
-│ • View analytics detail                          │
-└─────────────────────────────────────────────────┘
+TIER 3 â€” Tertiary Actions (Available on demand)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â€¢ Edit item details                              â”‚
+â”‚ â€¢ Bulk select & operate                          â”‚
+â”‚ â€¢ Customize dashboard layout                     â”‚
+â”‚ â€¢ Change settings                                â”‚
+â”‚ â€¢ Export data                                    â”‚
+â”‚ â€¢ Delete item (requires confirmation)            â”‚
+â”‚ â€¢ Link items cross-module                        â”‚
+â”‚ â€¢ View analytics detail                          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-TIER 4 — Administrative Actions (Intentionally hard to discover)
-┌─────────────────────────────────────────────────┐
-│ • Delete account                                 │
-│ • Clear AI memory                                │
-│ • Reset preferences                              │
-│ • Manage integrations                            │
-│ • Export all data                                 │
-└─────────────────────────────────────────────────┘
+TIER 4 â€” Administrative Actions (Intentionally hard to discover)
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ â€¢ Delete account                                 â”‚
+â”‚ â€¢ Clear AI memory                                â”‚
+â”‚ â€¢ Reset preferences                              â”‚
+â”‚ â€¢ Manage integrations                            â”‚
+â”‚ â€¢ Export all data                                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Interaction Patterns by Input Method
@@ -579,9 +579,9 @@ TIER 4 — Administrative Actions (Intentionally hard to discover)
 | Pattern | Desktop | Tablet | Mobile |
 |---------|---------|--------|--------|
 | Navigate | Sidebar click, Cmd+K | Icon tap, Tab tap | Bottom tab, Drawer |
-| Create | ⊕ button, Cmd+K > /new | ⊕ button | FAB (floating) |
+| Create | âŠ• button, Cmd+K > /new | âŠ• button | FAB (floating) |
 | Complete | Checkbox click | Checkbox tap | Swipe right |
-| Delete | ⋮ menu > Delete | ⋮ menu > Delete | Swipe left |
+| Delete | â‹® menu > Delete | â‹® menu > Delete | Swipe left |
 | Search | Cmd+K, Search bar click | Search bar tap | Search icon tap |
 | Filter | Click filter chips | Tap filter chips | Bottom sheet |
 | Sort | Click column header | Tap sort dropdown | Bottom sheet |
@@ -589,7 +589,7 @@ TIER 4 — Administrative Actions (Intentionally hard to discover)
 | View detail | Click row / card | Tap card | Tap card |
 | Back | Breadcrumb click | Back arrow | Back arrow / swipe |
 | Quick action | Keyboard shortcut | Tap action button | Tap action button |
-| Context menu | Right click / ⋮ | Long press | Long press |
+| Context menu | Right click / â‹® | Long press | Long press |
 
 ---
 
@@ -598,163 +598,163 @@ TIER 4 — Administrative Actions (Intentionally hard to discover)
 ### 1. Daily Workflow Flow
 
 ```
-┌──────────┐    ┌──────────────┐    ┌──────────────┐
-│  Wake Up  │───→│ Open ARIA OS │───→│  Dashboard   │
-└──────────┘    └──────────────┘    │  (Morning    │
-                                     │   Briefing)  │
-                                     └──────┬───────┘
-                                            │
-                              ┌─────────────┼─────────────┐
-                              ▼             ▼             ▼
-                     ┌──────────────┐ ┌──────────┐ ┌──────────┐
-                     │ Review Tasks │ │ Check    │ │ View AI  │
-                     │ for Today    │ │ Habits   │ │ Insights │
-                     └──────┬───────┘ └────┬─────┘ └────┬─────┘
-                            │              │             │
-                            ▼              ▼             ▼
-                     ┌──────────────┐ ┌──────────┐ ┌──────────┐
-                     │ Start Focus  │ │ Log      │ │ Act on   │
-                     │ Timer        │ │ Habits   │ │ Suggest. │
-                     └──────┬───────┘ └──────────┘ └──────────┘
-                            │
-                            ▼
-                     ┌──────────────┐
-                     │ Deep Work    │
-                     │ Session      │
-                     │ (Pomodoro)   │
-                     └──────┬───────┘
-                            │
-                            ▼
-                     ┌──────────────┐    ┌──────────────┐
-                     │ Complete     │───→│ AI Suggests  │
-                     │ Tasks        │    │ Next Task    │
-                     └──────────────┘    └──────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Wake Up  â”‚â”€â”€â”€â†’â”‚ Open ARIA OS â”‚â”€â”€â”€â†’â”‚  Dashboard   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚  (Morning    â”‚
+                                     â”‚   Briefing)  â”‚
+                                     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                                            â”‚
+                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                              â–¼             â–¼             â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Review Tasks â”‚ â”‚ Check    â”‚ â”‚ View AI  â”‚
+                     â”‚ for Today    â”‚ â”‚ Habits   â”‚ â”‚ Insights â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                            â”‚              â”‚             â”‚
+                            â–¼              â–¼             â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Start Focus  â”‚ â”‚ Log      â”‚ â”‚ Act on   â”‚
+                     â”‚ Timer        â”‚ â”‚ Habits   â”‚ â”‚ Suggest. â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚
+                            â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Deep Work    â”‚
+                     â”‚ Session      â”‚
+                     â”‚ (Pomodoro)   â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                            â”‚
+                            â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Complete     â”‚â”€â”€â”€â†’â”‚ AI Suggests  â”‚
+                     â”‚ Tasks        â”‚    â”‚ Next Task    â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2. Cross-Module Navigation Flow
 
 ```
-┌────────────┐     ┌────────────┐     ┌────────────┐
-│  Task      │────→│ Linked     │────→│ Goal       │
-│  Detail    │     │ Goal       │     │  Detail    │
-└────────────┘     └────────────┘     └─────┬──────┘
-                                            │
-                                            ▼
-┌────────────┐     ┌────────────┐     ┌────────────┐
-│  Resource  │←────│ Related    │←────│ Project    │
-│  Detail    │     │ Resources  │     │  Detail    │
-└────────────┘     └────────────┘     └────────────┘
-       │
-       ▼
-┌────────────┐     ┌────────────┐
-│ Knowledge  │────→│ Connected  │
-│   Graph    │     │  Ideas     │
-└────────────┘     └────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Task      â”‚â”€â”€â”€â”€â†’â”‚ Linked     â”‚â”€â”€â”€â”€â†’â”‚ Goal       â”‚
+â”‚  Detail    â”‚     â”‚ Goal       â”‚     â”‚  Detail    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                                            â”‚
+                                            â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Resource  â”‚â†â”€â”€â”€â”€â”‚ Related    â”‚â†â”€â”€â”€â”€â”‚ Project    â”‚
+â”‚  Detail    â”‚     â”‚ Resources  â”‚     â”‚  Detail    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚
+       â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Knowledge  â”‚â”€â”€â”€â”€â†’â”‚ Connected  â”‚
+â”‚   Graph    â”‚     â”‚  Ideas     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 3. AI Interaction Flow
 
 ```
-┌──────────────────────────────────────────────────┐
-│                 AI ENTRY POINTS                    │
-├──────────┬──────────┬──────────┬─────────────────┤
-│ Chat     │ Command  │ Inline   │ Proactive       │
-│ Page     │ Palette  │ AI Btn   │ Notification    │
-└────┬─────┴────┬─────┴────┬─────┴────┬────────────┘
-     │          │          │          │
-     ▼          ▼          ▼          ▼
-┌──────────────────────────────────────────────────┐
-│          ARIA INTENT CLASSIFICATION               │
-├──────────┬──────────┬──────────┬─────────────────┤
-│ Planning │ Info     │ Action   │ Reflection      │
-│ Request  │ Request  │ Request  │ Request         │
-└────┬─────┴────┬─────┴────┬─────┴────┬────────────┘
-     │          │          │          │
-     ▼          ▼          ▼          ▼
-┌──────────────────────────────────────────────────┐
-│           CONTEXT LOADING                         │
-│  User data + Current page + Conversation history  │
-└──────────────────┬───────────────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────────────┐
-│           AI RESPONSE GENERATION                  │
-├──────────┬──────────┬──────────┬─────────────────┤
-│ Text     │ Task     │ Resource │ Schedule        │
-│ Response │ Suggest. │ Suggest. │ Suggest.        │
-└────┬─────┴────┬─────┴────┬─────┴────┬────────────┘
-     │          │          │          │
-     ▼          ▼          ▼          ▼
-┌──────────────────────────────────────────────────┐
-│        USER ACTION ON RECOMMENDATION              │
-├──────────┬──────────┬──────────┬─────────────────┤
-│ Accept   │ Modify   │ Dismiss  │ Discuss         │
-│ (create) │ (edit)   │ (skip)   │ (follow-up)     │
-└──────────┴──────────┴──────────┴─────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 AI ENTRY POINTS                    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Chat     â”‚ Command  â”‚ Inline   â”‚ Proactive       â”‚
+â”‚ Page     â”‚ Palette  â”‚ AI Btn   â”‚ Notification    â”‚
+â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚          â”‚          â”‚          â”‚
+     â–¼          â–¼          â–¼          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚          ARIA INTENT CLASSIFICATION               â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Planning â”‚ Info     â”‚ Action   â”‚ Reflection      â”‚
+â”‚ Request  â”‚ Request  â”‚ Request  â”‚ Request         â”‚
+â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚          â”‚          â”‚          â”‚
+     â–¼          â–¼          â–¼          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           CONTEXT LOADING                         â”‚
+â”‚  User data + Current page + Conversation history  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                   â”‚
+                   â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           AI RESPONSE GENERATION                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Text     â”‚ Task     â”‚ Resource â”‚ Schedule        â”‚
+â”‚ Response â”‚ Suggest. â”‚ Suggest. â”‚ Suggest.        â”‚
+â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚          â”‚          â”‚          â”‚
+     â–¼          â–¼          â–¼          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚        USER ACTION ON RECOMMENDATION              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Accept   â”‚ Modify   â”‚ Dismiss  â”‚ Discuss         â”‚
+â”‚ (create) â”‚ (edit)   â”‚ (skip)   â”‚ (follow-up)     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4. Task Lifecycle Flow
 
 ```
-┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐
-│ BACKLOG │──→│ TO DO   │──→│ IN PROG │──→│ REVIEW  │──→│  DONE   │
-└─────────┘   └─────────┘   └─────────┘   └─────────┘   └─────────┘
-     ↑              │              │              │              │
-     │              ▼              ▼              ▼              ▼
-     │        ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
-     │        │ AI breaks│  │ Timer    │  │ AI check │  │ Celebrate│
-     │        │ into sub │  │ tracking │  │ quality  │  │ + suggest│
-     │        │ tasks    │  │ active   │  │          │  │ next     │
-     └────────┤          │  │          │  │          │  │          │
-   (re-open)  └──────────┘  └──────────┘  └──────────┘  └──────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ BACKLOG â”‚â”€â”€â†’â”‚ TO DO   â”‚â”€â”€â†’â”‚ IN PROG â”‚â”€â”€â†’â”‚ REVIEW  â”‚â”€â”€â†’â”‚  DONE   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â†‘              â”‚              â”‚              â”‚              â”‚
+     â”‚              â–¼              â–¼              â–¼              â–¼
+     â”‚        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+     â”‚        â”‚ AI breaksâ”‚  â”‚ Timer    â”‚  â”‚ AI check â”‚  â”‚ Celebrateâ”‚
+     â”‚        â”‚ into sub â”‚  â”‚ tracking â”‚  â”‚ quality  â”‚  â”‚ + suggestâ”‚
+     â”‚        â”‚ tasks    â”‚  â”‚ active   â”‚  â”‚          â”‚  â”‚ next     â”‚
+     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¤          â”‚  â”‚          â”‚  â”‚          â”‚  â”‚          â”‚
+   (re-open)  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 5. Idea-to-Project Pipeline Flow
 
 ```
-┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
-│ CAPTURE  │──→│ AI       │──→│ VALIDATE │──→│ BUILD    │
-│          │   │ ANALYSIS │   │          │   │          │
-│ Quick    │   │ Feasib.  │   │ Checklist│   │ → Create │
-│ capture  │   │ Market   │   │ Research │   │   Project│
-│ form     │   │ Skills   │   │ MVP Scope│   │ → Create │
-│          │   │ SWOT     │   │ Timeline │   │   Goal   │
-└──────────┘   └──────────┘   └──────────┘   └──────────┘
-                                                   │
-                                                   ▼
-                                              ┌──────────┐
-                                              │ LAUNCHED │
-                                              │          │
-                                              │ Ship +   │
-                                              │ Archive  │
-                                              └──────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ CAPTURE  â”‚â”€â”€â†’â”‚ AI       â”‚â”€â”€â†’â”‚ VALIDATE â”‚â”€â”€â†’â”‚ BUILD    â”‚
+â”‚          â”‚   â”‚ ANALYSIS â”‚   â”‚          â”‚   â”‚          â”‚
+â”‚ Quick    â”‚   â”‚ Feasib.  â”‚   â”‚ Checklistâ”‚   â”‚ â†’ Create â”‚
+â”‚ capture  â”‚   â”‚ Market   â”‚   â”‚ Research â”‚   â”‚   Projectâ”‚
+â”‚ form     â”‚   â”‚ Skills   â”‚   â”‚ MVP Scopeâ”‚   â”‚ â†’ Create â”‚
+â”‚          â”‚   â”‚ SWOT     â”‚   â”‚ Timeline â”‚   â”‚   Goal   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                   â”‚
+                                                   â–¼
+                                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                              â”‚ LAUNCHED â”‚
+                                              â”‚          â”‚
+                                              â”‚ Ship +   â”‚
+                                              â”‚ Archive  â”‚
+                                              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 6. Opportunity Discovery Flow
 
 ```
-┌──────────────┐
-│ AI Daily     │
-│ Scan         │
-└──────┬───────┘
-       │
-       ▼
-┌──────────────┐    ┌──────────────┐    ┌──────────────┐
-│ New Matches  │───→│ User Reviews │───→│ Save / Apply │
-│ Found (3)    │    │ in Radar     │    │ / Dismiss    │
-└──────────────┘    └──────┬───────┘    └──────┬───────┘
-                           │                    │
-                           ▼                    ▼
-                    ┌──────────────┐    ┌──────────────┐
-                    │ View Detail  │    │ Track App.   │
-                    │ + Match %    │    │ Status       │
-                    └──────────────┘    └──────────────┘
-                                              │
-                              ┌───────────────┼──────────────┐
-                              ▼               ▼              ▼
-                       ┌──────────┐    ┌──────────┐   ┌──────────┐
-                       │ Applied  │───→│Interview │──→│ Offered  │
-                       └──────────┘    └──────────┘   └──────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ AI Daily     â”‚
+â”‚ Scan         â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚
+       â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ New Matches  â”‚â”€â”€â”€â†’â”‚ User Reviews â”‚â”€â”€â”€â†’â”‚ Save / Apply â”‚
+â”‚ Found (3)    â”‚    â”‚ in Radar     â”‚    â”‚ / Dismiss    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚                    â”‚
+                           â–¼                    â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ View Detail  â”‚    â”‚ Track App.   â”‚
+                    â”‚ + Match %    â”‚    â”‚ Status       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                              â”‚
+                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                              â–¼               â–¼              â–¼
+                       â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                       â”‚ Applied  â”‚â”€â”€â”€â†’â”‚Interview â”‚â”€â”€â†’â”‚ Offered  â”‚
+                       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -764,80 +764,80 @@ TIER 4 — Administrative Actions (Intentionally hard to discover)
 ### Primary Navigation (Desktop)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│ Sidebar (always visible)                                 │
-│                                                          │
-│  Click NavItem ──→ Route change ──→ Page component loads │
-│                    URL updates      Content renders       │
-│                    Active state     Breadcrumb updates    │
-│                    updates                                │
-│                                                          │
-│  Keyboard: R then D = Dashboard, R then T = Tasks, etc. │
-└─────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Sidebar (always visible)                                 â”‚
+â”‚                                                          â”‚
+â”‚  Click NavItem â”€â”€â†’ Route change â”€â”€â†’ Page component loads â”‚
+â”‚                    URL updates      Content renders       â”‚
+â”‚                    Active state     Breadcrumb updates    â”‚
+â”‚                    updates                                â”‚
+â”‚                                                          â”‚
+â”‚  Keyboard: R then D = Dashboard, R then T = Tasks, etc. â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Command Palette Navigation
 
 ```
-┌─────────┐    ┌──────────────┐    ┌────────────────┐
-│ Cmd + K │───→│ Palette open │───→│ Type query     │
-└─────────┘    └──────────────┘    └───────┬────────┘
-                                           │
-                         ┌─────────────────┼─────────────────┐
-                         ▼                 ▼                 ▼
-                  ┌────────────┐   ┌────────────┐   ┌────────────┐
-                  │ Navigation │   │ Action     │   │ AI Command │
-                  │ Result     │   │ Result     │   │ Result     │
-                  └─────┬──────┘   └─────┬──────┘   └─────┬──────┘
-                        │                │                 │
-                        ▼                ▼                 ▼
-                  ┌────────────┐   ┌────────────┐   ┌────────────┐
-                  │ Navigate   │   │ Execute    │   │ AI Process │
-                  │ to page    │   │ action     │   │ + respond  │
-                  └────────────┘   └────────────┘   └────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Cmd + K â”‚â”€â”€â”€â†’â”‚ Palette open â”‚â”€â”€â”€â†’â”‚ Type query     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                           â”‚
+                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                         â–¼                 â–¼                 â–¼
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â”‚ Navigation â”‚   â”‚ Action     â”‚   â”‚ AI Command â”‚
+                  â”‚ Result     â”‚   â”‚ Result     â”‚   â”‚ Result     â”‚
+                  â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚                â”‚                 â”‚
+                        â–¼                â–¼                 â–¼
+                  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                  â”‚ Navigate   â”‚   â”‚ Execute    â”‚   â”‚ AI Process â”‚
+                  â”‚ to page    â”‚   â”‚ action     â”‚   â”‚ + respond  â”‚
+                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Mobile Navigation
 
 ```
-┌─────────────────────────────────────────────┐
-│                                              │
-│  Bottom Tab tap ──→ Module page loads        │
-│                     Tab indicator moves       │
-│                                              │
-│  Drawer open ──→ Full nav tree visible       │
-│                  Tap item → navigate + close  │
-│                                              │
-│  Back gesture ──→ Previous page              │
-│                   Or: scroll to top           │
-│                                              │
-│  FAB tap ──→ Quick create (context-aware)    │
-│              On Tasks page → New task         │
-│              On Ideas page → New idea         │
-│              On Dashboard → Choose type       │
-│                                              │
-└─────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                              â”‚
+â”‚  Bottom Tab tap â”€â”€â†’ Module page loads        â”‚
+â”‚                     Tab indicator moves       â”‚
+â”‚                                              â”‚
+â”‚  Drawer open â”€â”€â†’ Full nav tree visible       â”‚
+â”‚                  Tap item â†’ navigate + close  â”‚
+â”‚                                              â”‚
+â”‚  Back gesture â”€â”€â†’ Previous page              â”‚
+â”‚                   Or: scroll to top           â”‚
+â”‚                                              â”‚
+â”‚  FAB tap â”€â”€â†’ Quick create (context-aware)    â”‚
+â”‚              On Tasks page â†’ New task         â”‚
+â”‚              On Ideas page â†’ New idea         â”‚
+â”‚              On Dashboard â†’ Choose type       â”‚
+â”‚                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Deep Linking
 
 ```
 URL Pattern:
-  /[module]                    → Module list/default view
-  /[module]?view=[view]        → Specific view (list, board, calendar)
-  /[module]/[id]               → Item detail
-  /[module]/[id]?tab=[tab]     → Item detail with specific tab
-  /[module]?filter=[filters]   → Pre-filtered view
-  /settings/[section]          → Specific settings section
+  /[module]                    â†’ Module list/default view
+  /[module]?view=[view]        â†’ Specific view (list, board, calendar)
+  /[module]/[id]               â†’ Item detail
+  /[module]/[id]?tab=[tab]     â†’ Item detail with specific tab
+  /[module]?filter=[filters]   â†’ Pre-filtered view
+  /settings/[section]          â†’ Specific settings section
 
 Examples:
-  /tasks                       → Task list (default view)
-  /tasks?view=board            → Task kanban board
-  /tasks/abc-123               → Task detail
-  /tasks/abc-123?tab=subtasks  → Task detail, subtasks tab
-  /goals?view=timeline         → Goals Gantt view
-  /chat                        → ARIA chat (new conversation)
-  /settings/appearance         → Appearance settings
+  /tasks                       â†’ Task list (default view)
+  /tasks?view=board            â†’ Task kanban board
+  /tasks/abc-123               â†’ Task detail
+  /tasks/abc-123?tab=subtasks  â†’ Task detail, subtasks tab
+  /goals?view=timeline         â†’ Goals Gantt view
+  /chat                        â†’ ARIA chat (new conversation)
+  /settings/appearance         â†’ Appearance settings
 ```
 
 ---
@@ -889,8 +889,8 @@ Examples:
 | `Tab` | Next focusable element | Global |
 | `Shift + Tab` | Previous focusable element | Global |
 | `Space/Enter` | Activate focused element | Global |
-| `↑ / ↓` | Navigate list items | Lists |
-| `← / →` | Navigate tabs / board columns | Tabs/Board |
+| `â†‘ / â†“` | Navigate list items | Lists |
+| `â† / â†’` | Navigate tabs / board columns | Tabs/Board |
 | `J / K` | Next/previous item (vim-style) | Lists |
 | `X` | Toggle select current item | Lists |
 | `E` | Edit focused item | Detail views |
@@ -907,7 +907,7 @@ Examples:
 | **Accessibility First** | ARIA landmarks, keyboard nav, focus management documented |
 | **High Info Density** | Dashboard cards pack 15-20 data points above fold |
 | **Fast Scannability** | Z-pattern reading, priority-based content ordering |
-| **Progressive Disclosure** | L0→L4 hierarchy, expand for detail, collapse for overview |
+| **Progressive Disclosure** | L0â†’L4 hierarchy, expand for detail, collapse for overview |
 | **Graceful Degradation** | Error states, offline mode, AI unavailable fallback |
 | **Cross-Module Intelligence** | Deep linking, related items, AI connections between modules |
 
@@ -918,4 +918,4 @@ Examples:
 
 ---
 
-*Generated 2026-06-11 • ARIA OS Wireframe System v2.0.0 — All 20 modules covered across 7 wireframe documents*
+*Generated 2026-06-11 â€¢ ARIA OS Wireframe System v2.0.0 â€” All 20 modules covered across 7 wireframe documents*

@@ -1,7 +1,16 @@
-# Part VIII — Collaboration Experiences
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF08-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part VIII â€” Collaboration Experiences
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
-> Note: Collaboration features are in **design phase** — primarily deferred to future releases. This section defines the planned UX for multi-user scenarios.
+> Note: Collaboration features are in **design phase** â€” primarily deferred to future releases. This section defines the planned UX for multi-user scenarios.
 
 ---
 
@@ -13,27 +22,27 @@
 ### Share Dialog
 
 ```
-┌──────────────────────────────────────────────┐
-│  Share: "ML Project Roadmap"                 │
-│                                              │
-│  Permission:                                 │
-│  ○ View only    ○ Can comment    ○ Can edit  │
-│                                              │
-│  Share via:                                  │
-│  [Copy Link]  [Email]  [WhatsApp]  [More...] │
-│                                              │
-│  Link Options:                               │
-│  ☐ Expires in: [24 hours ▼]                 │
-│  ☐ Password protect                          │
-│  ☐ Allow comments                            │
-│                                              │
-│  Shared with:                                │
-│  👤 user@email.com · View · [Remove]         │
-│  👤 friend@email.com · Edit · [Remove]       │
-│  👤 + Invite by email                        │
-│                                              │
-│  [Generate Link]                             │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Share: "ML Project Roadmap"                 â”‚
+â”‚                                              â”‚
+â”‚  Permission:                                 â”‚
+â”‚  â—‹ View only    â—‹ Can comment    â—‹ Can edit  â”‚
+â”‚                                              â”‚
+â”‚  Share via:                                  â”‚
+â”‚  [Copy Link]  [Email]  [WhatsApp]  [More...] â”‚
+â”‚                                              â”‚
+â”‚  Link Options:                               â”‚
+â”‚  â˜ Expires in: [24 hours â–¼]                 â”‚
+â”‚  â˜ Password protect                          â”‚
+â”‚  â˜ Allow comments                            â”‚
+â”‚                                              â”‚
+â”‚  Shared with:                                â”‚
+â”‚  ðŸ‘¤ user@email.com Â· View Â· [Remove]         â”‚
+â”‚  ðŸ‘¤ friend@email.com Â· Edit Â· [Remove]       â”‚
+â”‚  ðŸ‘¤ + Invite by email                        â”‚
+â”‚                                              â”‚
+â”‚  [Generate Link]                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -58,32 +67,32 @@
 ### Comment Thread
 
 ```
-┌──────────────────────────────────────────────┐
-│  Comments (3)                           [X]  │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ 👤 User A · 2h ago                     │  │
-│  │ "Great progress on the ML project!"    │  │
-│  │ [Reply] [👍 5] [👎 0]                 │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ 👤 You · 1h ago                        │  │
-│  │ "Thanks! Stuck on the deployment       │  │
-│  │  phase though."                        │  │
-│  │ [Edit] [Delete] [👍 2] [👎 0]          │  │
-│  └────────────────────────────────────────┘  │
-│    ┌────────────────────────────────────┐    │
-│    │ 👤 User A · 30m ago               │    │
-│    │ "Try using Docker Compose!"        │    │
-│    │ [Reply] [👍 3] [👎 0]             │    │
-│    └────────────────────────────────────┘    │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ Write a comment...                     │  │
-│  │ [@mention] [Add file] [Send]           │  │
-│  └────────────────────────────────────────┘  │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Comments (3)                           [X]  â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ‘¤ User A Â· 2h ago                     â”‚  â”‚
+â”‚  â”‚ "Great progress on the ML project!"    â”‚  â”‚
+â”‚  â”‚ [Reply] [ðŸ‘ 5] [ðŸ‘Ž 0]                 â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ‘¤ You Â· 1h ago                        â”‚  â”‚
+â”‚  â”‚ "Thanks! Stuck on the deployment       â”‚  â”‚
+â”‚  â”‚  phase though."                        â”‚  â”‚
+â”‚  â”‚ [Edit] [Delete] [ðŸ‘ 2] [ðŸ‘Ž 0]          â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚    â”‚ ðŸ‘¤ User A Â· 30m ago               â”‚    â”‚
+â”‚    â”‚ "Try using Docker Compose!"        â”‚    â”‚
+â”‚    â”‚ [Reply] [ðŸ‘ 3] [ðŸ‘Ž 0]             â”‚    â”‚
+â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Write a comment...                     â”‚  â”‚
+â”‚  â”‚ [@mention] [Add file] [Send]           â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -95,8 +104,8 @@
 | **Populated** | Threaded comments with reactions and nested replies (max depth: 3) |
 | **Posting** | Grayed input + spinner + "Sending..." |
 | **Error** | "Couldn't post comment" + retry button in toast |
-| **Editing** | Inline edit field → Save / Cancel |
-| **Deleting** | Confirm dialog → remove with undo (30s) |
+| **Editing** | Inline edit field â†’ Save / Cancel |
+| **Deleting** | Confirm dialog â†’ remove with undo (30s) |
 
 ---
 
@@ -108,26 +117,26 @@
 ### Mention Dropdown
 
 ```
-┌──────────────────────────────────────────────┐
-│  Write a comment...                          │
-│  Hey @                                        │
-│  ┌────────────────────────────────────────┐  │
-│  │ 👤 User A · user@email.com            │  │
-│  │ 👤 User B · user2@email.com           │  │
-│  │ 👤 User C · user3@email.com           │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  After selection:                            │
-│  "Hey @User_A, check out this task!"        │
-│       └── accent colored, clickable        │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Write a comment...                          â”‚
+â”‚  Hey @                                        â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ‘¤ User A Â· user@email.com            â”‚  â”‚
+â”‚  â”‚ ðŸ‘¤ User B Â· user2@email.com           â”‚  â”‚
+â”‚  â”‚ ðŸ‘¤ User C Â· user3@email.com           â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  After selection:                            â”‚
+â”‚  "Hey @User_A, check out this task!"        â”‚
+â”‚       â””â”€â”€ accent colored, clickable        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
 
 | State | UI Treatment |
 |---|---|
-| **Triggered** | @ character detected → dropdown appears after 2 chars |
+| **Triggered** | @ character detected â†’ dropdown appears after 2 chars |
 | **Loading** | "Searching..." in dropdown |
 | **Results** | Matching users with avatar + name + email |
 | **No Results** | "No users found" |
@@ -144,39 +153,39 @@
 ### Activity Feed
 
 ```
-┌──────────────────────────────────────────────┐
-│  Activity                        [Filter ▼]  │
-│                                              │
-│  📅 Today                                    │
-│  ┌────────────────────────────────────────┐  │
-│  │ 2:30 PM · ✅ You completed "Deploy"    │  │
-│  │ 1:15 PM · 🤖 AI created 3 study tasks │  │
-│  │ 10:00 AM · 💬 User A commented         │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  📅 Yesterday                                │
-│  ┌────────────────────────────────────────┐  │
-│  │ 8:00 PM · ✏️ You updated goal +10%    │  │
-│  │ 6:30 PM · 🤖 Briefing generated        │  │
-│  │ 3:00 PM · 🔗 User B shared link        │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  [Load more]                                 │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Activity                        [Filter â–¼]  â”‚
+â”‚                                              â”‚
+â”‚  ðŸ“… Today                                    â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ 2:30 PM Â· âœ… You completed "Deploy"    â”‚  â”‚
+â”‚  â”‚ 1:15 PM Â· ðŸ¤– AI created 3 study tasks â”‚  â”‚
+â”‚  â”‚ 10:00 AM Â· ðŸ’¬ User A commented         â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  ðŸ“… Yesterday                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ 8:00 PM Â· âœï¸ You updated goal +10%    â”‚  â”‚
+â”‚  â”‚ 6:30 PM Â· ðŸ¤– Briefing generated        â”‚  â”‚
+â”‚  â”‚ 3:00 PM Â· ðŸ”— User B shared link        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  [Load more]                                 â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Event Types
 
 | Type | Icon | Color | Description |
 |---|---|---|---|
-| Created | ➕ | Green | Item was created |
-| Updated | ✏️ | Blue | Item was edited |
-| Completed | ✅ | Green | Task/goal completed |
-| Commented | 💬 | Purple | New comment added |
-| Shared | 🔗 | Indigo | Item was shared |
-| AI Action | 🤖 | Accent (helium) | Agent performed action |
-| Status Change | 🔄 | Amber | Status/phase transition |
-| Deleted | 🗑️ | Red | Item removed |
+| Created | âž• | Green | Item was created |
+| Updated | âœï¸ | Blue | Item was edited |
+| Completed | âœ… | Green | Task/goal completed |
+| Commented | ðŸ’¬ | Purple | New comment added |
+| Shared | ðŸ”— | Indigo | Item was shared |
+| AI Action | ðŸ¤– | Accent (helium) | Agent performed action |
+| Status Change | ðŸ”„ | Amber | Status/phase transition |
+| Deleted | ðŸ—‘ï¸ | Red | Item removed |
 
 ---
 
@@ -188,24 +197,24 @@
 ### History Timeline
 
 ```
-┌──────────────────────────────────────────────┐
-│  Version History — "ML Project Roadmap"      │
-│                                              │
-│  v1.3 · 2h ago · You                         │
-│  └─ Added "Deploy to production" phase      │
-│  [Restore this version]  [View diff]         │
-│                                              │
-│  v1.2 · 1d ago · User A                      │
-│  └─ Updated timeline: Phase 2 → 2 weeks     │
-│  [Restore this version]  [View diff]         │
-│                                              │
-│  v1.1 · 3d ago · 🤖 AI                       │
-│  └─ Generated phase breakdown               │
-│  [Restore this version]                      │
-│                                              │
-│  v1.0 · 5d ago · You                         │
-│  └─ Created project                         │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Version History â€” "ML Project Roadmap"      â”‚
+â”‚                                              â”‚
+â”‚  v1.3 Â· 2h ago Â· You                         â”‚
+â”‚  â””â”€ Added "Deploy to production" phase      â”‚
+â”‚  [Restore this version]  [View diff]         â”‚
+â”‚                                              â”‚
+â”‚  v1.2 Â· 1d ago Â· User A                      â”‚
+â”‚  â””â”€ Updated timeline: Phase 2 â†’ 2 weeks     â”‚
+â”‚  [Restore this version]  [View diff]         â”‚
+â”‚                                              â”‚
+â”‚  v1.1 Â· 3d ago Â· ðŸ¤– AI                       â”‚
+â”‚  â””â”€ Generated phase breakdown               â”‚
+â”‚  [Restore this version]                      â”‚
+â”‚                                              â”‚
+â”‚  v1.0 Â· 5d ago Â· You                         â”‚
+â”‚  â””â”€ Created project                         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -242,5 +251,5 @@ Auto-save snapshots of all editable content for rollback capability
 |---|---|
 | **Auto-Saving** | Subtle "Saving..." indicator (fades after 2s) |
 | **Saved** | "All changes saved" (fades after 2s) |
-| **Conflict Detected** | "Updated by another user" → resolve dialog |
-| **Restoring** | "Restoring version [N]..." → reload current view |
+| **Conflict Detected** | "Updated by another user" â†’ resolve dialog |
+| **Restoring** | "Restoring version [N]..." â†’ reload current view |

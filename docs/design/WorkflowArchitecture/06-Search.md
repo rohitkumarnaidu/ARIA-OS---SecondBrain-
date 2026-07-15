@@ -1,7 +1,16 @@
-# Part VI — Search Experience
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF06-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part VI â€” Search Experience
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
-> Related: `SearchArchitecture.md` (backend FTS → pgvector → hybrid), `InformationArchitecture.md` (search IA), `02-FeatureFlows.md` §2.14 (search feature flow).
+> Related: `SearchArchitecture.md` (backend FTS â†’ pgvector â†’ hybrid), `InformationArchitecture.md` (search IA), `02-FeatureFlows.md` Â§2.14 (search feature flow).
 
 ---
 
@@ -22,9 +31,9 @@
 | State | UI Treatment |
 |---|---|
 | **Idle** | Blinking cursor + placeholder: "Search tasks, courses, goals, ideas..." |
-| **Recent** | Focus without input → show 5 most recent searches (time-stamped) |
-| **Suggestions** | Typing (debounced 150ms) → dropdown with 5-7 inline suggestions |
-| **Empty Input** | Backspace to clear → return to recent searches |
+| **Recent** | Focus without input â†’ show 5 most recent searches (time-stamped) |
+| **Suggestions** | Typing (debounced 150ms) â†’ dropdown with 5-7 inline suggestions |
+| **Empty Input** | Backspace to clear â†’ return to recent searches |
 
 ---
 
@@ -41,27 +50,27 @@
 ### Result Card Anatomy
 
 ```
-┌──────────────────────────────────────────────┐
-│ [Icon] Title                          [Meta] │
-│        Snippet of content with highlight...  │
-│        Module Tag · Date · Status badge      │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ [Icon] Title                          [Meta] â”‚
+â”‚        Snippet of content with highlight...  â”‚
+â”‚        Module Tag Â· Date Â· Status badge      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Result Types
 
 | Type | Icon | Metadata | Primary Action |
 |---|---|---|---|
-| Task | Checklist | Status · Priority · Due date | Navigate to /tasks/{id} |
-| Course | Book | Platform · Progress % | Navigate to /courses/{id} |
-| Goal | Target | Category · Deadline | Navigate to /goals/{id} |
-| Habit | Cycle | Frequency · Streak | Log today |
-| Idea | Lightbulb | Stage · Date created | Navigate to /ideas/{id} |
-| Resource | Link | Tags · Date saved | Open URL in new tab |
-| Project | Folder | Phase · Status | Navigate to /projects/{id} |
-| Opportunity | Star | Match % · Company | Navigate to /opportunities/{id} |
-| Memory | Brain | Category · Confidence | Navigate to /memory/{id} |
-| Chat | Message | Date · Preview snippet | Navigate to /chat |
+| Task | Checklist | Status Â· Priority Â· Due date | Navigate to /tasks/{id} |
+| Course | Book | Platform Â· Progress % | Navigate to /courses/{id} |
+| Goal | Target | Category Â· Deadline | Navigate to /goals/{id} |
+| Habit | Cycle | Frequency Â· Streak | Log today |
+| Idea | Lightbulb | Stage Â· Date created | Navigate to /ideas/{id} |
+| Resource | Link | Tags Â· Date saved | Open URL in new tab |
+| Project | Folder | Phase Â· Status | Navigate to /projects/{id} |
+| Opportunity | Star | Match % Â· Company | Navigate to /opportunities/{id} |
+| Memory | Brain | Category Â· Confidence | Navigate to /memory/{id} |
+| Chat | Message | Date Â· Preview snippet | Navigate to /chat |
 | Command | Cmd | Shortcut hint | Execute command |
 | Setting | Gear | Section path | Navigate to /settings/{section} |
 
@@ -93,20 +102,20 @@
 ### UI Treatment
 
 ```
-┌──────────────────────────────────────────────┐
-│                                              │
-│           🔍 No results for "xyz"            │
-│                                              │
-│    Try:                                      │
-│    • Different keywords                      │
-│    • Check spelling                          │
-│    • Use fewer filters                       │
-│    • Broaden your search scope               │
-│                                              │
-│    Or create what you're looking for:        │
-│    [Create Task] [Create Goal] [Save Idea]   │
-│                                              │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                              â”‚
+â”‚           ðŸ” No results for "xyz"            â”‚
+â”‚                                              â”‚
+â”‚    Try:                                      â”‚
+â”‚    â€¢ Different keywords                      â”‚
+â”‚    â€¢ Check spelling                          â”‚
+â”‚    â€¢ Use fewer filters                       â”‚
+â”‚    â€¢ Broaden your search scope               â”‚
+â”‚                                              â”‚
+â”‚    Or create what you're looking for:        â”‚
+â”‚    [Create Task] [Create Goal] [Save Idea]   â”‚
+â”‚                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### AI Fallback
@@ -114,16 +123,16 @@
 If semantic search is enabled and FTS returns 0 results:
 
 ```
-┌──────────────────────────────────────────────┐
-│  ✨ ARIA couldn't find exact matches but     │
-│     found related items you might want:      │
-│                                              │
-│  • [Related item 1] (from [module])          │
-│  • [Related item 2] (from [module])          │
-│  • [Related item 3] (from [module])          │
-│                                              │
-│  Ask ARIA: "I'm looking for..."              │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  âœ¨ ARIA couldn't find exact matches but     â”‚
+â”‚     found related items you might want:      â”‚
+â”‚                                              â”‚
+â”‚  â€¢ [Related item 1] (from [module])          â”‚
+â”‚  â€¢ [Related item 2] (from [module])          â”‚
+â”‚  â€¢ [Related item 3] (from [module])          â”‚
+â”‚                                              â”‚
+â”‚  Ask ARIA: "I'm looking for..."              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -139,7 +148,7 @@ If semantic search is enabled and FTS returns 0 results:
 |---|---|
 | Toggle pill | "Semantic" / "Keyword" in filter bar |
 | Active state | Accent purple glow on pill |
-| Result badge | "Semantic match — 85%" confidence indicator |
+| Result badge | "Semantic match â€” 85%" confidence indicator |
 | Tooltip | "Searching by meaning, not just keywords" |
 
 ### States
@@ -150,7 +159,7 @@ If semantic search is enabled and FTS returns 0 results:
 | **Loading** | Pill pulses with "Searching by meaning..." |
 | **Results** | Cards show match percentage badge |
 | **No Results** | "No semantic matches" + "Try keyword search instead" |
-| **Error** | "Semantic search unavailable" → silent fallback to FTS |
+| **Error** | "Semantic search unavailable" â†’ silent fallback to FTS |
 
 ---
 
@@ -162,23 +171,23 @@ If semantic search is enabled and FTS returns 0 results:
 ### UI Treatment
 
 ```
-┌──────────────────────────────────────────────┐
-│  Ask ARIA                                     │
-│  ┌────────────────────────────────────────┐   │
-│  │ "find all high priority tasks due      │   │
-│  │ this week related to ML project"       │   │
-│  └────────────────────────────────────────┘   │
-│                                              │
-│  ✨ ARIA found 3 items:                       │
-│  • Complete ML project report (Due: Fri)     │
-│  • Review model accuracy (Due: Thu)          │
-│  • Deploy to staging (Due: Sat)              │
-│                                              │
-│  "These are your ML project tasks sorted     │
-│   by urgency."                               │
-│                                              │
-│  [Ask another question]                      │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Ask ARIA                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ "find all high priority tasks due      â”‚   â”‚
+â”‚  â”‚ this week related to ML project"       â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                              â”‚
+â”‚  âœ¨ ARIA found 3 items:                       â”‚
+â”‚  â€¢ Complete ML project report (Due: Fri)     â”‚
+â”‚  â€¢ Review model accuracy (Due: Thu)          â”‚
+â”‚  â€¢ Deploy to staging (Due: Sat)              â”‚
+â”‚                                              â”‚
+â”‚  "These are your ML project tasks sorted     â”‚
+â”‚   by urgency."                               â”‚
+â”‚                                              â”‚
+â”‚  [Ask another question]                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -213,7 +222,7 @@ If semantic search is enabled and FTS returns 0 results:
 | **Active Filters** | Chips below search bar, removable individually |
 | **No Filters** | "No filters applied" message |
 | **Clear All** | Button in panel header, clears all filters |
-| **Save** | "Save as..." → name input → saved search (see 6.8) |
+| **Save** | "Save as..." â†’ name input â†’ saved search (see 6.8) |
 
 ---
 
@@ -252,7 +261,7 @@ Persist filter + query combinations for quick access without re-entering.
 | **List** | Named items with match count badge |
 | **Refreshing** | Rotating icon + "Checking for new results" |
 | **New Matches** | Badge: "+3 new" on saved search item |
-| **Expired** | "This search may have new results" → Refresh CTA |
+| **Expired** | "This search may have new results" â†’ Refresh CTA |
 
 ---
 
@@ -266,7 +275,7 @@ Persist filter + query combinations for quick access without re-entering.
 | Semantic Search | Toggle | On | Enable vector similarity search |
 | Include AI in Results | Toggle | On | Show AI-powered suggestions |
 | Save Recent Searches | Toggle | On | Store last 50 searches locally |
-| Clear Recent | Danger button | — | Clear all recent search history |
-| Saved Searches | List | — | Manage saved searches |
+| Clear Recent | Danger button | â€” | Clear all recent search history |
+| Saved Searches | List | â€” | Manage saved searches |
 | Search History Privacy | Toggle | On | Store locally only (never sync) |
 | Result Count | Select | 20 / 50 / 100 | Results per page |
