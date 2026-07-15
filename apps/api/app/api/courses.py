@@ -4,6 +4,7 @@ from datetime import datetime
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.course import CourseCreate, CourseUpdate, CourseResponse
+from shared.utils.logger import logger
 
 router = APIRouter()
 
@@ -67,8 +68,8 @@ async def update_course(course_id: str, course_update: CourseUpdate, current_use
     if update_data.get("deadline") and update_data["deadline"]:
         try:
             update_data["deadline"] = datetime.fromisoformat(update_data["deadline"].replace("Z", "+00:00")).isoformat()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warn("Failed to parse course deadline", error=str(e))
     response = (
         supabase.from_("courses").update(update_data).eq("id", course_id).eq("user_id", current_user.user.id).execute()
     )
