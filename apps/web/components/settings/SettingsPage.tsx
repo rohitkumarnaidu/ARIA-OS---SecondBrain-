@@ -425,7 +425,7 @@ function ProfileSection({
 
         {/* Email (read-only) */}
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-text-secondary">Email</label>
+          <span className="block text-sm font-medium text-text-secondary">Email</span>
           <div className="w-full h-11 px-4 rounded-lg bg-surface-secondary border border-border text-text-tertiary flex items-center text-sm cursor-not-allowed">
             {data.email}
           </div>
