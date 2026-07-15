@@ -1,6 +1,5 @@
 // Supabase
 export { supabase, isUsingPlaceholders } from './supabase'
-export { createSupabaseServerClient } from './supabase-server'
 
 // Stores
 export {
