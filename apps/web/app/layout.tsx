@@ -6,6 +6,7 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme'
 import { SkipLink } from '@/components/layout/SkipLink'
 import { PWAStatus, PWAInstallPrompt } from '@/components/pwa'
+import { WebVitalsTracker } from '@/components/shared/WebVitalsTracker'
 
 const syne = Syne({
   subsets: ['latin'],
@@ -50,6 +51,7 @@ export default function RootLayout({
           <PWAStatus />
           <PWAInstallPrompt />
         </ThemeProvider>
+        <WebVitalsTracker />
         <footer role="contentinfo" className="sr-only">
           <p>ARIA OS Second Brain — version 2.4.0-stable</p>
         </footer>
