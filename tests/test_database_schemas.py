@@ -4,6 +4,7 @@ import pytest
 from datetime import datetime
 from pydantic import ValidationError
 from database.schemas.academic import SubjectCreate, SubjectResponse, MarkCreate
+from database.schemas.api_key import ApiKeyCreate, ApiKeyResponse, ApiKeyUpdate
 from database.schemas.audit import AuditLogCreate, AuditLogResponse
 from database.schemas.briefing import BriefingRead, BriefingListResponse, BriefingTriggerResponse
 from database.schemas.chat import ChatRequest, ChatMessage, ChatResponse, ChatSessionResponse
@@ -1482,3 +1483,198 @@ class TestConsolidationResult:
     def test_missing_required(self):
         with pytest.raises(ValidationError):
             ConsolidationResult()
+
+
+# ─────────────────────────────────────────────
+# API KEY
+# ─────────────────────────────────────────────
+
+
+class TestApiKeyTier:
+    def test_constants(self):
+        from database.schemas.api_key import ApiKeyTier
+
+        assert ApiKeyTier.FREE == "free"
+        assert ApiKeyTier.PRO == "pro"
+        assert ApiKeyTier.ENTERPRISE == "enterprise"
+        assert ApiKeyTier.INTERNAL == "internal"
+
+
+class TestTierLimits:
+    def test_all_tiers_present(self):
+        from database.schemas.api_key import TIER_LIMITS, ApiKeyTier
+
+        assert ApiKeyTier.FREE in TIER_LIMITS
+        assert ApiKeyTier.PRO in TIER_LIMITS
+        assert ApiKeyTier.ENTERPRISE in TIER_LIMITS
+        assert ApiKeyTier.INTERNAL in TIER_LIMITS
+
+    def test_free_tier_limits(self):
+        from database.schemas.api_key import TIER_LIMITS
+
+        assert TIER_LIMITS["free"]["max_requests"] == 10
+        assert TIER_LIMITS["free"]["window_seconds"] == 60
+        assert TIER_LIMITS["free"]["concurrent"] == 1
+
+    def test_pro_tier_limits(self):
+        from database.schemas.api_key import TIER_LIMITS
+
+        assert TIER_LIMITS["pro"]["max_requests"] == 100
+        assert TIER_LIMITS["pro"]["concurrent"] == 10
+
+    def test_enterprise_tier_limits(self):
+        from database.schemas.api_key import TIER_LIMITS
+
+        assert TIER_LIMITS["enterprise"]["max_requests"] == 1000
+        assert TIER_LIMITS["enterprise"]["concurrent"] == 100
+
+    def test_internal_tier_limits(self):
+        from database.schemas.api_key import TIER_LIMITS
+
+        assert TIER_LIMITS["internal"]["max_requests"] == 10000
+        assert TIER_LIMITS["internal"]["concurrent"] == 500
+
+    def test_all_tiers_have_required_keys(self):
+        from database.schemas.api_key import TIER_LIMITS
+
+        for key, limits in TIER_LIMITS.items():
+            assert "max_requests" in limits
+            assert "window_seconds" in limits
+            assert "concurrent" in limits
+            assert isinstance(limits["max_requests"], int)
+            assert isinstance(limits["window_seconds"], int)
+            assert isinstance(limits["concurrent"], int)
+
+
+class TestApiKeyCreate:
+    def test_valid(self):
+        k = ApiKeyCreate(name="My API Key")
+        assert k.name == "My API Key"
+        assert k.tier == "free"
+        assert k.expires_at is None
+
+    def test_with_all_fields(self):
+        k = ApiKeyCreate(name="Pro Key", tier="pro", expires_at=NOW)
+        assert k.tier == "pro"
+        assert k.expires_at == NOW
+
+    def test_enterprise_tier(self):
+        k = ApiKeyCreate(name="Enterprise Key", tier="enterprise")
+        assert k.tier == "enterprise"
+
+    def test_missing_name(self):
+        with pytest.raises(ValidationError):
+            ApiKeyCreate()
+
+    def test_default_tier(self):
+        k = ApiKeyCreate(name="Free Key")
+        assert k.tier == "free"
+
+    def test_serialization(self):
+        k = ApiKeyCreate(name="Test", tier="free")
+        d = k.model_dump()
+        assert d["name"] == "Test"
+        assert d["tier"] == "free"
+        assert d["expires_at"] is None
+
+
+class TestApiKeyResponse:
+    def test_valid(self):
+        k = ApiKeyResponse(
+            id="ak-1",
+            name="My Key",
+            key_prefix="sb_",
+            tier="pro",
+            is_active=True,
+            expires_at=None,
+            last_used_at=None,
+            created_at=NOW,
+        )
+        assert k.id == "ak-1"
+        assert k.name == "My Key"
+        assert k.key_prefix == "sb_"
+        assert k.tier == "pro"
+        assert k.is_active is True
+        assert k.expires_at is None
+        assert k.last_used_at is None
+
+    def test_with_all_fields(self):
+        k = ApiKeyResponse(
+            id="ak-2",
+            name="Full Key",
+            key_prefix="sb_",
+            tier="enterprise",
+            is_active=False,
+            expires_at=NOW,
+            last_used_at=NOW,
+            created_at=NOW,
+        )
+        assert k.is_active is False
+        assert k.expires_at == NOW
+        assert k.last_used_at == NOW
+
+    def test_missing_id(self):
+        with pytest.raises(ValidationError):
+            ApiKeyResponse(name="Key", key_prefix="sb_", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+
+    def test_missing_name(self):
+        with pytest.raises(ValidationError):
+            ApiKeyResponse(id="ak-1", key_prefix="sb_", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+
+    def test_missing_key_prefix(self):
+        with pytest.raises(ValidationError):
+            ApiKeyResponse(id="ak-1", name="Key", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+
+    def test_missing_is_active(self):
+        with pytest.raises(ValidationError):
+            ApiKeyResponse(id="ak-1", name="Key", key_prefix="sb_", tier="free", expires_at=None, last_used_at=None, created_at=NOW)
+
+    def test_serialization(self):
+        k = ApiKeyResponse(
+            id="ak-1",
+            name="Key",
+            key_prefix="sb_",
+            tier="free",
+            is_active=True,
+            expires_at=None,
+            last_used_at=None,
+            created_at=NOW,
+        )
+        d = k.model_dump()
+        assert d["id"] == "ak-1"
+        assert d["is_active"] is True
+
+
+class TestApiKeyUpdate:
+    def test_empty(self):
+        k = ApiKeyUpdate()
+        assert k.name is None
+        assert k.is_active is None
+        assert k.tier is None
+
+    def test_partial_name(self):
+        k = ApiKeyUpdate(name="Renamed Key")
+        assert k.name == "Renamed Key"
+        assert k.is_active is None
+
+    def test_partial_deactivate(self):
+        k = ApiKeyUpdate(is_active=False)
+        assert k.is_active is False
+        assert k.name is None
+
+    def test_partial_tier(self):
+        k = ApiKeyUpdate(tier="enterprise")
+        assert k.tier == "enterprise"
+
+    def test_all_fields(self):
+        k = ApiKeyUpdate(name="Updated", is_active=False, tier="pro")
+        assert k.name == "Updated"
+        assert k.is_active is False
+        assert k.tier == "pro"
+
+    def test_serialization(self):
+        k = ApiKeyUpdate(name="Key", is_active=False)
+        d = k.model_dump()
+        assert d["name"] == "Key"
+        assert d["is_active"] is False
+        assert d["tier"] is None
