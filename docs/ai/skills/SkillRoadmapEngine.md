@@ -6,7 +6,7 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLROADMAP-ARCH-001 |
+| Document ID | AI-SRE-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |

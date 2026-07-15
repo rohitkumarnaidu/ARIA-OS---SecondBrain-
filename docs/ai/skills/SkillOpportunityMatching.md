@@ -1,10 +1,10 @@
-# Skill Opportunity Matching --- Enterprise Opportunity Intelligence Engine
+﻿# Skill Opportunity Matching --- Enterprise Opportunity Intelligence Engine
 ---
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLOPP-ARCH-001 |
+| Document ID | AI-SOM-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
@@ -296,14 +296,14 @@ def calibrate_score(score: float, opp_type: str) -> float:
 
 ### 3.1 Gap Detection Architecture
 
-The gap detection system computes the delta between the user's current skill profile and what any opportunity requires. This feeds the Primary Score (§2) and generates actionable closure roadmaps.
+The gap detection system computes the delta between the user's current skill profile and what any opportunity requires. This feeds the Primary Score (Â§2) and generates actionable closure roadmaps.
 
 ```
-User Profile ──┬── Required Skills ─┬── Gap Vector
-               │                    │      ├── Missing skills
-               │                    │      ├── Level deficits
-               │                    │      └── Category gaps
-               └── Preferred Skills ─┘
+User Profile â”€â”€â”¬â”€â”€ Required Skills â”€â”¬â”€â”€ Gap Vector
+               â”‚                    â”‚      â”œâ”€â”€ Missing skills
+               â”‚                    â”‚      â”œâ”€â”€ Level deficits
+               â”‚                    â”‚      â””â”€â”€ Category gaps
+               â””â”€â”€ Preferred Skills â”€â”˜
                     (boosters, non-blocking)
 ```
 
@@ -311,11 +311,11 @@ User Profile ──┬── Required Skills ─┬── Gap Vector
 
 | Severity | Missing Core | Level Deficit | Action |
 |---|---|---|---|
-| Critical | ≥ 2 core | < -2 avg | Blocked — defer opportunity |
+| Critical | â‰¥ 2 core | < -2 avg | Blocked â€” defer opportunity |
 | High | 1 core | < -1 avg | Requires 3+ months prep |
 | Medium | 1 core | -1 to 0 avg | 1-2 months prep |
 | Low | 0 core | 0 avg | Minor upskilling |
-| None | 0 core | ≥ 0 avg | Ready to apply |
+| None | 0 core | â‰¥ 0 avg | Ready to apply |
 
 ### 3.2 Gap Analyzer Implementation
 
@@ -635,16 +635,16 @@ Default base rates (prior probabilities) for each opportunity type:
 
 ```python
 BASE_RATES = {
-    "job": 0.08,            # 8% — competitive job market
-    "internship": 0.15,     # 15% — easier entry
-    "hackathon": 0.25,      # 25% — many participants win something
-    "fellowship": 0.10,     # 10% — selective
-    "competition": 0.20,    # 20% — varies by competition
-    "freelance": 0.40,      # 40% — proposal quality matters
-    "opensource": 0.60,     # 60% — low barrier
-    "startup": 0.05,        # 5% — highly selective programs
-    "contract": 0.30,       # 30% — mid-range
-    "grant": 0.12           # 12% — research grants
+    "job": 0.08,            # 8% â€” competitive job market
+    "internship": 0.15,     # 15% â€” easier entry
+    "hackathon": 0.25,      # 25% â€” many participants win something
+    "fellowship": 0.10,     # 10% â€” selective
+    "competition": 0.20,    # 20% â€” varies by competition
+    "freelance": 0.40,      # 40% â€” proposal quality matters
+    "opensource": 0.60,     # 60% â€” low barrier
+    "startup": 0.05,        # 5% â€” highly selective programs
+    "contract": 0.30,       # 30% â€” mid-range
+    "grant": 0.12           # 12% â€” research grants
 }
 ```
 
@@ -681,11 +681,11 @@ R_total = 0.50 * R_content (content-based) + 0.30 * R_collaborative (collaborati
           + 0.20 * R_contextual (context-aware)
 ```
 
-**Content-Based (50%):** Matches opportunity features against user profile using scoring from §2. Best for cold-start (new opportunities/new users).
+**Content-Based (50%):** Matches opportunity features against user profile using scoring from Â§2. Best for cold-start (new opportunities/new users).
 
 **Collaborative (30%):** Finds similar users and recommends what they pursued. Requires interaction history.
 
-**Contextual (20%):** Factors in current context — time of year, academic calendar, trending opportunities.
+**Contextual (20%):** Factors in current context â€” time of year, academic calendar, trending opportunities.
 
 ### 5.2 Recommendation Engine Implementation
 
@@ -732,7 +732,7 @@ class RecommendationEngine:
         elif score["total"] > 0.6: parts.append("Strong skill alignment")
         else: parts.append("Moderate match")
         if prof["probability"] > 0.5: parts.append(f"High success likelihood ({prof['probability']:.0%})")
-        return " — ".join(parts)
+        return " â€” ".join(parts)
 
     async def refresh(self, user: dict, force: bool = False):
         cache_key = f"recs:{user['id']}"
@@ -857,11 +857,11 @@ The ranking system uses a five-level fallback chain that guarantees an answer ev
 
 ```
 Fallback Chain:
-  Level 1 → LLM (Claude Sonnet / Ollama Mistral)
-  Level 2 → LLM Lite (prompt-compressed variant, ~60% tokens)
-  Level 3 → Cache (previous LLM results, TTL 15 min)
-  Level 4 → Template (hand-authored ranking rules)
-  Level 5 → Algorithmic (pure score-based, always works)
+  Level 1 â†’ LLM (Claude Sonnet / Ollama Mistral)
+  Level 2 â†’ LLM Lite (prompt-compressed variant, ~60% tokens)
+  Level 3 â†’ Cache (previous LLM results, TTL 15 min)
+  Level 4 â†’ Template (hand-authored ranking rules)
+  Level 5 â†’ Algorithmic (pure score-based, always works)
 ```
 
 Each level is attempted in order. If it fails (timeout, error, bad output), the next is tried.
@@ -982,7 +982,7 @@ opportunities from best to worst fit for a given user profile. You must:
 
 3. Provide a brief reason for each ranking position explaining the key factor.
 
-4. Be decisive — avoid ties. Use decimal scores to break ties.
+4. Be decisive â€” avoid ties. Use decimal scores to break ties.
 
 5. Consider diversity: don't cluster the same opportunity type.
 
@@ -1016,12 +1016,12 @@ class BatchRanker:
 The analytics system tracks every stage of the opportunity lifecycle:
 
 ```
-Ingestion → Normalization → Matching → Ranking → User Action → Outcome → Retro
-    │                                                                        │
-    └────────────── Analytics Pipeline ───────────────────────────────────────┘
-                        │
+Ingestion â†’ Normalization â†’ Matching â†’ Ranking â†’ User Action â†’ Outcome â†’ Retro
+    â”‚                                                                        â”‚
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Analytics Pipeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚
                     Aggregation
-                        │
+                        â”‚
                     Dashboards & Alerts
 ```
 
@@ -1265,7 +1265,7 @@ OPPORTUNITY_KPIS = {
         "dashboard": "match_accuracy_gauge"
     },
     "conversion_funnel": {
-        "description": "View → Apply → Interview → Win",
+        "description": "View â†’ Apply â†’ Interview â†’ Win",
         "stages": [
             {"from": "view", "to": "apply", "target_conv": 0.15},
             {"from": "apply", "to": "interview", "target_conv": 0.30},
@@ -1409,16 +1409,16 @@ KPI_THRESHOLDS = {
 
 ### 10.1 Planned Enhancements
 
-1. **Multi-Modal Matching** — Parse images in job postings (logos, diagrams) using vision models
-2. **Temporal Skill Decay** — Weight skill proficiency lower if not used recently
-3. **Social Graph Integration** — Weight opportunities higher if user has connections at the organization
-4. **Automated Application** — AI-drafted cover letters, resume tailoring, and auto-submit
-5. **Market Trend Prediction** — Use time-series forecasting on skills demand data
-6. **Interview Probability** — ML model predicting interview likelihood for job applications
-7. **Salary Negotiation Support** — Market data-driven salary range recommendations
-8. **Contract Auto-Renewal** — Track contract end dates and auto-generate renewal reminders
-9. **Cross-Platform Opportunity Sync** — Aggregate across platforms with real-time push notifications
-10. **Gamified Skill Building** — Streak tracking, badges for closing skill gaps
+1. **Multi-Modal Matching** â€” Parse images in job postings (logos, diagrams) using vision models
+2. **Temporal Skill Decay** â€” Weight skill proficiency lower if not used recently
+3. **Social Graph Integration** â€” Weight opportunities higher if user has connections at the organization
+4. **Automated Application** â€” AI-drafted cover letters, resume tailoring, and auto-submit
+5. **Market Trend Prediction** â€” Use time-series forecasting on skills demand data
+6. **Interview Probability** â€” ML model predicting interview likelihood for job applications
+7. **Salary Negotiation Support** â€” Market data-driven salary range recommendations
+8. **Contract Auto-Renewal** â€” Track contract end dates and auto-generate renewal reminders
+9. **Cross-Platform Opportunity Sync** â€” Aggregate across platforms with real-time push notifications
+10. **Gamified Skill Building** â€” Streak tracking, badges for closing skill gaps
 
 ### 10.2 Scalability Targets
 
@@ -1450,12 +1450,12 @@ FUTURE_ADAPTERS = {
 
 The system is designed for extension via:
 
-1. **Adapter Plugin System** — Drop-in new adapters by implementing `BaseAdapter`
-2. **Custom Scoring Profiles** — Users can override `scoring_profiles` per opportunity type
-3. **Custom ML Models** — Swap `SuccessProbabilityModel` with any classifier following the same interface
-4. **Webhook Hooks** — Post-`normalize`, post-`match`, post-`rank` webhooks for custom processing
-5. **Prompt Override** — Agent prompts in `prompts/agents/` can be overridden per deployment
-6. **Analytics Export** — All KPIs available via REST endpoint + scheduled CSV/Parquet export
+1. **Adapter Plugin System** â€” Drop-in new adapters by implementing `BaseAdapter`
+2. **Custom Scoring Profiles** â€” Users can override `scoring_profiles` per opportunity type
+3. **Custom ML Models** â€” Swap `SuccessProbabilityModel` with any classifier following the same interface
+4. **Webhook Hooks** â€” Post-`normalize`, post-`match`, post-`rank` webhooks for custom processing
+5. **Prompt Override** â€” Agent prompts in `prompts/agents/` can be overridden per deployment
+6. **Analytics Export** â€” All KPIs available via REST endpoint + scheduled CSV/Parquet export
 
 
 ---
@@ -1469,14 +1469,14 @@ Composite = 0.70 * Primary + 0.30 * Secondary
 
 Primary = w1 * S_Align + w2 * L_Match + w3 * G_Potential + w4 * I_Align + w5 * D_Urgency + w6 * Inc_Potential
 
-where (w1..w6) vary by opportunity type (see §2.3)
+where (w1..w6) vary by opportunity type (see Â§2.3)
 ```
 
 ### A.2 Skill Alignment
 
 ```
 S_Align = sum(importance_i * has_skill_i) / sum(importance_i)
-Penalty: ×0.8 if any core skill (importance > 0.8) missing
+Penalty: Ã—0.8 if any core skill (importance > 0.8) missing
 ```
 
 ### A.3 Level Match
@@ -1495,7 +1495,7 @@ level_match = 1.00 if diff >= 2
 
 ```
 G_Potential = 0.60 * New_Skill_Ratio + 0.40 * Avg_Demand_Score
-Boost: ×1.2 if any growth skill aligns with career target
+Boost: Ã—1.2 if any growth skill aligns with career target
 ```
 
 ### A.5 Interest Alignment
@@ -1730,7 +1730,7 @@ ADAPTER_REGISTRY: dict[str, type[BaseAdapter]] = {
     "unstop":      UnstopAdapter,
     "upwork":      UpworkAdapter,
     "angellist":   AngelListAdapter,
-    "internshala": None,  # Planned (see §10.3)
+    "internshala": None,  # Planned (see Â§10.3)
     "wellfound":   None,  # Planned
     "devpost":     None,  # Planned
 }
@@ -1810,52 +1810,52 @@ ADAPTER_RETRY_CONFIG = {
 
 | Component | Status | Priority | Owner | ETA |
 |---|---|---|---|---|
-| TaxonomyMapper | ✅ Complete | P0 | Core | v1.0 |
-| CandidateGenerator | ✅ Complete | P0 | Core | v1.0 |
-| NormalizationOrchestrator | ✅ Complete | P0 | Core | v1.0 |
-| ScoringEngine | ✅ Complete | P0 | Core | v1.0 |
-| GapAnalyzer | ✅ Complete | P0 | Core | v1.0 |
-| SuccessProbabilityModel | ✅ Complete | P1 | Core | v1.0 |
-| RecommendationEngine | ✅ Complete | P1 | Core | v1.0 |
-| AIRanker | ✅ Complete | P1 | Core | v1.0 |
-| LinkedInAdapter | 🔧 In Progress | P0 | Adapter Team | v1.0 |
-| GitHubJobsAdapter | 🔧 In Progress | P1 | Adapter Team | v1.1 |
-| DevfolioAdapter | 📋 Planned | P1 | Adapter Team | v1.1 |
-| UnstopAdapter | 📋 Planned | P1 | Adapter Team | v1.1 |
-| UpworkAdapter | 📋 Planned | P2 | Adapter Team | v1.2 |
-| AngelListAdapter | 📋 Planned | P2 | Adapter Team | v1.2 |
-| AnalyticsAggregator | 🔧 In Progress | P1 | Analytics | v1.0 |
-| KPICollector | 🔧 In Progress | P1 | Analytics | v1.0 |
-| MetricsCollector | ✅ Complete | P1 | Analytics | v1.0 |
-| OpportunityHealth | ✅ Complete | P1 | DevOps | v1.0 |
-| RecommendationCache | ✅ Complete | P0 | Core | v1.0 |
-| CohortComparator | 📋 Planned | P2 | ML | v1.2 |
-| BatchRanker | ✅ Complete | P1 | Core | v1.1 |
-| KPIAlertEngine | 📋 Planned | P2 | Analytics | v1.1 |
-| DiversityInjector | ✅ Complete | P1 | Core | v1.1 |
+| TaxonomyMapper | âœ… Complete | P0 | Core | v1.0 |
+| CandidateGenerator | âœ… Complete | P0 | Core | v1.0 |
+| NormalizationOrchestrator | âœ… Complete | P0 | Core | v1.0 |
+| ScoringEngine | âœ… Complete | P0 | Core | v1.0 |
+| GapAnalyzer | âœ… Complete | P0 | Core | v1.0 |
+| SuccessProbabilityModel | âœ… Complete | P1 | Core | v1.0 |
+| RecommendationEngine | âœ… Complete | P1 | Core | v1.0 |
+| AIRanker | âœ… Complete | P1 | Core | v1.0 |
+| LinkedInAdapter | ðŸ”§ In Progress | P0 | Adapter Team | v1.0 |
+| GitHubJobsAdapter | ðŸ”§ In Progress | P1 | Adapter Team | v1.1 |
+| DevfolioAdapter | ðŸ“‹ Planned | P1 | Adapter Team | v1.1 |
+| UnstopAdapter | ðŸ“‹ Planned | P1 | Adapter Team | v1.1 |
+| UpworkAdapter | ðŸ“‹ Planned | P2 | Adapter Team | v1.2 |
+| AngelListAdapter | ðŸ“‹ Planned | P2 | Adapter Team | v1.2 |
+| AnalyticsAggregator | ðŸ”§ In Progress | P1 | Analytics | v1.0 |
+| KPICollector | ðŸ”§ In Progress | P1 | Analytics | v1.0 |
+| MetricsCollector | âœ… Complete | P1 | Analytics | v1.0 |
+| OpportunityHealth | âœ… Complete | P1 | DevOps | v1.0 |
+| RecommendationCache | âœ… Complete | P0 | Core | v1.0 |
+| CohortComparator | ðŸ“‹ Planned | P2 | ML | v1.2 |
+| BatchRanker | âœ… Complete | P1 | Core | v1.1 |
+| KPIAlertEngine | ðŸ“‹ Planned | P2 | Analytics | v1.1 |
+| DiversityInjector | âœ… Complete | P1 | Core | v1.1 |
 
 ### D.2 API Endpoint Status
 
 | Endpoint | Method | Status | Description |
 |---|---|---|---|
-| `/api/opportunities/` | GET | ✅ | List opportunities |
-| `/api/opportunities/{id}` | GET | ✅ | Get opportunity details |
-| `/api/opportunities/match` | POST | ✅ | Match user to opportunities |
-| `/api/opportunities/recommend` | POST | 🔧 | Get AI-ranked recommendations |
-| `/api/opportunities/{id}/apply` | POST | ✅ | Track application |
-| `/api/opportunities/gaps` | GET | 🔧 | Get skill gaps for user |
-| `/api/opportunities/gaps/{id}/roadmap` | GET | 📋 | Get gap closure roadmap |
-| `/api/opportunities/analytics/summary` | GET | 📋 | Get user analytics |
-| `/api/opportunities/analytics/kpis` | GET | 📋 | Get enterprise KPIs |
-| `/api/opportunities/health` | GET | ✅ | System health check |
-| `/api/opportunities/ingest/trigger` | POST | ✅ | Trigger manual ingestion |
+| `/api/opportunities/` | GET | âœ… | List opportunities |
+| `/api/opportunities/{id}` | GET | âœ… | Get opportunity details |
+| `/api/opportunities/match` | POST | âœ… | Match user to opportunities |
+| `/api/opportunities/recommend` | POST | ðŸ”§ | Get AI-ranked recommendations |
+| `/api/opportunities/{id}/apply` | POST | âœ… | Track application |
+| `/api/opportunities/gaps` | GET | ðŸ”§ | Get skill gaps for user |
+| `/api/opportunities/gaps/{id}/roadmap` | GET | ðŸ“‹ | Get gap closure roadmap |
+| `/api/opportunities/analytics/summary` | GET | ðŸ“‹ | Get user analytics |
+| `/api/opportunities/analytics/kpis` | GET | ðŸ“‹ | Get enterprise KPIs |
+| `/api/opportunities/health` | GET | âœ… | System health check |
+| `/api/opportunities/ingest/trigger` | POST | âœ… | Trigger manual ingestion |
 
 ### D.3 Prompt File Status
 
 | Prompt | Status | Lines | Location |
 |---|---|---|---|
-| Opportunity Matching Agent | 📋 Planned | ~200 | `prompts/agents/opportunity_matching_agent.md` |
-| Opportunity Ranking System | 📋 Planned | ~150 | `prompts/system/opportunity_ranking.md` |
+| Opportunity Matching Agent | ðŸ“‹ Planned | ~200 | `prompts/agents/opportunity_matching_agent.md` |
+| Opportunity Ranking System | ðŸ“‹ Planned | ~150 | `prompts/system/opportunity_ranking.md` |
 
 ---
 
@@ -1870,18 +1870,18 @@ ADAPTER_RETRY_CONFIG = {
 | **Cohort Profile** | Statistical skill level distribution (P25, P50, P75) of successful candidates per opportunity type |
 | **Composite Score** | Final ranking score: 70% primary (match) + 30% secondary (success probability) |
 | **Content-Based Filtering** | Recommends opportunities matching user's profile features |
-| **Core Skill** | Required skill with importance_weight > 0.8 — blocking if missing |
+| **Core Skill** | Required skill with importance_weight > 0.8 â€” blocking if missing |
 | **Critical Blocker** | A skill gap severe enough that the user should defer the opportunity |
 | **Diversity Injection** | Technique to prevent filter bubbles by ensuring variety in recommendation types |
-| **Fallback Chain** | Five-level degradation: LLM → LLM Lite → Cache → Template → Algorithmic |
+| **Fallback Chain** | Five-level degradation: LLM â†’ LLM Lite â†’ Cache â†’ Template â†’ Algorithmic |
 | **Gap Analysis** | Computes delta between user skills and opportunity requirements |
 | **Graceful Degradation** | System continues functioning (at reduced quality) when AI components fail |
-| **Ingestion Pipeline** | End-to-end flow: source API → raw table → normalization → scoring → recommendations |
+| **Ingestion Pipeline** | End-to-end flow: source API â†’ raw table â†’ normalization â†’ scoring â†’ recommendations |
 | **Normalization** | Converting source-specific data into the unified `NormalizedOpportunity` schema |
 | **Opportunity Source Type** | Categorical: job, internship, hackathon, fellowship, competition, freelance, opensource, startup, contract, grant |
 | **Primary Score** | Six-factor weighted match score (skill alignment through income potential) |
 | **Readiness Score** | 0.0-1.0 estimate of how prepared the user is for an opportunity |
-| **RLS** | Row-Level Security — Supabase feature ensuring user data isolation |
+| **RLS** | Row-Level Security â€” Supabase feature ensuring user data isolation |
 | **Scoring Profile** | Per-type weight configuration for the six scoring factors |
 | **Skill Tree** | Hierarchical database of ~200+ skills with levels, relationships, and learning resources |
 | **Success Features** | Eight features used by the Bayesian model: readiness, alignment, experience, competitiveness, win rate, prep time, network, deadline proximity |
@@ -1983,7 +1983,7 @@ OPPORTUNITY_HEALTH_INTERVAL_SEC=300
 
 ## Appendix G: Worked Examples
 
-### G.1 Complete Scoring Walkthrough — Job Application
+### G.1 Complete Scoring Walkthrough â€” Job Application
 
 **User Profile:**
 - Skills: Python (level 4), React (level 3), FastAPI (level 3), SQL (level 3), Docker (level 2)
@@ -1998,7 +1998,7 @@ OPPORTUNITY_HEALTH_INTERVAL_SEC=300
 
 **Step 1: Skill Alignment (S_Align)**
 
-| Required Skill | Importance | User Has? | Weight × Has |
+| Required Skill | Importance | User Has? | Weight Ã— Has |
 |---|---|---|---|
 | Python | 0.9 | Yes (L4 >= L3) | 0.9 |
 | FastAPI | 0.7 | Yes (L3 >= L2) | 0.7 |
@@ -2009,10 +2009,10 @@ OPPORTUNITY_HEALTH_INTERVAL_SEC=300
 
 ```
 S_Align = 3.0 / 3.5 = 0.857
-Core skills (>0.8): Python (0.9) → present ✓, PostgreSQL (0.8) → present ✓
-No core missing → no penalty
-Preferred boost: React present → +0.15 × 0.3/(0.3+0.4) = +0.064
-S_Align (final) = 0.857 × 0.85 + 0.064 = 0.792
+Core skills (>0.8): Python (0.9) â†’ present âœ“, PostgreSQL (0.8) â†’ present âœ“
+No core missing â†’ no penalty
+Preferred boost: React present â†’ +0.15 Ã— 0.3/(0.3+0.4) = +0.064
+S_Align (final) = 0.857 Ã— 0.85 + 0.064 = 0.792
 ```
 
 **Step 2: Level Match (L_Match)**
@@ -2036,8 +2036,8 @@ Growth skills for this opportunity: AWS, Redis, Kubernetes
 - Market demand avg: 0.85
 
 ```
-G_Potential = 0.60 × 1.0 + 0.40 × 0.85 = 0.940
-Career target boost: No direct overlap with backend eng → no boost
+G_Potential = 0.60 Ã— 1.0 + 0.40 Ã— 0.85 = 0.940
+Career target boost: No direct overlap with backend eng â†’ no boost
 G_Potential (final) = 0.940
 ```
 
@@ -2049,9 +2049,9 @@ G_Potential (final) = 0.940
 
 ```
 Category_Match: {backend} intersection {backend, SaaS} / 2 = 0.50
-Tag_Match: user has Python(0.9), FastAPI(0.7), PostgreSQL(0.8) → avg = 0.80
+Tag_Match: user has Python(0.9), FastAPI(0.7), PostgreSQL(0.8) â†’ avg = 0.80
 Past_Behavior: 0.60 (default)
-I_Align = 0.50 × 0.50 + 0.30 × 0.80 + 0.20 × 0.60 = 0.610
+I_Align = 0.50 Ã— 0.50 + 0.30 Ã— 0.80 + 0.20 Ã— 0.60 = 0.610
 ```
 
 **Step 5: Deadline Urgency (D_Urgency)**
@@ -2060,7 +2060,7 @@ I_Align = 0.50 × 0.50 + 0.30 × 0.80 + 0.20 × 0.60 = 0.610
 Days until deadline: 30
 Lookahead: 90
 D_Urgency = 1.0 - (30/90) = 0.667
-User prefers prep → (0.667 + 0.333) / 2 = 0.500
+User prefers prep â†’ (0.667 + 0.333) / 2 = 0.500
 ```
 
 **Step 6: Income Potential (Inc_Potential)**
@@ -2071,7 +2071,7 @@ Market median for backend/mid: $95K
 Comp_Score = min($100K/$95K, 1.5) / 1.5 = 0.702
 Growth_Trajectory (job) = 0.50
 Equity_Value (no mention of equity) = 0.30
-Inc_Potential = 0.50 × 0.702 + 0.30 × 0.50 + 0.20 × 0.30 = 0.561
+Inc_Potential = 0.50 Ã— 0.702 + 0.30 Ã— 0.50 + 0.20 Ã— 0.30 = 0.561
 ```
 
 **Step 7: Primary Score**
@@ -2079,7 +2079,7 @@ Inc_Potential = 0.50 × 0.702 + 0.30 × 0.50 + 0.20 × 0.30 = 0.561
 Job profile weights: S_Align=0.45, L_Match=0.25, G_Potential=0.10, I_Align=0.10, D_Urgency=0.05, Inc=0.05
 
 ```
-Primary = 0.45×0.792 + 0.25×0.830 + 0.10×0.940 + 0.10×0.610 + 0.05×0.500 + 0.05×0.561
+Primary = 0.45Ã—0.792 + 0.25Ã—0.830 + 0.10Ã—0.940 + 0.10Ã—0.610 + 0.05Ã—0.500 + 0.05Ã—0.561
         = 0.356 + 0.208 + 0.094 + 0.061 + 0.025 + 0.028
         = 0.772
 ```
@@ -2096,8 +2096,8 @@ Primary = 0.45×0.792 + 0.25×0.830 + 0.10×0.940 + 0.10×0.610 + 0.05×0.500 + 
 
 ```
 Readiness = (0.9 + 0.7 + 0.8 + 0.6 + 0.0) / 3.5 = 3.0/3.5 = 0.857
-Preferred boost: +0.064 → 0.921
-No missing core → no penalty
+Preferred boost: +0.064 â†’ 0.921
+No missing core â†’ no penalty
 Readiness (final) = 0.921
 ```
 
@@ -2109,7 +2109,7 @@ network_score=0.3, deadline=0.500
 
 ```
 prior_logit = ln(0.08/0.92) = -2.442
-logit = -2.442 + 2.5×0.921 + 1.8×0.792 + 1.2×0.667 + 1.5×0.800 + 0.8×0.30 + 0.4×0.167 + 0.6×0.3 + (-0.5)×0.500
+logit = -2.442 + 2.5Ã—0.921 + 1.8Ã—0.792 + 1.2Ã—0.667 + 1.5Ã—0.800 + 0.8Ã—0.30 + 0.4Ã—0.167 + 0.6Ã—0.3 + (-0.5)Ã—0.500
 logit = -2.442 + 2.303 + 1.426 + 0.800 + 1.200 + 0.240 + 0.067 + 0.180 + (-0.250)
 logit = 3.524
 P(Win) = 1 / (1 + e^(-3.524)) = 0.971
@@ -2118,7 +2118,7 @@ P(Win) = 1 / (1 + e^(-3.524)) = 0.971
 **Step 10: Composite Score**
 
 ```
-Composite = 0.70 × 0.772 + 0.30 × 0.971 = 0.540 + 0.291 = 0.831
+Composite = 0.70 Ã— 0.772 + 0.30 Ã— 0.971 = 0.540 + 0.291 = 0.831
 ```
 
 **Result:** Strong match (0.831). Recommendation: **Apply with AWS preparation**.
@@ -2129,16 +2129,16 @@ Composite = 0.70 × 0.772 + 0.30 × 0.971 = 0.540 + 0.291 = 0.831
 
 **User Profile:** Student with Python (L3), basic HTML/CSS (L2), no experience
 
-**Opportunity:** Smart India Hackathon — full-stack web app required
+**Opportunity:** Smart India Hackathon â€” full-stack web app required
 - Required: React (0.9, L2), Node.js (0.8, L2), MongoDB (0.6, L1)
 - Preferred: Python (0.5), UI/UX (0.4)
 - Deadline: 21 days
 
 **Gap Analysis:**
-- React: missing → critical (weight 0.9) → 40h to learn basics
-- Node.js: missing → high (weight 0.8) → 40h to learn basics
-- MongoDB: missing → medium → 20h
-- Python: present → preferred boost ✓
+- React: missing â†’ critical (weight 0.9) â†’ 40h to learn basics
+- Node.js: missing â†’ high (weight 0.8) â†’ 40h to learn basics
+- MongoDB: missing â†’ medium â†’ 20h
+- Python: present â†’ preferred boost âœ“
 
 ```
 Readiness = 0.0 / (0.9+0.8+0.6) = 0.0 (all skills missing)
@@ -2149,25 +2149,25 @@ Readiness = 0.10
 **Scoring:**
 ```
 S_Align = 0.0 (no required skills match)
-G_Potential: 100% new skills, avg demand 0.80 → 0.60×1.0 + 0.40×0.80 = 0.920
-I_Align: hackathon interest → high category match 0.8
+G_Potential: 100% new skills, avg demand 0.80 â†’ 0.60Ã—1.0 + 0.40Ã—0.80 = 0.920
+I_Align: hackathon interest â†’ high category match 0.8
 D_Urgency: 21/90 = 0.767
 
 Hackathon profile: S_Align=0.15, L_Match=0.10, G_Potential=0.40, I_Align=0.15, D_Urgency=0.10, Inc=0.10
-Primary = 0.15×0 + 0.10×0 + 0.40×0.92 + 0.15×0.8 + 0.10×0.767 + 0.10×0.3
+Primary = 0.15Ã—0 + 0.10Ã—0 + 0.40Ã—0.92 + 0.15Ã—0.8 + 0.10Ã—0.767 + 0.10Ã—0.3
         = 0 + 0 + 0.368 + 0.120 + 0.077 + 0.030
         = 0.595
 
 P(Win|Features): Readiness=0.10, S_Align=0, Exp=0.1, Comp=0.0, WR=0.2, Prep=0.5, Net=0.2, Dead=0.767
-logit = ln(0.25/0.75) + 2.5×0.1 + 1.8×0 + 1.2×0.1 + 1.5×0 + 0.8×0.2 + 0.4×0.5 + 0.6×0.2 + (-0.5)×0.767
+logit = ln(0.25/0.75) + 2.5Ã—0.1 + 1.8Ã—0 + 1.2Ã—0.1 + 1.5Ã—0 + 0.8Ã—0.2 + 0.4Ã—0.5 + 0.6Ã—0.2 + (-0.5)Ã—0.767
 logit = -1.099 + 0.250 + 0 + 0.120 + 0 + 0.160 + 0.200 + 0.120 + (-0.384)
 logit = -0.633
 P(Win) = 1 / (1 + e^(0.633)) = 0.345
 
-Composite = 0.70×0.595 + 0.30×0.345 = 0.417 + 0.104 = 0.520
+Composite = 0.70Ã—0.595 + 0.30Ã—0.345 = 0.417 + 0.104 = 0.520
 ```
 
-**Result:** Moderate match. Recommendation: **Prepare (defer to next cycle with prep)**. Suggest learning React + Node.js basics (40h each) → readiness would increase to 0.72.
+**Result:** Moderate match. Recommendation: **Prepare (defer to next cycle with prep)**. Suggest learning React + Node.js basics (40h each) â†’ readiness would increase to 0.72.
 
 ---
 
@@ -2175,33 +2175,33 @@ Composite = 0.70×0.595 + 0.30×0.345 = 0.417 + 0.104 = 0.520
 
 **User Profile:** Python (L4), FastAPI (L4), React (L3), DevOps (L2), 5 years experience
 
-**Opportunity:** Build REST API for fintech startup — $5K-$10K, 4 weeks
+**Opportunity:** Build REST API for fintech startup â€” $5K-$10K, 4 weeks
 - Required: Python (0.9, L3), FastAPI (0.8, L3), Stripe API (0.7, L1), PostgreSQL (0.6, L2), Docker (0.5, L2)
 - Deadline: 7 days
 
 **Analysis:**
-- Stripe API: user has no experience → deficit
+- Stripe API: user has no experience â†’ deficit
 - All other skills present
-- Income potential high: $7.5K avg for 4 weeks → strong hourly rate
+- Income potential high: $7.5K avg for 4 weeks â†’ strong hourly rate
 
 ```
 S_Align = (0.9 + 0.8 + 0.0 + 0.6 + 0.5) / 3.5 = 2.8/3.5 = 0.800
 L_Match: Python(L4/L3=1.0), FastAPI(L4/L3=1.0), Stripe(L0/L1=0.6), PG(L3/L2=1.0), Docker(L2/L2=1.0) = 0.920
-G_Potential: Stripe API new → 0.60×0.20 + 0.40×0.70 = 0.400
-I_Align: fintech interest → 0.7
+G_Potential: Stripe API new â†’ 0.60Ã—0.20 + 0.40Ã—0.70 = 0.400
+I_Align: fintech interest â†’ 0.7
 D_Urgency: 7/90 = 0.922
-Inc_Potential: $7.5K/4weeks vs market $5K → 0.80
+Inc_Potential: $7.5K/4weeks vs market $5K â†’ 0.80
 
 Freelance profile: S_Align=0.35, L_Match=0.20, G_Potential=0.10, I_Align=0.10, D_Urgency=0.10, Inc=0.15
-Primary = 0.35×0.800 + 0.20×0.920 + 0.10×0.400 + 0.10×0.700 + 0.10×0.922 + 0.15×0.800
+Primary = 0.35Ã—0.800 + 0.20Ã—0.920 + 0.10Ã—0.400 + 0.10Ã—0.700 + 0.10Ã—0.922 + 0.15Ã—0.800
         = 0.280 + 0.184 + 0.040 + 0.070 + 0.092 + 0.120
         = 0.786
 
-P(Win): baseline=0.40, features strong → 0.823 (high confidence)
-Composite = 0.70×0.786 + 0.30×0.823 = 0.797
+P(Win): baseline=0.40, features strong â†’ 0.823 (high confidence)
+Composite = 0.70Ã—0.786 + 0.30Ã—0.823 = 0.797
 ```
 
-**Result:** Strong match (0.797). Recommendation: **Apply now** — learn Stripe API basics in 2 days.
+**Result:** Strong match (0.797). Recommendation: **Apply now** â€” learn Stripe API basics in 2 days.
 
 ---
 
@@ -2211,69 +2211,69 @@ Composite = 0.70×0.786 + 0.30×0.823 = 0.797
 
 ```
 [Source: LinkedIn Jobs API]
-  │
-  ├── 1. LinkedInAdapter.fetch()
-  │      GET /v2/jobs/search?keywords=software+engineer&location=remote&limit=25
-  │      Response: 25 job listings in raw JSON format
-  │      → stored in raw_opportunities table
-  │
-  ├── 2. LinkedInAdapter.normalize(raw[0])
-  │      Input:  {
-  │                "id": "12345",
-  │                "title": "Senior Software Engineer",
-  │                "company": {"name": "TechCorp"},
-  │                "description": "We are looking for a senior SWE...",
-  │                "skills": ["Python", "React", "AWS"],
-  │                "experience_level": "senior",
-  │                "salary": {"min": 120000, "max": 180000, "currency": "USD"},
-  │                "posted_date": "2026-06-10T00:00:00Z",
-  │                "apply_url": "https://linkedin.com/jobs/view/12345"
-  │              }
-  │      → NormalizedOpportunity:
-  │           source_type: "job"
-  │           title: "Senior Software Engineer"
-  │           organization: "TechCorp"
-  │           required_skills: [
-  │             {canonical_id: "python",  name: "Python",  importance_weight: 0.9, required_level: 4},
-  │             {canonical_id: "react",   name: "React",   importance_weight: 0.7, required_level: 3},
-  │             {canonical_id: "aws",     name: "AWS",     importance_weight: 0.6, required_level: 3}
-  │           ]
-  │           experience_level: "senior"
-  │           compensation: {min: 120000, max: 180000, currency: "USD"}
-  │           deadline_at: 2026-07-10
-  │
-  ├── 3. CandidateGenerator.compute_candidates(user_123, [norm[0..24]])
-  │      → generates 25 CandidateOpportunity objects with raw scores
-  │      → stores as temporary candidate set
-  │
-  ├── 4. ScoringEngine.compute_score(user_123, norm[0])
-  │      → primary_score: 0.772
-  │      → score_detail: {S_Align: 0.792, L_Match: 0.830, ...}
-  │      → updates normalized_opportunities.composite_score
-  │
-  ├── 5. SuccessProbabilityModel.predict(user_123, norm[0])
-  │      → probability: 0.843
-  │      → confidence: 0.75
-  │
-  ├── 6. RecommendationEngine.recommend(user_123, [norm[0..24]])
-  │      → computes composite = 0.70 × 0.772 + 0.30 × 0.843 = 0.793
-  │      → ranks all 25 by composite_score DESC
-  │      → applies DiversityInjector (ensure 3+ types)
-  │      → caches result for 15 min
-  │
-  ├── 7. User views recommendations → GET /api/opportunities/recommend
-  │      → AIRanker.rank() tries LLM → fallback Level 4 (template)
-  │      → returns top 10, opportunity[0] = Senior SWE at TechCorp
-  │      → analytics: event_type='view', score_at_time=0.793
-  │
-  ├── 8. User clicks "Apply" → POST /api/opportunities/12345/apply
-  │      → analytics: event_type='apply'
-  │      → opportunity_interactions: (user_123, 12345, 'apply')
-  │
-  └── 9. (30 days later) Outcome: User got interview → hired
-         → POST /api/opportunities/12345/win
-         → analytics: event_type='win'
-         → cohort_profiles updated with user's skill levels
+  â”‚
+  â”œâ”€â”€ 1. LinkedInAdapter.fetch()
+  â”‚      GET /v2/jobs/search?keywords=software+engineer&location=remote&limit=25
+  â”‚      Response: 25 job listings in raw JSON format
+  â”‚      â†’ stored in raw_opportunities table
+  â”‚
+  â”œâ”€â”€ 2. LinkedInAdapter.normalize(raw[0])
+  â”‚      Input:  {
+  â”‚                "id": "12345",
+  â”‚                "title": "Senior Software Engineer",
+  â”‚                "company": {"name": "TechCorp"},
+  â”‚                "description": "We are looking for a senior SWE...",
+  â”‚                "skills": ["Python", "React", "AWS"],
+  â”‚                "experience_level": "senior",
+  â”‚                "salary": {"min": 120000, "max": 180000, "currency": "USD"},
+  â”‚                "posted_date": "2026-06-10T00:00:00Z",
+  â”‚                "apply_url": "https://linkedin.com/jobs/view/12345"
+  â”‚              }
+  â”‚      â†’ NormalizedOpportunity:
+  â”‚           source_type: "job"
+  â”‚           title: "Senior Software Engineer"
+  â”‚           organization: "TechCorp"
+  â”‚           required_skills: [
+  â”‚             {canonical_id: "python",  name: "Python",  importance_weight: 0.9, required_level: 4},
+  â”‚             {canonical_id: "react",   name: "React",   importance_weight: 0.7, required_level: 3},
+  â”‚             {canonical_id: "aws",     name: "AWS",     importance_weight: 0.6, required_level: 3}
+  â”‚           ]
+  â”‚           experience_level: "senior"
+  â”‚           compensation: {min: 120000, max: 180000, currency: "USD"}
+  â”‚           deadline_at: 2026-07-10
+  â”‚
+  â”œâ”€â”€ 3. CandidateGenerator.compute_candidates(user_123, [norm[0..24]])
+  â”‚      â†’ generates 25 CandidateOpportunity objects with raw scores
+  â”‚      â†’ stores as temporary candidate set
+  â”‚
+  â”œâ”€â”€ 4. ScoringEngine.compute_score(user_123, norm[0])
+  â”‚      â†’ primary_score: 0.772
+  â”‚      â†’ score_detail: {S_Align: 0.792, L_Match: 0.830, ...}
+  â”‚      â†’ updates normalized_opportunities.composite_score
+  â”‚
+  â”œâ”€â”€ 5. SuccessProbabilityModel.predict(user_123, norm[0])
+  â”‚      â†’ probability: 0.843
+  â”‚      â†’ confidence: 0.75
+  â”‚
+  â”œâ”€â”€ 6. RecommendationEngine.recommend(user_123, [norm[0..24]])
+  â”‚      â†’ computes composite = 0.70 Ã— 0.772 + 0.30 Ã— 0.843 = 0.793
+  â”‚      â†’ ranks all 25 by composite_score DESC
+  â”‚      â†’ applies DiversityInjector (ensure 3+ types)
+  â”‚      â†’ caches result for 15 min
+  â”‚
+  â”œâ”€â”€ 7. User views recommendations â†’ GET /api/opportunities/recommend
+  â”‚      â†’ AIRanker.rank() tries LLM â†’ fallback Level 4 (template)
+  â”‚      â†’ returns top 10, opportunity[0] = Senior SWE at TechCorp
+  â”‚      â†’ analytics: event_type='view', score_at_time=0.793
+  â”‚
+  â”œâ”€â”€ 8. User clicks "Apply" â†’ POST /api/opportunities/12345/apply
+  â”‚      â†’ analytics: event_type='apply'
+  â”‚      â†’ opportunity_interactions: (user_123, 12345, 'apply')
+  â”‚
+  â””â”€â”€ 9. (30 days later) Outcome: User got interview â†’ hired
+         â†’ POST /api/opportunities/12345/win
+         â†’ analytics: event_type='win'
+         â†’ cohort_profiles updated with user's skill levels
 ```
 
 ---
@@ -2290,7 +2290,7 @@ Composite = 0.70×0.786 + 0.30×0.823 = 0.797
 | **Malformed response** | JSON parse error | Skip item, log warning, continue batch | Single item dropped |
 | **LLM timeout** | > 30s no response | Fall to Level 2 (LLM Lite), then Level 5 (algorithmic) | Ranking quality degrades |
 | **LLM bad format** | JSON parse on response | Retry 1x, fall to Cache/Template/Algorithmic | Ranking quality degrades |
-| **Cache full** | TTLCache eviction | LRU eviction, no action needed | Cache miss → recompute |
+| **Cache full** | TTLCache eviction | LRU eviction, no action needed | Cache miss â†’ recompute |
 | **Database unreachable** | Connection timeout | Circuit breaker (30s), retry 3x, then 503 error | System unavailable |
 | **Score drift** | Avg composite drops >30% | Alert triggered, auto-recalibrate scoring profiles | None (automatic) |
 | **Dedup collision** | UNIQUE constraint violation | Skip duplicate, log, continue batch | Single item deduplicated |
@@ -2326,82 +2326,82 @@ CIRCUIT_BREAKER_CONFIG = {
 ### J.1 Ingestion Data Flow
 
 ```
-┌──────────┐   ┌───────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│ LinkedIn  │──▶│ LinkedIn  │──▶│ Taxonomy     │──▶│ Normalization│──▶│ raw_oppor-   │
-│ Jobs API  │   │ Adapter   │   │ Mapper       │   │ Orchestrator │   │ tunities tbl │
-└──────────┘   └───────────┘   └──────────────┘   └──────────────┘   └──────┬───────┘
-                                                                           │
-┌──────────┐   ┌───────────┐   ┌──────────────┐                           │
-│ GitHub   │──▶│ GitHub    │──▶│ Taxonomy     │                           │
-│ Jobs API │   │ Adapter   │   │ Mapper       │                           │
-└──────────┘   └───────────┘   └──────────────┘                           │
-                                                                           ▼
-┌──────────┐   ┌───────────┐   ┌──────────────┐                   ┌───────────────┐
-│ Devfolio │──▶│ Devfolio  │──▶│ Taxonomy     │                   │ normalized_   │
-│ API      │   │ Adapter   │   │ Mapper       │                   │ opportunities │
-└──────────┘   └───────────┘   └──────────────┘                   │ tbl          │
-                                                                   └──────┬───────┘
-┌──────────┐   ┌───────────┐   ┌──────────────┐                          │
-│ Unstop   │──▶│ Unstop    │──▶│ Taxonomy     │                          │
-│ API      │   │ Adapter   │   │ Mapper       │                          │
-└──────────┘   └───────────┘   └──────────────┘                          │
-                                                                           ▼
-┌──────────┐   ┌───────────┐   ┌──────────────┐                   ┌───────────────┐
-│ Upwork   │──▶│ Upwork    │──▶│ Taxonomy     │                   │ Scoring +     │
-│ API      │   │ Adapter   │   │ Mapper       │                   │ Matching      │
-└──────────┘   └───────────┘   └──────────────┘                   └───────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ LinkedIn  â”‚â”€â”€â–¶â”‚ LinkedIn  â”‚â”€â”€â–¶â”‚ Taxonomy     â”‚â”€â”€â–¶â”‚ Normalizationâ”‚â”€â”€â–¶â”‚ raw_oppor-   â”‚
+â”‚ Jobs API  â”‚   â”‚ Adapter   â”‚   â”‚ Mapper       â”‚   â”‚ Orchestrator â”‚   â”‚ tunities tbl â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                                           â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                           â”‚
+â”‚ GitHub   â”‚â”€â”€â–¶â”‚ GitHub    â”‚â”€â”€â–¶â”‚ Taxonomy     â”‚                           â”‚
+â”‚ Jobs API â”‚   â”‚ Adapter   â”‚   â”‚ Mapper       â”‚                           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                           â”‚
+                                                                           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Devfolio â”‚â”€â”€â–¶â”‚ Devfolio  â”‚â”€â”€â–¶â”‚ Taxonomy     â”‚                   â”‚ normalized_   â”‚
+â”‚ API      â”‚   â”‚ Adapter   â”‚   â”‚ Mapper       â”‚                   â”‚ opportunities â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                   â”‚ tbl          â”‚
+                                                                   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                          â”‚
+â”‚ Unstop   â”‚â”€â”€â–¶â”‚ Unstop    â”‚â”€â”€â–¶â”‚ Taxonomy     â”‚                          â”‚
+â”‚ API      â”‚   â”‚ Adapter   â”‚   â”‚ Mapper       â”‚                          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                          â”‚
+                                                                           â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ Upwork   â”‚â”€â”€â–¶â”‚ Upwork    â”‚â”€â”€â–¶â”‚ Taxonomy     â”‚                   â”‚ Scoring +     â”‚
+â”‚ API      â”‚   â”‚ Adapter   â”‚   â”‚ Mapper       â”‚                   â”‚ Matching      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### J.2 User Request Flow
 
 ```
-                                   ┌──────────────┐
-                                   │  User        │
-                                   │  Request     │
-                                   └──────┬───────┘
-                                          │
-                                          ▼
-                              ┌──────────────────────┐
-                              │  RecommendationEngine │
-                              │  .refresh()           │
-                              └──────┬───────────────┘
-                                     │
-                      ┌──────────────┼──────────────┐
-                      ▼              ▼              ▼
-              ┌────────────┐ ┌────────────┐ ┌────────────┐
-              │ Cache Hit? │ │ Scoring   │ │ Success    │
-              │ TTL 15 min │ │ Engine    │ │ Probability│
-              └──────┬─────┘ └─────┬──────┘ └──────┬─────┘
-                     │             │               │
-                     │             ▼               │
-                     │     ┌──────────────┐       │
-                     │     │ GapAnalyzer  │       │
-                     │     └──────┬───────┘       │
-                     │            │               │
-                     └────────────┼───────────────┘
-                                  │
-                                  ▼
-                     ┌────────────────────┐
-                     │ Composite Score    │
-                     │ = 0.70×Primary +   │
-                     │   0.30×Secondary   │
-                     └────────┬───────────┘
-                              │
-                              ▼
-                     ┌────────────────────┐
-                     │ AIRanker           │
-                     │ (5-level fallback) │
-                     └────────┬───────────┘
-                              │
-                              ▼
-                     ┌────────────────────┐
-                     │ DiversityInjector  │
-                     └────────┬───────────┘
-                              │
-                              ▼
-                     ┌────────────────────┐
-                     │ Response (Top-K)   │
-                     └────────────────────┘
+                                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                   â”‚  User        â”‚
+                                   â”‚  Request     â”‚
+                                   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+                                          â”‚
+                                          â–¼
+                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                              â”‚  RecommendationEngine â”‚
+                              â”‚  .refresh()           â”‚
+                              â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                     â”‚
+                      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                      â–¼              â–¼              â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚ Cache Hit? â”‚ â”‚ Scoring   â”‚ â”‚ Success    â”‚
+              â”‚ TTL 15 min â”‚ â”‚ Engine    â”‚ â”‚ Probabilityâ”‚
+              â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                     â”‚             â”‚               â”‚
+                     â”‚             â–¼               â”‚
+                     â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+                     â”‚     â”‚ GapAnalyzer  â”‚       â”‚
+                     â”‚     â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+                     â”‚            â”‚               â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                  â”‚
+                                  â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Composite Score    â”‚
+                     â”‚ = 0.70Ã—Primary +   â”‚
+                     â”‚   0.30Ã—Secondary   â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â”‚
+                              â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ AIRanker           â”‚
+                     â”‚ (5-level fallback) â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â”‚
+                              â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ DiversityInjector  â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â”‚
+                              â–¼
+                     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                     â”‚ Response (Top-K)   â”‚
+                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -2565,13 +2565,13 @@ def make_profile_cache_key(user_id: str) -> str:
 
 # Cache TTLs by use case
 CACHE_TTLS = {
-    "scoring": 900,          # 15 min — scores change when user skills update
-    "ranking": 900,          # 15 min — candidate pool changes
-    "user_profile": 300,     # 5 min — profile can change anytime
-    "adapter_list": 1800,    # 30 min — opportunity listings
-    "cohort_stats": 3600,    # 60 min — cohort data changes slowly
-    "market_rates": 7200,    # 2 hours — market rate data
-    "skill_tree": 86400,     # 24 hours — skill tree is relatively static
+    "scoring": 900,          # 15 min â€” scores change when user skills update
+    "ranking": 900,          # 15 min â€” candidate pool changes
+    "user_profile": 300,     # 5 min â€” profile can change anytime
+    "adapter_list": 1800,    # 30 min â€” opportunity listings
+    "cohort_stats": 3600,    # 60 min â€” cohort data changes slowly
+    "market_rates": 7200,    # 2 hours â€” market rate data
+    "skill_tree": 86400,     # 24 hours â€” skill tree is relatively static
 }
 ```
 
@@ -2587,7 +2587,7 @@ CACHE_TTLS = {
 | Batch score (50 opps) | 2 sec | 0.8 sec | 1.5 sec | 2.4 sec |
 | AI ranking (Level 1) | 10 sec | 2.1 sec | 5.8 sec | 12.4 sec |
 | AI ranking (Level 5) | 500 ms | 85 ms | 210 ms | 490 ms |
-| Full recommendation (50→10) | 5 sec | 1.2 sec | 2.8 sec | 4.7 sec |
+| Full recommendation (50â†’10) | 5 sec | 1.2 sec | 2.8 sec | 4.7 sec |
 | Gap analysis | 150 ms | 35 ms | 95 ms | 180 ms |
 | Cache hit response | 10 ms | 0.8 ms | 2.1 ms | 5.3 ms |
 | Ingestion (single item) | 1 sec | 0.3 sec | 0.7 sec | 1.1 sec |
@@ -2609,11 +2609,11 @@ CACHE_TTLS = {
 
 | Component | Baseline | Per User | Per 1,000 Opportunities |
 |---|---|---|---|
-| TTLCache (default 1000) | 0.5 MB | — | 1.5 MB |
-| Scoring profiles | 0.1 MB | — | — |
-| User profile cache | — | 2 KB | — |
-| Market data | 0.5 MB | — | — |
-| Skill tree | 0.3 MB | — | — |
+| TTLCache (default 1000) | 0.5 MB | â€” | 1.5 MB |
+| Scoring profiles | 0.1 MB | â€” | â€” |
+| User profile cache | â€” | 2 KB | â€” |
+| Market data | 0.5 MB | â€” | â€” |
+| Skill tree | 0.3 MB | â€” | â€” |
 | Total steady-state | 1.5 MB | 2 KB | 350 KB |
 
 ---
@@ -2624,7 +2624,7 @@ CACHE_TTLS = {
 
 | ARIA OS Module | Integration Point | Data Flow |
 |---|---|---|
-| Skills Module | Skill tree (§17) | Required/growth skills pulled from canonical skill tree |
+| Skills Module | Skill tree (Â§17) | Required/growth skills pulled from canonical skill tree |
 | Learning Module | Gap closure roadmaps | Closure plans feed into course recommendations |
 | Income Module | Income potential scoring | Compensation data normalized against user income profile |
 | Memory Module | Past behavior scoring | Win/loss history from memory consolidated into prior probability |
@@ -3043,8 +3043,8 @@ Skills lose relevance if not used recently. The decay factor adjusts proficiency
 ```
 effective_level = raw_level * decay_factor
 
-decay_factor = e^(-λ * months_since_last_use)
-where λ = 0.15 (half-life ≈ 4.6 months)
+decay_factor = e^(-Î» * months_since_last_use)
+where Î» = 0.15 (half-life â‰ˆ 4.6 months)
 ```
 
 ```python
@@ -3113,10 +3113,10 @@ If the user has connections at the organization:
 Network_Boost = 1.0 + 0.1 * min(connections, 5)
 
 Examples:
-  0 connections → ×1.0 (no boost)
-  1 connection  → ×1.1
-  3 connections → ×1.3
-  5+ connections → ×1.5 (max)
+  0 connections â†’ Ã—1.0 (no boost)
+  1 connection  â†’ Ã—1.1
+  3 connections â†’ Ã—1.3
+  5+ connections â†’ Ã—1.5 (max)
 ```
 
 ---
@@ -3126,34 +3126,34 @@ Examples:
 ### 18.1 State Machine (Detailed)
 
 ```
-                    ┌─────────────┐
-                    │  DISCOVERED │  ← New from ingestion
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │   ACTIVE    │  ← Shown in recommendations
-                    └──────┬──────┘
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-        ┌──────────┐ ┌──────────┐ ┌──────────┐
-        │  SAVED   │ │ APPLIED  │ │DISMISSED │
-        └────┬─────┘ └────┬─────┘ └──────────┘
-             │            │
-             │      ┌─────▼──────┐
-             │      │ IN_PROGRESS│  ← Interviewing / shortlisted
-             │      └─────┬──────┘
-             │            │
-             │     ┌──────┴──────┐
-             │     ▼             ▼
-             │ ┌──────┐    ┌───────┐
-             │ │ WON  │    │ LOST  │
-             │ └──────┘    └───────┘
-             │
-             ▼
-        ┌──────────┐
-        │ EXPIRED  │  ← Past deadline with no action
-        └──────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  DISCOVERED â”‚  â† New from ingestion
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
+                    â”‚   ACTIVE    â”‚  â† Shown in recommendations
+                    â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                           â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â–¼            â–¼            â–¼
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚  SAVED   â”‚ â”‚ APPLIED  â”‚ â”‚DISMISSED â”‚
+        â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+             â”‚            â”‚
+             â”‚      â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
+             â”‚      â”‚ IN_PROGRESSâ”‚  â† Interviewing / shortlisted
+             â”‚      â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+             â”‚            â”‚
+             â”‚     â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”
+             â”‚     â–¼             â–¼
+             â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”
+             â”‚ â”‚ WON  â”‚    â”‚ LOST  â”‚
+             â”‚ â””â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”˜
+             â”‚
+             â–¼
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚ EXPIRED  â”‚  â† Past deadline with no action
+        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 18.2 Transition Rules
@@ -3344,74 +3344,74 @@ WHERE r.status = 'completed'
 Small changes in weights produce these effects on composite scores:
 
 Increase S_Align by 0.05 (offset from other weights):
-  Job:          +0.022 avg Δ (high sensitivity — skill alignment matters)
-  Hackathon:    +0.008 avg Δ (low sensitivity — skills less critical)
-  Freelance:    +0.018 avg Δ
+  Job:          +0.022 avg Î” (high sensitivity â€” skill alignment matters)
+  Hackathon:    +0.008 avg Î” (low sensitivity â€” skills less critical)
+  Freelance:    +0.018 avg Î”
 
 Increase G_Potential by 0.05:
-  Hackathon:    +0.020 avg Δ (high sensitivity — growth is key)
-  Job:          +0.005 avg Δ (low sensitivity)
-  Internship:   +0.015 avg Δ
+  Hackathon:    +0.020 avg Î” (high sensitivity â€” growth is key)
+  Job:          +0.005 avg Î” (low sensitivity)
+  Internship:   +0.015 avg Î”
 
 Increase Inc_Potential by 0.05:
-  Freelance:    +0.008 avg Δ (moderate sensitivity)
-  Fellowship:   +0.003 avg Δ (low sensitivity)
-  Contract:     +0.008 avg Δ
+  Freelance:    +0.008 avg Î” (moderate sensitivity)
+  Fellowship:   +0.003 avg Î” (low sensitivity)
+  Contract:     +0.008 avg Î”
 
 Composite score variance by type:
-  Job:          σ = 0.18 (most discriminating — wide spread of scores)
-  Open Source:  σ = 0.09 (least discriminating — most users score similarly)
-  Hackathon:    σ = 0.14
-  Internship:   σ = 0.16
+  Job:          Ïƒ = 0.18 (most discriminating â€” wide spread of scores)
+  Open Source:  Ïƒ = 0.09 (least discriminating â€” most users score similarly)
+  Hackathon:    Ïƒ = 0.14
+  Internship:   Ïƒ = 0.16
 ```
 
-### Appendix O: Changelog (Skills.md §16 Alignment)
+### Appendix O: Changelog (Skills.md Â§16 Alignment)
 
-| Version | Date | Changes | Skills.md §16 Ref |
+| Version | Date | Changes | Skills.md Â§16 Ref |
 |---|---|---|---|
-| 1.0.0 | 2026-06-13 | Initial document — entire Opportunity Intelligence Engine | §16.1-16.5 |
-| 1.0.0 | | 10 opportunity types defined | §16.2 Base Match Formula |
-| 1.0.0 | | Seven-factor scoring (extended from Skills 5-factor) | §16.2 |
-| 1.0.0 | | 6 adapter implementations (3 complete, 3 planned) | §16.3 Data Sources |
-| 1.0.0 | | Bayesian success probability model | §16.4 |
-| 1.0.0 | | 5-level fallback ranking chain | §16.5 |
-| 1.0.0 | | 20+ enterprise KPIs, SLA targets, alert rules | §16.5 |
-| 1.0.0 | | Gap detection + closure roadmap system | §17.3 Skill Gap Analysis |
-| 1.0.0 | | SQL schema: 7 core tables, 17 indexes | §16.3 |
-| 1.0.0 | | Cross-module integration API | §21 Agent Integration |
+| 1.0.0 | 2026-06-13 | Initial document â€” entire Opportunity Intelligence Engine | Â§16.1-16.5 |
+| 1.0.0 | | 10 opportunity types defined | Â§16.2 Base Match Formula |
+| 1.0.0 | | Seven-factor scoring (extended from Skills 5-factor) | Â§16.2 |
+| 1.0.0 | | 6 adapter implementations (3 complete, 3 planned) | Â§16.3 Data Sources |
+| 1.0.0 | | Bayesian success probability model | Â§16.4 |
+| 1.0.0 | | 5-level fallback ranking chain | Â§16.5 |
+| 1.0.0 | | 20+ enterprise KPIs, SLA targets, alert rules | Â§16.5 |
+| 1.0.0 | | Gap detection + closure roadmap system | Â§17.3 Skill Gap Analysis |
+| 1.0.0 | | SQL schema: 7 core tables, 17 indexes | Â§16.3 |
+| 1.0.0 | | Cross-module integration API | Â§21 Agent Integration |
 
 ### Appendix P: Quick Reference Card
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│              OPPORTUNITY MATCHING — QUICK REFERENCE              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  SCORING:   Composite = 0.70 × Primary + 0.30 × Secondary       │
-│             Primary = Σ(w_i × f_i) for 6 factors                │
-│             Secondary = P(Win) from Bayesian model               │
-│                                                                  │
-│  PROFILES:  10 types with unique (w1..w6) weight vectors         │
-│             See §2.3 for complete table                          │
-│                                                                  │
-│  GAP:       Readiness = Σ(weight × readiness_i) / Σ(weight)     │
-│             4 severity levels: critical → high → medium → low   │
-│                                                                  │
-│  RANK:      5-level fallback: LLM → Lite → Cache → Tpl → Algo   │
-│             Cache TTL: 15 min                                    │
-│                                                                  │
-│  INTEGRATIONS: Skills, Learning, Income, Memory, Career, Tasks  │
-│                                                                  │
-│  SOURCES:   6 adapters: LinkedIn, GitHub, Devfolio, Unstop,      │
-│             Upwork, AngelList (3 live, 3 planned)               │
-│                                                                  │
-│  KPIs:      Pipeline velocity, match accuracy, conversion        │
-│             funnel, time-to-apply, gap closure rate, diversity   │
-│                                                                  │
-│  ALERTS:    5 rules: adapter_down, pipeline_stall, ai_degrade,   │
-│             score_drift, db_health                               │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              OPPORTUNITY MATCHING â€” QUICK REFERENCE              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                  â”‚
+â”‚  SCORING:   Composite = 0.70 Ã— Primary + 0.30 Ã— Secondary       â”‚
+â”‚             Primary = Î£(w_i Ã— f_i) for 6 factors                â”‚
+â”‚             Secondary = P(Win) from Bayesian model               â”‚
+â”‚                                                                  â”‚
+â”‚  PROFILES:  10 types with unique (w1..w6) weight vectors         â”‚
+â”‚             See Â§2.3 for complete table                          â”‚
+â”‚                                                                  â”‚
+â”‚  GAP:       Readiness = Î£(weight Ã— readiness_i) / Î£(weight)     â”‚
+â”‚             4 severity levels: critical â†’ high â†’ medium â†’ low   â”‚
+â”‚                                                                  â”‚
+â”‚  RANK:      5-level fallback: LLM â†’ Lite â†’ Cache â†’ Tpl â†’ Algo   â”‚
+â”‚             Cache TTL: 15 min                                    â”‚
+â”‚                                                                  â”‚
+â”‚  INTEGRATIONS: Skills, Learning, Income, Memory, Career, Tasks  â”‚
+â”‚                                                                  â”‚
+â”‚  SOURCES:   6 adapters: LinkedIn, GitHub, Devfolio, Unstop,      â”‚
+â”‚             Upwork, AngelList (3 live, 3 planned)               â”‚
+â”‚                                                                  â”‚
+â”‚  KPIs:      Pipeline velocity, match accuracy, conversion        â”‚
+â”‚             funnel, time-to-apply, gap closure rate, diversity   â”‚
+â”‚                                                                  â”‚
+â”‚  ALERTS:    5 rules: adapter_down, pipeline_stall, ai_degrade,   â”‚
+â”‚             score_drift, db_health                               â”‚
+â”‚                                                                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -3421,13 +3421,13 @@ Composite score variance by type:
 ### Q.1 Query Optimization
 
 ```sql
--- Instead of this (slow — sequential scan):
+-- Instead of this (slow â€” sequential scan):
 SELECT * FROM normalized_opportunities
 WHERE required_skills @> '[{"canonical_id": "python"}]';
 
--- Use this (fast — GIN index):
+-- Use this (fast â€” GIN index):
 -- Index: CREATE INDEX idx_norm_skills_gin ON normalized_opportunities USING GIN(required_skills);
--- Same query, but with GIN index on JSONB → bitmap index scan
+-- Same query, but with GIN index on JSONB â†’ bitmap index scan
 
 -- Instead of this (expensive ORDER BY on large set):
 SELECT * FROM normalized_opportunities
@@ -3443,28 +3443,28 @@ ORDER BY composite_score DESC;
 
 ```python
 # Optimization 1: Batch DB reads
-# BAD — N+1 queries:
+# BAD â€” N+1 queries:
 for opp_id in opportunity_ids:
     opp = await db.fetch_one("SELECT * FROM normalized_opportunities WHERE opportunity_id=:oid", {"oid": opp_id})
 
-# GOOD — single batch query:
+# GOOD â€” single batch query:
 opps = await db.fetch_all("SELECT * FROM normalized_opportunities WHERE opportunity_id = ANY(:oids)", {"oids": opportunity_ids})
 
 # Optimization 2: Preload user data once
-# BAD — fetch user profile for each scoring call:
+# BAD â€” fetch user profile for each scoring call:
 for opp in opportunities:
     user = await fetch_user_profile(user_id)
     score = await engine.compute(user, opp)
-# GOOD — fetch once before loop:
+# GOOD â€” fetch once before loop:
 user = await fetch_user_profile(user_id)
 tasks = [engine.compute(user, opp) for opp in opportunities]
 
 # Optimization 3: Parallel independent tasks
-# BAD — sequential independent operations:
+# BAD â€” sequential independent operations:
 score = await engine.compute(user, opp)
 gap = await gap_analyzer.analyze(user, opp)
 prob = await success_model.predict(user, opp)
-# GOOD — parallel:
+# GOOD â€” parallel:
 score, gap, prob = await asyncio.gather(
     engine.compute(user, opp),
     gap_analyzer.analyze(user, opp),
@@ -3497,9 +3497,9 @@ scores = array.array('d', [0.0] * 10000)  # 80KB vs ~800KB for list of floats
 users
   id (PK)
   preferences JSONB
-  ─────────────────────────────────────────────────
-  │ Linked to everything via user_id FK            │
-  └─────────────────────────────────────────────────
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  â”‚ Linked to everything via user_id FK            â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 raw_opportunities
   raw_id (PK)
@@ -3508,45 +3508,45 @@ raw_opportunities
   raw_data JSONB
   status VARCHAR(20)
   UNIQUE(source, source_id)
-  │
-  └── 1:1 ──> normalized_opportunities
+  â”‚
+  â””â”€â”€ 1:1 â”€â”€> normalized_opportunities
                 opportunity_id (PK)
-                raw_source_id (FK → raw_opportunities)
+                raw_source_id (FK â†’ raw_opportunities)
                 source_type VARCHAR(30)
                 title VARCHAR(255)
                 required_skills JSONB
                 preferred_skills JSONB
                 composite_score DECIMAL(5,4)
-                │
-                ├── 1:N ──> opportunity_interactions
-                │             interaction_id (PK)
-                │             user_id (FK → users)
-                │             opportunity_id (FK → norm_opps)
-                │             action VARCHAR(20)
-                │             UNIQUE(user_id, opp_id, action)
-                │
-                ├── 1:N ──> skill_gap_tracking
-                │             gap_id (PK)
-                │             user_id (FK → users)
-                │             opportunity_id (FK → norm_opps)
-                │             canonical_id VARCHAR(100)
-                │
-                ├── 1:N ──> recommendation_feedback
-                │             feedback_id (PK)
-                │             user_id (FK → users)
-                │             opportunity_id (FK → norm_opps)
-                │             rating SMALLINT
-                │
-                └── M:N ──> cohort_profiles
+                â”‚
+                â”œâ”€â”€ 1:N â”€â”€> opportunity_interactions
+                â”‚             interaction_id (PK)
+                â”‚             user_id (FK â†’ users)
+                â”‚             opportunity_id (FK â†’ norm_opps)
+                â”‚             action VARCHAR(20)
+                â”‚             UNIQUE(user_id, opp_id, action)
+                â”‚
+                â”œâ”€â”€ 1:N â”€â”€> skill_gap_tracking
+                â”‚             gap_id (PK)
+                â”‚             user_id (FK â†’ users)
+                â”‚             opportunity_id (FK â†’ norm_opps)
+                â”‚             canonical_id VARCHAR(100)
+                â”‚
+                â”œâ”€â”€ 1:N â”€â”€> recommendation_feedback
+                â”‚             feedback_id (PK)
+                â”‚             user_id (FK â†’ users)
+                â”‚             opportunity_id (FK â†’ norm_opps)
+                â”‚             rating SMALLINT
+                â”‚
+                â””â”€â”€ M:N â”€â”€> cohort_profiles
                               profile_id (PK)
                               opportunity_type VARCHAR(30)
                               median_levels JSONB
 
 opportunity_analytics_events
   event_id (PK)
-  user_id (FK → users)
+  user_id (FK â†’ users)
   event_type VARCHAR(50)
-  opportunity_id (FK → norm_opps)
+  opportunity_id (FK â†’ norm_opps)
   score_at_time DECIMAL(5,4)
   metadata JSONB
 
