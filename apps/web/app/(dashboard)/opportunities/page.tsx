@@ -10,6 +10,7 @@ import { SignalList } from '@/components/opportunities/SignalList'
 import { OpportunityDetail } from '@/components/opportunities/OpportunityDetail'
 import { MatchTierPills } from '@/components/opportunities/MatchTierPills'
 import { Button } from '@/components/ui/Button'
+import { DeadlineAlertBanner } from '@/components/opportunities/DeadlineAlertBanner'
 import type { Opportunity, OpportunityStatus } from '@/types/opportunity'
 import type { Opportunity as StoreOpportunity } from '@/lib/types'
 import { useOpportunityStore } from '@/lib/stores'
@@ -64,6 +65,7 @@ function toDisplayOpportunity(o: StoreOpportunity): Opportunity {
     matchBreakdown: [],
     url: o.url,
     createdAt: o.created_at,
+    deadline: o.deadline,
   }
 }
 
@@ -156,6 +158,19 @@ export default function OpportunitiesPage() {
     [opportunities]
   )
 
+  const deadlineAlerts = useMemo(() => {
+    const now = Date.now()
+    return opportunities
+      .filter((o) => o.deadline)
+      .map((o) => {
+        const deadlineMs = new Date(o.deadline!).getTime()
+        const hoursLeft = (deadlineMs - now) / 3600000
+        return { id: o.id, title: o.title, hoursLeft, severity: hoursLeft < 24 ? 'critical' as const : 'warning' as const }
+      })
+      .filter((d) => d.hoursLeft > 0 && d.hoursLeft <= 48)
+      .sort((a, b) => a.hoursLeft - b.hoursLeft)
+  }, [opportunities])
+
   const filteredByTier = useMemo(() => {
     if (!activeTier) return opportunities
     if (activeTier === 'exceptional') return opportunities.filter((o) => o.score >= 90)
@@ -213,6 +228,12 @@ export default function OpportunitiesPage() {
           <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
             {store.error}
           </div>
+        </motion.div>
+      )}
+
+      {deadlineAlerts.length > 0 && (
+        <motion.div variants={sectionVariants}>
+          <DeadlineAlertBanner deadlines={deadlineAlerts} />
         </motion.div>
       )}
 
