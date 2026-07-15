@@ -71,3 +71,10 @@ class TaskResponse(TaskBase):
 
     class Config:
         from_attributes = True
+
+
+class TaskListResponse(BaseModel):
+    data: list[TaskResponse]
+    total: int
+    limit: int
+    offset: int
