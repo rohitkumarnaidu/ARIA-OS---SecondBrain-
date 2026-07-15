@@ -367,10 +367,10 @@ export function FocusMode(): JSX.Element {
             </div>
 
             <div>
-              <label className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)]">
+              <span className="mb-1.5 flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)]">
                 <Hash size={14} className="text-[var(--accent-primary)]" />
                 Tags
-              </label>
+              </span>
               <div className="mb-2 flex flex-wrap gap-1.5">
                 {tags.map((tag) => (
                   <Badge key={tag} variant="info" className="gap-1 pr-1">
@@ -414,10 +414,10 @@ export function FocusMode(): JSX.Element {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+              <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                 <Timer size={14} className="mr-1.5 inline-block text-[var(--accent-primary)]" />
                 Session Duration
-              </label>
+              </span>
               <div className="flex flex-wrap gap-1.5">
                 {minutePresets.map((m) => (
                   <button
