@@ -1244,7 +1244,7 @@ const FLAG_REGISTRY: Record<string, FlagDefinition> = {
 | `docs/engineering/17_API.md` | API reference for flag admin endpoints |
 | `docs/qa/28_Testing.md` | Flag testing patterns and mocking strategy |
 | `docs/operations/40_IncidentResponse.md` | Kill switch activation as incident response action |
-| `docs/operations/49_ChangeManagement.md` | Flag promotion as change management process |
+| `docs/governance/02_ChangeManagement.md` | Flag promotion as change management process |
 
 ---
 

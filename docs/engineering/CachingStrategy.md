@@ -5,10 +5,11 @@
 | Field | Value |
 |---|---|
 | **Document ID** | ENG-CACHE-001 |
-| **Status** | Draft v0.1 |
-| **Author** | Architecture Team |
+| **Version** | 1.0.0 |
+| **Status** | Active |
 | **Last Updated** | 2026-06-11 |
-| **Approved By** | — |
+| **Classification** | Internal — Engineering Reference |
+| **Owner** | Platform Engineering |
 
 ---
 
@@ -497,7 +498,19 @@ graph TB
 | Version | Date | Author | Changes |
 |---|---|---|---|
 | 0.1 | 2026-06-11 | Architecture Team | Initial draft |
-| — | — | — | — |
+| 1.0.0 | 2026-07-10 | Platform Engineering | Production release |
+
+---
+
+### 12.4 Cross-References
+
+| Document | Location |
+|---|---|
+| Architecture Overview | [12_Architecture.md](12_Architecture.md) |
+| Backend Architecture | [BackendArchitecture.md](BackendArchitecture.md) |
+| Database Schema | [15_Database.md](15_Database.md) |
+| Performance Benchmarks | [AGENTS.md section 26](../../AGENTS.md#26-performance-benchmarks) |
+| Rate Limiting | [RateLimiting.md](RateLimiting.md) |
 
 ---
 

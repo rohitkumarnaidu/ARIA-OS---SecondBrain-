@@ -1,12 +1,12 @@
-# Architecture Update — Phase 4: Enterprise Hardening
+﻿# Architecture Update â€” Phase 4: Enterprise Hardening
 
 | Field | Value |
 |---|---|
-| Document ID | SB-ARCH-UPDATE-046 |
+| Document ID | ENG-ARU-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-21 |
-| Classification | Internal — Engineering |
+| Classification | Internal â€” Engineering |
 | Owner | Engineering Lead |
 
 ---
@@ -20,7 +20,7 @@ Request: POST /api/v1/tasks
 Headers: X-API-Key: sb_key_abc123...
          Content-Type: application/json
 
-Flow: Key → SHA-256 hash → Compare against stored hash → Resolve user_id → Execute request
+Flow: Key â†’ SHA-256 hash â†’ Compare against stored hash â†’ Resolve user_id â†’ Execute request
 ```
 
 **Config:** `API_KEY_SALT` env var, key prefix `sb_key_`, stored in `api_keys` table.
@@ -107,27 +107,27 @@ All user input sanitized via `shared/utils/validators.py`:
 All AI calls wrapped in `packages/shared/utils/retry.py`:
 
 ```
-┌──────────┐    Success → ┌──────────┐
-│  CLOSED  │─────────────▶│  CLOSED  │
-│ (normal) │              │ (normal) │
-└─────┬────┘              └──────────┘
-      │ 5 failures
-      ▼
-┌──────────┐    Timeout → ┌──────────┐
-│   OPEN   │─────────────▶│ HALF-OPEN│
-│ (60s CD) │   (60s)     │ (testing)│
-└──────────┘              └─────┬────┘
-                               │ Success
-                               ▼
-                          ┌──────────┐
-                          │  CLOSED  │
-                          │ (normal) │
-                          └──────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    Success â†’ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  CLOSED  â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¶â”‚  CLOSED  â”‚
+â”‚ (normal) â”‚              â”‚ (normal) â”‚
+â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+      â”‚ 5 failures
+      â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    Timeout â†’ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   OPEN   â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¶â”‚ HALF-OPENâ”‚
+â”‚ (60s CD) â”‚   (60s)     â”‚ (testing)â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜              â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
+                               â”‚ Success
+                               â–¼
+                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                          â”‚  CLOSED  â”‚
+                          â”‚ (normal) â”‚
+                          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 - **Retry:** 3 attempts with exponential backoff (2s, 4s, 8s)
 - **Circuit breaker:** Opens after 5 consecutive failures, 60s cooldown
-- **Fallback:** Ollama → Claude → algorithmic fallback
+- **Fallback:** Ollama â†’ Claude â†’ algorithmic fallback
 
 ## 10. Testing & Coverage
 

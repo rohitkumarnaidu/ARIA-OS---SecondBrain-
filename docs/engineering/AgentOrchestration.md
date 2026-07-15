@@ -1,15 +1,15 @@
-# Agent Orchestration
+﻿# Agent Orchestration
 
 ## Document Control
 
 | Property | Value |
 |---|---|
-| **Document ID** | DOC-ENG-008 |
+| **Document ID** | ENG-AOR-001 |
 | **Version** | 1.0.0 |
 | **Status** | Draft |
 | **Author** | AI Engineering Team |
-| **Last Updated** | 2026-06-11 |
-| **Approved By** | — |
+| **Last Updated** | 2026-07-11 |
+| **Approved By** | â€” |
 | **Supersedes** | ADR-004 (detailed implementation) |
 
 ---
@@ -126,14 +126,14 @@ graph TD
 
 ## 1. Executive Summary
 
-Agent orchestration is the system by which user inputs and system events are routed to the correct AI agent(s), executed with appropriate context, and composed into a coherent response. In Second Brain OS, orchestration governs how ARIA's 8 specialized sub-agents work together — or independently — to handle tasks ranging from daily briefing generation to opportunity scanning to memory consolidation.
+Agent orchestration is the system by which user inputs and system events are routed to the correct AI agent(s), executed with appropriate context, and composed into a coherent response. In Second Brain OS, orchestration governs how ARIA's 8 specialized sub-agents work together â€” or independently â€” to handle tasks ranging from daily briefing generation to opportunity scanning to memory consolidation.
 
 **Why orchestration matters:**
 
-- **Correctness**: Without orchestration, agents operate in isolation. A user greeting ("Good morning") should trigger the Briefing Agent, check sleep data, summarize tasks, and return a unified response — not require the user to invoke three separate commands.
+- **Correctness**: Without orchestration, agents operate in isolation. A user greeting ("Good morning") should trigger the Briefing Agent, check sleep data, summarize tasks, and return a unified response â€” not require the user to invoke three separate commands.
 - **Performance**: Parallel dispatch of independent agents (e.g., Task Agent + Learning Agent + Sleep Monitor) reduces response latency from sequential sum to max-of-parallel.
-- **Extensibility**: A defined orchestration framework means adding a new agent (e.g., a "Project Analyzer") requires only a registration entry and an intent classifier rule — no changes to existing agents.
-- **Observability**: Every orchestration decision is traceable — which agent was chosen, why, how long it took, what it returned, and whether it failed.
+- **Extensibility**: A defined orchestration framework means adding a new agent (e.g., a "Project Analyzer") requires only a registration entry and an intent classifier rule â€” no changes to existing agents.
+- **Observability**: Every orchestration decision is traceable â€” which agent was chosen, why, how long it took, what it returned, and whether it failed.
 
 This document defines the agent catalog, orchestration patterns, communication protocol, lifecycle management, error handling, and scaling strategy for the Second Brain OS agent system.
 
@@ -193,19 +193,19 @@ class Agent(Protocol):
 
 ```
 packages/ai/agents/
-├── __init__.py
-├── base.py                   # AgentContext, AgentResponse, Agent protocol
-├── orchestrator.py           # Orchestrator agent
-├── briefing.py               # Briefing Agent
-├── planner.py                # Planner Agent
-├── task.py                   # Task Agent
-├── learning.py               # Learning Agent
-├── memory.py                 # Memory Agent
-├── opportunity.py            # Opportunity Scanner
-├── radar.py                  # Radar Agent
-├── habit.py                  # Habit Coach
-├── sleep.py                  # Sleep Monitor
-└── registry.py               # AgentRegistry — maps IDs to agent classes
+â”œâ”€â”€ __init__.py
+â”œâ”€â”€ base.py                   # AgentContext, AgentResponse, Agent protocol
+â”œâ”€â”€ orchestrator.py           # Orchestrator agent
+â”œâ”€â”€ briefing.py               # Briefing Agent
+â”œâ”€â”€ planner.py                # Planner Agent
+â”œâ”€â”€ task.py                   # Task Agent
+â”œâ”€â”€ learning.py               # Learning Agent
+â”œâ”€â”€ memory.py                 # Memory Agent
+â”œâ”€â”€ opportunity.py            # Opportunity Scanner
+â”œâ”€â”€ radar.py                  # Radar Agent
+â”œâ”€â”€ habit.py                  # Habit Coach
+â”œâ”€â”€ sleep.py                  # Sleep Monitor
+â””â”€â”€ registry.py               # AgentRegistry â€” maps IDs to agent classes
 ```
 
 ---
@@ -224,11 +224,11 @@ Agents execute one after another, with each agent's output feeding into the next
 User: "Summarize my week and create a report"
 
 Orchestrator:
-  1. Task Agent → collect all tasks for the week
-  2. Learning Agent → collect course progress
-  3. Sleep Agent → collect sleep patterns
-  4. Memory Agent → summarize the combined data
-  5. → Return final summary to user
+  1. Task Agent â†’ collect all tasks for the week
+  2. Learning Agent â†’ collect course progress
+  3. Sleep Agent â†’ collect sleep patterns
+  4. Memory Agent â†’ summarize the combined data
+  5. â†’ Return final summary to user
 ```
 
 ```python
@@ -253,10 +253,10 @@ Independent agents execute concurrently. The Orchestrator merges results after a
 User: "How's my DSA progress and do I have any tasks due?"
 
 Orchestrator:
-  ┌── Learning Agent (DSA progress) ──┐
-  └── Task Agent (tasks due) ─────────┘
-               ↓
-           Merge results → response
+  â”Œâ”€â”€ Learning Agent (DSA progress) â”€â”€â”
+  â””â”€â”€ Task Agent (tasks due) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â†“
+           Merge results â†’ response
 ```
 
 ```python
@@ -278,31 +278,31 @@ Scheduled: Daily Briefing
 
 Orchestrator:
   Briefing Agent (coordinator)
-     ├── Task Agent → tasks due today
-     ├── Sleep Agent → last night's score
-     ├── Learning Agent → course progress
-     ├── Opportunity Agent → new matches
-     └── Radar Agent → new signals
-          ↓
-     Collect all → Briefing Agent generates final output
+     â”œâ”€â”€ Task Agent â†’ tasks due today
+     â”œâ”€â”€ Sleep Agent â†’ last night's score
+     â”œâ”€â”€ Learning Agent â†’ course progress
+     â”œâ”€â”€ Opportunity Agent â†’ new matches
+     â””â”€â”€ Radar Agent â†’ new signals
+          â†“
+     Collect all â†’ Briefing Agent generates final output
 ```
 
 ### 3.4 Conditional
 
 The path through agents depends on the content of the input or the result of a previous agent.
 
-**Use case**: "I'm feeling overwhelmed" — check what's happening before deciding action.
+**Use case**: "I'm feeling overwhelmed" â€” check what's happening before deciding action.
 
 ```
 User: "I'm feeling overwhelmed"
 
 Orchestrator:
-  1. Task Agent → count overdue tasks
+  1. Task Agent â†’ count overdue tasks
   2. If overdue > 5:
-       → Planner Agent (reschedule and simplify)
+       â†’ Planner Agent (reschedule and simplify)
      Else:
-       → Habit Agent (encouragement + check)
-  3. → Return response
+       â†’ Habit Agent (encouragement + check)
+  3. â†’ Return response
 ```
 
 ```python
@@ -328,8 +328,8 @@ An agent may invoke itself (or another agent) with refined parameters based on p
 Memory Agent:
   1. Summarize first chunk of messages
   2. If total messages > threshold:
-       → Recursively summarize summary + next chunk
-  3. → Return final summary
+       â†’ Recursively summarize summary + next chunk
+  3. â†’ Return final summary
 ```
 
 ---
@@ -342,48 +342,48 @@ Per **ADR-004**, all agents are in-process async functions within the same FastA
 
 ```
 FastAPI App (single uvicorn process)
-┌─────────────────────────────────────────────────────────────────┐
-│  apps/api/app/api/                                              │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │  Route Handler (e.g., /api/chat)                        │    │
-│  │  1. Parse request                                       │    │
-│  │  2. Build AgentContext (user_id, working_memory, etc.)  │    │
-│  │  3. Call orchestrator.execute(ctx, input)               │    │
-│  │  4. Return response                                     │    │
-│  └──────────────┬──────────────────────────────────────────┘    │
-│                 │                                               │
-│                 ▼                                               │
-│  packages/ai/agents/                                            │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │  Orchestrator Agent                                     │    │
-│  │  1. Intent classification                                │    │
-│  │  2. Pattern selection (sequential/parallel/conditional)  │    │
-│  │  3. Agent dispatch                                       │    │
-│  │  4. Output synthesis                                     │    │
-│  └──────┬──────┬──────┬──────┬──────┬──────┬──────┬────────┘    │
-│         │      │      │      │      │      │      │             │
-│  ┌──────┐┌────┐┌────┐┌────┐┌────┐┌────┐┌────┐┌────┐            │
-│  │Brief││Plan││Task││Learn││Mem ││Opp ││Radar││Habit│            │
-│  └──────┘└────┘└────┘└────┘└────┘└────┘└────┘└────┘            │
-│         │      │      │      │      │      │      │             │
-│         ▼      ▼      ▼      ▼      ▼      ▼      ▼             │
-│  ┌─────────────────────────────────────────────────────────┐    │
-│  │  Shared Infrastructure                                  │    │
-│  │  - OllamaClient (localhost:11434)                       │    │
-│  │  - ClaudeClient (API key in vault)                      │    │
-│  │  - SupabaseClient (connection pool)                     │    │
-│  │  - PromptRegistry (prompts/registry.yaml)               │    │
-│  │  - Cache (in-memory TTL cache)                          │    │
-│  │  - Logger (structured JSON)                             │    │
-│  └─────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  apps/api/app/api/                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚  Route Handler (e.g., /api/chat)                        â”‚    â”‚
+â”‚  â”‚  1. Parse request                                       â”‚    â”‚
+â”‚  â”‚  2. Build AgentContext (user_id, working_memory, etc.)  â”‚    â”‚
+â”‚  â”‚  3. Call orchestrator.execute(ctx, input)               â”‚    â”‚
+â”‚  â”‚  4. Return response                                     â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚                 â”‚                                               â”‚
+â”‚                 â–¼                                               â”‚
+â”‚  packages/ai/agents/                                            â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚  Orchestrator Agent                                     â”‚    â”‚
+â”‚  â”‚  1. Intent classification                                â”‚    â”‚
+â”‚  â”‚  2. Pattern selection (sequential/parallel/conditional)  â”‚    â”‚
+â”‚  â”‚  3. Agent dispatch                                       â”‚    â”‚
+â”‚  â”‚  4. Output synthesis                                     â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â”‚         â”‚      â”‚      â”‚      â”‚      â”‚      â”‚      â”‚             â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”â”Œâ”€â”€â”€â”€â”            â”‚
+â”‚  â”‚Briefâ”‚â”‚Planâ”‚â”‚Taskâ”‚â”‚Learnâ”‚â”‚Mem â”‚â”‚Opp â”‚â”‚Radarâ”‚â”‚Habitâ”‚            â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜â””â”€â”€â”€â”€â”˜            â”‚
+â”‚         â”‚      â”‚      â”‚      â”‚      â”‚      â”‚      â”‚             â”‚
+â”‚         â–¼      â–¼      â–¼      â–¼      â–¼      â–¼      â–¼             â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚
+â”‚  â”‚  Shared Infrastructure                                  â”‚    â”‚
+â”‚  â”‚  - OllamaClient (localhost:11434)                       â”‚    â”‚
+â”‚  â”‚  - ClaudeClient (API key in vault)                      â”‚    â”‚
+â”‚  â”‚  - SupabaseClient (connection pool)                     â”‚    â”‚
+â”‚  â”‚  - PromptRegistry (prompts/registry.yaml)               â”‚    â”‚
+â”‚  â”‚  - Cache (in-memory TTL cache)                          â”‚    â”‚
+â”‚  â”‚  - Logger (structured JSON)                             â”‚    â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Key Design Decisions
 
 - **Single event loop**: All async agents share the same event loop. I/O-bound operations (HTTP calls to Ollama, Supabase queries) do not block.
 - **No inter-agent serialization**: Agents pass Python dicts directly. No JSON marshal/unmarshal overhead.
-- **Shared imports**: Every agent imports shared utilities (logger, cache, rate limiter) directly — no duplication.
+- **Shared imports**: Every agent imports shared utilities (logger, cache, rate limiter) directly â€” no duplication.
 - **BackgroundTasks for long work**: CPU-intensive or long-running agent work (e.g., Radar scanning 5 sources) uses `asyncio.create_task()` or FastAPI `BackgroundTasks` to avoid blocking the request cycle.
 
 ---
@@ -438,16 +438,16 @@ Agents communicate through a standardized message format. Every input and output
 
 | Intent Pattern | Agents | Description |
 |---|---|---|
-| `greeting.*` | orchestrator → briefing | User greeting, triggers briefing if morning |
-| `task.*` | orchestrator → task | CRUD operations on tasks |
-| `learning.*` | orchestrator → learning | Course tracking, tutoring, quiz requests |
-| `memory.*` | orchestrator → memory | Explicit memory query or store |
-| `sleep.*` | orchestrator → sleep | Sleep log query or analysis |
-| `habit.*` | orchestrator → habit | Habit tracking, streak check |
-| `opportunity.*` | orchestrator → opportunity | Opportunity search/match |
-| `planner.*` | orchestrator → planner | Scheduling, prioritization |
+| `greeting.*` | orchestrator â†’ briefing | User greeting, triggers briefing if morning |
+| `task.*` | orchestrator â†’ task | CRUD operations on tasks |
+| `learning.*` | orchestrator â†’ learning | Course tracking, tutoring, quiz requests |
+| `memory.*` | orchestrator â†’ memory | Explicit memory query or store |
+| `sleep.*` | orchestrator â†’ sleep | Sleep log query or analysis |
+| `habit.*` | orchestrator â†’ habit | Habit tracking, streak check |
+| `opportunity.*` | orchestrator â†’ opportunity | Opportunity search/match |
+| `planner.*` | orchestrator â†’ planner | Scheduling, prioritization |
 | `system.*` | orchestrator | System-level commands (status, config) |
-| `fallback.*` | orchestrator → LLM general | Unrecognized intent → general chat |
+| `fallback.*` | orchestrator â†’ LLM general | Unrecognized intent â†’ general chat |
 
 ---
 
@@ -458,7 +458,7 @@ The Orchestrator Engine is the core dispatch logic that processes every incoming
 ### Pipeline
 
 ```
-Input → Intent Classification → Context Assembly → Agent Dispatch → Output Synthesis → Response
+Input â†’ Intent Classification â†’ Context Assembly â†’ Agent Dispatch â†’ Output Synthesis â†’ Response
 ```
 
 ### Stage 1: Intent Classification
@@ -562,7 +562,7 @@ async def synthesize(self, intent: str, results: list[AgentResponse]) -> str:
     if len(results) == 1:
         return results[0].data
 
-    # Multiple results — merge into a single narrative
+    # Multiple results â€” merge into a single narrative
     merge_prompt = self.prompt_registry.get("response-merger", "==1.0.0")
     resolved = merge_prompt.format(results=results)
     final_response = await self.ollama_client.generate(
@@ -580,12 +580,12 @@ async def synthesize(self, intent: str, results: list[AgentResponse]) -> str:
 Every agent invocation follows a defined lifecycle. This lifecycle is enforced by the base agent infrastructure.
 
 ```
-IDLE → TRIGGERED → CONTEXT_LOADING → EXECUTING → RESPONDING → CLEANUP → IDLE
+IDLE â†’ TRIGGERED â†’ CONTEXT_LOADING â†’ EXECUTING â†’ RESPONDING â†’ CLEANUP â†’ IDLE
 ```
 
 | Stage | Description | Duration Limit |
 |---|---|---|
-| **IDLE** | Agent is registered but not active. No resources consumed. | ∞ |
+| **IDLE** | Agent is registered but not active. No resources consumed. | âˆž |
 | **TRIGGERED** | Intent classifier has selected this agent. Dispatch is initiated. | < 10ms |
 | **CONTEXT_LOADING** | AgentContext is assembled: working memory built, Supabase queried, prompt loaded. | < 1s |
 | **EXECUTING** | LLM call is made (Ollama or Claude). Agent processes the response. | < 5s (configurable timeout) |
@@ -839,7 +839,7 @@ All agents in a dispatch chain share the same `AgentContext`. This ensures:
 - Shared access to Supabase (without re-authenticating)
 - Consistent model configuration
 
-The context is read-only during execution. Agents must not mutate the shared context — only read from it and return data in their response.
+The context is read-only during execution. Agents must not mutate the shared context â€” only read from it and return data in their response.
 
 ### 10.3 Conflict Resolution
 
@@ -894,28 +894,28 @@ async def trigger_radar_scan(user_id: str, background_tasks: BackgroundTasks):
 If the system needs to scale to hundreds of concurrent users, agents can be extracted into independent services:
 
 ```
-                           ┌──────────────────┐
-                           │   API Gateway    │
-                           │   (FastAPI)      │
-                           └────────┬─────────┘
-                                    │
-         ┌──────────────────────────┼──────────────────────────┐
-         ▼                          ▼                          ▼
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  Agent Worker 1  │     │  Agent Worker 2  │     │  Agent Worker 3  │
-│  (Briefing)      │     │  (Memory)        │     │  (Radar)         │
-│  uvicorn:8001    │     │  uvicorn:8002    │     │  uvicorn:8003    │
-└────────┬─────────┘     └────────┬─────────┘     └────────┬─────────┘
-         │                        │                        │
-         └────────────────────────┼────────────────────────┘
-                                  ▼
-                       ┌──────────────────┐
-                       │  Message Queue   │
-                       │  (Redis/NATS)    │
-                       └──────────────────┘
+                           â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                           â”‚   API Gateway    â”‚
+                           â”‚   (FastAPI)      â”‚
+                           â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                    â”‚
+         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+         â–¼                          â–¼                          â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Agent Worker 1  â”‚     â”‚  Agent Worker 2  â”‚     â”‚  Agent Worker 3  â”‚
+â”‚  (Briefing)      â”‚     â”‚  (Memory)        â”‚     â”‚  (Radar)         â”‚
+â”‚  uvicorn:8001    â”‚     â”‚  uvicorn:8002    â”‚     â”‚  uvicorn:8003    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚                        â”‚                        â”‚
+         â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                  â–¼
+                       â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                       â”‚  Message Queue   â”‚
+                       â”‚  (Redis/NATS)    â”‚
+                       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
-The agent interface (`Agent.execute(ctx, input)`) does not change when moving from in-process to distributed — only the transport mechanism differs. The same `AgentContext` and `AgentResponse` types are used, serialized to JSON for network transport.
+The agent interface (`Agent.execute(ctx, input)`) does not change when moving from in-process to distributed â€” only the transport mechanism differs. The same `AgentContext` and `AgentResponse` types are used, serialized to JSON for network transport.
 
 ---
 
