@@ -181,6 +181,24 @@ export interface HabitUpdate {
   is_active?: boolean
 }
 
+// ── Sleep Wind-Down ─────────────────────────────────────────────────────────
+export interface WindDownStep {
+  time?: string
+  action: string
+  duration_minutes?: number
+  reason?: string
+}
+
+export interface WindDownData {
+  available: boolean
+  message?: string
+  suggested_bedtime?: string
+  suggested_wake_time?: string
+  wind_down_routine?: WindDownStep[]
+  recommendations?: string[]
+  sleep_analysis?: string
+}
+
 // ── Sleep ───────────────────────────────────────────────────────────────────
 export interface SleepLog {
   id: UUID
@@ -531,8 +549,27 @@ export interface UserPreferences {
   focus_duration: number // minutes
 }
 
+// ── Nudges ───────────────────────────────────────────────────────────────────
+export type NudgeType = 'course' | 'habit' | 'task'
+export type NudgeSeverity = 'info' | 'warning' | 'critical'
+
+export interface NudgeEntry {
+  id: UUID
+  user_id: UUID
+  type: NudgeType
+  severity: NudgeSeverity
+  title: string
+  message: string
+  priority: string
+  category: string
+  read: boolean
+  action_url?: string
+  icon?: string
+  created_at: Timestamp
+}
+
 // ── Notifications ───────────────────────────────────────────────────────────
-export type NotificationCategory = 'task' | 'habit' | 'ai' | 'system' | 'reminder' | 'achievement' | 'learning' | 'opportunity' | 'goal'
+export type NotificationCategory = 'task' | 'habit' | 'ai' | 'system' | 'reminder' | 'achievement' | 'learning' | 'opportunity' | 'goal' | 'deadline_alert'
 export type NotificationPriority = 'low' | 'medium' | 'high'
 
 export interface AppNotification {
