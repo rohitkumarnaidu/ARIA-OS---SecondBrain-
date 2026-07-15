@@ -28,7 +28,7 @@ jobs:
         run: node scripts/check-token-drift.mjs
         working-directory: apps/web
       - name: Upload generated tokens as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: generated-tokens
           path: apps/web/scripts/.generated-tokens.css
