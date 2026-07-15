@@ -1,0 +1,33 @@
+# =============================================================================
+# Second Brain OS — Terraform Variables (Example)
+# =============================================================================
+# Copy to terraform.tfvars and fill in actual values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# Required variables marked with ⚠️ — all others have safe defaults.
+# =============================================================================
+
+# ── Project ─────────────────────────────────────────────────────────────────
+project_name = "second-brain-os"                 # Default, change if needed
+environment  = "production"                      # or "staging"
+
+# ══ Supabase ═══════════════════════════════════════════════════════════════
+# ⚠️  Get from: https://supabase.com/dashboard/account/tokens
+supabase_access_token = "sbp_your_supabase_access_token_here"
+
+# ⚠️  Find in: https://supabase.com/dashboard/account/organizations
+supabase_organization_id = "your_org_id_here"
+
+# ⚠️  Choose a strong password (min 16 chars, mixed case + numbers + symbols)
+supabase_db_password = "your_strong_db_password_here"
+
+# ══ Vercel ═════════════════════════════════════════════════════════════════
+# ⚠️  Get from: https://vercel.com/account/tokens
+vercel_api_token = "your_vercel_api_token_here"
+
+# Optional: your Vercel team ID (if using team account)
+# vercel_team_id = "team_xxxxxxxxxxxx"
+
+# ══ Monitoring (Optional) ══════════════════════════════════════════════════
+# grafana_api_key    = "your_grafana_api_key"
+# slack_webhook_url  = "https://hooks.slack.com/services/xxx/yyy/zzz"
