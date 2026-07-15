@@ -54,7 +54,7 @@ ROUTE_ALIASES = {
 
 
 def extract_date(text: str) -> str | None:
-    now = datetime.now(timezone.utc)
+    now = datetime.now()
     today = now.strftime("%Y-%m-%d")
     lower = text.lower()
 
