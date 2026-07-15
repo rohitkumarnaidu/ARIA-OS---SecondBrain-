@@ -110,8 +110,9 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
             <div className="p-4 space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[var(--text-secondary)]">Type</label>
+                  <label htmlFor="memory-type" className="text-xs font-medium text-[var(--text-secondary)]">Type</label>
                   <select
+                    id="memory-type"
                     value={type}
                     onChange={e => setType(e.target.value)}
                     className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
@@ -122,8 +123,9 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-[var(--text-secondary)]">Importance</label>
+                  <label htmlFor="memory-importance" className="text-xs font-medium text-[var(--text-secondary)]">Importance</label>
                   <select
+                    id="memory-importance"
                     value={importance}
                     onChange={e => setImportance(e.target.value)}
                     className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
@@ -136,8 +138,9 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[var(--text-secondary)]">Key</label>
+                <label htmlFor="memory-key" className="text-xs font-medium text-[var(--text-secondary)]">Key</label>
                 <input
+                  id="memory-key"
                   type="text"
                   value={key}
                   onChange={e => setKey(e.target.value)}
@@ -147,8 +150,9 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[var(--text-secondary)]">Value</label>
+                <label htmlFor="memory-value" className="text-xs font-medium text-[var(--text-secondary)]">Value</label>
                 <textarea
+                  id="memory-value"
                   value={valueStr}
                   onChange={e => setValueStr(e.target.value)}
                   rows={4}
@@ -157,8 +161,9 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[var(--text-secondary)]">Tags (comma-separated)</label>
+                <label htmlFor="memory-tags" className="text-xs font-medium text-[var(--text-secondary)]">Tags (comma-separated)</label>
                 <input
+                  id="memory-tags"
                   type="text"
                   value={tagsStr}
                   onChange={e => setTagsStr(e.target.value)}
