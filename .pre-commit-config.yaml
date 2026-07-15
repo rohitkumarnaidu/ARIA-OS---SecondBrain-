@@ -68,6 +68,20 @@ repos:
   # ── Prompt Validation ──────────────────────────────────────────────────────
   - repo: local
     hooks:
+      - id: check-links
+        name: Check markdown links
+        entry: pwsh ./scripts/check-links.ps1
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: false
+
+      - id: validate-doc-ids
+        name: Validate document IDs
+        entry: python scripts/validate-doc-ids.py
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: false
+
       - id: validate-prompts
         name: Validate prompt YAML frontmatter
         entry: python scripts/validate_prompts.py
