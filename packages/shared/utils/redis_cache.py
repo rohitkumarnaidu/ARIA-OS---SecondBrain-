@@ -98,6 +98,7 @@ class RedisCacheLayer:
             await self._redis.ping()
             return True
         except Exception:
+            pass  # Redis unavailable — degrading to memory cache gracefully
             self._enabled = False
             return False
 
@@ -115,7 +116,7 @@ class RedisCacheLayer:
                 val = await self._redis.get(key)
                 return json.loads(val) if val else None
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         return await memory_cache.get(key)
 
     async def set(self, key: str, value: Any, ttl: Optional[int] = None):
@@ -125,7 +126,7 @@ class RedisCacheLayer:
                 await self._redis.setex(key, timedelta(seconds=ttl), json.dumps(value))
                 return
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         await memory_cache.set(key, value, ttl)
 
     async def delete(self, key: str):
@@ -133,7 +134,7 @@ class RedisCacheLayer:
             try:
                 await self._redis.delete(key)
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         await memory_cache.delete(key)
 
     async def exists(self, key: str) -> bool:
@@ -141,7 +142,7 @@ class RedisCacheLayer:
             try:
                 return bool(await self._redis.exists(key))
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         return await memory_cache.exists(key) if hasattr(memory_cache, "exists") else False
 
     async def ttl(self, key: str) -> Optional[int]:
@@ -149,7 +150,7 @@ class RedisCacheLayer:
             try:
                 return await self._redis.ttl(key)
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         return None
 
     async def expire(self, key: str, ttl: int):
@@ -157,7 +158,7 @@ class RedisCacheLayer:
             try:
                 await self._redis.expire(key, ttl)
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
 
     async def invalidate_prefix(self, prefix: str):
         """Invalidate all cache entries with a given prefix."""
@@ -173,7 +174,7 @@ class RedisCacheLayer:
                         break
                 logger.debug(f"Invalidated Redis cache prefix: {prefix}")
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         await memory_cache.clear()
 
     async def invalidate_all(self):
@@ -202,7 +203,7 @@ class RedisCacheLayer:
                 vals = await self._redis.mget(keys)
                 return {k: json.loads(v) for k, v in zip(keys, vals) if v}
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         result = {}
         for key in keys:
             val = await memory_cache.get(key)
@@ -220,7 +221,7 @@ class RedisCacheLayer:
                     await pipe.execute()
                 return
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         for k, v in mapping.items():
             await memory_cache.set(k, v, ttl)
 
@@ -242,7 +243,7 @@ class RedisCacheLayer:
                     else 0
                 )
             except Exception:
-                pass
+                pass  # Redis unavailable — degrading to memory cache gracefully
         return stats
 
 

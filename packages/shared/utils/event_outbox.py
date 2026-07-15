@@ -306,7 +306,7 @@ class EventOutboxProcessor:
             try:
                 await self._task
             except asyncio.CancelledError:
-                pass
+                pass  # Expected during shutdown — not an error
             self._task = None
         logger.info("Event outbox background polling stopped")
 
@@ -353,7 +353,8 @@ class EventOutboxProcessor:
                 )
                 stats[status] = result.count if hasattr(result, "count") else 0
             return stats
-        except Exception:
+        except Exception as e:
+            logger.warn("Failed to clean up dead-letter entries", error=str(e))
             return {"pending": -1, "failed": -1, "dead_letter": -1, "delivered": -1}
 
 
