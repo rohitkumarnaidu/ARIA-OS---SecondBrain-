@@ -1,10 +1,10 @@
-# Developer Onboarding & Environment Guide — Second Brain OS
+﻿# Developer Onboarding & Environment Guide â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-OPS-044 |
+| Document ID | OPS-ONB-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -27,51 +27,51 @@ Second Brain OS (ARIA OS) is a personal AI productivity system built for BTech C
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 flowchart TD
-    Start["🚀 New Developer"] --> Prereqs["✅ Prerequisites<br/>Git, Node 18+, Python 3.10+, Ollama"]
-    Prereqs --> Clone["📦 Clone Repository<br/>git clone <repo-url>"]
-    Clone --> Env["🔐 Configure Environment<br/>cp .env.example .env.local"]
-    Env --> Install["📥 Install Dependencies<br/>make install"]
-    Install --> DB["🗄️ Database Setup<br/>Supabase Project + Schema"]
-    DB --> Validate["✅ Validate Installation<br/>make validate-prompts && make test"]
+    Start["ðŸš€ New Developer"] --> Prereqs["âœ… Prerequisites<br/>Git, Node 18+, Python 3.10+, Ollama"]
+    Prereqs --> Clone["ðŸ“¦ Clone Repository<br/>git clone <repo-url>"]
+    Clone --> Env["ðŸ” Configure Environment<br/>cp .env.example .env.local"]
+    Env --> Install["ðŸ“¥ Install Dependencies<br/>make install"]
+    Install --> DB["ðŸ—„ï¸ Database Setup<br/>Supabase Project + Schema"]
+    DB --> Validate["âœ… Validate Installation<br/>make validate-prompts && make test"]
     Validate --> TestsPass{"Tests Pass?"}
-    TestsPass -->|No| Debug["🔍 Debug & Troubleshoot"]
+    TestsPass -->|No| Debug["ðŸ” Debug & Troubleshoot"]
     Debug --> Install
-    TestsPass -->|Yes| ReadDocs["📖 Read AGENTS.md<br/>Sections 1-6"]
-    ReadDocs --> ReadVision["🎯 Read Product Vision<br/>docs/product/00_ProjectVision.md"]
-    ReadVision --> DevEnv["🖥️ Start Dev Environment<br/>make dev-api + make dev-web"]
-    DevEnv --> FirstTask["🎯 Pick First Task<br/>Good First Issue Label"]
-    FirstTask --> Branch["🌿 Create Feature Branch"]
-    Branch --> Code["💻 Write Code + Tests"]
-    Code --> PR["🔄 Submit Pull Request"]
-    PR --> CI["⚙️ CI Pipeline (5 Jobs)"]
-    CI --> Review2["👀 Code Review"]
+    TestsPass -->|Yes| ReadDocs["ðŸ“– Read AGENTS.md<br/>Sections 1-6"]
+    ReadDocs --> ReadVision["ðŸŽ¯ Read Product Vision<br/>docs/product/00_ProjectVision.md"]
+    ReadVision --> DevEnv["ðŸ–¥ï¸ Start Dev Environment<br/>make dev-api + make dev-web"]
+    DevEnv --> FirstTask["ðŸŽ¯ Pick First Task<br/>Good First Issue Label"]
+    FirstTask --> Branch["ðŸŒ¿ Create Feature Branch"]
+    Branch --> Code["ðŸ’» Write Code + Tests"]
+    Code --> PR["ðŸ”„ Submit Pull Request"]
+    PR --> CI["âš™ï¸ CI Pipeline (5 Jobs)"]
+    CI --> Review2["ðŸ‘€ Code Review"]
     Review2 --> Approved{"Approved?"}
     Approved -->|No| Code
-    Approved -->|Yes| Merge["🔀 Merge to Main"]
-    Merge --> Deploy["🚀 Auto-Deploy"]
-    Deploy --> Done["🎉 Onboarding Complete"]
+    Approved -->|Yes| Merge["ðŸ”€ Merge to Main"]
+    Merge --> Deploy["ðŸš€ Auto-Deploy"]
+    Deploy --> Done["ðŸŽ‰ Onboarding Complete"]
 ```
 
-**Frontend (Next.js 14 + React 18):** A cyberpunk-themed single-page application with 15 modules — Tasks, Courses, Goals (with roadmap canvas), Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, Academics, YouTube Vault, Chat (ARIA), Time Tracking, and Automation. Pages are built with Tailwind CSS (dark theme, neon accents), Framer Motion for animations, Three.js for 3D background effects, Zustand for state management, and React Flow for the roadmap editor. Data is fetched from Supabase directly (via SSR client) or proxied through the FastAPI backend.
+**Frontend (Next.js 14 + React 18):** A cyberpunk-themed single-page application with 15 modules â€” Tasks, Courses, Goals (with roadmap canvas), Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, Academics, YouTube Vault, Chat (ARIA), Time Tracking, and Automation. Pages are built with Tailwind CSS (dark theme, neon accents), Framer Motion for animations, Three.js for 3D background effects, Zustand for state management, and React Flow for the roadmap editor. Data is fetched from Supabase directly (via SSR client) or proxied through the FastAPI backend.
 
 **Backend (FastAPI + Python 3.10+):** A REST API with 13 routers (50+ endpoints) serving task management, course tracking, habit logging, sleep analysis, income tracking, project management, idea vault, resource library, opportunity radar, academic tracking, chat (ARIA), time tracking, and automation. The API integrates with Supabase PostgreSQL for persistence, Ollama (local) for primary AI inference, and Claude API as a fallback for complex reasoning tasks. A custom rate limiter (100 req/min) and structured JSON logger are applied globally.
 
-**Scheduler (APScheduler):** A standalone async service running 6 cron jobs — Daily Briefing (7 AM), Opportunity Radar (6 AM), Weekly Review (Sunday 8 PM), Habit Checker (8 PM), Missed Task Checker (midnight), and Sleep Reminder (10:30 PM). Each cron job calls the corresponding agent in `packages/ai/agents/` to generate briefings, scan for opportunities, or send reminders.
+**Scheduler (APScheduler):** A standalone async service running 6 cron jobs â€” Daily Briefing (7 AM), Opportunity Radar (6 AM), Weekly Review (Sunday 8 PM), Habit Checker (8 PM), Missed Task Checker (midnight), and Sleep Reminder (10:30 PM). Each cron job calls the corresponding agent in `packages/ai/agents/` to generate briefings, scan for opportunities, or send reminders.
 
-**AI Layer (Ollama + Claude):** ARIA — the AI assistant — runs in-process within the FastAPI backend. The `LLMClient` in `packages/ai/client.py` defaults to Ollama with Mistral model for zero-cost local inference. If `USE_LOCAL_AI=False` and a Claude API key is configured, it falls back to Anthropic Claude Sonnet 4. The client has two methods: `generate()` for text and `generate_json()` for structured JSON output. All prompts are constructed dynamically from templates stored in `docs/ai/`.
+**AI Layer (Ollama + Claude):** ARIA â€” the AI assistant â€” runs in-process within the FastAPI backend. The `LLMClient` in `packages/ai/client.py` defaults to Ollama with Mistral model for zero-cost local inference. If `USE_LOCAL_AI=False` and a Claude API key is configured, it falls back to Anthropic Claude Sonnet 4. The client has two methods: `generate()` for text and `generate_json()` for structured JSON output. All prompts are constructed dynamically from templates stored in `docs/ai/`.
 
 ### 1.3 Prerequisites
 
 Before starting, ensure you have:
 
-- **Windows 10/11** (64-bit) — this is the primary dev environment
+- **Windows 10/11** (64-bit) â€” this is the primary dev environment
 - **Git** installed and configured
 - **Node.js 18+** (LTS recommended)
 - **Python 3.10+** (3.10, 3.11, or 3.12)
 - **VS Code** (or your preferred editor)
-- **Ollama** (for local AI — required for full functionality)
+- **Ollama** (for local AI â€” required for full functionality)
 - **Supabase account** (free tier at supabase.com)
-- **Anthropic API key** (optional, for Claude fallback — get at console.anthropic.com)
+- **Anthropic API key** (optional, for Claude fallback â€” get at console.anthropic.com)
 - **GitHub account** (for repository access)
 - Minimum **8 GB RAM** (16 GB recommended for Ollama)
 - Minimum **10 GB free disk space**
@@ -99,8 +99,8 @@ Before starting, ensure you have:
 | AI (Cloud) | Anthropic Claude | Sonnet 4 | Fallback AI (optional) |
 | Scheduler | APScheduler | 3.10.4 | 6 cron jobs |
 | Email | Resend API | Latest | Daily briefings, alerts |
-| Rate Limiter | Custom middleware | — | 100 req/min per user |
-| Logging | Python structlog/json | — | Structured JSON logs |
+| Rate Limiter | Custom middleware | â€” | 100 req/min per user |
+| Logging | Python structlog/json | â€” | Structured JSON logs |
 | Validation | Pydantic v2 | 2.5.3 | Request/response schemas |
 | TypeScript | TypeScript | 5.3.3 | Type safety for frontend |
 | Linting | ESLint 8 + Ruff | Latest | Code quality |
@@ -108,14 +108,14 @@ Before starting, ensure you have:
 
 ---
 
-## 2. Environment Setup — Step by Step
+## 2. Environment Setup â€” Step by Step
 
 ### 2.1 Prerequisites Installation
 
 #### Git
 
 1. Download the installer from https://git-scm.com/download/win
-2. Run the installer — use defaults except:
+2. Run the installer â€” use defaults except:
    - **Choosing the default editor**: Select "Use Visual Studio Code as Git's default editor" (if VS Code is installed)
    - **Adjusting your PATH environment**: Select "Git from the command line and also from 3rd-party software"
    - **Configuring the line ending conversions**: Select "Checkout as-is, commit as-is" (avoids CRLF issues)
@@ -131,7 +131,7 @@ git config --global core.longpaths true
 **Windows-specific notes:**
 - If Git Bash is slow, use PowerShell or Windows Terminal instead
 - `core.longpaths true` prevents issues with deep npm dependency trees
-- The repo uses LF line endings — setting `autocrlf false` avoids unwanted diffs
+- The repo uses LF line endings â€” setting `autocrlf false` avoids unwanted diffs
 
 #### Node.js 18+ (with nvm-windows)
 
@@ -159,9 +159,9 @@ npm --version    # Should show 10.x
 
 #### Python 3.10+ (with pyenv-win or direct install)
 
-**Option A — Direct Install (recommended for simplicity):**
+**Option A â€” Direct Install (recommended for simplicity):**
 1. Download Python 3.10.11 from https://www.python.org/downloads/release/python-31011/
-2. Run the installer — **IMPORTANT**: Check "Add Python to PATH"
+2. Run the installer â€” **IMPORTANT**: Check "Add Python to PATH"
 3. Click "Install Now"
 4. Verify:
 
@@ -170,7 +170,7 @@ python --version   # Should show Python 3.10.11
 pip --version      # Should show pip 23.x
 ```
 
-**Option B — pyenv-win (for managing multiple versions):**
+**Option B â€” pyenv-win (for managing multiple versions):**
 ```powershell
 git clone https://github.com/pyenv-win/pyenv-win.git $HOME\.pyenv
 # Add to PATH (run in PowerShell, then restart):
@@ -252,7 +252,7 @@ curl http://localhost:11434/api/tags
 ```
 
 **Windows-specific notes:**
-- Ollama runs as a system tray icon on Windows — look for the llama icon in your system tray
+- Ollama runs as a system tray icon on Windows â€” look for the llama icon in your system tray
 - If the port 11434 is already in use, check `ollama serve` for conflicts
 - For systems with less than 16 GB RAM, consider pulling a smaller model: `ollama pull phi` or `ollama pull llama3.2:1b`
 
@@ -274,30 +274,30 @@ The repository is a monorepo with this top-level structure:
 
 ```
 ARIA OS - SecondBrain/
-├── apps/
-│   ├── api/               FastAPI backend
-│   └── web/               Next.js frontend
-├── packages/
-│   ├── ai/                AI agent modules & LLM client
-│   ├── config/core/       FastAPI config, auth, supabase
-│   ├── database/schemas/  Pydantic models
-│   ├── shared/utils/      Logging, cache, rate limiter
-│   ├── types/             Shared type definitions
-│   └── ui/                Shared UI components
-├── services/
-│   └── scheduler/         APScheduler + 6 cron jobs
-├── docs/
-│   ├── product/           PRD, Features, Roadmap
-│   ├── design/            UIUX
-│   ├── engineering/       Architecture, API, Database
-│   ├── ai/                Agents, AI_Instructions
-│   ├── security/
-│   └── devops/            Deployment
-├── infrastructure/        Docker, Terraform, K8s (WIP)
-├── tests/
-├── scripts/
-├── analytics/
-└── monitoring/
+â”œâ”€â”€ apps/
+â”‚   â”œâ”€â”€ api/               FastAPI backend
+â”‚   â””â”€â”€ web/               Next.js frontend
+â”œâ”€â”€ packages/
+â”‚   â”œâ”€â”€ ai/                AI agent modules & LLM client
+â”‚   â”œâ”€â”€ config/core/       FastAPI config, auth, supabase
+â”‚   â”œâ”€â”€ database/schemas/  Pydantic models
+â”‚   â”œâ”€â”€ shared/utils/      Logging, cache, rate limiter
+â”‚   â”œâ”€â”€ types/             Shared type definitions
+â”‚   â””â”€â”€ ui/                Shared UI components
+â”œâ”€â”€ services/
+â”‚   â””â”€â”€ scheduler/         APScheduler + 6 cron jobs
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ product/           PRD, Features, Roadmap
+â”‚   â”œâ”€â”€ design/            UIUX
+â”‚   â”œâ”€â”€ engineering/       Architecture, API, Database
+â”‚   â”œâ”€â”€ ai/                Agents, AI_Instructions
+â”‚   â”œâ”€â”€ security/
+â”‚   â””â”€â”€ devops/            Deployment
+â”œâ”€â”€ infrastructure/        Docker, Terraform, K8s (WIP)
+â”œâ”€â”€ tests/
+â”œâ”€â”€ scripts/
+â”œâ”€â”€ analytics/
+â””â”€â”€ monitoring/
 ```
 
 ### 2.3 Frontend Setup (`apps/web`)
@@ -310,7 +310,7 @@ npm install
 **What this does:**
 - `npm install` reads `package.json` and installs all dependencies (Next.js, React, Tailwind, Framer Motion, Three.js, Zustand, Supabase JS, etc.) into `node_modules/`
 - It also generates `package-lock.json` for reproducible builds
-- Expected install time: 1–3 minutes depending on network speed
+- Expected install time: 1â€“3 minutes depending on network speed
 - Expected output: a clean exit with no error messages (warnings about deprecated packages are normal)
 
 **Troubleshooting:**
@@ -323,8 +323,8 @@ If `npm install` fails:
 | **ERR! path too long** (Windows MAX_PATH) | Run PowerShell as Admin: `New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD` |
 | **ETIMEDOUT / network errors** | Retry with: `npm install --prefer-offline` or set proxy: `npm config set registry https://registry.npmjs.org/` |
 | **ERR! Cannot find module** | Delete `node_modules` and `package-lock.json`, then retry: `rm -r -fo node_modules; Remove-Item package-lock.json; npm install` |
-| **ESLint errors during install** | These are post-install scripts — ignore them for now, they'll be checked during lint |
-| **fsevents warnings on Windows** | Safe to ignore — fsevents is macOS-only |
+| **ESLint errors during install** | These are post-install scripts â€” ignore them for now, they'll be checked during lint |
+| **fsevents warnings on Windows** | Safe to ignore â€” fsevents is macOS-only |
 
 **Start the frontend dev server:**
 
@@ -335,22 +335,22 @@ npm run dev
 **Expected output:**
 
 ```
-▲ Next.js 14.2.0
+â–² Next.js 14.2.0
 - Local:        http://localhost:3000
 - Environments: .env.local
 
-✓ Ready in 2.8s
+âœ“ Ready in 2.8s
 ```
 
 **What this does:**
 - Starts the Next.js development server on port 3000
-- Hot Module Replacement (HMR) is enabled — changes to components refresh instantly
+- Hot Module Replacement (HMR) is enabled â€” changes to components refresh instantly
 - The server compiles TypeScript, applies Tailwind CSS, and watches for file changes
 
 **Verify:**
 1. Open http://localhost:3000 in your browser
 2. You should see the login page (cyberpunk dark theme with ARIA OS branding)
-3. If you see a blank page, check the terminal for errors (usually missing `.env.local` — see Section 2.8)
+3. If you see a blank page, check the terminal for errors (usually missing `.env.local` â€” see Section 2.8)
 
 ### 2.4 Backend Setup (`apps/api`)
 
@@ -387,14 +387,14 @@ Downloading fastapi-0.109.0-py3-none-any.whl (92 kB)
 Successfully installed fastapi-0.109.0 uvicorn-0.27.0 supabase-2.3.4 ...
 ```
 
-Total packages installed: ~22 (FastAPI, Uvicorn, SQLAlchemy, supabase-py, anthropic, httpx, APScheduler, etc.). Install time: 1–3 minutes.
+Total packages installed: ~22 (FastAPI, Uvicorn, SQLAlchemy, supabase-py, anthropic, httpx, APScheduler, etc.). Install time: 1â€“3 minutes.
 
 **Common issues:**
 
 | Issue | Solution |
 |---|---|
 | **`pip` not recognized** | Ensure Python is in PATH, restart PowerShell, or use `python -m pip install -r requirements.txt` |
-| **Microsoft Visual C++ 14.0 required** | Download from https://visualstudio.microsoft.com/visual-cpp-build-tools/ — run the installer and select "Desktop development with C++" |
+| **Microsoft Visual C++ 14.0 required** | Download from https://visualstudio.microsoft.com/visual-cpp-build-tools/ â€” run the installer and select "Desktop development with C++" |
 | **`psycopg2` build failure** | Install from wheel: `pip install psycopg2-binary` (it's already in requirements.txt under that name, but if it fails, try: `pip install --only-binary psycopg2-binary psycopg2-binary`) |
 | **`python-dotenv` not found** | Run: `pip install python-dotenv` |
 | **OpenSSL errors** | Install latest OpenSSL or use Python 3.10+ which bundles it |
@@ -418,9 +418,9 @@ INFO:     Second Brain OS API starting version=1.0.0
 - The server initializes middleware (CORS, rate limiter) and registers all 13 routers
 
 **Verify:**
-1. Open http://localhost:8000 — you should see: `{"message":"Second Brain OS API is running","version":"1.0.0"}`
-2. Open http://localhost:8000/docs — you should see the Swagger UI with all 50+ endpoints
-3. Open http://localhost:8000/health — you should see: `{"status":"healthy","version":"1.0.0"}`
+1. Open http://localhost:8000 â€” you should see: `{"message":"Second Brain OS API is running","version":"1.0.0"}`
+2. Open http://localhost:8000/docs â€” you should see the Swagger UI with all 50+ endpoints
+3. Open http://localhost:8000/health â€” you should see: `{"status":"healthy","version":"1.0.0"}`
 
 ### 2.5 Scheduler Setup (`services/scheduler`)
 
@@ -433,7 +433,7 @@ pip install -r requirements.txt
 
 The scheduler has its own virtual environment separate from the API. This is because it's a standalone service, not part of the API package.
 
-**Note:** The `requirements.txt` in `services/scheduler` may be empty — the scheduler relies on shared packages. Ensure the virtual environment has access to the `packages/` directory by checking that `sys.path.insert(0, ...)` in `main.py` points correctly (it inserts `../../packages` relative to the scheduler file).
+**Note:** The `requirements.txt` in `services/scheduler` may be empty â€” the scheduler relies on shared packages. Ensure the virtual environment has access to the `packages/` directory by checking that `sys.path.insert(0, ...)` in `main.py` points correctly (it inserts `../../packages` relative to the scheduler file).
 
 ```powershell
 python main.py
@@ -472,7 +472,7 @@ Scheduler started. Press Ctrl+C to exit.
 ollama pull mistral
 ```
 
-This downloads the Mistral 7B model (~4.1 GB). On a typical broadband connection, expect 5–15 minutes.
+This downloads the Mistral 7B model (~4.1 GB). On a typical broadband connection, expect 5â€“15 minutes.
 
 #### Verify AI Works
 
@@ -500,7 +500,7 @@ Start both the backend (Section 2.4) and Ollama, then:
 curl -X POST http://localhost:8000/api/chat -H "Content-Type: application/json" -d "{\"message\":\"Hello ARIA, what should I work on today?\"}"
 ```
 
-If `USE_LOCAL_AI=True` (default), this will call Ollama and return a response. Expect a response in 3–15 seconds (Ollama's first inference is slower — subsequent calls are faster).
+If `USE_LOCAL_AI=True` (default), this will call Ollama and return a response. Expect a response in 3â€“15 seconds (Ollama's first inference is slower â€” subsequent calls are faster).
 
 #### Setting Claude API Fallback (Optional)
 
@@ -523,21 +523,21 @@ $env:CLAUDE_API_KEY="sk-ant-..."
    - **Name**: `secondbrain-os-dev`
    - **Database Password**: Generate a strong password and save it
    - **Region**: Choose the closest to you (e.g., `Singapore` for Asia, `Mumbai` if available)
-4. Click "Create new project" (takes 1–2 minutes to provision)
+4. Click "Create new project" (takes 1â€“2 minutes to provision)
 
 #### Getting API Keys
 
-1. In the Supabase dashboard, go to **Project Settings → API**
+1. In the Supabase dashboard, go to **Project Settings â†’ API**
 2. Copy these values:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role** key → `SUPABASE_SERVICE_KEY` (keep this secret — never expose to the client)
+   - **Project URL** â†’ `NEXT_PUBLIC_SUPABASE_URL`
+   - **anon public** key â†’ `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **service_role** key â†’ `SUPABASE_SERVICE_KEY` (keep this secret â€” never expose to the client)
 
 #### Setting Up Database Tables
 
 The project requires 27 tables. You have two options:
 
-**Option A — Run SQL Scripts (recommended):**
+**Option A â€” Run SQL Scripts (recommended):**
 
 SQL scripts are located in `packages/database/schemas/`. Run them in the Supabase SQL Editor (go to **SQL Editor** in the dashboard):
 
@@ -549,7 +549,7 @@ SQL scripts are located in `packages/database/schemas/`. Run them in the Supabas
    - Then: subtasks, task_dependencies, habit_logs, sleep_logs, time_logs, chat_messages, aria_memory, daily_briefings, weekly_reviews
    - Then: youtube_saves, resources, ideas, opportunities, income_logs, academic_subjects, marks, study_sessions, daily_logs, roadmap_updates
 
-**Option B — Use `db/schema.sql`:**
+**Option B â€” Use `db/schema.sql`:**
 
 If a `packages/database/schemas/schema.sql` exists with all table definitions, copy the entire file content and paste it into the SQL Editor.
 
@@ -602,7 +602,7 @@ CREATE POLICY "users_own_data" ON courses
 
 #### Setting Up Auth (Google OAuth)
 
-1. In Supabase dashboard, go to **Authentication → Providers**
+1. In Supabase dashboard, go to **Authentication â†’ Providers**
 2. Click Google, enable it
 3. Go to https://console.cloud.google.com/apis/credentials
 4. Create a new OAuth 2.0 Client ID:
@@ -623,38 +623,38 @@ NEXT_PUBLIC_SUPABASE_URL=https://[your-project-ref].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-Create `.env` in the **repository root** (`ARIA OS - SecondBrain/.env`) — this is read by `packages/config/core/config.py`:
+Create `.env` in the **repository root** (`ARIA OS - SecondBrain/.env`) â€” this is read by `packages/config/core/config.py`:
 
 ```env
-# Backend (root .env — read by pydantic-settings)
+# Backend (root .env â€” read by pydantic-settings)
 SUPABASE_URL=https://[your-project-ref].supabase.co
 SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 JWT_SECRET=your-jwt-secret-change-in-production
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=10080
-CLAUDE_API_KEY=sk-ant-...                          # Optional — only if using Claude
+CLAUDE_API_KEY=sk-ant-...                          # Optional â€” only if using Claude
 OLLAMA_BASE_URL=http://localhost:11434
 USE_LOCAL_AI=True                                    # Set to False to use Claude
 APP_NAME="Second Brain OS"
 DEBUG=True
 CORS_ORIGINS=http://localhost:3000,http://localhost:3001
-RESEND_API_KEY=re_...                                # Optional — for email features
+RESEND_API_KEY=re_...                                # Optional â€” for email features
 ```
 
 **Where to get each value:**
 
 | Variable | Where to Find |
 |---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase Dashboard → Project Settings → API → Project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Dashboard → Project Settings → API → anon public key |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase Dashboard â†’ Project Settings â†’ API â†’ Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Dashboard â†’ Project Settings â†’ API â†’ anon public key |
 | `SUPABASE_URL` | Same as `NEXT_PUBLIC_SUPABASE_URL` |
 | `SUPABASE_KEY` | Same as `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
-| `SUPABASE_SERVICE_KEY` | Supabase Dashboard → Project Settings → API → service_role key |
-| `JWT_SECRET` | Supabase Dashboard → Project Settings → API → JWT Secret (or generate a random 32-char string) |
-| `CLAUDE_API_KEY` | https://console.anthropic.com/ → API Keys |
-| `RESEND_API_KEY` | https://resend.com/ → API Keys |
-| `OLLAMA_BASE_URL` | Defaults to `http://localhost:11434` — only change if Ollama runs on a different host/port |
+| `SUPABASE_SERVICE_KEY` | Supabase Dashboard â†’ Project Settings â†’ API â†’ service_role key |
+| `JWT_SECRET` | Supabase Dashboard â†’ Project Settings â†’ API â†’ JWT Secret (or generate a random 32-char string) |
+| `CLAUDE_API_KEY` | https://console.anthropic.com/ â†’ API Keys |
+| `RESEND_API_KEY` | https://resend.com/ â†’ API Keys |
+| `OLLAMA_BASE_URL` | Defaults to `http://localhost:11434` â€” only change if Ollama runs on a different host/port |
 | `CORS_ORIGINS` | Comma-separated list of frontend URLs allowed to call the API |
 
 **CRITICAL: NEVER commit `.env` or `.env.local` files to Git.** Add them to `.gitignore` (they already should be):
@@ -676,43 +676,43 @@ Use this checklist to verify that everything is working correctly. Complete each
 
 ### Frontend & Backend
 
-- [ ] **Frontend loads at localhost:3000** — Open http://localhost:3000 in Chrome/Edge. You should see the cyberpunk login page with "ARIA OS" branding and a Google sign-in button. The Three.js background should render (animated grid/lines).
-- [ ] **Login page renders** — The page at http://localhost:3000 should display a full login UI with Google OAuth button, ARIA logo, and the tagline. Check that the dark theme is applied (background #0A0B0F, neon accents).
-- [ ] **Backend health check returns 200** — Run: `curl http://localhost:8000/health`. Expected: `{"status":"healthy","version":"1.0.0"}`
-- [ ] **Backend root returns API info** — Run: `curl http://localhost:8000/`. Expected: `{"message":"Second Brain OS API is running","version":"1.0.0"}`
-- [ ] **Swagger docs render** — Open http://localhost:8000/docs. You should see the FastAPI Swagger UI with all 13 router tags: tasks, courses, goals, ideas, chat, projects, resources, opportunities, income, habits, sleep, time, automation.
+- [ ] **Frontend loads at localhost:3000** â€” Open http://localhost:3000 in Chrome/Edge. You should see the cyberpunk login page with "ARIA OS" branding and a Google sign-in button. The Three.js background should render (animated grid/lines).
+- [ ] **Login page renders** â€” The page at http://localhost:3000 should display a full login UI with Google OAuth button, ARIA logo, and the tagline. Check that the dark theme is applied (background #0A0B0F, neon accents).
+- [ ] **Backend health check returns 200** â€” Run: `curl http://localhost:8000/health`. Expected: `{"status":"healthy","version":"1.0.0"}`
+- [ ] **Backend root returns API info** â€” Run: `curl http://localhost:8000/`. Expected: `{"message":"Second Brain OS API is running","version":"1.0.0"}`
+- [ ] **Swagger docs render** â€” Open http://localhost:8000/docs. You should see the FastAPI Swagger UI with all 13 router tags: tasks, courses, goals, ideas, chat, projects, resources, opportunities, income, habits, sleep, time, automation.
 
 ### Database
-- [ ] **Supabase client initializes** — Start the backend and check the terminal logs. You should see no errors related to Supabase connection (if the `.env` is properly configured).
-- [ ] **Database tables exist** — In Supabase Dashboard → Table Editor, confirm that your 27 tables are listed.
-- [ ] **RLS is enabled** — Check Supabase Dashboard → Authentication → Policies. You should see policies for each table.
+- [ ] **Supabase client initializes** â€” Start the backend and check the terminal logs. You should see no errors related to Supabase connection (if the `.env` is properly configured).
+- [ ] **Database tables exist** â€” In Supabase Dashboard â†’ Table Editor, confirm that your 27 tables are listed.
+- [ ] **RLS is enabled** â€” Check Supabase Dashboard â†’ Authentication â†’ Policies. You should see policies for each table.
 
 ### AI
-- [ ] **Ollama is running** — Run: `curl http://localhost:11434/api/tags`. Expected: a JSON array containing the `mistral` model (or whatever models you've pulled).
-- [ ] **Ollama model responds** — Run: `ollama run mistral "Hello"`. Expected: the model responds with a greeting.
-- [ ] **ARIA chat endpoint responds** — Start both backend and Ollama, then: `curl -X POST http://localhost:8000/api/chat -H "Content-Type: application/json" -d "{\"message\":\"Hello\"}"`. Expected: a JSON response with `response` and `actions` fields.
+- [ ] **Ollama is running** â€” Run: `curl http://localhost:11434/api/tags`. Expected: a JSON array containing the `mistral` model (or whatever models you've pulled).
+- [ ] **Ollama model responds** â€” Run: `ollama run mistral "Hello"`. Expected: the model responds with a greeting.
+- [ ] **ARIA chat endpoint responds** â€” Start both backend and Ollama, then: `curl -X POST http://localhost:8000/api/chat -H "Content-Type: application/json" -d "{\"message\":\"Hello\"}"`. Expected: a JSON response with `response` and `actions` fields.
 
 ### Scheduler
-- [ ] **Scheduler starts without errors** — Run: `cd services/scheduler && python main.py`. Should print 6 cron jobs registered and "Scheduler started".
-- [ ] **Cron jobs registered** — The output should list all 6 jobs with their schedules (Daily Briefing at 7 AM, etc.).
+- [ ] **Scheduler starts without errors** â€” Run: `cd services/scheduler && python main.py`. Should print 6 cron jobs registered and "Scheduler started".
+- [ ] **Cron jobs registered** â€” The output should list all 6 jobs with their schedules (Daily Briefing at 7 AM, etc.).
 
 ### API Endpoints
-- [ ] **Tasks endpoint returns data** (may return empty array without auth) — `curl http://localhost:8000/api/tasks/`
-- [ ] **Courses endpoint returns data** — `curl http://localhost:8000/api/courses/`
-- [ ] **Goals endpoint returns data** — `curl http://localhost:8000/api/goals/`
-- [ ] **Habits endpoint returns data** — `curl http://localhost:8000/api/habits/`
-- [ ] **Sleep endpoint returns data** — `curl http://localhost:8000/api/sleep/`
-- [ ] **Time endpoint returns data** — `curl http://localhost:8000/api/time/`
-- [ ] **Income endpoint returns data** — `curl http://localhost:8000/api/income/`
-- [ ] **Projects endpoint returns data** — `curl http://localhost:8000/api/projects/`
-- [ ] **Ideas endpoint returns data** — `curl http://localhost:8000/api/ideas/`
-- [ ] **Resources endpoint returns data** — `curl http://localhost:8000/api/resources/`
-- [ ] **Opportunities endpoint returns data** — `curl http://localhost:8000/api/opportunities/`
-- [ ] **Automation endpoint returns data** — `curl http://localhost:8000/api/automation/`
-- [ ] **All 13 routers respond** — All above endpoints return either data or a valid error response (not a 500 or connection refused).
+- [ ] **Tasks endpoint returns data** (may return empty array without auth) â€” `curl http://localhost:8000/api/tasks/`
+- [ ] **Courses endpoint returns data** â€” `curl http://localhost:8000/api/courses/`
+- [ ] **Goals endpoint returns data** â€” `curl http://localhost:8000/api/goals/`
+- [ ] **Habits endpoint returns data** â€” `curl http://localhost:8000/api/habits/`
+- [ ] **Sleep endpoint returns data** â€” `curl http://localhost:8000/api/sleep/`
+- [ ] **Time endpoint returns data** â€” `curl http://localhost:8000/api/time/`
+- [ ] **Income endpoint returns data** â€” `curl http://localhost:8000/api/income/`
+- [ ] **Projects endpoint returns data** â€” `curl http://localhost:8000/api/projects/`
+- [ ] **Ideas endpoint returns data** â€” `curl http://localhost:8000/api/ideas/`
+- [ ] **Resources endpoint returns data** â€” `curl http://localhost:8000/api/resources/`
+- [ ] **Opportunities endpoint returns data** â€” `curl http://localhost:8000/api/opportunities/`
+- [ ] **Automation endpoint returns data** â€” `curl http://localhost:8000/api/automation/`
+- [ ] **All 13 routers respond** â€” All above endpoints return either data or a valid error response (not a 500 or connection refused).
 
 ### Final Integration Check
-- [ ] **Full stack works together** — Frontend running on :3000, backend on :8000, Ollama on :11434, all without errors. You can open Swagger at /docs and all endpoints are listed.
+- [ ] **Full stack works together** â€” Frontend running on :3000, backend on :8000, Ollama on :11434, all without errors. You can open Swagger at /docs and all endpoints are listed.
 
 ---
 
@@ -791,7 +791,7 @@ uvicorn main:app --reload
 # Terminal 3: Start the frontend
 cd apps/web
 npm run dev
-# Wait for: "✓ Ready in ..." and "Local: http://localhost:3000"
+# Wait for: "âœ“ Ready in ..." and "Local: http://localhost:3000"
 
 # (Optional) Terminal 4: Start the scheduler
 cd services/scheduler
@@ -801,17 +801,17 @@ python main.py
 ```
 
 **Order rationale:**
-1. Ollama first — it might take a moment to warm up
-2. Backend second — the frontend can't function without the API
-3. Frontend third — the dev server compiles TypeScript and Hot Module Replacement
-4. Scheduler last — it's standalone and not required for most development tasks
+1. Ollama first â€” it might take a moment to warm up
+2. Backend second â€” the frontend can't function without the API
+3. Frontend third â€” the dev server compiles TypeScript and Hot Module Replacement
+4. Scheduler last â€” it's standalone and not required for most development tasks
 
 ### 4.3 Code Quality
 
 #### Frontend
 
 ```powershell
-# ESLint — checks for code quality issues
+# ESLint â€” checks for code quality issues
 npm run lint
 
 # TypeScript type checking
@@ -841,7 +841,7 @@ There are no pre-commit hooks configured yet. Run these checks manually before c
 1. `npm run lint` (from `apps/web`)
 2. `npm run type-check` (from `apps/web`)
 3. `ruff check .` (from repo root or `apps/api`)
-4. `black --check .` (from repo root — fails if formatting is off)
+4. `black --check .` (from repo root â€” fails if formatting is off)
 
 ---
 
@@ -856,17 +856,17 @@ There are no pre-commit hooks configured yet. Run these checks manually before c
 | 3 | `pip' is not recognized` | Python scripts directory not in PATH | Use `python -m pip` instead, or add `%APPDATA%\Python\Scripts` to PATH |
 | 4 | `ModuleNotFoundError: No module named 'config'` | Backend running from wrong directory | Ensure you're running from `apps/api/` (where `main.py` is), not the repo root |
 | 5 | `cannot find module 'next'` | npm install not run | Run `cd apps/web && npm install` |
-| 6 | `Supabase connection refused` | .env not configured or wrong URL | Check `SUPABASE_URL` in `.env` — should be `https://[project-ref].supabase.co` |
+| 6 | `Supabase connection refused` | .env not configured or wrong URL | Check `SUPABASE_URL` in `.env` â€” should be `https://[project-ref].supabase.co` |
 | 7 | `Ollama is not running` | Ollama service not started | Run `ollama serve` or start Ollama from system tray. Check with `curl http://localhost:11434/api/tags` |
 | 8 | `CORS error` in browser | Backend origin not in `CORS_ORIGINS` | Add `http://localhost:3000` to `CORS_ORIGINS` in `.env`. Backend's CORS middleware includes this by default. |
 | 9 | `Port 3000 already in use` | Another process on port 3000 | Run `netstat -ano \| findstr :3000`, kill the PID with `taskkill /PID <number> /F`, or use a different port: `npm run dev -- -p 3001` |
 | 10 | `Port 8000 already in use` | Another process on port 8000 | Same as above; or run `uvicorn main:app --reload --port 8001` |
-| 11 | `JWT validation failed` | JWT_SECRET mismatch or expired token | Check that `JWT_SECRET` in `.env` matches the JWT secret in Supabase Project Settings → API. If expired, re-login. |
+| 11 | `JWT validation failed` | JWT_SECRET mismatch or expired token | Check that `JWT_SECRET` in `.env` matches the JWT secret in Supabase Project Settings â†’ API. If expired, re-login. |
 | 12 | `Rate limiting triggered` (429) | >100 requests in 60 seconds | Wait 60 seconds. If persistent, check for a bug causing repeated requests (e.g., infinite re-renders in React) |
 | 13 | `.env not loaded` | .env file in wrong directory | Backend `.env` must be in the **repo root** (not in `apps/api/`). Frontend `.env.local` must be in `apps/web/`. |
 | 14 | `node-gyp` rebuild errors | Missing C++ build tools | Run PowerShell as Admin: `npm install --global windows-build-tools`, or install Visual Studio Build Tools |
 | 15 | `ERR_OSSL_EVP_UNSUPPORTED` | OpenSSL 3.x incompatibility with older packages | Run: `$env:NODE_OPTIONS="--openssl-legacy-provider"` or use Node 18 LTS |
-| 16 | Tailwind styles not applying | Tailwind content paths misconfigured | Check `tailwind.config.js` → `content` array includes all directories with JSX/TSX files |
+| 16 | Tailwind styles not applying | Tailwind content paths misconfigured | Check `tailwind.config.js` â†’ `content` array includes all directories with JSX/TSX files |
 | 17 | Next.js compilation fails with TypeScript errors | New code has type errors | Run `npm run type-check` to see all errors. Fix them or add `// @ts-expect-error` with a comment |
 | 18 | FastAPI auto-docs (Swagger) not loading | Backend not started or wrong URL | Open http://localhost:8000/docs. If 404, ensure the backend is running. |
 | 19 | `404 Not Found` on API routes | Router not registered | Check `main.py` to confirm all routers are registered with `app.include_router()`. Check endpoint paths match the prefix. |
@@ -877,9 +877,9 @@ There are no pre-commit hooks configured yet. Run these checks manually before c
 #### Browser DevTools
 
 - **React DevTools**: Install the Chrome extension for component tree inspection and state debugging
-- **Network tab** (F12 → Network): Watch API calls, check response payloads, headers, and status codes
-- **Console tab** (F12 → Console): Check for React errors, Supabase SDK warnings, and rate limiting messages
-- **Application tab** (F12 → Application): Inspect localStorage (Zustand persisted stores), IndexedDB, and service workers
+- **Network tab** (F12 â†’ Network): Watch API calls, check response payloads, headers, and status codes
+- **Console tab** (F12 â†’ Console): Check for React errors, Supabase SDK warnings, and rate limiting messages
+- **Application tab** (F12 â†’ Application): Inspect localStorage (Zustand persisted stores), IndexedDB, and service workers
 
 #### VS Code Debugger
 
@@ -946,8 +946,8 @@ curl -X POST http://localhost:8000/api/chat -H "Content-Type: application/json" 
 
 #### Database Inspection
 
-- **Supabase Dashboard → Table Editor**: Browse, filter, and edit data directly
-- **Supabase Dashboard → SQL Editor**: Run arbitrary SQL queries
+- **Supabase Dashboard â†’ Table Editor**: Browse, filter, and edit data directly
+- **Supabase Dashboard â†’ SQL Editor**: Run arbitrary SQL queries
 - **Useful debug queries:**
 
 ```sql
@@ -975,136 +975,136 @@ SELECT schemaname,tablename,n_live_tup FROM pg_stat_user_tables ORDER BY n_live_
 
 ```
 ARIA OS - SecondBrain/
-├── apps/
-│   ├── api/                                    # FastAPI backend
-│   │   ├── main.py                             # App entry, middleware, 13 routers
-│   │   ├── requirements.txt                    # Python dependencies
-│   │   └── app/
-│   │       └── api/
-│   │           ├── __init__.py
-│   │           ├── tasks.py                    # /api/tasks (6 endpoints)
-│   │           ├── courses.py                  # /api/courses (4 endpoints)
-│   │           ├── goals.py                    # /api/goals (4 endpoints)
-│   │           ├── ideas.py                    # /api/ideas (4 endpoints)
-│   │           ├── chat.py                     # /api/chat (2 endpoints)
-│   │           ├── projects.py                 # /api/projects (4 endpoints)
-│   │           ├── resources.py                # /api/resources (4 endpoints)
-│   │           ├── opportunities.py            # /api/opportunities (4 endpoints)
-│   │           ├── income.py                   # /api/income (4 endpoints)
-│   │           ├── habits.py                   # /api/habits (4 endpoints)
-│   │           ├── sleep.py                    # /api/sleep (3 endpoints)
-│   │           ├── time.py                     # /api/time (7 endpoints)
-│   │           └── automation.py               # /api/automation (3 endpoints)
-│   └── web/                                    # Next.js 14 frontend
-│       ├── package.json
-│       ├── next.config.js
-│       ├── tailwind.config.js
-│       ├── tsconfig.json
-│       ├── app/
-│       │   ├── layout.tsx                      # Root layout (fonts, globals)
-│       │   ├── page.tsx                        # Root page (auth redirect)
-│       │   ├── globals.css                     # Global styles, cyberpunk theme
-│       │   ├── login/page.tsx                  # Login page
-│       │   ├── (dashboard)/layout.tsx          # Dashboard layout (sidebar + navbar)
-│       │   ├── dashboard/page.tsx              # Dashboard
-│       │   ├── tasks/page.tsx                  # Tasks module
-│       │   ├── courses/page.tsx                # Courses module
-│       │   ├── goals/page.tsx                  # Goals + roadmap editor
-│       │   ├── habits/page.tsx                 # Habits module
-│       │   ├── sleep/page.tsx                  # Sleep tracking
-│       │   ├── income/page.tsx                 # Income tracking
-│       │   ├── projects/page.tsx               # Projects module
-│       │   ├── ideas/page.tsx                  # Idea vault
-│       │   ├── resources/page.tsx              # Resources library
-│       │   ├── opportunities/page.tsx          # Opportunities radar
-│       │   ├── academics/page.tsx              # Academics / marks
-│       │   ├── youtube/page.tsx                # YouTube vault
-│       │   ├── chat/page.tsx                   # ARIA chat interface
-│       │   ├── time/page.tsx                   # Time tracking
-│       │   └── automation/page.tsx             # Automation rules
-│       ├── components/                         # Shared React components
-│       ├── lib/
-│       │   ├── supabase.ts                     # Supabase client (server-side)
-│       │   ├── taskStore.ts                    # Zustand store for tasks
-│       │   └── userStore.ts                    # Zustand store for user
-│       ├── hooks/                              # Custom React hooks
-│       ├── types/                              # TypeScript type definitions
-│       └── styles/                             # Additional CSS modules
-├── packages/
-│   ├── ai/
-│   │   ├── __init__.py
-│   │   ├── client.py                          # LLMClient (Ollama + Claude)
-│   │   └── agents/                            # AI agent implementations
-│   ├── config/
-│   │   └── core/
-│   │       ├── __init__.py
-│   │       ├── config.py                      # Pydantic Settings class
-│   │       ├── auth.py                        # JWT auth utilities
-│   │       └── supabase.py                    # Supabase client singleton
-│   ├── database/
-│   │   └── schemas/                           # Pydantic request/response models
-│   ├── shared/
-│   │   └── utils/
-│   │       ├── logger.py                      # Structured JSON logging
-│   │       ├── rate_limiter.py                # Rate limiting middleware
-│   │       ├── cache.py                       # In-memory cache with TTL
-│   │       └── security.py                    # Token generation, sanitization
-│   ├── types/                                 # Shared Python type definitions
-│   └── ui/                                    # Shared UI components (future)
-├── services/
-│   └── scheduler/
-│       ├── main.py                            # APScheduler setup, 6 cron jobs
-│       ├── requirements.txt
-│       └── crons/
-│           ├── daily_briefing.py              # 7 AM: generate morning briefing
-│           ├── opportunity_radar.py           # 6 AM: scan for opportunities
-│           ├── weekly_review.py               # Sunday 8 PM: weekly review
-│           ├── habit_checker.py               # 8 PM: check habits
-│           ├── missed_task_checker.py         # Midnight: check missed tasks
-│           └── sleep_reminder.py              # 10:30 PM: sleep reminder
-├── docs/
-│   ├── product/                               # PRD, Features, Roadmap, SRS
-│   ├── design/                                # UIUX, Design System, Design Tokens
-│   ├── engineering/                           # Architecture, API, Database
-│   ├── ai/                                    # AI_Instructions, Agent prompts
-│   ├── security/                              # Security policies, Compliance
-│   ├── devops/                                # Deployment, DevOps
-│   └── operations/                            # Monitoring, Runbooks, Onboarding
-├── infrastructure/                            # Docker, Terraform, K8s (WIP)
-├── tests/
-├── scripts/
-├── analytics/
-└── monitoring/
+â”œâ”€â”€ apps/
+â”‚   â”œâ”€â”€ api/                                    # FastAPI backend
+â”‚   â”‚   â”œâ”€â”€ main.py                             # App entry, middleware, 13 routers
+â”‚   â”‚   â”œâ”€â”€ requirements.txt                    # Python dependencies
+â”‚   â”‚   â””â”€â”€ app/
+â”‚   â”‚       â””â”€â”€ api/
+â”‚   â”‚           â”œâ”€â”€ __init__.py
+â”‚   â”‚           â”œâ”€â”€ tasks.py                    # /api/tasks (6 endpoints)
+â”‚   â”‚           â”œâ”€â”€ courses.py                  # /api/courses (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ goals.py                    # /api/goals (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ ideas.py                    # /api/ideas (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ chat.py                     # /api/chat (2 endpoints)
+â”‚   â”‚           â”œâ”€â”€ projects.py                 # /api/projects (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ resources.py                # /api/resources (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ opportunities.py            # /api/opportunities (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ income.py                   # /api/income (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ habits.py                   # /api/habits (4 endpoints)
+â”‚   â”‚           â”œâ”€â”€ sleep.py                    # /api/sleep (3 endpoints)
+â”‚   â”‚           â”œâ”€â”€ time.py                     # /api/time (7 endpoints)
+â”‚   â”‚           â””â”€â”€ automation.py               # /api/automation (3 endpoints)
+â”‚   â””â”€â”€ web/                                    # Next.js 14 frontend
+â”‚       â”œâ”€â”€ package.json
+â”‚       â”œâ”€â”€ next.config.js
+â”‚       â”œâ”€â”€ tailwind.config.js
+â”‚       â”œâ”€â”€ tsconfig.json
+â”‚       â”œâ”€â”€ app/
+â”‚       â”‚   â”œâ”€â”€ layout.tsx                      # Root layout (fonts, globals)
+â”‚       â”‚   â”œâ”€â”€ page.tsx                        # Root page (auth redirect)
+â”‚       â”‚   â”œâ”€â”€ globals.css                     # Global styles, cyberpunk theme
+â”‚       â”‚   â”œâ”€â”€ login/page.tsx                  # Login page
+â”‚       â”‚   â”œâ”€â”€ (dashboard)/layout.tsx          # Dashboard layout (sidebar + navbar)
+â”‚       â”‚   â”œâ”€â”€ dashboard/page.tsx              # Dashboard
+â”‚       â”‚   â”œâ”€â”€ tasks/page.tsx                  # Tasks module
+â”‚       â”‚   â”œâ”€â”€ courses/page.tsx                # Courses module
+â”‚       â”‚   â”œâ”€â”€ goals/page.tsx                  # Goals + roadmap editor
+â”‚       â”‚   â”œâ”€â”€ habits/page.tsx                 # Habits module
+â”‚       â”‚   â”œâ”€â”€ sleep/page.tsx                  # Sleep tracking
+â”‚       â”‚   â”œâ”€â”€ income/page.tsx                 # Income tracking
+â”‚       â”‚   â”œâ”€â”€ projects/page.tsx               # Projects module
+â”‚       â”‚   â”œâ”€â”€ ideas/page.tsx                  # Idea vault
+â”‚       â”‚   â”œâ”€â”€ resources/page.tsx              # Resources library
+â”‚       â”‚   â”œâ”€â”€ opportunities/page.tsx          # Opportunities radar
+â”‚       â”‚   â”œâ”€â”€ academics/page.tsx              # Academics / marks
+â”‚       â”‚   â”œâ”€â”€ youtube/page.tsx                # YouTube vault
+â”‚       â”‚   â”œâ”€â”€ chat/page.tsx                   # ARIA chat interface
+â”‚       â”‚   â”œâ”€â”€ time/page.tsx                   # Time tracking
+â”‚       â”‚   â””â”€â”€ automation/page.tsx             # Automation rules
+â”‚       â”œâ”€â”€ components/                         # Shared React components
+â”‚       â”œâ”€â”€ lib/
+â”‚       â”‚   â”œâ”€â”€ supabase.ts                     # Supabase client (server-side)
+â”‚       â”‚   â”œâ”€â”€ taskStore.ts                    # Zustand store for tasks
+â”‚       â”‚   â””â”€â”€ userStore.ts                    # Zustand store for user
+â”‚       â”œâ”€â”€ hooks/                              # Custom React hooks
+â”‚       â”œâ”€â”€ types/                              # TypeScript type definitions
+â”‚       â””â”€â”€ styles/                             # Additional CSS modules
+â”œâ”€â”€ packages/
+â”‚   â”œâ”€â”€ ai/
+â”‚   â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”‚   â”œâ”€â”€ client.py                          # LLMClient (Ollama + Claude)
+â”‚   â”‚   â””â”€â”€ agents/                            # AI agent implementations
+â”‚   â”œâ”€â”€ config/
+â”‚   â”‚   â””â”€â”€ core/
+â”‚   â”‚       â”œâ”€â”€ __init__.py
+â”‚   â”‚       â”œâ”€â”€ config.py                      # Pydantic Settings class
+â”‚   â”‚       â”œâ”€â”€ auth.py                        # JWT auth utilities
+â”‚   â”‚       â””â”€â”€ supabase.py                    # Supabase client singleton
+â”‚   â”œâ”€â”€ database/
+â”‚   â”‚   â””â”€â”€ schemas/                           # Pydantic request/response models
+â”‚   â”œâ”€â”€ shared/
+â”‚   â”‚   â””â”€â”€ utils/
+â”‚   â”‚       â”œâ”€â”€ logger.py                      # Structured JSON logging
+â”‚   â”‚       â”œâ”€â”€ rate_limiter.py                # Rate limiting middleware
+â”‚   â”‚       â”œâ”€â”€ cache.py                       # In-memory cache with TTL
+â”‚   â”‚       â””â”€â”€ security.py                    # Token generation, sanitization
+â”‚   â”œâ”€â”€ types/                                 # Shared Python type definitions
+â”‚   â””â”€â”€ ui/                                    # Shared UI components (future)
+â”œâ”€â”€ services/
+â”‚   â””â”€â”€ scheduler/
+â”‚       â”œâ”€â”€ main.py                            # APScheduler setup, 6 cron jobs
+â”‚       â”œâ”€â”€ requirements.txt
+â”‚       â””â”€â”€ crons/
+â”‚           â”œâ”€â”€ daily_briefing.py              # 7 AM: generate morning briefing
+â”‚           â”œâ”€â”€ opportunity_radar.py           # 6 AM: scan for opportunities
+â”‚           â”œâ”€â”€ weekly_review.py               # Sunday 8 PM: weekly review
+â”‚           â”œâ”€â”€ habit_checker.py               # 8 PM: check habits
+â”‚           â”œâ”€â”€ missed_task_checker.py         # Midnight: check missed tasks
+â”‚           â””â”€â”€ sleep_reminder.py              # 10:30 PM: sleep reminder
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ product/                               # PRD, Features, Roadmap, SRS
+â”‚   â”œâ”€â”€ design/                                # UIUX, Design System, Design Tokens
+â”‚   â”œâ”€â”€ engineering/                           # Architecture, API, Database
+â”‚   â”œâ”€â”€ ai/                                    # AI_Instructions, Agent prompts
+â”‚   â”œâ”€â”€ security/                              # Security policies, Compliance
+â”‚   â”œâ”€â”€ devops/                                # Deployment, DevOps
+â”‚   â””â”€â”€ operations/                            # Monitoring, Runbooks, Onboarding
+â”œâ”€â”€ infrastructure/                            # Docker, Terraform, K8s (WIP)
+â”œâ”€â”€ tests/
+â”œâ”€â”€ scripts/
+â”œâ”€â”€ analytics/
+â””â”€â”€ monitoring/
 ```
 
 ### 6.2 Key Files & Their Purpose
 
 | File | Purpose |
 |---|---|
-| `apps/api/main.py` | FastAPI app entry point — creates app, registers middleware, includes all 13 routers |
-| `apps/web/app/layout.tsx` | Root layout — loads Google fonts (Syne, DM Sans, JetBrains Mono), applies global CSS |
-| `apps/web/next.config.js` | Next.js configuration — image domains, environment vars for client |
-| `apps/web/tailwind.config.js` | Design system — colors, fonts, shadows, animations, breakpoints |
-| `packages/config/core/config.py` | Settings class — reads `.env`, validates all config variables via Pydantic |
-| `packages/config/core/supabase.py` | Supabase client factory — singleton pattern with `get_supabase_client()` |
-| `packages/ai/client.py` | LLM client — `generate()` and `generate_json()` with Ollama/Claude routing |
-| `packages/shared/utils/rate_limiter.py` | Rate limiter middleware — 100 req/min per user, in-memory sliding window |
-| `packages/shared/utils/logger.py` | Structured JSON logger — `log_request`, `log_response`, `log_error` |
-| `services/scheduler/main.py` | APScheduler setup — registers 6 cron jobs with AsyncIOScheduler |
+| `apps/api/main.py` | FastAPI app entry point â€” creates app, registers middleware, includes all 13 routers |
+| `apps/web/app/layout.tsx` | Root layout â€” loads Google fonts (Syne, DM Sans, JetBrains Mono), applies global CSS |
+| `apps/web/next.config.js` | Next.js configuration â€” image domains, environment vars for client |
+| `apps/web/tailwind.config.js` | Design system â€” colors, fonts, shadows, animations, breakpoints |
+| `packages/config/core/config.py` | Settings class â€” reads `.env`, validates all config variables via Pydantic |
+| `packages/config/core/supabase.py` | Supabase client factory â€” singleton pattern with `get_supabase_client()` |
+| `packages/ai/client.py` | LLM client â€” `generate()` and `generate_json()` with Ollama/Claude routing |
+| `packages/shared/utils/rate_limiter.py` | Rate limiter middleware â€” 100 req/min per user, in-memory sliding window |
+| `packages/shared/utils/logger.py` | Structured JSON logger â€” `log_request`, `log_response`, `log_error` |
+| `services/scheduler/main.py` | APScheduler setup â€” registers 6 cron jobs with AsyncIOScheduler |
 
 ### 6.3 Module Dependencies
 
 ```
-Frontend (Next.js) ─── Supabase SDK (direct reads via RLS)
-    │
-    ├── Backend API (FastAPI) ─── Supabase (PostgreSQL)
-    │       │                       │
-    │       ├── AI Client ───── Ollama (local) or Claude (cloud)
-    │       └── Rate Limiter
-    │
-    └── Scheduler (APScheduler) ─── Cron Agents ─── AI Client ─── Ollama/Claude
-                                        │
-                                        └── Email (Resend)
+Frontend (Next.js) â”€â”€â”€ Supabase SDK (direct reads via RLS)
+    â”‚
+    â”œâ”€â”€ Backend API (FastAPI) â”€â”€â”€ Supabase (PostgreSQL)
+    â”‚       â”‚                       â”‚
+    â”‚       â”œâ”€â”€ AI Client â”€â”€â”€â”€â”€ Ollama (local) or Claude (cloud)
+    â”‚       â””â”€â”€ Rate Limiter
+    â”‚
+    â””â”€â”€ Scheduler (APScheduler) â”€â”€â”€ Cron Agents â”€â”€â”€ AI Client â”€â”€â”€ Ollama/Claude
+                                        â”‚
+                                        â””â”€â”€ Email (Resend)
 ```
 
 **Dependency rules:**
@@ -1171,22 +1171,22 @@ All 27 tables have RLS enabled scoped to `user_id = auth.uid()`.
 
 ## 7. Security Checklist for Developers
 
-- [ ] **Never commit .env files** — `.env`, `.env.local`, `.env.*.local` are in `.gitignore`. Verify with `git status` before committing.
-- [ ] **Never log secrets** — The structured JSON logger (`logger.py`) should never log API keys, Supabase service keys, JWT tokens, or user passwords. If you need to debug auth, log the user ID, not the token.
-- [ ] **Always use parameterized queries** — The Supabase SDK handles this automatically. Never construct raw SQL strings with string interpolation.
-- [ ] **Always filter by `user_id`** — Every query to Supabase must be scoped to the authenticated user's ID. RLS should catch this, but never rely solely on RLS — filter in application code too.
-- [ ] **Never expose `service_role` key** — The `SUPABASE_SERVICE_KEY` bypasses RLS. It must only be used in server-side code (FastAPI routes, APScheduler). Never put it in `NEXT_PUBLIC_*` variables.
-- [ ] **Validate all input** — Frontend: Zod schemas with react-hook-form. Backend: Pydantic models in request handlers.
-- [ ] **Run lint before commit** — `npm run lint` (frontend) and `ruff check .` (backend) should pass without errors.
-- [ ] **Keep dependencies updated** — Run `npm audit` and `pip audit` periodically. Update patch versions for critical security fixes.
-- [ ] **Use the rate limiter** — All API requests are rate limited (100 req/min). If you need to bypass (e.g., for the scheduler), use a service_role key for server-to-server calls.
-- [ ] **Authenticate WebSocket connections** — The ARIA chat WebSocket must validate the JWT token on connection. Never accept unauthenticated WebSocket messages.
+- [ ] **Never commit .env files** â€” `.env`, `.env.local`, `.env.*.local` are in `.gitignore`. Verify with `git status` before committing.
+- [ ] **Never log secrets** â€” The structured JSON logger (`logger.py`) should never log API keys, Supabase service keys, JWT tokens, or user passwords. If you need to debug auth, log the user ID, not the token.
+- [ ] **Always use parameterized queries** â€” The Supabase SDK handles this automatically. Never construct raw SQL strings with string interpolation.
+- [ ] **Always filter by `user_id`** â€” Every query to Supabase must be scoped to the authenticated user's ID. RLS should catch this, but never rely solely on RLS â€” filter in application code too.
+- [ ] **Never expose `service_role` key** â€” The `SUPABASE_SERVICE_KEY` bypasses RLS. It must only be used in server-side code (FastAPI routes, APScheduler). Never put it in `NEXT_PUBLIC_*` variables.
+- [ ] **Validate all input** â€” Frontend: Zod schemas with react-hook-form. Backend: Pydantic models in request handlers.
+- [ ] **Run lint before commit** â€” `npm run lint` (frontend) and `ruff check .` (backend) should pass without errors.
+- [ ] **Keep dependencies updated** â€” Run `npm audit` and `pip audit` periodically. Update patch versions for critical security fixes.
+- [ ] **Use the rate limiter** â€” All API requests are rate limited (100 req/min). If you need to bypass (e.g., for the scheduler), use a service_role key for server-to-server calls.
+- [ ] **Authenticate WebSocket connections** â€” The ARIA chat WebSocket must validate the JWT token on connection. Never accept unauthenticated WebSocket messages.
 
 ---
 
 ## 8. Appendices
 
-### Appendix A: Quick Start (tl;dr — 10 Commands)
+### Appendix A: Quick Start (tl;dr â€” 10 Commands)
 
 ```powershell
 # 1. Clone the repo
@@ -1226,53 +1226,53 @@ curl http://localhost:11434/api/tags
 ### Appendix B: Troubleshooting Flowchart (Text-Based)
 
 ```
-                                    ┌──────────┐
-                                    │  PROBLEM │
-                                    └────┬─────┘
-                                         │
-                                    ┌────▼────┐
-                         ┌──────────│ Frontend│──────────┐
-                         │          │ issue?  │          │
-                         │          └────┬────┘          │
-                         ▼               ▼               ▼
-                   ┌──────────┐   ┌──────────────┐  ┌──────────┐
-                   │ Cannot   │   │ Page loads   │  │ CORS or  │
-                   │ npm      │   │ but broken   │  │ API 404  │
-                   │ install  │   │              │  │          │
-                   └────┬─────┘   └──────┬───────┘  └────┬─────┘
-                        │                │               │
-                   ┌────▼────┐     ┌─────▼──────┐  ┌─────▼──────┐
-                   │ Check   │     │ Open       │  │ Check if   │
-                   │ Node    │     │ DevTools   │  │ backend    │
-                   │ version │     │ Console    │  │ is running │
-                   └─────────┘     │ for errors │  │ on :8000   │
-                                   └────────────┘  └────────────┘
-                                        │               │
-                                   ┌────▼────┐    ┌─────▼──────┐
-                                   │ Fix JS  │    │ Start      │
-                                   │ errors  │    │ backend    │
-                                   │ in code │    │ (see §2.4) │
-                                   └─────────┘    └────────────┘
+                                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                    â”‚  PROBLEM â”‚
+                                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                                    â”Œâ”€â”€â”€â”€â–¼â”€â”€â”€â”€â”
+                         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”‚ Frontendâ”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                         â”‚          â”‚ issue?  â”‚          â”‚
+                         â”‚          â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜          â”‚
+                         â–¼               â–¼               â–¼
+                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                   â”‚ Cannot   â”‚   â”‚ Page loads   â”‚  â”‚ CORS or  â”‚
+                   â”‚ npm      â”‚   â”‚ but broken   â”‚  â”‚ API 404  â”‚
+                   â”‚ install  â”‚   â”‚              â”‚  â”‚          â”‚
+                   â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                        â”‚                â”‚               â”‚
+                   â”Œâ”€â”€â”€â”€â–¼â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
+                   â”‚ Check   â”‚     â”‚ Open       â”‚  â”‚ Check if   â”‚
+                   â”‚ Node    â”‚     â”‚ DevTools   â”‚  â”‚ backend    â”‚
+                   â”‚ version â”‚     â”‚ Console    â”‚  â”‚ is running â”‚
+                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚ for errors â”‚  â”‚ on :8000   â”‚
+                                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                        â”‚               â”‚
+                                   â”Œâ”€â”€â”€â”€â–¼â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
+                                   â”‚ Fix JS  â”‚    â”‚ Start      â”‚
+                                   â”‚ errors  â”‚    â”‚ backend    â”‚
+                                   â”‚ in code â”‚    â”‚ (see Â§2.4) â”‚
+                                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
-                                    ┌──────────┐
-                                    │  Backend │  (if frontend works but API fails)
-                                    │  issue?  │
-                                    └────┬─────┘
-                                         │
-                    ┌────────────────────┼────────────────────┐
-                    ▼                    ▼                    ▼
-              ┌───────────┐      ┌──────────────┐      ┌────────────┐
-              │ uvicorn   │      │ Supabase     │      │ Ollama not │
-              │ fails to  │      │ connection   │      │ responding │
-              │ start     │      │ error        │      │            │
-              └─────┬─────┘      └──────┬───────┘      └─────┬──────┘
-                    │                   │                     │
-              ┌─────▼─────┐      ┌──────▼───────┐      ┌─────▼──────┐
-              │ Check     │      │ Check .env   │      │ Check      │
-              │ Python    │      │ SUPABASE_URL │      │ ollama     │
-              │ deps      │      │ and _KEY     │      │ serve      │
-              │ pip list  │      │ values       │      │ & port     │
-              └───────────┘      └──────────────┘      └────────────┘
+                                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                                    â”‚  Backend â”‚  (if frontend works but API fails)
+                                    â”‚  issue?  â”‚
+                                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                                         â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â–¼                    â–¼                    â–¼
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â”‚ uvicorn   â”‚      â”‚ Supabase     â”‚      â”‚ Ollama not â”‚
+              â”‚ fails to  â”‚      â”‚ connection   â”‚      â”‚ responding â”‚
+              â”‚ start     â”‚      â”‚ error        â”‚      â”‚            â”‚
+              â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜
+                    â”‚                   â”‚                     â”‚
+              â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”
+              â”‚ Check     â”‚      â”‚ Check .env   â”‚      â”‚ Check      â”‚
+              â”‚ Python    â”‚      â”‚ SUPABASE_URL â”‚      â”‚ ollama     â”‚
+              â”‚ deps      â”‚      â”‚ and _KEY     â”‚      â”‚ serve      â”‚
+              â”‚ pip list  â”‚      â”‚ values       â”‚      â”‚ & port     â”‚
+              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix C: Useful Commands Reference
@@ -1304,9 +1304,9 @@ curl http://localhost:11434/api/tags
 #### Database
 | Command | Description |
 |---|---|
-| Supabase Dashboard → SQL Editor | Run SQL queries |
-| Supabase Dashboard → Table Editor | Browse/edit data |
-| Supabase Dashboard → Auth | Manage users, OAuth providers |
+| Supabase Dashboard â†’ SQL Editor | Run SQL queries |
+| Supabase Dashboard â†’ Table Editor | Browse/edit data |
+| Supabase Dashboard â†’ Auth | Manage users, OAuth providers |
 
 #### Git
 | Command | Description |
@@ -1359,4 +1359,4 @@ curl http://localhost:11434/api/tags
 
 ---
 
-*End of Document — SB-OPS-044*
+*End of Document â€” SB-OPS-044*

@@ -1,47 +1,52 @@
-# Cost Management & FinOps Plan
+﻿# Cost Management & FinOps Plan
 
-**Document ID:** OPS-47  
-**Version:** 1.0  
-**Last Updated:** 2026-06-11  
-**Owner:** Developer (Solo)  
-**Status:** Active  
+## Document Control
+
+| Property | Value |
+|---|---|
+| **Document ID** | OPS-CST-001 |
+| **Version** | 1.0 |
+| **Status** | Active |
+| **Owner** | Developer (Solo) |
+| **Last Updated** | 2026-07-11 |
+| **Review Cycle** | Monthly |
 
 ---
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#6366F1','primaryTextColor':'#F1F5F9','primaryBorderColor':'#6366F1','lineColor':'#818CF8','secondaryColor':'#13151A','tertiaryColor':'#0A0B0F','background':'#0A0B0F','mainBkg':'#13151A','nodeBorder':'#334155','clusterBkg':'#0A0B0F','clusterBorder':'#1E293B','titleColor':'#F1F5F9','edgeLabelBackground':'#13151A','nodeTextColor':'#F1F5F9'}}}%%
 graph LR
-    Services["🏗️ Service Inventory<br/>Supabase · Vercel · Railway · Ollama · Claude · Resend · GitHub"] --> Track["📊 Cost Tracking Dashboard"]
-    Track --> Daily["📅 Daily Usage Logs"]
-    Track --> Monthly["📆 Monthly Aggregation"]
+    Services["ðŸ—ï¸ Service Inventory<br/>Supabase Â· Vercel Â· Railway Â· Ollama Â· Claude Â· Resend Â· GitHub"] --> Track["ðŸ“Š Cost Tracking Dashboard"]
+    Track --> Daily["ðŸ“… Daily Usage Logs"]
+    Track --> Monthly["ðŸ“† Monthly Aggregation"]
     Monthly --> Budget{"Budget<br/>> $5/mo?"}
-    Budget -->|No| Monitor["✅ Monitor & Maintain"]
-    Budget -->|Yes| Alert["🚨 Budget Alert Triggered"]
-    Alert --> Analyze["🔍 Analyze Cost Drivers"]
-    Analyze --> Option1["📉 Reduce AI Usage<br/>(Ollama > Claude)"]
-    Analyze --> Option2["🗜️ Optimize DB Usage<br/>(Supabase quotas)"]
-    Analyze --> Option3["🔄 Migrate Services<br/>(cheaper alternatives)"]
+    Budget -->|No| Monitor["âœ… Monitor & Maintain"]
+    Budget -->|Yes| Alert["ðŸš¨ Budget Alert Triggered"]
+    Alert --> Analyze["ðŸ” Analyze Cost Drivers"]
+    Analyze --> Option1["ðŸ“‰ Reduce AI Usage<br/>(Ollama > Claude)"]
+    Analyze --> Option2["ðŸ—œï¸ Optimize DB Usage<br/>(Supabase quotas)"]
+    Analyze --> Option3["ðŸ”„ Migrate Services<br/>(cheaper alternatives)"]
     Option1 --> Optimize
     Option2 --> Optimize
     Option3 --> Optimize
     Optimize --> TargetMet{"Target Met?"}
     TargetMet -->|Yes| Monitor
-    TargetMet -->|No| Escalate["📢 Escalate — Rethink Architecture"]
+    TargetMet -->|No| Escalate["ðŸ“¢ Escalate â€” Rethink Architecture"]
     Escalate --> Option1
-    Monitor --> Review["📋 Quarterly FinOps Review"]
+    Monitor --> Review["ðŸ“‹ Quarterly FinOps Review"]
     Review --> Services
 ```
 
 ## 1. Executive Summary
 
 ### 1.1 Purpose
-Track and optimize all costs across Second Brain OS services — ensuring the system remains sustainable on a near-zero budget while maintaining performance, reliability, and room to scale when needed.
+Track and optimize all costs across Second Brain OS services â€” ensuring the system remains sustainable on a near-zero budget while maintaining performance, reliability, and room to scale when needed.
 
 ### 1.2 FinOps Philosophy
 **Spend smart, not zero.** Invest where it matters (AI quality, user experience), save where it doesn't (compute, bandwidth, idle resources). Every dollar saved on infrastructure is a dollar available for better AI or faster development.
 
 ### 1.3 Current Monthly Cost Target
-**$0–$5/mo** — with AI (Claude API) as the only variable cost.
+**$0â€“$5/mo** â€” with AI (Claude API) as the only variable cost.
 
 ---
 
@@ -64,13 +69,13 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 
 | Service | How to Check Usage |
 |---|---|
-| **Supabase** | Dashboard → Settings → Usage → View all metrics |
-| **Vercel** | Dashboard → Usage (bandwidth, builds, functions) |
-| **Railway** | Dashboard → Usage (compute hours, credits remaining) |
+| **Supabase** | Dashboard â†’ Settings â†’ Usage â†’ View all metrics |
+| **Vercel** | Dashboard â†’ Usage (bandwidth, builds, functions) |
+| **Railway** | Dashboard â†’ Usage (compute hours, credits remaining) |
 | **Ollama** | Local: `ollama ps` (running models), log files |
-| **Anthropic Claude** | Console → Usage (tokens, cost, requests) |
-| **Resend** | Dashboard → Activity → Analytics (daily email count) |
-| **GitHub** | Settings → Billing & plans → Actions (CI minutes) |
+| **Anthropic Claude** | Console â†’ Usage (tokens, cost, requests) |
+| **Resend** | Dashboard â†’ Activity â†’ Analytics (daily email count) |
+| **GitHub** | Settings â†’ Billing & plans â†’ Actions (CI minutes) |
 
 ### 2.3 Historical Cost Tracking
 
@@ -81,7 +86,7 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 | 2026-03 | $0 | $0 | $0 | $1.10 | $0 | $0 | **$1.10** |
 | 2026-04 | $0 | $0 | $0 | $1.80 | $0 | $0 | **$1.80** |
 | 2026-05 | $0 | $0 | $0 | $1.40 | $0 | $0 | **$1.40** |
-| 2026-06 | $0 | $0 | $0 | — | $0 | $0 | **—** |
+| 2026-06 | $0 | $0 | $0 | â€” | $0 | $0 | **â€”** |
 | 2026-07 | | | | | | | |
 | 2026-08 | | | | | | | |
 | 2026-09 | | | | | | | |
@@ -109,8 +114,8 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 | Year | Infrastructure | AI (Claude) | Domain | CI/CD | **Total** |
 |---|---|---|---|---|---|
 | **2026** | $0 | $30 | $0 | $0 | **$30** |
-| **2027** | $0–$60 | $30–$120 | $15 | $0 | **$45–$195** |
-| **2028** | $60–$300 | $60–$300 | $15 | $0–$50 | **$135–$665** |
+| **2027** | $0â€“$60 | $30â€“$120 | $15 | $0 | **$45â€“$195** |
+| **2028** | $60â€“$300 | $60â€“$300 | $15 | $0â€“$50 | **$135â€“$665** |
 
 *Escalation assumes user growth or monetization by 2028.*
 
@@ -124,18 +129,18 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 | Strategy | Impact | Effort |
 |---|---|---|
 | Stay on free tier as long as physically possible | $25+/mo saved per month delayed | Low |
-| Archive old data (>90 days completed tasks, resolved ideas) | Reduces row count 10–30% | Medium |
-| Use efficient queries (select specific columns, not `*`) | Reduces compute 5–15% | Low |
-| Clean up unused tables/indexes monthly | Reduces storage 5–10% | Low |
+| Archive old data (>90 days completed tasks, resolved ideas) | Reduces row count 10â€“30% | Medium |
+| Use efficient queries (select specific columns, not `*`) | Reduces compute 5â€“15% | Low |
+| Clean up unused tables/indexes monthly | Reduces storage 5â€“10% | Low |
 | Use views instead of materialized where possible | Reduces storage | Medium |
 | **Upgrade trigger:** >80% of any free limit for 2 consecutive checks | Upgrade to Pro ($25/mo) | N/A |
 
 #### Vercel
 | Strategy | Impact | Effort |
 |---|---|---|
-| Optimize build times — use `turbo` for cache | Reduces build minutes 30–50% | Medium |
-| Use ISR for static pages (reduce function invocations) | Reduces serverless calls 40–60% | Medium |
-| Compress images/assets with `next/image` | Reduces bandwidth 20–40% | Low |
+| Optimize build times â€” use `turbo` for cache | Reduces build minutes 30â€“50% | Medium |
+| Use ISR for static pages (reduce function invocations) | Reduces serverless calls 40â€“60% | Medium |
+| Compress images/assets with `next/image` | Reduces bandwidth 20â€“40% | Low |
 | Prefer Edge functions (cheaper than serverless) | 50% cheaper per invocation | Medium |
 | Use incremental static regeneration over SSR | Cost per request ~$0 vs $0.0001 | Low |
 | **Upgrade trigger:** >80% bandwidth or builds for 2 months | Upgrade to Pro ($20/mo) | N/A |
@@ -143,7 +148,7 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 #### Railway
 | Strategy | Impact | Effort |
 |---|---|---|
-| Sleep service when inactive for >1 hour | Reduces hours 40–60% | Low (config) |
+| Sleep service when inactive for >1 hour | Reduces hours 40â€“60% | Low (config) |
 | Single instance (no HA needed for single user) | $0 saved vs multi-instance | Low |
 | Use free credits wisely (don't deploy idle services) | Preserves $5 credit buffer | Low |
 | Monitor credit burn rate weekly | Prevents surprise charges | Low |
@@ -160,21 +165,21 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 | **Batch similar requests** | ~5% | Hard | Queue similar AI tasks and send in one API call |
 | **Use shorter system prompts** | ~5% | Easy | Keep system prompts under 500 tokens |
 | **Implement request throttling** | ~10% | Medium | Rate-limit AI calls per minute |
-| **Total potential savings** | **~50–80%** | | |
+| **Total potential savings** | **~50â€“80%** | | |
 
 **Default AI Routing Logic:**
-1. Simple/repetitive tasks → Ollama (local, free)
-2. Complex reasoning, code generation, summarization → Claude API
-3. If Claude budget > 80% → Degrade gracefully: offer Ollama-only mode
+1. Simple/repetitive tasks â†’ Ollama (local, free)
+2. Complex reasoning, code generation, summarization â†’ Claude API
+3. If Claude budget > 80% â†’ Degrade gracefully: offer Ollama-only mode
 
 ### 4.3 Email Cost Optimization
 
 | Strategy | Impact | Effort |
 |---|---|---|
 | Stay within 100 emails/day on Resend free tier | $0/mo | Low |
-| Batch notifications (single digest email vs individual) | Reduces count 40–60% | Medium |
-| Only send P0/P1 notifications (critical only) | Reduces count 30–50% | Low |
-| Remove non-critical email triggers (daily summaries) | Reduces count 20–30% | Low |
+| Batch notifications (single digest email vs individual) | Reduces count 40â€“60% | Medium |
+| Only send P0/P1 notifications (critical only) | Reduces count 30â€“50% | Low |
+| Remove non-critical email triggers (daily summaries) | Reduces count 20â€“30% | Low |
 | Use in-app notifications instead of email when possible | Reduces count 50%+ | Medium |
 
 ---
@@ -212,7 +217,7 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 
 | Review Type | Frequency | Participants | Output |
 |---|---|---|---|
-| **Quick cost check** | Weekly (Mon AM) | Developer | 5-min usage snapshot → AGENTS.md note |
+| **Quick cost check** | Weekly (Mon AM) | Developer | 5-min usage snapshot â†’ AGENTS.md note |
 | **Detailed cost review** | Monthly (1st of month) | Developer | Cost report + optimization actions list |
 | **Budget planning** | Quarterly (Jan/Apr/Jul/Oct) | Developer | Budget adjustments for next quarter |
 | **Infrastructure review** | Annually (Jan) | Developer | Plan upgrades + capacity needs for the year |
@@ -243,12 +248,12 @@ Track and optimize all costs across Second Brain OS services — ensuring the sy
 
 | Condition | Decision |
 |---|---|
-| Monthly costs < $5 AND free tiers sufficient | **Stay free** — no action needed |
-| Monthly costs $5–$25 AND system actively used | **Upgrade to paid tiers** — necessary growth |
-| Monthly costs > $25 | **Evaluate monetization** before upgrading — does value justify cost? |
-| System not used for 60+ days | **Pause services, downgrade to free** — idle infrastructure is waste |
-| AI costs > 50% of total budget | **Shift to Ollama-first** — Claude only for critical tasks |
-| Free tier limit exceeded for 2+ consecutive months | **Trigger upgrade** — base cost justified by active use |
+| Monthly costs < $5 AND free tiers sufficient | **Stay free** â€” no action needed |
+| Monthly costs $5â€“$25 AND system actively used | **Upgrade to paid tiers** â€” necessary growth |
+| Monthly costs > $25 | **Evaluate monetization** before upgrading â€” does value justify cost? |
+| System not used for 60+ days | **Pause services, downgrade to free** â€” idle infrastructure is waste |
+| AI costs > 50% of total budget | **Shift to Ollama-first** â€” Claude only for critical tasks |
+| Free tier limit exceeded for 2+ consecutive months | **Trigger upgrade** â€” base cost justified by active use |
 
 ---
 
@@ -261,27 +266,27 @@ Since Second Brain OS is a solo-dev project:
 | Category | Allocation | Payment Method |
 |---|---|---|
 | **Development cost** | $0 (personal time) | Sweat equity |
-| **Infrastructure cost** | $0–$5/mo | Out of pocket (personal card) |
-| **AI (Claude) cost** | $0–$2.50/mo | Out of pocket (personal card) |
+| **Infrastructure cost** | $0â€“$5/mo | Out of pocket (personal card) |
+| **AI (Claude) cost** | $0â€“$2.50/mo | Out of pocket (personal card) |
 | **Domain (future)** | $15/yr | Out of pocket (annual) |
-| **Total annual out-of-pocket** | **$30–$75/yr** | |
+| **Total annual out-of-pocket** | **$30â€“$75/yr** | |
 
 ### 7.2 Cost Recovery Options (if monetized)
 
 | Option | Model | Est. Monthly Revenue | Feasibility |
 |---|---|---|---|
-| **SaaS subscription** | $5–$10/mo per user | $5–$500 (1–50 users) | Medium — requires hosting scale |
-| **GitHub Sponsors** | Donation-based | $0–$50/mo | Low — small project visibility |
-| **Buy Me a Coffee / Ko-fi** | One-time tips | $0–$20/mo | Low — passive |
-| **Freemium** | Free core + paid AI features | $3–$8/mo per premium user | Medium — feature-gating needed |
-| **Affiliate referrals** | Cloud service referrals | $0–$10/mo | Low — passive |
+| **SaaS subscription** | $5â€“$10/mo per user | $5â€“$500 (1â€“50 users) | Medium â€” requires hosting scale |
+| **GitHub Sponsors** | Donation-based | $0â€“$50/mo | Low â€” small project visibility |
+| **Buy Me a Coffee / Ko-fi** | One-time tips | $0â€“$20/mo | Low â€” passive |
+| **Freemium** | Free core + paid AI features | $3â€“$8/mo per premium user | Medium â€” feature-gating needed |
+| **Affiliate referrals** | Cloud service referrals | $0â€“$10/mo | Low â€” passive |
 
 ### 7.3 Budget Approval
 
 | Cost Tier | Approval | Requirement |
 |---|---|---|
 | **Under $25/mo** | Self-approved (developer) | None |
-| **$25–$100/mo** | Self-approved with justification | Brief doc explaining value vs cost |
+| **$25â€“$100/mo** | Self-approved with justification | Brief doc explaining value vs cost |
 | **Over $100/mo** | Requires monetization or sponsorship | Must have revenue stream covering >= 50% |
 
 ---
@@ -292,23 +297,23 @@ Since Second Brain OS is a solo-dev project:
 
 | Waste Source | Impact | How to Fix |
 |---|---|---|
-| **Stale data** (old tasks, resolved ideas, completed goals) | Supabase row count grows 5–10% monthly | Archive/purge data >90 days old |
-| **Unused indexes** | DB storage + write overhead 2–5% | Run `pg_stat_user_indexes`, drop unused |
+| **Stale data** (old tasks, resolved ideas, completed goals) | Supabase row count grows 5â€“10% monthly | Archive/purge data >90 days old |
+| **Unused indexes** | DB storage + write overhead 2â€“5% | Run `pg_stat_user_indexes`, drop unused |
 | **Oversized AI prompts** (too much context) | Claude token cost doubles | Strip irrelevant context; max 4K tokens |
-| **Unnecessary API calls** (redundant fetches) | Bandwidth + compute 10–20% overhead | Add client-side caching, debounce |
-| **Inefficient queries** (`SELECT *` vs specific columns) | Bandwidth + DB compute 5–15% | Always select only needed columns |
+| **Unnecessary API calls** (redundant fetches) | Bandwidth + compute 10â€“20% overhead | Add client-side caching, debounce |
+| **Inefficient queries** (`SELECT *` vs specific columns) | Bandwidth + DB compute 5â€“15% | Always select only needed columns |
 | **Development resources** (Railway deployed but idle) | Credit burn even when unused | Shut down dev deployments on Railway |
-| **Over-fetching in frontend** (large payloads) | Bandwidth + render time 10–25% | Paginate, use GraphQL or partial responses |
+| **Over-fetching in frontend** (large payloads) | Bandwidth + render time 10â€“25% | Paginate, use GraphQL or partial responses |
 | **Ollama running unnecessarily** | Local CPU/RAM (free but battery) | Stop Ollama when not using AI features |
 
 ### 8.2 Weekly Waste Reduction Checklist
 
 ```markdown
-### Weekly Waste Check (Mon AM — 5 min)
+### Weekly Waste Check (Mon AM â€” 5 min)
 
-- [ ] Review Supabase Row Counts (Dashboard → Settings → Usage)
-- [ ] Check Vercel Bandwidth (Dashboard → Usage)
-- [ ] Review Claude API costs (Console → Usage → Cost)
+- [ ] Review Supabase Row Counts (Dashboard â†’ Settings â†’ Usage)
+- [ ] Check Vercel Bandwidth (Dashboard â†’ Usage)
+- [ ] Review Claude API costs (Console â†’ Usage â†’ Cost)
 - [ ] Purge stale data (tasks >90 days completed, resolved ideas)
 - [ ] Check for unused API calls (look at network tab or logs)
 - [ ] Review recent build minutes on Vercel
@@ -321,10 +326,10 @@ Since Second Brain OS is a solo-dev project:
 ### 8.3 Monthly Waste Reduction Actions
 
 ```markdown
-### Monthly Waste Cleanup (1st of month — 15 min)
+### Monthly Waste Cleanup (1st of month â€” 15 min)
 
 ### Database
-- [ ] Run: `SELECT * FROM pg_stat_user_indexes WHERE idx_scan = 0` → drop unused indexes
+- [ ] Run: `SELECT * FROM pg_stat_user_indexes WHERE idx_scan = 0` â†’ drop unused indexes
 - [ ] Archive: move tasks completed >90 days to `tasks_archive` table
 - [ ] Vacuum: `VACUUM ANALYZE` on frequently updated tables
 - [ ] Query audit: review slow queries in Supabase Query Performance
@@ -336,12 +341,12 @@ Since Second Brain OS is a solo-dev project:
 ### AI
 - [ ] Review Claude token usage by feature (which features use most?)
 - [ ] Check Ollama is handling default AI routing (verify config)
-- [ ] Audit prompt lengths — are system prompts growing?
+- [ ] Audit prompt lengths â€” are system prompts growing?
 
 ### Infrastructure
-- [ ] Review Railway deployments — any idle services?
-- [ ] Check Vercel — any stale preview deployments?
-- [ ] Review GitHub Actions — any failing/costly workflows?
+- [ ] Review Railway deployments â€” any idle services?
+- [ ] Check Vercel â€” any stale preview deployments?
+- [ ] Review GitHub Actions â€” any failing/costly workflows?
 ```
 
 ---
@@ -350,10 +355,10 @@ Since Second Brain OS is a solo-dev project:
 
 | Phase | Characteristics | Criteria | Current Status |
 |---|---|---|---|
-| **Phase 1: Cost Aware** | Know what services cost, basic tracking in place | ✅ Cost inventory completed, monthly tracking started | ✅ **Achieved** |
-| **Phase 2: Cost Optimized** | Active optimization, waste reduction routines | ⚠️ AI optimization pending, waste checklist in use | ⚠️ **Partial** |
-| **Phase 3: Cost Predictive** | Forecast usage, model cost growth | ❌ No forecasting model yet | ❌ **Not started** |
-| **Phase 4: Business Aligned** | Cost tied to value/user growth, unit economics | ❌ N/A (single user, no revenue) | ❌ **Not applicable** |
+| **Phase 1: Cost Aware** | Know what services cost, basic tracking in place | âœ… Cost inventory completed, monthly tracking started | âœ… **Achieved** |
+| **Phase 2: Cost Optimized** | Active optimization, waste reduction routines | âš ï¸ AI optimization pending, waste checklist in use | âš ï¸ **Partial** |
+| **Phase 3: Cost Predictive** | Forecast usage, model cost growth | âŒ No forecasting model yet | âŒ **Not started** |
+| **Phase 4: Business Aligned** | Cost tied to value/user growth, unit economics | âŒ N/A (single user, no revenue) | âŒ **Not applicable** |
 
 ### FinOps Roadmap
 
@@ -384,7 +389,7 @@ Since Second Brain OS is a solo-dev project:
 Copy this into a file or spreadsheet each month:
 
 ```markdown
-# Monthly Cost Report — [Month] [Year]
+# Monthly Cost Report â€” [Month] [Year]
 
 ## Service Usage
 | Service | Metric Used | Limit | % Used | Cost |
@@ -419,17 +424,17 @@ Copy this into a file or spreadsheet each month:
 
 ### Appendix C: Waste Reduction Weekly Checklist
 
-(See Section 8.2 — formatted as markdown checklist; copy into weekly task.)
+(See Section 8.2 â€” formatted as markdown checklist; copy into weekly task.)
 
 ### Appendix D: Upgrade Impact Analysis Matrix
 
-| Upgrade | Monthly Δ | Annual Δ | Benefit | Risk if Not Upgrading |
+| Upgrade | Monthly Î” | Annual Î” | Benefit | Risk if Not Upgrading |
 |---|---|---|---|---|
-| Supabase Free → Pro | +$25 | +$300 | 16x DB, 5x rows, 25x BW, PITR | Data loss risk, performance degrades |
-| Vercel Hobby → Pro | +$20 | +$240 | 10x BW, team features | Bandwidth limits, no team |
-| Railway Free → Developer | +$5 | +$60 | Unlimited hours, 1 GB RAM | Service downtime, OOM errors |
-| Resend Free → Growth | +$15 | +$180 | 500x email capacity, custom domain | Email limits hit |
-| GitHub Free → Team | +$4 | +$48 | 50% more CI minutes | CI pipeline failures |
+| Supabase Free â†’ Pro | +$25 | +$300 | 16x DB, 5x rows, 25x BW, PITR | Data loss risk, performance degrades |
+| Vercel Hobby â†’ Pro | +$20 | +$240 | 10x BW, team features | Bandwidth limits, no team |
+| Railway Free â†’ Developer | +$5 | +$60 | Unlimited hours, 1 GB RAM | Service downtime, OOM errors |
+| Resend Free â†’ Growth | +$15 | +$180 | 500x email capacity, custom domain | Email limits hit |
+| GitHub Free â†’ Team | +$4 | +$48 | 50% more CI minutes | CI pipeline failures |
 
 ### Appendix E: API Cost Calculator (Claude Token Cost Estimation)
 
@@ -443,15 +448,15 @@ Copy this into a file or spreadsheet each month:
 | **Total** | | | | **150** | **~$1.64** |
 
 *Claude 3.5 Sonnet pricing: $3/M input tokens, $15/M output tokens.  
-*Haiku pricing: $0.25/M input, $1.25/M output — use for simple tasks to save ~85%.*
+*Haiku pricing: $0.25/M input, $1.25/M output â€” use for simple tasks to save ~85%.*
 
 ### Appendix F: Revision History
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 1.0 | 2026-06-11 | Developer | Initial release — full cost inventory, optimization strategies, monitoring, upgrade planning |
+| 1.0 | 2026-06-11 | Developer | Initial release â€” full cost inventory, optimization strategies, monitoring, upgrade planning |
 | | | | |
 
 ---
 
-*End of Document — Next Review: 2026-07-01*
+*End of Document â€” Next Review: 2026-07-01*

@@ -1,10 +1,10 @@
-# Definition of Done
+﻿# Definition of Done
 
-> **Document ID:** SB-OPS-DOD-004  
+> **Document ID:OPS-DOD-001 SB-OPS-DOD-004  
 > **Version:** 2.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Development Process  
+> **Classification:** Internal â€” Development Process  
 > **Owner:** Lead Developer  
 
 ---
@@ -140,7 +140,7 @@ Every feature PR MUST pass ALL the following checks before it can be merged and 
 
 | Category | Mandatory | Optional (Recommended) |
 |---|---|---|
-| Acceptance Criteria | All | — |
+| Acceptance Criteria | All | â€” |
 | Testing | Unit + Integration + Manual | E2E |
 | Code Quality | Lint + Format + Types | Performance profiling |
 | Documentation | JSDoc/Pydoc + API docs | README |
@@ -253,7 +253,7 @@ Every feature PR MUST pass ALL the following checks before it can be merged and 
 - [ ] Follows project markdown conventions
 - [ ] Tables properly formatted with alignment
 - [ ] Code blocks have language tags
-- [ ] Proper heading hierarchy (H1 → H2 → H3)
+- [ ] Proper heading hierarchy (H1 â†’ H2 â†’ H3)
 
 ### Review
 - [ ] Technical accuracy reviewed by subject matter expert
@@ -418,11 +418,11 @@ For medium/high risk refactoring, include in the PR description:
 
 | Change Type | Version Bump | Example |
 |---|---|---|
-| Typos, formatting, minor rewording | Patch | 1.0.0 → 1.0.1 |
-| New examples, additional edge cases | Minor | 1.0.0 → 1.1.0 |
-| Changed output schema, major restructuring | Major | 1.0.0 → 2.0.0 |
-| Changed model or temperature | Minor | 1.0.0 → 1.1.0 |
-| Changed role or instructions fundamentally | Major | 1.0.0 → 2.0.0 |
+| Typos, formatting, minor rewording | Patch | 1.0.0 â†’ 1.0.1 |
+| New examples, additional edge cases | Minor | 1.0.0 â†’ 1.1.0 |
+| Changed output schema, major restructuring | Major | 1.0.0 â†’ 2.0.0 |
+| Changed model or temperature | Minor | 1.0.0 â†’ 1.1.0 |
+| Changed role or instructions fundamentally | Major | 1.0.0 â†’ 2.0.0 |
 
 ### 6.3 Prompt Quality Metrics
 
@@ -494,10 +494,10 @@ For medium/high risk refactoring, include in the PR description:
 
 Hotfixes receive limited DoD exemptions (see [Section 9](#9-dod-exemptions-process)) but must maintain:
 
-- ✅ Code review (at least 1 approval)
-- ✅ CI passes
-- ✅ Rollback plan
-- ✅ Post-mortem scheduled
+- âœ… Code review (at least 1 approval)
+- âœ… CI passes
+- âœ… Rollback plan
+- âœ… Post-mortem scheduled
 
 ---
 
@@ -585,10 +585,10 @@ All exemptions are tracked in a central registry:
 
 | ID | Sprint | Issue | Exempted Item | Reason | Approved By | Due Sprint | Status |
 |---|---|---|---|---|---|---|---|
-| EX-001 | S7 | #312 | E2E tests | Time pressure, legacy feature | Alice | S8 | ✅ Closed |
-| EX-002 | S8 | #345 | Performance benchmark | API not in critical path | Bob | S9 | ⏳ Open |
-| EX-003 | S8 | #350 | Accessibility audit | Design not finalized | Carol | S9 | ⏳ Open |
-| EX-004 | S9 | #378 | Documentation | UI still changing | Frank | S10 | ⏳ Open |
+| EX-001 | S7 | #312 | E2E tests | Time pressure, legacy feature | Alice | S8 | âœ… Closed |
+| EX-002 | S8 | #345 | Performance benchmark | API not in critical path | Bob | S9 | â³ Open |
+| EX-003 | S8 | #350 | Accessibility audit | Design not finalized | Carol | S9 | â³ Open |
+| EX-004 | S9 | #378 | Documentation | UI still changing | Frank | S10 | â³ Open |
 
 ### Exemption Aging Rules
 
@@ -607,10 +607,10 @@ All exemptions are tracked in a central registry:
 ### 10.1 CI-Policed DoD Items
 
 ```yaml
-# .github/workflows/ci.yml — DoD enforcement
+# .github/workflows/ci.yml â€” DoD enforcement
 
 # Job 1: Frontend Quality Gate
-- name: DoD — Frontend Quality
+- name: DoD â€” Frontend Quality
   run: |
     echo "Enforcing DoD: Frontend"
     cd apps/web
@@ -619,14 +619,14 @@ All exemptions are tracked in a central registry:
     npm run build         # Enforces buildability
 
 # Job 2: Backend Quality Gate
-- name: DoD — Backend Quality
+- name: DoD â€” Backend Quality
   run: |
     echo "Enforcing DoD: Backend"
     ruff check .          # Enforces Python style (Ruff as linter)
     python -m py_compile main.py  # Enforces syntax validity
 
 # Job 3: Prompt Quality Gate
-- name: DoD — Prompt Quality
+- name: DoD â€” Prompt Quality
   run: |
     echo "Enforcing DoD: Prompt Engineering"
     python scripts/validate_prompts.py  # Validates all frontmatter
@@ -634,13 +634,13 @@ All exemptions are tracked in a central registry:
     python -m pytest tests/test_agent_prompts.py -x  # Content tests
 
 # Job 4: Security Gate
-- name: DoD — Security
+- name: DoD â€” Security
   run: |
     echo "Enforcing DoD: Security"
     npm audit --audit-level=high   # Block on high vulnerabilities
 
 # Job 5: Test Gate
-- name: DoD — Tests
+- name: DoD â€” Tests
   run: |
     echo "Enforcing DoD: Testing"
     python -m pytest tests/ -x --tb=short  # All tests must pass
@@ -649,19 +649,19 @@ All exemptions are tracked in a central registry:
 ### 10.2 DoD Gates in CI Pipeline
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌────────────┐
-│ PR Submitted │ ──→ │ Lint & Types │ ──→ │ Test Suite   │ ──→ │ Prompts Check│ ──→ │ Security   │
-│              │     │              │     │              │     │              │     │            │
-│ DoD Gate 1   │     │ Frontend    │     │ pytest pass  │     │ validate_all │     │ npm audit  │
-│              │     │ + Backend   │     │ + coverage   │     │ + tests pass │     │ high only  │
-└─────────────┘     └──────────────┘     └──────────────┘     └──────────────┘     └────────────┘
-                                                                                          │
-                                                                                    ┌─────▼─────┐
-                                                                                    │ ALL DOORS  │
-                                                                                    │    MET     │
-                                                                                    │   MERGE   │
-                                                                                    │  ALLOWED  │
-                                                                                    └───────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ PR Submitted â”‚ â”€â”€â†’ â”‚ Lint & Types â”‚ â”€â”€â†’ â”‚ Test Suite   â”‚ â”€â”€â†’ â”‚ Prompts Checkâ”‚ â”€â”€â†’ â”‚ Security   â”‚
+â”‚              â”‚     â”‚              â”‚     â”‚              â”‚     â”‚              â”‚     â”‚            â”‚
+â”‚ DoD Gate 1   â”‚     â”‚ Frontend    â”‚     â”‚ pytest pass  â”‚     â”‚ validate_all â”‚     â”‚ npm audit  â”‚
+â”‚              â”‚     â”‚ + Backend   â”‚     â”‚ + coverage   â”‚     â”‚ + tests pass â”‚     â”‚ high only  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                                                          â”‚
+                                                                                    â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”
+                                                                                    â”‚ ALL DOORS  â”‚
+                                                                                    â”‚    MET     â”‚
+                                                                                    â”‚   MERGE   â”‚
+                                                                                    â”‚  ALLOWED  â”‚
+                                                                                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 10.3 Human-Policed DoD Items (Not Automatable)
@@ -682,14 +682,14 @@ The following DoD items require manual verification by the reviewer:
 
 | Failure | DoD Violation | Action | Block Merge? |
 |---|---|---|---|
-| ESLint error | Code quality | Fix lint error | ✅ Yes |
-| TypeScript error | Type safety | Fix type | ✅ Yes |
-| Build failure | Build quality | Fix build | ✅ Yes |
-| Test failure | Testing | Fix test or code | ✅ Yes |
-| validate_prompts.py fails | Prompt quality | Fix frontmatter | ✅ Yes |
-| npm audit (high) | Security | Fix vulnerability | ✅ Yes |
-| npm audit (moderate) | Security | Fix or document | ❌ No (warning) |
-| Coverage below threshold | Testing | Add tests | ✅ Yes |
+| ESLint error | Code quality | Fix lint error | âœ… Yes |
+| TypeScript error | Type safety | Fix type | âœ… Yes |
+| Build failure | Build quality | Fix build | âœ… Yes |
+| Test failure | Testing | Fix test or code | âœ… Yes |
+| validate_prompts.py fails | Prompt quality | Fix frontmatter | âœ… Yes |
+| npm audit (high) | Security | Fix vulnerability | âœ… Yes |
+| npm audit (moderate) | Security | Fix or document | âŒ No (warning) |
+| Coverage below threshold | Testing | Add tests | âœ… Yes |
 
 ---
 
@@ -708,11 +708,11 @@ The DoD is reviewed every quarter (every 6 sprints) and updated as the project m
 
 ### Review Agenda
 
-1. **New DoD Items** — Propose additions based on recent incidents
-2. **Existing DoD Items** — Are any items obsolete or too burdensome?
-3. **DoD Violations** — Review violations from last quarter
-4. **Exemptions** — Review open exemptions, close stale ones
-5. **Automation** — Can any human-policed items be automated?
+1. **New DoD Items** â€” Propose additions based on recent incidents
+2. **Existing DoD Items** â€” Are any items obsolete or too burdensome?
+3. **DoD Violations** â€” Review violations from last quarter
+4. **Exemptions** â€” Review open exemptions, close stale ones
+5. **Automation** â€” Can any human-policed items be automated?
 
 ### DoD Change Process
 
@@ -733,7 +733,7 @@ The DoD is reviewed every quarter (every 6 sprints) and updated as the project m
 | **3. Managed** | Scale | DoD fully automated in CI, exemptions tracked | v1.5-v2.0 |
 | **4. Optimizing** | Mature | DoD metrics tracked, continuous improvement | v2.0+ |
 
-**Current Status:** Level 2 (Defined) — transitioning to Level 3
+**Current Status:** Level 2 (Defined) â€” transitioning to Level 3
 
 ### 11.3 DoD Addition Criteria
 
@@ -835,7 +835,7 @@ A DoD violation occurs when:
 [2-3 sentences describing what happened]
 
 ### Root Cause
-[Why the DoD was violated — 5 Whys]
+[Why the DoD was violated â€” 5 Whys]
 
 ### Impact
 - Users affected: [count]
@@ -883,64 +883,64 @@ graph TD
 ### Appendix A: DoD Quick Reference Card
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     DEFINITION OF DONE — QUICK CARD                  │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  📋 FEATURE                                                         │
-│  ☐ All acceptance criteria met                                      │
-│  ☐ Unit + integration tests passing                                 │
-│  ☐ Lint + type-check + build passing                                │
-│  ☐ CI green (all 8 checks)                                          │
-│  ☐ PR reviewed & approved (1+ approval)                             │
-│  ☐ Error handling implemented                                       │
-│  ☐ Input validation + RLS respected                                 │
-│  ☐ JSDoc/Pydoc added for public APIs                                │
-│  ☐ CHANGELOG entry added                                            │
-│  ☐ No secrets committed                                             │
-│                                                                     │
-│  🐛 BUG FIX                                                         │
-│  ☐ Root cause identified                                            │
-│  ☐ Regression test added                                            │
-│  ☐ Fix minimal (< 50 lines)                                         │
-│  ☐ All existing tests pass                                          │
-│                                                                     │
-│  📝 PROMPT ENGINEERING                                              │
-│  ☐ Frontmatter valid (validate_prompts.py passes)                   │
-│  ☐ Prompt body > 1000 chars                                         │
-│  ☐ 3+ few-shot examples                                             │
-│  ☐ Fallback prompt exists and tested                                │
-│  ☐ Content tests pass                                               │
-│                                                                     │
-│  🚀 HOTFIX                                                          │
-│  ☐ P0 severity confirmed                                            │
-│  ☐ Max 50 lines changed                                             │
-│  ☐ 1+ reviewer approval                                             │
-│  ☐ Rollback plan documented                                         │
-│  ☐ Post-mortem scheduled                                            │
-│                                                                     │
-│  ⚠️ EXEMPTIONS                                                      │
-│  ☐ Approved by Tech Lead (or EM for > 1 sprint)                     │
-│  ☐ Tracking issue created                                           │
-│  ☐ Due date in current or next sprint                               │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     DEFINITION OF DONE â€” QUICK CARD                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                     â”‚
+â”‚  ðŸ“‹ FEATURE                                                         â”‚
+â”‚  â˜ All acceptance criteria met                                      â”‚
+â”‚  â˜ Unit + integration tests passing                                 â”‚
+â”‚  â˜ Lint + type-check + build passing                                â”‚
+â”‚  â˜ CI green (all 8 checks)                                          â”‚
+â”‚  â˜ PR reviewed & approved (1+ approval)                             â”‚
+â”‚  â˜ Error handling implemented                                       â”‚
+â”‚  â˜ Input validation + RLS respected                                 â”‚
+â”‚  â˜ JSDoc/Pydoc added for public APIs                                â”‚
+â”‚  â˜ CHANGELOG entry added                                            â”‚
+â”‚  â˜ No secrets committed                                             â”‚
+â”‚                                                                     â”‚
+â”‚  ðŸ› BUG FIX                                                         â”‚
+â”‚  â˜ Root cause identified                                            â”‚
+â”‚  â˜ Regression test added                                            â”‚
+â”‚  â˜ Fix minimal (< 50 lines)                                         â”‚
+â”‚  â˜ All existing tests pass                                          â”‚
+â”‚                                                                     â”‚
+â”‚  ðŸ“ PROMPT ENGINEERING                                              â”‚
+â”‚  â˜ Frontmatter valid (validate_prompts.py passes)                   â”‚
+â”‚  â˜ Prompt body > 1000 chars                                         â”‚
+â”‚  â˜ 3+ few-shot examples                                             â”‚
+â”‚  â˜ Fallback prompt exists and tested                                â”‚
+â”‚  â˜ Content tests pass                                               â”‚
+â”‚                                                                     â”‚
+â”‚  ðŸš€ HOTFIX                                                          â”‚
+â”‚  â˜ P0 severity confirmed                                            â”‚
+â”‚  â˜ Max 50 lines changed                                             â”‚
+â”‚  â˜ 1+ reviewer approval                                             â”‚
+â”‚  â˜ Rollback plan documented                                         â”‚
+â”‚  â˜ Post-mortem scheduled                                            â”‚
+â”‚                                                                     â”‚
+â”‚  âš ï¸ EXEMPTIONS                                                      â”‚
+â”‚  â˜ Approved by Tech Lead (or EM for > 1 sprint)                     â”‚
+â”‚  â˜ Tracking issue created                                           â”‚
+â”‚  â˜ Due date in current or next sprint                               â”‚
+â”‚                                                                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix B: DoD Review Cycle
 
 ```
-Quarter 1 (Sprints 1-6)  →  DoD Review 1  →  Update & Publish
-Quarter 2 (Sprints 7-12) →  DoD Review 2  →  Update & Publish
-Quarter 3 (Sprints 13-18) → DoD Review 3  →  Update & Publish
-Quarter 4 (Sprints 19-26) → DoD Review 4  →  Update & Publish
+Quarter 1 (Sprints 1-6)  â†’  DoD Review 1  â†’  Update & Publish
+Quarter 2 (Sprints 7-12) â†’  DoD Review 2  â†’  Update & Publish
+Quarter 3 (Sprints 13-18) â†’ DoD Review 3  â†’  Update & Publish
+Quarter 4 (Sprints 19-26) â†’ DoD Review 4  â†’  Update & Publish
 ```
 
 ### Appendix C: DoD Enforcement Script
 
 ```python
 #!/usr/bin/env python3
-"""dod_check.py — Pre-merge DoD enforcement script.
+"""dod_check.py â€” Pre-merge DoD enforcement script.
 
 Usage: python scripts/dod_check.py <pr-number>
 
@@ -978,7 +978,7 @@ def main():
     results = run_checks()
     all_passed = True
     for name, passed, output in results:
-        status = "✅" if passed else "❌"
+        status = "âœ…" if passed else "âŒ"
         print(f"{status} {name}")
         if not passed and output:
             print(f"   {output[:200].strip()}")
