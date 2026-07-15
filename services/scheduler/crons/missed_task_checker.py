@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from config.core.supabase import get_supabase_client
 from shared.utils.logger import logger
 
 
 async def run_missed_task_checker():
     supabase = get_supabase_client()
-    now = datetime.now().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     users_resp = supabase.from_("users").select("id").execute()
 
     for user in users_resp.data or []:
