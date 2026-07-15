@@ -21,9 +21,9 @@ CREATE INDEX IF NOT EXISTS idx_habits_user_active
 CREATE INDEX IF NOT EXISTS idx_habit_logs_user_date
     ON habit_logs (user_id, date DESC);
 
--- Time Entries: user + date for daily stats
-CREATE INDEX IF NOT EXISTS idx_time_entries_user_date
-    ON time_entries (user_id, date DESC);
+-- Time Logs: user + date for daily stats
+CREATE INDEX IF NOT EXISTS idx_time_logs_user_date
+    ON time_logs (user_id, date DESC);
 
 -- Sleep Logs: user + date for sleep analysis
 CREATE INDEX IF NOT EXISTS idx_sleep_logs_user_date
@@ -69,8 +69,8 @@ CREATE INDEX IF NOT EXISTS idx_daily_briefings_user_date
 CREATE INDEX IF NOT EXISTS idx_weekly_reviews_user_week
     ON weekly_reviews (user_id, week_start DESC);
 
-CREATE INDEX IF NOT EXISTS idx_memory_user_updated
-    ON memory (user_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_aria_memory_user_updated
+    ON aria_memory (user_id, updated_at DESC);
 
 -- ============================================================================
 -- 5. Index maintenance recommendations
@@ -82,6 +82,6 @@ CREATE INDEX IF NOT EXISTS idx_memory_user_updated
 
 COMMENT ON INDEX idx_tasks_user_status_due IS 'Optimizes dashboard task list queries';
 COMMENT ON INDEX idx_habit_logs_user_date IS 'Optimizes daily briefing habit queries';
-COMMENT ON INDEX idx_time_entries_user_date IS 'Optimizes daily time stats queries';
+COMMENT ON INDEX idx_time_logs_user_date IS 'Optimizes daily time stats queries';
 COMMENT ON INDEX idx_chat_messages_user_created IS 'Optimizes chat history pagination';
 COMMENT ON INDEX idx_tasks_title_search IS 'Enables full-text search on tasks';
