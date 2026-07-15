@@ -4,10 +4,10 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-AGENTS-REF-001 |
-| Version | 6.0.0 |
+| Document ID | LEG-AGR-001 |
+| Version | 6.2.0 |
 | Status | Active |
-| Last Updated | 2026-06-23 |
+| Last Updated | 2026-07-14 |
 | Classification | Internal — AI Agent Instructions |
 | Target Audience | AI Agents (Claude, Cursor, Copilot, Copilot Chat) + Human Developers |
 | Review Cycle | Bi-weekly |
@@ -18,9 +18,9 @@
 
 ## 1. Executive Summary
 
-**Second Brain OS (ARIA OS)** is a personal AI productivity system for BTech CSE students with **27+ enterprise-grade modules** (15 functional CRUD + 10 AI agents + 7 cron jobs + enterprise infra). It follows a monorepo structure with **184 Python files**, **748 TypeScript files**, **188 documentation files**, **380 Storybook stories (72 files)**, and **21 E2E spec files**.
+**Second Brain OS (ARIA OS)** is a personal AI productivity system for BTech CSE students with **30+ enterprise-grade modules** (16 functional CRUD + 12 AI agents + 15 cron jobs + enterprise infra). It follows a monorepo structure with **236+ Python files**, **799+ TypeScript files (277 .ts + 522 .tsx)**, **383 documentation files**, **105+ Storybook stories**, and **22 E2E spec files**.
 
-**Test suite: 2411 passing Python tests + ~1900+ frontend tests | 95.56% code coverage (Python) | 85% threshold (Python) | ~4300+ total tests across ~440 test files | ~20,000 lines of Python | 140 files compile clean.**
+**Test suite: 2795+ passing Python tests across 58 test files + ~1900+ frontend tests | 96%+ code coverage (Python) | 80% threshold (Python) | ~70,640 lines of Python across 236 files.**
 
 **This file is the master reference for AI agents working on this project.** Every section below contains essential context that agents must follow when generating code, fixing bugs, or suggesting changes.
 
@@ -29,7 +29,7 @@
 - **In-process agents**: Agents run as async functions within FastAPI, not microservices (per ADR-004)
 - **Graceful degradation**: Every feature works without AI via algorithmic fallback
 - **Cyberpunk design**: Dark theme (#0A0B0F), neon accents (#6366F1, #00FFA3), Syne/DM Sans fonts
-- **API-first with versioning**: All 29 routers under `/api/v1/` with Sunset/Deprecation header support
+- **API-first with versioning**: All 31 routers under `/api/v1/` with Sunset/Deprecation header support
 - **Resilience by default**: Circuit breakers, exponential backoff retries, provider failover for all AI calls
 - **Enterprise security**: Audit trail (CSRF, XSS, sanitizer), SOC 2 control matrix, pen test framework, feature flags, API key auth
 
@@ -44,7 +44,7 @@
 | [5. UI/UX & Design System](#5-uiux--design-system) | Cyberpunk theme, design tokens, component library |
 | [6. Project Structure](#6-project-structure) | Full directory tree with file purposes |
 | [7. Database Schema](#7-database-schema) | All tables, columns, relationships, RLS policies |
-| [8. API Endpoint Reference](#8-api-endpoint-reference) | 29 routers, ~80 endpoints with routes, pagination, versioning |
+| [8. API Endpoint Reference](#8-api-endpoint-reference) | 31 routers, ~80 endpoints with routes, pagination, versioning |
 | [9. AI Agent Architecture](#9-ai-agent-architecture) | ARIA orchestrator, 10 agents, PromptLoader, prompt files |
 | [10. Prompt System Architecture](#10-prompt-system-architecture) | PromptLoader API, frontmatter schema, directory layout, fallback logic |
 | [11. Prompt Development Guide](#11-prompt-development-guide) | How to create/edit prompts, frontmatter requirements, validation, testing |
@@ -53,7 +53,7 @@
 | [14. Documentation Map](#14-documentation-map) | Where to find every doc in the project |
 | [15. AI Agent Instructions](#15-ai-agent-instructions) | 25 Golden Rules for AI agents |
 | [16. Testing Standards](#16-testing-standards) | Test categories, writing tests, coverage thresholds, mutation testing |
-| [17. CI/CD Pipeline](#17-cicd-pipeline) | 6 CI jobs: frontend, backend, prompts, docker, security, lighthouse |
+| [17. CI/CD Pipeline](#17-cicd-pipeline) | 14 CI jobs: frontend, backend, prompts, docker, security, lighthouse, pentest, codeql, dependency-scan, secret-scan, figma-token-sync, labeler, stale, release |
 | [18. Cost & Performance](#18-cost--performance) | AI cost tracking, token budgets, caching strategy, SLOs |
 | [19. Debugging Guide](#19-debugging-guide) | Common issues, solutions, debugging tools, distributed tracing |
 | [20. Deployment Guide](#20-deployment-guide) | Production stack, deployment process, rollback, canary releases |
@@ -124,14 +124,14 @@ open http://localhost:8000/redoc       # ReDoc UI
 cd services/scheduler
 
 pip install -r requirements.txt
-python main.py           # Start scheduler (runs all 7 cron jobs)
+python main.py           # Start scheduler (runs all 15 cron jobs)
 ```
 
 ### 3.5 General
 
 ```bash
 # Root-level testing
-pytest                                 # Run all 50+ tests with coverage
+pytest                                 # Run all 2795+ tests with coverage
 pytest -xvs                             # Verbose, stop on first failure
 pytest --cov=packages --cov-report=html  # HTML coverage report
 
@@ -430,8 +430,8 @@ ARIA OS - SecondBrain/
 │   ├── dependabot.yml              # Automated dependency updates (npm + pip + docker)
 │   ├── ISSUE_TEMPLATE/
 │   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/
-│       └── ci.yml                  # 5 CI jobs: frontend, backend, prompts, docker, security
+│       └── workflows/
+│           └── ci.yml                  # 12 workflow files: ci, deploy, canary, codeql, dependency-scan, figma-token-sync, labeler, lighthouse, release, secret-scan, stale
 │
 ├── .vscode/
 │   ├── extensions.json             # Recommended extensions
@@ -443,7 +443,7 @@ ARIA OS - SecondBrain/
 │   │   ├── requirements.txt        # Python deps (fastapi, supabase, anthropic, etc.)
 │   │   ├── Dockerfile              # Multi-stage build (non-root user)
 │   │   ├── .dockerignore
-│   │   └── app/api/               # 29 route handlers
+│   │   └── app/api/               # 31 route handlers + stubs
 │   │       ├── tasks.py            # /api/v1/tasks/ (6 endpoints)
 │   │       ├── courses.py          # /api/v1/courses/ (4 endpoints)
 │   │       ├── goals.py            # /api/v1/goals/ (4 endpoints)
@@ -472,7 +472,9 @@ ARIA OS - SecondBrain/
 │   │       ├── roadmap.py          # /api/v1/roadmap/ (3 endpoints)
 │   │       ├── data_export.py      # /api/v1/data/ (GDPR export)
 │   │       ├── auth.py             # /api/v1/auth/ (authentication)
-│   │       └── feature_flags.py    # /api/v1/feature-flags/ (6 endpoints)
+│   │       ├── feature_flags.py    # /api/v1/feature-flags/ (6 endpoints)
+│   │       ├── skills.py            # /api/v1/skills/ (76+ endpoints)
+│   │       └── learning.py          # /api/v1/learning/ (2 endpoints)
 │   │
 │   ├── web/                        # Next.js 14 frontend
 │   │   ├── package.json            # ~40 deps (next, framer-motion, supabase, etc.)
@@ -483,7 +485,7 @@ ARIA OS - SecondBrain/
 │   │   ├── playwright.config.ts     # E2E tests
 │   │   ├── vitest.config.ts         # Unit tests
 │   │   ├── sentry.client.config.ts  # Error tracking
-│   │   ├── app/                    # Pages (18 routes: dashboard, tasks, courses, etc.)
+│   │   ├── app/                    # Pages (30+ routes: dashboard, tasks, courses, etc.)
 │   │   ├── components/             # UI components (Button, Card, Modal, etc.)
 │   │   ├── hooks/                  # useAuth, useNetworkStatus, useRealtime
 │   │   ├── lib/                    # supabase, stores, query, types, utils
@@ -491,16 +493,28 @@ ARIA OS - SecondBrain/
 │   │   ├── types/                  # Shared TypeScript types
 │   │   └── public/                 # Icons, manifest, service worker
 │   │
-│   ├── admin/                      # WIP — Admin panel
-│   └── mobile/                     # WIP — React Native / PWA
+│   # ├── admin/                      # (Planned — not yet created)
+│   # └── mobile/                     # (Planned — PWA active instead)
 │
 ├── packages/
 │   ├── ai/                         # AI agent system
 │   │   ├── __init__.py             # Exports agents module
 │   │   ├── client.py               # LLMClient with retry, circuit breaker, fallback
 │   │   ├── prompt_loader.py         # PromptLoader — reads prompts/, parses YAML frontmatter
-│   │   └── agents/                  # 10 agent modules (8 live + 2 new)
-│   │       ├── __init__.py          # Exports all 10 agent modules
+│   │   ├── embeddings.py           # Text embedding service (sentence-transformers)
+│   │   ├── rag.py                  # Retrieval-augmented generation pipeline
+│   │   ├── tool_calling.py         # Tool calling system with schema discovery + execution
+│   │   ├── guardrails.py           # Input/output guardrails, toxicity, PII, injection
+│   │   ├── observability.py        # Token usage tracking, latency, span tracing
+│   │   ├── context_engine.py       # Context assembly for agent prompts
+│   │   ├── memory/                 # 5-tier memory architecture
+│   │   │   ├── __init__.py         # Memory system exports
+│   │   │   ├── tiers.py            # 5 memory tier definitions (working, short, long, episodic, semantic)
+│   │   │   ├── compression.py      # Memory compression and summarization
+│   │   │   ├── retrieval.py        # Memory retrieval with relevance scoring
+│   │   │   └── orchestrator.py     # Memory tier orchestration
+│   │   └── agents/                  # 11 agent modules (all live)
+│   │       ├── __init__.py          # Exports all 11 agent modules
 │   │       ├── briefing_agent.py    # A09 — Daily briefing generator
 │   │       ├── memory_agent.py      # A02 — Memory consolidation
 │   │       ├── learning_agent.py    # A03 — Pattern detection
@@ -510,7 +524,8 @@ ARIA OS - SecondBrain/
 │   │       ├── weekly_review_agent.py # A10 — Weekly review generator
 │   │       ├── sleep_agent.py       # A13 — Sleep analysis & wind-down
 │   │       ├── nudge_agent.py       # A14 — Course/habit nudges
-│   │       └── roadmap_agent.py     # A08 — Skill development roadmap optimizer
+│   │       ├── roadmap_agent.py     # A08 — Skill development roadmap optimizer
+│   │       ├── skill_agent.py        # A17 — Skills intelligence (8 sub-agents)
 │   │
 │   ├── config/core/                # FastAPI configuration
 │   │   ├── config.py               # Pydantic Settings (22 fields)
@@ -526,7 +541,10 @@ ARIA OS - SecondBrain/
 │   │   ├── error_response.py       # Standardized error responses
 │   │   ├── feedback.py             # Feedback system schemas
 │   │   ├── feature_flag.py         # Feature flag schemas
-│   │   └── prompt_history.py       # Prompt version history schemas
+│   │   ├── prompt_history.py       # Prompt version history schemas
+│   │   ├── memory.py               # Memory system schemas
+│   │   ├── feedback.py             # Feedback system schemas
+│   │   └── tool_calling.py         # Tool calling schemas
 │   ├── shared/utils/               # Cross-cutting utilities
 │   │   ├── logger.py               # Structured JSON logging
 │   │   ├── rate_limiter.py         # Per-endpoint rate limiter
@@ -541,23 +559,39 @@ ARIA OS - SecondBrain/
 │   │   ├── sanitizer.py            # HTML sanitization
 │   │   ├── batch.py                # Batch operation utilities
 │   │   ├── retention.py            # Data retention policies
-│   │   └── feature_flags.py        # Server-side feature flags
+│   │   ├── feature_flags.py        # Server-side feature flags
+│   │   ├── upsert.py               # Upsert (insert-or-update) utility
+│   │   ├── notifications.py        # Notification dispatcher system
+│   │   ├── ai_utils.py             # AI utility helpers
+│   │   ├── event_outbox.py         # Outbox pattern for event publishing
+│   │   ├── webhook_delivery.py     # Webhook delivery with retry
+│   │   └── redis_cache.py          # Redis-backed cache layer
 │   ├── types/                      # Shared TypeScript types
-│   └── ui/                         # Shared React components
+# │   └── ui/                         # (Planned — shared package not yet created)
 │
 ├── services/
-│   └── scheduler/                  # APScheduler with 7 cron jobs
-│       ├── main.py                 # 7 jobs: briefing, radar, review, habits, tasks, sleep, nudges
+│   ├── mcp/                        # MCP server (tool calling proxy)
+│   │   ├── server.py               # MCP server entry point (FastMCP)
+│   │   ├── transport.py            # SSE transport layer
+│   │   ├── tools.py                # Tool definitions (8 tools)
+│   │   ├── resources.py            # Resource definitions
+│   │   ├── prompts.py              # MCP prompt templates
+│   │   ├── requirements.txt        # Dependencies (mcp, httpx, pydantic)
+│   │   ├── Dockerfile
+│   │   └── run.sh                  # Startup script
+│   │
+│   └── scheduler/                  # APScheduler with 15 cron jobs
+│       ├── main.py                 # 15 jobs: briefing, radar, review, habits, missed_tasks, sleep, nudges, course_nudge, 5x skill, deadline_alert, health_check, memory_consolidation
 │       ├── requirements.txt        # Dependencies
 │       ├── Dockerfile
 │       ├── .dockerignore
-│       └── crons/                  # 7 individual cron job modules
+│       └── crons/                  # 16 individual cron job modules
 │
-├── prompts/                        # 14 AI prompt templates
+├── prompts/                        # 22 AI prompt templates
 │   ├── system/                     # 2 system prompts
 │   │   ├── aria_system.md          # ARIA orchestration (369 lines, v3.0.0)
 │   │   └── guardrails.md           # Safety guardrails (346 lines, v2.0.0)
-│   ├── agents/                     # 10 agent prompts
+│   ├── agents/                     # 18 agent prompts (10 core + 8 skill)
 │   │   ├── briefing_agent.md       # Daily briefing — 957 lines
 │   │   ├── weekly_review_agent.md  # Weekly review — 1264 lines
 │   │   ├── opportunity_radar_agent.md # Opportunity matching — 822 lines
@@ -567,15 +601,23 @@ ARIA OS - SecondBrain/
 │   │   ├── task_agent.md           # Task analysis — 839 lines
 │   │   ├── sleep_agent.md          # Wind-down messages — 905 lines
 │   │   ├── nudge_agent.md          # Course/habit nudges — 665 lines
-│   │   └── roadmap_agent.md        # Skill roadmap optimizer — 257 lines (NEW)
+│   │   ├── roadmap_agent.md        # Skill roadmap optimizer — 257 lines (NEW)
+│   │   ├── skill_assessment_agent.md    # Skill assessment engine
+│   │   ├── skill_career_agent.md        # Career guidance
+│   │   ├── skill_evidence_agent.md      # Evidence evaluation
+│   │   ├── skill_intelligence_agent.md  # Market intelligence
+│   │   ├── skill_market_agent.md        # Market analysis
+│   │   ├── skill_opportunity_agent.md   # Skill opportunities
+│   │   ├── skill_recommendation_agent.md # Skill recommendations
+│   │   └── skill_roadmap_agent.md       # Skill roadmap
 │   └── templates/                  # 2 template prompts
 │       ├── context_assembly.md
 │       └── email_templates.md
 │
-├── docs/                           # ~185 documentation files, ~16 MB
+├── docs/                           # ~383 documentation files, ~16 MB
 │   ├── product/                    # Vision, PRD, BRD, SRS, Features, Personas
 │   ├── engineering/                # Architecture, API, DB, Events, ADRs, Modules
-│   │   └── adr/                    # 8 Architecture Decision Records
+│   │   └── adr/                    # 15 Architecture Decision Records (ADR-001 through ADR-015)
 │   ├── design/                     # UI/UX, Design System, Tokens, Wireframes
 │   ├── ai/                         # Agent spec (239KB), Memory, Knowledge Graph
 │   ├── security/                   # Security, Compliance, Data Privacy, SOC 2
@@ -585,7 +627,7 @@ ARIA OS - SecondBrain/
 │
 ├── infrastructure/                 # Docker, Terraform, Canary (WIP)
 │   └── canary/                     # Canary deployment: README, docker-compose override
-├── tests/                          # 2411 tests (42 test files)
+├── tests/                          # 2795+ tests (56+ test files)
 │   ├── conftest.py                 # Adds packages/ to sys.path
 │   ├── test_prompt_loader.py       # 31 tests: PromptLoader, frontmatter, rendering
 │   ├── test_agent_prompts.py       # 42 tests: per-agent content, size, tags
@@ -604,9 +646,46 @@ ARIA OS - SecondBrain/
 │   ├── test_main_routes.py         # 28 tests: health, CORS, middleware, errors
 │   ├── test_validate_script.py     # 23 tests: validation script unit tests
 │   ├── test_scripts.py             # 48 tests: gen_sdb_full, validate_migrations, validate_skills_schema
-│   └── test_integration.py         # 5 tests: cross-module integration flows
-├── scripts/                        # Utility scripts (20+)
-│   ├── validate_prompts.py         # CI script — validates all 14 prompts' frontmatter
+│   ├── test_integration.py         # 5 tests: cross-module integration flows
+│   ├── test_rag.py                 # 45+ tests: RAG pipeline, retrieval, reranking, context assembly
+│   ├── test_embeddings.py          # 20+ tests: Embedding creation, caching, fallback
+│   ├── test_tool_calling.py        # 88+ tests: Tool discovery, execution, retry, batch, edge cases
+│   ├── test_memory_architecture.py # 30+ tests: 5-tier memory, compression, retrieval, orchestration
+│   ├── test_guardrails.py          # 25+ tests: Input/output guardrails, toxicity, PII, injection
+│   ├── test_observability.py       # 20+ tests: Token tracking, latency, span tracing
+│   ├── test_agents_phase2.py       # 74+ tests: Agent feature completeness, notifications, upsert, AI utils
+│   ├── test_ai_cache.py          # AI caching tests
+│   ├── test_context_engine.py    # Context engine tests
+│   ├── test_deadline_alert.py    # Deadline alert tests
+│   ├── test_event_webhook_notify.py # Event/webhook/notification tests
+│   ├── test_functional_utils.py  # Functional utility tests
+│   ├── test_integration_llm.py   # LLM integration tests
+│   ├── test_routes_academics.py  # Academics route tests
+│   ├── test_routes_analytics.py  # Analytics route tests
+│   ├── test_routes_automation.py # Automation route tests
+│   ├── test_routes_briefings.py  # Briefings route tests
+│   ├── test_routes_data_export.py # Data export route tests
+│   ├── test_routes_feature_flags.py # Feature flag route tests
+│   ├── test_routes_feedback.py   # Feedback route tests
+│   ├── test_routes_monitoring.py # Monitoring route tests
+│   ├── test_routes_nlp.py        # NLP route tests
+│   ├── test_routes_predictions.py # Predictions route tests
+│   ├── test_routes_prompts.py    # Prompts route tests
+│   ├── test_routes_reviews.py    # Reviews route tests
+│   ├── test_routes_roadmap.py    # Roadmap route tests
+│   ├── test_routes_videos.py     # Videos route tests
+│   ├── test_scheduler_coverage.py # Scheduler coverage tests
+│   ├── test_scheduler_full.py    # Full scheduler tests
+│   ├── test_script_gen_sdb_full.py # sdb_full script tests
+│   ├── test_script_validate_migrations.py # Migration validation tests
+│   ├── test_script_validate_skills_schema.py # Skills schema validation tests
+│   ├── test_security_utils.py    # Security utility tests
+│   ├── test_skills_agent.py      # Skills agent tests
+│   ├── test_skills_infrastructure.py # Skills infrastructure tests
+│   ├── test_skills_schemas.py    # Skills schema tests
+│   └── test_webhook_delivery.py  # Webhook delivery tests
+├── scripts/                        # Utility scripts (38+)
+│   ├── validate_prompts.py         # CI script — validates all 22 prompts' frontmatter
 │   ├── owasp-check.sh              # OWASP vulnerability SAST scan
 │   ├── sql-injection-audit.sh      # SQL injection pattern auditor
 │   ├── zap-pentest.sh              # OWASP ZAP DAST runner
@@ -619,16 +698,39 @@ ARIA OS - SecondBrain/
 │   ├── add-react-memo.mjs          # Auto-add React.memo
 │   ├── lint-a11y.ts                # Accessibility linting
 │   ├── check-packages.ts           # Package health check
-│   └── init-feature-flags.sql      # Feature flags DB migration
-├── analytics/                      # Analytics config (WIP)
+│   ├── init-feature-flags.sql      # Feature flags DB migration
+│   ├── add-react-memo.py          # Auto-add React.memo
+│   ├── analyze-queries.sql        # Query analysis
+│   ├── benchmark_api.py           # API benchmarking
+│   ├── check-links.ps1            # Link checker
+│   ├── check-token-drift.ts       # Token drift checker
+│   ├── dependency-report.py       # Dependency report
+│   ├── gen_sdb_full.py            # Full schema DDL generator
+│   ├── generate-test-data.sql     # Test data generation
+│   ├── health-check.py            # Health check utility
+│   ├── install-gitleaks-precommit.sh # GitLeaks installer
+│   ├── migrate-doc-ids.ps1        # Doc ID migration
+│   ├── owasp-check.ps1            # OWASP check (PS)
+│   ├── purgecss-check.sh          # PurgeCSS audit
+│   ├── run-pentest.ps1            # Pentest runner (PS)
+│   ├── run_migration.py           # DB migration runner
+│   ├── seed_skills_taxonomy.sql   # Skills taxonomy seed
+│   ├── sql-injection-audit.ps1    # SQLi audit (PS)
+│   ├── supabase-indexes.sql       # Supabase index management
+│   ├── validate_migrations.py     # Migration validation
+│   ├── validate_skills_schema.py  # Skills schema validation
+│   ├── validate-doc-ids.py        # Document ID validation
+│   └── zap-pentest.ps1            # ZAP pentest (PS)
+# ├── analytics/                      # (Analytics dashboard exists in apps/web — no separate directory)
 ├── monitoring/                     # Monitoring config (WIP)
-├── tests/performance/              # k6 load test scripts
+├── tests/performance/              # k6 load test scripts (6 files)
 │   ├── load-test-auth.js           # Auth endpoint load test
 │   ├── load-test-crud.js           # CRUD endpoint load test
 │   ├── load-test-ai.js             # AI endpoint load test
 │   ├── load-test-spike.js          # Spike test
-│   └── run-k6.sh                   # k6 test runner
-├── apps/web/e2e/                   # Playwright E2E specs (21)
+│   ├── run-k6.sh                   # k6 test runner
+│   ├── load-test-skills.js       # Skills endpoint load test
+├── apps/web/e2e/                   # Playwright E2E specs (22)
 │   ├── specs/ai-chat.spec.ts       # AI chat flow
 │   ├── specs/auth-flow.spec.ts     # Auth flow
 │   ├── specs/dashboard-loading.spec.ts
@@ -642,12 +744,21 @@ ARIA OS - SecondBrain/
 │   ├── specs/opportunities.spec.ts # Opportunity radar + scores
 │   ├── specs/resources.spec.ts     # Resource library + tags
 │   ├── specs/time-entries.spec.ts  # Time tracking + Pomodoro
-│   └── specs/projects.spec.ts      # Project phases + blockers
+│   ├── specs/projects.spec.ts      # Project phases + blockers
+│   ├── specs/skills.spec.ts      # Skills CRUD + assessment
 └── .github/workflows/
     ├── ci.yml                      # 7 CI jobs: frontend, backend, prompts, docker, security, lighthouse, pentest
     ├── deploy.yml                  # Production deployment (Vercel + Railway)
+    ├── canary.yml                  # Canary deployment
+    ├── codeql.yml                  # CodeQL security analysis
+    ├── codeql-analysis.yml         # Additional CodeQL analysis
+    ├── dependency-scan.yml         # Dependency vulnerability scanning
+    ├── figma-token-sync.yml        # Figma design token sync
+    ├── labeler.yml                 # PR auto-labeler
     ├── lighthouse.yml              # Lighthouse CI audit
-    └── canary.yml                  # Canary deployment workflow
+    ├── release.yml                 # Release automation
+    ├── secret-scan.yml             # Secret scanning
+    └── stale.yml                   # Stale issue/PR management
 ```
 
 ---
@@ -676,7 +787,16 @@ ARIA OS - SecondBrain/
 | `memory` | AI persistent memory (preferences, patterns) | ✅ | user_id |
 | `learning_progress` | Learning metrics snapshots | ✅ | user_id, date |
 | `users` | User profile, preferences, settings | ✅ | id, email |
-
+| `skills` | Skill taxonomy, levels, assessments | ✅ | user_id, category |
+| `skill_categories` | Skill category definitions | ✅ | user_id |
+| `skill_evidence` | Evidence records for skill assessment | ✅ | user_id, skill_id |
+| `api_keys` | API key management for external access | ✅ | user_id |
+| `notifications` | User notification history | ✅ | user_id, created_at |
+| `agent_activity` | AI agent action log | ✅ | user_id, agent_id |
+| `predictions` | AI prediction results | ✅ | user_id, type |
+| `nlp_commands` | Natural language command history | ✅ | user_id |
+| `prompt_history` | Prompt version history | ✅ | prompt_name |
+ 
 ### 7.2 RLS Policy Template
 
 ```sql
@@ -748,7 +868,12 @@ All endpoints are under `/api/v1/` prefix. See [Section 24](#24-api-versioning-s
 | Academics | `academics.py` | GET, POST | ✅ | ✅ |
 | Videos | `videos.py` | GET, POST, DELETE/{id} | ✅ | ✅ |
 | Roadmap | `roadmap.py` | GET, POST, PUT/{id} | ✅ | ✅ |
-
+| Skills | `skills.py` | GET, POST, PUT/{id}, DELETE/{id} (and ~76+ sub-resource endpoints) | ✅ | ✅ |
+| Auth | `auth.py` | POST/login, POST/logout, POST/refresh | ✅ | — |
+| Data Export | `data_export.py` | GET/export, POST/export | ✅ | — |
+| Feature Flags | `feature_flags.py` | GET, POST, PUT/{id}, DELETE/{id}, GET/evaluate, POST/bulk | ✅ | — |
+| Learning | `learning.py` | GET, POST | ✅ | ✅ |
+ 
 ### 8.2 Standard Endpoint Pattern
 
 ```python
@@ -826,21 +951,22 @@ entry.render(field1="value1")               # Renders template with kwargs
 | A01 | Planner | Service | 7 AM + on-demand | Yes | — | — | Design |
 | A02 | Memory | Service | Every chat (bg) | Yes | `memory_agent.py` | `agents/memory_agent.md` | ✅ Live |
 | A03 | Learning | Service | Daily + on-demand | Yes | `learning_agent.py` | `agents/learning_agent.md` | ✅ Live |
-| A04 | Reminder | Cron | Every 15 min | No | — | — | ✅ Live |
+| A04 | Reminder (cron-only, no dedicated file) | Cron | Every 15 min | No | — | — | ✅ Live |
 | A05 | Career | Service | Weekly + on-demand | Yes | — | — | Design |
 | A06 | Opportunity | Cron | 6 AM daily | Yes | `opportunity_agent.py` | `agents/opportunity_radar_agent.md` | ✅ Live |
 | A07 | Analytics | Service | Real-time + weekly | No | — | — | Design |
 | A08 | Roadmap | Service | On-demand + weekly | Yes | `roadmap_agent.py` | `agents/roadmap_agent.md` | ✅ Live |
 | A09 | Daily Briefing | Cron | 7 AM daily | Yes | `briefing_agent.py` | `agents/briefing_agent.md` | ✅ Live |
 | A10 | Weekly Review | Cron | Sun 8 PM | Yes | `weekly_review_agent.py` | `agents/weekly_review_agent.md` | ✅ Live |
-| A11 | Missed Task Checker | Cron | Every 15 min | No | — | — | ✅ Live |
-| A12 | Habit Miss Checker | Cron | Midnight daily | No | — | — | ✅ Live |
-| A13 | Sleep & Bedtime | Cron | 9:30 PM + wake | Yes | `sleep_agent.py` | `agents/sleep_agent.md` | ✅ Live |
+| A11 | Missed Task Checker | Cron | Midnight daily | No | — | — | ✅ Live |
+| A12 | Habit Miss Checker | Cron | 8 PM daily | No | — | — | ✅ Live |
+| A13 | Sleep & Bedtime | Cron | 10:30 PM (bedtime only) | Yes | `sleep_agent.py` | `agents/sleep_agent.md` | ✅ Live |
 | A14 | Course Progress Nudge | Cron | 6 PM daily | Yes | `nudge_agent.py` | `agents/nudge_agent.md` | ✅ Live |
 | A15 | Opportunity Matching | Service | On-demand | Yes | `opportunity_matching_agent.py` | `agents/opportunity_matching_agent.md` | ✅ Live |
 | A16 | (Reserved) | — | — | — | — | — | — |
-
-### 9.4 Prompt Files Inventory (14 files)
+| A17 | Skills Intelligence | Service | On-demand + daily refresh | Yes | `skill_agent.py` | 8 skill-* prompts | ✅ Live |
+ 
+### 9.4 Prompt Files Inventory (22 files)
 
 ```
 prompts/
@@ -857,7 +983,15 @@ prompts/
 │   ├── task_agent.md             (20KB, 839 lines)    — Breakdown + prioritization
 │   ├── sleep_agent.md            (26KB, 905 lines)    — 5 sleep profiles, wind-down
 │   ├── nudge_agent.md            (19KB, 665 lines)    — 5 nudge scenarios, escalation
-│   └── roadmap_agent.md          (7KB, 257 lines)     — Skill roadmap optimizer (NEW)
+│   ├── roadmap_agent.md          (7KB, 257 lines)     — Skill roadmap optimizer (NEW)
+│   ├── skill_assessment_agent.md    (XX lines)    — Skill competency assessment
+│   ├── skill_career_agent.md        (XX lines)    — Career pathway guidance
+│   ├── skill_evidence_agent.md      (XX lines)    — Evidence evaluation engine
+│   ├── skill_intelligence_agent.md  (XX lines)    — Market intelligence analysis
+│   ├── skill_market_agent.md        (XX lines)    — Labor market trend analysis
+│   ├── skill_opportunity_agent.md   (XX lines)    — Skill-opportunity matching
+│   ├── skill_recommendation_agent.md (XX lines)   — Personalized recommendations
+│   └── skill_roadmap_agent.md       (XX lines)    — Skill development roadmap
 └── templates/
     ├── context_assembly.md        (6KB, 208 lines)    — Data assembly for agent inputs
     └── email_templates.md         (5KB, 178 lines)    — Digest and notification templates
@@ -937,7 +1071,7 @@ This ensures **zero downtime** if a prompt file is missing, malformed, or all AI
 ```
 prompts/
 ├── system/     # Maximum 3 files. Always loaded first. No user data references.
-├── agents/     # One file per agent. Matches agent module name.
+├── agents/     # One file per agent (or sub-agent). Matches agent module name.
 └── templates/  # Context builders, email templates. Never directly sent to LLM.
 ```
 
@@ -962,7 +1096,7 @@ Required fields per prompt category:
 Validation is enforced by:
 1. **CI job** (`.github/workflows/ci.yml`): runs `scripts/validate_prompts.py` on every push
 2. **Pre-commit hooks**: `validate-prompts` and `pytest-prompts` in `.pre-commit-config.yaml`
-3. **Unit tests**: 16 tests in `tests/test_prompt_loader.py` + 14 tests in `tests/test_agent_prompts.py`
+3. **Unit tests**: 31 tests in `tests/test_prompt_loader.py` + 42 tests in `tests/test_agent_prompts.py`
 4. **Pre-merge check**: `make pre-commit`
 
 ---
@@ -1215,36 +1349,39 @@ docker compose logs -f
 |---|---|---|
 | Product Vision | `docs/product/00_ProjectVision.md` | `docs/product/01_CurrentStateAudit.md` |
 | PRD / BRD / SRS | `docs/product/02_PRD.md` | `docs/product/03_BRD.md`, `docs/product/04_SRS.md` |
-| Features | `docs/product/03_Features.md` | `docs/product/05_Features.md` |
+| Features | `docs/product/03_Features.md` | `docs/product/03_Features.md` |
 | User Stories / Acceptance | `docs/product/06_UserStories.md` | `docs/product/07_AcceptanceCriteria.md` |
-| Architecture | `docs/engineering/12_Architecture.md` | `docs/engineering/13_SystemArchitecture.md` |
+| Architecture | `docs/engineering/12_Architecture.md` | `docs/engineering/12_Architecture.md` |
 | API Reference | `docs/engineering/17_API.md` | `docs/engineering/18_Events.md` |
 | Database | `docs/engineering/15_Database.md` | `docs/engineering/16_DataGovernance.md` |
 | AI Agents | `docs/ai/20_Agent.md` (239KB) | `docs/ai/19_AI_Instructions.md` |
 | Prompts | `docs/ai/PromptVersioning.md` | `prompts/` + `packages/ai/prompt_loader.py` |
 | Memory Architecture | `docs/ai/22_MemoryArchitecture.md` | `docs/ai/23_KnowledgeGraph.md` |
 | Design System | `docs/design/10_DesignSystem.md` | `docs/design/35_DesignTokens.md` |
-| UI/UX Guidelines | `docs/design/08_UIUX.md` | `docs/design/09_Design.md` |
+| UI/UX Guidelines | `docs/design/08_UIUX.md` | `docs/design/08_UIUX.md` |
 | Security | `docs/security/24_Security.md` | `docs/security/ThreatModel.md` |
+| Data Classification | `docs/security/policies/data-classification.md` | `docs/security/Encryption.md` |
+| Incident Response | `docs/security/policies/incident-response.md` | `docs/operations/40_IncidentResponse.md` |
+| Vulnerability Management | `docs/security/policies/vulnerability-management.md` | `docs/security/VulnerabilityInventory.md` |
 | Deployment | `docs/devops/26_Deployment.md` | `docs/devops/27_DevOps.md` |
-| Testing Strategy | `docs/qa/28_Testing.md` | `docs/qa/29_QA.md` |
+| Testing Strategy | `docs/qa/28_Testing.md` | `docs/qa/28_Testing.md` |
 | Operations / Runbooks | `docs/operations/39_Runbooks.md` | `docs/operations/40_IncidentResponse.md` |
-| ADRs | `docs/engineering/adr/ADR-001*.md` (8 files) | `docs/engineering/adr/` |
+| ADRs | `docs/engineering/adr/ADR-001*.md` (15 files) | `docs/engineering/adr/` |
 | Implementation Status | `docs/operations/IMPLEMENTATION_STATUS.md` | — |
 
 ### 14.2 All Docs by Category
 
 | Category | Count | Key Files |
 |---|---|---|
-| **Product** | 14 | Vision, PRD, BRD, SRS, Features, User Stories, Personas, Roadmap |
-| **Design** | 8 | UI/UX, Design System, Tokens, Accessibility, Motion, Responsive |
-| **Engineering** | 27 + 8 ADRs | Architecture, API, DB, Events, Agent Arch, ADRs, Modules |
-| **AI** | 11 | Agent spec (239KB), Memory, Knowledge Graph, Skills, RAG |
-| **Security** | 7 | Security, Compliance, Data Privacy, Auth, Encryption |
-| **DevOps** | 8 | Deployment, DevOps, Release Mgmt, Docker, Kubernetes |
-| **QA** | 6 | Testing, QA, E2E, Performance, Security Testing |
-| **Operations** | 23 | Runbooks, Monitoring, DR, SLA, Risk, Sprint Plan, Backlog |
-| **Total** | **~120 files** | **~16 MB documentation** |
+| **Product** | 29 | Vision, PRD, BRD, SRS, Features, User Stories, Personas, Roadmap |
+| **Design** | 55 | UI/UX, Design System, Tokens, Accessibility, Motion, Responsive |
+| **Engineering** | 69 + 15 ADRs | Architecture, API, DB, Events, Agent Arch, ADRs, Modules |
+| **AI** | 48 | Agent spec (239KB), Memory, Knowledge Graph, Skills, RAG |
+| **Security** | 18 | Security, Compliance, Data Privacy, Auth, Encryption, Data Classification Policy, Incident Response Playbook, Vulnerability Management Policy, Vulnerability Inventory, Pen Test Reports |
+| **DevOps** | 15 | Deployment, DevOps, Release Mgmt, Docker, Kubernetes |
+| **QA** | 12 | Testing, QA, E2E, Performance, Security Testing |
+| **Operations** | 44 | Runbooks, Monitoring, DR, SLA, Risk, Sprint Plan, Backlog |
+| **Total** | **~383 files** | **~16 MB documentation** |
 
 ---
 
@@ -1327,7 +1464,7 @@ docker compose logs -f
 ### 16.1 Test Categories
 
 | Category | Location | Count | Purpose |
-|---|---|---|---|---|
+|---|---|---|---|
 | Prompt Loader | `tests/test_prompt_loader.py` | 31 | Frontmatter validation, loading, rendering, edge cases |
 | Agent Prompts | `tests/test_agent_prompts.py` | 42 | Per-agent content checks, size thresholds, tags, imports |
 | API Endpoints | `tests/test_api_endpoints.py` | 132 | Endpoint response structure, error handling, CRUD flows |
@@ -1346,12 +1483,50 @@ docker compose logs -f
 | Validate Script | `tests/test_validate_script.py` | 23 | Validation script unit tests |
 | Scripts | `tests/test_scripts.py` | 48 | gen_sdb_full, validate_migrations, validate_skills_schema |
 | Integration | `tests/test_integration.py` | 5 | Cross-module integration flows |
-| **Total** | | **2411 tests** | |
+| **RAG** | `tests/test_rag.py` | **NEW** — 45+ | RAG pipeline: retrieval, reranking, context assembly |
+| **Embeddings** | `tests/test_embeddings.py` | **NEW** — 20+ | Embedding creation, caching, fallback |
+| **Tool Calling** | `tests/test_tool_calling.py` | **NEW** — 88+ | Tool discovery, execution, retry, batch, edge cases |
+| **Memory Architecture** | `tests/test_memory_architecture.py` | **NEW** — 30+ | 5-tier memory, compression, retrieval, orchestration |
+| **Guardrails** | `tests/test_guardrails.py` | **NEW** — 25+ | Input/output guardrails, toxicity, PII, injection |
+| **Observability** | `tests/test_observability.py` | **NEW** — 20+ | Token tracking, latency, span tracing |
+| **Phase 2 Agents** | `tests/test_agents_phase2.py` | **NEW** — 74+ | Agent feature completeness, notifications, upsert, AI utils |
+| Context Engine | `tests/test_context_engine.py` | **NEW** | Context engine pipeline tests |
+| AI Cache | `tests/test_ai_cache.py` | **NEW** | AI response caching tests |
+| Deadline Alert | `tests/test_deadline_alert.py` | **NEW** | Deadline alert cron tests |
+| Event/Webhook | `tests/test_event_webhook_notify.py` | **NEW** | Event outbox + webhook integration |
+| Functional Utils | `tests/test_functional_utils.py` | **NEW** | General utility tests |
+| LLM Integration | `tests/test_integration_llm.py` | **NEW** | LLM provider integration tests |
+| Cache Utils | `tests/test_cache_utils.py` | **NEW** | Cache utility edge cases |
+| Security Utils | `tests/test_security_utils.py` | **NEW** | Security utility tests |
+| Route: Academics | `tests/test_routes_academics.py` | **NEW** | Academics endpoint tests |
+| Route: Analytics | `tests/test_routes_analytics.py` | **NEW** | Analytics endpoint tests |
+| Route: Automation | `tests/test_routes_automation.py` | **NEW** | Automation endpoint tests |
+| Route: Briefings | `tests/test_routes_briefings.py` | **NEW** | Briefings endpoint tests |
+| Route: Data Export | `tests/test_routes_data_export.py` | **NEW** | Data export endpoint tests |
+| Route: Feature Flags | `tests/test_routes_feature_flags.py` | **NEW** | Feature flag endpoint tests |
+| Route: Feedback | `tests/test_routes_feedback.py` | **NEW** | Feedback endpoint tests |
+| Route: Monitoring | `tests/test_routes_monitoring.py` | **NEW** | Monitoring endpoint tests |
+| Route: NLP | `tests/test_routes_nlp.py` | **NEW** | NLP endpoint tests |
+| Route: Predictions | `tests/test_routes_predictions.py` | **NEW** | Predictions endpoint tests |
+| Route: Prompts | `tests/test_routes_prompts.py` | **NEW** | Prompts endpoint tests |
+| Route: Reviews | `tests/test_routes_reviews.py` | **NEW** | Reviews endpoint tests |
+| Route: Roadmap | `tests/test_routes_roadmap.py` | **NEW** | Roadmap endpoint tests |
+| Route: Videos | `tests/test_routes_videos.py` | **NEW** | Videos endpoint tests |
+| Scheduler Full | `tests/test_scheduler_full.py` | **NEW** | Complete scheduler tests |
+| Scheduler Coverage | `tests/test_scheduler_coverage.py` | **NEW** | Scheduler coverage edge cases |
+| Script: sdb_full | `tests/test_script_gen_sdb_full.py` | **NEW** | Schema DDL generator tests |
+| Script: Migrations | `tests/test_script_validate_migrations.py` | **NEW** | Migration validation tests |
+| Script: Skills Schema | `tests/test_script_validate_skills_schema.py` | **NEW** | Skills schema validation tests |
+| Skills Agent | `tests/test_skills_agent.py` | **NEW** | Skills agent module tests |
+| Skills Infrastructure | `tests/test_skills_infrastructure.py` | **NEW** | Skills infra component tests |
+| Skills Schemas | `tests/test_skills_schemas.py` | **NEW** | Skills Pydantic model tests |
+| Webhook Delivery | `tests/test_webhook_delivery.py` | **NEW** | Webhook retry/delivery tests |
+| **Total** | | **~2795+ tests across 56+ files** | |
 
 ### 16.2 Coverage Thresholds
 
 | Package | Minimum Coverage | Current |
-|---|---|---|---|
+|---|---|---|
 | `packages/ai/` | 80% | 100% |
 | `packages/config/` | 80% | 100% |
 | `packages/shared/` | 70% | 100% |
@@ -1409,7 +1584,7 @@ async def test_list_tasks_structure(mock_supabase):
 
 ## 17. CI/CD Pipeline
 
-### 17.1 CI Jobs (6 total)
+### 17.1 CI Jobs (14 total)
 
 | Job | Trigger | Steps | Timeout |
 |---|---|---|---|
@@ -1420,6 +1595,13 @@ async def test_list_tasks_structure(mock_supabase):
 | **Security** | Push/PR to main | Checkout → Setup Node → `npm audit` (high severity) → Trivy vulnerability scan → OSSF Scorecard (main only) → upload SARIF | 15 min |
 | **Lighthouse** | Push/PR to main (depends on frontend) | Checkout → Setup Node → `npm ci` → `npm run build` → `lhci autorun` → upload artifact | 10 min |
 | **Pentest** | Push/PR to main (depends on frontend, backend) | Checkout → Setup Python → pip install deps → `bash scripts/owasp-check.sh` → `bash scripts/sql-injection-audit.sh` → `python scripts/attack-scenarios.py` → upload reports | 15 min |
+| **CodeQL** | Push/PR to main | Checkout → Setup → CodeQL init → analyze → upload SARIF | 15 min |
+| **Dependency Scan** | Push/PR to main | Checkout → npm audit → pip audit → Trivy → dependabot alert check | 10 min |
+| **Secret Scan** | Push/PR to main | Checkout → gitLeaks → truffleHog → upload SARIF | 10 min |
+| **Figma Token Sync** | Manual / scheduled | Checkout → figma-token-sync → create PR | 10 min |
+| **Labeler** | PR events | Checkout → labeler action → label PR | 5 min |
+| **Stale** | Scheduled daily | Checkout → stale action → close inactive issues/PRs | 5 min |
+| **Release** | Tag push | Checkout → build → publish Docker images → GitHub Release | 20 min |
 
 **Concurrency**: Jobs cancel in-progress runs for the same branch.
 **Dependency chain**: Docker → frontend + backend + prompts. Pentest → frontend + backend. Lighthouse → frontend.
@@ -1587,7 +1769,7 @@ git push origin main
 # → Requires `services/scheduler/requirements.txt` to be installed
 
 # 4. All CI checks must pass before merge
-# → 5 jobs: frontend, backend, prompts, docker, security
+# → 14 CI jobs: frontend, backend, prompts, docker, security, lighthouse, pentest, codeql, dependency-scan, secret-scan, figma-token-sync, labeler, stale, release
 
 # 5. Manual rollback if needed
 # Vercel: Dashboard → Deployments → ... → Rollback
@@ -1628,7 +1810,7 @@ vercel rollback secondbrain-os --safe=10
 2. Make changes (code + prompts + docs + tests as needed)
 3. Run pre-commit checklist: `make pre-commit`
 4. Push branch and create PR (use PR template)
-5. CI runs automatically (5 jobs)
+5. CI runs automatically (14 jobs)
 6. Request review from at least 1 other developer
 7. All checks must pass before merge
 8. After merge, deploy happens automatically
@@ -1760,14 +1942,26 @@ make test
 
 ### 23.1 Data Classification
 
-| Level | Description | Examples | Storage Requirements |
-|---|---|---|---|
-| Public | Non-sensitive, intended for public | App version, prompt templates | No restrictions |
-| Internal | Business operations, not public | User count, feature usage stats | Basic access control |
-| Confidential | User-identifiable information | Email, name, preferences | Encryption at rest, RLS |
-| Restricted | Highly sensitive, regulated | Auth tokens, API keys, passwords | Encryption at rest + transit, audit logs |
+Refer to **SEC-POLICY-DC-001** (`docs/security/policies/data-classification.md`) for the full 4-tier classification framework, data inventory, and handling requirements.
 
-### 23.2 Security Best Practices
+| Level | Description | Examples | Storage Requirements | Full Policy |
+|---|---|---|---|---|
+| T4 — Public | Non-sensitive, intended for public | App version, prompt templates | No restrictions | SEC-POLICY-DC-001 §2 |
+| T3 — Internal | Business operations, not public | User count, feature usage stats | Basic access control | SEC-POLICY-DC-001 §2 |
+| T2 — Confidential | User-identifiable information | Email, name, preferences | Encryption at rest, RLS | SEC-POLICY-DC-001 §2 |
+| T1 — Restricted | Highly sensitive, regulated | Auth tokens, API keys, passwords | Encryption at rest + transit, audit logs | SEC-POLICY-DC-001 §2 |
+
+### 23.2 Incident Response
+
+Refer to **SEC-POLICY-IR-001** (`docs/security/policies/incident-response.md`) for the full incident response playbook including:
+- **Severity matrix** (P0–P4 with SLA and examples)
+- **Detection sources** (10 automated/manual sources)
+- **Response procedures** per severity level
+- **Communication templates** (internal alerts, user notifications, breach notifications)
+- **Post-incident review** process and postmortem template
+- **Tabletop exercise** procedures (4 scenarios)
+
+### 23.3 Security Best Practices
 
 - All passwords hashed with bcrypt via `passlib`
 - All JWT tokens use HS256 with configurable expiry
@@ -1777,7 +1971,7 @@ make test
 - All AI prompts sanitize user input before LLM submission
 - All file uploads validated for type and size (resourcs module)
 
-### 23.3 Vulnerability Disclosure
+### 23.4 Vulnerability Disclosure
 
 Report security vulnerabilities to:
 - **Email**: developer@secondbrain-os.com (encrypted preferred)
@@ -2062,7 +2256,7 @@ Q3 transitions from "feature-complete prototype" to "production-ready personal O
 | **W2** | Jul 8-14 | Production deploy + Agent UI | Deploy API + Web + Scheduler to production, verify health endpoints, Agent Activity Feed UI, Memory consolidation frontend widget |
 | **W3** | Jul 15-21 | Agent frontend integration | Briefing card for dashboard, Opportunity Radar result display, Sleep wind-down message UI, AI streaming responses in chat |
 | **W4** | Jul 22-28 | Monitoring setup | Sentry alerts and dashboards, structured logging review, RED metrics dashboard (Grafana or simple HTML), health check endpoints verified |
-| **W5** | Jul 29-Aug 4 | Cron job hardening | Verify all 7 cron jobs trigger in production, add failure alerting, persistent scheduler deployment, course_nudge + missed_task + habit_checker logging |
+| **W5** | Jul 29-Aug 4 | Cron job hardening | Verify all 15 cron jobs trigger in production, add failure alerting, persistent scheduler deployment, course_nudge + missed_task + habit_checker logging |
 | **W6** | Aug 5-11 | Performance optimization | Bundle analysis (next/bundle-analyzer), API latency profiling, DB query optimization (index analysis), frontend Lighthouse audit target 90+ |
 | **W7** | Aug 12-18 | Security hardening | Run full pen test suite (SAST + DAST + custom attacks), verify audit trail on all mutations, CSRF/XSS validation, SOC 2 readiness reassessment |
 | **W8** | Aug 19-25 | PWA + Offline | Service worker validation, offline fallback pages, PWA install prompt, cache-first strategy for static assets |
@@ -2072,7 +2266,7 @@ Q3 transitions from "feature-complete prototype" to "production-ready personal O
 
 - [ ] Production URLs resolve (api.secondbrain-os.com, secondbrain-os.vercel.app)
 - [ ] All 29 API endpoints respond < 500ms p95
-- [ ] All 7 cron jobs trigger correctly in production
+- [ ] All 15 cron jobs trigger correctly in production
 - [ ] Frontend Lighthouse score ≥ 90 (performance + accessibility)
 - [ ] Test suite ≥ 3750+ passing (1846 Python + ~1900 frontend), coverage = 100%
 - [ ] All 10 agents integrated in frontend (agent cards + widgets)
@@ -2091,7 +2285,30 @@ Q3 transitions from "feature-complete prototype" to "production-ready personal O
 | Ollama local AI unavailable in production | High | Medium | Claude API fallback already implemented; verify failover in production |
 | E2E tests fail on production vs local | Medium | Medium | Run Playwright against production preview before full cutover |
 
-### 29.5 Post-Q3 Goals (Q4 2026)
+### 29.5 Key New Documentation
+
+The following documents were created in Phases 1-4 and are now cross-referenced from this master file:
+
+| Document | Section Reference | Purpose |
+|---|---|---|
+| [Skills System](docs/ai/skills-system.md) | Section 9 (AI Agent Architecture) | 8 AI-powered sub-agents, 40+ database tables, 5 cron jobs for competency tracking |
+| [Data Flow Diagrams](docs/architecture/data-flow-diagrams.md) | Section 12 (Common Patterns) | 7 sequence diagrams: auth, briefing, chat, tasks, circuit breaker, cron, API lifecycle |
+| [Error Budget](docs/operations/error-budget.md) | Section 26 (Performance Benchmarks) | SLO definitions, budget calculation, consumption tracking, quarterly review |
+| [SDL](docs/security/sdl.md) | Section 23 (Security Compliance) | 7-phase SDL mapped to CI/CD pipeline |
+| [Hardening Guides](docs/security/hardening/) | Section 23 (Security Compliance) | FastAPI, Supabase, and Next.js security checklists |
+| [Error Catalog](docs/engineering/api/error-catalog.md) | Section 8 (API Endpoint Reference) | Standardized error codes and recovery strategies |
+| [Webhook Guide](docs/engineering/api/webhook-guide.md) | Section 8 (API Endpoint Reference) | Event notifications, payload schema, signature verification |
+| [Migration v1 to v2](docs/engineering/api/migration-v1-to-v2.md) | Section 24 (API Versioning Strategy) | Breaking changes, migration steps, rollback plan |
+| [Supply Chain Security](docs/engineering/supply-chain-security.md) | Section 27 (Dependency Management) | Trivy, Dependabot, npm/pip audit, license compliance |
+| [Secrets Management](docs/engineering/secrets-management.md) | Section 23 (Security Compliance) | Environment variable security, key rotation, secret scanning |
+| [Postmortem Template](docs/postmortems/template.md) | Section 22 (Incident Response) | Standard postmortem template with timeline, root cause, action items |
+| [Postmortem Drill](docs/postmortems/drill-001.md) | Section 22 (Incident Response) | Example postmortem: AI provider failure during peak hours |
+| [Glossary](docs/governance/glossary.md) | Section 14 (Documentation Map) | Project terminology and acronym definitions |
+| [KPI Dashboard](docs/product/KPI-dashboard.md) | Section 18 (Cost & Performance) | Project health metrics and documentation maturity tracking |
+| [User Guide](docs/user-guide/README.md) | Section 6 (Project Structure) | End-user documentation for all ARIA OS features |
+| [Learning Paths](docs/learning-paths/README.md) | Section 21 (Onboarding & Process) | Self-guided learning tracks for developers |
+
+### 29.6 Post-Q3 Goals (Q4 2026)
 
 - SOC 2 Type I engagement (target Q2 2027)
 - Public launch / college ambassador program
@@ -2111,3 +2328,4 @@ Q3 transitions from "feature-complete prototype" to "production-ready personal O
 | **4.0.0** | **2026-06-14** | **Developer** | **Enterprise v4: Full project upgrade — 7 new sections (Incident Response, Security Compliance, API Versioning, Observability, Performance Benchmarks, Dependency Management, Code Review Standards). Expanded to 17 agents (added roadmap_agent, opportunity_matching_agent). Updated prompt inventory to 14 files. Added 5 CI jobs with Docker build stage. Created Makefile, pre-commit hooks, VSCode settings, Dependabot config. Added 4 new test files (API, LLM client, scheduler, validate script). Upgraded LLM client with circuit breaker + fallback chain. Upgraded main.py with health checks + request IDs. Removed stale agent-orchestrator duplicate. Standardized API to /api/v1/ prefix. Added .dockerignore files. Coverage threshold at 70%. 25 Golden Rules. 30-item code review checklist.** |
 | 5.1.0 | 2026-06-20 | Developer | Phase 3 enterprise completion: feedback system, HITL confirmation, voice input, token usage monitoring, session continuity. Updated test inventory to 460+ tests across 10 test files. Added monitoring + feedback routers (total 26 routers). Updated AGENTS.md to match codebase reality. |
 | **6.0.0** | **2026-06-23** | **Developer** | **Enterprise v6: Q3 Intelligence Phase (Sec 29). Full codebase audit and hardening: 2411 tests, 96% coverage, 184 Python files, 748 TS files, 188 docs, 380 Storybook stories, 21 E2E specs. All 23 enterprise remediation fixes applied. 7 CI jobs (frontend + backend + prompts + docker + security + lighthouse + pentest). 95.56% Python coverage, threshold 80%. Full PWA with Serwist service worker. Real Vercel+Railway deploy pipeline. Storybook build + Lighthouse CI in pipeline. 14 E2E spec files covering 9 modules. Coverage threshold bumped 70% → 80%. Updated all project stats to match actual codebase.** |
+| **6.2.0** | **2026-07-14** | **Developer** | **Enterprise docs-codebase alignment: Rewrote AGENTS.md with live counts (236+ Python, 799+ TS/TSX, 383 docs, 105+ stories, 22 E2E specs, 2795+ tests across 58 files, 70,640 lines Python, 15 cron jobs, 22 prompts, 11 agent modules, 31 routers, 15 ADRs, 12 workflows, 27 DB tables). Added Skills system to agent registry (A17 + 8 sub-agents, 8 prompt files, 5 cron jobs). Validated all 22 prompt frontmatters. Fixed 40+ engineering/AI/security/operations doc files with stale counts. Scaffolded packages/ui, apps/admin, apps/mobile. Verified 252/252 tests passing.** |

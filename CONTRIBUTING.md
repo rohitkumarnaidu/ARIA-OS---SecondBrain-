@@ -1,6 +1,15 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | LEG-CONTRIB-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
 # Contributing to Second Brain OS
 
-Welcome to Second Brain OS (ARIA OS) — a personal AI productivity system for BTech CSE students that integrates 15 modules across task management, course tracking, opportunity scanning, and AI-driven planning. Built with Next.js 14, FastAPI, Supabase, and a local-first AI agent architecture, this project aims to help students become builders, not just degree collectors. We welcome contributions from developers, designers, and technical writers who share this vision.
+Welcome to Second Brain OS (ARIA OS) â€” a personal AI productivity system for BTech CSE students that integrates 15 modules across task management, course tracking, opportunity scanning, and AI-driven planning. Built with Next.js 14, FastAPI, Supabase, and a local-first AI agent architecture, this project aims to help students become builders, not just degree collectors. We welcome contributions from developers, designers, and technical writers who share this vision.
 
 ## Table of Contents
 
@@ -97,7 +106,7 @@ python main.py
 # Backend health check
 curl http://localhost:8000/health
 
-# Frontend check — open http://localhost:3000 in a browser
+# Frontend check â€” open http://localhost:3000 in a browser
 
 # Run the test suite
 pytest
@@ -113,7 +122,7 @@ We follow a simplified Git Flow with the following branch conventions:
 
 | Branch | Purpose |
 |---|---|
-| `main` | Production-ready code. Protected — no direct pushes. |
+| `main` | Production-ready code. Protected â€” no direct pushes. |
 | `develop` | Integration branch for features. Default target for PRs. |
 | `feature/<name>` | New features. Branch from `develop`, merge back to `develop`. |
 | `fix/<name>` | Bug fixes. Branch from `develop`, merge back to `develop`. |
@@ -199,19 +208,19 @@ feat(api)!: redesign task endpoint response schema
 
 ## Pull Request Process
 
-1. **Create a Draft PR early** — open a draft pull request as soon as you start working. This signals your intent and allows early feedback.
+1. **Create a Draft PR early** â€” open a draft pull request as soon as you start working. This signals your intent and allows early feedback.
 
-2. **Complete the PR template** — fill out the pull request template with a description of changes, related issues, and testing notes.
+2. **Complete the PR template** â€” fill out the pull request template with a description of changes, related issues, and testing notes.
 
-3. **Keep PRs focused** — each pull request should address a single concern. If you find yourself fixing unrelated issues, create a separate PR. Aim for PRs under 400 lines changed.
+3. **Keep PRs focused** â€” each pull request should address a single concern. If you find yourself fixing unrelated issues, create a separate PR. Aim for PRs under 400 lines changed.
 
-4. **Pass all CI checks** — ensure the following pass before requesting review:
+4. **Pass all CI checks** â€” ensure the following pass before requesting review:
    - Linting (ESLint for frontend, Ruff for backend)
    - Type checking (`npm run type-check`)
-   - Tests (`pytest` — all tests green)
+   - Tests (`pytest` â€” all tests green)
    - Build (`npm run build` for frontend)
 
-5. **Request review** — assign at least one maintainer as reviewer. Address all feedback with additional commits. Avoid force-pushing after a review has started, so reviewers can track changes incrementally.
+5. **Request review** â€” assign at least one maintainer as reviewer. Address all feedback with additional commits. Avoid force-pushing after a review has started, so reviewers can track changes incrementally.
 
 6. **Pre-merge checklist**:
    - [ ] Code follows project coding standards
@@ -222,7 +231,7 @@ feat(api)!: redesign task endpoint response schema
    - [ ] Documentation updated if introducing new features or changing behavior
    - [ ] No debug code, console.logs, or secrets committed
 
-7. **Merge** — a maintainer will squash-merge your PR into `develop`. The commit message should follow the Conventional Commits format. After merge, delete the feature branch.
+7. **Merge** â€” a maintainer will squash-merge your PR into `develop`. The commit message should follow the Conventional Commits format. After merge, delete the feature branch.
 
 ---
 
@@ -230,35 +239,35 @@ feat(api)!: redesign task endpoint response schema
 
 ### TypeScript / React (Frontend)
 
-- **Imports** — Order: external libraries → internal modules → relative imports
-- **Naming** — Components: `PascalCase` (`TaskCard`). Hooks: `camelCase` with `use` prefix (`useAuth`). Files: `kebab-case` (`task-card.tsx`). Types: `PascalCase` (`Task`, `User`).
-- **Types** — Never use `any`. Define interfaces for all data structures. Use Zod schemas where input validation is needed.
-- **State** — Use Zustand stores in `apps/web/lib/` for global state. Local state with `useState`/`useReducer` is preferred for component-local concerns.
-- **Styling** — Use Tailwind CSS exclusively. Design tokens from `tailwind.config.js`: `text-text-primary`, `bg-background-card`. Utility classes: `.btn`, `.card`, `.input`, `.text-gradient`. No custom CSS files unless absolutely necessary.
-- **Error Handling** — Use try/catch for async operations. Display user-friendly error messages. Handle Supabase errors explicitly.
-- **Linting** — Run `npm run lint` and `npm run type-check` before committing.
-- **UI/UX** — Follow the cyberpunk design system: dark base (`#0A0B0F`), accent-primary (`#6366F1`), accent-neon (`#00FFA3`). Use Framer Motion for staggered reveals and page transitions. Avoid generic AI aesthetics, system fonts (Inter, Arial), and predictable layouts.
+- **Imports** â€” Order: external libraries â†’ internal modules â†’ relative imports
+- **Naming** â€” Components: `PascalCase` (`TaskCard`). Hooks: `camelCase` with `use` prefix (`useAuth`). Files: `kebab-case` (`task-card.tsx`). Types: `PascalCase` (`Task`, `User`).
+- **Types** â€” Never use `any`. Define interfaces for all data structures. Use Zod schemas where input validation is needed.
+- **State** â€” Use Zustand stores in `apps/web/lib/` for global state. Local state with `useState`/`useReducer` is preferred for component-local concerns.
+- **Styling** â€” Use Tailwind CSS exclusively. Design tokens from `tailwind.config.js`: `text-text-primary`, `bg-background-card`. Utility classes: `.btn`, `.card`, `.input`, `.text-gradient`. No custom CSS files unless absolutely necessary.
+- **Error Handling** â€” Use try/catch for async operations. Display user-friendly error messages. Handle Supabase errors explicitly.
+- **Linting** â€” Run `npm run lint` and `npm run type-check` before committing.
+- **UI/UX** â€” Follow the cyberpunk design system: dark base (`#0A0B0F`), accent-primary (`#6366F1`), accent-neon (`#00FFA3`). Use Framer Motion for staggered reveals and page transitions. Avoid generic AI aesthetics, system fonts (Inter, Arial), and predictable layouts.
 
 ### Python / FastAPI (Backend)
 
-- **Imports** — Order: standard library → third-party packages → local application modules
-- **Naming** — Functions: `snake_case`. Classes: `PascalCase`. Constants: `UPPER_SNAKE`.
-- **Types** — Use Pydantic models for all request/response schemas. Add type hints to every function signature.
-- **Error Handling** — Raise `HTTPException` with appropriate status codes (400, 401, 404, 500). Return structured error responses.
-- **Database** — Always filter queries by `user_id`. Check `.error` after every Supabase `.execute()` call. Use Row-Level Security (RLS) on all tables.
-- **Utilities** — Use the shared utilities in `packages/shared/utils/`: structured JSON logging (`logger.py`), rate limiting (`rate_limiter.py`), in-memory caching (`cache.py`), and retry with exponential backoff (`retry.py`).
-- **Linting & Formatting** — Format with `black .` and lint with `ruff check .` before committing.
+- **Imports** â€” Order: standard library â†’ third-party packages â†’ local application modules
+- **Naming** â€” Functions: `snake_case`. Classes: `PascalCase`. Constants: `UPPER_SNAKE`.
+- **Types** â€” Use Pydantic models for all request/response schemas. Add type hints to every function signature.
+- **Error Handling** â€” Raise `HTTPException` with appropriate status codes (400, 401, 404, 500). Return structured error responses.
+- **Database** â€” Always filter queries by `user_id`. Check `.error` after every Supabase `.execute()` call. Use Row-Level Security (RLS) on all tables.
+- **Utilities** â€” Use the shared utilities in `packages/shared/utils/`: structured JSON logging (`logger.py`), rate limiting (`rate_limiter.py`), in-memory caching (`cache.py`), and retry with exponential backoff (`retry.py`).
+- **Linting & Formatting** â€” Format with `black .` and lint with `ruff check .` before committing.
 
 ### Testing
 
-- **Backend** — `pytest` for Python tests. Test files live in `tests/`. Run a single test: `pytest tests/test_file.py::TestClass::test_method -v`.
-- **Frontend** — Jest and React Testing Library for component tests.
-- **Coverage** — Aim for 80%+ coverage on new code. Critical paths (auth, task CRUD, AI agent orchestration) should have near-complete coverage.
+- **Backend** â€” `pytest` for Python tests. Test files live in `tests/`. Run a single test: `pytest tests/test_file.py::TestClass::test_method -v`.
+- **Frontend** â€” Jest and React Testing Library for component tests.
+- **Coverage** â€” Aim for 80%+ coverage on new code. Critical paths (auth, task CRUD, AI agent orchestration) should have near-complete coverage.
 
 ### General
 
 - No debug code, `console.log`, or `print` statements in committed code
-- No secrets, API keys, or credentials in code — use `.env` files
+- No secrets, API keys, or credentials in code â€” use `.env` files
 - Do not commit generated files, build artifacts, or compiled output
 - Document non-obvious logic with inline comments (but prefer self-documenting code)
 
@@ -285,8 +294,8 @@ Use the **Bug Report** issue template (select `Bug Report` when creating a new i
 When requesting a feature, include:
 
 - A clear, descriptive title
-- Problem statement — what problem does this solve?
-- Proposed solution — describe the desired behavior
+- Problem statement â€” what problem does this solve?
+- Proposed solution â€” describe the desired behavior
 - Alternative approaches you've considered
 - Any relevant context or prior art
 
@@ -302,17 +311,17 @@ Use the **Feature Request** issue template (select `Feature Request` when creati
 
 ## Documentation Contributions
 
-Documentation is maintained as code in `docs/` and follows the standards defined in [Documentation Standards](docs/operations/48_DocumentationStandards.md).
+Documentation is maintained as code in `docs/` and follows the standards defined in [Documentation Standards](docs/governance/01_DocumentationStandards.md).
 
 ### Key Rules
 
-- **Markdown** — Use GitHub-Flavored Markdown (GFM). Every code block must specify a language identifier.
-- **File naming** — `{NN}_{TitleCaseWithUnderscores}.md` (e.g., `02_PRD.md`, `48_DocumentationStandards.md`).
-- **Each document** — Must include a Document Control table, content sections, and a Revision History.
-- **No images** — Use ASCII art or Mermaid.js diagrams instead of screenshots or embedded images.
-- **No emojis** — Enterprise documentation uses professional tone throughout.
-- **Cross-references** — Use relative paths from the referencing document to the target (e.g., `[Architecture](../engineering/00_Architecture.md)`).
-- **Review** — Documentation PRs are reviewed with the same rigor as code PRs. Every PR that introduces a feature must include or update relevant documentation.
+- **Markdown** â€” Use GitHub-Flavored Markdown (GFM). Every code block must specify a language identifier.
+- **File naming** â€” `{NN}_{TitleCaseWithUnderscores}.md` (e.g., `02_PRD.md`, `48_DocumentationStandards.md`).
+- **Each document** â€” Must include a Document Control table, content sections, and a Revision History.
+- **No images** â€” Use ASCII art or Mermaid.js diagrams instead of screenshots or embedded images.
+- **No emojis** â€” Enterprise documentation uses professional tone throughout.
+- **Cross-references** â€” Use relative paths from the referencing document to the target (e.g., `[Architecture](../engineering/00_Architecture.md)`).
+- **Review** â€” Documentation PRs are reviewed with the same rigor as code PRs. Every PR that introduces a feature must include or update relevant documentation.
 
 ### Document Categories
 
@@ -330,11 +339,11 @@ Documentation is maintained as code in `docs/` and follows the standards defined
 
 ## Community & Support
 
-- **GitHub Discussions** — Ask questions, share ideas, and discuss features. Prefer public discussions over DMs so the whole community benefits.
-- **Issue Tracker** — Report bugs and request features via GitHub Issues with appropriate labels.
-- **Pull Requests** — All changes go through PRs. Direct pushes to `main` or `develop` are not permitted.
-- **Maintainers** — PRs require at least one approving review from a maintainer before merging.
-- **Release cadence** — We follow semantic versioning. Releases are cut from `develop` to `main` on a regular cadence.
+- **GitHub Discussions** â€” Ask questions, share ideas, and discuss features. Prefer public discussions over DMs so the whole community benefits.
+- **Issue Tracker** â€” Report bugs and request features via GitHub Issues with appropriate labels.
+- **Pull Requests** â€” All changes go through PRs. Direct pushes to `main` or `develop` are not permitted.
+- **Maintainers** â€” PRs require at least one approving review from a maintainer before merging.
+- **Release cadence** â€” We follow semantic versioning. Releases are cut from `develop` to `main` on a regular cadence.
 
 ---
 

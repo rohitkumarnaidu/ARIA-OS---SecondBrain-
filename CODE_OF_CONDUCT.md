@@ -1,3 +1,12 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | LEG-COC-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge
