@@ -127,6 +127,18 @@ jobs:
       - run: python scripts/validate_prompts.py
       - run: python -m pytest tests/test_prompt_loader.py tests/test_agent_prompts.py tests/test_validate_script.py -v
 
+  link-check:
+    name: Link Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Markdown Links
+        run: pwsh ./scripts/check-links.ps1
+        shell: pwsh
+      - name: Validate Doc IDs
+        run: python scripts/validate-doc-ids.py
+
   docker:
     name: Docker
     needs: [frontend, backend, prompts]
@@ -180,8 +192,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
       - run: npm audit --audit-level=high
         working-directory: apps/web
+        continue-on-error: true
+      - name: Install safety
+        run: pip install safety
+      - name: Safety check - API
+        run: safety check -r apps/api/requirements.txt --full-report
+        continue-on-error: true
+      - name: Safety check - Scheduler
+        run: safety check -r services/scheduler/requirements.txt --full-report
+        continue-on-error: true
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: pip-audit - API
+        run: pip-audit -r apps/api/requirements.txt
+        continue-on-error: true
+      - name: pip-audit - Scheduler
+        run: pip-audit -r services/scheduler/requirements.txt
         continue-on-error: true
       - uses: aquasecurity/trivy-action@master
         with:
@@ -199,3 +230,53 @@ jobs:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
+
+  load-test:
+    name: Load Tests (k6)
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install k6
+        run: sudo apt-get update && sudo apt-get install -y k6
+      - name: Run k6 auth tests
+        run: k6 run tests/performance/load-test-auth.js --summary-export=k6-auth-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 CRUD tests
+        run: k6 run tests/performance/load-test-crud.js --summary-export=k6-crud-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 AI tests
+        run: k6 run tests/performance/load-test-ai.js --summary-export=k6-ai-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 spike tests
+        run: k6 run tests/performance/load-test-spike.js --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-reports
+          path: k6-*-summary.json
+          retention-days: 7
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+      - run: terraform init
+        working-directory: infrastructure/terraform
+      - run: terraform validate
+        working-directory: infrastructure/terraform
+      - run: terraform plan -input=false
+        working-directory: infrastructure/terraform
+        continue-on-error: true
+      - uses: aquasecurity/tfsec-action@v1
+        continue-on-error: true
+        with:
+          working_directory: infrastructure/terraform
+          format: sarif

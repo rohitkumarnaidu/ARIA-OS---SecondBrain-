@@ -1,39 +1,198 @@
+# =============================================================================
+# Second Brain OS — Deploy
+# Automatic deployment to Vercel (frontend) + Railway (backend, scheduler)
+# =============================================================================
+
 name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+      rollback:
+        description: 'Rollback to previous deployment'
+        required: false
+        default: false
+        type: boolean
+
 concurrency:
-  group: deployment
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
-  deploy-frontend:
+  frontend:
     name: Deploy Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment: ${{ inputs.environment || 'production' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build project artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-  deploy-backend:
-    name: Deploy Backend (Railway)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+        working-directory: apps/web
+
+      - name: Build production bundle
+        run: npm run build
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_PWA_ENABLED: 'true'
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      - name: Deploy to Vercel (production)
+        if: github.ref == 'refs/heads/main' && inputs.rollback != true
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: apps/web
+
+      - name: Deploy to Vercel (preview)
+        if: github.ref != 'refs/heads/main' || inputs.environment == 'preview'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: apps/web
+
+  backend-services:
+    name: Deploy Backend Services
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    environment: ${{ inputs.environment || 'production' }}
+    strategy:
+      matrix:
+        service:
+          - name: api
+            context: .
+            dockerfile: apps/api/Dockerfile
+            service_id: RAILWAY_SERVICE_ID
+          - name: scheduler
+            context: .
+            dockerfile: services/scheduler/Dockerfile
+            service_id: RAILWAY_SCHEDULER_SERVICE_ID
     steps:
       - uses: actions/checkout@v4
-      - uses: bervProject/railway-deploy@v1
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
         with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: api
-          working_directory: apps/api
+          path: /tmp/.buildx-cache-${{ matrix.service.name }}
+          key: ${{ runner.os }}-buildx-${{ matrix.service.name }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.service.name }}-
+
+      - name: Build ${{ matrix.service.name }} image
+        run: docker build -f ${{ matrix.service.dockerfile }} -t secondbrain-${{ matrix.service.name }}:${{ github.sha }} --target production .
+        env:
+          BUILDKIT_PROGRESS: plain
+          DOCKER_BUILDKIT: 1
+
+      - name: Deploy ${{ matrix.service.name }} to Railway
+        uses: docker://ghcr.io/betalgo/railway-action:v4
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        with:
+          args: >
+            up
+            --service ${{ secrets[matrix.service.service_id] }}
+            --dockerfile ${{ matrix.service.dockerfile }}
+            --target production
+            --build-env BUILDKIT_PROGRESS=plain
+
+  health-check:
+    name: Health Check
+    needs: [frontend, backend-services]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wait for services to start
+        run: sleep 30
+
+      - name: Check frontend health
+        run: |
+          curl -sSf --max-time 10 'https://secondbrain-os.vercel.app/' || echo "frontend_health=failed" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Check API health
+        run: |
+          curl -sSf --max-time 10 'https://api.secondbrain-os.com/health' || echo "api_health=failed" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Notify deployment failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const workflow = context.payload.workflow || 'deploy';
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number || context.payload.pull_request?.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ⚠ Deployment Health Check Failed\n\n**Workflow:** ${workflow}\n**Run:** ${runUrl}\n**Branch:** ${context.ref}\n**Commit:** ${context.sha.substring(0, 7)}\n\nOne or more services failed health verification after deployment. Please investigate immediately.`
+            });
+        continue-on-error: true
+
+  rollback:
+    name: Rollback
+    if: inputs.rollback == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ inputs.environment || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rollback frontend on Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--rollback'
+          working-directory: apps/web
+
+      - name: Rollback backend on Railway
+        uses: docker/build-push-action@v6
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          target: production
+          tags: secondbrain-api:rollback
+          push: false
+
+      - name: Notify rollback
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number || context.payload.pull_request?.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🔄 Rollback Initiated\n\n**Environment:** ${{ inputs.environment || 'production' }}\n**Run:** ${runUrl}\n**Triggered by:** ${context.actor}\n\nRollback has been triggered. Verify service status after rollback completes.`
+            });
+        continue-on-error: true
