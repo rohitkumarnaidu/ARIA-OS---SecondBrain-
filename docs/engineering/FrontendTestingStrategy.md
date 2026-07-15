@@ -1,12 +1,12 @@
-# Frontend Testing Strategy — Second Brain OS
+﻿# Frontend Testing Strategy â€” Second Brain OS
 
 | Field | Value |
 |---|---|
-| Document ID | FE-TEST-001 |
+| Document ID | ENG-FTS-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Applies To | `apps/web/` — All frontend test files |
+| Applies To | `apps/web/` â€” All frontend test files |
 
 ---
 
@@ -30,18 +30,18 @@
 ### 1.1 Test Pyramid
 
 ```
-         ╱╲
-        ╱  ╲          E2E (Cypress) — 5%
-       ╱    ╲         Critical user flows
-      ╱──────╲
-     ╱        ╲      Integration (Jest + RTL) — 25%
-    ╱          ╲     Page interactions, form flows
-   ╱────────────╲
-  ╱              ╲   Unit (Jest) — 50%
- ╱                ╲  Stores, hooks, utilities, schemas
-╱──────────────────╲
-╱   Component (Jest + RTL) — 20%  ╲
-╱   Individual components, states  ╲
+         â•±â•²
+        â•±  â•²          E2E (Cypress) â€” 5%
+       â•±    â•²         Critical user flows
+      â•±â”€â”€â”€â”€â”€â”€â•²
+     â•±        â•²      Integration (Jest + RTL) â€” 25%
+    â•±          â•²     Page interactions, form flows
+   â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+  â•±              â•²   Unit (Jest) â€” 50%
+ â•±                â•²  Stores, hooks, utilities, schemas
+â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+â•±   Component (Jest + RTL) â€” 20%  â•²
+â•±   Individual components, states  â•²
 ```
 
 ### 1.2 Technology Stack
@@ -53,39 +53,39 @@
 | Integration tests | Jest + RTL + MSW | ^2 | `npx jest` |
 | E2E tests | Cypress | ^13 | `npx cypress run` |
 | A11y tests | jest-axe | ^8 | `npx jest --testPathPattern=a11y` |
-| Coverage | Jest built-in (istanbul) | — | `npx jest --coverage` |
+| Coverage | Jest built-in (istanbul) | â€” | `npx jest --coverage` |
 
 ### 1.3 File Structure
 
 ```
 apps/web/
-├── __tests__/
-│   ├── stores/
-│   │   ├── taskStore.test.ts
-│   │   └── userStore.test.ts
-│   ├── hooks/
-│   │   ├── useAuth.test.ts
-│   │   └── useRealtime.test.ts
-│   ├── components/
-│   │   ├── Button.test.tsx
-│   │   ├── Card.test.tsx
-│   │   ├── Modal.test.tsx
-│   │   └── FormField.test.tsx
-│   ├── integration/
-│   │   ├── tasks-page.test.tsx
-│   │   └── chat-flow.test.tsx
-│   └── a11y/
-│       ├── Button.a11y.test.tsx
-│       └── Modal.a11y.test.tsx
-├── cypress/
-│   ├── e2e/
-│   │   ├── auth.cy.ts
-│   │   ├── tasks.cy.ts
-│   │   └── dashboard.cy.ts
-│   ├── support/
-│   │   └── commands.ts
-│   └── tsconfig.json
-└── jest.config.ts
+â”œâ”€â”€ __tests__/
+â”‚   â”œâ”€â”€ stores/
+â”‚   â”‚   â”œâ”€â”€ taskStore.test.ts
+â”‚   â”‚   â””â”€â”€ userStore.test.ts
+â”‚   â”œâ”€â”€ hooks/
+â”‚   â”‚   â”œâ”€â”€ useAuth.test.ts
+â”‚   â”‚   â””â”€â”€ useRealtime.test.ts
+â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ Button.test.tsx
+â”‚   â”‚   â”œâ”€â”€ Card.test.tsx
+â”‚   â”‚   â”œâ”€â”€ Modal.test.tsx
+â”‚   â”‚   â””â”€â”€ FormField.test.tsx
+â”‚   â”œâ”€â”€ integration/
+â”‚   â”‚   â”œâ”€â”€ tasks-page.test.tsx
+â”‚   â”‚   â””â”€â”€ chat-flow.test.tsx
+â”‚   â””â”€â”€ a11y/
+â”‚       â”œâ”€â”€ Button.a11y.test.tsx
+â”‚       â””â”€â”€ Modal.a11y.test.tsx
+â”œâ”€â”€ cypress/
+â”‚   â”œâ”€â”€ e2e/
+â”‚   â”‚   â”œâ”€â”€ auth.cy.ts
+â”‚   â”‚   â”œâ”€â”€ tasks.cy.ts
+â”‚   â”‚   â””â”€â”€ dashboard.cy.ts
+â”‚   â”œâ”€â”€ support/
+â”‚   â”‚   â””â”€â”€ commands.ts
+â”‚   â””â”€â”€ tsconfig.json
+â””â”€â”€ jest.config.ts
 ```
 
 ## Test Pyramid
@@ -108,10 +108,10 @@ apps/web/
   }
 }%%
 graph BT
-    E2E["E2E Tests<br/><i>Cypress — 5%</i>"] --> INT["Integration Tests<br/><i>Jest + RTL — 20%</i>"]
-    INT --> COMP["Component Tests<br/><i>Jest + RTL — 25%</i>"]
-    COMP --> UNIT["Unit Tests<br/><i>Jest — 40%</i>"]
-    UNIT --> STATIC["Static Analysis<br/><i>TypeScript + ESLint — 10%</i>"]
+    E2E["E2E Tests<br/><i>Cypress â€” 5%</i>"] --> INT["Integration Tests<br/><i>Jest + RTL â€” 20%</i>"]
+    INT --> COMP["Component Tests<br/><i>Jest + RTL â€” 25%</i>"]
+    COMP --> UNIT["Unit Tests<br/><i>Jest â€” 40%</i>"]
+    UNIT --> STATIC["Static Analysis<br/><i>TypeScript + ESLint â€” 10%</i>"]
 
     E2E -.->|"Critical user flows<br/>auth, tasks, chat"| D1
     INT -.->|"Page interactions<br/>form flows"| D2
@@ -673,7 +673,7 @@ jest.mock('@/lib/taskStore', () => ({
   })),
 }))
 
-describe('Tasks Page — Integration', () => {
+describe('Tasks Page â€” Integration', () => {
   it('renders the page with task list', async () => {
     render(<TasksPage />)
     expect(screen.getByText('Tasks')).toBeInTheDocument()
@@ -728,7 +728,7 @@ describe('Tasks Page — Integration', () => {
 ### 6.2 Form Submission Flow
 
 ```typescript
-describe('Tasks Page — Create Task Flow', () => {
+describe('Tasks Page â€” Create Task Flow', () => {
   it('creates a task through the modal', async () => {
     const mockAddTask = jest.fn().mockResolvedValue({})
     jest.spyOn(useTaskStore, 'useTaskStore').mockImplementation(() => ({
@@ -987,10 +987,10 @@ export function createTaskStoreMock(overrides = {}) {
 
 | Metric | Target | Current |
 |---|---|---|
-| Statements | 70% | — |
-| Branches | 60% | — |
-| Functions | 70% | — |
-| Lines | 70% | — |
+| Statements | 70% | â€” |
+| Branches | 60% | â€” |
+| Functions | 70% | â€” |
+| Lines | 70% | â€” |
 
 ### 10.2 Per-Module Targets
 

@@ -1,9 +1,18 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-STM-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
 # State Management Architecture
 
 **Document ID:** SM-ARCH-001  
 **Version:** 1.0.0  
 **Last Updated:** 2026-06-11  
-**Applies To:** `apps/web/` — All client-side state patterns  
+**Applies To:** `apps/web/` â€” All client-side state patterns  
 
 ---
 
@@ -41,7 +50,7 @@ graph TD
             FORM[Form input values]
         end
 
-        subgraph SERVER["SERVER STATE (Supabase — Source of Truth)"]
+        subgraph SERVER["SERVER STATE (Supabase â€” Source of Truth)"]
             DATA[All user data permanently stored]
             RLS[RLS-enforced per user]
             RT[Real-time via Supabase Realtime]
@@ -61,24 +70,24 @@ graph TD
     style SERVER fill:#13151A,stroke:#818CF8,color:#F1F5F9
     style URL fill:#13151A,stroke:#F59E0B,color:#F1F5F9
 ```
-│  │  • Filter selections (/?status=pending&priority=high)               │ │
-│  │  • Pagination (/?page=2&limit=20)                                   │ │
-│  │  • Sort order (/?sort=due_date&order=asc)                           │ │
-│  └─────────────────────────────────────────────────────────────────────┘ │
-│                                                                          │
-│  ┌─────────────────────────────────────────────────────────────────────┐ │
-│  │                    AI STATE (local useState + Supabase)              │ │
-│  │                                                                     │ │
-│  │  • Chat message history (persisted to supabase.chat_messages)       │ │
-│  │  • Streaming response buffer (in-memory while AI generates)         │ │
-│  │  • Agent response cache (avoid redundant AI calls)                  │ │
-│  └─────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
+â”‚  â”‚  â€¢ Filter selections (/?status=pending&priority=high)               â”‚ â”‚
+â”‚  â”‚  â€¢ Pagination (/?page=2&limit=20)                                   â”‚ â”‚
+â”‚  â”‚  â€¢ Sort order (/?sort=due_date&order=asc)                           â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚                    AI STATE (local useState + Supabase)              â”‚ â”‚
+â”‚  â”‚                                                                     â”‚ â”‚
+â”‚  â”‚  â€¢ Chat message history (persisted to supabase.chat_messages)       â”‚ â”‚
+â”‚  â”‚  â€¢ Streaming response buffer (in-memory while AI generates)         â”‚ â”‚
+â”‚  â”‚  â€¢ Agent response cache (avoid redundant AI calls)                  â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2 State Decision Matrix
 
-| Question | Answer → State Tool |
+| Question | Answer â†’ State Tool |
 |---|---|
 | Is this data from the database? | **Supabase** (server state) |
 | Does it need to persist across sessions? | **Supabase** or **localStorage** |
@@ -90,18 +99,18 @@ graph TD
 ### 1.3 Data Flow Principle
 
 ```
-User Action → Component (local state update)
-                │
-                ▼
+User Action â†’ Component (local state update)
+                â”‚
+                â–¼
         Zustand Store (optimistic update)
-                │
-                ▼
+                â”‚
+                â–¼
         Supabase SDK (mutation)
-                │
-                ▼
+                â”‚
+                â–¼
         Supabase DB (persistence)
-                │
-                ▼
+                â”‚
+                â–¼
         Realtime Subscription (sync other devices)
 ```
 
@@ -260,7 +269,7 @@ export const useTaskStore = create<TaskStore>()(
 )
 ```
 
-**Immer middleware** (for nested state — future):
+**Immer middleware** (for nested state â€” future):
 ```typescript
 import { immer } from 'zustand/middleware/immer'
 
@@ -478,7 +487,7 @@ updateTaskOptimistic: async (id, updates) => {
 Components should use selectors to compute derived data rather than storing it:
 
 ```typescript
-// In component — use selectors from the store
+// In component â€” use selectors from the store
 const { tasks } = useTaskStore()
 
 // Derived values (computed, not stored)
@@ -817,7 +826,7 @@ export function useCreateTaskMutation() {
 
 ```
 Mutation              Invalidates              Reason
-─────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 createTask()          ['tasks', userId]        List changed
 updateTask()          ['tasks', userId]        Item changed
                       ['tasks', userId, id]    Detail view stale
@@ -830,26 +839,26 @@ completeTask()        ['tasks', userId]        Status changed
 
 ```
 Client requests data
-         │
-         ▼
-  ┌─── Cache Hit? ───┐
-  │   (stale < 30s)   │
-  └────────┬──────────┘
-           │
-    ┌──────┴──────┐
-    ▼             ▼
+         â”‚
+         â–¼
+  â”Œâ”€â”€â”€ Cache Hit? â”€â”€â”€â”
+  â”‚   (stale < 30s)   â”‚
+  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚
+    â”Œâ”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”
+    â–¼             â–¼
   Yes            No
-  │              │
-  ▼              ▼
+  â”‚              â”‚
+  â–¼              â–¼
 Return cached   Fetch from
 data instantly  Supabase
-  │              │
-  │          Return data
-  │              │
-  │         Update cache
-  │              │
-  └──────┬───────┘
-         ▼
+  â”‚              â”‚
+  â”‚          Return data
+  â”‚              â”‚
+  â”‚         Update cache
+  â”‚              â”‚
+  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+         â–¼
     Component renders with data
 ```
 
@@ -913,21 +922,21 @@ const updateFilter = (key: string, value: string) => {
 ### 6.4 URL State vs Local State Decision
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│                 Filter/Sort/Page Data                       │
-│                                                             │
-│  Should this value survive a page refresh?                  │
-│         ├── YES → URL State (useSearchParams)               │
-│         └── NO  → Local State (useState)                    │
-│                                                             │
-│  Should this value be shareable via link?                   │
-│         ├── YES → URL State                                 │
-│         └── NO  → Local State                               │
-│                                                             │
-│  Does this value affect the data being displayed?           │
-│         ├── YES → URL State                                 │
-│         └── NO  → Local State (modal open, tooltip)         │
-└────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 Filter/Sort/Page Data                       â”‚
+â”‚                                                             â”‚
+â”‚  Should this value survive a page refresh?                  â”‚
+â”‚         â”œâ”€â”€ YES â†’ URL State (useSearchParams)               â”‚
+â”‚         â””â”€â”€ NO  â†’ Local State (useState)                    â”‚
+â”‚                                                             â”‚
+â”‚  Should this value be shareable via link?                   â”‚
+â”‚         â”œâ”€â”€ YES â†’ URL State                                 â”‚
+â”‚         â””â”€â”€ NO  â†’ Local State                               â”‚
+â”‚                                                             â”‚
+â”‚  Does this value affect the data being displayed?           â”‚
+â”‚         â”œâ”€â”€ YES â†’ URL State                                 â”‚
+â”‚         â””â”€â”€ NO  â†’ Local State (modal open, tooltip)         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -951,7 +960,7 @@ interface ChatMessage {
   }
 }
 
-// Component state (not in Zustand — local to chat page)
+// Component state (not in Zustand â€” local to chat page)
 export default function ChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
@@ -967,7 +976,7 @@ export default function ChatPage() {
 # Backend: Chat endpoint returns structured response
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest, current_user=Depends(get_current_user)):
-    # Rule-based response (Phase 1 — no LLM)
+    # Rule-based response (Phase 1 â€” no LLM)
     response = generate_rule_based_response(request.message, context)
     # Future: AI-powered response via Ollama/Claude
     # response = await llm.generate(request.message, context)
@@ -1097,7 +1106,7 @@ interface AnyStore {
 }
 ```
 
-**UI Pattern — Loading State:**
+**UI Pattern â€” Loading State:**
 ```tsx
 // Page-level loading (initial mount + auth check)
 if (!mounted || authLoading) {
@@ -1259,16 +1268,16 @@ export const useToastStore = create<ToastStore>((set) => ({
 ### 8.6 State Transition Matrix
 
 ```
-Current State    │ Action          │ Next State
-─────────────────┼─────────────────┼──────────────────
-idle             │ fetchTasks()    │ loading
-loading          │ fetch success   │ data (or empty)
-loading          │ fetch error     │ error
-data             │ refresh         │ loading (re-fetch)
-data             │ addTask()       │ data (updated)
-data             │ deleteTask()    │ data (filtered)
-error            │ retry           │ loading
-error            │ dismiss error   │ idle
+Current State    â”‚ Action          â”‚ Next State
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+idle             â”‚ fetchTasks()    â”‚ loading
+loading          â”‚ fetch success   â”‚ data (or empty)
+loading          â”‚ fetch error     â”‚ error
+data             â”‚ refresh         â”‚ loading (re-fetch)
+data             â”‚ addTask()       â”‚ data (updated)
+data             â”‚ deleteTask()    â”‚ data (filtered)
+error            â”‚ retry           â”‚ loading
+error            â”‚ dismiss error   â”‚ idle
 ```
 
 ---
@@ -1365,37 +1374,37 @@ export const usePreferences = create<Preferences>()(
 ### 9.3 Supabase as Source of Truth
 
 ```
-┌──────────────────────────────────────────────┐
-│            Supabase PostgreSQL                │
-│                                              │
-│  tasks        — All task data                │
-│  users        — Profile + preferences        │
-│  chat_messages — Full conversation history   │
-│  daily_briefings — Generated briefings       │
-│  weekly_reviews — Generated reviews          │
-│  ...          — All other tables             │
-└──────────────┬───────────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────────┐
-│           Zustand (In-Memory Cache)           │
-│                                              │
-│  Fetched on mount / auth change              │
-│  Updated optimistically on mutations         │
-│  Invalidated on Supabase Realtime events     │
-│  Refreshed on window focus (future)          │
-└──────────────┬───────────────────────────────┘
-               │
-               ▼
-┌──────────────────────────────────────────────┐
-│           React Components                    │
-│                                              │
-│  useTaskStore → tasks, loading, error        │
-│  useUserStore → user, signIn, signOut        │
-│  usePreferences → theme, sidebarCollapsed    │
-│  useState → modal, form, filter              │
-│  useSearchParams → page, sort, status        │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚            Supabase PostgreSQL                â”‚
+â”‚                                              â”‚
+â”‚  tasks        â€” All task data                â”‚
+â”‚  users        â€” Profile + preferences        â”‚
+â”‚  chat_messages â€” Full conversation history   â”‚
+â”‚  daily_briefings â€” Generated briefings       â”‚
+â”‚  weekly_reviews â€” Generated reviews          â”‚
+â”‚  ...          â€” All other tables             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â”‚
+               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           Zustand (In-Memory Cache)           â”‚
+â”‚                                              â”‚
+â”‚  Fetched on mount / auth change              â”‚
+â”‚  Updated optimistically on mutations         â”‚
+â”‚  Invalidated on Supabase Realtime events     â”‚
+â”‚  Refreshed on window focus (future)          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+               â”‚
+               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           React Components                    â”‚
+â”‚                                              â”‚
+â”‚  useTaskStore â†’ tasks, loading, error        â”‚
+â”‚  useUserStore â†’ user, signIn, signOut        â”‚
+â”‚  usePreferences â†’ theme, sidebarCollapsed    â”‚
+â”‚  useState â†’ modal, form, filter              â”‚
+â”‚  useSearchParams â†’ page, sort, status        â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1407,13 +1416,13 @@ export const usePreferences = create<Preferences>()(
 Zustand renders re-run whenever any part of the store changes. Use selectors to minimize re-renders:
 
 ```typescript
-// ❌ BAD: Subscribes to entire store — re-renders on any change
+// âŒ BAD: Subscribes to entire store â€” re-renders on any change
 const { tasks } = useTaskStore()
 
-// ✅ GOOD: Selector subscribes only to `tasks`
+// âœ… GOOD: Selector subscribes only to `tasks`
 const tasks = useTaskStore((state) => state.tasks)
 
-// ✅ BETTER: Selector returns derived value
+// âœ… BETTER: Selector returns derived value
 const pendingCount = useTaskStore(
   (state) => state.tasks.filter(t => t.status === 'pending').length
 )
@@ -1426,10 +1435,10 @@ For non-primitive selectors, use shallow equality to prevent unnecessary re-rend
 ```typescript
 import { shallow } from 'zustand/shallow'
 
-// ✅ GOOD: Only re-renders when tasks array reference changes
+// âœ… GOOD: Only re-renders when tasks array reference changes
 const tasks = useTaskStore((state) => state.tasks, shallow)
 
-// ✅ GOOD: Multiple selections with shallow equality
+// âœ… GOOD: Multiple selections with shallow equality
 const { tasks, loading } = useTaskStore(
   (state) => ({ tasks: state.tasks, loading: state.loading }),
   shallow
@@ -1439,17 +1448,17 @@ const { tasks, loading } = useTaskStore(
 ### 10.3 Preventing Re-Render Cascades
 
 ```typescript
-// ❌ BAD: New object on every render → child re-renders
+// âŒ BAD: New object on every render â†’ child re-renders
 <TaskCard task={tasks.find(t => t.id === id)} />
 
-// ✅ GOOD: Memoize derived data
+// âœ… GOOD: Memoize derived data
 const currentTask = useMemo(
   () => tasks.find(t => t.id === id),
   [tasks, id]
 )
 <TaskCard task={currentTask} />
 
-// ✅ BETTER: Use React.memo on child component
+// âœ… BETTER: Use React.memo on child component
 const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
   return <div>{/* ... */}</div>
 })
@@ -1458,13 +1467,13 @@ const TaskCard = React.memo(function TaskCard({ task }: { task: Task }) {
 ### 10.4 Store Action Stability
 
 ```typescript
-// ✅ GOOD: Destructure stable action references (functions are stable across re-renders)
+// âœ… GOOD: Destructure stable action references (functions are stable across re-renders)
 const { addTask, deleteTask } = useTaskStore()
 
-// ❌ BAD: Destructuring non-stable values causes whole-object subscription
+// âŒ BAD: Destructuring non-stable values causes whole-object subscription
 const { tasks, loading, error, addTask } = useTaskStore()
 
-// ✅ GOOD: Separate subscriptions
+// âœ… GOOD: Separate subscriptions
 const tasks = useTaskStore((state) => state.tasks)
 const loading = useTaskStore((state) => state.loading)
 const addTask = useTaskStore((state) => state.addTask)
@@ -1474,9 +1483,9 @@ const addTask = useTaskStore((state) => state.addTask)
 
 | Operation | Without Optimization | With Optimization | Improvement |
 |---|---|---|---|
-| Re-render on store change | 150μs (full component tree) | 15μs (selector-isolated) | 10x |
+| Re-render on store change | 150Î¼s (full component tree) | 15Î¼s (selector-isolated) | 10x |
 | List re-render (100 items) | 45ms | 8ms (React.memo) | 5.6x |
-| Filter re-computation | 3ms (every render) | 0.5μs (useMemo) | 6000x |
+| Filter re-computation | 3ms (every render) | 0.5Î¼s (useMemo) | 6000x |
 
 ---
 
@@ -1527,9 +1536,9 @@ export const usePreferences = create<Preferences>()(
 
 ```
 1. Increment `version` in persist config
-2. Write `migrate` function handling old → new
+2. Write `migrate` function handling old â†’ new
 3. Test with localStorage manually (clear storage, reload)
-4. Deploy — existing users will auto-migrate on first load
+4. Deploy â€” existing users will auto-migrate on first load
 ```
 
 ### 11.4 Database Schema Migrations
@@ -1575,10 +1584,10 @@ export const useTaskStore = create<TaskStore>()(
 ```
 
 This enables:
-- **Time-travel debugging** — replay/store actions
-- **Action log** — every set() call with type label
-- **State diff** — before/after state comparison
-- **Jump to state** — inspect any past state
+- **Time-travel debugging** â€” replay/store actions
+- **Action log** â€” every set() call with type label
+- **State diff** â€” before/after state comparison
+- **Jump to state** â€” inspect any past state
 
 ### 12.2 React Query DevTools (Future)
 
@@ -1610,11 +1619,11 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
 ```
 
 React Query DevTools provides:
-- **Query cache inspector** — see all cached queries
-- **Mutation history** — track all mutations
-- **Stale status** — see which queries are fresh/stale
-- **Manual refetch** — trigger refetch for testing
-- **Query removal** — clear cache entries
+- **Query cache inspector** â€” see all cached queries
+- **Mutation history** â€” track all mutations
+- **Stale status** â€” see which queries are fresh/stale
+- **Manual refetch** â€” trigger refetch for testing
+- **Query removal** â€” clear cache entries
 
 ### 12.3 Redux DevTools Integration
 
@@ -1626,16 +1635,16 @@ Since Zustand's `devtools` middleware writes to the Redux DevTools extension, no
 ### 12.4 Debugging Tips
 
 ```typescript
-// Console debug — inspect store state
+// Console debug â€” inspect store state
 useTaskStore.subscribe(console.log)
 
-// React DevTools — inspect component props and state
+// React DevTools â€” inspect component props and state
 // Components using Zustand show hooks state
 
-// Network tab — monitor Supabase API calls
+// Network tab â€” monitor Supabase API calls
 // Filter by *.supabase.co
 
-// Debug middleware — log all state changes (development only)
+// Debug middleware â€” log all state changes (development only)
 const logMiddleware = (config) => (set, get, api) =>
   config(
     (args) => {
@@ -1679,7 +1688,7 @@ NEXT_PUBLIC_DEVTOOLS=true npm run dev
 
 ```mermaid
 graph TD
-    UI[USER INTERACTION<br/>Click → Dispatch → Optimistic Update]
+    UI[USER INTERACTION<br/>Click â†’ Dispatch â†’ Optimistic Update]
 
     subgraph SML["STATE MANAGEMENT LAYER"]
         ZS[Zustand Stores<br/>taskStore / userStore<br/>preferencesStore / toastStore]
