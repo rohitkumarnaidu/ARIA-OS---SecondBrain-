@@ -1,3 +1,13 @@
+## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-ADR-007 |
+| Version | 1.0.0 |
+| Status | Proposed |
+| Last Updated | 2026-07-11 |
+| Author | Developer |
+
 # ADR-007: PWA over Native Mobile
 
 ## Status

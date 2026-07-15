@@ -1,3 +1,12 @@
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | ENG-ADR04-001 |
+| Version | 1.0.0 |
+| Status | Accepted |
+| Last Updated | 2026-07-11 |
+
 # ADR-004: In-Process Agents over Microservices
 
 ## Status
@@ -56,18 +65,18 @@ All agents are implemented as standalone Python async functions in `packages/ai/
 ## Consequences
 
 ### Positive
-- Single `uvicorn` process to deploy — no Docker Compose, no Kubernetes, no service mesh
-- Zero inter-service communication overhead — no serialization, no network calls, no latency from HTTP/gRPC between agents
+- Single `uvicorn` process to deploy â€” no Docker Compose, no Kubernetes, no service mesh
+- Zero inter-service communication overhead â€” no serialization, no network calls, no latency from HTTP/gRPC between agents
 - Adding a new agent is as simple as creating a new file in `packages/ai/agents/` and registering its endpoint
-- Shared dependencies (Ollama client, Supabase client, logger, cache) are imported directly — no duplication
+- Shared dependencies (Ollama client, Supabase client, logger, cache) are imported directly â€” no duplication
 
 ### Negative
-- If the FastAPI process crashes or is restarted, all agents go down simultaneously — no fault isolation
+- If the FastAPI process crashes or is restarted, all agents go down simultaneously â€” no fault isolation
 - A long-running agent (e.g., Radar scanning multiple sources) blocks the event loop for other requests unless explicitly delegated to `asyncio.create_task` or `BackgroundTasks`
-- All agents share the same memory space — a memory leak in one agent affects all others
-- No independent scaling — CPU-heavy agent work competes with API request handling
+- All agents share the same memory space â€” a memory leak in one agent affects all others
+- No independent scaling â€” CPU-heavy agent work competes with API request handling
 
 ### Neutral
-- The `asyncio` event loop naturally handles concurrency — I/O-bound agent work (Ollama HTTP calls, Supabase queries) does not block
+- The `asyncio` event loop naturally handles concurrency â€” I/O-bound agent work (Ollama HTTP calls, Supabase queries) does not block
 - CPU-bound agent work (embedding, text processing) can be offloaded to a thread pool executor if needed
 - If scale requires it later, individual agents can be extracted into their own FastAPI apps behind a gateway without changing the agent interface
