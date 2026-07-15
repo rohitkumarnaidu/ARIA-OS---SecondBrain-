@@ -70,18 +70,19 @@ export class AIStreamClient {
     this.abortController = new AbortController()
     const requestId = generateRequestId()
     const fullText: string[] = []
+    const params = new URLSearchParams({ stream: 'true' })
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
         const response = await fetchWithTimeout(
-          `${AI_API_BASE}/api/v1/chat/`,
+          `${AI_API_BASE}/api/v1/chat/?${params}`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'X-Request-ID': requestId,
             },
-            body: JSON.stringify({ message, thread_id: threadId }),
+            body: JSON.stringify({ message, conversation_id: threadId }),
             signal: this.abortController.signal,
           },
           DEFAULT_TIMEOUT,
@@ -128,7 +129,11 @@ export class AIStreamClient {
                 if (data === '[DONE]') continue
                 try {
                   const parsed = JSON.parse(data)
-                  const chunk = parsed.content || parsed.delta || ''
+                  if (parsed.done) {
+                    onDone(parsed.full_response || fullText.join(''))
+                    return
+                  }
+                  const chunk = parsed.token || parsed.content || parsed.delta || ''
                   if (chunk) {
                     fullText.push(chunk)
                     onChunk(chunk, parsed.agent)
