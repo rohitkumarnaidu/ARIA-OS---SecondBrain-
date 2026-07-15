@@ -255,8 +255,9 @@ export default function ResourcesPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-text-secondary text-sm mb-1">Title *</label>
+                <label htmlFor="resource-title" className="block text-text-secondary text-sm mb-1">Title *</label>
                 <input
+                  id="resource-title"
                   type="text"
                   value={newResource.title}
                   onChange={e => setNewResource({ ...newResource, title: e.target.value })}
@@ -264,8 +265,9 @@ export default function ResourcesPage() {
                 />
               </div>
               <div>
-                <label className="block text-text-secondary text-sm mb-1">URL *</label>
+                <label htmlFor="resource-url" className="block text-text-secondary text-sm mb-1">URL *</label>
                 <input
+                  id="resource-url"
                   type="url"
                   value={newResource.url}
                   onChange={e => setNewResource({ ...newResource, url: e.target.value })}
@@ -273,8 +275,9 @@ export default function ResourcesPage() {
                 />
               </div>
               <div>
-                <label className="block text-text-secondary text-sm mb-1">Type</label>
+                <label htmlFor="resource-type" className="block text-text-secondary text-sm mb-1">Type</label>
                 <select
+                  id="resource-type"
                   value={newResource.resource_type}
                   onChange={e => setNewResource({ ...newResource, resource_type: e.target.value })}
                   className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary capitalize"
@@ -283,8 +286,9 @@ export default function ResourcesPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-text-secondary text-sm mb-1">Tags (comma separated)</label>
+                <label htmlFor="resource-tags" className="block text-text-secondary text-sm mb-1">Tags (comma separated)</label>
                 <input
+                  id="resource-tags"
                   type="text"
                   value={newResource.tags}
                   onChange={e => setNewResource({ ...newResource, tags: e.target.value })}
@@ -293,8 +297,9 @@ export default function ResourcesPage() {
                 />
               </div>
               <div>
-                <label className="block text-text-secondary text-sm mb-1">Notes</label>
+                <label htmlFor="resource-notes" className="block text-text-secondary text-sm mb-1">Notes</label>
                 <textarea
+                  id="resource-notes"
                   value={newResource.notes}
                   onChange={e => setNewResource({ ...newResource, notes: e.target.value })}
                   className="w-full bg-background-input border border-border rounded-lg px-4 py-2 text-text-primary"
