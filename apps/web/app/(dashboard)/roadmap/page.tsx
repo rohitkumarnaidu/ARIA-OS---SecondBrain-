@@ -569,8 +569,7 @@ export default function RoadmapPage(): JSX.Element {
                     onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
                     className="w-full h-10 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
                     placeholder="e.g., Next.js Advanced"
-                    autoFocus
-                  />
+                    />
                 </div>
 
                 <div>
