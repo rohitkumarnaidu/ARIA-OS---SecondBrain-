@@ -197,7 +197,10 @@ export default function IdeasPage() {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
               className="bg-background-card border border-border rounded-xl p-4 cursor-pointer hover:border-accent-primary/50"
+              role="button"
+              tabIndex={0}
               onClick={() => setSelectedIdea(idea)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedIdea(idea) } }}
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="w-10 h-10 rounded-lg bg-accent-warning/20 flex items-center justify-center">
@@ -260,8 +263,9 @@ export default function IdeasPage() {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-text-secondary text-sm mb-1">Idea Title *</label>
+                  <label htmlFor="idea-title" className="block text-text-secondary text-sm mb-1">Idea Title *</label>
                   <input
+                    id="idea-title"
                     type="text"
                     value={newIdea.title}
                     onChange={e => setNewIdea({ ...newIdea, title: e.target.value })}
@@ -271,8 +275,9 @@ export default function IdeasPage() {
                 </div>
 
                 <div>
-                  <label className="block text-text-secondary text-sm mb-1">Description</label>
+                  <label htmlFor="idea-description" className="block text-text-secondary text-sm mb-1">Description</label>
                   <textarea
+                    id="idea-description"
                     value={newIdea.description}
                     onChange={e => setNewIdea({ ...newIdea, description: e.target.value })}
                     className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary"
@@ -320,8 +325,8 @@ export default function IdeasPage() {
 
               {/* Status Pipeline */}
               <div className="mb-4">
-                <label className="block text-text-secondary text-sm mb-2">Status</label>
-                <div className="flex gap-2 flex-wrap">
+                <span className="block text-text-secondary text-sm mb-2">Status</span>
+                <div className="flex gap-2 flex-wrap" role="group" aria-label="Status">
                   {statuses.map(s => (
                     <button
                       key={s}
