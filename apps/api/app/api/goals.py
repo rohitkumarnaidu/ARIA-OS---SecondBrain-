@@ -3,6 +3,7 @@ from typing import List
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.goal import GoalCreate, GoalUpdate, GoalResponse
+from shared.utils.logger import logger
 
 router = APIRouter()
 
@@ -53,8 +54,8 @@ async def create_goal(goal: GoalCreate, current_user=Depends(get_current_user)):
 
         try:
             data["target_date"] = datetime.fromisoformat(data["target_date"].replace("Z", "+00:00")).isoformat()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warn("Failed to parse goal target_date", error=str(e))
     response = supabase.from_("goals").insert(data).execute()
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
