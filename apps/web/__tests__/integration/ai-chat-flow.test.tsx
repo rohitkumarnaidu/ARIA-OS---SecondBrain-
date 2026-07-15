@@ -118,7 +118,8 @@ describe('AI Chat Flow Integration', () => {
   it('renders session context panel', () => {
     render(<ChatPage />)
     expect(screen.getByText('Session Context')).toBeInTheDocument()
-    expect(screen.getByText('Agent Status')).toBeInTheDocument()
+    expect(screen.getByText('System Context')).toBeInTheDocument()
+    expect(screen.getByText('Memory Stats')).toBeInTheDocument()
   })
 
   it('renders New Thread button', () => {
