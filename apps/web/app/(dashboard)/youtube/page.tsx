@@ -196,8 +196,8 @@ export default function YouTubePage() {
                 <button onClick={() => setShowAddModal(false)}><X size={24} className="text-text-muted" /></button>
               </div>
               <div className="space-y-4">
-                <div><label className="block text-text-secondary text-sm mb-1">YouTube URL *</label><input type="url" value={newVideo.url} onChange={e => setNewVideo({ ...newVideo, url: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" placeholder="https://youtube.com/watch?v=..." /></div>
-                <div><label className="block text-text-secondary text-sm mb-1">Title</label><input type="text" value={newVideo.title} onChange={e => setNewVideo({ ...newVideo, title: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" placeholder="Video title" /></div>
+                <div><label htmlFor="video-url" className="block text-text-secondary text-sm mb-1">YouTube URL *</label><input id="video-url" type="url" value={newVideo.url} onChange={e => setNewVideo({ ...newVideo, url: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" placeholder="https://youtube.com/watch?v=..." /></div>
+                <div><label htmlFor="video-title" className="block text-text-secondary text-sm mb-1">Title</label><input id="video-title" type="text" value={newVideo.title} onChange={e => setNewVideo({ ...newVideo, title: e.target.value })} className="w-full bg-background-dark border border-border rounded-lg px-4 py-2 text-text-primary" placeholder="Video title" /></div>
                 <button onClick={handleAddVideo} className="w-full bg-accent-primary text-white py-2 rounded-lg hover:bg-accent-primary/90">Save Video</button>
               </div>
             </motion.div>
