@@ -59,6 +59,9 @@ class MockQueryBuilder:
     def text_search(self, col, val):
         return self
 
+    def in_(self, col, vals):
+        return self
+
     def lt(self, col, val):
         return self
 
@@ -115,31 +118,58 @@ def _router_modules_advanced():
         "app.api.resources",
         "app.api.sleep",
         "app.api.time",
+        "app.api.learning",
     ]
     return modules
 
 
-def _register_mock_agent_modules():
+_AGENT_MOCK_SPECS = {
+    "briefing_agent": {"generate_daily_briefing"},
+    "opportunity_agent": {"run_opportunity_radar"},
+    "weekly_review_agent": {"generate_weekly_review"},
+    "sleep_agent": {"analyze_sleep", "suggest_bedtime"},
+    "nudge_agent": {"run_all_nudges"},
+    "learning_agent": {"detect_learning_patterns", "track_user_progress"},
+}
+
+
+def _install_mock_agent_modules():
+    """Install mock agent modules only if real ones aren't already loaded."""
     import sys
     import types
 
-    specs = {
-        "briefing_agent": {"generate_daily_briefing"},
-        "opportunity_agent": {"run_opportunity_radar"},
-        "weekly_review_agent": {"generate_weekly_review"},
-        "sleep_agent": {"analyze_sleep", "suggest_bedtime"},
-        "nudge_agent": {"run_all_nudges"},
-    }
-    for name, fns in specs.items():
+    for name, fns in _AGENT_MOCK_SPECS.items():
         mod_path = f"ai.agents.{name}"
         if mod_path not in sys.modules:
             mock_mod = types.ModuleType(mod_path)
             for fn in fns:
-                setattr(mock_mod, fn, AsyncMock(return_value={} if "radar" not in fn else []))
+                return_val = [] if ("radar" in fn or "pattern" in fn) else {}
+                setattr(mock_mod, fn, AsyncMock(return_value=return_val))
             sys.modules[mod_path] = mock_mod
 
 
-_register_mock_agent_modules()
+_install_mock_agent_modules()
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _cleanup_mock_agent_modules():
+    """Restore original modules to avoid leaking mocks to other test files."""
+    import sys
+
+    old_modules = {}
+    for name in _AGENT_MOCK_SPECS:
+        mod_path = f"ai.agents.{name}"
+        old_modules[mod_path] = sys.modules.get(mod_path)
+    # Re-install mocks in case real modules were loaded during collection
+    _install_mock_agent_modules()
+
+    yield
+
+    for mod_path, old_mod in old_modules.items():
+        if old_mod is not None:
+            sys.modules[mod_path] = old_mod
+        else:
+            sys.modules.pop(mod_path, None)
 
 
 # ===========================================================================
@@ -178,6 +208,7 @@ def app():
         sleep,
         time,
         auth,
+        learning,
     )
 
     application = FastAPI(title="Test API Advanced")
@@ -206,6 +237,7 @@ def app():
     application.include_router(projects.router, prefix="/api/v1/projects", tags=["projects"])
     application.include_router(resources.router, prefix="/api/v1/resources", tags=["resources"])
     application.include_router(sleep.router, prefix="/api/v1/sleep", tags=["sleep"])
+    application.include_router(learning.router, prefix="/api/v1/learning", tags=["learning"])
     application.include_router(time.router, prefix="/api/v1/time", tags=["time"])
     application.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
     return application
@@ -233,6 +265,19 @@ def _setup_deps(app, mock_supabase):
         p = patch(f"{mod}.get_supabase_client", return_value=mock_supabase)
         p.start()
         patchers.append(p)
+
+    # Patch agent functions imported into route modules (covers full-suite runs
+    # where real modules are already cached in sys.modules from earlier test files)
+    _AGENT_IMPORT_MAP = {
+        "app.api.sleep": ["analyze_sleep", "suggest_bedtime"],
+        "app.api.learning": ["detect_learning_patterns", "track_user_progress"],
+    }
+    for mod_path, funcs in _AGENT_IMPORT_MAP.items():
+        for func in funcs:
+            return_val = [] if "pattern" in func else {}
+            p = patch(f"{mod_path}.{func}", new_callable=AsyncMock, return_value=return_val)
+            p.start()
+            patchers.append(p)
 
     yield
 
@@ -833,6 +878,38 @@ class TestNotificationEndpoints:
     def test_notifications_unauthorized(self, client, no_auth):
         resp = client.get("/api/v1/notifications/")
         assert resp.status_code == 401
+
+    def test_list_nudges_with_read_filter(self, client, mock_supabase):
+        nudges = [
+            {**SAMPLE_NOTIFICATION, "id": "n1", "read": True, "priority": "low"},
+            {**SAMPLE_NOTIFICATION, "id": "n2", "read": False, "priority": "medium"},
+        ]
+        _cfg(mock_supabase, nudges)
+        resp = client.get("/api/v1/notifications/nudges?read=true", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert isinstance(resp.json(), list)
+
+    def test_list_nudges_severity_mapping(self, client, mock_supabase):
+        nudges = [
+            {**SAMPLE_NOTIFICATION, "id": "n1", "priority": "low"},
+            {**SAMPLE_NOTIFICATION, "id": "n2", "priority": "medium"},
+            {**SAMPLE_NOTIFICATION, "id": "n3", "priority": "high"},
+        ]
+        _cfg(mock_supabase, nudges)
+        resp = client.get("/api/v1/notifications/nudges", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data) == 3
+        severities = {n["id"]: n["severity"] for n in data}
+        assert severities["n1"] == "info"
+        assert severities["n2"] == "warning"
+        assert severities["n3"] == "critical"
+
+    def test_list_nudges_db_error_returns_empty(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = Exception("DB error")
+        resp = client.get("/api/v1/notifications/nudges", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json() == []
 
 
 # ===========================================================================
@@ -4092,3 +4169,476 @@ class TestNLPHelpers:
         from app.api.nlp import resolve_route
 
         assert resolve_route("nonexistent") is None
+
+
+# ===========================================================================
+# MONITORING — activity feed, ai-cache, metrics, _calc_trend
+# ===========================================================================
+
+
+@pytest.mark.api
+class TestMonitoringEndpoints:
+
+    def test_record_agent_activity(self, client, mock_supabase):
+        _cfg(mock_supabase, [{"id": "act-1"}])
+        resp = client.post(
+            "/api/v1/monitoring/activity",
+            json={
+                "agent_name": "briefing",
+                "status": "completed",
+                "started_at": "2026-06-20T06:00:00",
+                "completed_at": "2026-06-20T06:05:00",
+                "duration_ms": 300000,
+                "input_summary": "Generate briefing",
+                "output_summary": "Briefing ready",
+            },
+            headers=_AUTH_HEADER,
+        )
+        assert resp.status_code == 201
+        assert resp.json()["status"] == "ok"
+
+    def test_record_agent_activity_db_error(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = Exception("DB error")
+        resp = client.post(
+            "/api/v1/monitoring/activity",
+            json={"agent_name": "test", "status": "completed"},
+            headers=_AUTH_HEADER,
+        )
+        assert resp.status_code == 201
+        assert resp.json()["status"] == "ok"
+
+    def test_record_agent_activity_missing_agent_name(self, client, mock_supabase):
+        resp = client.post(
+            "/api/v1/monitoring/activity",
+            json={"status": "completed"},
+            headers=_AUTH_HEADER,
+        )
+        assert resp.status_code == 422
+
+    def test_record_agent_activity_invalid_status(self, client, mock_supabase):
+        resp = client.post(
+            "/api/v1/monitoring/activity",
+            json={"agent_name": "test", "status": "invalid"},
+            headers=_AUTH_HEADER,
+        )
+        assert resp.status_code == 422
+
+    def test_get_agent_activity_feed(self, client, mock_supabase):
+        data = [{
+            "id": "act-1",
+            "user_id": "user-1",
+            "agent_name": "briefing",
+            "status": "completed",
+            "started_at": "2026-06-20T06:00:00",
+            "completed_at": "2026-06-20T06:05:00",
+            "duration_ms": 300000,
+            "error_message": None,
+            "input_summary": "Gen",
+            "output_summary": "Done",
+            "created_at": "2026-06-20T06:05:00",
+        }]
+        builder = MagicMock()
+        count_result = MagicMock()
+        count_result.count = 1
+        builder.select.return_value.eq.return_value.execute.return_value = count_result
+        data_result = MagicMock()
+        data_result.data = data
+        data_result.error = None
+        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = data_result
+        mock_supabase.from_.return_value = builder
+        resp = client.get("/api/v1/monitoring/activity", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert len(body["data"]) == 1
+        assert body["total"] == 1
+        assert body["limit"] == 20
+
+    def test_get_agent_activity_feed_empty(self, client, mock_supabase):
+        builder = MagicMock()
+        count_result = MagicMock()
+        count_result.count = 0
+        builder.select.return_value.eq.return_value.execute.return_value = count_result
+        data_result = MagicMock()
+        data_result.data = []
+        data_result.error = None
+        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = data_result
+        mock_supabase.from_.return_value = builder
+        resp = client.get("/api/v1/monitoring/activity", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["data"] == []
+
+    def test_get_agent_activity_feed_db_error(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = Exception("DB error")
+        resp = client.get("/api/v1/monitoring/activity", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["data"] == []
+        assert body["total"] == 0
+
+    def test_get_ai_cache_stats(self, client, mock_supabase):
+        resp = client.get("/api/v1/monitoring/ai-cache", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["status"] == "ok"
+        assert "cache" in body
+        assert body["cache"]["hits"] == 0
+
+    def test_clear_ai_cache(self, client, mock_supabase):
+        resp = client.delete("/api/v1/monitoring/ai-cache", headers=_AUTH_HEADER)
+        assert resp.status_code == 204
+
+    def test_get_metrics(self, client, mock_supabase):
+        data = [
+            {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
+            {"agent": "briefing", "total_tokens": 2000, "duration_ms": 1500, "cost_usd": 0.0, "created_at": "2026-06-20T13:00:00"},
+            {"agent": "memory", "total_tokens": 500, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T12:30:00"},
+        ]
+        _cfg(mock_supabase, data)
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "rate" in body
+        assert "errors" in body
+        assert "duration" in body
+        assert "agents" in body
+        assert "services" in body
+        assert len(body["agents"]) == 2
+
+    def test_get_metrics_with_agent_filter(self, client, mock_supabase):
+        data = [
+            {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
+        ]
+        _cfg(mock_supabase, data)
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics?agent=briefing", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert len(resp.json()["agents"]) == 1
+
+    def test_get_metrics_empty(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["rate"]["current"] == 0.0
+        assert body["errors"]["current"] == 0.0
+        assert body["agents"] == []
+
+    def test_get_metrics_trend_up(self, client, mock_supabase):
+        data = [
+            {"agent": "briefing", "total_tokens": 100, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-19T10:00:00"},
+            {"agent": "briefing", "total_tokens": 200, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T10:00:00"},
+        ]
+        _cfg(mock_supabase, data)
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics?period=7d", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["rate"]["trend"] in ("up", "neutral")
+
+    def test_get_metrics_trend_down(self, client, mock_supabase):
+        data = [
+            {"agent": "briefing", "total_tokens": 300, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-19T10:00:00"},
+            {"agent": "briefing", "total_tokens": 100, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T10:00:00"},
+        ]
+        _cfg(mock_supabase, data)
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics?period=7d", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+
+    def test_get_metrics_with_activity_data(self, client, mock_supabase):
+        data = [
+            {"agent": "briefing", "total_tokens": 100, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00", "agent_name": "briefing", "status": "failed"},
+        ]
+        _cfg(mock_supabase, data)
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+
+    def test_get_metrics_services_api(self, client, mock_supabase):
+        _cfg(mock_supabase, [{"agent": "test", "total_tokens": 10, "created_at": "2026-06-20T12:00:00"}])
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        services = resp.json()["services"]
+        assert "api" in services
+        assert "supabase" in services
+        assert "ai" in services
+        assert "scheduler" in services
+
+    def test_calc_trend_less_than_two(self):
+        from app.api.monitoring import _calc_trend
+
+        trend, change = _calc_trend([{"value": 10}])
+        assert trend == "neutral"
+        assert change == 0.0
+
+    def test_calc_trend_first_zero(self):
+        from app.api.monitoring import _calc_trend
+
+        trend, change = _calc_trend([{"value": 0}, {"value": 10}, {"value": 20}])
+        assert trend == "neutral"
+        assert change == 0.0
+
+    def test_calc_trend_up(self):
+        from app.api.monitoring import _calc_trend
+
+        trend, change = _calc_trend([{"value": 10}, {"value": 20}, {"value": 30}])
+        assert trend == "up"
+        assert change == 200.0
+
+    def test_calc_trend_down(self):
+        from app.api.monitoring import _calc_trend
+
+        trend, change = _calc_trend([{"value": 30}, {"value": 20}, {"value": 10}])
+        assert trend == "down"
+        assert change == -66.7
+
+    def test_monitoring_unauthorized(self, client, no_auth):
+        assert client.get("/api/v1/monitoring/activity").status_code == 401
+        assert client.get("/api/v1/monitoring/ai-cache").status_code == 401
+        assert client.get("/api/v1/monitoring/metrics").status_code == 401
+
+    def test_compute_cost_opus(self, client, mock_supabase):
+        """_compute_cost with opus model uses $15/M input, $75/M output."""
+        from app.api.monitoring import _compute_cost
+        cost = _compute_cost("claude-3-opus", 1000, 500)
+        assert cost == (1000 / 1_000_000 * 15) + (500 / 1_000_000 * 75)
+
+    def test_compute_cost_sonnet(self, client, mock_supabase):
+        """_compute_cost with sonnet model uses $3/M input, $15/M output."""
+        from app.api.monitoring import _compute_cost
+        cost = _compute_cost("claude-3-sonnet", 1000, 500)
+        assert cost == (1000 / 1_000_000 * 3) + (500 / 1_000_000 * 15)
+
+    def test_compute_cost_haiku(self, client, mock_supabase):
+        """_compute_cost with haiku model uses $0.25/M input, $1.25/M output."""
+        from app.api.monitoring import _compute_cost
+        cost = _compute_cost("claude-3-haiku", 1000, 500)
+        assert cost == (1000 / 1_000_000 * 0.25) + (500 / 1_000_000 * 1.25)
+
+    def test_compute_cost_default(self, client, mock_supabase):
+        """_compute_cost with unknown model uses default $3/M for total."""
+        from app.api.monitoring import _compute_cost
+        cost = _compute_cost("unknown-model", 1000, 500)
+        assert cost == (1500 / 1_000_000 * 3)
+
+    def test_get_metrics_supabase_unavailable(self, client, mock_supabase):
+        """get_metrics handles supabase service check failure."""
+        token_data = [
+            {"agent": "briefing", "total_tokens": 100, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
+        ]
+
+        def mock_from(table_name):
+            if table_name == "token_usage":
+                return MockQueryBuilder(return_data=token_data)
+            if table_name == "agent_activity_log":
+                return MockQueryBuilder(return_data=[])
+            if table_name == "users":
+                raise Exception("DB connection failed")
+            return MockQueryBuilder(return_data=[])
+
+        mock_supabase.from_.side_effect = mock_from
+        with patch("app.api.monitoring.settings.use_local_ai", False):
+            resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["services"]["supabase"]["status"] == "unavailable"
+
+    def test_get_metrics_use_local_ai(self, client, mock_supabase):
+        """get_metrics with use_local_ai=True checks local Ollama."""
+        _cfg(mock_supabase, [])
+        with patch("app.api.monitoring.settings.use_local_ai", True):
+            with patch("httpx.get") as mock_get:
+                mock_get.return_value = MagicMock(status_code=200)
+                resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["services"]["ai"]["status"] == "ok"
+
+    def test_get_metrics_use_local_ai_unavailable(self, client, mock_supabase):
+        """get_metrics handles local AI query failure."""
+        _cfg(mock_supabase, [])
+        with patch("app.api.monitoring.settings.use_local_ai", True):
+            with patch("httpx.get", side_effect=Exception("AI unavailable")):
+                resp = client.get("/api/v1/monitoring/metrics", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["services"]["ai"]["status"] == "unavailable"
+
+
+# ===========================================================================
+# LEARNING — /api/v1/learning/insights
+# ===========================================================================
+
+
+@pytest.mark.api
+class TestLearningInsights:
+
+    def test_get_insights(self, client, mock_supabase):
+        def mock_from(table_name):
+            builders = {
+                "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5, "completion_rate": 80}}]),
+                "tasks": MockQueryBuilder(return_data=[
+                    {"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"},
+                ]),
+                "courses": MockQueryBuilder(return_data=[
+                    {"title": "React", "status": "in_progress", "progress_pct": 50},
+                ]),
+                "habits": MockQueryBuilder(return_data=[
+                    {"title": "Read", "is_active": True, "current_streak": 5, "consistency_percentage": 80},
+                ]),
+                "time_entries": MockQueryBuilder(return_data=[
+                    {"duration_minutes": 60, "is_deep_work": True, "start_time": "2026-06-20T09:00:00"},
+                ]),
+            }
+            return builders.get(table_name, MockQueryBuilder(return_data=[]))
+
+        mock_supabase.from_.side_effect = mock_from
+        resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "progress" in body
+        assert "productivity_patterns" in body
+        assert "study_habits" in body
+        assert "peak_times" in body
+        assert body["productivity_patterns"]["completed_tasks"] == 1
+        assert body["study_habits"]["active_habits"] == 1
+
+    def test_get_insights_empty(self, client, mock_supabase):
+        def mock_from(table_name):
+            builders = {
+                "learning_progress": MockQueryBuilder(return_data=[]),
+                "tasks": MockQueryBuilder(return_data=[]),
+                "courses": MockQueryBuilder(return_data=[]),
+                "habits": MockQueryBuilder(return_data=[]),
+                "time_entries": MockQueryBuilder(return_data=[]),
+            }
+            return builders.get(table_name, MockQueryBuilder(return_data=[]))
+
+        mock_supabase.from_.side_effect = mock_from
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=[]):
+            resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["progress"] == {}
+        assert body["productivity_patterns"]["total_tasks"] == 0
+        assert body["insights"] == []
+
+    def test_get_insights_refresh(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(return_data=[
+            {"id": "t-1", "status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"},
+            {"id": "c-1", "title": "ML", "status": "in_progress", "progress_pct": 30},
+            {"id": "h-1", "title": "Exercise", "is_active": True, "current_streak": 3, "consistency_percentage": 70},
+        ])
+        resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "progress" in body
+
+    def test_get_insights_refresh_error(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")):
+            with patch("app.api.learning.track_user_progress", new_callable=AsyncMock, side_effect=Exception("progress fail")):
+                resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["progress"] == {}
+        assert body["insights"] == []
+
+    def test_get_insights_db_error(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = Exception("DB unavailable")
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=[]):
+            resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["progress"] == {}
+        assert body["productivity_patterns"]["total_tasks"] == 0
+
+    def test_get_insights_refresh_partial_data(self, client, mock_supabase):
+        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(return_data=[
+            {"status": "pending", "priority": "low", "created_at": "2026-06-20T12:00:00"},
+        ])
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=["Stay focused"]):
+            resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["insights"] == ["Stay focused"]
+
+    def test_learning_unauthorized(self, client, no_auth):
+        assert client.get("/api/v1/learning/insights").status_code == 401
+
+    def test_get_insights_time_entry_error(self, client, mock_supabase):
+        """Invalid time entry start_time is handled gracefully."""
+        def mock_from(table_name):
+            builders = {
+                "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5}}]),
+                "tasks": MockQueryBuilder(return_data=[{"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"}]),
+                "courses": MockQueryBuilder(return_data=[]),
+                "habits": MockQueryBuilder(return_data=[]),
+                "time_entries": MockQueryBuilder(return_data=[{"duration_minutes": 30, "is_deep_work": False, "start_time": "not-a-date"}]),
+            }
+            return builders.get(table_name, MockQueryBuilder(return_data=[]))
+        mock_supabase.from_.side_effect = mock_from
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=[]):
+            resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["peak_times"]["peak_hours"] == []
+        assert body["peak_times"]["deep_work_minutes_7d"] == 0
+
+    def test_get_insights_pattern_detection_failure_non_refresh(self, client, mock_supabase):
+        """Pattern detection failure in non-refresh mode returns empty insights."""
+        def mock_from(table_name):
+            builders = {
+                "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5}}]),
+                "tasks": MockQueryBuilder(return_data=[{"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"}]),
+                "courses": MockQueryBuilder(return_data=[]),
+                "habits": MockQueryBuilder(return_data=[]),
+                "time_entries": MockQueryBuilder(return_data=[]),
+            }
+            return builders.get(table_name, MockQueryBuilder(return_data=[]))
+        mock_supabase.from_.side_effect = mock_from
+        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")):
+            resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["insights"] == []
+
+
+# ===========================================================================
+# SLEEP — wind-down endpoint
+# ===========================================================================
+
+import datetime as real_datetime
+
+
+@pytest.mark.api
+class TestSleepWindDown:
+
+    def test_wind_down_before_evening(self, client, mock_supabase):
+        with patch("app.api.sleep.datetime") as mock_dt:
+            mock_dt.now.return_value = real_datetime.datetime(2026, 6, 20, 14, 0, 0)
+            mock_dt.side_effect = lambda *args, **kw: real_datetime.datetime(*args, **kw)
+            resp = client.get("/api/v1/sleep/wind-down", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["available"] is False
+        assert "tonight" in body["message"]
+
+    def test_wind_down_success(self, client, mock_supabase):
+        with patch("app.api.sleep.datetime") as mock_dt:
+            mock_dt.now.return_value = real_datetime.datetime(2026, 6, 20, 21, 0, 0)
+            mock_dt.side_effect = lambda *args, **kw: real_datetime.datetime(*args, **kw)
+            resp = client.get("/api/v1/sleep/wind-down", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["available"] is True
+        assert body["suggested_bedtime"] == "22:00"
+        assert body["suggested_wake_time"] == "06:00"
+
+    def test_wind_down_agent_error(self, client, mock_supabase):
+        with patch("app.api.sleep.suggest_bedtime", new_callable=AsyncMock, side_effect=Exception("AI error")):
+            with patch("app.api.sleep.datetime") as mock_dt:
+                mock_dt.now.return_value = real_datetime.datetime(2026, 6, 20, 21, 0, 0)
+                mock_dt.side_effect = lambda *args, **kw: real_datetime.datetime(*args, **kw)
+                resp = client.get("/api/v1/sleep/wind-down", headers=_AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["available"] is False
+        assert "Unable to generate" in body["message"]
