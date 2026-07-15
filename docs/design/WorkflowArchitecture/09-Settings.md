@@ -1,7 +1,16 @@
-# Part IX — Settings
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF09-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part IX â€” Settings
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
-> Related: `04-MultiStepExperiences.md` (setup wizards), `02-FeatureFlows.md` §2.18 (settings flow), wireframes `06_ANALYTICS_AI_SETTINGS_STATES_WIREFRAMES.md`.
+> Related: `04-MultiStepExperiences.md` (setup wizards), `02-FeatureFlows.md` Â§2.18 (settings flow), wireframes `06_ANALYTICS_AI_SETTINGS_STATES_WIREFRAMES.md`.
 
 ---
 
@@ -56,10 +65,10 @@ flowchart TD
 | Avatar | Image upload (PNG/JPEG, max 2MB) | Dimension > 100px | Initials fallback |
 | Display Name | Text input | 2-50 characters | Google profile name |
 | Email | Read-only display | Valid email format | Google account email |
-| College | Text input | 2-100 characters | — |
-| Semester | Select dropdown | 1-8 | — |
+| College | Text input | 2-100 characters | â€” |
+| Semester | Select dropdown | 1-8 | â€” |
 | Timezone | Searchable select (IANA list) | Valid IANA timezone | Browser Intl API |
-| Bio | Textarea | 0-500 characters | — |
+| Bio | Textarea | 0-500 characters | â€” |
 
 ---
 
@@ -70,10 +79,10 @@ flowchart TD
 | Section | Control | Description |
 |---|---|---|
 | Email | Display (read-only) | Connected Google account email |
-| Password | "Change Password" link | → Email reset link (OAuth-based) |
+| Password | "Change Password" link | â†’ Email reset link (OAuth-based) |
 | Connected Accounts | List with status tags | Google (primary), GitHub, (future: Outlook, Notion) |
 | Active Sessions | List with device info + revoke button | Current session highlighted |
-| Delete Account | Danger button (red) | → Type "DELETE" to confirm → 30-day grace period |
+| Delete Account | Danger button (red) | â†’ Type "DELETE" to confirm â†’ 30-day grace period |
 
 ---
 
@@ -83,14 +92,14 @@ flowchart TD
 
 | Category | In-App | Push | Email | Default |
 |---|---|---|---|---|
-| Task Reminders | ✅ Toggle | ✅ Toggle | ❌ | All On |
-| Course Nudges | ✅ Toggle | ✅ Toggle | ❌ | All On |
-| Opportunity Alerts | ✅ Toggle | ✅ Toggle | ✅ (weekly) | All On |
-| Goal Milestones | ✅ Toggle | ❌ | ❌ | On |
-| Habit Reminders | ✅ Toggle | ✅ Toggle | ❌ | All On |
-| AI Digests | ✅ Toggle | ❌ | ✅ | On |
-| System Alerts | ✅ Toggle (forced) | ✅ Toggle (forced) | ✅ (P0 only) | All On |
-| Social (collab) | ✅ Toggle | ✅ Toggle | ❌ | All On |
+| Task Reminders | âœ… Toggle | âœ… Toggle | âŒ | All On |
+| Course Nudges | âœ… Toggle | âœ… Toggle | âŒ | All On |
+| Opportunity Alerts | âœ… Toggle | âœ… Toggle | âœ… (weekly) | All On |
+| Goal Milestones | âœ… Toggle | âŒ | âŒ | On |
+| Habit Reminders | âœ… Toggle | âœ… Toggle | âŒ | All On |
+| AI Digests | âœ… Toggle | âŒ | âœ… | On |
+| System Alerts | âœ… Toggle (forced) | âœ… Toggle (forced) | âœ… (P0 only) | All On |
+| Social (collab) | âœ… Toggle | âœ… Toggle | âŒ | All On |
 
 **Quiet Hours:**
 
@@ -110,8 +119,8 @@ flowchart TD
 |---|---|---|---|
 | Data Storage | Select | Local (Ollama only) / Cloud (Ollama + Claude) | Local |
 | Anonymize Data | Toggle | Strip personal info from AI training data | On |
-| Export All Data | Button | → Generates JSON download of all user data | — |
-| Delete All Data | Danger button | → Confirm → Type "DELETE" → 30-day grace | — |
+| Export All Data | Button | â†’ Generates JSON download of all user data | â€” |
+| Delete All Data | Danger button | â†’ Confirm â†’ Type "DELETE" â†’ 30-day grace | â€” |
 | Memory Retention | Select | 30 days / 90 days / 1 year / Forever | 90 days |
 | Session Learning | Toggle | Allow ARIA to learn from usage patterns | On |
 
@@ -134,7 +143,7 @@ flowchart TD
 | Level | Description |
 |---|---|
 | Low | Only respond when asked directly |
-| Medium | Suggest occasionally (≤ 2/day per agent) |
+| Medium | Suggest occasionally (â‰¤ 2/day per agent) |
 | High | Proactive suggestions, briefings, nudges (default) |
 
 ### AI Features Toggles
@@ -178,14 +187,14 @@ All 8 AI features are individually togglable:
 
 | Integration | Status | Actions |
 |---|---|---|
-| Google Calendar | ✅ Connected | Sync events, view schedule, auto-create tasks |
-| GitHub | 🔗 Connect | Fetch repos, stars, activity feed |
-| YouTube | ✅ Connected | Fetch watch later, subscriptions |
-| Resend (Email) | ✅ Connected | Send briefing, weekly review, alerts |
-| Notion | 🔜 Coming soon | — |
-| Obsidian | 🔜 Coming soon | — |
-| Todoist | 🔜 Coming soon | — |
-| Browser Extension | 📋 Setup guide | Install link + pairing code |
+| Google Calendar | âœ… Connected | Sync events, view schedule, auto-create tasks |
+| GitHub | ðŸ”— Connect | Fetch repos, stars, activity feed |
+| YouTube | âœ… Connected | Fetch watch later, subscriptions |
+| Resend (Email) | âœ… Connected | Send briefing, weekly review, alerts |
+| Notion | ðŸ”œ Coming soon | â€” |
+| Obsidian | ðŸ”œ Coming soon | â€” |
+| Todoist | ðŸ”œ Coming soon | â€” |
+| Browser Extension | ðŸ“‹ Setup guide | Install link + pairing code |
 
 ---
 
@@ -195,7 +204,7 @@ All 8 AI features are individually togglable:
 
 | App | Status | Permissions | Last Sync | Actions |
 |---|---|---|---|---|
-| Google | ✅ Connected | Profile, Calendar (read) | 2m ago | Disconnect |
-| GitHub | ✅ Connected | Repos (read) | 1h ago | Disconnect |
-| YouTube | ⚠️ Token expiring | Watch Later (read) | — | Reconnect |
-| Resend | ✅ Connected | Email (send only) | Active | Disconnect |
+| Google | âœ… Connected | Profile, Calendar (read) | 2m ago | Disconnect |
+| GitHub | âœ… Connected | Repos (read) | 1h ago | Disconnect |
+| YouTube | âš ï¸ Token expiring | Watch Later (read) | â€” | Reconnect |
+| Resend | âœ… Connected | Email (send only) | Active | Disconnect |

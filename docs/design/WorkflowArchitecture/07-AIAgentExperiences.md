@@ -1,7 +1,16 @@
-# Part VII — AI Agent Experiences
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF07-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part VII â€” AI Agent Experiences
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
-> Related: `19_AI_Instructions.md` (agent framework), `20_Agent.md` (agent specification), `AgentOrchestration.md` (orchestration), `02-FeatureFlows.md` §2.11-2.13 (AI conversation flows).
+> Related: `19_AI_Instructions.md` (agent framework), `20_Agent.md` (agent specification), `AgentOrchestration.md` (orchestration), `02-FeatureFlows.md` Â§2.11-2.13 (AI conversation flows).
 
 ---
 
@@ -13,19 +22,19 @@
 ### Recommendation Card
 
 ```
-┌──────────────────────────────────────────────┐
-│  ✨ ARIA Suggestion                     [X]  │
-│                                              │
-│  "Based on your goal to learn ML, you        │
-│   should start with Andrew Ng's course."     │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ Source: @learning_agent               │  │
-│  │ Confidence: 92% match                 │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  [Add to Roadmap] [View Course] [Dismiss]    │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  âœ¨ ARIA Suggestion                     [X]  â”‚
+â”‚                                              â”‚
+â”‚  "Based on your goal to learn ML, you        â”‚
+â”‚   should start with Andrew Ng's course."     â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Source: @learning_agent               â”‚  â”‚
+â”‚  â”‚ Confidence: 92% match                 â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  [Add to Roadmap] [View Course] [Dismiss]    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -34,7 +43,7 @@
 |---|---|
 | **Appearing** | Slide-up from suggestion area + neon glow animation (300ms) |
 | **Visible** | Full card with confidence badge, source attribution, action buttons |
-| **Accepted** | Green pulse → shrink → "Applied!" confirmation + undo toast |
+| **Accepted** | Green pulse â†’ shrink â†’ "Applied!" confirmation + undo toast |
 | **Dismissed** | Slide-right + fade (200ms) |
 | **Loading** | Skeleton card (shimmer, 3 lines) |
 | **Error** | "Couldn't generate suggestion" + retry link |
@@ -50,18 +59,18 @@
 ### Collaboration Panel
 
 ```
-┌──────────────────────────────────────────────┐
-│  ARIA is consulting agents...        [Collapse]│
-│                                              │
-│  ✅ @task_agent     — Tasks analyzed         │
-│  ⏳ @memory_agent   — Recalling context...   │
-│  ⏳ @sleep_agent    — Checking sleep data... │
-│  ⏳ @learning_agent — Finding patterns...    │
-│  ❌ @opportunity_agent — Unavailable         │
-│                                              │
-│  Parallel dispatch: 3 of 4 agents active     │
-│  ═══════════╺══════════ 65% complete         │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ARIA is consulting agents...        [Collapse]â”‚
+â”‚                                              â”‚
+â”‚  âœ… @task_agent     â€” Tasks analyzed         â”‚
+â”‚  â³ @memory_agent   â€” Recalling context...   â”‚
+â”‚  â³ @sleep_agent    â€” Checking sleep data... â”‚
+â”‚  â³ @learning_agent â€” Finding patterns...    â”‚
+â”‚  âŒ @opportunity_agent â€” Unavailable         â”‚
+â”‚                                              â”‚
+â”‚  Parallel dispatch: 3 of 4 agents active     â”‚
+â”‚  â•â•â•â•â•â•â•â•â•â•â•â•ºâ•â•â•â•â•â•â•â•â•â• 65% complete         â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -70,9 +79,9 @@
 |---|---|
 | **Idle** | Hidden (collapsed by default) |
 | **Dispatching** | "ARIA is consulting [N] agents..." fades in |
-| **In Progress** | Per-agent status line: ✅ / ⏳ / ❌ with agent icon |
-| **Complete — All OK** | All ✅ → collapse automatically → show result |
-| **Partial Failure** | Some ✅ + some ❌ → show available results + note on failures |
+| **In Progress** | Per-agent status line: âœ… / â³ / âŒ with agent icon |
+| **Complete â€” All OK** | All âœ… â†’ collapse automatically â†’ show result |
+| **Partial Failure** | Some âœ… + some âŒ â†’ show available results + note on failures |
 | **All Failed** | "ARIA couldn't process your request" + suggestion to retry |
 | **Timeline** | Expand to see step-by-step ordering (sequential vs parallel) |
 
@@ -86,31 +95,31 @@
 ### Status Dashboard
 
 ```
-┌──────────────────────────────────────────────┐
-│  AI Agent Status                  Last Sync  │
-│                                              │
-│  🟢 @briefing_agent       ✅ 7:02 AM (2.3s) │
-│  🟢 @memory_agent         ✅ 7:00 AM (0.8s) │
-│  🟡 @opportunity_agent    ⏳ Scanning... (4m)│
-│  🔴 @analytics_agent      ❌ Failed (retry 2/3)│
-│  ⚪ @career_agent         💤 Not configured  │
-│  🟢 @sleep_agent          ✅ 9:30 PM (1.2s) │
-│  🟢 @nudge_agent          ✅ 6:00 PM (0.5s) │
-│  🟡 @learning_agent       ⏳ Analyzing... (8m)│
-│                                              │
-│  [Trigger All] [Configure] [View Logs]       │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  AI Agent Status                  Last Sync  â”‚
+â”‚                                              â”‚
+â”‚  ðŸŸ¢ @briefing_agent       âœ… 7:02 AM (2.3s) â”‚
+â”‚  ðŸŸ¢ @memory_agent         âœ… 7:00 AM (0.8s) â”‚
+â”‚  ðŸŸ¡ @opportunity_agent    â³ Scanning... (4m)â”‚
+â”‚  ðŸ”´ @analytics_agent      âŒ Failed (retry 2/3)â”‚
+â”‚  âšª @career_agent         ðŸ’¤ Not configured  â”‚
+â”‚  ðŸŸ¢ @sleep_agent          âœ… 9:30 PM (1.2s) â”‚
+â”‚  ðŸŸ¢ @nudge_agent          âœ… 6:00 PM (0.5s) â”‚
+â”‚  ðŸŸ¡ @learning_agent       â³ Analyzing... (8m)â”‚
+â”‚                                              â”‚
+â”‚  [Trigger All] [Configure] [View Logs]       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Status Indicators
 
 | Icon | State | Meaning | User Action |
 |---|---|---|---|
-| 🟢 | Online | Last run successful, within expected window | None |
-| 🟡 | Running | Currently executing | View current step |
-| 🔴 | Error | Last run failed, retry active | View error, manual trigger |
-| ⚪ | Disabled | Agent turned off in user preferences | Enable in AI Settings |
-| 💤 | Dormant | Configured but no trigger window reached | None |
+| ðŸŸ¢ | Online | Last run successful, within expected window | None |
+| ðŸŸ¡ | Running | Currently executing | View current step |
+| ðŸ”´ | Error | Last run failed, retry active | View error, manual trigger |
+| âšª | Disabled | Agent turned off in user preferences | Enable in AI Settings |
+| ðŸ’¤ | Dormant | Configured but no trigger window reached | None |
 
 ---
 
@@ -122,32 +131,32 @@
 ### Memory Browser
 
 ```
-┌──────────────────────────────────────────────┐
-│  Memory Browser                          🔍  │
-│                                              │
-│  Filter: [All ▼]  Sort: [Recent ▼]          │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ 📌 Preference                          │  │
-│  │ "You prefer morning deep work blocks"  │  │
-│  │ Source: Chat · June 15 · Confidence: 87%│  │
-│  │ [Edit] [Delete] [Incorrect?]           │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ 🔍 Pattern                             │  │
-│  │ "Productivity drops after 3 PM"        │  │
-│  │ Source: @learning_agent · June 14      │  │
-│  │ [Edit] [Delete] [View Analysis]        │  │
-│  └────────────────────────────────────────┘  │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Memory Browser                          ðŸ”  â”‚
+â”‚                                              â”‚
+â”‚  Filter: [All â–¼]  Sort: [Recent â–¼]          â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ“Œ Preference                          â”‚  â”‚
+â”‚  â”‚ "You prefer morning deep work blocks"  â”‚  â”‚
+â”‚  â”‚ Source: Chat Â· June 15 Â· Confidence: 87%â”‚  â”‚
+â”‚  â”‚ [Edit] [Delete] [Incorrect?]           â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ ðŸ” Pattern                             â”‚  â”‚
+â”‚  â”‚ "Productivity drops after 3 PM"        â”‚  â”‚
+â”‚  â”‚ Source: @learning_agent Â· June 14      â”‚  â”‚
+â”‚  â”‚ [Edit] [Delete] [View Analysis]        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Memory Card Anatomy
 
 | Element | Description |
 |---|---|
-| Icon | 📌 Preference, 🔍 Pattern, 💡 Fact, 🔄 Habit, 📝 Note |
+| Icon | ðŸ“Œ Preference, ðŸ” Pattern, ðŸ’¡ Fact, ðŸ”„ Habit, ðŸ“ Note |
 | Category badge | Preference / Fact / Pattern / Habit |
 | Content | The stored memory (AI-generated summary) |
 | Source | Which conversation / agent created this |
@@ -161,8 +170,8 @@
 | **Empty** | "No memories yet" + "ARIA learns from your conversations over time" |
 | **Loading** | 4 skeleton memory cards (shimmer) |
 | **Populated** | Filterable, searchable timeline grouped by category |
-| **Editing** | Inline text edit → Save / Cancel |
-| **Deleting** | Confirm dialog → delete with undo (30s) |
+| **Editing** | Inline text edit â†’ Save / Cancel |
+| **Deleting** | Confirm dialog â†’ delete with undo (30s) |
 | **Error** | "Couldn't load memories" + retry button |
 | **Search Results** | Filtered list with query highlighted in results |
 
@@ -176,35 +185,35 @@
 ### Action List
 
 ```
-┌──────────────────────────────────────────────┐
-│  ARIA Actions                    [Clear All] │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ ☑ Create task: "Review ML paper"       │  │
-│  │    ✅ Done · Undo (28s remaining)      │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ ☑ Update goal: "ML Learning" → +5%     │  │
-│  │    ⏳ Updating linked courses...        │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ ☐ Find course: "Neural Networks"       │  │
-│  │    ⏳ Queued...                         │  │
-│  └────────────────────────────────────────┘  │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ARIA Actions                    [Clear All] â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ â˜‘ Create task: "Review ML paper"       â”‚  â”‚
+â”‚  â”‚    âœ… Done Â· Undo (28s remaining)      â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ â˜‘ Update goal: "ML Learning" â†’ +5%     â”‚  â”‚
+â”‚  â”‚    â³ Updating linked courses...        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ â˜ Find course: "Neural Networks"       â”‚  â”‚
+â”‚  â”‚    â³ Queued...                         â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Action States
 
 | State | Icon | Treatment |
 |---|---|---|
-| **Queued** | ⏳ | Gray spinner + "Waiting..." |
-| **Processing** | ⏳ | Animated spinner + "Working..." + current step |
-| **Complete** | ✅ | Green check + undo timer (30s countdown) |
-| **Failed** | ❌ | Red X + error message + retry button |
-| **Requires Approval** | 🔒 | Locked state + "Tap to approve" button |
+| **Queued** | â³ | Gray spinner + "Waiting..." |
+| **Processing** | â³ | Animated spinner + "Working..." + current step |
+| **Complete** | âœ… | Green check + undo timer (30s countdown) |
+| **Failed** | âŒ | Red X + error message + retry button |
+| **Requires Approval** | ðŸ”’ | Locked state + "Tap to approve" button |
 
 ---
 
@@ -216,21 +225,21 @@
 ### Workflow Progress
 
 ```
-┌──────────────────────────────────────────────┐
-│  Daily Briefing Generation                   │
-│  ━━━━━━━━━━━━━━━━━━╺━━━━━━━━━ 65%            │
-│                                              │
-│  Steps:                                      │
-│  ✅ 1. Collect tasks due today               │
-│  ✅ 2. Get sleep score                       │
-│  ✅ 3. Get learning progress                 │
-│  ⏳ 4. Generate briefing text (LLM)...       │
-│  ⬜ 5. Store briefing                        │
-│  ⬜ 6. Deliver notification                  │
-│                                              │
-│  Elapsed: 4.2s · Est. remaining: 12s         │
-│  [Cancel Workflow]                           │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Daily Briefing Generation                   â”‚
+â”‚  â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â•ºâ”â”â”â”â”â”â”â”â” 65%            â”‚
+â”‚                                              â”‚
+â”‚  Steps:                                      â”‚
+â”‚  âœ… 1. Collect tasks due today               â”‚
+â”‚  âœ… 2. Get sleep score                       â”‚
+â”‚  âœ… 3. Get learning progress                 â”‚
+â”‚  â³ 4. Generate briefing text (LLM)...       â”‚
+â”‚  â¬œ 5. Store briefing                        â”‚
+â”‚  â¬œ 6. Deliver notification                  â”‚
+â”‚                                              â”‚
+â”‚  Elapsed: 4.2s Â· Est. remaining: 12s         â”‚
+â”‚  [Cancel Workflow]                           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -254,25 +263,25 @@
 ### Approval Modal
 
 ```
-┌──────────────────────────────────────────────┐
-│  🔒 ARIA wants to:                           │
-│                                              │
-│  "Create 5 study tasks from your new         │
-│   course schedule for this week."            │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │ Preview:                               │  │
-│  │ • Mon: Study ML (2h)                   │  │
-│  │ • Tue: Study ML (2h)                   │  │
-│  │ • Wed: Review assignment (1h)          │  │
-│  │ • Thu: Study ML (2h)                   │  │
-│  │ • Fri: Practice problems (1.5h)        │  │
-│  └────────────────────────────────────────┘  │
-│                                              │
-│  ☐ Remember for next time                    │
-│                                              │
-│  [Approve] [Modify] [Reject]                  │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ðŸ”’ ARIA wants to:                           â”‚
+â”‚                                              â”‚
+â”‚  "Create 5 study tasks from your new         â”‚
+â”‚   course schedule for this week."            â”‚
+â”‚                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Preview:                               â”‚  â”‚
+â”‚  â”‚ â€¢ Mon: Study ML (2h)                   â”‚  â”‚
+â”‚  â”‚ â€¢ Tue: Study ML (2h)                   â”‚  â”‚
+â”‚  â”‚ â€¢ Wed: Review assignment (1h)          â”‚  â”‚
+â”‚  â”‚ â€¢ Thu: Study ML (2h)                   â”‚  â”‚
+â”‚  â”‚ â€¢ Fri: Practice problems (1.5h)        â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                              â”‚
+â”‚  â˜ Remember for next time                    â”‚
+â”‚                                              â”‚
+â”‚  [Approve] [Modify] [Reject]                  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### States
@@ -280,9 +289,9 @@
 | State | UI Treatment |
 |---|---|
 | **Pending** | Modal with preview, action buttons, "Remember" checkbox |
-| **Approved** | Modal closes → execute action → success toast |
-| **Modified** | Opens edit interface → user adjusts → save → execute |
-| **Rejected** | Modal closes → "Got it" toast → optional feedback prompt |
+| **Approved** | Modal closes â†’ execute action â†’ success toast |
+| **Modified** | Opens edit interface â†’ user adjusts â†’ save â†’ execute |
+| **Rejected** | Modal closes â†’ "Got it" toast â†’ optional feedback prompt |
 | **Expired** | Auto-dismiss after 24h (configurable in AI Settings) |
 | **Remembered** | Future similar actions auto-approved per threshold |
 
@@ -296,19 +305,19 @@
 ### Result Card
 
 ```
-┌──────────────────────────────────────────────┐
-│  📊 Learning Analysis                        │
-│  @learning_agent · Just now (1.2s)           │
-│                                              │
-│  "Your productivity is 15% higher on days    │
-│   when you sleep 7+ hours."                  │
-│                                              │
-│  📈 [Productivity vs Sleep chart]            │
-│                                              │
-│  [View Full Analysis] [Export] [Share]       │
-│                                              │
-│  Was this helpful?    👍 42    👎 3          │
-└──────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ðŸ“Š Learning Analysis                        â”‚
+â”‚  @learning_agent Â· Just now (1.2s)           â”‚
+â”‚                                              â”‚
+â”‚  "Your productivity is 15% higher on days    â”‚
+â”‚   when you sleep 7+ hours."                  â”‚
+â”‚                                              â”‚
+â”‚  ðŸ“ˆ [Productivity vs Sleep chart]            â”‚
+â”‚                                              â”‚
+â”‚  [View Full Analysis] [Export] [Share]       â”‚
+â”‚                                              â”‚
+â”‚  Was this helpful?    ðŸ‘ 42    ðŸ‘Ž 3          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Result Types
@@ -334,5 +343,5 @@
 | 500ms - 2s | Inline spinner (16px, accent color) | Subtle: no text needed |
 | 2s - 5s | Skeleton result card (shimmer) | "Working on it..." |
 | 5s - 15s | Progress bar + step indicator | "[Agent name] is [current step]..." |
-| 15s - 30s | Background mode + notification | "I'll let you know when ready" → push on complete |
+| 15s - 30s | Background mode + notification | "I'll let you know when ready" â†’ push on complete |
 | > 30s | Fallback + graceful degradation | "AI is taking longer than expected. Here's what I can do now:" + algorithmic result |

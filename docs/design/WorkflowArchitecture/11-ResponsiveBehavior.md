@@ -1,11 +1,20 @@
-# Part XI — Responsive Behavior
+﻿## Document Control
+
+| Field | Value |
+|---|---|
+| Document ID | DSG-WF11-001 |
+| Version | 1.0.0 |
+| Status | Active |
+| Last Updated | 2026-07-11 |
+
+# Part XI â€” Responsive Behavior
 
 > **Part of the Workflow Architecture (SB-WFARCH-001). See `README.md` for document control.**
 > Related: `ResponsiveRules.md` (breakpoint definitions, layout reflow), wireframes (7 parts, all show 3 breakpoints), `FrontendArchitecture.md` (responsive shell architecture).
 
 ---
 
-## 11.1 Desktop Behavior (≥ 1024px)
+## 11.1 Desktop Behavior (â‰¥ 1024px)
 
 | Aspect | Specification |
 |---|---|
@@ -28,7 +37,7 @@
 |---|---|
 | **Layout** | Collapsed sidebar (64px icons only) + Content (flex) |
 | **Density** | Compact: padding 16px, gap 12px |
-| **Interactions** | Tap targets ≥ 44px, swipe gestures, long-press for context menu |
+| **Interactions** | Tap targets â‰¥ 44px, swipe gestures, long-press for context menu |
 | **Navigation** | Hamburger toggle for sidebar, bottom tab bar (5 items) on the way |
 | **Typography** | H1: 24px, H2: 20px, H3: 18px, Body: 15px, Small: 13px |
 | **Modals** | Slide-up sheet at 70% height |
@@ -44,7 +53,7 @@
 | Sidebar | Always visible, 240px | Collapsed 64px, expand on hamburger |
 | Data tables | Full columns | Horizontally scrollable, hide less important columns |
 | Card grids | 3 columns | 2 columns |
-| Detail view | Split: list + detail | Stacked: list → tap → detail |
+| Detail view | Split: list + detail | Stacked: list â†’ tap â†’ detail |
 | Dashboard widgets | 2-3 per row | 1-2 per row |
 | Command palette | Full overlay | Full overlay (same) |
 | Notifications | Dropdown from bell | Bottom sheet from bell |
@@ -75,8 +84,8 @@
 | Bottom Nav | None | 5 fixed tabs at bottom |
 | Modals | Centered dialog | Full-screen sheet |
 | Toast | Top-right | Bottom (above bottom nav) |
-| Context menu | Right-click | Long-press → bottom sheet |
-| Multi-select | Checkbox + toolbar | Swipe → action bar |
+| Context menu | Right-click | Long-press â†’ bottom sheet |
+| Multi-select | Checkbox + toolbar | Swipe â†’ action bar |
 | Pull to refresh | Not needed | Pull down to refresh content |
 | Floating action | Button in header | Bottom-right FAB, 56px |
 
@@ -100,12 +109,12 @@
 | Component | Desktop | Tablet | Mobile |
 |---|---|---|---|
 | Dashboard | 3-column bento grid | 2-column grid | 1-column stack |
-| Task List | Full list with detail split | List with slide-over | Full list → tap → full detail |
+| Task List | Full list with detail split | List with slide-over | Full list â†’ tap â†’ full detail |
 | Kanban Board | 4-5 columns side-by-side | 2-3 columns (horizontal scroll) | Single column with stage tabs |
 | Calendar | Month grid with events | Month grid (compact) | Agenda list |
 | Chart | Full with tooltips | Full (touch tooltips) | Simplified, no interactive |
 | Forms | Inline errors side-by-side | Stacked layout | Stacked, full-width inputs |
-| Data Table | All columns | Key columns + scroll | Key fields only → card list |
+| Data Table | All columns | Key columns + scroll | Key fields only â†’ card list |
 
 ---
 
@@ -114,13 +123,13 @@
 | Interaction | Desktop | Tablet | Mobile |
 |---|---|---|---|
 | Click / Tap | Click (mouse) | Tap (finger) | Tap (finger) |
-| Right-click / Long-press | Right-click menu | Long-press menu | Long-press → action sheet |
+| Right-click / Long-press | Right-click menu | Long-press menu | Long-press â†’ action sheet |
 | Hover | Tooltips, previews | None (use tap) | None |
 | Drag & Drop | Mouse drag | Touch drag | Touch drag (with haptic) |
 | Swipe | N/A | Swipe for actions | Swipe for actions (primary) |
 | Scroll | Mouse wheel, scrollbar | Touch scroll | Touch scroll |
 | Keyboard shortcuts | Full support (50+) | Limited (Cmd+K) | None |
-| Multi-select | Shift/Ctrl + click | Tap select mode | Swipe → select mode |
+| Multi-select | Shift/Ctrl + click | Tap select mode | Swipe â†’ select mode |
 
 ---
 
@@ -146,7 +155,7 @@ Typography uses `clamp()` for fluid scaling between breakpoints.
 
 | Requirement | Desktop | Tablet | Mobile |
 |---|---|---|---|
-| Touch Targets | ≥ 32px (mouse) | ≥ 44px | ≥ 44px |
+| Touch Targets | â‰¥ 32px (mouse) | â‰¥ 44px | â‰¥ 44px |
 | Focus Indicators | Keyboard focus ring | Tap highlight | Tap highlight |
 | Screen Reader | Full ARIA labels | Full ARIA labels | Full ARIA labels |
 | Reduced Motion | Respect `prefers-reduced-motion` | Same | Same |
@@ -159,7 +168,7 @@ Typography uses `clamp()` for fluid scaling between breakpoints.
 
 All text meets WCAG 2.1 AA minimum:
 - **Normal text (< 18px)**: 4.5:1 minimum contrast ratio
-- **Large text (≥ 18px bold / ≥ 24px)**: 3:1 minimum contrast ratio
+- **Large text (â‰¥ 18px bold / â‰¥ 24px)**: 3:1 minimum contrast ratio
 - **UI components**: 3:1 minimum contrast ratio
 - **Disabled states**: 50% opacity (no contrast requirement)
 
