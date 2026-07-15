@@ -1,4 +1,4 @@
-# Enterprise Frontend Discovery Report v3.0 — Second Brain OS (ARIA OS)
+﻿# Enterprise Frontend Discovery Report v3.0 â€” Second Brain OS (ARIA OS)
 
 > **Part of the Second Brain OS architecture suite.**
 > For the full Product Architecture, see [ProductArchitecture.md](./ProductArchitecture.md).
@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-DISCOVERY-003 |
+| Document ID | DSG-EFD3-001 |
 | Version | 3.0.0 |
 | Status | Active |
-| Classification | Internal — Enterprise Design & Engineering Reference |
+| Classification | Internal â€” Enterprise Design & Engineering Reference |
 | Target Audience | Product Managers, Designers, Frontend Engineers, AI Engineers, QA, DevOps, Security |
 | Last Updated | 2026-06-11 |
 | Review Cycle | Quarterly |
@@ -25,7 +25,7 @@
 
 ## Table of Contents
 
-### Part I — Product Foundation (Sections 1-15)
+### Part I â€” Product Foundation (Sections 1-15)
 
 1. [Executive Summary](#1-executive-summary)
 2. [Product Understanding Report](#2-product-understanding-report)
@@ -43,7 +43,7 @@
 14. [AI Flow Architecture](#14-ai-flow-architecture)
 15. [Agent Flow Architecture](#15-agent-flow-architecture)
 
-### Part II — Product Strategy (Sections 16-24)
+### Part II â€” Product Strategy (Sections 16-24)
 
 16. [Dashboard Strategy](#16-dashboard-strategy)
 17. [Navigation Strategy](#17-navigation-strategy)
@@ -55,7 +55,7 @@
 23. [Opportunity Strategy](#23-opportunity-strategy)
 24. [AI Assistant Strategy](#24-ai-assistant-strategy)
 
-### Part III — Enterprise Depth (Sections 25-39)
+### Part III â€” Enterprise Depth (Sections 25-39)
 
 25. [Information Architecture Deep Dive](#25-information-architecture-deep-dive)
 26. [AI UX Patterns Catalog](#26-ai-ux-patterns-catalog)
@@ -73,7 +73,7 @@
 38. [Feature Flags & A/B Testing Framework](#38-feature-flags--ab-testing-framework)
 39. [Loading / Empty / Error State Catalog](#39-loading--empty--error-state-catalog)
 
-### Part IV — Platform Strategy (Sections 40-45)
+### Part IV â€” Platform Strategy (Sections 40-45)
 
 40. [Mobile Strategy](#40-mobile-strategy)
 41. [Tablet Strategy](#41-tablet-strategy)
@@ -82,40 +82,40 @@
 44. [Realtime Strategy](#44-realtime-strategy)
 45. [Accessibility Strategy](#45-accessibility-strategy)
 
-### Part V — Risk, Opportunity & Direction (Sections 46-53)
+### Part V â€” Risk, Opportunity & Direction (Sections 46-53)
 
 46. [Product, UX & Technical Risks](#46-product-ux--technical-risks)
 47. [Design & Innovation Opportunities](#47-design--innovation-opportunities)
 48. [Recommended Direction & Execution Roadmap](#48-recommended-direction)
 49. [Research References](#49-research-references)
 50. [Appendices](#50-appendices)
-51. **NEW** — [Competitive Intelligence Integration](#51-competitive-intelligence-integration)
-52. **NEW** — [Enterprise UI Pattern Library](#52-enterprise-ui-pattern-library)
-53. **NEW** — [Enterprise UX Maturity Model](#53-enterprise-ux-maturity-model)
+51. **NEW** â€” [Competitive Intelligence Integration](#51-competitive-intelligence-integration)
+52. **NEW** â€” [Enterprise UI Pattern Library](#52-enterprise-ui-pattern-library)
+53. **NEW** â€” [Enterprise UX Maturity Model](#53-enterprise-ux-maturity-model)
 
 ---
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#0A0B0F', 'primaryColor': '#6366F1', 'secondaryColor': '#00FFA3', 'tertiaryColor': '#818CF8', 'primaryTextColor': '#F1F5F9', 'secondaryTextColor': '#94A3B8', 'lineColor': '#6366F1', 'fontFamily': 'DM Sans', 'nodeBorder': '#6366F1', 'clusterBkg': '#13151A', 'clusterBorder': '#1E293B' }}}%%
 flowchart LR
-    subgraph Phase_1["🔍 Research & Discovery"]
+    subgraph Phase_1["ðŸ” Research & Discovery"]
         A["Product Understanding"]
         B["User Research"]
         C["Competitive Intel<br/>25 products"]
     end
-    subgraph Phase_2["📐 Architecture & Strategy"]
+    subgraph Phase_2["ðŸ“ Architecture & Strategy"]
         D["IA + Navigation"]
         E["AI UX + Agentic UX"]
         F["Render Strategy"]
         G["Performance Budget"]
     end
-    subgraph Phase_3["⚡ Execution & Quality"]
+    subgraph Phase_3["âš¡ Execution & Quality"]
         H["CI/CD Pipeline"]
         I["Testing & Quality Gates"]
         J["Monitoring & Observability"]
         K["Error Handling"]
     end
-    subgraph Phase_4["🚀 Outcomes"]
+    subgraph Phase_4["ðŸš€ Outcomes"]
         O1["Production-ready<br/>frontend"]
         O2["Enterprise UX<br/>Maturity Model"]
     end
@@ -132,17 +132,17 @@ flowchart LR
 
 ---
 
-# Part I — Product Foundation
+# Part I â€” Product Foundation
 
 ---
 
 ## 1. Executive Summary
 
-Second Brain OS (ARIA OS) is a first-of-its-kind AI operating system purpose-built for BTech CSE students — a demographic that manages 8-12 disconnected tools, loses 80% of ideas within 24 hours, misses 60% of relevant opportunities, and abandons 70% of courses started. The product consolidates 15 integrated modules (Tasks, Courses, Goals, Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, YouTube Vault, Academics, Time Tracking, Chat/AI, Automation) into a single surface with 8 AI agents and 1 orchestrator (ARIA) that proactively pushes intelligence rather than waiting to be asked.
+Second Brain OS (ARIA OS) is a first-of-its-kind AI operating system purpose-built for BTech CSE students â€” a demographic that manages 8-12 disconnected tools, loses 80% of ideas within 24 hours, misses 60% of relevant opportunities, and abandons 70% of courses started. The product consolidates 15 integrated modules (Tasks, Courses, Goals, Habits, Sleep, Income, Projects, Ideas, Resources, Opportunities, YouTube Vault, Academics, Time Tracking, Chat/AI, Automation) into a single surface with 8 AI agents and 1 orchestrator (ARIA) that proactively pushes intelligence rather than waiting to be asked.
 
-**Architecture**: Next.js 14 frontend → FastAPI backend → Supabase PostgreSQL (21 tables, RLS-enforced) → Dual AI layer (Ollama local primary, Claude API fallback) → 8 scheduled cron agents.
+**Architecture**: Next.js 14 frontend â†’ FastAPI backend â†’ Supabase PostgreSQL (21 tables, RLS-enforced) â†’ Dual AI layer (Ollama local primary, Claude API fallback) â†’ 8 scheduled cron agents.
 
-**Competitive Positioning**: ARIA OS occupies a unique space no existing tool fills. It has **9 unique features** (course tracking with daily targets, daily briefing, opportunity radar, sleep tracking, income tracking, time tracking, YouTube vault, CGPA calculator, cross-domain pattern detection) that no competitor offers. The competitive moat is student-specific depth, cross-domain integration, zero-cost architecture, and privacy-first local AI — advantages structurally impossible for VC-backed incumbents to replicate.
+**Competitive Positioning**: ARIA OS occupies a unique space no existing tool fills. It has **9 unique features** (course tracking with daily targets, daily briefing, opportunity radar, sleep tracking, income tracking, time tracking, YouTube vault, CGPA calculator, cross-domain pattern detection) that no competitor offers. The competitive moat is student-specific depth, cross-domain integration, zero-cost architecture, and privacy-first local AI â€” advantages structurally impossible for VC-backed incumbents to replicate.
 
 **Design Philosophy**: Cyberpunk dark theme (#0A0B0F base), neon accents (#6366F1 primary, #00FFA3 secondary), Syne/DM Sans/JetBrains Mono typography, Framer Motion animations, glass morphism panels.
 
@@ -156,7 +156,7 @@ Second Brain OS (ARIA OS) is a first-of-its-kind AI operating system purpose-bui
 
 ### 2.1 What Is Second Brain OS?
 
-Second Brain OS is not a productivity tool. It is an AI operating system for a specific human being — a BTech CSE student — that manages their entire digital existence across learning, building, earning, and well-being. The "OS" metaphor is intentional: just as an operating system manages hardware resources, ARIA OS manages the student's cognitive, temporal, and opportunity resources.
+Second Brain OS is not a productivity tool. It is an AI operating system for a specific human being â€” a BTech CSE student â€” that manages their entire digital existence across learning, building, earning, and well-being. The "OS" metaphor is intentional: just as an operating system manages hardware resources, ARIA OS manages the student's cognitive, temporal, and opportunity resources.
 
 ### 2.2 What Makes It Unique
 
@@ -182,7 +182,7 @@ The product occupies a space no existing tool fills. Notion is a general-purpose
 | Dimension | Complexity Level | Rationale |
 |---|---|---|
 | Module Count | Very High | 15 modules with inter-module data flows |
-| AI Architecture | High | 8 agents + orchestrator + dual AI backend + prompt versioning |
+| AI Architecture | High | 11 agents + orchestrator + dual AI backend + prompt versioning |
 | Data Modelling | High | 21 tables with RLS, realtime subscriptions, offline sync |
 | UI/UX Surface | Very High | 15+ screens with dashboard, kanban, chat, calendar, heatmap, roadmap canvas |
 | Offline Requirements | High | 3-layer offline (service worker, IndexedDB, background sync) |
@@ -194,18 +194,18 @@ The product occupies a space no existing tool fills. Notion is a general-purpose
 
 ## 3. Core Product Vision
 
-**One-sentence vision**: Second Brain OS is the world's first purpose-built AI operating system for BTech CSE students — a unified platform that transforms fragmented student lives into compounded, measurable growth by connecting learning, building, earning, and well-being into a single intelligent system.
+**One-sentence vision**: Second Brain OS is the world's first purpose-built AI operating system for BTech CSE students â€” a unified platform that transforms fragmented student lives into compounded, measurable growth by connecting learning, building, earning, and well-being into a single intelligent system.
 
-**Product philosophy (from CI research)**: "Your second brain should be faster than your first." — Speed, intelligence, proactivity, and compound growth.
+**Product philosophy (from CI research)**: "Your second brain should be faster than your first." â€” Speed, intelligence, proactivity, and compound growth.
 
-**The BHAG**: By 2031, Second Brain OS will help 25,000+ students complete 500,000+ courses, ship 100,000+ projects, and collectively earn Rs. 10 crore+ through opportunities found via the system — while operating at zero cost to every user.
+**The BHAG**: By 2031, Second Brain OS will help 25,000+ students complete 500,000+ courses, ship 100,000+ projects, and collectively earn Rs. 10 crore+ through opportunities found via the system â€” while operating at zero cost to every user.
 
 **Five core pillars:**
-1. **Active Intelligence** — Pushes information proactively, never waits to be asked
-2. **Compound Growth** — Every action feeds every other action (course → skill → project → income)
-3. **Privacy First** — Data never leaves user control, RLS on every table, local AI via Ollama
-4. **Zero Barriers** — Rs. 0 cost, offline-capable, runs on 8GB RAM
-5. **Build First** — Everything funnels toward shipping real things
+1. **Active Intelligence** â€” Pushes information proactively, never waits to be asked
+2. **Compound Growth** â€” Every action feeds every other action (course â†’ skill â†’ project â†’ income)
+3. **Privacy First** â€” Data never leaves user control, RLS on every table, local AI via Ollama
+4. **Zero Barriers** â€” Rs. 0 cost, offline-capable, runs on 8GB RAM
+5. **Build First** â€” Everything funnels toward shipping real things
 
 **The strategic window**: 24-36 months before incumbents (Notion, Todoist, Motion) build student-specific AI features. Moat created by depth of student-specific modules, zero-cost architecture, and privacy-first local AI.
 
@@ -252,7 +252,7 @@ The product occupies a space no existing tool fills. Notion is a general-purpose
 
 BTech CSE students juggle 8-12 tools daily: Todoist (tasks), Notion (notes), Google Calendar (time), Coursera/Udemy (courses), GitHub (projects), LinkedIn (career), Excel (CGPA), bank statements (income), a habit tracker, a sleep tracker, and a notes app for ideas. Each tool has its own login, UI paradigm, notification system, and data model. The cost of context switching is estimated at 40% of productive time.
 
-**Competitive insight**: Single-domain tools (Linear for tasks, Notion for notes, ChatGPT for AI) are optimized within their domain but create fragmentation. ARIA OS's 15-module unified surface solves this structurally — no competitor can match without building 15 integrated products.
+**Competitive insight**: Single-domain tools (Linear for tasks, Notion for notes, ChatGPT for AI) are optimized within their domain but create fragmentation. ARIA OS's 15-module unified surface solves this structurally â€” no competitor can match without building 15 integrated products.
 
 ### 5.2 Discovery Problem
 
@@ -268,7 +268,7 @@ Students have no systematic way to prioritize across work/school/life. No tool c
 
 ### 5.5 Accountability Problem
 
-Existing tools are reactive — they remind but don't plan, prioritize, or suggest. ARIA's Zero-Miss Policy and 8 proactive agents provide accountability that single-domain tools cannot match.
+Existing tools are reactive â€” they remind but don't plan, prioritize, or suggest. ARIA's Zero-Miss Policy and 8 proactive agents provide accountability that single-domain tools cannot match.
 
 ### 5.6 Pattern Blindness Problem
 
@@ -298,15 +298,15 @@ No existing tool correlates data across domains. A student cannot answer: "Does 
 ### 6.3 Market Timing
 
 The product launches at the convergence of five tailwinds:
-1. **AI Native Era** — 72% of Indian college students have tried ChatGPT; users understand AI capabilities
-2. **Builder Generation** — 62% of Indian Gen Z want to start a business (Deloitte 2024)
-3. **Free Infrastructure Maturity** — Supabase (2M+ users), Vercel, Railway free tiers are battle-tested
-4. **Privacy Renaissance** — Local LLMs (Ollama, Llama) make data sovereignty mainstream
-5. **India Tech Boom** — 1.5M engineers graduate/year, internship market at all-time high
+1. **AI Native Era** â€” 72% of Indian college students have tried ChatGPT; users understand AI capabilities
+2. **Builder Generation** â€” 62% of Indian Gen Z want to start a business (Deloitte 2024)
+3. **Free Infrastructure Maturity** â€” Supabase (2M+ users), Vercel, Railway free tiers are battle-tested
+4. **Privacy Renaissance** â€” Local LLMs (Ollama, Llama) make data sovereignty mainstream
+5. **India Tech Boom** â€” 1.5M engineers graduate/year, internship market at all-time high
 
 **TAM**: 7.2M BTech CSE students in India
 **SAM**: 600K students who actively use productivity tools
-**SOM**: 100 users (Y1) → 30K users (Y5)
+**SOM**: 100 users (Y1) â†’ 30K users (Y5)
 
 ---
 
@@ -316,18 +316,18 @@ The product launches at the convergence of five tailwinds:
 
 | Differentiator | Description | Copy Difficulty |
 |---|---|---|
-| **15-Module Unified Surface** | Courses, tasks, goals, ideas, opportunities, income, projects, habits, sleep, time, resources, YouTube, academics, chat, automation | Very High — requires building 15 integrated products |
-| **Student-Specific Modules** | CGPA calculator, semester planner, exam countdown, course deadline tracker, hackathon radar | High — general tools need 5+ new products |
-| **Zero-Cost Architecture** | Entire system runs on free tiers: Vercel, Supabase, Ollama, Brave Search, Resend | High — VC-backed competitors must monetize |
-| **Privacy-First Local AI** | Ollama runs on student laptops; no data leaves the machine | Very High — centralized AI providers can't offer this |
-| **Inter-Module Data Flow** | Course completion → skill update → opportunity matching → goal progress → task generation | Very High — requires deep architectural integration |
+| **15-Module Unified Surface** | Courses, tasks, goals, ideas, opportunities, income, projects, habits, sleep, time, resources, YouTube, academics, chat, automation | Very High â€” requires building 15 integrated products |
+| **Student-Specific Modules** | CGPA calculator, semester planner, exam countdown, course deadline tracker, hackathon radar | High â€” general tools need 5+ new products |
+| **Zero-Cost Architecture** | Entire system runs on free tiers: Vercel, Supabase, Ollama, Brave Search, Resend | High â€” VC-backed competitors must monetize |
+| **Privacy-First Local AI** | Ollama runs on student laptops; no data leaves the machine | Very High â€” centralized AI providers can't offer this |
+| **Inter-Module Data Flow** | Course completion â†’ skill update â†’ opportunity matching â†’ goal progress â†’ task generation | Very High â€” requires deep architectural integration |
 
 ### 7.2 Experience Differentiators (Visible to Users)
 
 | Differentiator | Description | User Impact |
 |---|---|---|
 | **Active Push Intelligence** | 8 cron agents + ARIA proactively push briefings, scans, nudges | No user action needed to get value |
-| **Sleep-Adjusted Scheduling** | Low sleep score → lighter tasks surfaced | Prevents burnout, demonstrates system intelligence |
+| **Sleep-Adjusted Scheduling** | Low sleep score â†’ lighter tasks surfaced | Prevents burnout, demonstrates system intelligence |
 | **Zero-Miss Policy** | Every overdue task must be done, rescheduled, or explicitly dropped | Eliminates guilt-driven task avoidance |
 | **Opportunity Radar** | Daily scan of 6 categories matched to user skills | Passive career development |
 | **Cyberpunk Design** | #0A0B0F dark theme, neon accents, glass morphism, Framer Motion | Distinctive brand identity, late-night study comfort |
@@ -372,7 +372,7 @@ The product operates across 7 interconnected domains:
 ### 8.4 Career & Opportunity Domain
 - **Modules**: Opportunities, Income, Projects
 - **Core Purpose**: Find, track, and capitalize on career opportunities
-- **Key Features**: 6-category opportunity scanner, skill match scoring, income tracking with hourly rate, project → income mapping
+- **Key Features**: 6-category opportunity scanner, skill match scoring, income tracking with hourly rate, project â†’ income mapping
 - **AI Integration**: Daily opportunity radar, match score calculation, one-sentence relevance reasoning, AI-generated LinkedIn post drafts
 - **CI Benchmark**: No competitor offers student-specific opportunity matching with cross-domain skill data
 
@@ -410,8 +410,8 @@ The product operates across 7 interconnected domains:
 | Real-time Sync | Multi-device instant updates via Supabase Realtime | Implemented |
 | Offline Support | 3-layer offline (SW + IDB + Background Sync) | Design Complete |
 | Push Notifications | Web Push API for reminders and alerts | Implemented |
-| Cmd+K Command Palette | Universal search + navigation + actions | **Not started — P0 gap** |
-| Keyboard Shortcuts | Power user two-key navigation | **Not started — P0 gap** |
+| Cmd+K Command Palette | Universal search + navigation + actions | **Not started â€” P0 gap** |
+| Keyboard Shortcuts | Power user two-key navigation | **Not started â€” P0 gap** |
 | Data Export | JSON/CSV export of all modules | Design Complete |
 | PWA Installability | Installable web app with service worker | Design Complete |
 | Voice Input | Web Speech API for hands-free interaction | Planned |
@@ -455,7 +455,7 @@ The product operates across 7 interconnected domains:
 
 ## 10. User Types
 
-### 10.1 Primary User — Aarav (BTech CSE Sophomore)
+### 10.1 Primary User â€” Aarav (BTech CSE Sophomore)
 
 | Attribute | Detail |
 |---|---|
@@ -466,9 +466,9 @@ The product operates across 7 interconnected domains:
 | **Pain Points** | Overwhelmed by 4 college courses + online learning; forgets deadlines; no time management |
 | **Device** | Windows laptop + budget Android phone |
 | **Usage Pattern** | Morning (check briefing), classes (mobile quick capture), evening (desktop deep work), night (log sleep) |
-| **Tech Comfort** | Moderate — comfortable with browser and basic keyboard shortcuts |
+| **Tech Comfort** | Moderate â€” comfortable with browser and basic keyboard shortcuts |
 
-### 10.2 Secondary User — Priya (BTech CSE Junior + Intern)
+### 10.2 Secondary User â€” Priya (BTech CSE Junior + Intern)
 
 | Attribute | Detail |
 |---|---|
@@ -477,9 +477,9 @@ The product operates across 7 interconnected domains:
 | **Status** | Student + part-time intern at startup |
 | **Goals** | Balance academics + internship + side projects; track freelance income; find better opportunities |
 | **Device** | MacBook + iPhone |
-| **Tech Comfort** | High — uses CLI, Git, knows productivity tools |
+| **Tech Comfort** | High â€” uses CLI, Git, knows productivity tools |
 
-### 10.3 Tertiary User — Rohan (BTech CSE Senior + Job Seeker)
+### 10.3 Tertiary User â€” Rohan (BTech CSE Senior + Job Seeker)
 
 | Attribute | Detail |
 |---|---|
@@ -488,20 +488,20 @@ The product operates across 7 interconnected domains:
 | **Status** | Job seeking, freelance developer |
 | **Goals** | Land placement in top tech company, build portfolio, earn Rs. 50K/month freelancing |
 | **Device** | Windows laptop + Android phone |
-| **Tech Comfort** | Expert — power user of productivity tools, CLI proficient |
+| **Tech Comfort** | Expert â€” power user of productivity tools, CLI proficient |
 
 ### 10.4 Extended Users
 
 | Persona | Age | Status | Goals | Device |
 |---|---|---|---|---|
-| **Ananya** — Self-learning Developer | 24 | Working frontend dev, upskilling for full-stack | Transition to full-stack, earn $2K/month freelancing | MacBook + iPhone |
-| **Arjun** — Fresh Graduate | 22 | Junior developer | Get AWS certified, switch to better role | Windows laptop |
+| **Ananya** â€” Self-learning Developer | 24 | Working frontend dev, upskilling for full-stack | Transition to full-stack, earn $2K/month freelancing | MacBook + iPhone |
+| **Arjun** â€” Fresh Graduate | 22 | Junior developer | Get AWS certified, switch to better role | Windows laptop |
 
 ---
 
 ## 11. Core User Journeys
 
-### 11.1 Daily Journey — Aarav (Sophomore) — CI-Upgraded
+### 11.1 Daily Journey â€” Aarav (Sophomore) â€” CI-Upgraded
 
 | Time | Activity | Module | AI Touchpoint | UX Pattern (from CI) |
 |---|---|---|---|---|
@@ -512,9 +512,9 @@ The product operates across 7 interconnected domains:
 | 6:00 PM | Coursework | Courses | Course Progress Nudge via push | Tiered notification (Interrupt) |
 | 9:30 PM | Wind-down | Sleep | Bedtime reminder with tomorrow's first task | Ambient notification |
 | 10:00 PM | Review tomorrow | Dashboard | Evening glance at next day's schedule | Time-of-day adaptive dashboard |
-| 11:00 PM | Log sleep | Sleep / Chat | "Good night ARIA" → logs sleep time | Voice input + quick log |
+| 11:00 PM | Log sleep | Sleep / Chat | "Good night ARIA" â†’ logs sleep time | Voice input + quick log |
 
-### 11.2 Weekly Journey — Priya (Junior + Intern)
+### 11.2 Weekly Journey â€” Priya (Junior + Intern)
 
 | Day | Focus | Modules Used |
 |---|---|---|
@@ -525,7 +525,7 @@ The product operates across 7 interconnected domains:
 | Sat | Career prep | Opportunities, Learning |
 | Sun | Planning + Rest | Habits, Sleep, Goals, Roadmap |
 
-### 11.3 Placement Prep Journey — Rohan (Senior)
+### 11.3 Placement Prep Journey â€” Rohan (Senior)
 
 | Phase | Duration | Activities | Key Modules |
 |---|---|---|---|
@@ -538,19 +538,19 @@ The product operates across 7 interconnected domains:
 ### 11.4 Task-to-Completion Journey (CI-Upgraded)
 
 1. **Capture**: User types `/task "Complete DBMS assignment"` in Cmd+K, OR uses Quick Capture button, OR browser extension
-2. **Enrich**: ARIA auto-assigns priority (medium), category (academics), estimated time (2h), due date — shown inline with confidence badge
-3. **Schedule**: Task appears in today's bounded list; Planner agent checks sleep score — if low, schedules for afternoon
+2. **Enrich**: ARIA auto-assigns priority (medium), category (academics), estimated time (2h), due date â€” shown inline with confidence badge
+3. **Schedule**: Task appears in today's bounded list; Planner agent checks sleep score â€” if low, schedules for afternoon
 4. **Remind**: 15-min missed task checker detects if task passes due; push notification sent (Interrupt tier); if missed twice, email escalation; if missed thrice + high priority, SMS
-5. **Complete**: User marks task done → instant optimistic update → API confirmation → streak updated → goal progress recalculated
-6. **Review**: Weekly Review agent notes: "You completed 14/20 tasks this week. DBMS was rescheduled 3 times — consider breaking into smaller tasks."
+5. **Complete**: User marks task done â†’ instant optimistic update â†’ API confirmation â†’ streak updated â†’ goal progress recalculated
+6. **Review**: Weekly Review agent notes: "You completed 14/20 tasks this week. DBMS was rescheduled 3 times â€” consider breaking into smaller tasks."
 
 ### 11.5 Course Completion Journey
 
 1. **Enroll**: User adds course with target completion date and "why-enrolled"
 2. **Plan**: ARIA calculates daily minutes needed, generates study tasks for the week
 3. **Track**: Course progress bar updates with each module completion; daily study target on dashboard
-4. **Nudge**: Course Progress Nudge (6 PM daily) checks if behind schedule → push notification
-5. **Complete**: Course marked done → skills updated → Learning Agent detects new skill → Career Agent may find opportunities
+4. **Nudge**: Course Progress Nudge (6 PM daily) checks if behind schedule â†’ push notification
+5. **Complete**: Course marked done â†’ skills updated â†’ Learning Agent detects new skill â†’ Career Agent may find opportunities
 6. **Retain**: Spaced repetition reviews at 1, 3, 7, 14, 30 days resurface key concepts
 
 ---
@@ -560,29 +560,29 @@ The product operates across 7 interconnected domains:
 ### 12.1 Cross-Module Data Flow Map
 
 ```
-YouTube Save ──► YouTube Vault
-     │
-     ├──► AI Summary ──► Resource Library
-     │
-     └──► Topic Extraction ──► Goals (link video to goal)
-                                  │
-                                  ├──► Generate Study Tasks ──► Tasks
-                                  │                              │
-                                  │                              ├──► Time Tracking (Pomodoro)
-                                  │                              │
-                                  │                              └──► Daily Briefing (top tasks)
-                                  │
-                                  ├──► Course Progress ──► Dashboard (productivity score)
-                                  │
-                                  ├──► Skill Update ──► Learning Agent
-                                  │                        │
-                                  │                        └──► Career Agent
-                                  │                              │
-                                  │                              └──► Opportunity Radar (match scoring)
-                                  │
-                                  └──► Income (if monetized skill) ──► Income Tracker
-                                                                         │
-                                                                         └──► Weekly Review (ROI report)
+YouTube Save â”€â”€â–º YouTube Vault
+     â”‚
+     â”œâ”€â”€â–º AI Summary â”€â”€â–º Resource Library
+     â”‚
+     â””â”€â”€â–º Topic Extraction â”€â”€â–º Goals (link video to goal)
+                                  â”‚
+                                  â”œâ”€â”€â–º Generate Study Tasks â”€â”€â–º Tasks
+                                  â”‚                              â”‚
+                                  â”‚                              â”œâ”€â”€â–º Time Tracking (Pomodoro)
+                                  â”‚                              â”‚
+                                  â”‚                              â””â”€â”€â–º Daily Briefing (top tasks)
+                                  â”‚
+                                  â”œâ”€â”€â–º Course Progress â”€â”€â–º Dashboard (productivity score)
+                                  â”‚
+                                  â”œâ”€â”€â–º Skill Update â”€â”€â–º Learning Agent
+                                  â”‚                        â”‚
+                                  â”‚                        â””â”€â”€â–º Career Agent
+                                  â”‚                              â”‚
+                                  â”‚                              â””â”€â”€â–º Opportunity Radar (match scoring)
+                                  â”‚
+                                  â””â”€â”€â–º Income (if monetized skill) â”€â”€â–º Income Tracker
+                                                                         â”‚
+                                                                         â””â”€â”€â–º Weekly Review (ROI report)
 ```
 
 ### 12.2 Core Transactional Flows
@@ -590,44 +590,44 @@ YouTube Save ──► YouTube Vault
 **Task Creation Flow (CI-Upgraded with Optimistic Updates):**
 ```
 User Input (Cmd+K or Quick Capture or Chat)
-     │
-     ├──► Local optimistic update (instant, <50ms)
-     ├──► POST /api/tasks ──► FastAPI validation
-     │                           │
-     │                           ├──► AI Priority Assignment (async, 70-90% confidence → "Suggested" badge)
-     │                           ├──► Category Detection (async, >90% → auto-accept)
-     │                           └──► Supabase INSERT
-     │                               │
-     │                               ├──► Realtime push to all clients
-     │                               ├──► Due date check (≤2h → Interrupt notification)
-     │                               └──► UI reconciliation (replace temp with real data)
+     â”‚
+     â”œâ”€â”€â–º Local optimistic update (instant, <50ms)
+     â”œâ”€â”€â–º POST /api/tasks â”€â”€â–º FastAPI validation
+     â”‚                           â”‚
+     â”‚                           â”œâ”€â”€â–º AI Priority Assignment (async, 70-90% confidence â†’ "Suggested" badge)
+     â”‚                           â”œâ”€â”€â–º Category Detection (async, >90% â†’ auto-accept)
+     â”‚                           â””â”€â”€â–º Supabase INSERT
+     â”‚                               â”‚
+     â”‚                               â”œâ”€â”€â–º Realtime push to all clients
+     â”‚                               â”œâ”€â”€â–º Due date check (â‰¤2h â†’ Interrupt notification)
+     â”‚                               â””â”€â”€â–º UI reconciliation (replace temp with real data)
 ```
 
 **Chat with ARIA Flow (CI-Upgraded with Multi-Agent Orchestration):**
 ```
-User Message ──► POST /api/chat ──► Context Builder
-     │                                       │
-     │                                       ├──► Profile snapshot
-     │                                       ├──► Active tasks + goals + course status
-     │                                       ├──► Sleep score + conversation history + memory
-     │                                       │
-     │                                       ▼
-     │                               Prompt Assembly (aria_system.md + guardrails.md + context)
-     │                                       │
-     │                                       ▼
-     │                               LLM Call (Ollama → Claude fallback)
-     │                                       │
-     │                                       ├──► Response generation with streaming + thinking display
-     │                                       └──► Action JSON (add_task, update_course, etc.)
-     │                                           │
-     │                                           ▼
-     │                                   Action Executor → Supabase
-     │                                           │
-     │                                           ▼
-     │                                   Memory Writer → aria_memory
-     │                                           │
-     │                                           ▼
-     │                                   Response ──► Chat UI with embedded action cards
+User Message â”€â”€â–º POST /api/chat â”€â”€â–º Context Builder
+     â”‚                                       â”‚
+     â”‚                                       â”œâ”€â”€â–º Profile snapshot
+     â”‚                                       â”œâ”€â”€â–º Active tasks + goals + course status
+     â”‚                                       â”œâ”€â”€â–º Sleep score + conversation history + memory
+     â”‚                                       â”‚
+     â”‚                                       â–¼
+     â”‚                               Prompt Assembly (aria_system.md + guardrails.md + context)
+     â”‚                                       â”‚
+     â”‚                                       â–¼
+     â”‚                               LLM Call (Ollama â†’ Claude fallback)
+     â”‚                                       â”‚
+     â”‚                                       â”œâ”€â”€â–º Response generation with streaming + thinking display
+     â”‚                                       â””â”€â”€â–º Action JSON (add_task, update_course, etc.)
+     â”‚                                           â”‚
+     â”‚                                           â–¼
+     â”‚                                   Action Executor â†’ Supabase
+     â”‚                                           â”‚
+     â”‚                                           â–¼
+     â”‚                                   Memory Writer â†’ aria_memory
+     â”‚                                           â”‚
+     â”‚                                           â–¼
+     â”‚                                   Response â”€â”€â–º Chat UI with embedded action cards
 ```
 
 ### 12.3 Agent Trigger Patterns
@@ -644,22 +644,22 @@ User Message ──► POST /api/chat ──► Context Builder
 
 ## 13. Data Flow Architecture
 
-### 13.1 Frontend → Backend → Database
+### 13.1 Frontend â†’ Backend â†’ Database
 
 ```
 Browser (Next.js)
-  Zustand (UI State)     ── Optimistic updates on mutations
-  React Query (Server)   ── p95 <60ms for local cache hits
-  IndexedDB (Offline)    ── Recent 100 tasks, active courses/goals
-  localStorage (Drafts)  ── Quick Capture drafts, unsaved work
-  Service Worker (Cache) ── App shell, static assets
-       │
-       ▼ HTTPS / WSS
+  Zustand (UI State)     â”€â”€ Optimistic updates on mutations
+  React Query (Server)   â”€â”€ p95 <60ms for local cache hits
+  IndexedDB (Offline)    â”€â”€ Recent 100 tasks, active courses/goals
+  localStorage (Drafts)  â”€â”€ Quick Capture drafts, unsaved work
+  Service Worker (Cache) â”€â”€ App shell, static assets
+       â”‚
+       â–¼ HTTPS / WSS
 FastAPI Backend
   Auth Middleware (JWT) + Rate Limiter + CORS + Routers (x13)
   Services (Business) + Context Builder (AI) + Action Executor (AI)
-       │
-       ▼
+       â”‚
+       â–¼
 Supabase PostgreSQL
   21 Tables with RLS + Realtime Subscriptions + Edge Functions + pg_cron
 ```
@@ -687,36 +687,36 @@ Supabase PostgreSQL
 
 ```
 User Request
-     │
-     ▼
-┌─────────────┐
-│  AI Router  │
-│             │
-│ 1. Check USE_LOCAL_AI flag
-│ 2. If True → Ollama (localhost:11434)
-│ 3. If False → Claude API
-│ 4. If Ollama fails → retry 1x → Claude fallback
-│ 5. If Claude fails → algorithmic fallback
-│ 6. Show confidence indicator at all stages
-└─────────────┘
-     │
-     ├──► Ollama: llama3.1 (8B) or mistral:7b
-     │        ├── Latency: 2-10s (student laptop, 8GB RAM)
-     │        ├── Cost: Rs. 0
-     │        └── Capability: chat, summaries, basic analysis
-     │
-     └──► Claude: sonnet-4-20250514
-              ├── Latency: 1-3s
-              ├── Cost: ~$0.015/request (free credits)
-              └── Capability: complex reasoning, briefing, review, opportunity parsing
+     â”‚
+     â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  AI Router  â”‚
+â”‚             â”‚
+â”‚ 1. Check USE_LOCAL_AI flag
+â”‚ 2. If True â†’ Ollama (localhost:11434)
+â”‚ 3. If False â†’ Claude API
+â”‚ 4. If Ollama fails â†’ retry 1x â†’ Claude fallback
+â”‚ 5. If Claude fails â†’ algorithmic fallback
+â”‚ 6. Show confidence indicator at all stages
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+     â”‚
+     â”œâ”€â”€â–º Ollama: llama3.1 (8B) or mistral:7b
+     â”‚        â”œâ”€â”€ Latency: 2-10s (student laptop, 8GB RAM)
+     â”‚        â”œâ”€â”€ Cost: Rs. 0
+     â”‚        â””â”€â”€ Capability: chat, summaries, basic analysis
+     â”‚
+     â””â”€â”€â–º Claude: sonnet-4-20250514
+              â”œâ”€â”€ Latency: 1-3s
+              â”œâ”€â”€ Cost: ~$0.015/request (free credits)
+              â””â”€â”€ Capability: complex reasoning, briefing, review, opportunity parsing
 ```
 
 ### 14.2 AI Interaction Patterns (from CI)
 
 | Pattern | Source | ARIA Implementation |
 |---|---|---|
-| **Extended Thinking** | Claude | Show "Thinking..." → "Researching..." → "Analyzing..." → "Writing..." |
-| **Mode Selection** | ChatGPT | "I want to..." → Plan / Execute / Learn / Reflect |
+| **Extended Thinking** | Claude | Show "Thinking..." â†’ "Researching..." â†’ "Analyzing..." â†’ "Writing..." |
+| **Mode Selection** | ChatGPT | "I want to..." â†’ Plan / Execute / Learn / Reflect |
 | **Inline Suggestions** | Cursor | Tab to accept AI-suggested priority, category, due date |
 | **Native Blocks** | Notion AI | AI responses embed task cards, progress bars, opportunity cards |
 | **Source Grounding** | Perplexity | Every opportunity match: "Why this matches you" with specific skill overlap |
@@ -739,9 +739,9 @@ User Request
 
 ### 14.4 AI Fallback Chain
 
-1. Ollama (primary) → if timeout > 60s or error
-2. Ollama retry 1x → if still fails
-3. Claude API (fallback) → if Claude also fails
+1. Ollama (primary) â†’ if timeout > 60s or error
+2. Ollama retry 1x â†’ if still fails
+3. Claude API (fallback) â†’ if Claude also fails
 4. Algorithmic default (e.g., "Could not generate briefing. Here are your raw tasks...")
 
 ---
@@ -751,17 +751,17 @@ User Request
 ### 15.1 Agent Dependency Graph
 
 ```
-ARIA (A00) ─┬─ Service Agents ──────────────────── Cron Agents
-             │    ├── Planner (A01)             ─── Reminder (A04) [no deps]
-             │    ├── Memory (A02)              ─── Opportunity (A06) [reads resources]
-             │    ├── Learning (A03)            ─── Daily Briefing (A09) [reads all agents]
-             │    ├── Career (A05)              ─── Weekly Review (A10) [reads all history]
-             │    ├── Analytics (A07)           ─── Missed Task (A11) [reads tasks]
-             │    └── Roadmap (A08)             ─── Habit Miss (A12) [reads habits]
-             │                                  ─── Sleep & Bedtime (A13) [reads sleep_logs]
-             │                                  ─── Course Nudge (A14) [reads courses]
-             │
-             └──→ Data flows through Supabase tables (agents never call each other directly)
+ARIA (A00) â”€â”¬â”€ Service Agents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Cron Agents
+             â”‚    â”œâ”€â”€ Planner (A01)             â”€â”€â”€ Reminder (A04) [no deps]
+             â”‚    â”œâ”€â”€ Memory (A02)              â”€â”€â”€ Opportunity (A06) [reads resources]
+             â”‚    â”œâ”€â”€ Learning (A03)            â”€â”€â”€ Daily Briefing (A09) [reads all agents]
+             â”‚    â”œâ”€â”€ Career (A05)              â”€â”€â”€ Weekly Review (A10) [reads all history]
+             â”‚    â”œâ”€â”€ Analytics (A07)           â”€â”€â”€ Missed Task (A11) [reads tasks]
+             â”‚    â””â”€â”€ Roadmap (A08)             â”€â”€â”€ Habit Miss (A12) [reads habits]
+             â”‚                                  â”€â”€â”€ Sleep & Bedtime (A13) [reads sleep_logs]
+             â”‚                                  â”€â”€â”€ Course Nudge (A14) [reads courses]
+             â”‚
+             â””â”€â”€â†’ Data flows through Supabase tables (agents never call each other directly)
 ```
 
 ### 15.2 Agent Communication Pattern
@@ -769,7 +769,7 @@ ARIA (A00) ─┬─ Service Agents ──────────────�
 Agents communicate exclusively through Supabase tables. No agent directly calls another:
 
 ```
-Agent A writes to Table X → Table X (Supabase) → Agent B reads Table X as part of data assembly
+Agent A writes to Table X â†’ Table X (Supabase) â†’ Agent B reads Table X as part of data assembly
 ```
 
 This ensures decoupling, observability, resilience, and independent testability.
@@ -790,13 +790,13 @@ This ensures decoupling, observability, resilience, and independent testability.
 ### 15.4 Agent Health Contract
 
 Every agent implements:
-- `health()` → status, last_run, success_rate, latency, errors_last_hour
-- `metrics()` → calls_total, avg_latency, p95_latency, error_rate, token usage, cost
-- `version()` → agent_version, prompt_version, last_updated, code_hash
+- `health()` â†’ status, last_run, success_rate, latency, errors_last_hour
+- `metrics()` â†’ calls_total, avg_latency, p95_latency, error_rate, token usage, cost
+- `version()` â†’ agent_version, prompt_version, last_updated, code_hash
 
 ---
 
-# Part II — Product Strategy
+# Part II â€” Product Strategy
 
 ---
 
@@ -805,7 +805,7 @@ Every agent implements:
 ### 16.1 Design Principles (CI-Upgraded)
 
 The dashboard is the user's home base. It must be:
-- **Glanceable**: Critical data in under 5 seconds — Stripe-style KPI strip at top
+- **Glanceable**: Critical data in under 5 seconds â€” Stripe-style KPI strip at top
 - **Context-Aware**: Adapts to time of day (morning/midday/evening/night) and sleep score
 - **Action-Oriented**: Every card has a clear next action
 - **Comparative**: Every metric paired with "vs last week" context (Linear pattern)
@@ -838,19 +838,19 @@ The dashboard is the user's home base. It must be:
 ### 16.4 Recommended Dashboard Layout (CI-Upgraded)
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  🌅 GOOD MORNING, AARAV — Sleep 78 · 3 tasks today · 1 opp     │
-├──────────────────────────────────────────────────────────────────┤
-│  72  │  3/8   │  78  │  +2   │  65%  │  ₹250/hr               │ ← Stripe KPI strip
-│  ▲5% │  Tasks │ Sleep│  Opps │ Course│  Income                 │
-├─────────────────────┬──────────────────────┬────────────────────┤
-│  TODAY'S FOCUS       │  COURSE TARGET        │  TOMORROW PREVIEW  │ ← Sunsama + Linear
-│  3 Priority Tasks    │  Node.js: 45min/day   │  1 deadline        │
-│  + Time blocks       │  40% behind           │  2 tasks           │
-├─────────────────────┴──────────────────────┴────────────────────┤
-│  ACTIVITY (7-day) ████░░░░░░  Productivity trend — week view   │ ← PostHog trends
-│  HEATMAP (6-month) [GitHub-style grid]                          │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ðŸŒ… GOOD MORNING, AARAV â€” Sleep 78 Â· 3 tasks today Â· 1 opp     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  72  â”‚  3/8   â”‚  78  â”‚  +2   â”‚  65%  â”‚  â‚¹250/hr               â”‚ â† Stripe KPI strip
+â”‚  â–²5% â”‚  Tasks â”‚ Sleepâ”‚  Opps â”‚ Courseâ”‚  Income                 â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TODAY'S FOCUS       â”‚  COURSE TARGET        â”‚  TOMORROW PREVIEW  â”‚ â† Sunsama + Linear
+â”‚  3 Priority Tasks    â”‚  Node.js: 45min/day   â”‚  1 deadline        â”‚
+â”‚  + Time blocks       â”‚  40% behind           â”‚  2 tasks           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  ACTIVITY (7-day) â–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘  Productivity trend â€” week view   â”‚ â† PostHog trends
+â”‚  HEATMAP (6-month) [GitHub-style grid]                          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -861,22 +861,22 @@ The dashboard is the user's home base. It must be:
 
 ```
 Level 1: Primary Navigation (always visible)
-├── Dashboard (home)
-├── Tasks (most frequent)
-├── Chat with ARIA (AI assistant)
-└── Quick Capture (+ button, any context)
+â”œâ”€â”€ Dashboard (home)
+â”œâ”€â”€ Tasks (most frequent)
+â”œâ”€â”€ Chat with ARIA (AI assistant)
+â””â”€â”€ Quick Capture (+ button, any context)
 
 Level 2: Module Navigation (sidebar)
-├── Courses │ Goals & Roadmaps │ Projects │ Habits │ Sleep
-├── Income │ Ideas │ Resources │ YouTube Vault
-├── Opportunities │ Time Tracking │ Academics
-└── Automation │ Settings
+â”œâ”€â”€ Courses â”‚ Goals & Roadmaps â”‚ Projects â”‚ Habits â”‚ Sleep
+â”œâ”€â”€ Income â”‚ Ideas â”‚ Resources â”‚ YouTube Vault
+â”œâ”€â”€ Opportunities â”‚ Time Tracking â”‚ Academics
+â””â”€â”€ Automation â”‚ Settings
 
 Level 3: Context Navigation (within module)
-├── Module header (title, back, actions)
-├── Tab bar (views: list/kanban/calendar/detail)
-├── Filters (status, priority, date, tags)
-└── Breadcrumbs (object-type breadcrumb — Capacities pattern)
+â”œâ”€â”€ Module header (title, back, actions)
+â”œâ”€â”€ Tab bar (views: list/kanban/calendar/detail)
+â”œâ”€â”€ Filters (status, priority, date, tags)
+â””â”€â”€ Breadcrumbs (object-type breadcrumb â€” Capacities pattern)
 ```
 
 ### 17.2 Navigation Patterns (CI-Upgraded)
@@ -885,7 +885,7 @@ Level 3: Context Navigation (within module)
 |---|---|---|
 | **Collapsible Sidebar** | 240px expanded, 64px icon-only, dims on content focus | Linear receding sidebar |
 | **Cmd+K Command Palette** | Global search + navigation + actions, local-first | Linear, industry standard |
-| **Two-Key Go-To** | G+T → Tasks, G+C → Courses, G+H → Habits | Linear two-key navigation |
+| **Two-Key Go-To** | G+T â†’ Tasks, G+C â†’ Courses, G+H â†’ Habits | Linear two-key navigation |
 | **Tab Bar** | Horizontal tabs for module views | Standard |
 | **Breadcrumbs** | Object-type hierarchy (Tasks > Active > Assignment) | Capacities |
 | **Page-as-Folder** | Any module becomes parent by containing sub-items | Notion |
@@ -894,27 +894,27 @@ Level 3: Context Navigation (within module)
 ### 17.3 Sidebar Architecture (CI-Upgraded)
 
 ```
-┌─────────────────────┐
-│  ARIA OS Logo       │  ← Collapsed: icon only
-│  Search (Cmd+K)     │  ← Always visible
-├─────────────────────┤
-│  Dashboard          │  ← Active: neon left border + glow
-│  Chat with ARIA     │  ← Badge for unread
-│  Tasks              │  ← Badge for overdue count
-│  Courses            │
-├─────────────────────┤
-│  Goals              │  ← Section divider
-│  Projects │ Ideas   │
-│  Opportunities      │  ← Badge for new matches
-│  Resources │ YouTube│
-│  Income             │
-├─────────────────────┤
-│  Habits │ Sleep     │
-│  Time │ Academics   │
-├─────────────────────┤
-│  Automation         │  ← Agent health status dot
-│  Settings           │
-└─────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ARIA OS Logo       â”‚  â† Collapsed: icon only
+â”‚  Search (Cmd+K)     â”‚  â† Always visible
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Dashboard          â”‚  â† Active: neon left border + glow
+â”‚  Chat with ARIA     â”‚  â† Badge for unread
+â”‚  Tasks              â”‚  â† Badge for overdue count
+â”‚  Courses            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Goals              â”‚  â† Section divider
+â”‚  Projects â”‚ Ideas   â”‚
+â”‚  Opportunities      â”‚  â† Badge for new matches
+â”‚  Resources â”‚ YouTubeâ”‚
+â”‚  Income             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Habits â”‚ Sleep     â”‚
+â”‚  Time â”‚ Academics   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Automation         â”‚  â† Agent health status dot
+â”‚  Settings           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 17.4 Navigation Responsiveness
@@ -925,7 +925,7 @@ Level 3: Context Navigation (within module)
 | 768-1024px (Tablet) | Collapsed sidebar (64px icons) + expandable overlay |
 | > 1024px (Desktop) | Expanded sidebar (240px), collapsible on demand |
 
-### 17.5 Keyboard Shortcuts (CI-Adopted — Priority from Competitive Gap)
+### 17.5 Keyboard Shortcuts (CI-Adopted â€” Priority from Competitive Gap)
 
 | Shortcut | Action | Context | CI Source |
 |---|---|---|---|
@@ -948,39 +948,39 @@ Level 3: Context Navigation (within module)
 
 | Scope | What It Searches | CI Pattern | Priority |
 |---|---|---|---|
-| **Global Search (Cmd+K)** | All modules — fuzzy title + full-text + natural language | Linear local-first, hybrid semantic | P0 |
+| **Global Search (Cmd+K)** | All modules â€” fuzzy title + full-text + natural language | Linear local-first, hybrid semantic | P0 |
 | **Module Search** | Within current module only | Standard | P0 |
-| **Natural Language** | "react articles from 3 months ago", "high priority tasks due this week" | PostHog NL → query | P1 |
+| **Natural Language** | "react articles from 3 months ago", "high priority tasks due this week" | PostHog NL â†’ query | P1 |
 | **Operator Syntax** | `from:ARIA`, `in:Tasks`, `tag:WebDev`, `before:2026-07-01` | Notion operators | P1 |
 | **AI Semantic** | Find content related to a concept, not just keywords | Linear vectors + keyword | P2 |
 
-### 18.2 Command Palette (Cmd+K) — CI-Adopted
+### 18.2 Command Palette (Cmd+K) â€” CI-Adopted
 
 ```
-┌──────────────────────────────────────────┐
-│ 🔍 Search tasks, courses, anything...   │ ← Auto-focus, live results, p95 <60ms
-├──────────────────────────────────────────┤
-│ RECENT                                   │ ← Accessed items
-│   DBMS Assignment (Task)                 │
-│   Node.js Course (Course)                │
-├──────────────────────────────────────────┤
-│ RESULTS (grouped by module)              │
-│   📋 Tasks (3)                           │
-│     > Complete DBMS assignment           │ ← Arrow key to select
-│   📚 Courses (2)                         │
-│     > Node.js - The Complete Guide       │
-├──────────────────────────────────────────┤
-│ ACTIONS (/ commands)                     │ ← Notion slash pattern
-│   /new task "Complete DBMS"              │
-│   /new idea "AI study buddy"             │
-│   /new course "Node.js"                  │
-├──────────────────────────────────────────┤
-│ NAVIGATION                               │ ← Shortcut discovery
-│   > Dashboard          ⌘1               │
-│   > Tasks              ⌘2               │
-│   > Courses            ⌘3               │
-│   > Chat               ⌘K               │
-└──────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚ ðŸ” Search tasks, courses, anything...   â”‚ â† Auto-focus, live results, p95 <60ms
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ RECENT                                   â”‚ â† Accessed items
+â”‚   DBMS Assignment (Task)                 â”‚
+â”‚   Node.js Course (Course)                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ RESULTS (grouped by module)              â”‚
+â”‚   ðŸ“‹ Tasks (3)                           â”‚
+â”‚     > Complete DBMS assignment           â”‚ â† Arrow key to select
+â”‚   ðŸ“š Courses (2)                         â”‚
+â”‚     > Node.js - The Complete Guide       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ ACTIONS (/ commands)                     â”‚ â† Notion slash pattern
+â”‚   /new task "Complete DBMS"              â”‚
+â”‚   /new idea "AI study buddy"             â”‚
+â”‚   /new course "Node.js"                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ NAVIGATION                               â”‚ â† Shortcut discovery
+â”‚   > Dashboard          âŒ˜1               â”‚
+â”‚   > Tasks              âŒ˜2               â”‚
+â”‚   > Courses            âŒ˜3               â”‚
+â”‚   > Chat               âŒ˜K               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Critical architecture decision (from Linear)**: Search local data (IndexedDB), not API. p95 <60ms target. Falls back to server full-text for deep content search.
@@ -993,20 +993,20 @@ Level 3: Context Navigation (within module)
 
 ```
 Trigger Methods:
-├── Keyboard: Cmd+Shift+C (from desktop) — Linear pattern
-├── Cmd+K: /new task "..." — Notion slash command
-├── Floating Button: + button (bottom-right, any screen)
-├── Mobile Share: Share intent from any app
-├── Browser Extension: One-tap save from any web page
-└── Voice: "Hey ARIA, save this..."
+â”œâ”€â”€ Keyboard: Cmd+Shift+C (from desktop) â€” Linear pattern
+â”œâ”€â”€ Cmd+K: /new task "..." â€” Notion slash command
+â”œâ”€â”€ Floating Button: + button (bottom-right, any screen)
+â”œâ”€â”€ Mobile Share: Share intent from any app
+â”œâ”€â”€ Browser Extension: One-tap save from any web page
+â””â”€â”€ Voice: "Hey ARIA, save this..."
 
 Capture Types (AI auto-detected with confidence indicator):
-├── Task: Title + auto-priority (suggested: High) — 80-90% confidence
-├── Idea: Title + auto-market check
-├── Resource: URL → auto-fetch metadata, AI summary
-├── YouTube: URL → auto-fetch title, thumbnail, summary
-├── Course: Course URL → auto-detect platform + suggest deadline
-└── General Note: Free text → ARIA categorizes later
+â”œâ”€â”€ Task: Title + auto-priority (suggested: High) â€” 80-90% confidence
+â”œâ”€â”€ Idea: Title + auto-market check
+â”œâ”€â”€ Resource: URL â†’ auto-fetch metadata, AI summary
+â”œâ”€â”€ YouTube: URL â†’ auto-fetch title, thumbnail, summary
+â”œâ”€â”€ Course: Course URL â†’ auto-detect platform + suggest deadline
+â””â”€â”€ General Note: Free text â†’ ARIA categorizes later
 ```
 
 ### 19.2 Action Commands (from Cmd+K)
@@ -1057,7 +1057,7 @@ Capture Types (AI auto-detected with confidence indicator):
 | **KPI Strip** | 4-6 metrics at top, card-less, trend arrows | Stripe |
 | **Multiple Lenses** | Same data as trends, funnels, retention, paths | PostHog |
 | **Correlated Views** | Sleep vs productivity, skill vs income side-by-side | Datadog |
-| **AI Refresh Analysis** | "What changed since yesterday" — ARIA highlights | PostHog |
+| **AI Refresh Analysis** | "What changed since yesterday" â€” ARIA highlights | PostHog |
 | **Surgical Accent** | Charts use ONE accent color (#6366F1) | Stripe |
 | **Comparison Context** | Every number shows "vs last week" | Linear |
 | **Score Gamification** | 0-100 productivity score with daily trend | Standard |
@@ -1072,23 +1072,23 @@ The knowledge system spans 3 modules:
 
 ```
 KNOWLEDGE ECOSYSTEM
-│
-├── Resource Library (Intentional Capture)
-│   ├── Articles, books, repos, tools, papers, threads
-│   ├── AI auto-tagging by topic + skill + goal
-│   ├── AI summarization (3-sentence)
-│   └── Reading queue prioritized by active goals
-│
-├── Ideas (Creative Capture)
-│   ├── Status pipeline: Raw → Researching → Validating → Building → Archived
-│   ├── AI market check (does this exist? competitors?)
-│   └── AI enrichment (validation plan, feasibility)
-│
-└── YouTube Vault (Video Capture)
-    ├── One-tap save + auto-metadata
-    ├── AI summary of what it teaches
-    ├── 60-day expiry → "Keep or Archive?"
-    └── Topic extraction + goal linking
+â”‚
+â”œâ”€â”€ Resource Library (Intentional Capture)
+â”‚   â”œâ”€â”€ Articles, books, repos, tools, papers, threads
+â”‚   â”œâ”€â”€ AI auto-tagging by topic + skill + goal
+â”‚   â”œâ”€â”€ AI summarization (3-sentence)
+â”‚   â””â”€â”€ Reading queue prioritized by active goals
+â”‚
+â”œâ”€â”€ Ideas (Creative Capture)
+â”‚   â”œâ”€â”€ Status pipeline: Raw â†’ Researching â†’ Validating â†’ Building â†’ Archived
+â”‚   â”œâ”€â”€ AI market check (does this exist? competitors?)
+â”‚   â””â”€â”€ AI enrichment (validation plan, feasibility)
+â”‚
+â””â”€â”€ YouTube Vault (Video Capture)
+    â”œâ”€â”€ One-tap save + auto-metadata
+    â”œâ”€â”€ AI summary of what it teaches
+    â”œâ”€â”€ 60-day expiry â†’ "Keep or Archive?"
+    â””â”€â”€ Topic extraction + goal linking
 ```
 
 ### 21.2 Resurface Engine (CI-Upgraded with Bi-Directional Linking)
@@ -1101,7 +1101,7 @@ KNOWLEDGE ECOSYSTEM
 | Weekly Review | Unread resources, stalled ideas, unwatched YouTube | Mem review |
 | Daily Briefing | Top 1 resource or idea relevant to today's tasks | Linear Pulse |
 
-### 21.3 Knowledge Graph (Future — CI-Inspired)
+### 21.3 Knowledge Graph (Future â€” CI-Inspired)
 
 The long-term vision includes a full knowledge graph where:
 - Every resource, idea, course, project, and task is a node
@@ -1117,20 +1117,20 @@ The long-term vision includes a full knowledge graph where:
 
 ```
 Learning Sources
-├── College Courses (4-year BTech)
-│   ├── Semester structure with subjects, attendance, assignments
-│   ├── Exam countdown with daily study target
-│   └── CGPA calculator with what-if scenarios
-│
-├── Online Courses (Udemy, Coursera, NPTEL)
-│   ├── Progress tracking with auto-generated study tasks
-│   ├── Daily study target (min/day) calculated from deadline
-│   └── Deadline management with early completion bonus
-│
-└── Self-Directed (YouTube, Articles, Books)
-    ├── Save → Schedule → Watch → Review pipeline
-    ├── Topic-based organization with goal linking
-    └── 60-day expiry drives action (Capacities-inspired)
+â”œâ”€â”€ College Courses (4-year BTech)
+â”‚   â”œâ”€â”€ Semester structure with subjects, attendance, assignments
+â”‚   â”œâ”€â”€ Exam countdown with daily study target
+â”‚   â””â”€â”€ CGPA calculator with what-if scenarios
+â”‚
+â”œâ”€â”€ Online Courses (Udemy, Coursera, NPTEL)
+â”‚   â”œâ”€â”€ Progress tracking with auto-generated study tasks
+â”‚   â”œâ”€â”€ Daily study target (min/day) calculated from deadline
+â”‚   â””â”€â”€ Deadline management with early completion bonus
+â”‚
+â””â”€â”€ Self-Directed (YouTube, Articles, Books)
+    â”œâ”€â”€ Save â†’ Schedule â†’ Watch â†’ Review pipeline
+    â”œâ”€â”€ Topic-based organization with goal linking
+    â””â”€â”€ 60-day expiry drives action (Capacities-inspired)
 ```
 
 ### 22.2 Learning Progress Mechanics
@@ -1141,7 +1141,7 @@ Learning Sources
 | **Deadline Recalc** | If behind 2 weeks, recalculate daily target | Warning banner + new target |
 | **Spaced Repetition** | Reviews at 1/3/7/14/30 days post-completion | Notification + review card |
 | **Course Nudge** | 6 PM daily: "You need X min/day to finish" | Tiered notification (Ambient) |
-| **Skill Extraction** | Completed course → skills updated in profile | Automatic, shows in profile |
+| **Skill Extraction** | Completed course â†’ skills updated in profile | Automatic, shows in profile |
 
 ---
 
@@ -1163,21 +1163,21 @@ Runs daily at 6 AM IST, scans 6 categories:
 ### 23.2 Match Scoring Algorithm (CI-Upgraded with Source Grounding)
 
 ```
-Match Score = (Skill Overlap × 0.4) + (Interest Match × 0.3) + (Timeline Feasibility × 0.2) + (Location Fit × 0.1)
+Match Score = (Skill Overlap Ã— 0.4) + (Interest Match Ã— 0.3) + (Timeline Feasibility Ã— 0.2) + (Location Fit Ã— 0.1)
 
 Each match includes "Why this matches you" (Perplexity pattern):
-├── "You have 3 of 5 required skills: Node.js ✓, React ✓, MongoDB ✓"
-├── "This is relevant to your 'Full-Stack Developer' goal"
-└── "Deadline in 14 days — matches your available schedule"
+â”œâ”€â”€ "You have 3 of 5 required skills: Node.js âœ“, React âœ“, MongoDB âœ“"
+â”œâ”€â”€ "This is relevant to your 'Full-Stack Developer' goal"
+â””â”€â”€ "Deadline in 14 days â€” matches your available schedule"
 ```
 
 ### 23.3 Opportunity UX Flow
 
 ```
-1. DAILY RADAR (6 AM) — Brave Search → AI parse → score → filter (≥40) → save
-2. MORNING BRIEFING (7 AM) — Top 3 shown; deadlines < 48h → Interrupt notification
-3. OPPORTUNITIES MODULE — List with score badges, deadline countdown, relevance sentence
-4. WEEKLY REVIEW — "This week's top matches" + application pipeline status
+1. DAILY RADAR (6 AM) â€” Brave Search â†’ AI parse â†’ score â†’ filter (â‰¥40) â†’ save
+2. MORNING BRIEFING (7 AM) â€” Top 3 shown; deadlines < 48h â†’ Interrupt notification
+3. OPPORTUNITIES MODULE â€” List with score badges, deadline countdown, relevance sentence
+4. WEEKLY REVIEW â€” "This week's top matches" + application pipeline status
 ```
 
 ---
@@ -1202,7 +1202,7 @@ Each match includes "Why this matches you" (Perplexity pattern):
 |---|---|---|
 | Text Chat | Full chat at /chat with streaming + typewriter | ChatGPT streaming |
 | Inline Suggestions | Tab to accept AI-suggested priority/category/due date | Cursor inline |
-| Extended Thinking | "Thinking..." → "Researching..." → "Analyzing..." → "Writing..." | Claude thinking |
+| Extended Thinking | "Thinking..." â†’ "Researching..." â†’ "Analyzing..." â†’ "Writing..." | Claude thinking |
 | Native Blocks | Responses embed task cards, progress bars, opportunity cards | Notion AI blocks |
 | Source Grounding | Every recommendation: "Why this matches you" | Perplexity citations |
 | Voice Input | Microphone button in chat and quick capture | ChatGPT voice |
@@ -1239,34 +1239,34 @@ Supported: `add_task`, `update_task`, `complete_task`, `add_course`, `add_goal`,
 
 ---
 
-# Part III — Enterprise Depth
+# Part III â€” Enterprise Depth
 
 ---
 
 ## 25. Information Architecture Deep Dive
 
-### 25.1 Content Inventory — Complete Module Taxonomy
+### 25.1 Content Inventory â€” Complete Module Taxonomy
 
 | Module | Label | Content Types | Relationships | Data Volume (Est.) |
 |---|---|---|---|---|
 | Dashboard | Home | Briefing cards, score widgets, heatmap, activity feed | Aggregates from all modules | ~50 items |
-| Tasks | Tasks | Tasks, subtasks, dependencies, recurring patterns | → Goals, Courses, Projects, Time | ~500 active |
-| Courses | Courses | Courses, modules, progress snapshots, study targets | → Tasks (study tasks), Skills, Goals | ~20 active |
-| Goals | Goals | Goals, milestones (roadmap nodes), goal dependencies | → Tasks, Courses, Projects, Income | ~10 active |
-| Habits | Habits | Habit definitions, habit logs, streak records | → Goals, Dashboard | ~15 active |
-| Sleep | Sleep | Sleep logs, sleep score history, sleep debt | → Dashboard, Task scheduling | ~365/year |
-| Income | Income | Income entries, sources, hourly rates | → Projects, Skills, Goals | ~100/year |
-| Projects | Projects | Projects, phases, blockers, GitHub links | → Tasks, Income, Goals | ~5 active |
-| Ideas | Ideas | Ideas, status pipeline entries, AI analysis | → Projects, Resources, Goals | ~50/year |
-| Resources | Resources | Articles, books, repos, tools, papers, threads | → Goals, Courses, Projects | ~200/year |
-| YouTube | YouTube Vault | Saved videos, AI summaries, watch history | → Goals, Courses, Resources | ~100/year |
-| Opportunities | Opportunities | Scanned opportunities, applications, matches | → Skills, Goals, Projects | ~500/year |
-| Time | Time Tracking | Time entries, Pomodoro sessions, deep work blocks | → Tasks, Projects, Income | ~500/month |
-| Academics | Academics | Semester plans, CGPA, subjects, exam schedules | → Courses, Tasks | ~40/semester |
-| Chat | ARIA | Chat messages, AI responses, action logs | → All modules (via actions) | ~1000/month |
-| Automation | Automation | Cron job status, trigger logs, execution history | → All agents | ~50 logs/day |
+| Tasks | Tasks | Tasks, subtasks, dependencies, recurring patterns | â†’ Goals, Courses, Projects, Time | ~500 active |
+| Courses | Courses | Courses, modules, progress snapshots, study targets | â†’ Tasks (study tasks), Skills, Goals | ~20 active |
+| Goals | Goals | Goals, milestones (roadmap nodes), goal dependencies | â†’ Tasks, Courses, Projects, Income | ~10 active |
+| Habits | Habits | Habit definitions, habit logs, streak records | â†’ Goals, Dashboard | ~15 active |
+| Sleep | Sleep | Sleep logs, sleep score history, sleep debt | â†’ Dashboard, Task scheduling | ~365/year |
+| Income | Income | Income entries, sources, hourly rates | â†’ Projects, Skills, Goals | ~100/year |
+| Projects | Projects | Projects, phases, blockers, GitHub links | â†’ Tasks, Income, Goals | ~5 active |
+| Ideas | Ideas | Ideas, status pipeline entries, AI analysis | â†’ Projects, Resources, Goals | ~50/year |
+| Resources | Resources | Articles, books, repos, tools, papers, threads | â†’ Goals, Courses, Projects | ~200/year |
+| YouTube | YouTube Vault | Saved videos, AI summaries, watch history | â†’ Goals, Courses, Resources | ~100/year |
+| Opportunities | Opportunities | Scanned opportunities, applications, matches | â†’ Skills, Goals, Projects | ~500/year |
+| Time | Time Tracking | Time entries, Pomodoro sessions, deep work blocks | â†’ Tasks, Projects, Income | ~500/month |
+| Academics | Academics | Semester plans, CGPA, subjects, exam schedules | â†’ Courses, Tasks | ~40/semester |
+| Chat | ARIA | Chat messages, AI responses, action logs | â†’ All modules (via actions) | ~1000/month |
+| Automation | Automation | Cron job status, trigger logs, execution history | â†’ All agents | ~50 logs/day |
 
-### 25.2 Taxonomy Design — Tag & Category System
+### 25.2 Taxonomy Design â€” Tag & Category System
 
 ```
 Topic: DSA, WebDev, AI/ML, DevOps, Security, DBMS, OS, Networks
@@ -1282,21 +1282,21 @@ Source: College, Online, Self-taught, Work, Freelance
 
 ```
 Global Wayfinding:
-  Cmd+K Command Palette → any module, action, or item
-  Sidebar → module-level navigation
-  Object-type Breadcrumbs → Capacities-style hierarchy
-  Quick Switcher (Cmd+Shift+K) → recents + favorites
+  Cmd+K Command Palette â†’ any module, action, or item
+  Sidebar â†’ module-level navigation
+  Object-type Breadcrumbs â†’ Capacities-style hierarchy
+  Quick Switcher (Cmd+Shift+K) â†’ recents + favorites
 
 Module Wayfinding:
-  Tab Bar → view switching (list/kanban/calendar/detail)
-  Search Bar → module-scoped search
-  Filter Bar → status, priority, date, tags
+  Tab Bar â†’ view switching (list/kanban/calendar/detail)
+  Search Bar â†’ module-scoped search
+  Filter Bar â†’ status, priority, date, tags
 
 Contextual Wayfinding:
-  Related Items → AI-suggested related tasks, resources, ideas
-  Bi-directional Links → Obsidian-style backlinks
-  Deep Links → shareable URLs for any item
-  Notification Links → click → specific item
+  Related Items â†’ AI-suggested related tasks, resources, ideas
+  Bi-directional Links â†’ Obsidian-style backlinks
+  Deep Links â†’ shareable URLs for any item
+  Notification Links â†’ click â†’ specific item
 ```
 
 ---
@@ -1308,9 +1308,9 @@ Contextual Wayfinding:
 | Level | Name | Description | Example in ARIA OS | UX Treatment |
 |---|---|---|---|---|
 | 0 | **Manual** | User initiates, AI does nothing | Raw task creation | Standard form |
-| 1 | **Suggestive** | User initiates, AI suggests | Task creation → AI suggests priority | Subtle pill: "Suggested: High" |
-| 2 | **Pre-fill** | User initiates, AI pre-fills | Quick Capture → AI detects type + fills fields | Animated fill, editable |
-| 3 | **Auto-execute** | User initiates, AI completes silently | Add course → AI auto-generates study tasks | Toast confirmation |
+| 1 | **Suggestive** | User initiates, AI suggests | Task creation â†’ AI suggests priority | Subtle pill: "Suggested: High" |
+| 2 | **Pre-fill** | User initiates, AI pre-fills | Quick Capture â†’ AI detects type + fills fields | Animated fill, editable |
+| 3 | **Auto-execute** | User initiates, AI completes silently | Add course â†’ AI auto-generates study tasks | Toast confirmation |
 | 4 | **Proactive Suggest** | AI initiates, user confirms | 6 PM: "Behind on Node.js. Add 30min study?" | Notification + one-tap |
 | 5 | **Proactive Execute** | AI initiates, executes silently | 7 AM: briefing generated and pushed | Notification only |
 | 6 | **Autonomous** | AI acts independently, informs user | Opportunity radar scans, scores, saves | Daily digest |
@@ -1346,7 +1346,7 @@ Contextual Wayfinding:
 | Feedback Type | UX Pattern | Data Collected |
 |---|---|---|
 | Implicit (accept) | User clicks "Accept" | Confirmed correct |
-| Implicit (override) | User changes AI value | Incorrect — log correction |
+| Implicit (override) | User changes AI value | Incorrect â€” log correction |
 | Explicit (positive) | Thumbs up / "Good suggestion" | Training signal |
 | Explicit (negative) | Thumbs down / "Not helpful" | Training signal + trigger prompt review |
 
@@ -1357,16 +1357,16 @@ Contextual Wayfinding:
 ### 27.1 Agent Initiative Continuum
 
 ```
-User-Driven ──────────────────────────────────────── System-Driven
-     │              │              │              │
+User-Driven â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ System-Driven
+     â”‚              â”‚              â”‚              â”‚
    Manual        Suggestive     Proactive      Autonomous
    (User asks)   (AI suggests)  (AI offers)    (AI acts)
 ```
 
 **Agent visibility rules:**
-- **Service agents** (Memory, Learning, Analytics): Level 4-6 — user sees results, not process
-- **Cron agents** (Briefing, Radar, Nudge): Level 5 — user sees delivery, not execution
-- **Interactive agents** (Planner, Career, Roadmap): Level 1-3 — user must initiate, AI assists
+- **Service agents** (Memory, Learning, Analytics): Level 4-6 â€” user sees results, not process
+- **Cron agents** (Briefing, Radar, Nudge): Level 5 â€” user sees delivery, not execution
+- **Interactive agents** (Planner, Career, Roadmap): Level 1-3 â€” user must initiate, AI assists
 - **ARIA**: All levels depending on context
 
 ### 27.2 Multi-Agent Orchestration UX (CI-Adopted)
@@ -1375,16 +1375,16 @@ When ARIA dispatches multiple agents:
 
 ```
 User: "What should I focus on today?"
-     ↓
+     â†“
 ARIA dispatches: Planner + Sleep + Learning + Opportunity (parallel)
-     ↓
+     â†“
 Results merge into single briefing response
-     ↓
+     â†“
 User sees: Unified response with agent attribution
-           "📋 Tasks (Planner): 3 priority tasks — DBMS assignment due tomorrow"
-           "😴 Sleep (Sleep Agent): Score 78 — light day scheduled"
-           "📚 Courses (Learning Agent): Node.js — behind by 2 days"
-           "🎯 Opportunities (Radar): 2 new matches >80% match"
+           "ðŸ“‹ Tasks (Planner): 3 priority tasks â€” DBMS assignment due tomorrow"
+           "ðŸ˜´ Sleep (Sleep Agent): Score 78 â€” light day scheduled"
+           "ðŸ“š Courses (Learning Agent): Node.js â€” behind by 2 days"
+           "ðŸŽ¯ Opportunities (Radar): 2 new matches >80% match"
 ```
 
 **UX rules**: Each agent output grouped with icon + name + content. Ordered by user priority. Timed-out agents show gray placeholder. User can click "Why?" for reasoning.
@@ -1422,14 +1422,14 @@ User sees: Unified response with agent attribution
 ### 28.2 Streaming SSR Strategy
 
 ```
-Server sends: HTML skeleton → streaming component chunks → client hydrates progressively
+Server sends: HTML skeleton â†’ streaming component chunks â†’ client hydrates progressively
 
 Priority order:
-1. Shell layout (sidebar, header) — instant
-2. Critical data (briefing, today's tasks) — < 1s
-3. Secondary data (goals, courses) — < 2s
-4. Analytics data (heatmap, stats) — lazy loaded
-5. Non-critical (activity feed, suggestions) — idle load
+1. Shell layout (sidebar, header) â€” instant
+2. Critical data (briefing, today's tasks) â€” < 1s
+3. Secondary data (goals, courses) â€” < 2s
+4. Analytics data (heatmap, stats) â€” lazy loaded
+5. Non-critical (activity feed, suggestions) â€” idle load
 ```
 
 ---
@@ -1470,7 +1470,7 @@ Priority order:
 5. Font subsetting: Latin only, `display: swap`
 6. Image optimization: WebP format, lazy loading
 7. Preload critical: Fonts, critical CSS
-8. Prefetch likely: Dashboard → Tasks, Chat
+8. Prefetch likely: Dashboard â†’ Tasks, Chat
 
 ---
 
@@ -1519,18 +1519,18 @@ Content-Security-Policy:
 ### 31.1 Testing Pyramid
 
 ```
-         ╱╲
-        ╱  ╲          E2E (Cypress/Playwright) — 15 critical flows
-       ╱    ╲
-      ╱──────╲
-     ╱        ╲       Integration Tests (React Testing Library)
-    ╱          ╲      Component interaction, API mocking, state flows
-   ╱────────────╲
-  ╱              ╲    Unit Tests (Jest/Vitest)
- ╱                ╲   Pure functions, hooks, utilities, state logic
-╱──────────────────╲
-╱  Static Analysis  ╲ TypeScript (strict), ESLint, Prettier
-╱────────────────────╲
+         â•±â•²
+        â•±  â•²          E2E (Cypress/Playwright) â€” 15 critical flows
+       â•±    â•²
+      â•±â”€â”€â”€â”€â”€â”€â•²
+     â•±        â•²       Integration Tests (React Testing Library)
+    â•±          â•²      Component interaction, API mocking, state flows
+   â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+  â•±              â•²    Unit Tests (Jest/Vitest)
+ â•±                â•²   Pure functions, hooks, utilities, state logic
+â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
+â•±  Static Analysis  â•² TypeScript (strict), ESLint, Prettier
+â•±â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â•²
 ```
 
 ### 31.2 Test Coverage Requirements
@@ -1546,13 +1546,13 @@ Content-Security-Policy:
 
 | Flow | Steps | Verification |
 |---|---|---|
-| **Task creation → completion** | Create → appears → complete → disappears | Task count, streak |
-| **Quick capture → auto-categorize** | Paste URL → AI detects type → save | Correct module save |
-| **Chat → action execution** | "Add task X" → ARIA responds → task appears | Chat + task list |
-| **Daily briefing generation** | Wait for 7AM or manual trigger → briefing appears | 6 briefing sections |
-| **Offline task creation → sync** | Go offline → create → come online → task syncs | Task on server |
-| **Keyboard shortcut → action** | Cmd+K → type → navigate | Page changes |
-| **Voice input → ARIA** | Speak → text appears → response | Chat response |
+| **Task creation â†’ completion** | Create â†’ appears â†’ complete â†’ disappears | Task count, streak |
+| **Quick capture â†’ auto-categorize** | Paste URL â†’ AI detects type â†’ save | Correct module save |
+| **Chat â†’ action execution** | "Add task X" â†’ ARIA responds â†’ task appears | Chat + task list |
+| **Daily briefing generation** | Wait for 7AM or manual trigger â†’ briefing appears | 6 briefing sections |
+| **Offline task creation â†’ sync** | Go offline â†’ create â†’ come online â†’ task syncs | Task on server |
+| **Keyboard shortcut â†’ action** | Cmd+K â†’ type â†’ navigate | Page changes |
+| **Voice input â†’ ARIA** | Speak â†’ text appears â†’ response | Chat response |
 
 ### 31.4 Quality Gates (CI)
 
@@ -1574,12 +1574,12 @@ Content-Security-Policy:
 | Class | Description | UX Treatment | Recovery |
 |---|---|---|---|
 | **Network** | API unreachable, timeout | Offline mode activation + toast | Background sync on reconnect |
-| **Auth** | Token expired, unauthorized | Silent refresh → if fails, redirect | Refresh token rotation |
+| **Auth** | Token expired, unauthorized | Silent refresh â†’ if fails, redirect | Refresh token rotation |
 | **Validation** | Bad input, missing fields | Inline error on field + toast summary | User corrects input |
 | **Server** | 500, 503, rate limited | Generic error message + retry button | Exponential backoff retry |
-| **AI** | LLM timeout, bad response | Fallback content + "AI unavailable" indicator | Retry → algorithmic fallback |
+| **AI** | LLM timeout, bad response | Fallback content + "AI unavailable" indicator | Retry â†’ algorithmic fallback |
 | **Storage** | IndexedDB full, quota exceeded | Warning toast + cleanup suggestion | Auto-clean or user action |
-| **Runtime** | JS exception | Error boundary → fallback UI + Sentry | Refresh or navigate away |
+| **Runtime** | JS exception | Error boundary â†’ fallback UI + Sentry | Refresh or navigate away |
 
 **Stripe-inspired error messages**: Every error explains what happened, why it happened, and how to fix it. No technical jargon.
 
@@ -1587,13 +1587,13 @@ Content-Security-Policy:
 
 ```
 App Root Error Boundary
-  ├── Layout Error Boundary (sidebar, header)
-  ├── Module Error Boundaries (15 modules, each independent)
-  │    ├── Tasks Error Boundary
-  │    ├── Courses Error Boundary
-  │    └── ...
-  ├── Chat Error Boundary
-  └── Dashboard Error Boundary (with zone-level recovery)
+  â”œâ”€â”€ Layout Error Boundary (sidebar, header)
+  â”œâ”€â”€ Module Error Boundaries (15 modules, each independent)
+  â”‚    â”œâ”€â”€ Tasks Error Boundary
+  â”‚    â”œâ”€â”€ Courses Error Boundary
+  â”‚    â””â”€â”€ ...
+  â”œâ”€â”€ Chat Error Boundary
+  â””â”€â”€ Dashboard Error Boundary (with zone-level recovery)
 ```
 
 ### 32.3 API Error Handling Contract
@@ -1602,7 +1602,7 @@ App Root Error Boundary
 interface ApiError {
   status: number
   code: ErrorCode       // 'VALIDATION_ERROR' | 'NOT_FOUND' | 'RATE_LIMITED'
-  message: string        // User-friendly — explains what + why + how to fix
+  message: string        // User-friendly â€” explains what + why + how to fix
   details?: unknown      // Dev-only, never shown to user
   retryAfter?: number    // For rate limiting
 }
@@ -1615,53 +1615,53 @@ interface ApiError {
 ### 33.1 State Architecture (CI-Upgraded with Linear-Speed Optimism)
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Zustand (UI State)                       │
-│  sidebarOpen, theme, activeModule, modalStack, toastQueue   │
-│  Keyboard bindings, command palette state, quick capture    │
-└──────────────────┬──────────────────────────────────────────┘
-                   │
-┌──────────────────┴──────────────────────────────────────────┐
-│                React Query (Server State)                    │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
-│  │  Tasks   │ │ Courses  │ │  Goals   │ │   ...    │       │
-│  │  query   │ │  query   │ │  query   │ │  other   │       │
-│  │  cache   │ │  cache   │ │  cache   │ │ modules  │       │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
-│  Stale time: 30s │ Cache time: 5min │ Retry: 3x            │
-└──────────────────┬──────────────────────────────────────────┘
-                   │
-┌──────────────────┴──────────────────────────────────────────┐
-│              IndexedDB (Offline State)                       │
-│  tasks (100), courses (active), goals (active), briefings    │
-│  + offline mutation queue + sync metadata                    │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     Zustand (UI State)                       â”‚
+â”‚  sidebarOpen, theme, activeModule, modalStack, toastQueue   â”‚
+â”‚  Keyboard bindings, command palette state, quick capture    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                   â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                React Query (Server State)                    â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚  Tasks   â”‚ â”‚ Courses  â”‚ â”‚  Goals   â”‚ â”‚   ...    â”‚       â”‚
+â”‚  â”‚  query   â”‚ â”‚  query   â”‚ â”‚  query   â”‚ â”‚  other   â”‚       â”‚
+â”‚  â”‚  cache   â”‚ â”‚  cache   â”‚ â”‚  cache   â”‚ â”‚ modules  â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚  Stale time: 30s â”‚ Cache time: 5min â”‚ Retry: 3x            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                   â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              IndexedDB (Offline State)                       â”‚
+â”‚  tasks (100), courses (active), goals (active), briefings    â”‚
+â”‚  + offline mutation queue + sync metadata                    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 33.2 Optimistic Update Pattern (CI-Upgraded for Sub-100ms Feel)
 
 ```typescript
-// Standard pattern for ALL mutations — matching Linear's speed
+// Standard pattern for ALL mutations â€” matching Linear's speed
 const mutation = useMutation({
   mutationFn: (newTask) => api.createTask(newTask),
 
   onMutate: async (newTask) => {
     await queryClient.cancelQueries({ queryKey: ['tasks'] })
     const previous = queryClient.getQueryData(['tasks'])
-    // Instant local update — user sees result in <50ms
+    // Instant local update â€” user sees result in <50ms
     queryClient.setQueryData(['tasks'], (old) => [...old, { ...newTask, id: 'temp-id', status: 'pending' }])
     return { previous }
   },
 
   onSuccess: (realTask, _vars, context) => {
-    // Seamless replacement — user doesn't notice
+    // Seamless replacement â€” user doesn't notice
     queryClient.setQueryData(['tasks'], (old) =>
       old.map(t => t.id === 'temp-id' ? realTask : t)
     )
   },
 
   onError: (_err, _vars, context) => {
-    // Rollback with toast — transparent about failure
+    // Rollback with toast â€” transparent about failure
     queryClient.setQueryData(['tasks'], context.previous)
     toast.error('Failed to create task. Your changes have been saved offline and will sync when reconnected.')
   },
@@ -1672,14 +1672,14 @@ const mutation = useMutation({
 
 | Module | Optimistic? | Rollback Strategy | Notes |
 |---|---|---|---|
-| Tasks | ✅ Yes | Full rollback | Most frequent mutation |
-| Courses | ✅ Yes | Full rollback | Progress updates |
-| Goals | ✅ Yes | Full rollback | Milestone updates |
-| Habits | ✅ Yes | Full rollback | Daily logging |
-| Sleep | ✅ Yes | Full rollback | Nightly log |
-| Income | ❌ No | Error state | Financial accuracy |
-| Opportunities | ❌ No | Error state | Application status accuracy |
-| Chat | ✅ Yes | Optimistic message | Streaming confirms |
+| Tasks | âœ… Yes | Full rollback | Most frequent mutation |
+| Courses | âœ… Yes | Full rollback | Progress updates |
+| Goals | âœ… Yes | Full rollback | Milestone updates |
+| Habits | âœ… Yes | Full rollback | Daily logging |
+| Sleep | âœ… Yes | Full rollback | Nightly log |
+| Income | âŒ No | Error state | Financial accuracy |
+| Opportunities | âŒ No | Error state | Application status accuracy |
+| Chat | âœ… Yes | Optimistic message | Streaming confirms |
 
 ---
 
@@ -1740,7 +1740,7 @@ const mutation = useMutation({
 | **Radar chart** | Skill profile, multi-dimensional comparison | PostHog | Recharts |
 | **KPI strip** | 4-6 glanceable metrics with trend arrows | Stripe | Custom HTML+CSS |
 
-### 35.2 Chart Design Tokens (CI-Upgraded — Single Accent Color)
+### 35.2 Chart Design Tokens (CI-Upgraded â€” Single Accent Color)
 
 ```css
 /* Single accent color strategy (Stripe-inspired) */
@@ -1752,7 +1752,7 @@ const mutation = useMutation({
 --chart-axis: #475569;
 
 /* Multi-series (for comparison charts only) */
---chart-series-1: #6366F1;  /* Indigo — primary */
+--chart-series-1: #6366F1;  /* Indigo â€” primary */
 --chart-series-2: #10B981;  /* Emerald */
 --chart-series-3: #F59E0B;  /* Amber */
 --chart-series-4: #EF4444;  /* Red */
@@ -1764,12 +1764,12 @@ const mutation = useMutation({
 | Interaction | Implementation |
 |---|---|
 | **Hover tooltip** | Show exact value + "vs last week" context |
-| **Click drill-down** | Click segment → filter/view detail |
+| **Click drill-down** | Click segment â†’ filter/view detail |
 | **Brush/zoom** | Select time range to zoom |
 | **Legend toggle** | Click legend to toggle series |
 | **Animation** | Animate on first render (once, respects reduced-motion) |
 | **Export** | Download as PNG via html2canvas |
-| **Empty state** | "No data yet — start tracking to see trends" |
+| **Empty state** | "No data yet â€” start tracking to see trends" |
 | **Loading state** | Skeleton chart with shimmer |
 
 ---
@@ -1779,15 +1779,15 @@ const mutation = useMutation({
 ### 36.1 Pipeline Stages
 
 ```
-git push → GitHub
-    ↓
+git push â†’ GitHub
+    â†“
 CI Pipeline:
-  Stage 1: Install & Build — npm ci, next build
-  Stage 2: Code Quality — tsc --noEmit, next lint, prettier --check
-  Stage 3: Tests — jest --coverage, cypress run (15 critical flows), axe-core
-  Stage 4: Performance & Security — Lighthouse CI, bundle-analyzer, npm audit, Snyk
-  Stage 5: Visual Regression — Chromatic/Percy (UI diff check)
-  Stage 6: Deploy (main only) — Vercel deploy, E2E smoke tests on production
+  Stage 1: Install & Build â€” npm ci, next build
+  Stage 2: Code Quality â€” tsc --noEmit, next lint, prettier --check
+  Stage 3: Tests â€” jest --coverage, cypress run (15 critical flows), axe-core
+  Stage 4: Performance & Security â€” Lighthouse CI, bundle-analyzer, npm audit, Snyk
+  Stage 5: Visual Regression â€” Chromatic/Percy (UI diff check)
+  Stage 6: Deploy (main only) â€” Vercel deploy, E2E smoke tests on production
 ```
 
 ### 36.2 Deployment Strategy
@@ -1905,7 +1905,7 @@ interface FeatureFlag {
 
 ---
 
-# Part IV — Platform Strategy
+# Part IV â€” Platform Strategy
 
 ---
 
@@ -1929,10 +1929,10 @@ Primary mobile use cases are consumption and quick capture:
 
 ```
 Bottom Tab Bar (always visible, 5 customizable items):
-┌──────────┬──────────┬──────────┬──────────┬──────────┐
-│  Home    │  Tasks   │    +     │  Chat    │  More    │
-│ (Briefing)│ (Today) │ (Capture)│ (ARIA)  │ (Modules)│
-└──────────┴──────────┴──────────┴──────────┴──────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Home    â”‚  Tasks   â”‚    +     â”‚  Chat    â”‚  More    â”‚
+â”‚ (Briefing)â”‚ (Today) â”‚ (Capture)â”‚ (ARIA)  â”‚ (Modules)â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 - **Home**: Dashboard summary (briefing, KPI strip, top 3 tasks)
@@ -1979,7 +1979,7 @@ Bottom Tab Bar (always visible, 5 customizable items):
 
 | Pattern | Implementation | Benefit |
 |---|---|---|
-| Drag & drop split | Drag task → drop into calendar slot | Natural scheduling |
+| Drag & drop split | Drag task â†’ drop into calendar slot | Natural scheduling |
 | Two-thumb navigation | Left: sidebar, Right: content | Ergonomic hold |
 | Pencil/hover | Hover preview, tap select, pencil write | Precision input |
 | Floating toolbar | Context-sensitive near selection | Reduces travel |
@@ -1991,19 +1991,19 @@ Bottom Tab Bar (always visible, 5 customizable items):
 ### 42.1 Desktop Layout Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Header Bar (64px)                                               │
-│  Logo | Search (Cmd+K) | Quick Capture | Quick Actions | User    │
-├──────────┬───────────────────────────────────────────────────────┤
-│  Sidebar │  Content Area (flex)                                   │
-│  (240px) │    Module Header (title + actions + tabs)             │
-│          │    Main Content (scrollable)                           │
-│  Collaps │      Bento grid / list / kanban / detail view         │
-│  ible to │                                                       │
-│  64px    │    Optional Right Panel (320px) — context, links     │
-├──────────┴───────────────────────────────────────────────────────┤
-│  Status Bar (32px) — Online status, last sync, agent health      │
-└──────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Header Bar (64px)                                               â”‚
+â”‚  Logo | Search (Cmd+K) | Quick Capture | Quick Actions | User    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Sidebar â”‚  Content Area (flex)                                   â”‚
+â”‚  (240px) â”‚    Module Header (title + actions + tabs)             â”‚
+â”‚          â”‚    Main Content (scrollable)                           â”‚
+â”‚  Collaps â”‚      Bento grid / list / kanban / detail view         â”‚
+â”‚  ible to â”‚                                                       â”‚
+â”‚  64px    â”‚    Optional Right Panel (320px) â€” context, links     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Status Bar (32px) â€” Online status, last sync, agent health      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 42.2 Desktop Window Modes
@@ -2034,40 +2034,40 @@ Bottom Tab Bar (always visible, 5 customizable items):
 
 ```
 Layer 1: App Shell (Workbox SW)
-├── StaleWhileRevalidate for page routes
-├── NetworkFirst for /api/* requests
-├── CacheFirst for static assets
-└── Fallback: Offline page at /offline
+â”œâ”€â”€ StaleWhileRevalidate for page routes
+â”œâ”€â”€ NetworkFirst for /api/* requests
+â”œâ”€â”€ CacheFirst for static assets
+â””â”€â”€ Fallback: Offline page at /offline
 
 Layer 2: Local Data Store (IndexedDB via idb)
-├── Tables: tasks (100), courses (active), goals (active), briefings (current week)
-├── Read from IndexedDB when offline
-├── Write to IndexedDB immediately (optimistic)
-└── Sync to Supabase on reconnect
+â”œâ”€â”€ Tables: tasks (100), courses (active), goals (active), briefings (current week)
+â”œâ”€â”€ Read from IndexedDB when offline
+â”œâ”€â”€ Write to IndexedDB immediately (optimistic)
+â””â”€â”€ Sync to Supabase on reconnect
 
 Layer 3: Background Sync
-├── Queue offline actions in IndexedDB
-├── On reconnect: replay in FIFO order
-├── Conflict: last-write-wins (server timestamp)
-└── Visual: pending sync count in status bar
+â”œâ”€â”€ Queue offline actions in IndexedDB
+â”œâ”€â”€ On reconnect: replay in FIFO order
+â”œâ”€â”€ Conflict: last-write-wins (server timestamp)
+â””â”€â”€ Visual: pending sync count in status bar
 ```
 
 ### 43.2 Offline Capability Matrix
 
 | Module | Read Offline | Write Offline | Sync on Reconnect |
 |---|---|---|---|
-| Tasks | ✅ (recent 100) | ✅ | ✅ |
-| Courses | ✅ (active) | ✅ | ✅ |
-| Goals | ✅ (active) | ✅ | ✅ |
-| Habits | ✅ (active) | ✅ | ✅ |
-| Dashboard | ✅ (cached briefing) | ❌ | ❌ |
-| Opportunities | ✅ (cached) | ❌ | ❌ |
+| Tasks | âœ… (recent 100) | âœ… | âœ… |
+| Courses | âœ… (active) | âœ… | âœ… |
+| Goals | âœ… (active) | âœ… | âœ… |
+| Habits | âœ… (active) | âœ… | âœ… |
+| Dashboard | âœ… (cached briefing) | âŒ | âŒ |
+| Opportunities | âœ… (cached) | âŒ | âŒ |
 
 ### 43.3 Offline UX
 
 | State | UX Treatment |
 |---|---|
-| **Going Offline** | Subtle toast: "You're offline — changes will sync when reconnected" |
+| **Going Offline** | Subtle toast: "You're offline â€” changes will sync when reconnected" |
 | **Offline Active** | Status bar indicator (yellow dot), muted icons for unavailable features |
 | **Reconnecting** | Background sync runs silently |
 | **Sync Conflict** | Toast: "Conflict detected. Using latest version." |
@@ -2105,7 +2105,7 @@ Supabase Realtime subscriptions:
 
 | Guideline | Requirement | Implementation |
 |---|---|---|
-| 1.4.3 Contrast | 4.5:1 normal, 3:1 large text | #F0F2F5 on #0A0B0F = 14.5:1 ✅ |
+| 1.4.3 Contrast | 4.5:1 normal, 3:1 large text | #F0F2F5 on #0A0B0F = 14.5:1 âœ… |
 | 2.1.1 Keyboard | All functionality via keyboard | Cmd+K, tab, arrow keys |
 | 2.4.7 Focus Visible | Visible focus indicator | Glow ring: `focus-visible:ring-2` |
 | 4.1.2 Name, Role, Value | All controls have accessible names | aria-* attributes on all components |
@@ -2156,7 +2156,7 @@ Supabase Realtime subscriptions:
 
 ---
 
-# Part V — Risk, Opportunity & Direction
+# Part V â€” Risk, Opportunity & Direction
 
 ---
 
@@ -2198,8 +2198,8 @@ Supabase Realtime subscriptions:
 
 | Opportunity | Value | Effort | Priority | CI Source |
 |---|---|---|---|---|
-| Cmd+K Command Palette | 5 | 2 | **20** | Linear — P0 gap |
-| Keyboard shortcuts (two-key nav) | 5 | 1 | **25** | Linear — P0 gap |
+| Cmd+K Command Palette | 5 | 2 | **20** | Linear â€” P0 gap |
+| Keyboard shortcuts (two-key nav) | 5 | 1 | **25** | Linear â€” P0 gap |
 | Tiered notifications (Interrupt/Ambient/Digest) | 5 | 2 | **20** | Linear |
 | Empty states as onboarding moments | 5 | 1 | **25** | Stripe, Notion |
 | Time-of-day adaptive dashboard | 4 | 2 | **16** | Sunsama |
@@ -2230,35 +2230,35 @@ Supabase Realtime subscriptions:
 
 ## 48. Recommended Direction
 
-### 48.1 Product Execution Roadmap — Phase Gate Model (CI-Upgraded)
+### 48.1 Product Execution Roadmap â€” Phase Gate Model (CI-Upgraded)
 
 ```
 Phase 1: Foundation (Q3 2026)
-│  Gate: All P0 modules functional, 50 DAU
-│  CI Gaps Closed: Cmd+K palette, keyboard shortcuts, bounded lists
-│  AI: Daily Briefing, Opportunity Radar
-│  UX: Quick Capture, Offline PWA, Onboarding wizard
-│
-├──► Phase 2: Intelligence (Q4 2026)
-│  Gate: 100 DAU, >60% 30d retention
-│  CI Gaps Closed: Tiered notifications, search operators, empty/error states
-│  AI: All 8 agents functional, ARIA memory system
-│  UX: Browser extension, Weekly Review, Voice input
-│
-├──► Phase 3: Network Effects (Q1-Q2 2027)
-│  Gate: 500 DAU, >70% retention
-│  CI Gaps Closed: Bi-directional linking, time-of-day dashboard, sleep-adaptive
-│  AI: Learning Agent, Career Agent
-│  UX: Knowledge graph, Mobile apps, Community features
-│
-└──► Phase 4: Platform (Q3-Q4 2027+)
+â”‚  Gate: All P0 modules functional, 50 DAU
+â”‚  CI Gaps Closed: Cmd+K palette, keyboard shortcuts, bounded lists
+â”‚  AI: Daily Briefing, Opportunity Radar
+â”‚  UX: Quick Capture, Offline PWA, Onboarding wizard
+â”‚
+â”œâ”€â”€â–º Phase 2: Intelligence (Q4 2026)
+â”‚  Gate: 100 DAU, >60% 30d retention
+â”‚  CI Gaps Closed: Tiered notifications, search operators, empty/error states
+â”‚  AI: All 11 agents functional, ARIA memory system
+â”‚  UX: Browser extension, Weekly Review, Voice input
+â”‚
+â”œâ”€â”€â–º Phase 3: Network Effects (Q1-Q2 2027)
+â”‚  Gate: 500 DAU, >70% retention
+â”‚  CI Gaps Closed: Bi-directional linking, time-of-day dashboard, sleep-adaptive
+â”‚  AI: Learning Agent, Career Agent
+â”‚  UX: Knowledge graph, Mobile apps, Community features
+â”‚
+â””â”€â”€â–º Phase 4: Platform (Q3-Q4 2027+)
    Gate: 1000+ DAU, revenue experiments
    CI Gaps Closed: Inline AI suggestions, native blocks, source grounding
    AI: AI Study Buddy, Career Coach
    UX: Full native apps, Team features, Public API
 ```
 
-### 48.2 Frontend Direction — Technology Stack
+### 48.2 Frontend Direction â€” Technology Stack
 
 | Layer | Decision | Rationale |
 |---|---|---|
@@ -2272,7 +2272,7 @@ Phase 1: Foundation (Q3 2026)
 | Monitoring | Sentry + PostHog | Error tracking + product analytics |
 | Offline | Workbox 6 + idb 7 | Battle-tested, Google-maintained |
 
-### 48.3 AI Direction — Prompt Development Plan
+### 48.3 AI Direction â€” Prompt Development Plan
 
 | Prompt | Current Size | Action | Priority |
 |---|---|---|---|
@@ -2309,7 +2309,7 @@ Phase 1: Foundation (Q3 2026)
 | **PARA Method** | Tiago Forte (2017) | Information architecture |
 | **Spaced Repetition** | Ebbinghaus (1885) | Learning reviews at 1/3/7/14/30 days |
 | **Fitts's Law** | Paul Fitts (1954) | Touch target sizing (44x44px) |
-| **Miller's Law** | George Miller (1956) | 5 bottom tabs, 7±2 module groups |
+| **Miller's Law** | George Miller (1956) | 5 bottom tabs, 7Â±2 module groups |
 | **Doherty Threshold** | Walter Doherty (1982) | <400ms for AI, <100ms for UI |
 
 ### 49.2 Products Studied (25 Total)
@@ -2323,7 +2323,7 @@ Phase 1: Foundation (Q3 2026)
 | **Developer** | GitHub, Vercel, Supabase | Performance obsession, realtime subscriptions, optimistic UI |
 | **Design Systems** | shadcn/ui, IBM Carbon, MD3, MagicUI, Aceternity, 21st.dev, Origin UI, Ant Design | Copy-paste component model, Radix primitives, design tokens, enterprise tables |
 
-### 49.3 Design Systems — Specific Pattern Extraction
+### 49.3 Design Systems â€” Specific Pattern Extraction
 
 | Design System | Pattern Extracted | Applied In |
 |---|---|---|
@@ -2342,11 +2342,11 @@ Phase 1: Foundation (Q3 2026)
 
 | Term | Definition |
 |---|---|
-| ARIA | Adaptive Reasoning and Intelligence Assistant — the AI orchestrator |
+| ARIA | Adaptive Reasoning and Intelligence Assistant â€” the AI orchestrator |
 | Agent | Specialized AI module with a single responsibility |
 | Module | A functional area of the system (e.g., Task Manager, Course Tracker) |
 | PromptLoader | System that loads AI prompts from `prompts/` with YAML frontmatter parsing |
-| RLS | Row Level Security — Supabase security policy per user |
+| RLS | Row Level Security â€” Supabase security policy per user |
 | Graceful Degradation | Every AI feature has a non-AI fallback |
 | Zero-Miss Policy | Every overdue task must be done, rescheduled, or dropped |
 | Opportunity Radar | Daily scanner matching external opportunities to user skills |
@@ -2366,13 +2366,13 @@ Phase 1: Foundation (Q3 2026)
 | Agent Architecture v3.0.0 | `/docs/engineering/14_AgentArchitecture.md` | 15 agents, coordination |
 | Database v3.0.0 | `/docs/engineering/15_Database.md` | 21 tables, DDL, RLS |
 | API Reference | `/docs/engineering/17_API.md` | ~53 endpoints, auth |
-| Agent Spec | `/docs/ai/20_Agent.md` | 5209 lines — complete agent specs |
+| Agent Spec | `/docs/ai/20_Agent.md` | 5209 lines â€” complete agent specs |
 | Design System v3.0.0 | `/docs/design/10_DesignSystem.md` | Atomic design, components |
 | UI/UX Spec v3.0.0 | `/docs/design/08_UIUX.md` | UX principles, personas |
 | Design Tokens | `/docs/design/35_DesignTokens.md` | All tokens: color, typography, spacing |
 | CI Report | `/docs/design/Competitive_Intelligence_Report.md` | 25-product competitive analysis |
 
-### Appendix C: Audit Trail — v1.0.0 to v3.0.0
+### Appendix C: Audit Trail â€” v1.0.0 to v3.0.0
 
 | Change | v1.0.0 | v2.0.0 | v3.0.0 |
 |---|---|---|---|
@@ -2380,13 +2380,13 @@ Phase 1: Foundation (Q3 2026)
 | Sections | 40 | 50+ | 53 |
 | Products analyzed | 20 | 20+8 design systems | 25+8 design systems |
 | CI integration | None | None | Full integration across all sections |
-| New sections added | — | 11 enterprise + 4 strategic | 3 new (CI Integration, UI Pattern Library, UX Maturity Model) |
+| New sections added | â€” | 11 enterprise + 4 strategic | 3 new (CI Integration, UI Pattern Library, UX Maturity Model) |
 | UX gaps identified | None | None | 14 gaps with priority scores |
 | Competitive advantage matrix | None | None | 11-dimension comparison |
 | Feature gap matrix | None | None | 17-feature comparison |
 | Innovation opportunity matrix | None | None | 12-opportunity prioritized roadmap |
 | Risk quantification | 8 items | 15 items + RPN | 10 items + RPN + CI risks |
-| Design opportunity scoring | 10 items | Value × Effort | Value × Effort + CI sources |
+| Design opportunity scoring | 10 items | Value Ã— Effort | Value Ã— Effort + CI sources |
 
 ---
 
@@ -2401,23 +2401,23 @@ ARIA OS has been analyzed against 25 products across 6 categories. Key findings:
 **Structural Advantages (cannot be copied):**
 - 15-module unified surface with cross-domain data flow
 - Student-specific modules (CGPA, semester, exam countdown, hackathon radar)
-- Zero-cost architecture (₹0 vs $8-20/mo for competitors)
+- Zero-cost architecture (â‚¹0 vs $8-20/mo for competitors)
 - Privacy-first local AI (Ollama on laptop)
 
 **Experience Advantages (visible to users):**
 - 9 unique features no competitor offers
-- Proactive AI with 8 agents (not reactive like most tools)
+- Proactive AI with 11 agents (not reactive like most tools)
 - Sleep-adjusted scheduling (unique in industry)
 - Cross-domain pattern detection (structurally impossible for siloed tools)
 
 **Critical UX Gaps to Close (UX Gap Matrix):**
 | Gap | Industry Benchmark | ARIA Status | Priority |
 |---|---|---|---|
-| Cmd+K Command Palette | Linear (p95 <60ms, local search) | Not implemented | **P0 — Sprint 1** |
-| Keyboard Shortcuts | Linear (every action, two-key nav) | Not implemented | **P0 — Sprint 1** |
-| Tiered Notifications | Linear (Interrupt/Ambient/Digest) | Basic push | **P0 — Sprint 2** |
-| Hybrid Semantic Search | Linear (vectors + keyword, operators) | Basic full-text | **P1 — Sprint 3** |
-| Mobile Experience | Linear (Liquid Glass, full keyboard) | Basic PWA | **P1 — Sprint 4** |
+| Cmd+K Command Palette | Linear (p95 <60ms, local search) | Not implemented | **P0 â€” Sprint 1** |
+| Keyboard Shortcuts | Linear (every action, two-key nav) | Not implemented | **P0 â€” Sprint 1** |
+| Tiered Notifications | Linear (Interrupt/Ambient/Digest) | Basic push | **P0 â€” Sprint 2** |
+| Hybrid Semantic Search | Linear (vectors + keyword, operators) | Basic full-text | **P1 â€” Sprint 3** |
+| Mobile Experience | Linear (Liquid Glass, full keyboard) | Basic PWA | **P1 â€” Sprint 4** |
 
 ### 51.2 Must-Adopt Patterns (from CI Research)
 
@@ -2563,15 +2563,15 @@ These deliver maximum value with minimum effort:
 
 | Quarter | Modules to Upgrade | Target Levels |
 |---|---|---|
-| Q3 2026 | Tasks, Dashboard, Search, Notifications | L2 → L3 for Tasks; L1 → L2 for Dashboard/Search/Notifications |
-| Q4 2026 | Goals, Mobile, AI Chat | L1 → L2 for Goals/Mobile; L2 → L3 for AI Chat |
-| Q1 2027 | Courses, Sleep | L2 → L3 for Courses; L2 → L3 for Sleep |
-| Q2 2027 | Habits, All modules | L2 → L3 for Habits; All modules at L2+ |
+| Q3 2026 | Tasks, Dashboard, Search, Notifications | L2 â†’ L3 for Tasks; L1 â†’ L2 for Dashboard/Search/Notifications |
+| Q4 2026 | Goals, Mobile, AI Chat | L1 â†’ L2 for Goals/Mobile; L2 â†’ L3 for AI Chat |
+| Q1 2027 | Courses, Sleep | L2 â†’ L3 for Courses; L2 â†’ L3 for Sleep |
+| Q2 2027 | Habits, All modules | L2 â†’ L3 for Habits; All modules at L2+ |
 | Q3 2027+ | Platform-wide | 3+ modules at L4 (Leading) |
 
 ---
 
-> **Document Status**: Active — v3.0.0
+> **Document Status**: Active â€” v3.0.0
 > **Supersedes**: SB-DISCOVERY-001 (v1.0.0) and SB-DISCOVERY-002 (v2.0.0)
 > **Review Date**: 2026-06-11
 > **Next Review**: 2026-09-11
