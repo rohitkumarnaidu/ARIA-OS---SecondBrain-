@@ -1,4 +1,4 @@
-# Skill Database Architecture -- Enterprise Data Architecture for the Skills System
+﻿# Skill Database Architecture -- Enterprise Data Architecture for the Skills System
 
 ---
 
@@ -6,7 +6,7 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLDB-ARCH-001 |
+| Document ID | AI-SDB-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-22 |
@@ -2453,18 +2453,18 @@ Archive process:
 Backup storage layout:
 ```
 /backups/skills/
-├── daily/           # Compressed pg_dump, per-table
-│   └── YYYY-MM-DD/
-│       ├── taxonomy.sql.gz
-│       ├── user_skills.sql.gz
-│       ├── evidence.sql.gz
-│       ├── market.sql.gz
-│       └── events.sql.gz
-├── wal/             # WAL segments via pg_receivewal
-│   └── YYYY/MM/DD/
-│       └── HH/
-└── monthly/         # Shared with pgbackrest
-    └── skills-monthly-YYYY-MM.sql.gz
+â”œâ”€â”€ daily/           # Compressed pg_dump, per-table
+â”‚   â””â”€â”€ YYYY-MM-DD/
+â”‚       â”œâ”€â”€ taxonomy.sql.gz
+â”‚       â”œâ”€â”€ user_skills.sql.gz
+â”‚       â”œâ”€â”€ evidence.sql.gz
+â”‚       â”œâ”€â”€ market.sql.gz
+â”‚       â””â”€â”€ events.sql.gz
+â”œâ”€â”€ wal/             # WAL segments via pg_receivewal
+â”‚   â””â”€â”€ YYYY/MM/DD/
+â”‚       â””â”€â”€ HH/
+â””â”€â”€ monthly/         # Shared with pgbackrest
+    â””â”€â”€ skills-monthly-YYYY-MM.sql.gz
 ```
 
 Recovery procedures by failure scenario:

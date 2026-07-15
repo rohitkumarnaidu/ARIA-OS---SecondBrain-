@@ -1,4 +1,4 @@
-# Skill Assessment System — Enterprise Assessment Execution Architecture
+﻿# Skill Assessment System â€” Enterprise Assessment Execution Architecture
 
 ---
 
@@ -6,12 +6,12 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLASSESS-ARCH-001 |
+| Document ID | AI-SAS-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-12 |
-| Classification | Internal — Architecture Reference |
-| Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture — §11, §12, §7, §5) |
+| Classification | Internal â€” Architecture Reference |
+| Source of Truth | `docs/ai/skills/skills.md` (Skills System Enterprise Architecture â€” Â§11, Â§12, Â§7, Â§5) |
 | Companion Docs | `docs/ai/skills/SkillGraphArchitecture.md` (Graph Storage & Traversal) |
 | | `docs/ai/skills/SkillIntelligence.md` (Analytics Engine & Scoring Pipelines) |
 | Target Stack | Python 3.11+ (Assessment Engine) + Neo4j (Evidence Graph) + PostgreSQL (Sessions) + Redis (State Cache) + FastAPI (API Layer) + Sandboxed Code Runner |
@@ -41,7 +41,7 @@
 
 ### 1.1 Why a Dedicated Assessment Execution Engine?
 
-Skills.md defines the **data model and formulas** for assessment — what assessments exist, how they score, and how evidence is weighted. SkillAssessment.md defines the **execution engine** — the runtime that administers assessments, evaluates responses, detects cheating, and produces validated scores.
+Skills.md defines the **data model and formulas** for assessment â€” what assessments exist, how they score, and how evidence is weighted. SkillAssessment.md defines the **execution engine** â€” the runtime that administers assessments, evaluates responses, detects cheating, and produces validated scores.
 
 The relationship between the four documents:
 
@@ -55,38 +55,38 @@ The relationship between the four documents:
 ### 1.2 Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                     ASSESSMENT EXECUTION ENGINE                       │
-│                                                                      │
-│  ┌──────────────────────┐    ┌──────────────────────────────────┐   │
-│  │   ASSESSMENT ENGINE   │    │         SCORING ENGINE           │   │
-│  │                       │    │                                  │   │
-│  │  ┌─────────────────┐  │    │  ┌──────────────────────────┐   │   │
-│  │  │ Session Manager  │  │    │  │ Multi-Method Fusion      │   │   │
-│  │  │ (lifecycle SM)   │──┼────┼─▶│ (trust-weighted scoring) │   │   │
-│  │  └─────────────────┘  │    │  └──────────────────────────┘   │   │
-│  │  ┌─────────────────┐  │    │  ┌──────────────────────────┐   │   │
-│  │  │ Question Bank    │  │    │  │ IRT Calibration Engine   │   │   │
-│  │  │ (IRT-calibrated) │  │    │  │ (3PL, adaptive)          │   │   │
-│  │  └─────────────────┘  │    │  └──────────────────────────┘   │   │
-│  │  ┌─────────────────┐  │    │  ┌──────────────────────────┐   │   │
-│  │  │ 7 Method Engines │  │    │  │ Partial Credit Models    │   │   │
-│  │  │ (dispatch router)│  │    │  │ (3 variants)             │   │   │
-│  │  └─────────────────┘  │    │  └──────────────────────────┘   │   │
-│  └──────────────────────┘    └──────────────────────────────────┘   │
-│                                                                      │
-│  ┌──────────────────────┐    ┌──────────────────────────────────┐   │
-│  │  BAYESIAN CONFIDENCE  │    │       VALIDATION PIPELINE        │   │
-│  │  Model (posterior     │    │  Auto → AI → Human escalation   │   │
-│  │  updating, conjugate) │    │  with SLA & audit trail         │   │
-│  └──────────────────────┘    └──────────────────────────────────┘   │
-│                                                                      │
-│  ┌──────────────────────┐    ┌──────────────────────────────────┐   │
-│  │  ANTI-CHEATING ENGINE │    │       AI ASSESSMENT ENGINE       │   │
-│  │  10-layer detection   │    │  LLM interview, code review,    │   │
-│  │  (software + AI-only) │    │  reasoning analysis, rubrics    │   │
-│  └──────────────────────┘    └──────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     ASSESSMENT EXECUTION ENGINE                       â”‚
+â”‚                                                                      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚   ASSESSMENT ENGINE   â”‚    â”‚         SCORING ENGINE           â”‚   â”‚
+â”‚  â”‚                       â”‚    â”‚                                  â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚  â”‚  â”‚ Session Manager  â”‚  â”‚    â”‚  â”‚ Multi-Method Fusion      â”‚   â”‚   â”‚
+â”‚  â”‚  â”‚ (lifecycle SM)   â”‚â”€â”€â”¼â”€â”€â”€â”€â”¼â”€â–¶â”‚ (trust-weighted scoring) â”‚   â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚  â”‚  â”‚ Question Bank    â”‚  â”‚    â”‚  â”‚ IRT Calibration Engine   â”‚   â”‚   â”‚
+â”‚  â”‚  â”‚ (IRT-calibrated) â”‚  â”‚    â”‚  â”‚ (3PL, adaptive)          â”‚   â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚   â”‚
+â”‚  â”‚  â”‚ 7 Method Engines â”‚  â”‚    â”‚  â”‚ Partial Credit Models    â”‚   â”‚   â”‚
+â”‚  â”‚  â”‚ (dispatch router)â”‚  â”‚    â”‚  â”‚ (3 variants)             â”‚   â”‚   â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  BAYESIAN CONFIDENCE  â”‚    â”‚       VALIDATION PIPELINE        â”‚   â”‚
+â”‚  â”‚  Model (posterior     â”‚    â”‚  Auto â†’ AI â†’ Human escalation   â”‚   â”‚
+â”‚  â”‚  updating, conjugate) â”‚    â”‚  with SLA & audit trail         â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  ANTI-CHEATING ENGINE â”‚    â”‚       AI ASSESSMENT ENGINE       â”‚   â”‚
+â”‚  â”‚  10-layer detection   â”‚    â”‚  LLM interview, code review,    â”‚   â”‚
+â”‚  â”‚  (software + AI-only) â”‚    â”‚  reasoning analysis, rubrics    â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 1.2b Assessment Execution Pipeline
@@ -143,48 +143,48 @@ graph LR
 Every assessment is a **durable session** with a defined state machine:
 
 ```
-                    ┌──────────┐
-                    │ Created  │
-                    └────┬─────┘
-                         │ User starts assessment
-                         ▼
-                    ┌──────────┐
-                    │In Progress│
-                    └────┬─────┘
-                         │ User submits / time expires
-                         ▼
-                    ┌──────────┐
-                    │ Submitted │
-                    └────┬─────┘
-                         │ Auto-grading begins
-                         ▼
-                    ┌──────────┐
-                    │Evaluating│
-                    └────┬─────┘
-                         │ Grading complete
-                         ▼
-               ┌─────────────────┐
-               │  Scored          │
-               └────────┬────────┘
-                         │
-              ┌──────────┼──────────┐
-              ▼          ▼          ▼
-         ┌────────┐ ┌────────┐ ┌────────┐
-         │Validated│ │Flagged │ │Appealed│
-         │ (auto)  │ │ (AI    │ │ (user  │
-         └────────┘ │ review)│ │challenge)
-                    └────────┘ └────┬────┘
-                         │          │
-                         ▼          │
-                    ┌──────────┐     │
-                    │Human     │     │
-                    │Reviewed  │─────┘
-                    └──────────┘
-                         │
-                         ▼
-                    ┌──────────┐
-                    │  Recorded │ → Updates Scoring Engine
-                    └──────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ Created  â”‚
+                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                         â”‚ User starts assessment
+                         â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚In Progressâ”‚
+                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                         â”‚ User submits / time expires
+                         â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚ Submitted â”‚
+                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                         â”‚ Auto-grading begins
+                         â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚Evaluatingâ”‚
+                    â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜
+                         â”‚ Grading complete
+                         â–¼
+               â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+               â”‚  Scored          â”‚
+               â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚
+              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+              â–¼          â–¼          â–¼
+         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”
+         â”‚Validatedâ”‚ â”‚Flagged â”‚ â”‚Appealedâ”‚
+         â”‚ (auto)  â”‚ â”‚ (AI    â”‚ â”‚ (user  â”‚
+         â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚ review)â”‚ â”‚challenge)
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
+                         â”‚          â”‚
+                         â–¼          â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+                    â”‚Human     â”‚     â”‚
+                    â”‚Reviewed  â”‚â”€â”€â”€â”€â”€â”˜
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚
+                         â–¼
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚  Recorded â”‚ â†’ Updates Scoring Engine
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ```python
@@ -303,7 +303,7 @@ class AssessmentSession:
 
 ### 1.5 Assessment Trigger Matrix
 
-Assessments are triggered by 6 event categories (extending skills.md §12.5):
+Assessments are triggered by 6 event categories (extending skills.md Â§12.5):
 
 ```python
 class AssessmentTrigger:
@@ -915,7 +915,7 @@ class CodingEngine(MethodEngine):
 class GitHubAnalysisEngine(MethodEngine):
     """
     GitHub profile analysis engine.
-    Zero-effort from user — just OAuth. Analyzes commits, PRs, repos, and community.
+    Zero-effort from user â€” just OAuth. Analyzes commits, PRs, repos, and community.
     """
 
     GITHUB_API_BASE = "https://api.github.com"
@@ -943,7 +943,7 @@ class GitHubAnalysisEngine(MethodEngine):
     async def process_response(
         self, session: AssessmentSession, response_data: dict, metadata: dict | None
     ) -> Response:
-        """GitHub analysis is auto-generated — no user responses needed."""
+        """GitHub analysis is auto-generated â€” no user responses needed."""
         # Analysis is performed during evaluate, not incrementally
         return Response(
             question_id="github_analysis",
@@ -1355,7 +1355,7 @@ class AIInterviewEngine(MethodEngine):
 ```python
 class PracticalTaskEngine(MethodEngine):
     """
-    Practical task assessment — hands-on exercises in a sandboxed environment.
+    Practical task assessment â€” hands-on exercises in a sandboxed environment.
     Generates parameterized tasks with randomized parameters and evaluates solutions.
     """
 
@@ -1579,8 +1579,8 @@ class AssessmentScoringEngine:
     ) -> float:
         """
         Measure consistency across assessment methods.
-        High consistency → higher confidence in the fused score.
-        Low consistency → potential skill variance or measurement error.
+        High consistency â†’ higher confidence in the fused score.
+        Low consistency â†’ potential skill variance or measurement error.
         """
         if len(assessments) < 2:
             return 0.0
@@ -1920,12 +1920,12 @@ Traditional confidence estimation uses a single score (e.g., `confidence = evide
 The Bayesian model solves all three:
 
 ```
-Prior:    Beta(α₀, β₀) based on existing evidence (skill's current evidence score)
+Prior:    Beta(Î±â‚€, Î²â‚€) based on existing evidence (skill's current evidence score)
 Likelihood: Binomial(n_correct, n_total) from the assessment
-Posterior: Beta(α₀ + n_correct, β₀ + n_total - n_correct)
+Posterior: Beta(Î±â‚€ + n_correct, Î²â‚€ + n_total - n_correct)
 
-Posterior mean = (α₀ + n_correct) / (α₀ + β₀ + n_total)
-Posterior variance = (α₀ + n_correct)(β₀ + n_total - n_correct) / ((α₀ + β₀ + n_total)²(α₀ + β₀ + n_total + 1))
+Posterior mean = (Î±â‚€ + n_correct) / (Î±â‚€ + Î²â‚€ + n_total)
+Posterior variance = (Î±â‚€ + n_correct)(Î²â‚€ + n_total - n_correct) / ((Î±â‚€ + Î²â‚€ + n_total)Â²(Î±â‚€ + Î²â‚€ + n_total + 1))
 
 Confidence = 1 - posterior_std
 ```
@@ -1938,9 +1938,9 @@ class BayesianConfidenceModel:
     Bayesian confidence updating for skill assessment.
     Uses Beta-Binomial conjugate prior for efficient online updating.
 
-    Each skill has a Beta(α, β) prior.
+    Each skill has a Beta(Î±, Î²) prior.
     After an assessment with n_correct out of n_total:
-        posterior = Beta(α + n_correct, β + n_total - n_correct)
+        posterior = Beta(Î± + n_correct, Î² + n_total - n_correct)
     """
 
     # Prior hyperparameters for different evidence levels
@@ -2355,7 +2355,7 @@ class EvidenceIntegrationResult:
 
 ### 4.1 Enhanced Readiness Model
 
-The readiness score extends skills.md §12.3 with additional signals and Bayesian confidence weighting:
+The readiness score extends skills.md Â§12.3 with additional signals and Bayesian confidence weighting:
 
 ```
 Readiness = Evidence(0.30) + Assessment(0.35) + Recency(0.10) + Consistency(0.10) + Confidence(0.15)
@@ -2368,11 +2368,11 @@ Where:
   Confidence(skill)  = fused_confidence * 100
 
   Level Transition Thresholds:
-    L0→L1:  Readiness >= 20  AND  Confidence >= 0.3
-    L1→L2:  Readiness >= 40  AND  Confidence >= 0.5
-    L2→L3:  Readiness >= 55  AND  Confidence >= 0.6
-    L3→L4:  Readiness >= 70  AND  Confidence >= 0.7
-    L4→L5:  Readiness >= 85  AND  Confidence >= 0.8
+    L0â†’L1:  Readiness >= 20  AND  Confidence >= 0.3
+    L1â†’L2:  Readiness >= 40  AND  Confidence >= 0.5
+    L2â†’L3:  Readiness >= 55  AND  Confidence >= 0.6
+    L3â†’L4:  Readiness >= 70  AND  Confidence >= 0.7
+    L4â†’L5:  Readiness >= 85  AND  Confidence >= 0.8
 ```
 
 ```python
@@ -2385,11 +2385,11 @@ class ReadinessScoreCalculator:
     # Level transition thresholds (readiness, confidence)
     LEVEL_THRESHOLDS = {
         0: {"readiness": 0.0, "confidence": 0.0},   # No transition from L0
-        1: {"readiness": 20.0, "confidence": 0.30},  # L0→L1
-        2: {"readiness": 40.0, "confidence": 0.50},  # L1→L2
-        3: {"readiness": 55.0, "confidence": 0.60},  # L2→L3
-        4: {"readiness": 70.0, "confidence": 0.70},  # L3→L4
-        5: {"readiness": 85.0, "confidence": 0.80},  # L4→L5
+        1: {"readiness": 20.0, "confidence": 0.30},  # L0â†’L1
+        2: {"readiness": 40.0, "confidence": 0.50},  # L1â†’L2
+        3: {"readiness": 55.0, "confidence": 0.60},  # L2â†’L3
+        4: {"readiness": 70.0, "confidence": 0.70},  # L3â†’L4
+        5: {"readiness": 85.0, "confidence": 0.80},  # L4â†’L5
     }
 
     # Readiness component weights
@@ -2675,7 +2675,7 @@ def readiness_decay(
 
 ### 5.1 Rubric Architecture
 
-Each assessment method has a unique rubric engine that defines how responses are scored. Rubrics are level-aware — the same response is evaluated differently depending on the target level.
+Each assessment method has a unique rubric engine that defines how responses are scored. Rubrics are level-aware â€” the same response is evaluated differently depending on the target level.
 
 ```python
 class RubricEngine(ABC):
@@ -2711,7 +2711,7 @@ class RubricScore:
     max_possible: float
 ```
 
-### 5.2 MCQ Rubric — Item Analysis Engine
+### 5.2 MCQ Rubric â€” Item Analysis Engine
 
 ```python
 class MCQRubric(RubricEngine):
@@ -2902,7 +2902,7 @@ class CodingRubric(RubricEngine):
         if test_correctness < 80:
             feedback.append(f"Passed {passed}/{total} tests ({test_correctness:.0f}%)")
         if not has_error_handling:
-            feedback.append("No error handling detected — add try/catch blocks")
+            feedback.append("No error handling detected â€” add try/catch blocks")
         if not has_functions:
             feedback.append("Code is not organized into functions")
 
@@ -2979,7 +2979,7 @@ class CodingRubric(RubricEngine):
                 name="efficiency",
                 description="Algorithmic time/space complexity",
                 max_score=100.0, weight=self._get_level_weights(target_level)["efficiency"],
-                level_specific={3: "O(n²) acceptable", 4: "O(n log n) or better expected"},
+                level_specific={3: "O(nÂ²) acceptable", 4: "O(n log n) or better expected"},
             ),
         ]
 ```
@@ -2989,7 +2989,7 @@ class CodingRubric(RubricEngine):
 ```python
 class PortfolioRubric(RubricEngine):
     """
-    Portfolio review rubric — impact × craftsmanship matrix.
+    Portfolio review rubric â€” impact Ã— craftsmanship matrix.
     Evaluates each artifact on impact, craftsmanship, breadth, and depth dimensions.
     """
 
@@ -3063,7 +3063,7 @@ class PortfolioRubric(RubricEngine):
 ```python
 class GitHubRubric(RubricEngine):
     """
-    GitHub analysis rubric — evaluates commit quality, project depth, collaboration.
+    GitHub analysis rubric â€” evaluates commit quality, project depth, collaboration.
     """
 
     async def evaluate(
@@ -3148,7 +3148,7 @@ class GitHubRubric(RubricEngine):
 ```python
 class ProjectRubric(RubricEngine):
     """
-    Full project evaluation rubric — architecture, requirements, delivery, testing.
+    Full project evaluation rubric â€” architecture, requirements, delivery, testing.
     """
 
     async def evaluate(
@@ -3206,7 +3206,7 @@ class ProjectRubric(RubricEngine):
 ```python
 class InterviewRubric(RubricEngine):
     """
-    AI interview rubric — communication, problem decomposition, depth, adaptability.
+    AI interview rubric â€” communication, problem decomposition, depth, adaptability.
     """
 
     async def evaluate(
@@ -3249,7 +3249,7 @@ class InterviewRubric(RubricEngine):
 ```python
 class PracticalTaskRubric(RubricEngine):
     """
-    Practical task rubric — correctness, approach quality, time efficiency.
+    Practical task rubric â€” correctness, approach quality, time efficiency.
     """
 
     async def evaluate(
@@ -3306,25 +3306,25 @@ class PracticalTaskRubric(RubricEngine):
 The AI assessment engine provides LLM-powered evaluation for methods that require nuanced understanding: code quality, interview responses, portfolio artifacts, and project architecture.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     AI ASSESSMENT ENGINE                         │
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
-│  │ Code         │  │ Interview    │  │ Artifact/Portfolio   │  │
-│  │ Reviewer     │  │ Conductor    │  │ Analyzer             │  │
-│  ├──────────────┤  ├──────────────┤  ├──────────────────────┤  │
-│  │ • Test       │  │ • Dynamic    │  │ • Impact assessment  │  │
-│  │   coverage   │  │   question   │  │ • Craftsmanship eval │  │
-│  │ • Algorithmic│  │ • Follow-up  │  │ • Gap identification │  │
-│  │ • Style      │  │ • Multi-axis │  │ • Authenticity check │  │
-│  │ • Efficiency │  │   scoring    │  │ • Level calibration  │  │
-│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  LLM Client Abstraction (Claude / Ollama / Gemini)       │   │
-│  │  PromptLoader integration, response parsing, fallback    │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     AI ASSESSMENT ENGINE                         â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Code         â”‚  â”‚ Interview    â”‚  â”‚ Artifact/Portfolio   â”‚  â”‚
+â”‚  â”‚ Reviewer     â”‚  â”‚ Conductor    â”‚  â”‚ Analyzer             â”‚  â”‚
+â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
+â”‚  â”‚ â€¢ Test       â”‚  â”‚ â€¢ Dynamic    â”‚  â”‚ â€¢ Impact assessment  â”‚  â”‚
+â”‚  â”‚   coverage   â”‚  â”‚   question   â”‚  â”‚ â€¢ Craftsmanship eval â”‚  â”‚
+â”‚  â”‚ â€¢ Algorithmicâ”‚  â”‚ â€¢ Follow-up  â”‚  â”‚ â€¢ Gap identification â”‚  â”‚
+â”‚  â”‚ â€¢ Style      â”‚  â”‚ â€¢ Multi-axis â”‚  â”‚ â€¢ Authenticity check â”‚  â”‚
+â”‚  â”‚ â€¢ Efficiency â”‚  â”‚   scoring    â”‚  â”‚ â€¢ Level calibration  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                  â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  LLM Client Abstraction (Claude / Ollama / Gemini)       â”‚   â”‚
+â”‚  â”‚  PromptLoader integration, response parsing, fallback    â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 6.2 AI Code Reviewer
@@ -3504,7 +3504,7 @@ class AIInterviewConductor:
         if count == 0:
             return f"""
             Generate a warm-up question for {skill} at L{level}.
-            This is the first question — start broad and accessible.
+            This is the first question â€” start broad and accessible.
             Include: question, difficulty (1-5), expected keywords, follow-ups.
             """
         else:
@@ -3646,25 +3646,25 @@ class AIConfidenceCalibrator:
 
 ### 7.1 Anti-Cheating Architecture
 
-The anti-cheating engine implements a 10-layer defense-in-depth strategy. Every layer operates independently — any single layer can flag suspicious behavior. Layers are designed to work **without webcams, biometrics, or browser extensions** — only software signals and AI-native detection.
+The anti-cheating engine implements a 10-layer defense-in-depth strategy. Every layer operates independently â€” any single layer can flag suspicious behavior. Layers are designed to work **without webcams, biometrics, or browser extensions** â€” only software signals and AI-native detection.
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          ANTI-CHEATING ENGINE                                │
-│                                                                              │
-│  Layer  1: Keystroke Dynamics ──── Timing patterns, typing rhythm            │
-│  Layer  2: Plagiarism Detection ── Code clone detection, n-gram matching     │
-│  Layer  3: LLM Detection ──────── AI-generated text & code signatures        │
-│  Layer  4: Timing Analysis ────── Speed outliers, pause patterns             │
-│  Layer  5: Cross-Session ──────── Consistency across multiple assessments    │
-│  Layer  6: Browser Fingerprint ── Environment validation, automation detect  │
-│  Layer  7: IP Geolocation ──────── VPN/proxy detection, geo-velocity checks  │
-│  Layer  8: Answer Patterns ────── Copy-paste, uniform answer analysis         │
-│  Layer  9: Collaborative ──────── Shared answers, coordinated cheating        │
-│  Layer 10: Aggregation ────────── Bayesian fusion of 9 layer signals          │
-│                                                                              │
-│  Output: cheating_probability ∈ [0,1] + evidence_tags + severity_level       │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                          ANTI-CHEATING ENGINE                                â”‚
+â”‚                                                                              â”‚
+â”‚  Layer  1: Keystroke Dynamics â”€â”€â”€â”€ Timing patterns, typing rhythm            â”‚
+â”‚  Layer  2: Plagiarism Detection â”€â”€ Code clone detection, n-gram matching     â”‚
+â”‚  Layer  3: LLM Detection â”€â”€â”€â”€â”€â”€â”€â”€ AI-generated text & code signatures        â”‚
+â”‚  Layer  4: Timing Analysis â”€â”€â”€â”€â”€â”€ Speed outliers, pause patterns             â”‚
+â”‚  Layer  5: Cross-Session â”€â”€â”€â”€â”€â”€â”€â”€ Consistency across multiple assessments    â”‚
+â”‚  Layer  6: Browser Fingerprint â”€â”€ Environment validation, automation detect  â”‚
+â”‚  Layer  7: IP Geolocation â”€â”€â”€â”€â”€â”€â”€â”€ VPN/proxy detection, geo-velocity checks  â”‚
+â”‚  Layer  8: Answer Patterns â”€â”€â”€â”€â”€â”€ Copy-paste, uniform answer analysis         â”‚
+â”‚  Layer  9: Collaborative â”€â”€â”€â”€â”€â”€â”€â”€ Shared answers, coordinated cheating        â”‚
+â”‚  Layer 10: Aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Bayesian fusion of 9 layer signals          â”‚
+â”‚                                                                              â”‚
+â”‚  Output: cheating_probability âˆˆ [0,1] + evidence_tags + severity_level       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 7.2 Layer 1: Keystroke Dynamics
@@ -3821,7 +3821,7 @@ class KeystrokeAnalyzer:
             if 500 <= iki <= 2000:
                 natural_pauses += 1
             elif 2000 < iki <= 5000:
-                pass  # Transitional — could be either
+                pass  # Transitional â€” could be either
             elif 5000 < iki <= 30000:
                 suspicious_pauses += 1
             elif iki > 30000:
@@ -3933,7 +3933,7 @@ class KeystrokeAnalyzer:
         score = 0.0
         for name, signal in sub_signals.items():
             if signal["flagged"]:
-                # Noisy-OR: P(cheat) = 1 - Π(1 - P_i)
+                # Noisy-OR: P(cheat) = 1 - Î (1 - P_i)
                 score = 1.0 - (1.0 - score) * (1.0 - signal["score"])
         return score
 
@@ -4145,7 +4145,7 @@ class PlagiarismDetector:
         #     ref_emb = embedder.encode(ref)
         #     sim = cosine_similarity(text_emb, ref_emb)
 
-        # Placeholder — actual embedding calls in production
+        # Placeholder â€” actual embedding calls in production
         max_sim = 0.0
         return {
             "name": "semantic",
@@ -4200,11 +4200,11 @@ class PlagiarismDetector:
 class LLMDetectionEngine:
     """
     AI-native detection of LLM-generated content in submissions.
-    Uses multiple independent signals — no single signal is decisive.
+    Uses multiple independent signals â€” no single signal is decisive.
 
     Signals:
     1. LLM-perplexity scoring (contrastive probability)
-    2. Burstiness analysis (human → variable, LLM → uniform)
+    2. Burstiness analysis (human â†’ variable, LLM â†’ uniform)
     3. Self-consistency (LLMs produce different answers on re-query)
     4. Adversarial prompt injection markers
     5. Stylometric fingerprinting (vocabulary richness, sentence length variance)
@@ -5567,7 +5567,7 @@ class AntiCheatingEngine:
     Runs all 9 detection layers and produces a unified cheating assessment.
 
     Output:
-    - cheating_probability: [0, 1] — fused probability of cheating
+    - cheating_probability: [0, 1] â€” fused probability of cheating
     - severity: none | low | medium | high | critical
     - signal_breakdown: per-layer scores for transparency
     - recommended_action: allow | review | escalate | invalidate
@@ -5949,27 +5949,27 @@ The assessment analytics engine continuously monitors assessment quality, identi
 | **Weekly** | Bias audits, rubric calibration, question bank refresh | Full-pipeline analysis |
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                      ASSESSMENT ANALYTICS ENGINE                      │
-│                                                                      │
-│  ┌─────────────────┐  ┌────────────────┐  ┌────────────────────┐   │
-│  │  Item Analysis   │  │ Learning Curve │  │  Method Comparison │   │
-│  │                  │  │                │  │                    │   │
-│  │ • Difficulty     │  │ • Within-skill │  │ • Cross-method     │   │
-│  │ • Discrimination │  │ • Cross-skill  │  │   correlation      │   │
-│  │ • IRT parameters │  │ • Cohort bench │  │ • Cost-per-level   │   │
-│  │ • Distractor     │  │ • Decay curves │  │ • Time efficiency  │   │
-│  │   analysis (MCQ) │  │ • Plateau det  │  │ • User preference  │   │
-│  └─────────────────┘  └────────────────┘  └────────────────────┘   │
-│                                                                      │
-│  ┌──────────────────────────────────┐  ┌────────────────────────┐   │
-│  │       Bias Detection             │  │   Quality Dashboard    │   │
-│  │  • Demographic fairness (A/B)    │  │   • Real-time metrics  │   │
-│  │  • Item-level DIF detection      │  │   • Anomaly alerts     │   │
-│  │  • Rater bias (if human review)  │  │   • Trend visualization│   │
-│  │  • Calibration drift alerts      │  │   • Export/API access  │   │
-│  └──────────────────────────────────┘  └────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                      ASSESSMENT ANALYTICS ENGINE                      â”‚
+â”‚                                                                      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  Item Analysis   â”‚  â”‚ Learning Curve â”‚  â”‚  Method Comparison â”‚   â”‚
+â”‚  â”‚                  â”‚  â”‚                â”‚  â”‚                    â”‚   â”‚
+â”‚  â”‚ â€¢ Difficulty     â”‚  â”‚ â€¢ Within-skill â”‚  â”‚ â€¢ Cross-method     â”‚   â”‚
+â”‚  â”‚ â€¢ Discrimination â”‚  â”‚ â€¢ Cross-skill  â”‚  â”‚   correlation      â”‚   â”‚
+â”‚  â”‚ â€¢ IRT parameters â”‚  â”‚ â€¢ Cohort bench â”‚  â”‚ â€¢ Cost-per-level   â”‚   â”‚
+â”‚  â”‚ â€¢ Distractor     â”‚  â”‚ â€¢ Decay curves â”‚  â”‚ â€¢ Time efficiency  â”‚   â”‚
+â”‚  â”‚   analysis (MCQ) â”‚  â”‚ â€¢ Plateau det  â”‚  â”‚ â€¢ User preference  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                      â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚       Bias Detection             â”‚  â”‚   Quality Dashboard    â”‚   â”‚
+â”‚  â”‚  â€¢ Demographic fairness (A/B)    â”‚  â”‚   â€¢ Real-time metrics  â”‚   â”‚
+â”‚  â”‚  â€¢ Item-level DIF detection      â”‚  â”‚   â€¢ Anomaly alerts     â”‚   â”‚
+â”‚  â”‚  â€¢ Rater bias (if human review)  â”‚  â”‚   â€¢ Trend visualizationâ”‚   â”‚
+â”‚  â”‚  â€¢ Calibration drift alerts      â”‚  â”‚   â€¢ Export/API access  â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 8.2 Item Analysis Engine
@@ -6021,14 +6021,14 @@ class ItemAnalyzer:
 
         if difficulty < 0.2:
             flags.append("too_difficult")
-            recommendations.append("Review or replace item — below 20% correct")
+            recommendations.append("Review or replace item â€” below 20% correct")
         elif difficulty > 0.95:
             flags.append("too_easy")
-            recommendations.append("Item is trivial — increase difficulty")
+            recommendations.append("Item is trivial â€” increase difficulty")
 
         if discrimination < 0.2:
             flags.append("poor_discrimination")
-            recommendations.append("Item doesn't differentiate skill levels — revise or remove")
+            recommendations.append("Item doesn't differentiate skill levels â€” revise or remove")
         elif discrimination < 0.3:
             recommendations.append("Consider revising item to improve discrimination")
 
@@ -6038,7 +6038,7 @@ class ItemAnalyzer:
 
         if irt_params.c > 0.4:
             flags.append("high_guessing_param")
-            recommendations.append("High guessing parameter — review answer choices")
+            recommendations.append("High guessing parameter â€” review answer choices")
 
         return ItemAnalysisResult(
             item_id=item_id,
@@ -6121,10 +6121,10 @@ class ItemAnalyzer:
     ) -> IRTParameters:
         """
         Estimate IRT 3PL parameters using maximum likelihood.
-        Simplified for pseudocode — in production use
+        Simplified for pseudocode â€” in production use
         MIRT / ltm / pyirt libraries.
 
-        3PL Model: P(θ) = c + (1-c) / (1 + exp(-a(θ - b)))
+        3PL Model: P(Î¸) = c + (1-c) / (1 + exp(-a(Î¸ - b)))
         where:
         - a = discrimination (slope)
         - b = difficulty (threshold)
@@ -6142,7 +6142,7 @@ class ItemAnalyzer:
         p_clipped = max(0.01, min(0.99, p))
         b = -math.log((1.0 - p_clipped) / p_clipped)
 
-        # c: guessing parameter — for MCQ, 1/n_options
+        # c: guessing parameter â€” for MCQ, 1/n_options
         # Estimate from lowest-performing group
         n_options = self._estimate_n_options(responses)
         c = 1.0 / n_options if n_options > 0 else 0.25
@@ -6228,13 +6228,13 @@ class ItemAnalyzer:
                 analysis[opt_id] = {
                     "status": "non_functioning",
                     "text": d["text"],
-                    "recommendation": "Replace — never selected",
+                    "recommendation": "Replace â€” never selected",
                 }
             elif total < len(responses) * 0.05:
                 analysis[opt_id] = {
                     "status": "weak",
                     "text": d["text"],
-                    "recommendation": "Consider revising — rarely selected",
+                    "recommendation": "Consider revising â€” rarely selected",
                 }
             else:
                 analysis[opt_id] = {
@@ -6334,7 +6334,7 @@ class LearningCurveAnalyzer:
         )
 
         # Peer comparison
-        peer_percentile = 50.0  # Placeholder — computed from cohort
+        peer_percentile = 50.0  # Placeholder â€” computed from cohort
 
         return LearningCurveResult(
             user_id=user_id,
@@ -6379,7 +6379,7 @@ class LearningCurveAnalyzer:
         Estimate growth rate using logarithmic regression.
         score = a * ln(t + 1) + c
 
-        Returns the coefficient 'a' — positive means improving.
+        Returns the coefficient 'a' â€” positive means improving.
         """
         if len(times) < 3:
             return 0.0
@@ -6403,7 +6403,7 @@ class LearningCurveAnalyzer:
         self, times: list[float], scores: list[float]
     ) -> dict:
         """
-        Detect learning plateau — no significant improvement
+        Detect learning plateau â€” no significant improvement
         over recent assessments.
         """
         if len(scores) < 4:
@@ -6419,7 +6419,7 @@ class LearningCurveAnalyzer:
                 "detected": True,
                 "details": (
                     f"No significant improvement over last {len(recent)} "
-                    f"assessments (Δ={improvement:.1f}pts)"
+                    f"assessments (Î”={improvement:.1f}pts)"
                 ),
             }
 
@@ -6434,7 +6434,7 @@ class LearningCurveAnalyzer:
                 if second_rate < first_rate * 0.3 and second_rate < 2.0:
                     return {
                         "detected": True,
-                        "details": f"Diminishing returns: {first_rate:.1f} → {second_rate:.1f} pts/assessment",
+                        "details": f"Diminishing returns: {first_rate:.1f} â†’ {second_rate:.1f} pts/assessment",
                     }
 
         return {"detected": False, "details": "normal progression"}
@@ -6479,26 +6479,26 @@ class LearningCurveAnalyzer:
         recs = []
 
         if plateau["detected"]:
-            recs.append("Learning plateau detected — try different learning methods")
+            recs.append("Learning plateau detected â€” try different learning methods")
             recs.append("Consider peer review or project-based practice")
 
         if growth_rate < 0.02:
-            recs.append("Growth rate is very low — review foundational concepts")
+            recs.append("Growth rate is very low â€” review foundational concepts")
             recs.append("Try spaced repetition and targeted practice")
         elif growth_rate < 0.1:
-            recs.append("Moderate growth — consistent practice recommended")
+            recs.append("Moderate growth â€” consistent practice recommended")
         else:
-            recs.append("Good growth rate — maintain current approach")
+            recs.append("Good growth rate â€” maintain current approach")
 
         if time_to_next and time_to_next > 180:
-            recs.append(f"Estimated {time_to_next:.0f} days to next level — consider intensive study plan")
+            recs.append(f"Estimated {time_to_next:.0f} days to next level â€” consider intensive study plan")
         elif time_to_next and time_to_next < 30:
-            recs.append("Close to next level — schedule reassessment soon")
+            recs.append("Close to next level â€” schedule reassessment soon")
 
         if peer_percentile < 25:
-            recs.append("Below peer average — additional practice recommended")
+            recs.append("Below peer average â€” additional practice recommended")
         elif peer_percentile > 75:
-            recs.append("Above peer average — consider mentoring others")
+            recs.append("Above peer average â€” consider mentoring others")
 
         return recs
 
@@ -6673,9 +6673,9 @@ class MethodComparisonAnalyzer:
 
         for method, data in methods.items():
             if data.get("reliability", 0) < 0.5:
-                recs.append(f"{method}: low reliability ({data['reliability']:.2f}) — review rubric")
+                recs.append(f"{method}: low reliability ({data['reliability']:.2f}) â€” review rubric")
             if data.get("time_efficiency", 100) < 5:
-                recs.append(f"{method}: low time efficiency — consider streamlining")
+                recs.append(f"{method}: low time efficiency â€” consider streamlining")
 
         return recs
 
@@ -6696,11 +6696,11 @@ class BiasDetector:
     Detects systematic bias in assessment outcomes across demographic groups.
 
     Methods:
-    1. Differential Item Functioning (DIF) — items that function differently
+    1. Differential Item Functioning (DIF) â€” items that function differently
        for different groups at the same ability level
-    2. Score gap analysis — statistically significant score differences
-    3. Level assignment parity — disproportionate level outcomes
-    4. Algorithmic fairness metrics — equal opportunity, demographic parity
+    2. Score gap analysis â€” statistically significant score differences
+    3. Level assignment parity â€” disproportionate level outcomes
+    4. Algorithmic fairness metrics â€” equal opportunity, demographic parity
 
     This implementation uses only non-sensitive demographic proxies
     (assessment time, language preference, etc.) when explicit
@@ -6926,12 +6926,12 @@ class BiasDetector:
         recs = []
         if signals.get("item_dif", {}).get("flagged"):
             n = len(signals["item_dif"].get("flagged_items", []))
-            recs.append(f"{n} items flagged for DIF — review for cultural/language bias")
+            recs.append(f"{n} items flagged for DIF â€” review for cultural/language bias")
         if signals.get("time_segments", {}).get("flagged"):
             gap = signals["time_segments"].get("max_score_gap", 0)
-            recs.append(f"Score gap of {gap:.1f} points across time segments — investigate")
+            recs.append(f"Score gap of {gap:.1f} points across time segments â€” investigate")
         if signals.get("level_parity", {}).get("flagged"):
-            recs.append("Level distribution is skewed — review assessment difficulty calibration")
+            recs.append("Level distribution is skewed â€” review assessment difficulty calibration")
         if not recs:
             recs.append("No significant bias detected")
         return recs
@@ -7043,7 +7043,7 @@ class AnalyticsDashboard:
         if flagged:
             recs.append(f"{len(flagged)}/{len(item_results)} items need revision")
         if cheating_stats.get("rate", 0) > 0.05:
-            recs.append(f"Cheating rate: {cheating_stats['rate']:.1%} — review anti-cheating layers")
+            recs.append(f"Cheating rate: {cheating_stats['rate']:.1%} â€” review anti-cheating layers")
         return recs
 
 
@@ -7067,33 +7067,33 @@ class AnalyticsReport:
 The validation pipeline ensures that every skill assessment result is trustworthy before it updates a user's skill profile. It implements a 7-stage gate system with AI, algorithmic, and human review paths.
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        VALIDATION PIPELINE (7 Stages)                    │
-│                                                                          │
-│  Stage 1 ────── Stage 2 ────── Stage 3 ────── Stage 4 ────── Stage 5   │
-│  Auto-Score    Cheating      Confidence    AI Review    Human           │
-│  + Rubric      Check        Threshold     (if needed)   Escalation      │
-│                                                                          │
-│     │              │              │              │              │        │
-│     ▼              ▼              ▼              ▼              ▼        │
-│  ┌────────┐   ┌────────┐    ┌────────┐    ┌────────┐    ┌────────┐     │
-│  │ Score  │   │ Pass?  │───▶│ High   │───▶│ Needed?│───▶│ SLA:   │     │
-│  │+Rubric │   │ Yes/No │    │Conf?   │    │ Yes/No │    │ 24-48h │     │
-│  └────────┘   └────────┘    └────────┘    └────────┘    └────────┘     │
-│                   │              │              │              │        │
-│                   │ No           │ No           │ No           │        │
-│                   ▼              ▼              ▼              ▼        │
-│              ╔══════════════════════════════════════════════════════╗    │
-│              ║           STAGE 6: VALIDATION COMMITTEE              ║    │
-│              ║  Conflicting signals → Multi-reviewer resolution    ║    │
-│              ╚══════════════════════════════════════════════════════╝    │
-│                                   │                                     │
-│                                   ▼                                     │
-│              ╔══════════════════════════════════════════════════════╗    │
-│              ║           STAGE 7: SKILL PROFILE UPDATE              ║    │
-│              ║  Signed result → Neo4j graph → Event published       ║    │
-│              ╚══════════════════════════════════════════════════════╝    │
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        VALIDATION PIPELINE (7 Stages)                    â”‚
+â”‚                                                                          â”‚
+â”‚  Stage 1 â”€â”€â”€â”€â”€â”€ Stage 2 â”€â”€â”€â”€â”€â”€ Stage 3 â”€â”€â”€â”€â”€â”€ Stage 4 â”€â”€â”€â”€â”€â”€ Stage 5   â”‚
+â”‚  Auto-Score    Cheating      Confidence    AI Review    Human           â”‚
+â”‚  + Rubric      Check        Threshold     (if needed)   Escalation      â”‚
+â”‚                                                                          â”‚
+â”‚     â”‚              â”‚              â”‚              â”‚              â”‚        â”‚
+â”‚     â–¼              â–¼              â–¼              â–¼              â–¼        â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+â”‚  â”‚ Score  â”‚   â”‚ Pass?  â”‚â”€â”€â”€â–¶â”‚ High   â”‚â”€â”€â”€â–¶â”‚ Needed?â”‚â”€â”€â”€â–¶â”‚ SLA:   â”‚     â”‚
+â”‚  â”‚+Rubric â”‚   â”‚ Yes/No â”‚    â”‚Conf?   â”‚    â”‚ Yes/No â”‚    â”‚ 24-48h â”‚     â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚
+â”‚                   â”‚              â”‚              â”‚              â”‚        â”‚
+â”‚                   â”‚ No           â”‚ No           â”‚ No           â”‚        â”‚
+â”‚                   â–¼              â–¼              â–¼              â–¼        â”‚
+â”‚              â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—    â”‚
+â”‚              â•‘           STAGE 6: VALIDATION COMMITTEE              â•‘    â”‚
+â”‚              â•‘  Conflicting signals â†’ Multi-reviewer resolution    â•‘    â”‚
+â”‚              â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•    â”‚
+â”‚                                   â”‚                                     â”‚
+â”‚                                   â–¼                                     â”‚
+â”‚              â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—    â”‚
+â”‚              â•‘           STAGE 7: SKILL PROFILE UPDATE              â•‘    â”‚
+â”‚              â•‘  Signed result â†’ Neo4j graph â†’ Event published       â•‘    â”‚
+â”‚              â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•    â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 9.2 Validation Pipeline Implementation
@@ -7135,7 +7135,7 @@ class ValidationPipeline:
             session, user_history or [], cohort or [], reference_pool or []
         )
 
-        # Early exit: critical cheating → immediate invalidation
+        # Early exit: critical cheating â†’ immediate invalidation
         if stages["cheating_check"].verdict.severity == "critical":
             return ValidationResult(
                 validated=False,
@@ -7144,7 +7144,7 @@ class ValidationPipeline:
                 confidence=0.0,
                 stages=stages,
                 decision="invalidated_cheating",
-                details="Critical cheating detected — assessment invalidated",
+                details="Critical cheating detected â€” assessment invalidated",
                 signature="",
             )
 
@@ -7321,7 +7321,7 @@ class ValidationPipeline:
             reason = f"Confidence too low: {confidence:.2f}"
         elif session.target_level >= 4 and not session.user_history:
             escalate = True
-            reason = "First L4+ assessment — requires human validation"
+            reason = "First L4+ assessment â€” requires human validation"
 
         if escalate:
             ticket = await self.human_escalation.create_ticket(
@@ -7458,19 +7458,19 @@ class CertificationEquivalence:
     # Mapping table
     FRAMEWORKS: dict[str, dict] = {
         "sfia": {
-            1: "SFIA Level 1 — Follow",
-            2: "SFIA Level 2 — Assist",
-            3: "SFIA Level 3 — Apply",
-            4: "SFIA Level 4 — Enable",
-            5: "SFIA Level 5 — Ensure/Advise",
+            1: "SFIA Level 1 â€” Follow",
+            2: "SFIA Level 2 â€” Assist",
+            3: "SFIA Level 3 â€” Apply",
+            4: "SFIA Level 4 â€” Enable",
+            5: "SFIA Level 5 â€” Ensure/Advise",
         },
         "industry": {
             "python": {
                 1: "No certification equivalent",
-                2: "PCEP — Entry-Level Python Programmer",
-                3: "PCAP — Certified Associate in Python Programming",
-                4: "PCPP1 — Professional Python Programmer Level 1",
-                5: "PCPP2 — Professional Python Programmer Level 2",
+                2: "PCEP â€” Entry-Level Python Programmer",
+                3: "PCAP â€” Certified Associate in Python Programming",
+                4: "PCPP1 â€” Professional Python Programmer Level 1",
+                5: "PCPP2 â€” Professional Python Programmer Level 2",
             },
             "aws": {
                 1: "No certification equivalent",
@@ -7650,7 +7650,7 @@ class AssessmentAppealManager:
 
         elif ai_result["recommendation"] == "retake":
             appeal.status = "approved_retake"
-            appeal.resolution = "Retake approved — previous score invalidated"
+            appeal.resolution = "Retake approved â€” previous score invalidated"
 
     def _check_validity(self, appeal: Appeal) -> dict:
         """Check if appeal is valid (within time limit, not frivolous)."""
@@ -7798,31 +7798,31 @@ class AIValidationReviewer:
 The assessment engine supports multi-tenant deployments where each tenant (organization, institution, or department) has isolated assessment configurations, question banks, and user data.
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        ENTERPRISE ASSESSMENT PLATFORM                    │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  Tenant A          Tenant B          Tenant C        Tenant D           │
-│  (University)      (Bootcamp)        (Enterprise)    (Individual)       │
-│  ┌────────────┐   ┌────────────┐   ┌────────────┐  ┌────────────┐      │
-│  │QuestionBank│   │QuestionBank│   │QuestionBank│  │QuestionBank│      │
-│  │Rubrics     │   │Rubrics     │   │Rubrics     │  │Rubrics     │      │
-│  │Skills      │   │Skills      │   │Skills      │  │Skills      │      │
-│  │Users       │   │Users       │   │Users       │  │Users       │      │
-│  │Config      │   │Config      │   │Config      │  │Config      │      │
-│  └────────────┘   └────────────┘   └────────────┘  └────────────┘      │
-│                                                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐   │
-│  │                    SHARED INFRASTRUCTURE                          │   │
-│  │  Assessment Engine │ Scoring Engine │ Anti-Cheating │ Analytics  │   │
-│  │  Validation Pipeline │ AI Engine │ Question Bank Service         │   │
-│  └──────────────────────────────────────────────────────────────────┘   │
-│                                                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐   │
-│  │                    DATA LAYER (Isolated)                          │   │
-│  │  Tenant A → schema_a.* | Tenant B → schema_b.* | RLS enforced   │   │
-│  └──────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        ENTERPRISE ASSESSMENT PLATFORM                    â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                          â”‚
+â”‚  Tenant A          Tenant B          Tenant C        Tenant D           â”‚
+â”‚  (University)      (Bootcamp)        (Enterprise)    (Individual)       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+â”‚  â”‚QuestionBankâ”‚   â”‚QuestionBankâ”‚   â”‚QuestionBankâ”‚  â”‚QuestionBankâ”‚      â”‚
+â”‚  â”‚Rubrics     â”‚   â”‚Rubrics     â”‚   â”‚Rubrics     â”‚  â”‚Rubrics     â”‚      â”‚
+â”‚  â”‚Skills      â”‚   â”‚Skills      â”‚   â”‚Skills      â”‚  â”‚Skills      â”‚      â”‚
+â”‚  â”‚Users       â”‚   â”‚Users       â”‚   â”‚Users       â”‚  â”‚Users       â”‚      â”‚
+â”‚  â”‚Config      â”‚   â”‚Config      â”‚   â”‚Config      â”‚  â”‚Config      â”‚      â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚                    SHARED INFRASTRUCTURE                          â”‚   â”‚
+â”‚  â”‚  Assessment Engine â”‚ Scoring Engine â”‚ Anti-Cheating â”‚ Analytics  â”‚   â”‚
+â”‚  â”‚  Validation Pipeline â”‚ AI Engine â”‚ Question Bank Service         â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚                    DATA LAYER (Isolated)                          â”‚   â”‚
+â”‚  â”‚  Tenant A â†’ schema_a.* | Tenant B â†’ schema_b.* | RLS enforced   â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 10.2 Tenant Configuration Model
@@ -8157,9 +8157,9 @@ class AssessmentCache:
     Reduces latency for frequently accessed data.
 
     Cache levels:
-    L1: In-memory (dict / Redis) — sub-millisecond
-    L2: Redis cluster — millisecond
-    L3: PostgreSQL — tens of milliseconds (fallback)
+    L1: In-memory (dict / Redis) â€” sub-millisecond
+    L2: Redis cluster â€” millisecond
+    L3: PostgreSQL â€” tens of milliseconds (fallback)
     """
 
     def __init__(self, redis_client=None):
@@ -8169,7 +8169,7 @@ class AssessmentCache:
         self.default_ttl = 300  # 5 minutes
 
     async def get(self, key: str) -> object | None:
-        """Get from L1 → L2 → None."""
+        """Get from L1 â†’ L2 â†’ None."""
         # L1: Local memory
         if key in self.local:
             value, expiry = self.local[key]
@@ -8297,20 +8297,20 @@ This appendix catalogs all mathematical formulas used in the assessment system, 
 
 ### A.1 IRT 3PL Model
 
-**Purpose:** Models probability of correct response given ability θ and item parameters.
+**Purpose:** Models probability of correct response given ability Î¸ and item parameters.
 
 **Formula:**
 ```
-P(θ) = c + (1 - c) / (1 + exp(-a(θ - b)))
+P(Î¸) = c + (1 - c) / (1 + exp(-a(Î¸ - b)))
 
 Where:
-- θ = estimated ability level
+- Î¸ = estimated ability level
 - a = discrimination parameter (slope)
 - b = difficulty parameter (threshold)
 - c = guessing parameter (lower asymptote)
 ```
 
-**Implementation Reference:** `ItemAnalyzer._estimate_irt_3pl()` (§8.2)
+**Implementation Reference:** `ItemAnalyzer._estimate_irt_3pl()` (Â§8.2)
 
 ### A.2 Trust-Weighted Score Fusion
 
@@ -8318,7 +8318,7 @@ Where:
 
 **Formula:**
 ```
-Score_fused = Σ(w_i × s_i) / Σ(w_i)
+Score_fused = Î£(w_i Ã— s_i) / Î£(w_i)
 
 Where:
 - w_i = trust weight for method i
@@ -8337,7 +8337,7 @@ Where:
 | AI Interview | 0.70 |
 | Practical Task | 0.80 |
 
-**Implementation Reference:** `RubricOrchestrator.fuse_scores()` (§2.3)
+**Implementation Reference:** `RubricOrchestrator.fuse_scores()` (Â§2.3)
 
 ### A.3 Bayesian Confidence Updating
 
@@ -8345,20 +8345,20 @@ Where:
 
 **Formula (Beta-Binomial Conjugate):**
 ```
-Prior: P(θ) ~ Beta(α₀, β₀)
-Likelihood: P(x|θ) ~ Binomial(n, θ)
-Posterior: P(θ|x) ~ Beta(α₀ + x, β₀ + n - x)
+Prior: P(Î¸) ~ Beta(Î±â‚€, Î²â‚€)
+Likelihood: P(x|Î¸) ~ Binomial(n, Î¸)
+Posterior: P(Î¸|x) ~ Beta(Î±â‚€ + x, Î²â‚€ + n - x)
 
 Where:
-- α₀, β₀ = prior parameters (default: α₀=5, β₀=5)
+- Î±â‚€, Î²â‚€ = prior parameters (default: Î±â‚€=5, Î²â‚€=5)
 - x = correct/positive signals
 - n = total signals
-- E[θ] = (α₀ + x) / (α₀ + β₀ + n)
+- E[Î¸] = (Î±â‚€ + x) / (Î±â‚€ + Î²â‚€ + n)
 
-Confidence = E[θ]
+Confidence = E[Î¸]
 ```
 
-**Implementation Reference:** `BayesianConfidenceModel.update()` (§3.2)
+**Implementation Reference:** `BayesianConfidenceModel.update()` (Â§3.2)
 
 ### A.4 Readiness Score
 
@@ -8366,21 +8366,21 @@ Confidence = E[θ]
 
 **Formula:**
 ```
-Readiness = Evidence × 0.40 + Assessment × 0.40 + Recency × 0.20
+Readiness = Evidence Ã— 0.40 + Assessment Ã— 0.40 + Recency Ã— 0.20
 
 Where:
-Evidence = Σ(tier_weight × confidence_signal) / Σ(tier_weights)
-Assessment = fused_score_pct × confidence_pct + (1 - confidence_pct) × 0.5
-Recency = exp(-λ × days_since_last_assessment)
+Evidence = Î£(tier_weight Ã— confidence_signal) / Î£(tier_weights)
+Assessment = fused_score_pct Ã— confidence_pct + (1 - confidence_pct) Ã— 0.5
+Recency = exp(-Î» Ã— days_since_last_assessment)
 
 Level-Specific Thresholds:
-- L1→L2: Readiness ≥ 40
-- L2→L3: Readiness ≥ 55
-- L3→L4: Readiness ≥ 70
-- L4→L5: Readiness ≥ 85
+- L1â†’L2: Readiness â‰¥ 40
+- L2â†’L3: Readiness â‰¥ 55
+- L3â†’L4: Readiness â‰¥ 70
+- L4â†’L5: Readiness â‰¥ 85
 ```
 
-**Implementation Reference:** Section 4, `ReadinessScoreModel` (§4.2)
+**Implementation Reference:** Section 4, `ReadinessScoreModel` (Â§4.2)
 
 ### A.5 Cheating Probability Fusion
 
@@ -8388,17 +8388,17 @@ Level-Specific Thresholds:
 
 **Formula (Noisy-OR Bayesian Fusion):**
 ```
-P(cheat) = 1 - Π(1 - w_i × P_i)
+P(cheat) = 1 - Î (1 - w_i Ã— P_i)
 
 Posterior from prior odds:
 odds = prior / (1 - prior)
-odds_updated = odds × Π(LR_i ^ w_i)
+odds_updated = odds Ã— Î (LR_i ^ w_i)
 P_posterior = odds_updated / (1 + odds_updated)
 
 Where:
 - P_i = probability from layer i
 - w_i = trust weight for layer i
-- LR_i = P_i / max(P_i, ε) — likelihood ratio
+- LR_i = P_i / max(P_i, Îµ) â€” likelihood ratio
 - prior = 0.1 (default)
 ```
 
@@ -8416,7 +8416,7 @@ Where:
 | Answer Pattern Analysis | 0.12 |
 | Collaborative Detection | 0.10 |
 
-**Implementation Reference:** `AntiCheatingEngine._fuse_bayesian()` (§7.11)
+**Implementation Reference:** `AntiCheatingEngine._fuse_bayesian()` (Â§7.11)
 
 ### A.6 Item Analysis Statistics
 
@@ -8438,17 +8438,17 @@ Target: D > 0.3
 
 **Point-Biserial Correlation:**
 ```
-r_pb = (M₁ - M₀) / s_n × √(p × q)
+r_pb = (Mâ‚ - Mâ‚€) / s_n Ã— âˆš(p Ã— q)
 
 Where:
-- M₁ = mean total score of those who got item correct
-- M₀ = mean total score of those who got item wrong
+- Mâ‚ = mean total score of those who got item correct
+- Mâ‚€ = mean total score of those who got item wrong
 - s_n = standard deviation of total scores
 - p = proportion correct
 - q = 1 - p
 ```
 
-**Implementation Reference:** `ItemAnalyzer` (§8.2)
+**Implementation Reference:** `ItemAnalyzer` (Â§8.2)
 
 ### A.7 Reliability (Split-Half with Spearman-Brown)
 
@@ -8457,11 +8457,11 @@ Where:
 **Formula:**
 ```
 r_split = correlation(first_half_scores, second_half_scores)
-r_full = 2 × r_split / (1 + r_split)   [Spearman-Brown correction]
+r_full = 2 Ã— r_split / (1 + r_split)   [Spearman-Brown correction]
 Target: r_full > 0.7
 ```
 
-**Implementation Reference:** `MethodComparisonAnalyzer._compute_reliability()` (§8.4)
+**Implementation Reference:** `MethodComparisonAnalyzer._compute_reliability()` (Â§8.4)
 
 ### A.8 Learning Curve (Logarithmic Regression)
 
@@ -8469,7 +8469,7 @@ Target: r_full > 0.7
 
 **Formula:**
 ```
-score = a × ln(t + 1) + c
+score = a Ã— ln(t + 1) + c
 
 Where:
 - t = days since first assessment
@@ -8482,7 +8482,7 @@ Growth rate interpretation:
 - a < 0.05: Slow/plateau
 ```
 
-**Implementation Reference:** `LearningCurveAnalyzer._estimate_growth_rate()` (§8.3)
+**Implementation Reference:** `LearningCurveAnalyzer._estimate_growth_rate()` (Â§8.3)
 
 ### A.9 Readiness Decay Curve
 
@@ -8490,14 +8490,14 @@ Growth rate interpretation:
 
 **Formula:**
 ```
-Readiness(t) = Readiness₀ × exp(-t / τ)
+Readiness(t) = Readinessâ‚€ Ã— exp(-t / Ï„)
 
 Where:
 - t = days since last assessment
-- τ = time constant (level-specific)
-- Readiness₀ = readiness at last assessment
+- Ï„ = time constant (level-specific)
+- Readinessâ‚€ = readiness at last assessment
 
-Level-specific τ values:
+Level-specific Ï„ values:
 - L1: 30 days (fast decay)
 - L2: 45 days
 - L3: 60 days
@@ -8505,7 +8505,7 @@ Level-specific τ values:
 - L5: 180 days (slow decay for experts)
 ```
 
-**Implementation Reference:** Section 4, readiness decay function (§4.2)
+**Implementation Reference:** Section 4, readiness decay function (Â§4.2)
 
 ### A.10 Inter-Rater Reliability
 
@@ -8513,16 +8513,16 @@ Level-specific τ values:
 
 **Cohen's Kappa (2 raters):**
 ```
-κ = (P₀ - P_e) / (1 - P_e)
+Îº = (Pâ‚€ - P_e) / (1 - P_e)
 
 Where:
-- P₀ = observed agreement proportion
+- Pâ‚€ = observed agreement proportion
 - P_e = expected agreement by chance
 ```
 
 **Intraclass Correlation Coefficient (3+ raters):**
 ```
-ICC = MS_B - MS_W / MS_B + (k-1) × MS_W
+ICC = MS_B - MS_W / MS_B + (k-1) Ã— MS_W
 
 Where:
 - MS_B = between-target mean square
@@ -8530,7 +8530,7 @@ Where:
 - k = number of raters
 ```
 
-**Implementation Reference:** `RubricOrchestrator._compute_inter_rater_reliability()` (§2.5)
+**Implementation Reference:** `RubricOrchestrator._compute_inter_rater_reliability()` (Â§2.5)
 
 ### A.11 Bias Detection: Differential Item Functioning (Mantel-Haenszel)
 
@@ -8538,8 +8538,8 @@ Where:
 
 **Formula:**
 ```
-MH χ² = [Σ(n_R1k × n_W2k - n_R2k × n_W1k) / N_k]² /
-        [Σ(n_R1k × n_W2k × n_R2k × n_W1k) / (N_k² × (N_k - 1))]
+MH Ï‡Â² = [Î£(n_R1k Ã— n_W2k - n_R2k Ã— n_W1k) / N_k]Â² /
+        [Î£(n_R1k Ã— n_W2k Ã— n_R2k Ã— n_W1k) / (N_kÂ² Ã— (N_k - 1))]
 
 Where:
 - n_Rgk = number in group g correct on item at score level k
@@ -8547,7 +8547,7 @@ Where:
 - N_k = total at score level k
 ```
 
-**Implementation Reference:** `BiasDetector._detect_dif()` (§8.5)
+**Implementation Reference:** `BiasDetector._detect_dif()` (Â§8.5)
 
 ---
 
@@ -8764,23 +8764,23 @@ PROJECT_RUBRIC_TEMPLATE = {
 
 | Term | Definition |
 |---|---|
-| **3PL** | Three-Parameter Logistic model for IRT — discrimination (a), difficulty (b), guessing (c) |
+| **3PL** | Three-Parameter Logistic model for IRT â€” discrimination (a), difficulty (b), guessing (c) |
 | **Assessment Engine** | Runtime that administers assessments, collects responses, and coordinates evaluation |
 | **Bayesian Confidence** | Posterior probability of true skill level given observed assessment results, using conjugate Beta-Binomial priors |
 | **Bias Detection** | Systematic analysis of assessment outcomes for differential item functioning, score gaps, and fairness across demographic groups |
-| **Burstiness** | Statistical variation in inter-keystroke timing — humans have high burstiness, machines have low burstiness |
+| **Burstiness** | Statistical variation in inter-keystroke timing â€” humans have high burstiness, machines have low burstiness |
 | **Cohort** | Group of users taking the same assessment within a time window, used for collaborative cheating detection |
 | **Committee Review** | Multi-reviewer resolution when automated and AI assessments disagree |
 | **Confidence Calibration** | Temperature scaling of AI confidence scores to ensure well-calibrated probabilities (ECE < 0.10) |
 | **Cross-Session Consistency** | Analysis of user behavior patterns across multiple assessment sessions to detect impersonation |
 | **DIF (Differential Item Functioning)** | Items that function differently for different demographic groups at the same ability level |
-| **Difficulty (p-value)** | Proportion of correct responses — classical item difficulty metric, target 0.3-0.8 |
+| **Difficulty (p-value)** | Proportion of correct responses â€” classical item difficulty metric, target 0.3-0.8 |
 | **Discrimination (D)** | How well an item separates high-performing from low-performing test takers, target D > 0.3 |
 | **Distractor Analysis** | Evaluation of MCQ wrong-answer choices to ensure they are plausible and functioning |
 | **Evidence Signals** | Quality-weighted observations (Gold/Silver/Bronze) that contribute to Bayesian confidence updating |
 | **Fingerprinting** | Collection of browser and environment characteristics for automation detection without invasive monitoring |
 | **Geo-Velocity** | Physically impossible IP location changes during a session (e.g., New York to London in 5 minutes) |
-| **IRT (Item Response Theory)** | Statistical framework for modeling item performance as a function of latent ability θ |
+| **IRT (Item Response Theory)** | Statistical framework for modeling item performance as a function of latent ability Î¸ |
 | **Item Analysis** | Statistical evaluation of question quality including difficulty, discrimination, IRT parameters, and distractor effectiveness |
 | **Keystroke Dynamics** | Analysis of typing rhythm (inter-keystroke intervals, key hold times) to detect copy-paste and multi-user behavior |
 | **Learning Curve** | Mathematical model of skill improvement over time, typically logarithmic or exponential |
@@ -8791,7 +8791,7 @@ PROJECT_RUBRIC_TEMPLATE = {
 | **Point-Biserial Correlation** | Item-total correlation measuring how well an item aligns with overall assessment performance |
 | **PromptLoader** | System for loading AI prompts from external YAML-frontmatter files with graceful fallback |
 | **Rate Limiting** | Per-tenant and per-user assessment frequency and concurrency limits |
-| **Readiness Score** | Composite (evidence × 0.40 + assessment × 0.40 + recency × 0.20) determining level advancement eligibility |
+| **Readiness Score** | Composite (evidence Ã— 0.40 + assessment Ã— 0.40 + recency Ã— 0.20) determining level advancement eligibility |
 | **Reliability** | Internal consistency of an assessment measured via split-half correlation with Spearman-Brown correction |
 | **Rubric Engine** | Scoring module that evaluates assessment responses against defined criteria with level-aware weights |
 | **Scoring Engine** | Core system that computes scores from rubric evaluation, fuses multi-method scores, and applies IRT calibration |
@@ -8802,14 +8802,14 @@ PROJECT_RUBRIC_TEMPLATE = {
 | **Skill Profile** | Aggregated representation of a user's skill levels across all assessed skills |
 | **Skill Graph** | Directed acyclic graph of skill dependencies used for prerequisite checking and pathway recommendation |
 | **Rubric** | Structured scoring criteria with weighted dimensions, level-specific expectations, and feedback templates |
-| **Assessment Session** | A complete lifecycle of one assessment attempt — from trigger through scoring to validation |
+| **Assessment Session** | A complete lifecycle of one assessment attempt â€” from trigger through scoring to validation |
 | **Adaptive Assessment** | IRT-based dynamic question selection that adjusts difficulty based on estimated ability |
 | **Cheating Verdict** | Final anti-cheating determination: allow | review | escalate | invalidate, with severity classification |
 | **SLA (Service Level Agreement)** | Time commitment for human review: 24h (standard), 48h (L4+ escalation), 72h (appeal resolution) |
 | **Appeal** | User-initiated challenge to an assessment result with automated AI review and optional human escalation |
 | **Certification Equivalence** | Mapping of internal skill levels to external certification frameworks (SFIA, industry certs, academic levels) |
 | **IRT Calibration** | Process of estimating item parameters (a, b, c) from response data using maximum likelihood estimation |
-| **Expected Calibration Error** | |Difference between predicted confidence and observed accuracy| — target ECE < 0.10 |
+| **Expected Calibration Error** | |Difference between predicted confidence and observed accuracy| â€” target ECE < 0.10 |
 | **StructuredLogger** | JSON-structured logging utility with context fields for distributed tracing and debugging |
 | **Ollama** | Local LLM runtime used as the default AI engine for assessment scoring |
 | **Assessment Catalog** | Central registry of all available assessments with metadata, prerequisites, and time estimates |

@@ -1,5 +1,5 @@
-
-# SkillAnalytics — Enterprise Skill Analytics Platform
+﻿
+# SkillAnalytics â€” Enterprise Skill Analytics Platform
 
 ---
 
@@ -7,12 +7,12 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLANALYTICS-ARCH-001 |
+| Document ID | AI-SKN-001 |
 | Version | 1.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-13 |
-| Classification | Internal — Architecture Reference |
-| Source of Truth | `docs/ai/skills/skills.md` (§19 Analytics, §32 Enterprise KPIs) |
+| Classification | Internal â€” Architecture Reference |
+| Source of Truth | `docs/ai/skills/skills.md` (Â§19 Analytics, Â§32 Enterprise KPIs) |
 | Companion Docs | `docs/ai/skills/SkillIntelligence.md` (Scoring Engine) |
 | | `docs/ai/skills/SkillMarketIntelligence.md` (Market Engine) |
 | | `docs/ai/skills/SkillOpportunityMatching.md` (Opportunity Engine) |
@@ -141,48 +141,48 @@ graph TD
 
 ### 0.1 Purpose
 
-SkillAnalytics is the **Unified Analytics Execution Engine** for the entire ARIA OS skills ecosystem. All 8 companion engine documents generate data — assessments, evidence scores, market intelligence, roadmaps, opportunity matches, agent recommendations — but none provides cross-engine aggregation, trend computation, dashboard rendering, report generation, or predictive modeling. SkillAnalytics fills that gap.
+SkillAnalytics is the **Unified Analytics Execution Engine** for the entire ARIA OS skills ecosystem. All 8 companion engine documents generate data â€” assessments, evidence scores, market intelligence, roadmaps, opportunity matches, agent recommendations â€” but none provides cross-engine aggregation, trend computation, dashboard rendering, report generation, or predictive modeling. SkillAnalytics fills that gap.
 
 It ingests from all 8 engines, normalizes into a unified metric store, computes trends and forecasts, renders 6 role-based dashboards, generates 5 executive report templates, and maintains 15 enterprise KPIs with alerting.
 
 ### 0.2 Architecture Diagram
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────┐
-│                          DATA SOURCES (8 Companion Engines)                        │
-├──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬───────┤
-│ Skill    │ Skill    │ Skill    │ Skill    │ Market   │ Opp      │ Roadmap  │ Agent │
-│ Assess-  │ Evidence │ Intelli- │ Graph    │ Intel-   │ Matching │ Engine   │ Obser-│
-│ ment     │          │ gence    │          │ ligence  │          │          │ vabil-│
-│ Engine   │ Engine   │ Engine   │ Engine   │ Engine   │ Engine   │ Engine   │ ity   │
-├──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴───────┤
-│                              INGESTION LAYER                                       │
-│  ┌───────────┐ ┌──────────┐ ┌───────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │
-│  │ Event     │ │ Metric   │ │ Snapshot  │ │ Webhook  │ │ Batch    │ │ API      │ │
-│  │ Stream    │ │ Push     │ │ Pull      │ │ Listener │ │ Import   │ │ Poller   │ │
-│  └───────────┘ └──────────┘ └───────────┘ └──────────┘ └──────────┘ └──────────┘ │
-├────────────────────────────────────────────────────────────────────────────────────┤
-│                         UNIFIED METRIC STORE                                       │
-│  ┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────────┐   │
-│  │ Time-Series DB       │ │ Relational (Postgres) │ │ Materialized Views      │   │
-│  │ skill_analytics_ts   │ │ skill_analytics_events│ │ kpi_snapshots           │   │
-│  │ (hot: 30d SSD)       │ │ metric_definitions    │ │ dashboard_snapshots     │   │
-│  │ warm: 90d)           │ │ report_schedule       │ │ report_history          │   │
-│  └──────────────────────┘ └──────────────────────┘ └──────────────────────────┘   │
-├────────────────────────────────────────────────────────────────────────────────────┤
-│                         COMPUTATION LAYER                                          │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌───────────────┐   │
-│  │ Metrics    │ │ Trend      │ │ Forecasting│ │ Alert      │ │ Report        │   │
-│  │ Calculator │ │ Analyzer   │ │ Engine     │ │ Engine     │ │ Generator     │   │
-│  └────────────┘ └────────────┘ └────────────┘ └────────────┘ └───────────────┘   │
-├────────────────────────────────────────────────────────────────────────────────────┤
-│                              PRESENTATION LAYER                                    │
-│  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐ ┌───────────────┐ │
-│  │ 6 Role-Based     │ │ 5 Report         │ │ Alert Center     │ │ Export API    │ │
-│  │ Dashboards       │ │ Templates        │ │ + Notifications  │ │ (PDF/CSV)     │ │
-│  │ (Grafana)        │ │ (PDF/MD/HTML)    │ │ (Slack/Email)    │ │               │ │
-│  └──────────────────┘ └──────────────────┘ └──────────────────┘ └───────────────┘ │
-└────────────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                          DATA SOURCES (8 Companion Engines)                        â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ Skill    â”‚ Skill    â”‚ Skill    â”‚ Skill    â”‚ Market   â”‚ Opp      â”‚ Roadmap  â”‚ Agent â”‚
+â”‚ Assess-  â”‚ Evidence â”‚ Intelli- â”‚ Graph    â”‚ Intel-   â”‚ Matching â”‚ Engine   â”‚ Obser-â”‚
+â”‚ ment     â”‚          â”‚ gence    â”‚          â”‚ ligence  â”‚          â”‚          â”‚ vabil-â”‚
+â”‚ Engine   â”‚ Engine   â”‚ Engine   â”‚ Engine   â”‚ Engine   â”‚ Engine   â”‚ Engine   â”‚ ity   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                              INGESTION LAYER                                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ Event     â”‚ â”‚ Metric   â”‚ â”‚ Snapshot  â”‚ â”‚ Webhook  â”‚ â”‚ Batch    â”‚ â”‚ API      â”‚ â”‚
+â”‚  â”‚ Stream    â”‚ â”‚ Push     â”‚ â”‚ Pull      â”‚ â”‚ Listener â”‚ â”‚ Import   â”‚ â”‚ Poller   â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                         UNIFIED METRIC STORE                                       â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Time-Series DB       â”‚ â”‚ Relational (Postgres) â”‚ â”‚ Materialized Views      â”‚   â”‚
+â”‚  â”‚ skill_analytics_ts   â”‚ â”‚ skill_analytics_eventsâ”‚ â”‚ kpi_snapshots           â”‚   â”‚
+â”‚  â”‚ (hot: 30d SSD)       â”‚ â”‚ metric_definitions    â”‚ â”‚ dashboard_snapshots     â”‚   â”‚
+â”‚  â”‚ warm: 90d)           â”‚ â”‚ report_schedule       â”‚ â”‚ report_history          â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                         COMPUTATION LAYER                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Metrics    â”‚ â”‚ Trend      â”‚ â”‚ Forecastingâ”‚ â”‚ Alert      â”‚ â”‚ Report        â”‚   â”‚
+â”‚  â”‚ Calculator â”‚ â”‚ Analyzer   â”‚ â”‚ Engine     â”‚ â”‚ Engine     â”‚ â”‚ Generator     â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                              PRESENTATION LAYER                                    â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ 6 Role-Based     â”‚ â”‚ 5 Report         â”‚ â”‚ Alert Center     â”‚ â”‚ Export API    â”‚ â”‚
+â”‚  â”‚ Dashboards       â”‚ â”‚ Templates        â”‚ â”‚ + Notifications  â”‚ â”‚ (PDF/CSV)     â”‚ â”‚
+â”‚  â”‚ (Grafana)        â”‚ â”‚ (PDF/MD/HTML)    â”‚ â”‚ (Slack/Email)    â”‚ â”‚               â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 0.3 Role Hierarchy
@@ -192,35 +192,35 @@ Four tiers of analytics access with progressively broader scope:
 ```
 Role Hierarchy
 
-┌─────────────────────────────────────────────────────────────────────────┐
-│  TIER 1: USER                                                           │
-│  Scope: Self only                                                       │
-│  Sees: Personal Growth Dashboard, personal Learning Velocity,           │
-│        personal Career Readiness, personal Income Analytics             │
-│  Access: /api/analytics/user/:id/*                                      │
-│  Dashboards: User Growth Dashboard                                      │
-├─────────────────────────────────────────────────────────────────────────┤
-│  TIER 2: MANAGER                                                        │
-│  Scope: Direct reports + self                                           │
-│  Sees: Team Skill Heatmap, team Learning Velocity comparison,           │
-│        team Career Readiness summary, team Gap Report                   │
-│  Access: /api/analytics/team/:id/*, owns User scope                    │
-│  Dashboards: Manager Team Dashboard                                     │
-├─────────────────────────────────────────────────────────────────────────┤
-│  TIER 3: ADMIN                                                          │
-│  Scope: Organization-wide                                               │
-│  Sees: Pipeline Health, Data Freshness, System KPIs,                    │
-│        all team dashboards, usage analytics, cost analytics             │
-│  Access: /api/analytics/admin/*, owns Manager scope                    │
-│  Dashboards: Admin Pipeline Dashboard + all lower tiers                │
-├─────────────────────────────────────────────────────────────────────────┤
-│  TIER 4: EXECUTIVE                                                      │
-│  Scope: Business outcomes                                               │
-│  Sees: Org Health Scorecard, 15 KPIs with trends,                       │
-│        ROI Analysis, Executive Briefs, Market Intelligence             │
-│  Access: /api/analytics/exec/*, owns Admin scope                       │
-│  Dashboards: Executive Org Health Dashboard + all lower tiers          │
-└─────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  TIER 1: USER                                                           â”‚
+â”‚  Scope: Self only                                                       â”‚
+â”‚  Sees: Personal Growth Dashboard, personal Learning Velocity,           â”‚
+â”‚        personal Career Readiness, personal Income Analytics             â”‚
+â”‚  Access: /api/analytics/user/:id/*                                      â”‚
+â”‚  Dashboards: User Growth Dashboard                                      â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TIER 2: MANAGER                                                        â”‚
+â”‚  Scope: Direct reports + self                                           â”‚
+â”‚  Sees: Team Skill Heatmap, team Learning Velocity comparison,           â”‚
+â”‚        team Career Readiness summary, team Gap Report                   â”‚
+â”‚  Access: /api/analytics/team/:id/*, owns User scope                    â”‚
+â”‚  Dashboards: Manager Team Dashboard                                     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TIER 3: ADMIN                                                          â”‚
+â”‚  Scope: Organization-wide                                               â”‚
+â”‚  Sees: Pipeline Health, Data Freshness, System KPIs,                    â”‚
+â”‚        all team dashboards, usage analytics, cost analytics             â”‚
+â”‚  Access: /api/analytics/admin/*, owns Manager scope                    â”‚
+â”‚  Dashboards: Admin Pipeline Dashboard + all lower tiers                â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  TIER 4: EXECUTIVE                                                      â”‚
+â”‚  Scope: Business outcomes                                               â”‚
+â”‚  Sees: Org Health Scorecard, 15 KPIs with trends,                       â”‚
+â”‚        ROI Analysis, Executive Briefs, Market Intelligence             â”‚
+â”‚  Access: /api/analytics/exec/*, owns Admin scope                       â”‚
+â”‚  Dashboards: Executive Org Health Dashboard + all lower tiers          â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 0.4 Relationship to Companion Docs
@@ -284,25 +284,25 @@ Every metric in the analytics system belongs to one of three tiers:
 
 ```
 TIER 1: RAW METRICS (directly measured from source engines)
-├── Counters:         skill_assessments_completed, evidence_submitted, recommendations_shown
-├── Gauges:           current_skill_count, avg_skill_level, active_users
-├── Histograms:       assessment_duration_seconds, evidence_verification_latency
-└── Events:           user_login, skill_created, target_achieved, opportunity_applied
+â”œâ”€â”€ Counters:         skill_assessments_completed, evidence_submitted, recommendations_shown
+â”œâ”€â”€ Gauges:           current_skill_count, avg_skill_level, active_users
+â”œâ”€â”€ Histograms:       assessment_duration_seconds, evidence_verification_latency
+â””â”€â”€ Events:           user_login, skill_created, target_achieved, opportunity_applied
 
 TIER 2: COMPUTED KPIs (derived from one or more raw metrics)
-├── Growth:           skill_acquisition_rate, level_distribution_shift, category_growth
-├── Velocity:         learning_velocity, time_to_target, velocity_delta
-├── Quality:          assessment_accuracy, evidence_quality_score, recommendation_acceptance
-├── Conversion:       view_to_apply_rate, apply_to_win_rate, source_efficiency
-├── Financial:        income_potential, roi_per_hour, diversification_score
-├── Career:           career_readiness, gap_closure_rate, milestone_completion
-└── Operational:      pipeline_latency_p95, data_freshness, cache_hit_ratio
+â”œâ”€â”€ Growth:           skill_acquisition_rate, level_distribution_shift, category_growth
+â”œâ”€â”€ Velocity:         learning_velocity, time_to_target, velocity_delta
+â”œâ”€â”€ Quality:          assessment_accuracy, evidence_quality_score, recommendation_acceptance
+â”œâ”€â”€ Conversion:       view_to_apply_rate, apply_to_win_rate, source_efficiency
+â”œâ”€â”€ Financial:        income_potential, roi_per_hour, diversification_score
+â”œâ”€â”€ Career:           career_readiness, gap_closure_rate, milestone_completion
+â””â”€â”€ Operational:      pipeline_latency_p95, data_freshness, cache_hit_ratio
 
 TIER 3: BUSINESS OUTCOMES (strategic, board-reportable)
-├── Org Readiness:    % org meeting career targets, skill coverage ratio
-├── ROI:              salary_growth_per_user, learning_cost_per_level, time_saved
-├── Retention:        user_retention_rate, skill_system_nps, engagement_score
-└── Talent:           internal_mobility_rate, time_to_productivity, skill_gap_closure
+â”œâ”€â”€ Org Readiness:    % org meeting career targets, skill coverage ratio
+â”œâ”€â”€ ROI:              salary_growth_per_user, learning_cost_per_level, time_saved
+â”œâ”€â”€ Retention:        user_retention_rate, skill_system_nps, engagement_score
+â””â”€â”€ Talent:           internal_mobility_rate, time_to_productivity, skill_gap_closure
 ```
 
 ### 1.2 Dimension Model
@@ -348,7 +348,7 @@ FORMULA_REGISTRY = {
     "skill_acquisition_rate": {
         "id": "F-001",
         "name": "Skill Acquisition Rate",
-        "source": "skills.md §19.4",
+        "source": "skills.md Â§19.4",
         "formula": "new_skills_added_per_quarter / total_active_skills",
         "target": "> 0.15",
         "frequency": "weekly"
@@ -356,7 +356,7 @@ FORMULA_REGISTRY = {
     "learning_velocity": {
         "id": "F-002",
         "name": "Learning Velocity",
-        "source": "skills.md §19.4",
+        "source": "skills.md Â§19.4",
         "formula": "avg(level_gain_per_month) across active skills",
         "target": "> 0.25 levels/month",
         "frequency": "weekly"
@@ -364,7 +364,7 @@ FORMULA_REGISTRY = {
     "career_readiness": {
         "id": "F-003",
         "name": "Career Readiness Score",
-        "source": "skills.md §19.5",
+        "source": "skills.md Â§19.5",
         "formula": "avg(min(1.0, current_level / target_level)) * 100",
         "target": "> 60%",
         "frequency": "weekly"
@@ -372,7 +372,7 @@ FORMULA_REGISTRY = {
     "opportunity_match_score": {
         "id": "F-004",
         "name": "Opportunity Match Score",
-        "source": "skills.md §19.6",
+        "source": "skills.md Â§19.6",
         "formula": "avg(match_score(opportunity_i, user_skills))",
         "target": "> 0.65",
         "frequency": "daily"
@@ -380,7 +380,7 @@ FORMULA_REGISTRY = {
     "income_potential": {
         "id": "F-005",
         "name": "Income Potential Score",
-        "source": "skills.md §19.7",
+        "source": "skills.md Â§19.7",
         "formula": "normalized_sum(income_forecast(monetizable_skills))",
         "target": "> 60 / 100",
         "frequency": "monthly"
@@ -388,7 +388,7 @@ FORMULA_REGISTRY = {
     "recommendation_acceptance_rate": {
         "id": "F-006",
         "name": "Recommendation Acceptance Rate",
-        "source": "SkillIntel.md §10",
+        "source": "SkillIntel.md Â§10",
         "formula": "accepted / (accepted + dismissed) * 100",
         "target": "> 30%",
         "frequency": "weekly"
@@ -404,7 +404,7 @@ FORMULA_REGISTRY = {
     "evidence_quality_score": {
         "id": "F-008",
         "name": "Evidence Quality Score",
-        "source": "SkillEvidence.md §5",
+        "source": "SkillEvidence.md Â§5",
         "formula": "avg(quality_score) across verified evidence",
         "target": "> 0.75",
         "frequency": "weekly"
@@ -412,7 +412,7 @@ FORMULA_REGISTRY = {
     "view_to_apply_rate": {
         "id": "F-009",
         "name": "View to Apply Conversion",
-        "source": "SkillOpp.md §7",
+        "source": "SkillOpp.md Â§7",
         "formula": "opportunities_applied / opportunities_viewed",
         "target": "> 0.15",
         "frequency": "weekly"
@@ -420,7 +420,7 @@ FORMULA_REGISTRY = {
     "skill_gap_closure_rate": {
         "id": "F-010",
         "name": "Skill Gap Closure Rate",
-        "source": "SkillOpp.md §9",
+        "source": "SkillOpp.md Â§9",
         "formula": "gaps_closed / gaps_identified",
         "target": "> 0.60",
         "frequency": "monthly"
@@ -428,7 +428,7 @@ FORMULA_REGISTRY = {
     "income_diversification": {
         "id": "F-011",
         "name": "Income Diversification Score",
-        "source": "skills.md §18.6",
+        "source": "skills.md Â§18.6",
         "formula": "0.40*Source_Count + 0.30*Income_Balance + 0.20*Skill_Diversity + 0.10*Stability",
         "target": "> 60 / 100",
         "frequency": "monthly"
@@ -436,7 +436,7 @@ FORMULA_REGISTRY = {
     "data_freshness": {
         "id": "F-012",
         "name": "Analytics Data Freshness",
-        "source": "SkillIntel.md §10",
+        "source": "SkillIntel.md Â§10",
         "formula": "% of metric streams with data < 24h old",
         "target": "> 95%",
         "frequency": "daily"
@@ -546,44 +546,44 @@ class DashboardEngine:
 **Role:** User (Tier 1) | **Refresh:** 5 min | **Default range:** 30 days
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  USER GROWTH DASHBOARD — John Doe                                           │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       │
-│ │ Total Skills │ │ Avg Level    │ │ This Month   │ │ Streak       │       │
-│ │ 24           │ │ L2.7         │ │ +3 skills    │ │ 12 days      │       │
-│ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Level Distribution (bar)                              L0 L1 L2 L3 L4 L5 ││
-│ │ ┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃││
-│ │ 12 ┃███                                                               ┃││
-│ │ 8  ┃██████████                                                        ┃││
-│ │ 4  ┃███████████████████████                                           ┃││
-│ │ 0  ┃████████████████████████████████████████████████████              ┃││
-│ │    ┃──L0────L1────L2────L3────L4────L5                               ┃││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌────────────────────────────┐ ┌───────────────────────────────────────────┐│
-│ │ Learning Velocity (graph) │ │ Category Breakdown (pie)                  ││
-│ │ ┃━━━━━━━━━━━━━━━━━━━━━━━┃│ │ ┌──────────┐                              ││
-│ │ 0.5┤       ╱╲            ┃│ │ │ Backend  │ 30%                          ││
-│ │ 0.4┤      ╱  ╲     ╱╲   ┃│ │ │ Frontend │ 25%                          ││
-│ │ 0.3┤     ╱    ╲   ╱  ╲  ┃│ │ │ AI/ML    │ 20%                          ││
-│ │ 0.2┤    ╱      ╲ ╱    ╲ ┃│ │ │ DevOps   │ 15%                          ││
-│ │    └────────────────────┘│ │ │ Other    │ 10%                          ││
-│ │    Jan Feb Mar Apr May   │ │ └──────────┘                              ││
-│ └────────────────────────────┘ └───────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Recent Progress (table)                                                  ││
-│ │ Skill         ┃ Before ┃ After ┃ Date       ┃ Source                    ││
-│ │ React.js      ┃ L2     ┃ L3    ┃ 2026-06-10 ┃ Assessment                ││
-│ │ TypeScript    ┃ L1     ┃ L2    ┃ 2026-06-08 ┃ Course Completion         ││
-│ │ Docker        ┃ L2     ┃ L3    ┃ 2026-06-05 ┃ Project Evidence          ││
-│ │ Python        ┃ L3     ┃ L4    ┃ 2026-05-28 ┃ Assessment                ││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  USER GROWTH DASHBOARD â€” John Doe                                           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚ â”‚ Total Skills â”‚ â”‚ Avg Level    â”‚ â”‚ This Month   â”‚ â”‚ Streak       â”‚       â”‚
+â”‚ â”‚ 24           â”‚ â”‚ L2.7         â”‚ â”‚ +3 skills    â”‚ â”‚ 12 days      â”‚       â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Level Distribution (bar)                              L0 L1 L2 L3 L4 L5 â”‚â”‚
+â”‚ â”‚ â”ƒâ”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”ƒâ”‚â”‚
+â”‚ â”‚ 12 â”ƒâ–ˆâ–ˆâ–ˆ                                                               â”ƒâ”‚â”‚
+â”‚ â”‚ 8  â”ƒâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ                                                        â”ƒâ”‚â”‚
+â”‚ â”‚ 4  â”ƒâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ                                           â”ƒâ”‚â”‚
+â”‚ â”‚ 0  â”ƒâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ              â”ƒâ”‚â”‚
+â”‚ â”‚    â”ƒâ”€â”€L0â”€â”€â”€â”€L1â”€â”€â”€â”€L2â”€â”€â”€â”€L3â”€â”€â”€â”€L4â”€â”€â”€â”€L5                               â”ƒâ”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Learning Velocity (graph) â”‚ â”‚ Category Breakdown (pie)                  â”‚â”‚
+â”‚ â”‚ â”ƒâ”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”ƒâ”‚ â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                              â”‚â”‚
+â”‚ â”‚ 0.5â”¤       â•±â•²            â”ƒâ”‚ â”‚ â”‚ Backend  â”‚ 30%                          â”‚â”‚
+â”‚ â”‚ 0.4â”¤      â•±  â•²     â•±â•²   â”ƒâ”‚ â”‚ â”‚ Frontend â”‚ 25%                          â”‚â”‚
+â”‚ â”‚ 0.3â”¤     â•±    â•²   â•±  â•²  â”ƒâ”‚ â”‚ â”‚ AI/ML    â”‚ 20%                          â”‚â”‚
+â”‚ â”‚ 0.2â”¤    â•±      â•² â•±    â•² â”ƒâ”‚ â”‚ â”‚ DevOps   â”‚ 15%                          â”‚â”‚
+â”‚ â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚ â”‚ â”‚ Other    â”‚ 10%                          â”‚â”‚
+â”‚ â”‚    Jan Feb Mar Apr May   â”‚ â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Recent Progress (table)                                                  â”‚â”‚
+â”‚ â”‚ Skill         â”ƒ Before â”ƒ After â”ƒ Date       â”ƒ Source                    â”‚â”‚
+â”‚ â”‚ React.js      â”ƒ L2     â”ƒ L3    â”ƒ 2026-06-10 â”ƒ Assessment                â”‚â”‚
+â”‚ â”‚ TypeScript    â”ƒ L1     â”ƒ L2    â”ƒ 2026-06-08 â”ƒ Course Completion         â”‚â”‚
+â”‚ â”‚ Docker        â”ƒ L2     â”ƒ L3    â”ƒ 2026-06-05 â”ƒ Project Evidence          â”‚â”‚
+â”‚ â”‚ Python        â”ƒ L3     â”ƒ L4    â”ƒ 2026-05-28 â”ƒ Assessment                â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 **Panel Configuration:**
@@ -611,39 +611,39 @@ USER_GROWTH_DASHBOARD = DashboardConfig(
 **Role:** Manager (Tier 2) | **Refresh:** 5 min | **Default range:** 90 days
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  MANAGER TEAM DASHBOARD — Engineering Team (8 members)                     │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       │
-│ │ Team Size    │ │ Avg Skills   │ │ Avg Level    │ │ Growth (QoQ) │       │
-│ │ 8            │ │ 18.5/user    │ │ L2.5         │ │ +0.3 lvl/qtr │       │
-│ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Skill Heatmap (by team member)                                          ││
-│ │               Python React TS  Docker K8s  AWS  SQL  GraphQL            ││
-│ │ Alice         L4     L3    L4   L2    L1   L3   L3   L2                ││
-│ │ Bob           L3     L4    L3   L3    L2   L2   L4   L1                ││
-│ │ Carol         L2     L2    L1   L4    L3   L3   L2   L0                ││
-│ │ Dave          L4     L3    L3   L2    L1   L4   L3   L2                ││
-│ │ Emma          L3     L4    L4   L3    L2   L2   L3   L3                ││
-│ │ ──Team Avg──  L3.2   L3.2  L3.0 L2.8  L1.8 L2.8 L3.0 L1.6             ││
-│ │ Target:       L4     L4    L4   L3    L3   L4   L4   L3                ││
-│ │ ──Gap───      -0.8   -0.8  -1.0 -0.2  -1.2 -1.2 -1.0 -1.4             ││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌────────────────────────────┐ ┌───────────────────────────────────────────┐│
-│ │ Velocity Comparison        │ │ Readiness Summary                        ││
-│ │ (graph, all members)       │ │ Senior BE:  62% (3/8 ready)              ││
-│ │ 0.6┤    ╱╲                 │ │ Full Stack: 75% (6/8 ready)              ││
-│ │ 0.5┤   ╱  ╲   ╱╲          │ │ Tech Lead:  38% (1/8 ready)              ││
-│ │ 0.4┤  ╱    ╲ ╱  ╲         │ │                                           ││
-│ │ 0.3┤ ╱      ╲╱    ╲        │ │ Top Gaps: K8s, AWS, GraphQL             ││
-│ │ └────────────────────┬───  │ │                                           ││
-│ │   Jan Feb Mar Apr May │    │ │ Team Skill Coverage: 68%                 ││
-│ │          User ── Team Avg  │ │                                           ││
-│ └────────────────────────────┘ └───────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  MANAGER TEAM DASHBOARD â€” Engineering Team (8 members)                     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚ â”‚ Team Size    â”‚ â”‚ Avg Skills   â”‚ â”‚ Avg Level    â”‚ â”‚ Growth (QoQ) â”‚       â”‚
+â”‚ â”‚ 8            â”‚ â”‚ 18.5/user    â”‚ â”‚ L2.5         â”‚ â”‚ +0.3 lvl/qtr â”‚       â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Skill Heatmap (by team member)                                          â”‚â”‚
+â”‚ â”‚               Python React TS  Docker K8s  AWS  SQL  GraphQL            â”‚â”‚
+â”‚ â”‚ Alice         L4     L3    L4   L2    L1   L3   L3   L2                â”‚â”‚
+â”‚ â”‚ Bob           L3     L4    L3   L3    L2   L2   L4   L1                â”‚â”‚
+â”‚ â”‚ Carol         L2     L2    L1   L4    L3   L3   L2   L0                â”‚â”‚
+â”‚ â”‚ Dave          L4     L3    L3   L2    L1   L4   L3   L2                â”‚â”‚
+â”‚ â”‚ Emma          L3     L4    L4   L3    L2   L2   L3   L3                â”‚â”‚
+â”‚ â”‚ â”€â”€Team Avgâ”€â”€  L3.2   L3.2  L3.0 L2.8  L1.8 L2.8 L3.0 L1.6             â”‚â”‚
+â”‚ â”‚ Target:       L4     L4    L4   L3    L3   L4   L4   L3                â”‚â”‚
+â”‚ â”‚ â”€â”€Gapâ”€â”€â”€      -0.8   -0.8  -1.0 -0.2  -1.2 -1.2 -1.0 -1.4             â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Velocity Comparison        â”‚ â”‚ Readiness Summary                        â”‚â”‚
+â”‚ â”‚ (graph, all members)       â”‚ â”‚ Senior BE:  62% (3/8 ready)              â”‚â”‚
+â”‚ â”‚ 0.6â”¤    â•±â•²                 â”‚ â”‚ Full Stack: 75% (6/8 ready)              â”‚â”‚
+â”‚ â”‚ 0.5â”¤   â•±  â•²   â•±â•²          â”‚ â”‚ Tech Lead:  38% (1/8 ready)              â”‚â”‚
+â”‚ â”‚ 0.4â”¤  â•±    â•² â•±  â•²         â”‚ â”‚                                           â”‚â”‚
+â”‚ â”‚ 0.3â”¤ â•±      â•²â•±    â•²        â”‚ â”‚ Top Gaps: K8s, AWS, GraphQL             â”‚â”‚
+â”‚ â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€  â”‚ â”‚                                           â”‚â”‚
+â”‚ â”‚   Jan Feb Mar Apr May â”‚    â”‚ â”‚ Team Skill Coverage: 68%                 â”‚â”‚
+â”‚ â”‚          User â”€â”€ Team Avg  â”‚ â”‚                                           â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.4 Admin Pipeline Dashboard
@@ -651,36 +651,36 @@ USER_GROWTH_DASHBOARD = DashboardConfig(
 **Role:** Admin (Tier 3) | **Refresh:** 60 sec | **Default range:** 7 days
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  ADMIN PIPELINE DASHBOARD — System Health                                  │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
-│ │ Pipeline │ │ Data     │ │ Cache    │ │ Avg Load │ │ Error    │          │
-│ │ Health   │ │ Freshness│ │ Hit Rate │ │ 1.2      │ │ Rate     │          │
-│ │ 99.2%    │ │ 97%      │ │ 72%      │ │          │ │ 0.8%     │          │
-│ └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Pipeline execution duration (graph, P95 by engine)                      ││
-│ │ 5s┤               ╱╲                                                    ││
-│ │ 4s┤     ╱╲       ╱  ╲     ╱╲                                           ││
-│ │ 3s┤    ╱  ╲     ╱    ╲   ╱  ╲                                          ││
-│ │ 2s┤   ╱    ╲   ╱      ╲ ╱    ╲                                         ││
-│ │ 1s┤  ╱      ╲ ╱        ╲╱      ╲                                       ││
-│ │   └────────────────────────────────────                                 ││
-│ │    6/6 6/7  6/8  6/9  6/10 6/11 6/12                                   ││
-│ │    ── Intel ── Market ── Assessment                                     ││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐ │
-│ │ Data Freshness Gauge │ │ Sync Queue           │ │ Active Runs          │ │
-│ │ Intel:  98%  █████  │ │ Intel:    0 queued   │ │ Intel:   2 running   │ │
-│ │ Market: 95%  █████  │ │ Market:   3 queued   │ │ Market:  1 running   │ │
-│ │ Assess: 99%  █████  │ │ Assess:   0 queued   │ │ Assess:  0 running   │ │
-│ │ Evid:   96%  █████  │ │ Evid:     1 queued   │ │ Evid:    0 running   │ │
-│ │ Opp:    92%  ████   │ │ Opp:      0 queued   │ │ Opp:     1 running   │ │
-│ └──────────────────────┘ └──────────────────────┘ └──────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  ADMIN PIPELINE DASHBOARD â€” System Health                                  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”          â”‚
+â”‚ â”‚ Pipeline â”‚ â”‚ Data     â”‚ â”‚ Cache    â”‚ â”‚ Avg Load â”‚ â”‚ Error    â”‚          â”‚
+â”‚ â”‚ Health   â”‚ â”‚ Freshnessâ”‚ â”‚ Hit Rate â”‚ â”‚ 1.2      â”‚ â”‚ Rate     â”‚          â”‚
+â”‚ â”‚ 99.2%    â”‚ â”‚ 97%      â”‚ â”‚ 72%      â”‚ â”‚          â”‚ â”‚ 0.8%     â”‚          â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜          â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Pipeline execution duration (graph, P95 by engine)                      â”‚â”‚
+â”‚ â”‚ 5sâ”¤               â•±â•²                                                    â”‚â”‚
+â”‚ â”‚ 4sâ”¤     â•±â•²       â•±  â•²     â•±â•²                                           â”‚â”‚
+â”‚ â”‚ 3sâ”¤    â•±  â•²     â•±    â•²   â•±  â•²                                          â”‚â”‚
+â”‚ â”‚ 2sâ”¤   â•±    â•²   â•±      â•² â•±    â•²                                         â”‚â”‚
+â”‚ â”‚ 1sâ”¤  â•±      â•² â•±        â•²â•±      â•²                                       â”‚â”‚
+â”‚ â”‚   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€                                 â”‚â”‚
+â”‚ â”‚    6/6 6/7  6/8  6/9  6/10 6/11 6/12                                   â”‚â”‚
+â”‚ â”‚    â”€â”€ Intel â”€â”€ Market â”€â”€ Assessment                                     â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Data Freshness Gauge â”‚ â”‚ Sync Queue           â”‚ â”‚ Active Runs          â”‚ â”‚
+â”‚ â”‚ Intel:  98%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â”‚ â”‚ Intel:    0 queued   â”‚ â”‚ Intel:   2 running   â”‚ â”‚
+â”‚ â”‚ Market: 95%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â”‚ â”‚ Market:   3 queued   â”‚ â”‚ Market:  1 running   â”‚ â”‚
+â”‚ â”‚ Assess: 99%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â”‚ â”‚ Assess:   0 queued   â”‚ â”‚ Assess:  0 running   â”‚ â”‚
+â”‚ â”‚ Evid:   96%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â”‚ â”‚ Evid:     1 queued   â”‚ â”‚ Evid:    0 running   â”‚ â”‚
+â”‚ â”‚ Opp:    92%  â–ˆâ–ˆâ–ˆâ–ˆ   â”‚ â”‚ Opp:      0 queued   â”‚ â”‚ Opp:     1 running   â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.5 Executive Org Health Dashboard
@@ -688,39 +688,39 @@ USER_GROWTH_DASHBOARD = DashboardConfig(
 **Role:** Executive (Tier 4) | **Refresh:** 1 hour | **Default range:** 12 months
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  EXECUTIVE ORG HEALTH DASHBOARD — Q2 2026                                 │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌────────────┐ │
-│ │ Org Readiness    │ │ Skill Coverage  │ │ Learning ROI    │ │ Engagement  │ │
-│ │ 67% ▲ +5% QoQ   │ │ 73% ▲ +8% QoQ   │ │ 3.2x ▲ +0.4x   │ │ NPS: 52    │ │
-│ └─────────────────┘ └─────────────────┘ └─────────────────┘ └────────────┘ │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Skills Intelligence Heatmap (category × team)                           ││
-│ │              Eng    Product  Design  Data    Mktg    Sales  ──Gap──     ││
-│ │ Backend      92%    45%     30%     68%     20%     25%    -22%        ││
-│ │ Frontend     88%    55%     75%     30%     25%     20%    -18%        ││
-│ │ AI/ML        75%    30%     20%     85%     15%     10%    -28%        ││
-│ │ DevOps       70%    20%     15%     55%     10%     5%     -38%        ││
-│ │ Data         65%    40%     25%     90%     35%     30%    -19%        ││
-│ │ ──Avg──      78%    38%     33%     66%     21%     18%    -25%        ││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌────────────────────────────┐ ┌──────────────────────────────────────────┐│
-│ │ 15 KPIs Scorecard (table)  │ │ Market Intelligence Summary              ││
-│ │ KPI                      ┃Target┃Actual┃Status│ │ Top 5 Rising Skills:         ││
-│ │ Org Readiness             ┃>60%  ┃67%   │✅   │ │ Agent Eng: +45% YoY       ││
-│ │ Skill Coverage            ┃>60%  ┃73%   │✅   │ │ RAG:       +40%            ││
-│ │ Learning Velocity         ┃>0.25 ┃0.31  │✅   │ │ Gen AI:    +35%            ││
-│ │ Rec Acceptance            ┃>30%  ┃34%   │✅   │ │ Rust:      +28%            ││
-│ │ Assessment Accuracy       ┃>85%  ┃82%   │⚠️   │ │ K8s:       +22%            ││
-│ │ Evidence Quality          ┃>0.75 ┃0.79  │✅   │                              ││
-│ │ Gap Closure Rate          ┃>60%  ┃58%   │⚠️   │ Top 3 Skill Gaps:           ││
-│ │ Data Freshness            ┃>95%  ┃97%   │✅   │ │ K8s: 54% coverage gap     ││
-│ │ Time to Value             ┃<7d   ┃5.2d  │✅   │ │ GraphQL: 48%              ││
-│ └────────────────────────────┘ └──────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  EXECUTIVE ORG HEALTH DASHBOARD â€” Q2 2026                                 â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚ â”‚ Org Readiness    â”‚ â”‚ Skill Coverage  â”‚ â”‚ Learning ROI    â”‚ â”‚ Engagement  â”‚ â”‚
+â”‚ â”‚ 67% â–² +5% QoQ   â”‚ â”‚ 73% â–² +8% QoQ   â”‚ â”‚ 3.2x â–² +0.4x   â”‚ â”‚ NPS: 52    â”‚ â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Skills Intelligence Heatmap (category Ã— team)                           â”‚â”‚
+â”‚ â”‚              Eng    Product  Design  Data    Mktg    Sales  â”€â”€Gapâ”€â”€     â”‚â”‚
+â”‚ â”‚ Backend      92%    45%     30%     68%     20%     25%    -22%        â”‚â”‚
+â”‚ â”‚ Frontend     88%    55%     75%     30%     25%     20%    -18%        â”‚â”‚
+â”‚ â”‚ AI/ML        75%    30%     20%     85%     15%     10%    -28%        â”‚â”‚
+â”‚ â”‚ DevOps       70%    20%     15%     55%     10%     5%     -38%        â”‚â”‚
+â”‚ â”‚ Data         65%    40%     25%     90%     35%     30%    -19%        â”‚â”‚
+â”‚ â”‚ â”€â”€Avgâ”€â”€      78%    38%     33%     66%     21%     18%    -25%        â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ 15 KPIs Scorecard (table)  â”‚ â”‚ Market Intelligence Summary              â”‚â”‚
+â”‚ â”‚ KPI                      â”ƒTargetâ”ƒActualâ”ƒStatusâ”‚ â”‚ Top 5 Rising Skills:         â”‚â”‚
+â”‚ â”‚ Org Readiness             â”ƒ>60%  â”ƒ67%   â”‚âœ…   â”‚ â”‚ Agent Eng: +45% YoY       â”‚â”‚
+â”‚ â”‚ Skill Coverage            â”ƒ>60%  â”ƒ73%   â”‚âœ…   â”‚ â”‚ RAG:       +40%            â”‚â”‚
+â”‚ â”‚ Learning Velocity         â”ƒ>0.25 â”ƒ0.31  â”‚âœ…   â”‚ â”‚ Gen AI:    +35%            â”‚â”‚
+â”‚ â”‚ Rec Acceptance            â”ƒ>30%  â”ƒ34%   â”‚âœ…   â”‚ â”‚ Rust:      +28%            â”‚â”‚
+â”‚ â”‚ Assessment Accuracy       â”ƒ>85%  â”ƒ82%   â”‚âš ï¸   â”‚ â”‚ K8s:       +22%            â”‚â”‚
+â”‚ â”‚ Evidence Quality          â”ƒ>0.75 â”ƒ0.79  â”‚âœ…   â”‚                              â”‚â”‚
+â”‚ â”‚ Gap Closure Rate          â”ƒ>60%  â”ƒ58%   â”‚âš ï¸   â”‚ Top 3 Skill Gaps:           â”‚â”‚
+â”‚ â”‚ Data Freshness            â”ƒ>95%  â”ƒ97%   â”‚âœ…   â”‚ â”‚ K8s: 54% coverage gap     â”‚â”‚
+â”‚ â”‚ Time to Value             â”ƒ<7d   â”ƒ5.2d  â”‚âœ…   â”‚ â”‚ GraphQL: 48%              â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.6 Market Intelligence Dashboard
@@ -728,35 +728,35 @@ USER_GROWTH_DASHBOARD = DashboardConfig(
 **Role:** Admin + Executive | **Refresh:** 1 hour | **Default range:** 90 days
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  MARKET INTELLIGENCE DASHBOARD                                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐       │
-│ │ Skills       │ │ Avg Demand   │ │ Avg Salary   │ │ Emerging     │       │
-│ │ Tracked: 512 │ │ 67 / 100     │ │ $128K        │ │ Detected: 8  │       │
-│ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌──────────────────────────────────────────────────────────────────────────┐│
-│ │ Salary vs Demand Matrix (scatter)                                       ││
-│ │ Salary                                                            │     ││
-│ │ $200K┤  ··Agent·Eng···········································     │     ││
-│ │ $150K┤  ··MLOps··AWS··K8s·····································     │     ││
-│ │ $100K┤  ··React··Python··TS···································     │     ││
-│ │ $80K └────────────────────────────────────────────────────         │     ││
-│ │       50               65           80              100             │     ││
-│ │                          Demand Score                               │     ││
-│ └──────────────────────────────────────────────────────────────────────────┘│
-├─────────────────────────────────────────────────────────────────────────────┤
-│ ┌────────────────────────────┐ ┌──────────────────────────────────────────┐│
-│ │ Growth Rate Leaders (table)│ │ Source Health (gauges)                  ││
-│ │ Skill           ┃ Growth   │ │ LinkedIn:   98%  █████████              ││
-│ │ Agent Eng       ┃ +45%     │ │ Indeed:     95%  █████████              ││
-│ │ RAG Systems     ┃ +40%     │ │ Glassdoor:  92%  ████████               ││
-│ │ Gen AI Apps     ┃ +35%     │ │ Upwork:     88%  ████████               ││
-│ │ Rust            ┃ +28%     │ │ GitHub:     99%  █████████              ││
-│ │ WebAssembly     ┃ +25%     │ │ Google Trends:90% ████████              ││
-│ └────────────────────────────┘ └──────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  MARKET INTELLIGENCE DASHBOARD                                             â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚ â”‚ Skills       â”‚ â”‚ Avg Demand   â”‚ â”‚ Avg Salary   â”‚ â”‚ Emerging     â”‚       â”‚
+â”‚ â”‚ Tracked: 512 â”‚ â”‚ 67 / 100     â”‚ â”‚ $128K        â”‚ â”‚ Detected: 8  â”‚       â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Salary vs Demand Matrix (scatter)                                       â”‚â”‚
+â”‚ â”‚ Salary                                                            â”‚     â”‚â”‚
+â”‚ â”‚ $200Kâ”¤  Â·Â·AgentÂ·EngÂ·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·     â”‚     â”‚â”‚
+â”‚ â”‚ $150Kâ”¤  Â·Â·MLOpsÂ·Â·AWSÂ·Â·K8sÂ·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·     â”‚     â”‚â”‚
+â”‚ â”‚ $100Kâ”¤  Â·Â·ReactÂ·Â·PythonÂ·Â·TSÂ·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·Â·     â”‚     â”‚â”‚
+â”‚ â”‚ $80K â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€         â”‚     â”‚â”‚
+â”‚ â”‚       50               65           80              100             â”‚     â”‚â”‚
+â”‚ â”‚                          Demand Score                               â”‚     â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚ â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”â”‚
+â”‚ â”‚ Growth Rate Leaders (table)â”‚ â”‚ Source Health (gauges)                  â”‚â”‚
+â”‚ â”‚ Skill           â”ƒ Growth   â”‚ â”‚ LinkedIn:   98%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ              â”‚â”‚
+â”‚ â”‚ Agent Eng       â”ƒ +45%     â”‚ â”‚ Indeed:     95%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ              â”‚â”‚
+â”‚ â”‚ RAG Systems     â”ƒ +40%     â”‚ â”‚ Glassdoor:  92%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ               â”‚â”‚
+â”‚ â”‚ Gen AI Apps     â”ƒ +35%     â”‚ â”‚ Upwork:     88%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ               â”‚â”‚
+â”‚ â”‚ Rust            â”ƒ +28%     â”‚ â”‚ GitHub:     99%  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ              â”‚â”‚
+â”‚ â”‚ WebAssembly     â”ƒ +25%     â”‚ â”‚ Google Trends:90% â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ              â”‚â”‚
+â”‚ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 2.7 Custom Dashboard Builder
@@ -844,7 +844,7 @@ class SkillAcquisitionTracker:
 
 ### 3.2 Level Distribution Shifts
 
-Tracks how the distribution of skill levels changes over time — critical for understanding if users are progressing or plateauing.
+Tracks how the distribution of skill levels changes over time â€” critical for understanding if users are progressing or plateauing.
 
 ```python
 class LevelDistributionTracker:
@@ -1099,7 +1099,7 @@ class CategoryVelocityTracker:
 
 ### 4.3 Learning Rate Deceleration Detection
 
-Detects when a user's learning velocity is slowing down — enabling early intervention.
+Detects when a user's learning velocity is slowing down â€” enabling early intervention.
 
 ```python
 class DecelerationDetector:
@@ -1327,7 +1327,7 @@ class TimeToConversion:
 
 ### 6.1 Portfolio Income Tracking
 
-Tracks the user's total estimated income across all 10 income sources defined in skills.md §18.1.
+Tracks the user's total estimated income across all 10 income sources defined in skills.md Â§18.1.
 
 ```python
 class IncomePortfolioTracker:
@@ -1400,7 +1400,7 @@ class LearningROICalculator:
 
 ### 6.3 Diversification Score Trending
 
-Tracks the income diversification score (skills.md §18.6) over time.
+Tracks the income diversification score (skills.md Â§18.6) over time.
 
 ```python
 class DiversificationTracker:
@@ -1433,8 +1433,8 @@ class DiversificationTracker:
 
     def _recommendation(self, score: float) -> str:
         if score >= 0.75: return "Well-diversified income portfolio"
-        if score >= 0.5: return "Moderate diversification — consider adding income sources"
-        return "Low diversification — high reliance on few sources. Consider freelancing or content creation."
+        if score >= 0.5: return "Moderate diversification â€” consider adding income sources"
+        return "Low diversification â€” high reliance on few sources. Consider freelancing or content creation."
 
     async def trend(self, user_id: str, months: int = 6) -> list[dict]:
         return await self.db.fetch_all(
@@ -1971,21 +1971,21 @@ The following 15 KPIs unify metrics across all 8 skills engines. Each KPI is def
 
 | ID | KPI Name | Formula | Source | Freq | I | T | M | E |
 |---|---|---|---|---|---|---|---|---|
-| KPI-01 | **Avg Skill Level** | `avg(user_skills.level)` | User Skills | Weekly | ≥3.0 | ≥3.5 | ≥3.5 | ≥3.0 |
-| KPI-02 | **Skill Count** | `count(user_skills.*)` | User Skills | Weekly | ≥12 | ≥20 | ≥30 | ≥50 |
-| KPI-03 | **Readiness Score** | `(weighted readiness / total weight) * 100` | Career Readiness | Weekly | ≥75% | ≥70% | ≥65% | ≥60% |
-| KPI-04 | **Learning Velocity** | `avg(level_change_90d) / 90 * 30` | Learning Activities | Monthly | ≥0.15 | ≥0.12 | ≥0.10 | ≥0.08 |
-| KPI-05 | **Gap Closure Rate** | `closed_gaps / month` | Gap Tracking | Monthly | ≥3 | ≥5 | ≥8 | ≥15 |
-| KPI-06 | **Diversification Score** | `0.4*S + 0.3*B + 0.2*D + 0.1*St` | Income Portfolio | Monthly | ≥60% | ≥55% | ≥50% | — |
-| KPI-07 | **Income Per Skill Hour** | `attributed_income / learning_hours` | Income Attribution | Monthly | ≥$40 | ≥$35 | — | — |
-| KPI-08 | **Market Alignment** | `avg(demand_score) / 100` | Market Data | Monthly | ≥0.70 | ≥0.75 | ≥0.70 | ≥0.65 |
-| KPI-09 | **Emerging Skill Coverage** | `emerging_skills_count` | User Skills | Monthly | ≥3 | ≥5 | ≥8 | ≥15 |
-| KPI-10 | **Milestone Completion** | `(completed / total) * 100` | Roadmaps | Monthly | ≥60% | ≥55% | ≥50% | ≥40% |
-| KPI-11 | **Evidence Ratio** | `evidence_items / skill` | Evidence | Weekly | ≥2.0 | ≥2.5 | ≥3.0 | — |
-| KPI-12 | **Skill Trajectory** | `slope(level_over_time) * 100` | Intelligence Scores | Monthly | ≥2.0 | ≥1.5 | ≥1.0 | ≥0.5 |
-| KPI-13 | **Forecast Accuracy** | `1 - mape / 100` | Forecast Engine | Quarterly | ≥75% | ≥80% | ≥80% | ≥85% |
-| KPI-14 | **Recommendation Acceptance** | `accepted / total * 100` | Recommendations | Monthly | ≥50% | ≥55% | ≥60% | — |
-| KPI-15 | **Org Skill Coverage** | `categories_covered / total_categories` | User Skills | Monthly | — | — | ≥70% | ≥80% |
+| KPI-01 | **Avg Skill Level** | `avg(user_skills.level)` | User Skills | Weekly | â‰¥3.0 | â‰¥3.5 | â‰¥3.5 | â‰¥3.0 |
+| KPI-02 | **Skill Count** | `count(user_skills.*)` | User Skills | Weekly | â‰¥12 | â‰¥20 | â‰¥30 | â‰¥50 |
+| KPI-03 | **Readiness Score** | `(weighted readiness / total weight) * 100` | Career Readiness | Weekly | â‰¥75% | â‰¥70% | â‰¥65% | â‰¥60% |
+| KPI-04 | **Learning Velocity** | `avg(level_change_90d) / 90 * 30` | Learning Activities | Monthly | â‰¥0.15 | â‰¥0.12 | â‰¥0.10 | â‰¥0.08 |
+| KPI-05 | **Gap Closure Rate** | `closed_gaps / month` | Gap Tracking | Monthly | â‰¥3 | â‰¥5 | â‰¥8 | â‰¥15 |
+| KPI-06 | **Diversification Score** | `0.4*S + 0.3*B + 0.2*D + 0.1*St` | Income Portfolio | Monthly | â‰¥60% | â‰¥55% | â‰¥50% | â€” |
+| KPI-07 | **Income Per Skill Hour** | `attributed_income / learning_hours` | Income Attribution | Monthly | â‰¥$40 | â‰¥$35 | â€” | â€” |
+| KPI-08 | **Market Alignment** | `avg(demand_score) / 100` | Market Data | Monthly | â‰¥0.70 | â‰¥0.75 | â‰¥0.70 | â‰¥0.65 |
+| KPI-09 | **Emerging Skill Coverage** | `emerging_skills_count` | User Skills | Monthly | â‰¥3 | â‰¥5 | â‰¥8 | â‰¥15 |
+| KPI-10 | **Milestone Completion** | `(completed / total) * 100` | Roadmaps | Monthly | â‰¥60% | â‰¥55% | â‰¥50% | â‰¥40% |
+| KPI-11 | **Evidence Ratio** | `evidence_items / skill` | Evidence | Weekly | â‰¥2.0 | â‰¥2.5 | â‰¥3.0 | â€” |
+| KPI-12 | **Skill Trajectory** | `slope(level_over_time) * 100` | Intelligence Scores | Monthly | â‰¥2.0 | â‰¥1.5 | â‰¥1.0 | â‰¥0.5 |
+| KPI-13 | **Forecast Accuracy** | `1 - mape / 100` | Forecast Engine | Quarterly | â‰¥75% | â‰¥80% | â‰¥80% | â‰¥85% |
+| KPI-14 | **Recommendation Acceptance** | `accepted / total * 100` | Recommendations | Monthly | â‰¥50% | â‰¥55% | â‰¥60% | â€” |
+| KPI-15 | **Org Skill Coverage** | `categories_covered / total_categories` | User Skills | Monthly | â€” | â€” | â‰¥70% | â‰¥80% |
 
 ### 10.2 KPI Engine Implementation
 
@@ -2137,7 +2137,7 @@ Save this as `grafana/skills-analytics-dashboard.json` and import into Grafana v
 ```json
 {
   "dashboard": {
-    "title": "Skills Analytics — Enterprise",
+    "title": "Skills Analytics â€” Enterprise",
     "uid": "skills-analytics-enterprise",
     "tags": ["skills", "analytics", "enterprise"],
     "timezone": "browser",
@@ -2241,20 +2241,20 @@ CREATE TABLE kpi_alerts (
 
 ## A. Formula Registry
 
-| ID | Formula | Description | Engine | § Reference |
+| ID | Formula | Description | Engine | Â§ Reference |
 |---|---|---|---|---|---|
-| F-001 | `S_k = Σ w_i · s_i / Σ w_i` | Weighted skill score | SkillAssessment | §1.3 |
-| F-002 | `ΔL_30 = (L_t - L_{t-30}) / 30` | Learning velocity (30-day) | SkillAssessment | §1.3 |
-| F-003 | `R = Σ (w_i · r_i) / Σ w_i` | Role readiness score | CareerReadiness | §7.1 |
-| F-004 | `RoI_h = I_annual / H_total` | ROI per learning hour | IncomeAnalytics | §6.2 |
-| F-005 | `M_a = 1 - Σ (i_j / I)^2` | Market alignment index | MarketIntel | §8.3 |
-| F-006 | `L_t = α · v_t + (1-α) · (L_{t-1} + T_{t-1})` | Holt-Winters level | Forecaster | §8.1 |
-| F-007 | `G_c = N_closed / Δt` | Gap closure rate | GapTracking | §7.2 |
-| F-008 | `D_s = 0.4·S_c + 0.3·B + 0.2·D + 0.1·St` | Diversification score | IncomeAnalytics | §6.3 |
-| F-009 | `P(a) = 1 / (1 + e^{-(β_0 + β_1·x_1 + ...)})` | Success probability | OpportunityMatching | |
+| F-001 | `S_k = Î£ w_i Â· s_i / Î£ w_i` | Weighted skill score | SkillAssessment | Â§1.3 |
+| F-002 | `Î”L_30 = (L_t - L_{t-30}) / 30` | Learning velocity (30-day) | SkillAssessment | Â§1.3 |
+| F-003 | `R = Î£ (w_i Â· r_i) / Î£ w_i` | Role readiness score | CareerReadiness | Â§7.1 |
+| F-004 | `RoI_h = I_annual / H_total` | ROI per learning hour | IncomeAnalytics | Â§6.2 |
+| F-005 | `M_a = 1 - Î£ (i_j / I)^2` | Market alignment index | MarketIntel | Â§8.3 |
+| F-006 | `L_t = Î± Â· v_t + (1-Î±) Â· (L_{t-1} + T_{t-1})` | Holt-Winters level | Forecaster | Â§8.1 |
+| F-007 | `G_c = N_closed / Î”t` | Gap closure rate | GapTracking | Â§7.2 |
+| F-008 | `D_s = 0.4Â·S_c + 0.3Â·B + 0.2Â·D + 0.1Â·St` | Diversification score | IncomeAnalytics | Â§6.3 |
+| F-009 | `P(a) = 1 / (1 + e^{-(Î²_0 + Î²_1Â·x_1 + ...)})` | Success probability | OpportunityMatching | |
 | F-010 | `E_r = N_evidence / N_skills` | Evidence ratio | SkillEvidence | |
 | F-011 | `T_s = slope(L(t))` | Skill trajectory vector | Intelligence | |
-| F-012 | `MAPE = (1/n) · Σ |(A_i - F_i)/A_i|·100` | Forecast error | Forecaster | §8.1 |
+| F-012 | `MAPE = (1/n) Â· Î£ |(A_i - F_i)/A_i|Â·100` | Forecast error | Forecaster | Â§8.1 |
 
 ## B. Database Schema
 
@@ -2316,16 +2316,16 @@ INSERT INTO skill_report_templates (name, description, config) VALUES
 
 | Component | Status | Lines | Dependencies | Priority |
 |---|---|---|---|---|
-| Metrics Framework (§1) | Design | ~250 | None | P0 |
-| Dashboard & Visualization (§2) | Design | ~200 | Metrics Framework | P0 |
-| Growth Analytics (§3) | Design | ~180 | Learning Activities | P1 |
-| Learning Velocity (§4) | Design | ~150 | SkillAssessment engine | P1 |
-| Opportunity Analytics (§5) | Design | ~200 | OpportunityMatching engine | P1 |
-| Income Analytics (§6) | Design | ~250 | Income Entries | P1 |
-| Career Analytics (§7) | Design | ~220 | CareerReadiness engine | P1 |
-| Predictive Analytics (§8) | Design | ~300 | Intelligence scores | P2 |
-| Executive Reports (§9) | Design | ~180 | All engines | P2 |
-| Enterprise KPIs (§10) | Design | ~350 | KPI Engine | P0 |
+| Metrics Framework (Â§1) | Design | ~250 | None | P0 |
+| Dashboard & Visualization (Â§2) | Design | ~200 | Metrics Framework | P0 |
+| Growth Analytics (Â§3) | Design | ~180 | Learning Activities | P1 |
+| Learning Velocity (Â§4) | Design | ~150 | SkillAssessment engine | P1 |
+| Opportunity Analytics (Â§5) | Design | ~200 | OpportunityMatching engine | P1 |
+| Income Analytics (Â§6) | Design | ~250 | Income Entries | P1 |
+| Career Analytics (Â§7) | Design | ~220 | CareerReadiness engine | P1 |
+| Predictive Analytics (Â§8) | Design | ~300 | Intelligence scores | P2 |
+| Executive Reports (Â§9) | Design | ~180 | All engines | P2 |
+| Enterprise KPIs (Â§10) | Design | ~350 | KPI Engine | P0 |
 
 ## D. Appendix: Edge Case Matrix
 
@@ -2333,7 +2333,7 @@ INSERT INTO skill_report_templates (name, description, config) VALUES
 |---|---|---|---|
 | User has zero skills | Count = 0 | Empty state messaging | INFO |
 | Single skill only | Skill count = 1 | Skill diversification nudge | WARN |
-| No learning in 90 days | Δ level change = 0 | Engagement reminder | WARN |
+| No learning in 90 days | Î” level change = 0 | Engagement reminder | WARN |
 | No income data | Income = 0 | Skip income section | INFO |
 | All skills in one category | Category count = 1 | Diversification nudge | WARN |
 | Stale targets (>60d no update) | Flag in query | Archive + notify | WARN |

@@ -1,4 +1,4 @@
-# SkillAuditEnterprise v2.0 — Skills.md Enterprise Audit (20-Dimension)
+﻿# SkillAuditEnterprise v2.0 â€” Skills.md Enterprise Audit (20-Dimension)
 
 ---
 
@@ -6,11 +6,11 @@
 
 | Field | Value |
 |---|---|
-| Document ID | SB-SKILLAUDIT-ENT-002 |
+| Document ID | AI-SAE-001 |
 | Version | 2.0.0 |
 | Status | Active |
 | Last Updated | 2026-06-13 |
-| Classification | Internal — Enterprise Audit Report |
+| Classification | Internal â€” Enterprise Audit Report |
 | Audit Target | `docs/ai/skills/skills.md` (3,797 lines, 33 sections, 2 appendices) |
 | Cross-Referenced | All 9 companion docs under `docs/ai/skills/` |
 | Audit Scope | 20 enterprise dimensions across all sections + companion docs |
@@ -119,7 +119,7 @@ flowchart LR
 
 | Metric | Value |
 |---|---|
-| **Overall Maturity Score** | **72/100** (Managed) — v1.0 was 69/100; corrected +3 via companion doc cross-reference |
+| **Overall Maturity Score** | **72/100** (Managed) â€” v1.0 was 69/100; corrected +3 via companion doc cross-reference |
 | Dimensions at Optimizing (90+) | 0 |
 | Dimensions at Quantitatively Managed (80-89) | 4 (Product Completeness, Enterprise Readiness, Knowledge Graph, Governance) |
 | Dimensions at Managed (70-79) | 7 (AI, Agent, Database, API, Analytics, Security, Future-Proofing, Maintainability) |
@@ -139,36 +139,36 @@ flowchart LR
 
 ```
 Scorecard Legend:
-  ██ Optimizing (90-100)   ▓▓ Quantitatively Managed (80-89)
-  ▒▒ Managed (70-79)       ░░ Defined (60-69)        ░░ Initial (0-39)
+  â–ˆâ–ˆ Optimizing (90-100)   â–“â–“ Quantitatively Managed (80-89)
+  â–’â–’ Managed (70-79)       â–‘â–‘ Defined (60-69)        â–‘â–‘ Initial (0-39)
 
-  Product Completeness     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  82/100 (+0)
-  Enterprise Readiness     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  88/100 (+0)
-  Scalability              ░░░░░░░░░░░░░░░░░░  64/100 (+6)
-  AI Readiness             ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   76/100 (+5)
-  Agent Readiness          ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   76/100 (+0)
-  Knowledge Graph          ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  82/100 (+17)
-  Database                 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   78/100 (+15)
-  API                      ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   74/100 (+0)
-  Analytics                ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   72/100 (+12)
-  Security                 ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   72/100 (+0)
-  Governance               ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  85/100 (+0)
-  Observability            ░░░░░░░░░░░░░░░░░░  52/100 (+14)
-  Future-Proofing          ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   79/100 (+0)
-  Multi-Year Maintain.     ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   70/100 (+0)
-  UX Readiness             ░░░░░░░░░░░░░░░░░░  67/100 (+0)
-  ─────────────────────────────────────────────────
-  DR & Business Continuity ░░░░░░░░░░░░░░░░░░  18/100 (NEW)
-  Cost Management/FinOps   ░░░░░░░░░░░░░░░░░░  38/100 (NEW)
-  Developer Experience     ░░░░░░░░░░░░░░░░░░  28/100 (NEW)
-  Open Source Strategy     ░░░░░░░░░░░░░░░░░░  12/100 (NEW)
-  Competitive Positioning  ░░░░░░░░░░░░░░░░░░  22/100 (NEW)
-  ─────────────────────────────────────────────────
-  OVERALL (20-dim mean)    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   61.5/100
-  OVERALL (15-dim legacy)  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒   72.1/100
+  Product Completeness     â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“  82/100 (+0)
+  Enterprise Readiness     â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“  88/100 (+0)
+  Scalability              â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  64/100 (+6)
+  AI Readiness             â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   76/100 (+5)
+  Agent Readiness          â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   76/100 (+0)
+  Knowledge Graph          â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“  82/100 (+17)
+  Database                 â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   78/100 (+15)
+  API                      â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   74/100 (+0)
+  Analytics                â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   72/100 (+12)
+  Security                 â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   72/100 (+0)
+  Governance               â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“â–“  85/100 (+0)
+  Observability            â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  52/100 (+14)
+  Future-Proofing          â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   79/100 (+0)
+  Multi-Year Maintain.     â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   70/100 (+0)
+  UX Readiness             â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  67/100 (+0)
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  DR & Business Continuity â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  18/100 (NEW)
+  Cost Management/FinOps   â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  38/100 (NEW)
+  Developer Experience     â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  28/100 (NEW)
+  Open Source Strategy     â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  12/100 (NEW)
+  Competitive Positioning  â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘â–‘  22/100 (NEW)
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  OVERALL (20-dim mean)    â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   61.5/100
+  OVERALL (15-dim legacy)  â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’   72.1/100
 ```
 
-**Key Insight**: The jump from 15 to 20 dimensions drops the overall from 72 to 61.5 — the 5 new enterprise dimensions expose real gaps that most products at this stage legitimately have. This is normal for a pre-launch system. The remediation roadmap addresses all 5.
+**Key Insight**: The jump from 15 to 20 dimensions drops the overall from 72 to 61.5 â€” the 5 new enterprise dimensions expose real gaps that most products at this stage legitimately have. This is normal for a pre-launch system. The remediation roadmap addresses all 5.
 
 ### 0.3 Risk Distribution
 
@@ -196,16 +196,16 @@ Scorecard Legend:
 
 ### 0.5 Top-10 Recommendations
 
-1. **Generate full PostgreSQL DDL + Neo4j schema** — SkillDatabaseArchitecture.md exists but needs synchronization with main spec
-2. **Design unified observability architecture** — SLOs, OpenTelemetry tracing, structured logging, alerting rules
-3. **Build disaster recovery playbook** — RTO/RPO targets, backup strategies, failover testing, data restoration SLAs
-4. **Create developer SDK & sandbox** — API client libraries, interactive playground, webhook testing tools
-5. **Define open source governance model** — What parts are public? Contribution process, CLA, community guidelines
-6. **Complete API security hardening** — RLS policies, rate limiting, request validation schemas across all endpoints
-7. **Build FinOps model** — Per-tenant cost allocation, AI token budget governance, infrastructure cost projections
-8. **Implement CI/CD pipeline** — Build, test, deploy, prompt validation across all services
-9. **Add WCAG 2.1 AA accessibility standards** — Wireframes, color contrast, keyboard navigation, screen reader support
-10. **Publish competitive benchmark** — Feature comparison vs Workday Skills Cloud, LinkedIn, Degreed, Pluralsight
+1. **Generate full PostgreSQL DDL + Neo4j schema** â€” SkillDatabaseArchitecture.md exists but needs synchronization with main spec
+2. **Design unified observability architecture** â€” SLOs, OpenTelemetry tracing, structured logging, alerting rules
+3. **Build disaster recovery playbook** â€” RTO/RPO targets, backup strategies, failover testing, data restoration SLAs
+4. **Create developer SDK & sandbox** â€” API client libraries, interactive playground, webhook testing tools
+5. **Define open source governance model** â€” What parts are public? Contribution process, CLA, community guidelines
+6. **Complete API security hardening** â€” RLS policies, rate limiting, request validation schemas across all endpoints
+7. **Build FinOps model** â€” Per-tenant cost allocation, AI token budget governance, infrastructure cost projections
+8. **Implement CI/CD pipeline** â€” Build, test, deploy, prompt validation across all services
+9. **Add WCAG 2.1 AA accessibility standards** â€” Wireframes, color contrast, keyboard navigation, screen reader support
+10. **Publish competitive benchmark** â€” Feature comparison vs Workday Skills Cloud, LinkedIn, Degreed, Pluralsight
 
 ---
 
@@ -217,7 +217,7 @@ v2.0 expands from 15 to 20 dimensions. Each was evaluated by:
 1. **Systematic review** of all 33 sections and 2 appendices of `skills.md`
 2. **Cross-reference verification** against 9 companion docs under `docs/ai/skills/`
 3. **Gap identification** against industry enterprise architecture standards
-4. **Score recalibration** — v1.0 scores were adjusted upward where companion docs fill gaps
+4. **Score recalibration** â€” v1.0 scores were adjusted upward where companion docs fill gaps
 5. **5 new dimensions** added for true enterprise coverage: DR/BC, Cost/FinOps, DX, OSS, Competitive
 
 ### 1.2 Maturity Model
@@ -283,13 +283,13 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | Market Differentiation | 10% | 75 | 7.5 |
 | **Total** | **100%** | | **82.0** |
 
-*(Content identical to v1.0 §2 — see previous audit for full detail)*
+*(Content identical to v1.0 Â§2 â€” see previous audit for full detail)*
 
 ### 2.2 Key Gaps (Unchanged)
 
-- No concrete data schemas (§24)
-- No concrete API request/response schemas (§25)
-- No concrete UI wireframes or mockups (§26)
+- No concrete data schemas (Â§24)
+- No concrete API request/response schemas (Â§25)
+- No concrete UI wireframes or mockups (Â§26)
 
 ---
 
@@ -297,7 +297,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Optimizing**
 
-*(Content identical to v1.0 §3 — see previous audit for full detail)*
+*(Content identical to v1.0 Â§3 â€” see previous audit for full detail)*
 
 ---
 
@@ -305,7 +305,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*Recalibrated +6: Companion docs (SkillDatabaseArchitecture.md §12.4, SkillOpportunityMatching.md §11, SkillEvidence.md §10.3, SkillMarketIntelligence.md §2.9) provide caching strategy covering 5 service layers.*
+*Recalibrated +6: Companion docs (SkillDatabaseArchitecture.md Â§12.4, SkillOpportunityMatching.md Â§11, SkillEvidence.md Â§10.3, SkillMarketIntelligence.md Â§2.9) provide caching strategy covering 5 service layers.*
 
 ### 4.1 Score Breakdown
 
@@ -323,26 +323,26 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No caching strategy (was Critical) | SkillDatabaseArchitecture.md §12.4 | Redis TTL, invalidation, materialized views, CDN for taxonomy |
-| No caching strategy | SkillOpportunityMatching.md §11 | In-Memory Scoring Cache (TTLCache, maxsize/ttl) |
-| No caching strategy | SkillEvidence.md §10.3 | 8 Redis key patterns with per-key TTLs (300s-86400s) |
-| No caching strategy | SkillMarketIntelligence.md §2.9 | Cache Strategy with TTL + max_entries |
-| No caching strategy | SkillAssessment.md §10.5 | Multi-level caching with tenant config |
+| No caching strategy (was Critical) | SkillDatabaseArchitecture.md Â§12.4 | Redis TTL, invalidation, materialized views, CDN for taxonomy |
+| No caching strategy | SkillOpportunityMatching.md Â§11 | In-Memory Scoring Cache (TTLCache, maxsize/ttl) |
+| No caching strategy | SkillEvidence.md Â§10.3 | 8 Redis key patterns with per-key TTLs (300s-86400s) |
+| No caching strategy | SkillMarketIntelligence.md Â§2.9 | Cache Strategy with TTL + max_entries |
+| No caching strategy | SkillAssessment.md Â§10.5 | Multi-level caching with tenant config |
 | No caching strategy | SkillAgent.md | cache_get/set tool (15-min TTL) |
 
 ### 4.3 Remaining Gaps
 
 | Gap | Severity | Detail | Risk |
 |---|---|---|---|
-| No database partitioning scheme | High | 100M+ evidence items need time partitioning | — |
-| No read replica strategy | High | Analytics queries will hit primary DB | — |
-| No horizontal scaling architecture | High | No pod auto-scaling, sharding, or regional deployment | — |
-| No connection pooling strategy | Medium | Supabase connection limits at scale | — |
-| No cost projection model at scale | Medium | Cost per user/month not modeled | — |
-| No warm standby/failover architecture | Medium | 99.95% SLA requires multi-region | — |
-| No CDN implementation detail | Medium | Mentioned but no config | — |
-| No data archival strategy for cold data | Low | Audit logs indefinite | — |
-| No WebSocket/realtime scaling | Low | Not explicitly addressed | — |
+| No database partitioning scheme | High | 100M+ evidence items need time partitioning | â€” |
+| No read replica strategy | High | Analytics queries will hit primary DB | â€” |
+| No horizontal scaling architecture | High | No pod auto-scaling, sharding, or regional deployment | â€” |
+| No connection pooling strategy | Medium | Supabase connection limits at scale | â€” |
+| No cost projection model at scale | Medium | Cost per user/month not modeled | â€” |
+| No warm standby/failover architecture | Medium | 99.95% SLA requires multi-region | â€” |
+| No CDN implementation detail | Medium | Mentioned but no config | â€” |
+| No data archival strategy for cold data | Low | Audit logs indefinite | â€” |
+| No WebSocket/realtime scaling | Low | Not explicitly addressed | â€” |
 
 ### 4.4 Recommendations
 
@@ -377,8 +377,8 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No AI training pipeline | SkillIntelligence.md §5 | Pipeline Orchestrator with PipelineStateStore, incremental processing |
-| No cost tracking | SkillIntelligence.md §7.7 | Daily budget, workflow budgets, token usage tracking, CostAnomaly alert |
+| No AI training pipeline | SkillIntelligence.md Â§5 | Pipeline Orchestrator with PipelineStateStore, incremental processing |
+| No cost tracking | SkillIntelligence.md Â§7.7 | Daily budget, workflow budgets, token usage tracking, CostAnomaly alert |
 | No token budget allocation | SkillOpportunityMatching.md | token_budget: 4096 in prompt config |
 
 ### 5.3 Remaining Gaps
@@ -399,7 +399,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §6 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§6 â€” see previous audit for full detail)*
 
 ---
 
@@ -424,13 +424,13 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No graph database schema | SkillGraphArchitecture.md §3-§5 | Complete Neo4j schema: 10 node types, 15 relationship types, properties |
-| No graph algorithm specifications | SkillGraphArchitecture.md §7 | Shortest path, centrality, community detection, PageRank |
-| No graph indexing strategy | SkillGraphArchitecture.md §11 | Neo4j indexes, relationship indexes, composite indexes |
-| No graph data freshness/SLA | SkillGraphArchitecture.md §8 | Sync latency budgets, TTL-based freshness |
-| No graph caching strategy | SkillGraphArchitecture.md §12 | Query result caching, materialized graph views |
-| No visualization library recommendation | SkillGraphArchitecture.md §10 | D3.js force-directed, Cytoscape.js, custom React graph components |
-| No tree rendering performance targets | SkillGraphArchitecture.md §6 | Performance budget: <200ms P95 for 1000-node trees |
+| No graph database schema | SkillGraphArchitecture.md Â§3-Â§5 | Complete Neo4j schema: 10 node types, 15 relationship types, properties |
+| No graph algorithm specifications | SkillGraphArchitecture.md Â§7 | Shortest path, centrality, community detection, PageRank |
+| No graph indexing strategy | SkillGraphArchitecture.md Â§11 | Neo4j indexes, relationship indexes, composite indexes |
+| No graph data freshness/SLA | SkillGraphArchitecture.md Â§8 | Sync latency budgets, TTL-based freshness |
+| No graph caching strategy | SkillGraphArchitecture.md Â§12 | Query result caching, materialized graph views |
+| No visualization library recommendation | SkillGraphArchitecture.md Â§10 | D3.js force-directed, Cytoscape.js, custom React graph components |
+| No tree rendering performance targets | SkillGraphArchitecture.md Â§6 | Performance budget: <200ms P95 for 1000-node trees |
 
 ### 7.3 Remaining Gaps
 
@@ -464,15 +464,15 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No PostgreSQL DDL | SkillDatabaseArchitecture.md §3 + Appendix D | Full CREATE TABLE for 31 tables, enums, types |
-| No index definitions | SkillDatabaseArchitecture.md §5 | 70+ indexes: primary, unique, composite, partial, full-text, covering |
-| No RLS policies | SkillDatabaseArchitecture.md §11.2 | Row-level security policies for all user-scoped tables |
-| No partitioning scheme | SkillDatabaseArchitecture.md §3.4 | Time-based partitioning for evidence/audit_logs using pg_partman |
-| No enum definitions | SkillDatabaseArchitecture.md §3.1 | Complete type definitions: skill_level, skill_state, evidence_type, etc. |
-| No trigger functions | SkillDatabaseArchitecture.md §3.2 | updated_at triggers, audit triggers, versioning triggers |
-| No foreign key constraints | SkillDatabaseArchitecture.md §6 | Complete ON DELETE CASCADE/SET NULL specifications |
-| No full-text search configuration | SkillDatabaseArchitecture.md §5.3 | GIN indexes with tsvector for skills, categories |
-| No connection pooling | SkillDatabaseArchitecture.md §12.1 | PgBouncer configuration, pool sizing |
+| No PostgreSQL DDL | SkillDatabaseArchitecture.md Â§3 + Appendix D | Full CREATE TABLE for 31 tables, enums, types |
+| No index definitions | SkillDatabaseArchitecture.md Â§5 | 70+ indexes: primary, unique, composite, partial, full-text, covering |
+| No RLS policies | SkillDatabaseArchitecture.md Â§11.2 | Row-level security policies for all user-scoped tables |
+| No partitioning scheme | SkillDatabaseArchitecture.md Â§3.4 | Time-based partitioning for evidence/audit_logs using pg_partman |
+| No enum definitions | SkillDatabaseArchitecture.md Â§3.1 | Complete type definitions: skill_level, skill_state, evidence_type, etc. |
+| No trigger functions | SkillDatabaseArchitecture.md Â§3.2 | updated_at triggers, audit triggers, versioning triggers |
+| No foreign key constraints | SkillDatabaseArchitecture.md Â§6 | Complete ON DELETE CASCADE/SET NULL specifications |
+| No full-text search configuration | SkillDatabaseArchitecture.md Â§5.3 | GIN indexes with tsvector for skills, categories |
+| No connection pooling | SkillDatabaseArchitecture.md Â§12.1 | PgBouncer configuration, pool sizing |
 
 ### 8.3 Remaining Gaps
 
@@ -489,7 +489,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §9 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§9 â€” see previous audit for full detail)*
 
 ---
 
@@ -514,14 +514,14 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No ETL/ELT pipeline architecture | SkillIntelligence.md §5 | Pipeline Orchestrator, PipelineStateStore, DAG specifications |
-| No data warehouse model | SkillAnalytics.md §1, §10 | Star schema, fact/dimension tables, materialized views |
+| No ETL/ELT pipeline architecture | SkillIntelligence.md Â§5 | Pipeline Orchestrator, PipelineStateStore, DAG specifications |
+| No data warehouse model | SkillAnalytics.md Â§1, Â§10 | Star schema, fact/dimension tables, materialized views |
 | No dashboard technology recommendation | SkillAnalytics.md Appendix D | Grafana Dashboard JSON template included |
-| No real-time vs batch analytics split | SkillIntelligence.md §5 | Incremental vs full refresh pipeline stages |
-| No scheduled report generation | SkillAnalytics.md §10 | Automated KPI reporting cycle |
-| No export format specification | SkillAnalytics.md §9 | PDF report templates with layout specifications |
-| No anomaly detection on key metrics | SkillIntelligence.md §9 | CostAnomaly alerting, monitoring strategy |
-| No cohort analysis | SkillAnalytics.md §6 | Learning velocity by cohort dimensions |
+| No real-time vs batch analytics split | SkillIntelligence.md Â§5 | Incremental vs full refresh pipeline stages |
+| No scheduled report generation | SkillAnalytics.md Â§10 | Automated KPI reporting cycle |
+| No export format specification | SkillAnalytics.md Â§9 | PDF report templates with layout specifications |
+| No anomaly detection on key metrics | SkillIntelligence.md Â§9 | CostAnomaly alerting, monitoring strategy |
+| No cohort analysis | SkillAnalytics.md Â§6 | Learning velocity by cohort dimensions |
 
 ### 10.3 Remaining Gaps
 
@@ -537,7 +537,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §11 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§11 â€” see previous audit for full detail)*
 
 ---
 
@@ -545,7 +545,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Optimizing**
 
-*(Content similar to v1.0 §12 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§12 â€” see previous audit for full detail)*
 
 ---
 
@@ -553,7 +553,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Defined**
 
-*Recalibrated +14: SkillAgent.md §12 provides full OpenTelemetry tracing, Prometheus metrics, Grafana dashboards. SkillOpportunityMatching.md §8 includes monitoring stack with docker-compose. SkillIntelligence.md §9 adds monitoring strategy.*
+*Recalibrated +14: SkillAgent.md Â§12 provides full OpenTelemetry tracing, Prometheus metrics, Grafana dashboards. SkillOpportunityMatching.md Â§8 includes monitoring stack with docker-compose. SkillIntelligence.md Â§9 adds monitoring strategy.*
 
 ### 13.1 Score Breakdown
 
@@ -570,20 +570,20 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Gap from v1.0 | Filled By | How |
 |---|---|---|
-| No monitoring strategy | SkillAgent.md §12 | Observability section: OpenTelemetry, Jaeger, Prometheus, Grafana |
-| No alerting rules | SkillOpportunityMatching.md §8 | docker-compose with Prometheus + Grafana, alerting configuration |
-| No tracing | SkillAgent.md §12.3 | Tracing & Monitoring with spans, context propagation |
-| No logging standard | SkillIntelligence.md §9 | Structured logging for intelligence pipeline |
+| No monitoring strategy | SkillAgent.md Â§12 | Observability section: OpenTelemetry, Jaeger, Prometheus, Grafana |
+| No alerting rules | SkillOpportunityMatching.md Â§8 | docker-compose with Prometheus + Grafana, alerting configuration |
+| No tracing | SkillAgent.md Â§12.3 | Tracing & Monitoring with spans, context propagation |
+| No logging standard | SkillIntelligence.md Â§9 | Structured logging for intelligence pipeline |
 | No SLO/SLI definitions | SkillAgent.md Appendix F | P50/P95/P99, Success Rate, Availability, monthly error budget per sub-agent |
-| No health check endpoints | SkillAgent.md §12 | Health probes for agent services |
-| No dashboard templates | SkillOpportunityMatching.md §8 | Grafana Dashboard JSON included |
+| No health check endpoints | SkillAgent.md Â§12 | Health probes for agent services |
+| No dashboard templates | SkillOpportunityMatching.md Â§8 | Grafana Dashboard JSON included |
 | No error budget policy | SkillAgent.md Appendix F | Monthly error budget per sub-agent (2.2s/4.5s/9s P95 budgets) |
 
 ### 13.3 Remaining Gaps
 
 | Gap | Severity | Detail |
 |---|---|---|
-| No unified cross-service observability model | High | Each service has its own — no unified view |
+| No unified cross-service observability model | High | Each service has its own â€” no unified view |
 | No unified SLO framework across all services | High | Only SkillAgent.md has formal SLOs |
 | No capacity planning metrics | High | Proactive scaling not addressed |
 | No business metrics dashboard | Medium | Product health visible only in SkillAnalytics.md |
@@ -597,7 +597,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §14 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§14 â€” see previous audit for full detail)*
 
 ---
 
@@ -605,7 +605,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §15 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§15 â€” see previous audit for full detail)*
 
 ---
 
@@ -613,7 +613,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 **Maturity Level: Managed**
 
-*(Content similar to v1.0 §16 — see previous audit for full detail)*
+*(Content similar to v1.0 Â§16 â€” see previous audit for full detail)*
 
 
 ---
@@ -638,18 +638,18 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Coverage | Location | Detail |
 |---|---|---|
-| Rollback plan (5 scenarios) | skills.md §33.8 | Critical bug, integration failure, perf degradation, security incident, user backlash |
+| Rollback plan (5 scenarios) | skills.md Â§33.8 | Critical bug, integration failure, perf degradation, security incident, user backlash |
 | Crash recovery mention | SkillGraphArchitecture.md | "Crash recovery: Async queue replays on startup, ~10s RPO" |
-| SLA targets | skills.md §32.1 | 99.5%/99.9%/99.99% uptime tiers |
+| SLA targets | skills.md Â§32.1 | 99.5%/99.9%/99.99% uptime tiers |
 
 ### 17.3 Gaps
 
 | Gap | Severity | Detail | Risk |
 |---|---|---|---|
-| **No backup strategy** — no backup types, schedule, or retention | Critical | Full data loss scenario unaddressed | C-06 |
-| **No RTO/RPO targets** — no recovery time/point objectives | Critical | Cannot define SLA compliance | C-06 |
-| **No failover architecture** — no active/passive, multi-region, or HA config | Critical | Single-region deployment = single point of failure | C-06 |
-| No data restoration testing process | High | Backup existence ≠ ability to restore |
+| **No backup strategy** â€” no backup types, schedule, or retention | Critical | Full data loss scenario unaddressed | C-06 |
+| **No RTO/RPO targets** â€” no recovery time/point objectives | Critical | Cannot define SLA compliance | C-06 |
+| **No failover architecture** â€” no active/passive, multi-region, or HA config | Critical | Single-region deployment = single point of failure | C-06 |
+| No data restoration testing process | High | Backup existence â‰  ability to restore |
 | No BC/DR plan document | High | No documented runbook for disaster scenarios |
 | No business impact analysis (BIA) | High | No prioritization of which services restore first |
 | No DR testing cadence | Medium | Quarterly/annual disaster recovery tests |
@@ -662,9 +662,9 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Risk | Level | Impact |
 |---|---|---|
-| No backup strategy — full data loss on DB corruption | Critical | Irrecoverable loss of all skill data |
-| No RTO/RPO — cannot commit to SLA recovery times | Critical | Enterprise contract breach |
-| No failover — single-region outage = complete downtime | Critical | 99.99% SLA impossible |
+| No backup strategy â€” full data loss on DB corruption | Critical | Irrecoverable loss of all skill data |
+| No RTO/RPO â€” cannot commit to SLA recovery times | Critical | Enterprise contract breach |
+| No failover â€” single-region outage = complete downtime | Critical | 99.99% SLA impossible |
 
 ### 17.5 Recommendations
 
@@ -672,7 +672,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 - **Q3 2026**: Implement automated PostgreSQL backups (pgBackRest or WAL-G) with point-in-time recovery
 - **Q3 2026**: Design multi-region failover architecture (active-passive at minimum)
 - **Q4 2026**: Document BC/DR playbook with runbooks for 8 disaster scenarios
-- **Q4 2026**: Conduct quarterly DR testing (tabletop → simulated → full failover)
+- **Q4 2026**: Conduct quarterly DR testing (tabletop â†’ simulated â†’ full failover)
 - **Q1 2027**: Implement cross-region replication for all critical data stores
 - **Q1 2027**: Add backup encryption, monitoring, and automated restore validation
 
@@ -698,14 +698,14 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Coverage | Location | Detail |
 |---|---|---|
-| Daily budget per workflow | SkillIntelligence.md §7.7 | Cost optimization with daily budget, workflow budgets |
-| Token usage tracking | SkillIntelligence.md §7.7 | Token counting, CostAnomaly alerting via Slack |
+| Daily budget per workflow | SkillIntelligence.md Â§7.7 | Cost optimization with daily budget, workflow budgets |
+| Token usage tracking | SkillIntelligence.md Â§7.7 | Token counting, CostAnomaly alerting via Slack |
 | Budget parameters | SkillMarketIntelligence.md | budget_min/max, budget_score for market data operations |
 | Monthly budget per roadmap | SkillRoadmapEngine.md | monthly_budget_usd throughout architecture |
 | Token budget per prompt | SkillOpportunityMatching.md | token_budget: 4096 in prompt config |
 | Error budget per agent | SkillAgent.md Appendix F | Monthly error budget per sub-agent |
-| SLA cost credits | skills.md §32.1 | 5%/10% credits for SLA breaches |
-| Pricing tiers | skills.md §32.3 | 4-tier pricing ($5/$12/$25/custom per user/month) |
+| SLA cost credits | skills.md Â§32.1 | 5%/10% credits for SLA breaches |
+| Pricing tiers | skills.md Â§32.3 | 4-tier pricing ($5/$12/$25/custom per user/month) |
 
 ### 18.3 Gaps
 
@@ -754,20 +754,20 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Coverage | Location | Detail |
 |---|---|---|
-| API endpoints documented (50+) | skills.md §25.2-§25.11 | All 9 endpoint groups with methods and descriptions |
-| Webhook events defined | skills.md §30.6 | 6 event types with triggers and payload |
-| API architecture follows existing patterns | skills.md §25.1 | FastAPI routers, Supabase, JWT auth |
-| Rate limiting table | skills.md §27.6 | 6 endpoint groups with limits |
-| Versioning API | skills.md §25.11 | GET/PUT versions, diff, changelog |
-| SSO/SAML/OIDC/SCIM | skills.md §30.5 | Enterprise identity protocols |
-| Integration patterns | skills.md §30.1-§30.7 | HRIS, LMS, ATS integration specs |
+| API endpoints documented (50+) | skills.md Â§25.2-Â§25.11 | All 9 endpoint groups with methods and descriptions |
+| Webhook events defined | skills.md Â§30.6 | 6 event types with triggers and payload |
+| API architecture follows existing patterns | skills.md Â§25.1 | FastAPI routers, Supabase, JWT auth |
+| Rate limiting table | skills.md Â§27.6 | 6 endpoint groups with limits |
+| Versioning API | skills.md Â§25.11 | GET/PUT versions, diff, changelog |
+| SSO/SAML/OIDC/SCIM | skills.md Â§30.5 | Enterprise identity protocols |
+| Integration patterns | skills.md Â§30.1-Â§30.7 | HRIS, LMS, ATS integration specs |
 
 ### 19.3 Gaps
 
 | Gap | Severity | Detail | Risk |
 |---|---|---|---|
-| **No SDK/client libraries** — no Python, JS, or REST SDK | Critical | Integrators must write from scratch | C-07 |
-| **No sandbox/demo environment** — no test instance | Critical | Can't evaluate without deploying | C-07 |
+| **No SDK/client libraries** â€” no Python, JS, or REST SDK | Critical | Integrators must write from scratch | C-07 |
+| **No sandbox/demo environment** â€” no test instance | Critical | Can't evaluate without deploying | C-07 |
 | No OpenAPI/Swagger spec generation | High | No interactive API docs |
 | No developer portal | High | No centralized docs, API keys, status |
 | No API changelog | Medium | Breaking changes not communicated |
@@ -816,15 +816,15 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | MIT License | Root | Repository licensed MIT |
 | CODE_OF_CONDUCT.md | Root | Community standards |
 | CONTRIBUTING.md | Root | Contribution guide |
-| Open taxonomy mentioned | skills.md §1.4 | "Open skill taxonomy enables third-party integrations, plugins, and enterprise deployments" |
-| Ecosystem expansion | skills.md §28.4-§28.5 | Skill packs, markets, challenges, DAO-governed taxonomy in Phase 5 |
+| Open taxonomy mentioned | skills.md Â§1.4 | "Open skill taxonomy enables third-party integrations, plugins, and enterprise deployments" |
+| Ecosystem expansion | skills.md Â§28.4-Â§28.5 | Skill packs, markets, challenges, DAO-governed taxonomy in Phase 5 |
 
 ### 20.3 Gaps
 
 | Gap | Severity | Detail | Risk |
 |---|---|---|---|
-| **No OSS governance model** — no steering committee, decision process | Critical | No community management structure | C-08 |
-| **No contribution process** — no PR workflow, CLA, review standards | Critical | Cannot accept community contributions | C-08 |
+| **No OSS governance model** â€” no steering committee, decision process | Critical | No community management structure | C-08 |
+| **No contribution process** â€” no PR workflow, CLA, review standards | Critical | Cannot accept community contributions | C-08 |
 | No plugin SDK or extension API | High | Third-party integrations are ad-hoc |
 | No community roadmap visibility | High | No public roadmap |
 | No contributor recognition program | Medium | No incentives for contributions |
@@ -866,16 +866,16 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 | Coverage | Location | Detail |
 |---|---|---|
-| "Competitive Moat" claim | skills.md §1.2 | "No existing productivity OS has a first-class skill graph with market intelligence" |
-| Business value articulation | skills.md §1.2 | 6 dimensions of competitive advantage |
-| Market intelligence mentions | skills.md §1.2 | "Aggregated skill data (anonymized) powers market intelligence no competitor can replicate" |
+| "Competitive Moat" claim | skills.md Â§1.2 | "No existing productivity OS has a first-class skill graph with market intelligence" |
+| Business value articulation | skills.md Â§1.2 | 6 dimensions of competitive advantage |
+| Market intelligence mentions | skills.md Â§1.2 | "Aggregated skill data (anonymized) powers market intelligence no competitor can replicate" |
 
 ### 21.3 Gaps
 
 | Gap | Severity | Detail |
 |---|---|---|
-| **No competitive landscape analysis** — no named competitors | Critical | Cannot differentiate without comparison |
-| **No feature comparison matrix** — no vs Workday, LinkedIn, Degreed | Critical | Buyers need comparison |
+| **No competitive landscape analysis** â€” no named competitors | Critical | Cannot differentiate without comparison |
+| **No feature comparison matrix** â€” no vs Workday, LinkedIn, Degreed | Critical | Buyers need comparison |
 | No SWOT analysis | High | No strengths/weaknesses/threats assessment |
 | No market positioning statement | High | 1-sentence positioning undefined |
 | No competitor pricing intelligence | High | No knowledge of market pricing |
@@ -901,7 +901,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 ### 21.5 Recommendations
 
-- Build competitive feature comparison matrix (20+ rows × 8 competitors)
+- Build competitive feature comparison matrix (20+ rows Ã— 8 competitors)
 - Define positioning: "The only AI-native personal skill OS with market intelligence and income mapping"
 - Conduct SWOT analysis with quarterly updates
 - Develop enterprise GTM strategy (top-down + bottom-up)
@@ -922,7 +922,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | High | 12 | 16 | +4 | New FinOps, Competitive dimensions |
 | Medium | 18 | 22 | +4 | New enterprise gaps |
 | Low | 9 | 12 | +3 | New low-severity findings |
-| **Total** | **44** | **58** | **+14** | +5 dimensions × ~3 gaps each |
+| **Total** | **44** | **58** | **+14** | +5 dimensions Ã— ~3 gaps each |
 
 ### 22.2 New Critical Risks
 
@@ -938,38 +938,38 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
                     LIKELIHOOD
               Rare  Unlikely  Possible  Likely  Almost Certain
   IMPACT       1       2         3        4         5
-  ─────────────────────────────────────────────────────────
-  Critical   │       │         │   C-08  │  C-01,   │
-     5       │       │         │         │  C-02    │  C-03, C-04, C-05,
-             │       │         │         │  C-06    │  C-07
-  ───────────┼───────┼─────────┼────────┼──────────┼───────────
-  High       │       │  H-15   │  H-12  │  H-01,   │
-     4       │       │  H-16   │  H-13  │  H-02,   │
-             │       │         │  H-14  │  H-03,   │
-             │       │         │        │  H-04    │
-             │       │         │        │  H-06    │
-             │       │         │        │  H-07    │
-             │       │         │        │  H-08    │
-             │       │         │        │  H-09    │
-             │       │         │        │  H-10    │
-             │       │         │        │  H-11    │
-  ───────────┼───────┼─────────┼────────┼──────────┼───────────
-  Medium     │  M-20 │  M-17   │  M-14  │  M-01,   │
-     3       │  M-21 │  M-18   │  M-15  │  M-02,   │
-             │  M-22 │  M-19   │  M-16  │  M-03    │
-             │       │         │        │  M-04    │
-             │       │         │        │  M-05    │
-             │       │         │        │  M-06    │
-             │       │         │        │  M-07    │
-             │       │         │        │  M-10    │
-             │       │         │        │  M-11    │
-             │       │         │        │  M-12    │
-             │       │         │        │  M-13    │
-  ───────────┼───────┼─────────┼────────┼──────────┼───────────
-  Low        │  L-10 │  L-07   │  L-08  │  L-09    │
-     2       │  L-11 │         │  L-12  │          │
-             │  L-09 │         │        │          │
-  ───────────┼───────┼─────────┼────────┼──────────┼───────────
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Critical   â”‚       â”‚         â”‚   C-08  â”‚  C-01,   â”‚
+     5       â”‚       â”‚         â”‚         â”‚  C-02    â”‚  C-03, C-04, C-05,
+             â”‚       â”‚         â”‚         â”‚  C-06    â”‚  C-07
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  High       â”‚       â”‚  H-15   â”‚  H-12  â”‚  H-01,   â”‚
+     4       â”‚       â”‚  H-16   â”‚  H-13  â”‚  H-02,   â”‚
+             â”‚       â”‚         â”‚  H-14  â”‚  H-03,   â”‚
+             â”‚       â”‚         â”‚        â”‚  H-04    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-06    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-07    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-08    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-09    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-10    â”‚
+             â”‚       â”‚         â”‚        â”‚  H-11    â”‚
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Medium     â”‚  M-20 â”‚  M-17   â”‚  M-14  â”‚  M-01,   â”‚
+     3       â”‚  M-21 â”‚  M-18   â”‚  M-15  â”‚  M-02,   â”‚
+             â”‚  M-22 â”‚  M-19   â”‚  M-16  â”‚  M-03    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-04    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-05    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-06    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-07    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-10    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-11    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-12    â”‚
+             â”‚       â”‚         â”‚        â”‚  M-13    â”‚
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  Low        â”‚  L-10 â”‚  L-07   â”‚  L-08  â”‚  L-09    â”‚
+     2       â”‚  L-11 â”‚         â”‚  L-12  â”‚          â”‚
+             â”‚  L-09 â”‚         â”‚        â”‚          â”‚
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ```
 
 
@@ -977,20 +977,20 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 ## 23. Gap Analysis by Severity
 
-### 23.1 Critical Gaps (Must Fix — Q3 2026)
+### 23.1 Critical Gaps (Must Fix â€” Q3 2026)
 
 | # | Gap | Dimension | Why Critical |
 |---|---|---|---|
 | CG-01 | No unified DDL, indexes, partitioning, RLS across all services | Database | Skills.md spec has 25+ tables but no executable SQL across services. Companion SkillDatabaseArchitecture.md fills this partially but not integrated. |
 | CG-02 | No unified graph query layer for knowledge graph | Knowledge Graph | Companion SkillGraphArchitecture.md has schema but no integrated GraphQL or Neo4j query layer in main spec. |
 | CG-03 | No unified monitoring, tracing, alerting, or SLO framework | Observability | Companion docs each have partial coverage but no unified cross-service observability model. |
-| CG-04 | No enterprise caching strategy across all services | Scalability | 6 companion docs each define caching for their service — needs unification into single strategy. |
-| CG-05 | No unified analytics pipeline (ETL, warehouse, materialized views) | Analytics | Companion docs each define own pipeline — no unified enterprise analytics architecture. |
+| CG-04 | No enterprise caching strategy across all services | Scalability | 6 companion docs each define caching for their service â€” needs unification into single strategy. |
+| CG-05 | No unified analytics pipeline (ETL, warehouse, materialized views) | Analytics | Companion docs each define own pipeline â€” no unified enterprise analytics architecture. |
 | CG-06 | No disaster recovery plan, backups, RTO/RPO targets | DR/BC | Complete absence of backup, failover, data restoration strategy. 99.99% SLA impossible without it. |
-| CG-07 | No SDK, sandbox, or developer portal | Developer Exp | Zero developer tooling — every integrator starts from scratch. Blocks ecosystem growth. |
+| CG-07 | No SDK, sandbox, or developer portal | Developer Exp | Zero developer tooling â€” every integrator starts from scratch. Blocks ecosystem growth. |
 | CG-08 | No OSS governance, contribution model, community strategy | Open Source | Despite MIT license and CODE_OF_CONDUCT, no structure for accepting or managing contributions. |
 
-### 23.2 High Gaps (Should Fix — Q4 2026)
+### 23.2 High Gaps (Should Fix â€” Q4 2026)
 
 | # | Gap | Dimension |
 |---|---|---|
@@ -1011,7 +1011,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | HG-15 | No competitive feature comparison matrix | Competitive |
 | HG-16 | No enterprise GTM strategy | Competitive |
 
-### 23.3 Medium Gaps (Plan — Q1 2027)
+### 23.3 Medium Gaps (Plan â€” Q1 2027)
 
 | # | Gap | Dimension |
 |---|---|---|
@@ -1038,7 +1038,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | MG-21 | No SWOT analysis | Competitive |
 | MG-22 | No competitor pricing intelligence | Competitive |
 
-### 23.4 Low Gaps (Watch — H2 2027)
+### 23.4 Low Gaps (Watch â€” H2 2027)
 
 | # | Gap | Dimension |
 |---|---|---|
@@ -1059,7 +1059,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 
 ## 24. Remediation Roadmap
 
-### 24.1 Tier 1 — Critical (Immediate, Q3 2026)
+### 24.1 Tier 1 â€” Critical (Immediate, Q3 2026)
 
 **Effort: 12-16 weeks | Priority: P0 | Unblocks: Phase 1 deployment**
 
@@ -1068,13 +1068,13 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | T1-01 | Generate unified DDL for all 25+ tables with indexes, RLS, triggers, partitioning | Data/Backend | 4 weeks | Companion DB doc | Single migration script covering all services |
 | T1-02 | Define unified observability model: SLOs, OpenTelemetry, structured logging, health endpoints | DevOps/SRE | 3 weeks | Companion doc cross-ref | SLO document shared across all teams |
 | T1-03 | Design unified caching strategy: Redis TTL per service, CDN for taxonomy, materialized views | Backend Arch | 2 weeks | Companion doc analysis | Single caching architecture document |
-| T1-04 | Design unified analytics pipeline: source → warehouse → materialized views → dashboards | Data Engineer | 4 weeks | Companion doc analysis | Pipeline architecture covering all services |
+| T1-04 | Design unified analytics pipeline: source â†’ warehouse â†’ materialized views â†’ dashboards | Data Engineer | 4 weeks | Companion doc analysis | Pipeline architecture covering all services |
 | T1-05 | Define disaster recovery plan: RTO/RPO targets, backup strategy, failover architecture | DevOps/SRE | 3 weeks | None | Documented DR plan with RTO <1hr, RPO <5min |
 | T1-06 | Build developer portal: API docs, sandbox, SDK generation plan | Developer Exp | 4 weeks | API schemas (T1-07) | Live developer portal with sandbox |
 | T1-07 | Define OSS governance model: steering committee, CLA, contribution process | Product/Legal | 2 weeks | None | Published governance document |
 | T1-08 | Generate OpenAPI 3.0 spec for all 50+ endpoints | Backend | 2 weeks | Companion doc analysis | Auto-generated Swagger UI |
 
-### 24.2 Tier 2 — High (Q4 2026)
+### 24.2 Tier 2 â€” High (Q4 2026)
 
 **Effort: 16-20 weeks | Priority: P1 | Unblocks: Phase 2 deployment**
 
@@ -1091,7 +1091,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | T2-09 | Create competitive feature comparison matrix | Product | 2 weeks |
 | T2-10 | Develop enterprise GTM strategy | Product/Marketing | 3 weeks |
 
-### 24.3 Tier 3 — Medium (Q1 2027)
+### 24.3 Tier 3 â€” Medium (Q1 2027)
 
 **Effort: 20-28 weeks | Priority: P2 | Unblocks: Phase 3 deployment**
 
@@ -1110,7 +1110,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | T3-11 | Add no-code/low-code skill category | Taxonomy | 1 week |
 | T3-12 | Implement vector embedding pipeline | ML/AI | 3 weeks |
 
-### 24.4 Tier 4 — Low (H2 2027)
+### 24.4 Tier 4 â€” Low (H2 2027)
 
 **Effort: 36-52 weeks | Priority: P3 | Phase 4+**
 
@@ -1135,7 +1135,7 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 | Quarterly architecture audit against this document | Quarterly | Architecture |
 | Monthly KPI review against enterprise targets | Monthly | Product |
 | Bi-weekly prompt quality review | Bi-weekly | AI Team |
-| Monthly DR testing (tabletop → quarterly simulated → annual full) | Monthly | DevOps/SRE |
+| Monthly DR testing (tabletop â†’ quarterly simulated â†’ annual full) | Monthly | DevOps/SRE |
 | Monthly security review of new vulnerabilities | Monthly | Security |
 | Quarterly competitive landscape refresh | Quarterly | Product |
 | Bi-annual compliance audit preparation | Bi-annual | Governance |
@@ -1147,54 +1147,54 @@ For each gap identified in v1.0, all 9 companion docs were checked for coverage.
 ## 25. Implementation Phasing (v2.0 Updated)
 
 ```
-Phase 1 (Q3 2026) — Foundation [Tier 1]
-├── Database: Unified DDL, indexes, RLS, partitioning, triggers
-├── Observability: Unified SLOs, logging, health checks, basic dashboards
-├── Caching: Unified Redis + CDN architecture across all services
-├── Analytics: Unified pipeline architecture, warehouse model
-├── Graph: Integrated GraphQL layer + Neo4j query specs
-├── DR: RTO/RPO targets, backup strategy, failover architecture
-├── DX: Developer portal, OpenAPI spec, sandbox environment
-├── OSS: Governance model, CLA, contribution process
-└── Safety: Critical security controls (RLS, encryption, auth)
+Phase 1 (Q3 2026) â€” Foundation [Tier 1]
+â”œâ”€â”€ Database: Unified DDL, indexes, RLS, partitioning, triggers
+â”œâ”€â”€ Observability: Unified SLOs, logging, health checks, basic dashboards
+â”œâ”€â”€ Caching: Unified Redis + CDN architecture across all services
+â”œâ”€â”€ Analytics: Unified pipeline architecture, warehouse model
+â”œâ”€â”€ Graph: Integrated GraphQL layer + Neo4j query specs
+â”œâ”€â”€ DR: RTO/RPO targets, backup strategy, failover architecture
+â”œâ”€â”€ DX: Developer portal, OpenAPI spec, sandbox environment
+â”œâ”€â”€ OSS: Governance model, CLA, contribution process
+â””â”€â”€ Safety: Critical security controls (RLS, encryption, auth)
     Gate: All 8 critical risks resolved. Performance testing at 1K concurrent users.
     DR tested: Tabletop exercise completed.
 
-Phase 2 (Q4 2026) — Hardening [Tier 2]
-├── Infrastructure: Read replicas, horizontal scaling, multi-region readiness
-├── Quality: Unified test suite, CI/CD pipeline, API schemas
-├── Graph: GraphQL federation, graph algorithms, embedding pipeline
-├── AI: A/B testing framework, prompt optimization
-├── UX: WCAG compliance, responsive design polish
-├── Security: Backup/restore system, vulnerability scanning
-├── Cost: Per-tenant cost allocation model
-├── Competitive: Feature comparison matrix, GTM strategy
-└── Analytics: Unified materialized views, dashboard implementation
+Phase 2 (Q4 2026) â€” Hardening [Tier 2]
+â”œâ”€â”€ Infrastructure: Read replicas, horizontal scaling, multi-region readiness
+â”œâ”€â”€ Quality: Unified test suite, CI/CD pipeline, API schemas
+â”œâ”€â”€ Graph: GraphQL federation, graph algorithms, embedding pipeline
+â”œâ”€â”€ AI: A/B testing framework, prompt optimization
+â”œâ”€â”€ UX: WCAG compliance, responsive design polish
+â”œâ”€â”€ Security: Backup/restore system, vulnerability scanning
+â”œâ”€â”€ Cost: Per-tenant cost allocation model
+â”œâ”€â”€ Competitive: Feature comparison matrix, GTM strategy
+â””â”€â”€ Analytics: Unified materialized views, dashboard implementation
     Gate: Performance testing at 10K concurrent users. 99.9% uptime achieved.
     DR tested: Simulated failover completed.
 
-Phase 3 (Q1 2027) — Intelligence [Tier 3]
-├── AI: Prompt versioning, guardrails, token budgeting, hallucination detection
-├── Agent: Tracing, KPIs, human-in-the-loop, testing framework
-├── UX: Wireframed and implemented all 8 view types
-├── Security: SSO/SAML, audit workflow, vulnerability program
-├── Governance: Taxonomy approval workflow
-├── Search: Full-text search optimization
-├── Integration: CDN for taxonomy, connection pooling
-├── FinOps: Dashboard, forecasting, anomaly detection
-├── OSS: Plugin SDK, community forum, contributor program
-└── Competitive: SWOT analysis, pricing intelligence
+Phase 3 (Q1 2027) â€” Intelligence [Tier 3]
+â”œâ”€â”€ AI: Prompt versioning, guardrails, token budgeting, hallucination detection
+â”œâ”€â”€ Agent: Tracing, KPIs, human-in-the-loop, testing framework
+â”œâ”€â”€ UX: Wireframed and implemented all 8 view types
+â”œâ”€â”€ Security: SSO/SAML, audit workflow, vulnerability program
+â”œâ”€â”€ Governance: Taxonomy approval workflow
+â”œâ”€â”€ Search: Full-text search optimization
+â”œâ”€â”€ Integration: CDN for taxonomy, connection pooling
+â”œâ”€â”€ FinOps: Dashboard, forecasting, anomaly detection
+â”œâ”€â”€ OSS: Plugin SDK, community forum, contributor program
+â””â”€â”€ Competitive: SWOT analysis, pricing intelligence
     Gate: 99.95% uptime. All medium gaps resolved. DR fully tested.
 
-Phase 4 (H2 2027) — Ecosystem [Tier 4]
-├── Partner: Channel program, professional services
-├── Infrastructure: Multi-region, data residency, geo-redundancy
-├── Blockchain: Tokenization, DAO governance, DID/VC
-├── Platform: SDK (PyPI + npm), webhooks, API marketplace
-├── Developer: Community forum, contributor recognition, bug bounty
-├── Security: Advanced threat detection, patent filing
-├── Future: Climate tech skills, quantum readiness, localization
-└── Cost: Full chargeback/showback, cost optimization runbook
+Phase 4 (H2 2027) â€” Ecosystem [Tier 4]
+â”œâ”€â”€ Partner: Channel program, professional services
+â”œâ”€â”€ Infrastructure: Multi-region, data residency, geo-redundancy
+â”œâ”€â”€ Blockchain: Tokenization, DAO governance, DID/VC
+â”œâ”€â”€ Platform: SDK (PyPI + npm), webhooks, API marketplace
+â”œâ”€â”€ Developer: Community forum, contributor recognition, bug bounty
+â”œâ”€â”€ Security: Advanced threat detection, patent filing
+â”œâ”€â”€ Future: Climate tech skills, quantum readiness, localization
+â””â”€â”€ Cost: Full chargeback/showback, cost optimization runbook
     Gate: 99.99% premium SLA achieved. Global deployment ready.
 ```
 
@@ -1259,24 +1259,24 @@ Phase 4 (H2 2027) — Ecosystem [Tier 4]
 |---|---|---|---|---|---|
 | **Skill Graph** | Native Neo4j (full graph DB) | Proprietary graph | Tag-based | Taxonomy-based | Tag-based |
 | **Skill Detection** | AI auto-detect + manual | HRIS import + manager | Self-declared | Course-based | Assessment-based |
-| **L0-L5 Levels** | ✅ 6-level unified framework | 5-level (Basic→Expert) | 3-level (Beginner→Expert) | Not leveled | Skill IQ (0-1000) |
-| **Evidence Framework** | ✅ 12 types with quality scoring | Self-reported | Self-reported | Course completion | Course + assessment |
-| **AI Recommendations** | ✅ 5 dimensions | Basic | Job-based | Course-based | Skill IQ gaps |
-| **Market Intelligence** | ✅ 5 scores + health indicator | Lightcast data | No | Labor Insights | No |
-| **Income Mapping** | ✅ 10 sources + portfolio | No | Salary insights | No | No |
-| **Opportunity Matching** | ✅ 5-factor match scoring | No | Job match | No | No |
-| **Career Readiness** | ✅ Multi-target scoring | Limited | No | No | No |
-| **Knowledge Graph** | ✅ 10 node types, 15 relationship types | No | No | No | No |
-| **Personal Skill Trees** | ✅ 7 tree types | Limited | No | Yes | Roadmaps |
-| **Certification Tracking** | ✅ 18 providers, expiry tracking | Yes | Yes | Yes | Yes |
-| **Multi-Tenant Enterprise** | ✅ 4-tier with RLS | Native | No | Yes | No |
-| **SSO/SAML/SCIM** | ✅ Planned (spec exists) | Native | Yes | Yes | Enterprise only |
-| **Open Source** | ✅ MIT License | No | No | No | No |
-| **API-First** | ✅ 50+ endpoints | REST API | REST API | REST API | REST API |
-| **AI Agent Integration** | ✅ 12 agent capabilities | No | No | No | No |
-| **Income Portfolio** | ✅ Diversification scoring | No | No | No | No |
-| **Self-Hosted Option** | ✅ Yes (add-on) | No | No | No | No |
-| **Local AI (Ollama)** | ✅ Yes (default) | No | No | No | No |
+| **L0-L5 Levels** | âœ… 6-level unified framework | 5-level (Basicâ†’Expert) | 3-level (Beginnerâ†’Expert) | Not leveled | Skill IQ (0-1000) |
+| **Evidence Framework** | âœ… 12 types with quality scoring | Self-reported | Self-reported | Course completion | Course + assessment |
+| **AI Recommendations** | âœ… 5 dimensions | Basic | Job-based | Course-based | Skill IQ gaps |
+| **Market Intelligence** | âœ… 5 scores + health indicator | Lightcast data | No | Labor Insights | No |
+| **Income Mapping** | âœ… 10 sources + portfolio | No | Salary insights | No | No |
+| **Opportunity Matching** | âœ… 5-factor match scoring | No | Job match | No | No |
+| **Career Readiness** | âœ… Multi-target scoring | Limited | No | No | No |
+| **Knowledge Graph** | âœ… 10 node types, 15 relationship types | No | No | No | No |
+| **Personal Skill Trees** | âœ… 7 tree types | Limited | No | Yes | Roadmaps |
+| **Certification Tracking** | âœ… 18 providers, expiry tracking | Yes | Yes | Yes | Yes |
+| **Multi-Tenant Enterprise** | âœ… 4-tier with RLS | Native | No | Yes | No |
+| **SSO/SAML/SCIM** | âœ… Planned (spec exists) | Native | Yes | Yes | Enterprise only |
+| **Open Source** | âœ… MIT License | No | No | No | No |
+| **API-First** | âœ… 50+ endpoints | REST API | REST API | REST API | REST API |
+| **AI Agent Integration** | âœ… 12 agent capabilities | No | No | No | No |
+| **Income Portfolio** | âœ… Diversification scoring | No | No | No | No |
+| **Self-Hosted Option** | âœ… Yes (add-on) | No | No | No | No |
+| **Local AI (Ollama)** | âœ… Yes (default) | No | No | No | No |
 
 ### 27.2 Competitive Moats
 
@@ -1319,86 +1319,86 @@ Phase 4 (H2 2027) — Ecosystem [Tier 4]
 ## 29. Enterprise Reference Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                                ENTERPRISE SKILLS SYSTEM                               │
-│                                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                           ENTERPRISE LAYER                               │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │Identity  │ │Enterprise│ │Compliance│ │Audit     │ │Multi-Tenant  │ │       │
-│  │  │(SSO/SAML)│ │Admin     │ │Framework │ │Trail     │ │Isolation     │ │       │
-│  │  │ OIDC/SCIM│ │Console   │ │(SOC2,ISO)│ │(Append-  │ │(RLS + Tenant)│ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                     │                                                │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                            API GATEWAY LAYER                             │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │REST API  │ │GraphQL   │ │Webhook   │ │Rate      │ │Developer     │ │       │
-│  │  │(FastAPI) │ │Federation│ │Events    │ │Limiter   │ │Portal / SDK  │ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                     │                                                │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                         SKILLS ENGINE LAYER                              │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │Taxonomy  │ │Inventory │ │Evidence  │ │Assessment│ │Certification │ │       │
-│  │  │Manager   │ │Manager   │ │Engine    │ │Engine    │ │Tracker       │ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                     │                                                │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                        INTELLIGENCE LAYER                               │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │Market    │ │Income    │ │AI        │ │Agent     │ │Knowledge     │ │       │
-│  │  │Intell.   │ │Mapping   │ │Recommends│ │Orchestra-│ │Graph (Neo4j) │ │       │
-│  │  │Engine    │ │Engine    │ │Engine    │ │tor (ARIA)│ │Engine        │ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                     │                                                │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                           DATA LAYER                                    │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │PostgreSQL│ │Redis     │ │Neo4j     │ │Vector DB │ │Object Store  │ │       │
-│  │  │(Primary) │ │(Cache)   │ │(Graph)   │ │(Skills   │ │(Evidence,    │ │       │
-│  │  │          │ │          │ │          │ │Embeddings)│ │Attachments)  │ │       │
-│  │  └────┬─────┘ └────┬─────┘ └────┬─────┘ └────┬─────┘ └──────┬───────┘ │       │
-│  │       │             │            │            │              │         │       │
-│  │       └─────────────┼────────────┼────────────┼──────────────┘         │       │
-│  │                  ┌──▼────────────▼────────────▼──────────────────┐     │       │
-│  │                  │              CACHING LAYER                     │     │       │
-│  │                  │  Redis (API) + CDN (Taxonomy) + Materialized   │     │       │
-│  │                  │  Views (Analytics) + Local (Hot Data)          │     │       │
-│  │                  └─────────────────────────────────────────────┘ │     │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                         OBSERVABILITY LAYER                             │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │Prometheus│ │Grafana   │ │OpenTele- │ │ELK/Loki  │ │SLO Dashboard │ │       │
-│  │  │(Metrics) │ │(Dashbd)  │ │metry(Trc)│ │(Logs)    │ │(Error Budget)│ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                          INFRASTRUCTURE LAYER                            │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │K8s (EKS) │ │CI/CD     │ │DR        │ │Backup    │ │Multi-Region  │ │       │
-│  │  │Auto-     │ │(Build,   │ │Failover  │ │(WAL-G)   │ │(Active-      │ │       │
-│  │  │scale     │ │Test, Dep)│ │(Active-  │ │PITR      │ │Passive)      │ │       │
-│  │  └──────────┘ │          │ │Passive)  │ │          │ │              │ │       │
-│  │               └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-│                                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐       │
-│  │                         ENTERPRISE INTEGRATIONS                          │       │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐ │       │
-│  │  │HRIS      │ │LMS       │ │ATS       │ │Slack/    │ │Developer     │ │       │
-│  │  │(Workday) │ │(Corner-  │ │(Green-   │ │Teams Notf│ │Portal (SDK,  │ │       │
-│  │  │BambooHR  │ │stone)    │ │house)    │ │          │ │Sandbox)      │ │       │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────────┘ │       │
-│  └─────────────────────────────────────────────────────────────────────────┘       │
-└─────────────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                ENTERPRISE SKILLS SYSTEM                               â”‚
+â”‚                                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                           ENTERPRISE LAYER                               â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚Identity  â”‚ â”‚Enterpriseâ”‚ â”‚Complianceâ”‚ â”‚Audit     â”‚ â”‚Multi-Tenant  â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚(SSO/SAML)â”‚ â”‚Admin     â”‚ â”‚Framework â”‚ â”‚Trail     â”‚ â”‚Isolation     â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚ OIDC/SCIMâ”‚ â”‚Console   â”‚ â”‚(SOC2,ISO)â”‚ â”‚(Append-  â”‚ â”‚(RLS + Tenant)â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                     â”‚                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                            API GATEWAY LAYER                             â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚REST API  â”‚ â”‚GraphQL   â”‚ â”‚Webhook   â”‚ â”‚Rate      â”‚ â”‚Developer     â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚(FastAPI) â”‚ â”‚Federationâ”‚ â”‚Events    â”‚ â”‚Limiter   â”‚ â”‚Portal / SDK  â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                     â”‚                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                         SKILLS ENGINE LAYER                              â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚Taxonomy  â”‚ â”‚Inventory â”‚ â”‚Evidence  â”‚ â”‚Assessmentâ”‚ â”‚Certification â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚Manager   â”‚ â”‚Manager   â”‚ â”‚Engine    â”‚ â”‚Engine    â”‚ â”‚Tracker       â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                     â”‚                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                        INTELLIGENCE LAYER                               â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚Market    â”‚ â”‚Income    â”‚ â”‚AI        â”‚ â”‚Agent     â”‚ â”‚Knowledge     â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚Intell.   â”‚ â”‚Mapping   â”‚ â”‚Recommendsâ”‚ â”‚Orchestra-â”‚ â”‚Graph (Neo4j) â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚Engine    â”‚ â”‚Engine    â”‚ â”‚Engine    â”‚ â”‚tor (ARIA)â”‚ â”‚Engine        â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                     â”‚                                                â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                           DATA LAYER                                    â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚PostgreSQLâ”‚ â”‚Redis     â”‚ â”‚Neo4j     â”‚ â”‚Vector DB â”‚ â”‚Object Store  â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚(Primary) â”‚ â”‚(Cache)   â”‚ â”‚(Graph)   â”‚ â”‚(Skills   â”‚ â”‚(Evidence,    â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚          â”‚ â”‚          â”‚ â”‚          â”‚ â”‚Embeddings)â”‚ â”‚Attachments)  â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â”‚       â”‚             â”‚            â”‚            â”‚              â”‚         â”‚       â”‚
+â”‚  â”‚       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â”‚       â”‚
+â”‚  â”‚                  â”Œâ”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚       â”‚
+â”‚  â”‚                  â”‚              CACHING LAYER                     â”‚     â”‚       â”‚
+â”‚  â”‚                  â”‚  Redis (API) + CDN (Taxonomy) + Materialized   â”‚     â”‚       â”‚
+â”‚  â”‚                  â”‚  Views (Analytics) + Local (Hot Data)          â”‚     â”‚       â”‚
+â”‚  â”‚                  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚     â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                         OBSERVABILITY LAYER                             â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚Prometheusâ”‚ â”‚Grafana   â”‚ â”‚OpenTele- â”‚ â”‚ELK/Loki  â”‚ â”‚SLO Dashboard â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚(Metrics) â”‚ â”‚(Dashbd)  â”‚ â”‚metry(Trc)â”‚ â”‚(Logs)    â”‚ â”‚(Error Budget)â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                          INFRASTRUCTURE LAYER                            â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚K8s (EKS) â”‚ â”‚CI/CD     â”‚ â”‚DR        â”‚ â”‚Backup    â”‚ â”‚Multi-Region  â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚Auto-     â”‚ â”‚(Build,   â”‚ â”‚Failover  â”‚ â”‚(WAL-G)   â”‚ â”‚(Active-      â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚scale     â”‚ â”‚Test, Dep)â”‚ â”‚(Active-  â”‚ â”‚PITR      â”‚ â”‚Passive)      â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚          â”‚ â”‚Passive)  â”‚ â”‚          â”‚ â”‚              â”‚ â”‚       â”‚
+â”‚  â”‚               â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â”‚                                                                                     â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”       â”‚
+â”‚  â”‚                         ENTERPRISE INTEGRATIONS                          â”‚       â”‚
+â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚       â”‚
+â”‚  â”‚  â”‚HRIS      â”‚ â”‚LMS       â”‚ â”‚ATS       â”‚ â”‚Slack/    â”‚ â”‚Developer     â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚(Workday) â”‚ â”‚(Corner-  â”‚ â”‚(Green-   â”‚ â”‚Teams Notfâ”‚ â”‚Portal (SDK,  â”‚ â”‚       â”‚
+â”‚  â”‚  â”‚BambooHR  â”‚ â”‚stone)    â”‚ â”‚house)    â”‚ â”‚          â”‚ â”‚Sandbox)      â”‚ â”‚       â”‚
+â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚       â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜       â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -1409,7 +1409,7 @@ Phase 4 (H2 2027) — Ecosystem [Tier 4]
 
 | KPI | Definition | Target | Current | Dimension |
 |---|---|---|---|---|
-| **ARR (Annual Recurring Revenue)** | Monthly active users × avg price × 12 | $5M (Y2) | $0 | Enterprise |
+| **ARR (Annual Recurring Revenue)** | Monthly active users Ã— avg price Ã— 12 | $5M (Y2) | $0 | Enterprise |
 | **User Adoption** | Active users / total licensed | >80% | 0% | Enterprise |
 | **Net Revenue Retention** | (Starting MRR - Churn + Expansion) / Starting MRR | >120% | N/A | Enterprise |
 | **Time to Value** | Days from signup to first skill | <7 days | N/A | UX |
@@ -1453,79 +1453,79 @@ Phase 4 (H2 2027) — Ecosystem [Tier 4]
 
 ## Appendix A: 20-Dimension Scoring Detail
 
-| Dimension | Score | v1.0 | Δ | Key Weakness | Companion Fill |
+| Dimension | Score | v1.0 | Î” | Key Weakness | Companion Fill |
 |---|---|---|---|---|---|
-| Product Completeness | 82 | 82 | 0 | No concrete DDL/API schemas | — |
-| Enterprise Readiness | 88 | 88 | 0 | No data residency strategy | — |
+| Product Completeness | 82 | 82 | 0 | No concrete DDL/API schemas | â€” |
+| Enterprise Readiness | 88 | 88 | 0 | No data residency strategy | â€” |
 | Scalability | 64 | 58 | +6 | No DB partitioning, read replicas | 6 companion docs provide caching |
 | AI Readiness | 76 | 71 | +5 | No A/B testing, guardrails | SkillIntelligence.md pipeline |
-| Agent Readiness | 76 | 76 | 0 | No tracing, KPIs | — |
+| Agent Readiness | 76 | 76 | 0 | No tracing, KPIs | â€” |
 | Knowledge Graph | 82 | 65 | +17 | No GraphQL federation | SkillGraphArchitecture.md (3,871 lines) |
 | Database | 78 | 63 | +15 | No backup/restore | SkillDatabaseArchitecture.md (3,348 lines) |
-| API | 74 | 74 | 0 | No request/response schemas | — |
+| API | 74 | 74 | 0 | No request/response schemas | â€” |
 | Analytics | 72 | 60 | +12 | No predictive analytics | SkillAnalytics.md + SkillIntelligence.md |
-| Security | 72 | 72 | 0 | No incident RLS, response | — |
-| Governance | 85 | 85 | 0 | No tech approval workflow | — |
-| Observability | 52 | 38 | +14 | No unified cross-service SLOs | SkillAgent.md §12 + SkillOpportunityMatching.md §8 |
-| Future-Proofing | 79 | 79 | 0 | No EU AI Act, no-code | — |
-| Multi-Year Maint. | 70 | 70 | 0 | No automated tests, CI/CD | — |
-| UX Readiness | 67 | 67 | 0 | No WCAG standards | — |
-| **DR & BC** | **18** | **NEW** | — | No backup, RTO/RPO, failover | — |
-| **Cost/FinOps** | **38** | **NEW** | — | No unified cost dashboard | SkillIntelligence.md §7.7 partial |
-| **Developer Exp** | **28** | **NEW** | — | No SDK, sandbox, portal | — |
-| **Open Source** | **12** | **NEW** | — | No governance, contribution model | — |
-| **Competitive** | **22** | **NEW** | — | No competitive matrix, SWOT | — |
+| Security | 72 | 72 | 0 | No incident RLS, response | â€” |
+| Governance | 85 | 85 | 0 | No tech approval workflow | â€” |
+| Observability | 52 | 38 | +14 | No unified cross-service SLOs | SkillAgent.md Â§12 + SkillOpportunityMatching.md Â§8 |
+| Future-Proofing | 79 | 79 | 0 | No EU AI Act, no-code | â€” |
+| Multi-Year Maint. | 70 | 70 | 0 | No automated tests, CI/CD | â€” |
+| UX Readiness | 67 | 67 | 0 | No WCAG standards | â€” |
+| **DR & BC** | **18** | **NEW** | â€” | No backup, RTO/RPO, failover | â€” |
+| **Cost/FinOps** | **38** | **NEW** | â€” | No unified cost dashboard | SkillIntelligence.md Â§7.7 partial |
+| **Developer Exp** | **28** | **NEW** | â€” | No SDK, sandbox, portal | â€” |
+| **Open Source** | **12** | **NEW** | â€” | No governance, contribution model | â€” |
+| **Competitive** | **22** | **NEW** | â€” | No competitive matrix, SWOT | â€” |
 
 ---
 
 ## Appendix B: Section-by-Section Completeness
 
-*(Identical to v1.0 Appendix B — see previous audit. No new sections were added to skills.md between v1.0 and v2.0.)*
+*(Identical to v1.0 Appendix B â€” see previous audit. No new sections were added to skills.md between v1.0 and v2.0.)*
 
 ---
 
 ## Appendix C: Cross-Dimension Dependency Map (v2.0)
 
 ```
-Database ────► API ────► Developer Exp
-    │                     │
-    ▼                     ▼
-Scalability ◄──── Analytics ◄──── Observability
-    │                                       │
-    ▼                                       ▼
-DR/BC ──────► SLA Compliance ◄──────────────┘
-    │               │
-    ▼               ▼
+Database â”€â”€â”€â”€â–º API â”€â”€â”€â”€â–º Developer Exp
+    â”‚                     â”‚
+    â–¼                     â–¼
+Scalability â—„â”€â”€â”€â”€ Analytics â—„â”€â”€â”€â”€ Observability
+    â”‚                                       â”‚
+    â–¼                                       â–¼
+DR/BC â”€â”€â”€â”€â”€â”€â–º SLA Compliance â—„â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+    â”‚               â”‚
+    â–¼               â–¼
 Enterprise Readiness
-    │
-    ▼
+    â”‚
+    â–¼
 Competitive Positioning
 
-Knowledge Graph ──► AI Readiness ──► Agent Readiness
-    │                   │
-    ▼                   ▼
-Future-Proofing ◄─── Cost/FinOps
+Knowledge Graph â”€â”€â–º AI Readiness â”€â”€â–º Agent Readiness
+    â”‚                   â”‚
+    â–¼                   â–¼
+Future-Proofing â—„â”€â”€â”€ Cost/FinOps
 
-Open Source ──► Developer Exp ──► API Readiness
-    │
-    ▼
+Open Source â”€â”€â–º Developer Exp â”€â”€â–º API Readiness
+    â”‚
+    â–¼
 Competitive Positioning
 
-UX Readiness ◄─── API Readiness ◄─── Scalability
-    │
-    ▼
-Governance ◄─── Security ◄─── Database
+UX Readiness â—„â”€â”€â”€ API Readiness â—„â”€â”€â”€ Scalability
+    â”‚
+    â–¼
+Governance â—„â”€â”€â”€ Security â—„â”€â”€â”€ Database
 
-Multi-Year Maint. ◄─── CI/CD ◄─── Testing
+Multi-Year Maint. â—„â”€â”€â”€ CI/CD â—„â”€â”€â”€ Testing
 ```
 
-**Key Insight**: DR/BC is the most blocking dimension — it gates SLA Compliance which gates Enterprise Readiness which gates Revenue. Fix DR/BC first.
+**Key Insight**: DR/BC is the most blocking dimension â€” it gates SLA Compliance which gates Enterprise Readiness which gates Revenue. Fix DR/BC first.
 
 ---
 
 ## Appendix D: Key Risk Indicators (KRIs)
 
-*(Expanded 20 KRIs — identical to v1.0 Appendix D with +5 new KRIs added)*
+*(Expanded 20 KRIs â€” identical to v1.0 Appendix D with +5 new KRIs added)*
 
 ### D.1 New KRIs (v2.0 Additions)
 
@@ -1545,15 +1545,15 @@ Multi-Year Maint. ◄─── CI/CD ◄─── Testing
 
 | Gap ID | SkillDatabaseArchitecture | SkillGraphArchitecture | SkillAnalytics | SkillIntelligence | SkillAgent | SkillOpportunity | SkillEvidence | SkillAssessment | SkillMarketIntel | SkillRoadmapEngine |
 |---|---|---|---|---|---|---|---|---|---|---|
-| DDL/Indexes/RLS | ✅ Full | — | — | — | — | — | Partial | — | — | — |
-| Graph Schema | Partial (App A) | ✅ Full | — | — | — | — | — | — | — | — |
-| Analytics Pipeline | — | — | ✅ Strong | ✅ Strong | — | Partial | Partial | — | Partial | — |
-| Monitoring/Tracing | — | — | — | ✅ Strong | ✅ Strong | ✅ Strong | — | — | Partial | Partial |
-| Caching Strategy | ✅ Section 12.4 | Partial | — | — | ✅ cache tool | ✅ TTLCache | ✅ 8 patterns | ✅ Multi-level | ✅ TTL Cache | Partial |
-| SLOs/Error Budgets | — | Partial (latency) | — | Partial | ✅ Appendix F | Partial | Partial | — | — | — |
-| Cost/FinOps | — | — | — | ✅ §7.7 | ✅ App F | Partial | — | — | — | ✅ Budget |
-| CI/CD/Testing | — | — | — | Partial | — | ✅ §14 | — | — | ✅ §12 | — |
-| DR/Backup | — | Partial (~10s RPO) | — | — | — | — | — | — | — | — |
+| DDL/Indexes/RLS | âœ… Full | â€” | â€” | â€” | â€” | â€” | Partial | â€” | â€” | â€” |
+| Graph Schema | Partial (App A) | âœ… Full | â€” | â€” | â€” | â€” | â€” | â€” | â€” | â€” |
+| Analytics Pipeline | â€” | â€” | âœ… Strong | âœ… Strong | â€” | Partial | Partial | â€” | Partial | â€” |
+| Monitoring/Tracing | â€” | â€” | â€” | âœ… Strong | âœ… Strong | âœ… Strong | â€” | â€” | Partial | Partial |
+| Caching Strategy | âœ… Section 12.4 | Partial | â€” | â€” | âœ… cache tool | âœ… TTLCache | âœ… 8 patterns | âœ… Multi-level | âœ… TTL Cache | Partial |
+| SLOs/Error Budgets | â€” | Partial (latency) | â€” | Partial | âœ… Appendix F | Partial | Partial | â€” | â€” | â€” |
+| Cost/FinOps | â€” | â€” | â€” | âœ… Â§7.7 | âœ… App F | Partial | â€” | â€” | â€” | âœ… Budget |
+| CI/CD/Testing | â€” | â€” | â€” | Partial | â€” | âœ… Â§14 | â€” | â€” | âœ… Â§12 | â€” |
+| DR/Backup | â€” | Partial (~10s RPO) | â€” | â€” | â€” | â€” | â€” | â€” | â€” | â€” |
 
 ### E.2 Unfilled Gaps (No Companion Doc Addresses)
 
@@ -1594,7 +1594,7 @@ Scores in v2.0 follow same rubric as v1.0 but with companion doc verification:
 
 ### F.4 Limitations
 
-*(Same as v1.0 §E.5)*
+*(Same as v1.0 Â§E.5)*
 
 ---
 
