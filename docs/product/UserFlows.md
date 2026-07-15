@@ -1,10 +1,10 @@
-# User Flows — Second Brain OS
+﻿# User Flows â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-UF-001 |
+| Document ID | PRD-UF-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -20,12 +20,12 @@ This document defines every user flow across Second Brain OS. Each flow includes
 **Design Philosophy:** Every flow must complete in under 30 seconds for capture actions and under 3 minutes for review actions. Flows that exceed these thresholds must be broken into sub-flows.
 
 **Flow Notation Key:**
-- `[Action]` — User or system action
-- `{Decision}` — Branching point
-- `->` — Flow direction
-- `==>` — Async/background process
-- `(Error)` — Error recovery path
-- `[Metric]` — Success metric captured
+- `[Action]` â€” User or system action
+- `{Decision}` â€” Branching point
+- `->` â€” Flow direction
+- `==>` â€” Async/background process
+- `(Error)` â€” Error recovery path
+- `[Metric]` â€” Success metric captured
 
 ---
 
@@ -78,7 +78,7 @@ flowchart TD
 **Edge Cases:**
 - **Partial completion:** User closes browser during Step 3. On next login, resume at Step 3.
 - **Timezone mismatch:** Detect via IP geolocation, allow override. If IP detection fails, default to IST (UTC+5:30).
-- **Duplicate account:** Google OAuth handles this — same email = same user. Merge preferences if re-onboarding.
+- **Duplicate account:** Google OAuth handles this â€” same email = same user. Merge preferences if re-onboarding.
 - **Network failure during save:** Queue changes locally, retry on reconnection. Show toast: "Your preferences will sync when you're back online."
 
 **Error Paths:**
@@ -161,7 +161,7 @@ flowchart TD
   },
   "opportunities": {"new_matches": 1, "title": "Hackathon: Build with AI"},
   "productivity_score": 68,
-  "week_progress": "Wednesday — 42% through week"
+  "week_progress": "Wednesday â€” 42% through week"
 }
 ```
 
@@ -174,7 +174,7 @@ flowchart TD
   ],
   "focus_suggestion": "Deep work block: 10 AM - 12 PM on ML project",
   "sleep_insight": "You're 2 hours behind on sleep. Consider lighter schedule today.",
-  "opportunity_alert": "New: Build with AI Hackathon — apply by Friday",
+  "opportunity_alert": "New: Build with AI Hackathon â€” apply by Friday",
   "quote": "The best time to start was yesterday. The next best time is now.",
   "morning_momentum_tip": "Start with your 5-minute task to build momentum",
   "productivity_forecast": 65
@@ -278,9 +278,9 @@ flowchart TD
 | Input | Title | Priority | Due Date | Category | Linked To |
 |---|---|---|---|---|---|
 | "finish dbms assignment by tomorrow evening high priority" | Finish DBMS assignment | High | Tomorrow 6 PM | Academics | DBMS course |
-| "leetcode daily challenge" | LeetCode Daily Challenge | Medium | Today 11:59 PM | Coding | — |
-| "buy groceries list milk eggs bread" | Buy groceries | Low | No date | Personal | — |
-| "prepare for google interview next friday urgent" | Prepare for Google interview | Urgent | Next Friday 9 AM | Career | — |
+| "leetcode daily challenge" | LeetCode Daily Challenge | Medium | Today 11:59 PM | Coding | â€” |
+| "buy groceries list milk eggs bread" | Buy groceries | Low | No date | Personal | â€” |
+| "prepare for google interview next friday urgent" | Prepare for Google interview | Urgent | Next Friday 9 AM | Career | â€” |
 | "review pull request for project X" | Review pull request for project X | High | No date | Projects | Project X |
 
 ### 4.2 Task Completion Flow
@@ -541,13 +541,13 @@ flowchart TD
 
 ```json
 {
-  "week_overview": "Strong week — completed 12 of 18 planned tasks (67%)",
+  "week_overview": "Strong week â€” completed 12 of 18 planned tasks (67%)",
   "wins": ["Completed DBMS project milestone", "5-day coding streak"],
   "improvements": ["Sleep debt increased by 4 hours", "Missed 2 habit check-ins"],
   "patterns": [
     {"pattern": "Low productivity on Wednesdays", "suggestion": "Schedule lighter tasks on Wednesdays"}
   ],
-  "focus_next_week": "Prioritize ML course — deadline in 10 days",
+  "focus_next_week": "Prioritize ML course â€” deadline in 10 days",
   "metric_changes": {
     "productivity_score": {"previous": 65, "current": 72, "change": "+7"},
     "sleep_avg": {"previous": 7.2, "current": 6.1, "change": "-1.1"},
@@ -655,7 +655,7 @@ flowchart TD
     BRIEF --> DBQ
     REVIEW2 --> DBQ
     CLARIFY --> DBQ
-    DBQ -->|Yes| EXECUTE[Execute query → format results → include in response]
+    DBQ -->|Yes| EXECUTE[Execute query â†’ format results â†’ include in response]
     DBQ -->|No| LLM2[Direct LLM response]
     EXECUTE --> ACTQ{Requires action?}
     LLM2 --> ACTQ
@@ -698,11 +698,11 @@ flowchart TD
     C6[Cron job fires at 6:00 AM] --> PROFILE[Query user profile: skills, interests, goals, location]
     PROFILE --> BUILDQ[Build search queries from profile tags]
     BUILDQ --> SCRAPE[Scrape/query opportunity sources]
-    SCRAPE --> IS[Internshala API → internships]
-    SCRAPE --> LI[LinkedIn scraping → job postings]
-    SCRAPE --> DEV[Devfolio/Devpost → hackathons]
-    SCRAPE --> SI2[ScholarshipsIndia → scholarships]
-    SCRAPE --> GH[GitHub trending → repos/projects]
+    SCRAPE --> IS[Internshala API â†’ internships]
+    SCRAPE --> LI[LinkedIn scraping â†’ job postings]
+    SCRAPE --> DEV[Devfolio/Devpost â†’ hackathons]
+    SCRAPE --> SI2[ScholarshipsIndia â†’ scholarships]
+    SCRAPE --> GH[GitHub trending â†’ repos/projects]
     IS --> LOADOPP[Call PromptLoader.get_agent opportunity_radar_agent]
     LI --> LOADOPP
     DEV --> LOADOPP
@@ -798,7 +798,7 @@ flowchart TD
 
 ## 11. Cross-Module Flows
 
-### 11.1 Flow: Idea → Project → Task → Income
+### 11.1 Flow: Idea â†’ Project â†’ Task â†’ Income
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
@@ -821,7 +821,7 @@ flowchart TD
     style MONETIZE fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
-### 11.2 Flow: Course → Sleep → Productivity Correlation
+### 11.2 Flow: Course â†’ Sleep â†’ Productivity Correlation
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
@@ -839,7 +839,7 @@ flowchart TD
     style SUGGEST2 fill:#13151A,stroke:#00FFA3,color:#F1F5F9
 ```
 
-### 11.3 Flow: Opportunity → Application → Prep Tasks
+### 11.3 Flow: Opportunity â†’ Application â†’ Prep Tasks
 
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
@@ -949,8 +949,8 @@ flowchart TD
 %%{init: {'theme': 'base', 'themeVariables': {'background': '#0A0B0F', 'primaryColor': '#13151A', 'primaryBorderColor': '#6366F1', 'primaryTextColor': '#F1F5F9', 'lineColor': '#6366F1', 'secondaryColor': '#1A1D24', 'tertiaryColor': '#0A0B0F', 'fontFamily': 'DM Sans'}}}%%
 flowchart TD
     RN[React Native app launch] --> BIO[Biometric authentication<br/>fingerprint/face]
-    BIO --> TAB[Bottom tab navigation<br/>Dashboard · Quick Capture · Chat · Profile]
-    TAB --> PUSH2[Push notification handling → deep link to relevant screen]
+    BIO --> TAB[Bottom tab navigation<br/>Dashboard Â· Quick Capture Â· Chat Â· Profile]
+    TAB --> PUSH2[Push notification handling â†’ deep link to relevant screen]
     PUSH2 --> WIDGET[Quick capture widget on home screen]
     WIDGET --> SQLITE[Offline support with local SQLite]
     SQLITE --> SYNC2[Sync with backend on connectivity]

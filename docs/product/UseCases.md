@@ -1,10 +1,10 @@
-# Use Cases — Second Brain OS
+﻿# Use Cases â€” Second Brain OS
 
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Document ID | SB-UC-001 |
+| Document ID | PRD-UC-001 |
 | Version | 1.0.0 |
 | Status | Draft |
 | Date | 2026-06-11 |
@@ -79,12 +79,12 @@ flowchart TD
 
   TASK --> TaskAction{Create / Read /<br/>Update / Delete?}
   TaskAction -->|Read| ListTasks[Query tasks table<br/>filter by user_id]
-  TaskAction -->|Create| CreateTask[Validate schema →<br/>Insert to tasks table]
+  TaskAction -->|Create| CreateTask[Validate schema â†’<br/>Insert to tasks table]
   TaskAction -->|Update| UpdateTask[Update task fields<br/>+ status change]
   TaskAction -->|Delete| DeleteTask[Soft/Hard delete<br/>cascade dependents]
 
   CHAT --> AriaAvailable{ARIA Agent<br/>Available?}
-  AriaAvailable -->|Yes| LLMResponse[Process via ARIA<br/>Orchestrator → Sub-Agents]
+  AriaAvailable -->|Yes| LLMResponse[Process via ARIA<br/>Orchestrator â†’ Sub-Agents]
   AriaAvailable -->|No| RuleResponse[Rule-Based Fallback<br/>Keyword Matching]
 
   RenderBriefing --> End([Render View])
@@ -120,7 +120,7 @@ flowchart TD
 | **Priority** | Critical |
 
 **Steps:**
-1. User opens web app → redirected to /dashboard
+1. User opens web app â†’ redirected to /dashboard
 2. Frontend fetches today's briefing from GET /api/briefing/today
 3. Query supabase `daily_briefings` for user_id + today's date
 4. If found: render briefing card with top 3 tasks, score gauge, insights, quote
@@ -139,9 +139,9 @@ flowchart TD
 - LLM generated bad data: Validate JSON schema, fallback to algorithmic data
 
 **Error Recovery:**
-- Supabase query fails → Show cached briefing from last successful fetch
-- AI generation fails → Fallback to algorithmic briefing (top 3 tasks by priority + due date)
-- All data sources return empty → Show motivational fallback with quick capture prompt
+- Supabase query fails â†’ Show cached briefing from last successful fetch
+- AI generation fails â†’ Fallback to algorithmic briefing (top 3 tasks by priority + due date)
+- All data sources return empty â†’ Show motivational fallback with quick capture prompt
 
 ---
 
@@ -159,11 +159,11 @@ flowchart TD
 **Steps:**
 1. Frontend calls GET /api/analytics/productivity-score
 2. Backend calculates score from weighted formula:
-   - Task completion rate (30%) — completed / created (7-day rolling)
-   - Habit consistency (20%) — habits logged / habits defined
-   - Sleep score (15%) — average sleep over last 7 days
-   - Focus time (20%) — total deep work hours / target
-   - Course progress (15%) — active courses maintaining pace
+   - Task completion rate (30%) â€” completed / created (7-day rolling)
+   - Habit consistency (20%) â€” habits logged / habits defined
+   - Sleep score (15%) â€” average sleep over last 7 days
+   - Focus time (20%) â€” total deep work hours / target
+   - Course progress (15%) â€” active courses maintaining pace
 3. Score is returned as 0-100 integer with breakdown components
 4. Frontend renders animated gauge with color coding:
    - 0-39: Red (danger)
@@ -202,18 +202,18 @@ flowchart TD
 
 **Outcome:** Task created in < 10 seconds without manual field entry
 
-**Input → Output Examples:**
+**Input â†’ Output Examples:**
 
 | Input | Parsed Title | Priority | Due Date | Category | Confidence |
 |---|---|---|---|---|---|
 | "buy groceries tomorrow" | Buy groceries | Low | Tomorrow | Personal | 0.95 |
 | "leetcode daily challenge" | LeetCode Daily Challenge | Medium | Today 11:59 PM | Coding | 0.92 |
 | "urgent: prepare for google interview friday" | Prepare for Google interview | Urgent | Friday 9 AM | Career | 0.94 |
-| "read clean code chapters 4-6" | Read Clean Code chapters 4-6 | Medium | — | Learning | 0.87 |
-| "fix login bug in project" | Fix login bug in project | High | — | Projects | 0.88 |
+| "read clean code chapters 4-6" | Read Clean Code chapters 4-6 | Medium | â€” | Learning | 0.87 |
+| "fix login bug in project" | Fix login bug in project | High | â€” | Projects | 0.88 |
 
 **Edge Cases:**
-- Very short input (< 3 words): "todo" → Prompt user for more detail
+- Very short input (< 3 words): "todo" â†’ Prompt user for more detail
 - No time reference: Assume ASAP, set due date to today
 - Multi-sentence input: Only process first actionable sentence, prompt about rest
 - Existing task with same title + active status: Show duplicate warning, offer to merge
@@ -242,11 +242,11 @@ flowchart TD
 2. Optimistic UI update: task crosses out with animation
 3. POST /api/tasks/{id}/complete
 4. Backend sets `completed_at = NOW()`, `status = "completed"`
-5. If task has dependent tasks → unblock them, notify user
-6. If task was in today's top 3 → check if all 3 done → celebratory animation
+5. If task has dependent tasks â†’ unblock them, notify user
+6. If task was in today's top 3 â†’ check if all 3 done â†’ celebratory animation
 7. Update productivity score (recalculate)
-8. If task was linked to course → update course progress
-9. If task was part of project → update project milestone tracking
+8. If task was linked to course â†’ update course progress
+9. If task was part of project â†’ update project milestone tracking
 
 **Outcome:** Task marked complete, dependent tasks unblocked, score updated
 
@@ -268,18 +268,18 @@ flowchart TD
 2. Group by user_id
 3. For each user with overdue tasks:
    a. Check total count of overdue tasks
-   b. If > 5 overdue → ARIA marks this as "task overload" pattern
+   b. If > 5 overdue â†’ ARIA marks this as "task overload" pattern
    c. Reschedule each task: set new due_date = NOW() + (original duration estimate)
-   d. Priority unchanged (unless user has low sleep → auto-demote non-critical)
+   d. Priority unchanged (unless user has low sleep â†’ auto-demote non-critical)
    e. Log reschedule action in task history
-4. If a task has been overdue and auto-rescheduled > 3 times → escalate to user
+4. If a task has been overdue and auto-rescheduled > 3 times â†’ escalate to user
 5. Push notification: "You have N overdue tasks. Need help reprioritizing?"
 
 **Outcome:** No task silently expires. All tasks remain actionable.
 
 **Edge Cases:**
 - Task overdue > 7 days and rescheduled > 5 times: Flag as "stale", prompt user to drop or break down
-- User on vacation/break: Detect via calendar integration or manual vacation mode → pause auto-reschedule
+- User on vacation/break: Detect via calendar integration or manual vacation mode â†’ pause auto-reschedule
 - Dependency chain with overdue tasks: Reschedule dependents proportionally
 
 ---
@@ -309,15 +309,15 @@ flowchart TD
 ```
 Input: "Build portfolio website"
 Output:
-  □ Research portfolio examples (30 min)
-  □ Choose tech stack (15 min)
-  □ Set up project scaffolding (20 min)
-  □ Build hero section (1 hour)
-  □ Build projects section (2 hours)
-  □ Build about/contact section (1 hour)
-  □ Deploy to Vercel (15 min)
-  □ Custom domain setup (15 min)
-  □ Write case studies for 3 projects (2 hours)
+  â–¡ Research portfolio examples (30 min)
+  â–¡ Choose tech stack (15 min)
+  â–¡ Set up project scaffolding (20 min)
+  â–¡ Build hero section (1 hour)
+  â–¡ Build projects section (2 hours)
+  â–¡ Build about/contact section (1 hour)
+  â–¡ Deploy to Vercel (15 min)
+  â–¡ Custom domain setup (15 min)
+  â–¡ Write case studies for 3 projects (2 hours)
 ```
 
 ---
@@ -336,14 +336,14 @@ Output:
 | **Priority** | Critical |
 
 **Steps:**
-1. User opens /courses → sees list of active courses + "Add Course" button
-2. Clicks Add → modal with form fields
+1. User opens /courses â†’ sees list of active courses + "Add Course" button
+2. Clicks Add â†’ modal with form fields
 3. Fills: Course name, Platform (Udemy/Coursera/NPTEL/College/YouTube/Other)
 4. Optional: URL, Total hours, Hours/week, Deadline, "Why I'm taking this"
-5. If total hours + hours/week provided → auto-calculate suggested deadline
-6. Saves → POST /api/courses/
+5. If total hours + hours/week provided â†’ auto-calculate suggested deadline
+6. Saves â†’ POST /api/courses/
 7. ==>[Background] Generate study task schedule for course duration
-8. ==>[Background] Check if URL already registered → duplicate alert
+8. ==>[Background] Check if URL already registered â†’ duplicate alert
 9. Course appears in active list with progress bar at 0%
 
 **Outcome:** Course registered with progress tracking and auto-generated study schedule
@@ -369,10 +369,10 @@ Output:
 
 **Steps:**
 1. User studies a course while time tracker is running with course tag
-2. On timer stop → study hours auto-logged to course progress
+2. On timer stop â†’ study hours auto-logged to course progress
 3. OR: User manually enters hours on course detail page
 4. Backend updates `courses.hours_completed`, recalculates `completion_pct`
-5. Check if course completion_pct >= 100% → prompt to mark as complete
+5. Check if course completion_pct >= 100% â†’ prompt to mark as complete
 6. Recalculate deadline status: on track / at risk / behind
 
 ---
@@ -391,7 +391,7 @@ Output:
 **Steps:**
 1. Daily cron queries courses where deadline < 14 days away
 2. Calculate: `hours_remaining / days_remaining` vs `avg_hours_per_day`
-3. If pace_needed > pace_actual * 1.5 → "at risk" status
+3. If pace_needed > pace_actual * 1.5 â†’ "at risk" status
 4. Create warning if days_remaining < 3:
    - Push notification: "URGENT: [Course] deadline in N days"
    - Create high-priority catch-up study task
@@ -425,11 +425,11 @@ Output:
 4. User toggles each habit: Done / Not Done / Skip for cause
 5. POST /api/habit_logs/ with batch of statuses
 6. Backend updates streaks:
-   - If all completed → increment streak_current
-   - If streak_current > streak_best → update best
-   - If missed 3+ consecutive days → reset streak_current to 0
+   - If all completed â†’ increment streak_current
+   - If streak_current > streak_best â†’ update best
+   - If missed 3+ consecutive days â†’ reset streak_current to 0
 7. Show today's summary: "3/5 habits done. You're on a 7-day streak!"
-8. If streak milestone reached (7, 30, 60, 90) → celebration animation
+8. If streak milestone reached (7, 30, 60, 90) â†’ celebration animation
 
 **Edge Cases:**
 - Midnight logging (12:05 AM): Log to previous day if habit uses "previous day" setting
@@ -454,7 +454,7 @@ Output:
 1. User clicks "Add Habit"
 2. Form: Name, Goal description, Frequency (daily/weekly), Reminder time
 3. Optional: Target count (e.g., "Drink 8 glasses of water")
-4. User saves → POST /api/habits/
+4. User saves â†’ POST /api/habits/
 5. New habit appears in daily habit list
 6. ==>[Background] ARIA suggests optimal reminder time based on user's schedule
 
@@ -480,8 +480,8 @@ Output:
 4. POST /api/sleep/
 5. Backend calculates: duration, sleep score, sleep debt delta
 6. Update sleep debt running total
-7. If sleep < 6 hours → briefing adjusts task load
-8. If sleep < 5 hours for 3+ consecutive nights → ARIA sends sleep hygiene suggestions
+7. If sleep < 6 hours â†’ briefing adjusts task load
+8. If sleep < 5 hours for 3+ consecutive nights â†’ ARIA sends sleep hygiene suggestions
 
 ---
 
@@ -502,7 +502,7 @@ Output:
 3. Calls PromptLoader.get_agent("sleep_agent")
 4. LLM generates personalized wind-down message
 5. Push notification: "Time to wind down, Arjun. You have a 7 AM class tomorrow."
-6. ==>[Background] If user has a habit scheduled before bed → remind of that habit
+6. ==>[Background] If user has a habit scheduled before bed â†’ remind of that habit
 
 ---
 
@@ -520,12 +520,12 @@ Output:
 | **Priority** | High |
 
 **Steps:**
-1. User opens /income → sees monthly summary, timeline, hourly rate trends
+1. User opens /income â†’ sees monthly summary, timeline, hourly rate trends
 2. Clicks "Add Income Entry"
 3. Form: Amount (Rs.), Source (Freelance/Internship/Scholarship/Other)
 4. Optional: Description, Hours worked, Date (defaults to today), Linked project
-5. If hours worked > 0 → auto-calculate hourly rate
-6. Saves → POST /api/income/
+5. If hours worked > 0 â†’ auto-calculate hourly rate
+6. Saves â†’ POST /api/income/
 7. Dashboard income summary updates
 8. ==>[Background] Update monthly total, recalculate average hourly rate
 
@@ -565,11 +565,11 @@ Output:
 | **Priority** | High |
 
 **Steps:**
-1. User opens /projects → sees project list with status indicators
-2. Clicks "New Project" → form: Name, Description, Tech Stack, Timeline
+1. User opens /projects â†’ sees project list with status indicators
+2. Clicks "New Project" â†’ form: Name, Description, Tech Stack, Timeline
 3. Optional: GitHub URL, Deployment URL, Milestones
-4. Can import from idea vault: select idea → auto-fills project details
-5. Saves → POST /api/projects/
+4. Can import from idea vault: select idea â†’ auto-fills project details
+5. Saves â†’ POST /api/projects/
 6. ==>[Background] ARIA suggests initial task list based on tech stack + project type
 7. Project appears in list with Milestone 1 highlighted
 
@@ -591,8 +591,8 @@ Output:
 2. Views milestones with completion status
 3. Marks milestone as complete
 4. PUT /api/projects/{id} with updated milestone
-5. ==>[Background] ARIA may trigger: if "MVP Complete" milestone → suggest deployment + sharing
-6. If all milestones complete → prompt: "Mark project as shipped?"
+5. ==>[Background] ARIA may trigger: if "MVP Complete" milestone â†’ suggest deployment + sharing
+6. If all milestones complete â†’ prompt: "Mark project as shipped?"
 
 ---
 
@@ -658,7 +658,7 @@ Output:
 3. AI auto-tags: [react, tutorial, frontend, beginner]
 4. User can add notes, change tags, set priority
 5. POST /api/resources/
-6. ==>[Background] Check if URL already exists → show existing or update
+6. ==>[Background] Check if URL already exists â†’ show existing or update
 
 ---
 
@@ -700,9 +700,9 @@ Output:
 2. Query sources: Internshala, LinkedIn, Devfolio, Devpost, GitHub, ScholarshipsIndia
 3. Collect and deduplicate opportunities
 4. Run AI matching: score each 0-100 based on skill overlap, location, deadline urgency
-5. Filter: score > 70 → save, score < 70 → archive
-6. If match found with deadline < 5 days → immediate push notification
-7. Otherwise → include in morning briefing
+5. Filter: score > 70 â†’ save, score < 70 â†’ archive
+6. If match found with deadline < 5 days â†’ immediate push notification
+7. Otherwise â†’ include in morning briefing
 8. Log scan completion with match count
 
 ---
@@ -723,9 +723,9 @@ Output:
 2. Clicks "Track Application"
 3. Modal: Application date, Notes, Status (Applied/Interviewing/Offer/Rejected)
 4. Optional: Link to resume or portfolio
-5. Saves → auto-creates follow-up task in 7 days
+5. Saves â†’ auto-creates follow-up task in 7 days
 6. Add opportunity to income tracking if paid position
-7. If multiple applications → weekly review shows application funnel
+7. If multiple applications â†’ weekly review shows application funnel
 
 ---
 
@@ -786,7 +786,7 @@ Output:
 | **Priority** | Critical |
 
 **Steps:**
-1. User opens /chat → full conversation history loads
+1. User opens /chat â†’ full conversation history loads
 2. ARIA greeting based on context (time of day, pending tasks, etc.)
 3. User types message
 4. POST /api/chat/ with message + context
@@ -797,12 +797,12 @@ Output:
 9. User can thumbs up/down response for quality feedback
 
 **Intent Categories:**
-- Task: "add task buy groceries" → direct action
-- Query: "what's my productivity score?" → database query
-- Advice: "how should I prepare for interviews?" → AI generation
-- Memory: "what was that article I saved last week?" → memory recall
-- Command: "brief me" → trigger briefing
-- Casual: "good morning" → friendly response
+- Task: "add task buy groceries" â†’ direct action
+- Query: "what's my productivity score?" â†’ database query
+- Advice: "how should I prepare for interviews?" â†’ AI generation
+- Memory: "what was that article I saved last week?" â†’ memory recall
+- Command: "brief me" â†’ trigger briefing
+- Casual: "good morning" â†’ friendly response
 
 ---
 
@@ -881,11 +881,11 @@ Output:
 | **Priority** | Critical |
 
 **Steps:**
-1. Open app → briefing ready (UC-DASH-01)
+1. Open app â†’ briefing ready (UC-DASH-01)
 2. Log last night's sleep (UC-SLP-01)
 3. Quick scan of top 3 tasks
 4. View any new opportunities (UC-OPP-01)
-5. Log morning habits (UC-HAB-01 — if applicable)
+5. Log morning habits (UC-HAB-01 â€” if applicable)
 6. Start first focus session (UC-TIME-01)
 
 **Total time: Target < 3 minutes**
