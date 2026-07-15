@@ -105,7 +105,7 @@ class TestScheduler:
         for job in scheduler.get_jobs():
             assert isinstance(job.trigger, CronTrigger), f"Job '{job.id}' should use CronTrigger"
 
-    def test_all_twelve_jobs_registered(self):
+    def test_all_fifteen_jobs_registered(self):
         import main as scheduler_module
 
         scheduler_module.setup_cron_jobs()
@@ -124,8 +124,11 @@ class TestScheduler:
             "skill_analytics_snapshot",
             "skill_mv_refresh",
             "skill_retention_cleanup",
+            "deadline_alert",
+            "health_check",
+            "memory_consolidation",
         }
-        assert job_ids == expected, f"Missing jobs: {expected - job_ids}"
+        assert job_ids == expected, f"Mismatch - extra: {job_ids - expected}, missing: {expected - job_ids}"
         scheduler_module.scheduler.remove_all_jobs()
 
     def test_jobs_have_descriptive_names(self):
@@ -186,6 +189,11 @@ class TestSchedulerImports:
         from crons.course_nudge import run_course_nudges
 
         assert callable(run_course_nudges)
+
+    def test_deadline_alert_import(self):
+        from crons.deadline_alert import run_deadline_alert
+
+        assert callable(run_deadline_alert)
 
 
 @pytest.mark.scheduler
@@ -1046,6 +1054,7 @@ class TestCronMainBlocks:
         ("crons.missed_task_checker", "run_missed_task_checker"),
         ("crons.sleep_reminder", "run_sleep_reminder"),
         ("crons.course_nudge", "run_course_nudges"),
+        ("crons.deadline_alert", "run_deadline_alert"),
     ]
 
     MODULE_DIR = str(Path(__file__).resolve().parent.parent / "services" / "scheduler")
@@ -1082,6 +1091,9 @@ class TestCronMainBlocks:
 
     def test_course_nudge_main_block(self, mocker):
         self._run_scheduler_module_as_main("course_nudge.py", mocker)
+
+    def test_deadline_alert_main_block(self, mocker):
+        self._run_scheduler_module_as_main("deadline_alert.py", mocker)
 
     def test_skill_intelligence_refresh_main_block(self, mocker):
         self._run_scheduler_module_as_main("skill_intelligence_refresh.py", mocker)
