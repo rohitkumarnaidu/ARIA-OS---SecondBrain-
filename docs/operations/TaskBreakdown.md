@@ -1,10 +1,10 @@
-# Task Breakdown
+﻿# Task Breakdown
 
-> **Document ID:** SB-OPS-TASK-005  
+> **Document ID:OPS-TSK-001 SB-OPS-TASK-005  
 > **Version:** 2.0.0  
 > **Status:** Active  
 > **Last Updated:** 2026-06-11  
-> **Classification:** Internal — Development Process  
+> **Classification:** Internal â€” Development Process  
 > **Owner:** Lead Developer  
 
 ---
@@ -32,18 +32,18 @@
 
 ```
 Epic (Multi-sprint initiative)
-    │
-    ▼
-User Story (User-valuable feature — fits in 1 sprint)
-    │
-    ▼
-Feature (Logical unit of work — 1-3 days)
-    │
-    ▼
-Task (Individual work item — 2-8 hours)
-    │
-    ▼
-Subtask (Granular action — < 2 hours, optional)
+    â”‚
+    â–¼
+User Story (User-valuable feature â€” fits in 1 sprint)
+    â”‚
+    â–¼
+Feature (Logical unit of work â€” 1-3 days)
+    â”‚
+    â–¼
+Task (Individual work item â€” 2-8 hours)
+    â”‚
+    â–¼
+Subtask (Granular action â€” < 2 hours, optional)
 ```
 
 ### 1.2 Decomposition Rules
@@ -79,11 +79,11 @@ graph TD
 
 **Step-by-step decomposition workflow:**
 
-1. **Start with the epic** — What is the high-level goal?
-2. **Identify user stories** — What value does each user get?
-3. **Break stories into features** — What technical capabilities are needed?
-4. **Split features into tasks** — What are the individual work items?
-5. **Optionally create subtasks** — What are the exact steps for each task?
+1. **Start with the epic** â€” What is the high-level goal?
+2. **Identify user stories** â€” What value does each user get?
+3. **Break stories into features** â€” What technical capabilities are needed?
+4. **Split features into tasks** â€” What are the individual work items?
+5. **Optionally create subtasks** â€” What are the exact steps for each task?
 
 ### 1.4 Decomposition Heuristics
 
@@ -126,10 +126,10 @@ graph TD
 **Task > 3 days: Break by concern**
 
 ```
-❌ BAD: Large task
+âŒ BAD: Large task
 "Build task management feature" (5 days, 8 points)
 
-✅ GOOD: Broken down
+âœ… GOOD: Broken down
 1. "Create task API endpoints"          (2 days, 3 points)
 2. "Build task list UI component"       (1 day, 2 points)
 3. "Add task creation form"             (1 day, 2 points)
@@ -196,9 +196,9 @@ milestone: SB-YY.SN
 
 ## Acceptance Criteria
 
-- [ ] [Criterion 1 — specific, measurable, testable]
-- [ ] [Criterion 2 — specific, measurable, testable]
-- [ ] [Criterion 3 — specific, measurable, testable]
+- [ ] [Criterion 1 â€” specific, measurable, testable]
+- [ ] [Criterion 2 â€” specific, measurable, testable]
+- [ ] [Criterion 3 â€” specific, measurable, testable]
 
 ## Technical Notes
 
@@ -208,18 +208,18 @@ milestone: SB-YY.SN
 
 ## Files to Modify
 
-- `apps/api/app/api/<module>.py` — [what changes]
-- `apps/web/app/<module>/page.tsx` — [what changes]
-- `packages/ai/agents/<agent>.py` — [what changes]
+- `apps/api/app/api/<module>.py` â€” [what changes]
+- `apps/web/app/<module>/page.tsx` â€” [what changes]
+- `packages/ai/agents/<agent>.py` â€” [what changes]
 
 ## Dependencies
 
 ### Blocked By
-- #[issue-number] — [description of dependency]
-- #[issue-number] — [description of dependency]
+- #[issue-number] â€” [description of dependency]
+- #[issue-number] â€” [description of dependency]
 
 ### Blocks
-- #[issue-number] — [description of what this blocks]
+- #[issue-number] â€” [description of what this blocks]
 
 ## Effort
 
@@ -352,37 +352,37 @@ Story: "As a user, I want to view my tasks with priority sorting"
 Feature: Task list with priority sorting
 
 Tasks:
-├── 1. API Layer (2 points)
-│   ├── Create API endpoint: GET /api/tasks?sort=priority
-│   ├── Add TypeScript types for priority sort params
-│   └── Write API integration tests
-│
-├── 2. Data Fetching (1 point)
-│   ├── Create useTasks hook with sort parameter
-│   ├── Add loading and error states
-│   └── Implement optimistic updates
-│
-├── 3. UI Components (3 points)
-│   ├── Build TaskList component with sort dropdown
-│   ├── Create PriorityBadge component
-│   ├── Implement drag-to-reorder (priority-based)
-│   └── Add empty state and error state
-│
-├── 4. State Management (1 point)
-│   ├── Add sort preference to Zustand store
-│   ├── Persist sort preference to localStorage
-│   └── Handle edge case: no tasks to sort
-│
-├── 5. Styling (1 point)
-│   ├── CSS for priority indicators
-│   ├── Responsive layout adjustments
-│   └── Dark mode compliance
-│
-└── 6. Tests (2 points)
-    ├── Unit tests for sorting logic
-    ├── Component tests for TaskList
-    ├── Integration tests for API + fetch
-    └── E2E test for full flow
+â”œâ”€â”€ 1. API Layer (2 points)
+â”‚   â”œâ”€â”€ Create API endpoint: GET /api/tasks?sort=priority
+â”‚   â”œâ”€â”€ Add TypeScript types for priority sort params
+â”‚   â””â”€â”€ Write API integration tests
+â”‚
+â”œâ”€â”€ 2. Data Fetching (1 point)
+â”‚   â”œâ”€â”€ Create useTasks hook with sort parameter
+â”‚   â”œâ”€â”€ Add loading and error states
+â”‚   â””â”€â”€ Implement optimistic updates
+â”‚
+â”œâ”€â”€ 3. UI Components (3 points)
+â”‚   â”œâ”€â”€ Build TaskList component with sort dropdown
+â”‚   â”œâ”€â”€ Create PriorityBadge component
+â”‚   â”œâ”€â”€ Implement drag-to-reorder (priority-based)
+â”‚   â””â”€â”€ Add empty state and error state
+â”‚
+â”œâ”€â”€ 4. State Management (1 point)
+â”‚   â”œâ”€â”€ Add sort preference to Zustand store
+â”‚   â”œâ”€â”€ Persist sort preference to localStorage
+â”‚   â””â”€â”€ Handle edge case: no tasks to sort
+â”‚
+â”œâ”€â”€ 5. Styling (1 point)
+â”‚   â”œâ”€â”€ CSS for priority indicators
+â”‚   â”œâ”€â”€ Responsive layout adjustments
+â”‚   â””â”€â”€ Dark mode compliance
+â”‚
+â””â”€â”€ 6. Tests (2 points)
+    â”œâ”€â”€ Unit tests for sorting logic
+    â”œâ”€â”€ Component tests for TaskList
+    â”œâ”€â”€ Integration tests for API + fetch
+    â””â”€â”€ E2E test for full flow
 ```
 
 ### 4.2 Backend Endpoint Breakdown
@@ -391,37 +391,37 @@ Tasks:
 Task: Create task CRUD API endpoint
 
 Subtasks:
-├── 1. Data Model (1 hour)
-│   ├── Define Pydantic schemas (TaskCreate, TaskUpdate, TaskResponse)
-│   ├── Validate fields (title length, priority enum, due_date format)
-│   └── Add OpenAPI examples
-│
-├── 2. Database (1 hour)
-│   ├── Write Supabase migration (if table doesn't exist)
-│   ├── Add RLS policy for user isolation
-│   └── Add indexes on commonly queried fields
-│
-├── 3. Route Handler (2 hours)
-│   ├── Create CRUD functions (create, read, update, delete, list)
-│   ├── Add error handling (404, 400, 500)
-│   ├── Add pagination for list endpoint
-│   └── Implement query parameters (filter, sort, search)
-│
-├── 4. Validation (1 hour)
-│   ├── Input sanitization
-│   ├── Business rule validation (due_date not in past)
-│   └── Permission validation (user_id matches auth)
-│
-├── 5. Tests (2 hours)
-│   ├── Unit tests for validation logic
-│   ├── Integration tests for each CRUD operation
-│   ├── Test error cases (invalid input, missing record)
-│   └── Test RLS policy enforcement
-│
-└── 6. Documentation (30 min)
-    ├── Update OpenAPI schema
-    ├── Add examples to API docs
-    └── Update endpoint inventory
+â”œâ”€â”€ 1. Data Model (1 hour)
+â”‚   â”œâ”€â”€ Define Pydantic schemas (TaskCreate, TaskUpdate, TaskResponse)
+â”‚   â”œâ”€â”€ Validate fields (title length, priority enum, due_date format)
+â”‚   â””â”€â”€ Add OpenAPI examples
+â”‚
+â”œâ”€â”€ 2. Database (1 hour)
+â”‚   â”œâ”€â”€ Write Supabase migration (if table doesn't exist)
+â”‚   â”œâ”€â”€ Add RLS policy for user isolation
+â”‚   â””â”€â”€ Add indexes on commonly queried fields
+â”‚
+â”œâ”€â”€ 3. Route Handler (2 hours)
+â”‚   â”œâ”€â”€ Create CRUD functions (create, read, update, delete, list)
+â”‚   â”œâ”€â”€ Add error handling (404, 400, 500)
+â”‚   â”œâ”€â”€ Add pagination for list endpoint
+â”‚   â””â”€â”€ Implement query parameters (filter, sort, search)
+â”‚
+â”œâ”€â”€ 4. Validation (1 hour)
+â”‚   â”œâ”€â”€ Input sanitization
+â”‚   â”œâ”€â”€ Business rule validation (due_date not in past)
+â”‚   â””â”€â”€ Permission validation (user_id matches auth)
+â”‚
+â”œâ”€â”€ 5. Tests (2 hours)
+â”‚   â”œâ”€â”€ Unit tests for validation logic
+â”‚   â”œâ”€â”€ Integration tests for each CRUD operation
+â”‚   â”œâ”€â”€ Test error cases (invalid input, missing record)
+â”‚   â””â”€â”€ Test RLS policy enforcement
+â”‚
+â””â”€â”€ 6. Documentation (30 min)
+    â”œâ”€â”€ Update OpenAPI schema
+    â”œâ”€â”€ Add examples to API docs
+    â””â”€â”€ Update endpoint inventory
 ```
 
 ### 4.3 Agent Module Breakdown
@@ -432,45 +432,45 @@ Story: "ARIA should generate daily briefings with AI"
 Feature: Daily Briefing Agent (A09)
 
 Tasks:
-├── 1. Prompt Engineering (3 points)
-│   ├── Create prompts/agents/briefing_agent.md with YAML frontmatter
-│   ├── Define output JSON schema (tasks_summary, courses_progress, etc.)
-│   ├── Write 5+ few-shot examples
-│   ├── Document edge cases and anti-patterns
-│   └── Run validate_prompts.py — pass with zero errors
-│
-├── 2. Agent Module (3 points)
-│   ├── Create packages/ai/agents/briefing_agent.py
-│   ├── Import from PromptLoader: prompts.get_agent("briefing_agent")
-│   ├── Implement generate_briefing(user_id) async function
-│   ├── Add fallback prompt (hardcoded inline string)
-│   ├── Parse LLM response as JSON with validation
-│   └── Handle LLM failure gracefully (return default briefing)
-│
-├── 3. Database Integration (2 points)
-│   ├── Create daily_briefings table in Supabase
-│   ├── Add RLS policy
-│   ├── Create Pydantic schemas
-│   └── Create API endpoint: GET /api/briefings/latest
-│
-├── 4. Scheduler Integration (2 points)
-│   ├── Add cron job in services/scheduler/main.py
-│   ├── Configure trigger at 7:00 AM daily
-│   ├── Add error handling and retry logic
-│   └── Add logging for monitoring
-│
-├── 5. Frontend UI (2 points)
-│   ├── Create dashboard briefing card component
-│   ├── Format LLM output for display
-│   ├── Add loading skeleton
-│   ├── Add refresh button
-│   └── Handle case: no briefing available yet
-│
-└── 6. Testing (2 points)
-    ├── Prompt content tests (tests/test_agent_prompts.py)
-    ├── Agent unit tests (mock LLM, verify parsing)
-    ├── Integration test (scheduler → agent → database)
-    └── Manual testing with real LLM
+â”œâ”€â”€ 1. Prompt Engineering (3 points)
+â”‚   â”œâ”€â”€ Create prompts/agents/briefing_agent.md with YAML frontmatter
+â”‚   â”œâ”€â”€ Define output JSON schema (tasks_summary, courses_progress, etc.)
+â”‚   â”œâ”€â”€ Write 5+ few-shot examples
+â”‚   â”œâ”€â”€ Document edge cases and anti-patterns
+â”‚   â””â”€â”€ Run validate_prompts.py â€” pass with zero errors
+â”‚
+â”œâ”€â”€ 2. Agent Module (3 points)
+â”‚   â”œâ”€â”€ Create packages/ai/agents/briefing_agent.py
+â”‚   â”œâ”€â”€ Import from PromptLoader: prompts.get_agent("briefing_agent")
+â”‚   â”œâ”€â”€ Implement generate_briefing(user_id) async function
+â”‚   â”œâ”€â”€ Add fallback prompt (hardcoded inline string)
+â”‚   â”œâ”€â”€ Parse LLM response as JSON with validation
+â”‚   â””â”€â”€ Handle LLM failure gracefully (return default briefing)
+â”‚
+â”œâ”€â”€ 3. Database Integration (2 points)
+â”‚   â”œâ”€â”€ Create daily_briefings table in Supabase
+â”‚   â”œâ”€â”€ Add RLS policy
+â”‚   â”œâ”€â”€ Create Pydantic schemas
+â”‚   â””â”€â”€ Create API endpoint: GET /api/briefings/latest
+â”‚
+â”œâ”€â”€ 4. Scheduler Integration (2 points)
+â”‚   â”œâ”€â”€ Add cron job in services/scheduler/main.py
+â”‚   â”œâ”€â”€ Configure trigger at 7:00 AM daily
+â”‚   â”œâ”€â”€ Add error handling and retry logic
+â”‚   â””â”€â”€ Add logging for monitoring
+â”‚
+â”œâ”€â”€ 5. Frontend UI (2 points)
+â”‚   â”œâ”€â”€ Create dashboard briefing card component
+â”‚   â”œâ”€â”€ Format LLM output for display
+â”‚   â”œâ”€â”€ Add loading skeleton
+â”‚   â”œâ”€â”€ Add refresh button
+â”‚   â””â”€â”€ Handle case: no briefing available yet
+â”‚
+â””â”€â”€ 6. Testing (2 points)
+    â”œâ”€â”€ Prompt content tests (tests/test_agent_prompts.py)
+    â”œâ”€â”€ Agent unit tests (mock LLM, verify parsing)
+    â”œâ”€â”€ Integration test (scheduler â†’ agent â†’ database)
+    â””â”€â”€ Manual testing with real LLM
 ```
 
 ### 4.4 Bug Fix Breakdown
@@ -479,31 +479,31 @@ Tasks:
 Task: Fix login redirect loop when token expires
 
 Subtasks:
-├── 1. Reproduce (30 min)
-│   ├── Set up test scenario: expired token
-│   ├── Document exact reproduction steps
-│   └── Capture error logs
-│
-├── 2. Locate Root Cause (1 hour)
-│   ├── Trace auth middleware flow
-│   ├── Identify where redirect is triggered
-│   └── Determine why refresh isn't happening first
-│
-├── 3. Fix Implementation (2 hours)
-│   ├── Move token expiry check after refresh attempt
-│   ├── Add max redirect counter (3) to prevent infinite loops
-│   ├── Add toast notification on token refresh failure
-│   └── Minimize diff (only touch affected lines)
-│
-├── 4. Tests (1 hour)
-│   ├── Add unit test for token refresh flow
-│   ├── Add integration test for expired token handling
-│   └── Verify no regression in other auth flows
-│
-└── 5. Deploy (30 min)
-    ├── Create PR with bug fix
-    ├── Deploy to production
-    └── Verify fix with smoke test
+â”œâ”€â”€ 1. Reproduce (30 min)
+â”‚   â”œâ”€â”€ Set up test scenario: expired token
+â”‚   â”œâ”€â”€ Document exact reproduction steps
+â”‚   â””â”€â”€ Capture error logs
+â”‚
+â”œâ”€â”€ 2. Locate Root Cause (1 hour)
+â”‚   â”œâ”€â”€ Trace auth middleware flow
+â”‚   â”œâ”€â”€ Identify where redirect is triggered
+â”‚   â””â”€â”€ Determine why refresh isn't happening first
+â”‚
+â”œâ”€â”€ 3. Fix Implementation (2 hours)
+â”‚   â”œâ”€â”€ Move token expiry check after refresh attempt
+â”‚   â”œâ”€â”€ Add max redirect counter (3) to prevent infinite loops
+â”‚   â”œâ”€â”€ Add toast notification on token refresh failure
+â”‚   â””â”€â”€ Minimize diff (only touch affected lines)
+â”‚
+â”œâ”€â”€ 4. Tests (1 hour)
+â”‚   â”œâ”€â”€ Add unit test for token refresh flow
+â”‚   â”œâ”€â”€ Add integration test for expired token handling
+â”‚   â””â”€â”€ Verify no regression in other auth flows
+â”‚
+â””â”€â”€ 5. Deploy (30 min)
+    â”œâ”€â”€ Create PR with bug fix
+    â”œâ”€â”€ Deploy to production
+    â””â”€â”€ Verify fix with smoke test
 ```
 
 ### 4.5 Refactoring Breakdown
@@ -512,31 +512,31 @@ Subtasks:
 Task: Refactor PromptLoader for better error handling
 
 Subtasks:
-├── 1. Map Current State (1 hour)
-│   ├── Document current PromptLoader architecture
-│   ├── Identify pain points (error handling, caching)
-│   └── Read all current consumers
-│
-├── 2. Plan Migration (1 hour)
-│   ├── Design new error handling approach
-│   ├── Define new public API
-│   └── Write migration plan
-│
-├── 3. Execute Refactoring (4 hours)
-│   ├── Add error handling for YAML parse failures
-│   ├── Add caching layer with TTL
-│   ├── Add logging for debug
-│   └── Update type hints
-│
-├── 4. Verify (1 hour)
-│   ├── Run existing tests — all pass unchanged
-│   ├── Add new tests for error scenarios
-│   └── Manual test with malformed prompt files
-│
-└── 5. Clean Up (30 min)
-    ├── Remove deprecated methods
-    ├── Update documentation
-    └── Mark migration task as complete
+â”œâ”€â”€ 1. Map Current State (1 hour)
+â”‚   â”œâ”€â”€ Document current PromptLoader architecture
+â”‚   â”œâ”€â”€ Identify pain points (error handling, caching)
+â”‚   â””â”€â”€ Read all current consumers
+â”‚
+â”œâ”€â”€ 2. Plan Migration (1 hour)
+â”‚   â”œâ”€â”€ Design new error handling approach
+â”‚   â”œâ”€â”€ Define new public API
+â”‚   â””â”€â”€ Write migration plan
+â”‚
+â”œâ”€â”€ 3. Execute Refactoring (4 hours)
+â”‚   â”œâ”€â”€ Add error handling for YAML parse failures
+â”‚   â”œâ”€â”€ Add caching layer with TTL
+â”‚   â”œâ”€â”€ Add logging for debug
+â”‚   â””â”€â”€ Update type hints
+â”‚
+â”œâ”€â”€ 4. Verify (1 hour)
+â”‚   â”œâ”€â”€ Run existing tests â€” all pass unchanged
+â”‚   â”œâ”€â”€ Add new tests for error scenarios
+â”‚   â””â”€â”€ Manual test with malformed prompt files
+â”‚
+â””â”€â”€ 5. Clean Up (30 min)
+    â”œâ”€â”€ Remove deprecated methods
+    â”œâ”€â”€ Update documentation
+    â””â”€â”€ Mark migration task as complete
 ```
 
 ### 4.6 Task Breakdown by Module (Second Brain OS)
@@ -564,7 +564,7 @@ Subtasks:
 
 ## 5. Estimation Techniques
 
-### 5.1 T-Shirt Sizing → Fibonacci
+### 5.1 T-Shirt Sizing â†’ Fibonacci
 
 | T-Shirt | Points | Time Range | Certainty |
 |---|---|---|---|
@@ -573,7 +573,7 @@ Subtasks:
 | M | 3 | 4-8 hours (1 day) | High |
 | L | 5 | 1-2 days | Moderate |
 | XL | 8 | 2-3 days | Moderate |
-| XXL | 13 | 3-5 days | Low — must split |
+| XXL | 13 | 3-5 days | Low â€” must split |
 
 ### 5.2 Affinity Estimation
 
@@ -589,7 +589,7 @@ For estimating many items quickly:
 
 **Best for:** Backlog refinement with 10+ unestimated items
 **Time:** 15-30 minutes for 20 items
-**Accuracy:** ±30% (acceptable for backlog prioritization)
+**Accuracy:** Â±30% (acceptable for backlog prioritization)
 
 ### 5.3 Reference Stories
 
@@ -672,12 +672,12 @@ Fixed reference stories that the team calibrates against:
 ## Dependencies
 
 ### Blocked By (must complete first)
-- [ ] #142 — Task API endpoints (Alice) — Due: S7.D3
-- [ ] #143 — Database migrations (Bob) — Due: S7.D2
+- [ ] #142 â€” Task API endpoints (Alice) â€” Due: S7.D3
+- [ ] #143 â€” Database migrations (Bob) â€” Due: S7.D2
 
 ### Blocks (must complete before these can start)
-- [ ] #145 — Task list UI (Carol) — Needs API endpoints
-- [ ] #146 — Task filtering (Dave) — Needs API endpoints
+- [ ] #145 â€” Task list UI (Carol) â€” Needs API endpoints
+- [ ] #146 â€” Task filtering (Dave) â€” Needs API endpoints
 ```
 
 **Dependency status labels:**
@@ -712,13 +712,13 @@ For complex features, identify the critical path (longest dependent chain):
 Task: Daily Briefing Agent feature
 
 Chain A (Frontend): 
-  API endpoint → Frontend card → Dashboard integration → Tests = 5 days
+  API endpoint â†’ Frontend card â†’ Dashboard integration â†’ Tests = 5 days
 
 Chain B (Backend): 
-  DB migration → Agent module → Prompt → Scheduler → Tests = 8 days ⬅ CRITICAL
+  DB migration â†’ Agent module â†’ Prompt â†’ Scheduler â†’ Tests = 8 days â¬… CRITICAL
 
 Chain C (Integration):
-  Agent + Scheduler → E2E tests → Documentation = 3 days
+  Agent + Scheduler â†’ E2E tests â†’ Documentation = 3 days
 
 Critical path = Chain B (8 days)
 Schedule buffer = 2 days (for risk)
@@ -741,12 +741,12 @@ Total timeline = 10 days = 1 sprint
 
 ### 7.1 RICE Scoring
 
-**Formula:** RICE Score = `(Reach × Impact × Confidence) / Effort`
+**Formula:** RICE Score = `(Reach Ã— Impact Ã— Confidence) / Effort`
 
 | Factor | Description | Scale | Weight |
 |---|---|---|---|
-| **Reach** | How many users per time period? | 0.25 (0.25×) |
-| **Impact** | How much impact per user? | 0.35 (0.35×) |
+| **Reach** | How many users per time period? | 0.25 (0.25Ã—) |
+| **Impact** | How much impact per user? | 0.35 (0.35Ã—) |
 | **Confidence** | How confident are we? | 0.15 (multiplier) |
 | **Effort** | How many person-months? | - (divisor) |
 
@@ -776,7 +776,7 @@ Impact: 4 (significantly improves morning routine)
 Confidence: 4 (well-understood, existing patterns)
 Effort: 1.0 (2 weeks)
 
-RICE = (5 × 4 × 4) / 1.0 = 80
+RICE = (5 Ã— 4 Ã— 4) / 1.0 = 80
 
 Feature: Dark mode toggle
 Reach: 3 (some users prefer dark mode)
@@ -784,26 +784,26 @@ Impact: 2 (nice to have, not critical)
 Confidence: 3 (straightforward CSS)
 Effort: 0.5 (3 days)
 
-RICE = (3 × 2 × 3) / 0.5 = 36
+RICE = (3 Ã— 2 Ã— 3) / 0.5 = 36
 ```
 
 ### 7.2 Priority Matrix
 
 ```
                     High Impact
-                        │
-                   ┌────┴────┐
-                   │         │
-    Low Effort ────┤ DO NOW  │ SCHEDULE ├──── High Effort
-                   │ (P0)    │ (P1)     │
-                   └────┬────┘
-                        │
-                   ┌────┴────┐
-                   │         │
-                   │ DO NEXT │ MAYBE    │
-                   │ (P2)    │ (P3/P4)  │
-                   └─────────┘
-                        │
+                        â”‚
+                   â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”
+                   â”‚         â”‚
+    Low Effort â”€â”€â”€â”€â”¤ DO NOW  â”‚ SCHEDULE â”œâ”€â”€â”€â”€ High Effort
+                   â”‚ (P0)    â”‚ (P1)     â”‚
+                   â””â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”˜
+                        â”‚
+                   â”Œâ”€â”€â”€â”€â”´â”€â”€â”€â”€â”
+                   â”‚         â”‚
+                   â”‚ DO NEXT â”‚ MAYBE    â”‚
+                   â”‚ (P2)    â”‚ (P3/P4)  â”‚
+                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚
                     Low Impact
 ```
 
@@ -834,7 +834,7 @@ RICE = (3 × 2 × 3) / 0.5 = 36
 ### 8.2 Capacity Allocation Template
 
 ```markdown
-## Sprint Capacity Plan — SB-26.S7
+## Sprint Capacity Plan â€” SB-26.S7
 
 ### Team Availability
 
@@ -885,9 +885,9 @@ RICE = (3 × 2 × 3) / 0.5 = 36
 
 | Scenario | Calculation | Points |
 |---|---|---|
-| Conservative | Avg - σ | 30 |
+| Conservative | Avg - Ïƒ | 30 |
 | Expected | Avg | 33 |
-| Optimistic | Avg + σ | 35 |
+| Optimistic | Avg + Ïƒ | 35 |
 
 ### Recommended Commitment: 30-33 points
 ```
@@ -940,7 +940,7 @@ type/spike:       "Research, investigation"
 type/hotfix:      "Emergency production fix"
 
 # Priority
-priority/p0:      "Drop everything — critical"
+priority/p0:      "Drop everything â€” critical"
 priority/p1:      "High priority"
 priority/p2:      "Medium priority"
 priority/p3:      "Low priority"
@@ -985,11 +985,11 @@ milestones:
 
 # Sprint milestones
   - title: SB-26.S7
-    description: "Sprint 7 — AI Agent Integration"
+    description: "Sprint 7 â€” AI Agent Integration"
     due_on: 2026-04-12
     
   - title: SB-26.S8
-    description: "Sprint 8 — AI Agent Integration"
+    description: "Sprint 8 â€” AI Agent Integration"
     due_on: 2026-04-26
 ```
 
@@ -1047,20 +1047,20 @@ y_axis: Story Points
 ### 10.1 State Flow
 
 ```
-                   ┌──────────────────────────────────────┐
-                   │                                      │
-                   ▼                                      │
-┌────────┐   ┌────────┐   ┌────────────┐   ┌──────────┐  │  ┌──────────┐   ┌────────────┐
-│Backlog │ → │ Ready  │ → │ In Progress│ → │In Review │  │  │   Done   │ → │  Deployed  │
-│        │   │(DoR met)│   │ (Active)   │   │(PR sent)  │  │  │(DoD met) │   │(In prod)   │
-└────────┘   └────────┘   └────────────┘   └──────────┘  │  └──────────┘   └────────────┘
-                               │               │         │       ▲
-                               ▼               ▼         │       │
-                          ┌────────────┐   ┌──────────┐  │       │
-                          │  Blocked   │   │  In QA   │──┘       │
-                          │(Dependency)│   │(QA check)│          │
-                          └────────────┘   └──────────┘──────────┘
-                                                     (QA failed → back to In Progress)
+                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                   â”‚                                      â”‚
+                   â–¼                                      â”‚
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚Backlog â”‚ â†’ â”‚ Ready  â”‚ â†’ â”‚ In Progressâ”‚ â†’ â”‚In Review â”‚  â”‚  â”‚   Done   â”‚ â†’ â”‚  Deployed  â”‚
+â”‚        â”‚   â”‚(DoR met)â”‚   â”‚ (Active)   â”‚   â”‚(PR sent)  â”‚  â”‚  â”‚(DoD met) â”‚   â”‚(In prod)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚               â”‚         â”‚       â–²
+                               â–¼               â–¼         â”‚       â”‚
+                          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚       â”‚
+                          â”‚  Blocked   â”‚   â”‚  In QA   â”‚â”€â”€â”˜       â”‚
+                          â”‚(Dependency)â”‚   â”‚(QA check)â”‚          â”‚
+                          â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                                     (QA failed â†’ back to In Progress)
 ```
 
 ### 10.2 State Definitions
@@ -1083,12 +1083,12 @@ y_axis: Story Points
 | Backlog | Ready | All DoR criteria met |
 | Ready | In Progress | Developer self-assigns |
 | In Progress | In Review | PR submitted with CI green |
-| In Progress | Blocked | Dependency not available — add `status/blocked` label |
-| Blocked | In Progress | Dependency resolved — remove label |
+| In Progress | Blocked | Dependency not available â€” add `status/blocked` label |
+| Blocked | In Progress | Dependency resolved â€” remove label |
 | In Review | In QA | 1+ approval received, PR ready for QA |
-| In Review | In Progress | Changes requested — address feedback |
+| In Review | In Progress | Changes requested â€” address feedback |
 | In QA | Done | QA verified, all checks pass |
-| In QA | In Progress | QA failed — fix issues |
+| In QA | In Progress | QA failed â€” fix issues |
 | Done | Deployed | Merge to main, CD deploys |
 
 ---
@@ -1137,7 +1137,7 @@ Every task in the sprint backlog must meet:
 | Is the task clear enough to start? | Developer | Yes/No |
 | Are all dependencies resolved? | Scrum Master | Yes/No |
 | Is the design approved? | Design Lead (if UI) | Yes/No |
-| Is the estimate valid? | Team | ±25% |
+| Is the estimate valid? | Team | Â±25% |
 | Is test data available? | QA Lead | Yes/No |
 
 ---
@@ -1149,38 +1149,38 @@ Every task in the sprint backlog must meet:
 ```
 Legend: Pts = Story Points, Dur = Duration
 
-┌─────────────────────────────────────────────────────────────┐
-│           TASK BREAKDOWN — QUICK REFERENCE                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  USER STORY → FEATURES → TASKS → SUBTASKS                   │
-│                                                             │
-│  Size limits:                                               │
-│    Story:   ≤ 13 pts, ≤ 3 days         [If >, split]        │
-│    Feature: ≤ 8 pts,  ≤ 2 days         [If >, split]        │
-│    Task:    ≤ 3 pts,  ≤ 8 hours        [If >, split]        │
-│    Subtask: Not estimated, < 2 hours   [Optional]           │
-│                                                             │
-│  Typical breakdown:                                         │
-│    Frontend:  API → Data → UI → State → Style → Tests       │
-│    Backend:   Model → Schema → Route → Val → Tests → Docs   │
-│    Agent:     Prompt → Module → Tests → Integration         │
-│    Bug:       Reproduce → Find → Fix → Test → Deploy        │
-│    Refactor:  Map → Plan → Execute → Verify → Cleanup       │
-│                                                             │
-│  Estimation:                                                │
-│    XS = 1 pt (< 2h)    S = 2 pt (2-4h)                     │
-│    M = 3 pt (4-8h)     L = 5 pt (1-2d)                     │
-│    XL = 8 pt (2-3d)    XXL = 13 pt (split!)                │
-│                                                             │
-│  Dependencies:                                              │
-│    Blocked By: #[issue] — dependency must complete first     │
-│    Blocks: #[issue] — other work depends on this task        │
-│                                                             │
-│  Task states: Backlog → Ready → In Progress → In Review      │
-│               → In QA → Done → Deployed                      │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚           TASK BREAKDOWN â€” QUICK REFERENCE                   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                             â”‚
+â”‚  USER STORY â†’ FEATURES â†’ TASKS â†’ SUBTASKS                   â”‚
+â”‚                                                             â”‚
+â”‚  Size limits:                                               â”‚
+â”‚    Story:   â‰¤ 13 pts, â‰¤ 3 days         [If >, split]        â”‚
+â”‚    Feature: â‰¤ 8 pts,  â‰¤ 2 days         [If >, split]        â”‚
+â”‚    Task:    â‰¤ 3 pts,  â‰¤ 8 hours        [If >, split]        â”‚
+â”‚    Subtask: Not estimated, < 2 hours   [Optional]           â”‚
+â”‚                                                             â”‚
+â”‚  Typical breakdown:                                         â”‚
+â”‚    Frontend:  API â†’ Data â†’ UI â†’ State â†’ Style â†’ Tests       â”‚
+â”‚    Backend:   Model â†’ Schema â†’ Route â†’ Val â†’ Tests â†’ Docs   â”‚
+â”‚    Agent:     Prompt â†’ Module â†’ Tests â†’ Integration         â”‚
+â”‚    Bug:       Reproduce â†’ Find â†’ Fix â†’ Test â†’ Deploy        â”‚
+â”‚    Refactor:  Map â†’ Plan â†’ Execute â†’ Verify â†’ Cleanup       â”‚
+â”‚                                                             â”‚
+â”‚  Estimation:                                                â”‚
+â”‚    XS = 1 pt (< 2h)    S = 2 pt (2-4h)                     â”‚
+â”‚    M = 3 pt (4-8h)     L = 5 pt (1-2d)                     â”‚
+â”‚    XL = 8 pt (2-3d)    XXL = 13 pt (split!)                â”‚
+â”‚                                                             â”‚
+â”‚  Dependencies:                                              â”‚
+â”‚    Blocked By: #[issue] â€” dependency must complete first     â”‚
+â”‚    Blocks: #[issue] â€” other work depends on this task        â”‚
+â”‚                                                             â”‚
+â”‚  Task states: Backlog â†’ Ready â†’ In Progress â†’ In Review      â”‚
+â”‚               â†’ In QA â†’ Done â†’ Deployed                      â”‚
+â”‚                                                             â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix B: Common Task Templates by Type
@@ -1198,31 +1198,31 @@ Legend: Pts = Story Points, Dur = Duration
 
 | Strategy | When to Use | Example |
 |---|---|---|
-| **By layer** | Full-stack features | API → Frontend → Tests |
-| **By use case** | Multiple user workflows | Create task → Edit task → Complete task |
-| **By data type** | Multiple entity types | Task CRUD → Goal CRUD → Habit CRUD |
-| **By operation** | CRUD features | Create → Read → Update → Delete |
-| **By complexity** | Varying difficulty | Simple case → Edge cases → Advanced features |
-| **By scenario** | Multiple paths | Happy path → Error path → Empty state |
+| **By layer** | Full-stack features | API â†’ Frontend â†’ Tests |
+| **By use case** | Multiple user workflows | Create task â†’ Edit task â†’ Complete task |
+| **By data type** | Multiple entity types | Task CRUD â†’ Goal CRUD â†’ Habit CRUD |
+| **By operation** | CRUD features | Create â†’ Read â†’ Update â†’ Delete |
+| **By complexity** | Varying difficulty | Simple case â†’ Edge cases â†’ Advanced features |
+| **By scenario** | Multiple paths | Happy path â†’ Error path â†’ Empty state |
 
 ### Appendix D: Estimation Poker Cards
 
 ```
-┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐
-│  0  │  │  1  │  │  2  │  │  3  │  │  5  │  │  8  │
-│  ?  │  │ XS  │  │  S  │  │  M  │  │  L  │  │ XL  │
-└─────┘  └─────┘  └─────┘  └─────┘  └─────┘  └─────┘
+â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”
+â”‚  0  â”‚  â”‚  1  â”‚  â”‚  2  â”‚  â”‚  3  â”‚  â”‚  5  â”‚  â”‚  8  â”‚
+â”‚  ?  â”‚  â”‚ XS  â”‚  â”‚  S  â”‚  â”‚  M  â”‚  â”‚  L  â”‚  â”‚ XL  â”‚
+â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜
 
-┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐
-│ 13  │  │ 21  │  │ ∞   │  │ ☕  │  │ ?   │
-│ XXL │  │SPLIT│  │UNKNW│  │BREAK│  │UNCLR│
-└─────┘  └─────┘  └─────┘  └─────┘  └─────┘
+â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”
+â”‚ 13  â”‚  â”‚ 21  â”‚  â”‚ âˆž   â”‚  â”‚ â˜•  â”‚  â”‚ ?   â”‚
+â”‚ XXL â”‚  â”‚SPLITâ”‚  â”‚UNKNWâ”‚  â”‚BREAKâ”‚  â”‚UNCLRâ”‚
+â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”˜
 
 Card Meanings:
 0    = Already done / trivial (no effort)
 ?    = Don't understand, need clarification
-∞    = Too large, must split
-☕   = Need a break / can't estimate right now
+âˆž    = Too large, must split
+â˜•   = Need a break / can't estimate right now
 21   = Epic, must split into smaller stories
 ```
 
