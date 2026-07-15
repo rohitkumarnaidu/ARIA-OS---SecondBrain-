@@ -1,5 +1,6 @@
 import os
 from typing import Optional, Dict, Any
+from shared.utils.logger import logger
 
 
 def get_ai_response(prompt: str, context: Optional[Dict[str, Any]] = None) -> str:
@@ -25,7 +26,7 @@ def get_ollama_response(prompt: str, context: Optional[Dict[str, Any]] = None) -
         if response.status_code == 200:
             return response.json().get("response", "No response")
     except Exception as e:
-        print(f"Ollama error: {e}")
+        logger.error("Ollama error", error=str(e))
 
     return "AI response unavailable. Please try again later."
 
@@ -46,7 +47,7 @@ def get_claude_response(prompt: str, context: Optional[Dict[str, Any]] = None) -
         )
         return message.content[0].text
     except Exception as e:
-        print(f"Claude error: {e}")
+        logger.error("Claude error", error=str(e))
         return "AI response unavailable."
 
 
