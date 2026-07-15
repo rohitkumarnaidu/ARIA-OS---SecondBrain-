@@ -41,7 +41,7 @@ jobs:
         working-directory: apps/web
       - name: Upload frontend coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage
           path: apps/web/coverage/
@@ -59,7 +59,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: npx playwright test --config=playwright.config.ts --grep="@a11y"
         working-directory: apps/web
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-report
@@ -80,7 +80,7 @@ jobs:
       - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
       - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/
       - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=85 -x
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
@@ -102,7 +102,7 @@ jobs:
       - run: bash scripts/owasp-check.sh
       - run: bash scripts/sql-injection-audit.sh
       - run: python scripts/attack-scenarios.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         continue-on-error: true
         with:
@@ -252,7 +252,7 @@ jobs:
       - name: Run k6 spike tests
         run: k6 run tests/performance/load-test-spike.js --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000
         continue-on-error: true
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: k6-reports
