@@ -6,6 +6,8 @@
 .git
 .gitignore
 .gitattributes
+.gitmodules
+.gitkeep
 
 # Python
 __pycache__/
@@ -21,6 +23,12 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+.coverage.*
+coverage/
+*.log
+
+# Node (if present in monorepo root)
+node_modules/
 
 # IDE
 .vscode/
@@ -41,3 +49,6 @@ Thumbs.db
 # Docker
 Dockerfile
 .dockerignore
+
+# CI / GitHub
+.github/
