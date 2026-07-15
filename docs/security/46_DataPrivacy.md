@@ -1,10 +1,10 @@
-# Data Privacy & GDPR Compliance Document
+﻿# Data Privacy & GDPR Compliance Document
 
 ## Document Control
 
 | Property | Details |
 |---|---|
-| **Document ID** | SEC-046 |
+| **Document ID** | SEC-DPR-001 |
 | **Document Name** | Data Privacy & GDPR Compliance |
 | **Version** | 1.0 |
 | **Status** | Draft |
@@ -39,7 +39,7 @@ flowchart LR
 
 ### 1.1 Purpose
 
-This document defines the data privacy framework, GDPR compliance posture, and DPDP Act 2023 compliance measures for **Second Brain OS (ARIA OS)** — a personal AI productivity system designed for individual users (BTech CSE students). It establishes policies, procedures, and technical controls to protect user personal data across all system components.
+This document defines the data privacy framework, GDPR compliance posture, and DPDP Act 2023 compliance measures for **Second Brain OS (ARIA OS)** â€” a personal AI productivity system designed for individual users (BTech CSE students). It establishes policies, procedures, and technical controls to protect user personal data across all system components.
 
 ### 1.2 Scope
 
@@ -107,7 +107,7 @@ Second Brain OS operates on a **data minimization** and **privacy-by-default** p
 
 | Classification | Definition | Examples | Handling Requirements |
 |---|---|---|---|
-| **Public** | Non-sensitive, intended to be visible to anyone | None — all data is private by design | Standard encryption at rest and in transit |
+| **Public** | Non-sensitive, intended to be visible to anyone | None â€” all data is private by design | Standard encryption at rest and in transit |
 | **Internal** | General operational data not attributed to specific users | Feature flags, app configuration settings, deployment status | Access controlled via developer authentication; standard encryption |
 | **Confidential** | User's personal productivity data that identifies patterns or habits | Tasks, habits, goals, projects, courses, ideas, resources, time entries | Encryption at rest + in transit; Row-Level Security (RLS); access limited to user and system |
 | **Restricted** | Highly sensitive personal data that could cause harm if disclosed | Income entries, sleep logs, chat messages, AI briefings, authentication tokens | Encryption at rest + in transit; RLS; strict access control; minimal retention; AI processing requires explicit opt-in |
@@ -115,82 +115,82 @@ Second Brain OS operates on a **data minimization** and **privacy-by-default** p
 ### 2.3 Data Flow Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           DATA FLOW DIAGRAM                                 │
-│                           Second Brain OS                                   │
-└─────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                           DATA FLOW DIAGRAM                                 â”‚
+â”‚                           Second Brain OS                                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
   USER (Browser/Mobile)
-        │
-        │  HTTPS/TLS 1.3
-        ▼
-┌───────────────────┐         ┌───────────────────┐
-│                   │         │                   │
-│   VERCEL (CDN)    │ ──────► │  NEXT.JS APP      │
-│   Frontend Host   │         │  (React 18)       │
-│                   │         │                   │
-└───────────────────┘         └────────┬──────────┘
-                                       │
-                                       │  HTTPS/TLS 1.3
-                                       ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                                                              │
-│                        FASTAPI BACKEND (Railway)                             │
-│                                                                              │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────────────┐   │
-│  │ Auth Routes │  │ API Routes  │  │ AI Clients  │  │ Email Service    │   │
-│  │ /auth/*     │  │ /api/*      │  │ /ai/*       │  │ /email/*         │   │
-│  └─────────────┘  └─────────────┘  └──────┬──────┘  └────────┬─────────┘   │
-│                                           │                   │             │
-│              ┌────────────────────────────┘                   │             │
-│              ▼                                                ▼             │
-│    ┌──────────────────┐                              ┌──────────────┐      │
-│    │ OLLAMA (Local)   │                              │ RESEND API   │      │
-│    │ Local AI Model   │                              │ Email Delivery│      │
-│    │ No data retained │                              │ Logs 90 days │      │
-│    └──────────────────┘                              └──────────────┘      │
-│              │                                                             │
-│              ▼                                                             │
-│    ┌──────────────────┐                                                   │
-│    │ CLAUDE API       │                                                   │
-│    │ Anthropic Cloud  │                                                   │
-│    │ Stores 30 days   │                                                   │
-│    └──────────────────┘                                                   │
-│                                                                              │
-└──────────────────────────────┬───────────────────────────────────────────────┘
-                               │
-                               │  HTTPS/TLS 1.3
-                               ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                                                              │
-│                         SUPABASE (PostgreSQL)                                │
-│                                                                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐   │
-│  │  tasks       │  │  habits      │  │  goals       │  │  projects     │   │
-│  ├──────────────┤  ├──────────────┤  ├──────────────┤  ├───────────────┤   │
-│  │  courses     │  │  ideas       │  │  resources   │  │  opportunities│   │
-│  ├──────────────┤  ├──────────────┤  ├──────────────┤  ├───────────────┤   │
-│  │  income      │  │  sleep_logs  │  │ time_entries │  │  briefings    │   │
-│  ├──────────────┤  ├──────────────┤  ├──────────────┤  ├───────────────┤   │
-│  │ chat_messages│  │ users        │  │preferences   │  │email_logs     │   │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └───────────────┘   │
-│                                                                              │
-│  Security: Row-Level Security (RLS) enabled on all tables                   │
-│  Encryption: AES-256 at rest, TLS 1.3 in transit                            │
-│  Access: user_id filter on all queries                                      │
-│                                                                              │
-└──────────────────────────────────────────────────────────────────────────────┘
+        â”‚
+        â”‚  HTTPS/TLS 1.3
+        â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   â”‚         â”‚                   â”‚
+â”‚   VERCEL (CDN)    â”‚ â”€â”€â”€â”€â”€â”€â–º â”‚  NEXT.JS APP      â”‚
+â”‚   Frontend Host   â”‚         â”‚  (React 18)       â”‚
+â”‚                   â”‚         â”‚                   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜         â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                       â”‚
+                                       â”‚  HTTPS/TLS 1.3
+                                       â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                                                              â”‚
+â”‚                        FASTAPI BACKEND (Railway)                             â”‚
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚ Auth Routes â”‚  â”‚ API Routes  â”‚  â”‚ AI Clients  â”‚  â”‚ Email Service    â”‚   â”‚
+â”‚  â”‚ /auth/*     â”‚  â”‚ /api/*      â”‚  â”‚ /ai/*       â”‚  â”‚ /email/*         â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                           â”‚                   â”‚             â”‚
+â”‚              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                   â”‚             â”‚
+â”‚              â–¼                                                â–¼             â”‚
+â”‚    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”‚
+â”‚    â”‚ OLLAMA (Local)   â”‚                              â”‚ RESEND API   â”‚      â”‚
+â”‚    â”‚ Local AI Model   â”‚                              â”‚ Email Deliveryâ”‚      â”‚
+â”‚    â”‚ No data retained â”‚                              â”‚ Logs 90 days â”‚      â”‚
+â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚
+â”‚              â”‚                                                             â”‚
+â”‚              â–¼                                                             â”‚
+â”‚    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                                                   â”‚
+â”‚    â”‚ CLAUDE API       â”‚                                                   â”‚
+â”‚    â”‚ Anthropic Cloud  â”‚                                                   â”‚
+â”‚    â”‚ Stores 30 days   â”‚                                                   â”‚
+â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                                                   â”‚
+â”‚                                                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                               â”‚
+                               â”‚  HTTPS/TLS 1.3
+                               â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                                                              â”‚
+â”‚                         SUPABASE (PostgreSQL)                                â”‚
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”‚
+â”‚  â”‚  tasks       â”‚  â”‚  habits      â”‚  â”‚  goals       â”‚  â”‚  projects     â”‚   â”‚
+â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”‚
+â”‚  â”‚  courses     â”‚  â”‚  ideas       â”‚  â”‚  resources   â”‚  â”‚  opportunitiesâ”‚   â”‚
+â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”‚
+â”‚  â”‚  income      â”‚  â”‚  sleep_logs  â”‚  â”‚ time_entries â”‚  â”‚  briefings    â”‚   â”‚
+â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤   â”‚
+â”‚  â”‚ chat_messagesâ”‚  â”‚ users        â”‚  â”‚preferences   â”‚  â”‚email_logs     â”‚   â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â”‚
+â”‚                                                                              â”‚
+â”‚  Security: Row-Level Security (RLS) enabled on all tables                   â”‚
+â”‚  Encryption: AES-256 at rest, TLS 1.3 in transit                            â”‚
+â”‚  Access: user_id filter on all queries                                      â”‚
+â”‚                                                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 
                               EXTERNAL INTEGRATIONS
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                                                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐  │
-│  │ Google OAuth │  │ Claude API   │  │ Resend Email │  │ Ollama (local) │  │
-│  │ Identity     │  │ AI Processing│  │ Notification │  │ AI Processing  │  │
-│  │ Provider     │  │ Anthropic    │  │ Delivery     │  │ User Machine   │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  └────────────────┘  │
-│                                                                              │
-└──────────────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                                                                              â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Google OAuth â”‚  â”‚ Claude API   â”‚  â”‚ Resend Email â”‚  â”‚ Ollama (local) â”‚  â”‚
+â”‚  â”‚ Identity     â”‚  â”‚ AI Processingâ”‚  â”‚ Notification â”‚  â”‚ AI Processing  â”‚  â”‚
+â”‚  â”‚ Provider     â”‚  â”‚ Anthropic    â”‚  â”‚ Delivery     â”‚  â”‚ User Machine   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â”‚                                                                              â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -204,11 +204,11 @@ Second Brain OS enables all GDPR data subject rights as follows:
 | GDPR Right | Article | Implementation | Mechanism |
 |---|---|---|---|
 | **Right to be informed** | Art. 13-14 | Privacy notice (Section 11, Appendix B) | Published privacy policy + in-app consent dialogs |
-| **Right of access** | Art. 15 | Data export (JSON download) | Settings → Export My Data |
+| **Right of access** | Art. 15 | Data export (JSON download) | Settings â†’ Export My Data |
 | **Right to rectification** | Art. 16 | Edit all user-created data | In-app edit forms for all data types |
-| **Right to erasure** | Art. 17 | Account deletion | Settings → Delete Account → Confirm |
-| **Right to restrict processing** | Art. 18 | Toggle AI features off | Settings → AI Features → Disable |
-| **Right to data portability** | Art. 20 | Full JSON export | Settings → Export My Data → Download |
+| **Right to erasure** | Art. 17 | Account deletion | Settings â†’ Delete Account â†’ Confirm |
+| **Right to restrict processing** | Art. 18 | Toggle AI features off | Settings â†’ AI Features â†’ Disable |
+| **Right to data portability** | Art. 20 | Full JSON export | Settings â†’ Export My Data â†’ Download |
 | **Right to object** | Art. 21 | Stop all data processing | Account deletion (complete opt-out) |
 | **Rights related to automated decision-making** | Art. 22 | AI profiling notice | Disclosure: "AI generates briefings and recommendations based on your data" + opt-in |
 
@@ -224,7 +224,7 @@ Users are informed at the point of data collection via:
 
 Users can access all their data at any time via:
 1. In-app data viewer (browse all modules)
-2. Settings → Export My Data (downloadable JSON)
+2. Settings â†’ Export My Data (downloadable JSON)
 3. DSAR request (email to dpo@secondbrainos.app for manual compilation)
 
 #### 3.1.3 Right to Rectification
@@ -238,13 +238,13 @@ All user-created data is editable through the respective module UI:
 
 #### 3.1.4 Right to Erasure
 
-See Section 3.5 — Data Erasure / Right to be Forgotten.
+See Section 3.5 â€” Data Erasure / Right to be Forgotten.
 
 #### 3.1.5 Right to Restrict Processing
 
 Users can restrict specific processing activities:
-- **AI Processing Toggle**: Disable cloud AI (Claude) → falls back to local Ollama or algorithmic responses
-- **Analytics Opt-Out**: Disable usage analytics → only essential telemetry collected
+- **AI Processing Toggle**: Disable cloud AI (Claude) â†’ falls back to local Ollama or algorithmic responses
+- **Analytics Opt-Out**: Disable usage analytics â†’ only essential telemetry collected
 - **Email Notifications Toggle**: Disable all non-essential email communications
 
 When processing is restricted:
@@ -254,7 +254,7 @@ When processing is restricted:
 
 #### 3.1.6 Right to Data Portability
 
-See Section 3.6 — Data Portability.
+See Section 3.6 â€” Data Portability.
 
 #### 3.1.7 Right to Object
 
@@ -298,7 +298,7 @@ Disclosure: Users are informed that briefings and recommendations are AI-generat
 
 | Consent Type | Collection Point | Mechanism | Granularity |
 |---|---|---|---|
-| AI processing (Claude API) | Settings → AI Features toggle | Explicit toggle switch + disclosure dialog | Per-user, can be toggled on/off at any time |
+| AI processing (Claude API) | Settings â†’ AI Features toggle | Explicit toggle switch + disclosure dialog | Per-user, can be toggled on/off at any time |
 | AI briefings | Onboarding flow + Settings | Explicit checkbox + description of data used | Per-user |
 | Opportunity Radar | Onboarding flow + Settings | Explicit checkbox | Per-user |
 | Email notifications | Sign-up flow + Settings | Explicit checkbox (marketing); transactional emails are contract-necessary | Per notification type |
@@ -360,7 +360,7 @@ Users can withdraw consent at any time via Settings page:
 
 | Step | Owner | Timeline | Description |
 |---|---|---|---|
-| **1. Request Submission** | User | Day 0 | User submits DSAR via email (dpo@secondbrainos.app) or in-app request form (Settings → Privacy → Access My Data) |
+| **1. Request Submission** | User | Day 0 | User submits DSAR via email (dpo@secondbrainos.app) or in-app request form (Settings â†’ Privacy â†’ Access My Data) |
 | **2. Identity Verification** | Support Team | Day 0-1 | Send verification email to registered email address. User must click verification link. For email requests, request must come from registered email address. |
 | **3. Request Logging** | Support Team | Day 1 | Log DSAR in tracking system with: request ID, user ID, submission date, requested data scope, verification status |
 | **4. Data Compilation** | Engineering | Day 1-7 | Compile data package: (a) Supabase export via SQL query filtering by user_id; (b) Chat message export; (c) Analytics data export; (d) System logs related to user |
@@ -371,7 +371,7 @@ Users can withdraw consent at any time via Settings page:
 #### 3.4.2 DSAR Response Template
 
 ```
-Subject: Response to Data Subject Access Request — [Request ID]
+Subject: Response to Data Subject Access Request â€” [Request ID]
 Date: [Response Date]
 To: [User Email]
 
@@ -416,7 +416,7 @@ dpo@secondbrainos.app
 
 | Step | Owner | Timeline | Description |
 |---|---|---|---|
-| **1. Request Initiation** | User | Day 0 | User navigates to Settings → Delete Account. Reads warning about irreversible data loss. Confirms deletion. |
+| **1. Request Initiation** | User | Day 0 | User navigates to Settings â†’ Delete Account. Reads warning about irreversible data loss. Confirms deletion. |
 | **2. Identity Confirmation** | System | Day 0 | Send confirmation email with unique deletion link. User must click link within 24 hours. |
 | **3. Grace Period** | System | Day 0-7 | 7-day grace period during which user can cancel deletion by clicking link in email. User can log in but cannot create new data. |
 | **4. Data Deletion** | System | Day 7 | Automated deletion script runs: (a) Delete all rows where user_id = UUID from all data tables; (b) Delete auth user from Supabase Auth (`auth.users`); (c) Delete user preferences; (d) Anonymize analytics events (remove user_id, retain aggregated count). |
@@ -427,24 +427,24 @@ dpo@secondbrainos.app
 
 | Data Type | Deleted | Anonymized | Retained (justified) |
 |---|---|---|---|
-| Tasks | ✅ Hard delete | — | — |
-| Habits & logs | ✅ Hard delete | — | — |
-| Goals | ✅ Hard delete | — | — |
-| Projects | ✅ Hard delete | — | — |
-| Courses | ✅ Hard delete | — | — |
-| Income | ✅ Hard delete | — | — |
-| Sleep logs | ✅ Hard delete | — | — |
-| Time entries | ✅ Hard delete | — | — |
-| Ideas | ✅ Hard delete | — | — |
-| Resources | ✅ Hard delete | — | — |
-| Opportunities | ✅ Hard delete | — | — |
-| Chat messages | ✅ Hard delete | — | — |
-| Briefings | ✅ Hard delete | — | — |
-| Auth user | ✅ Delete from auth.users | — | — |
-| Email logs | — | — | Retained 90 days (operational) |
-| Analytics events | — | ✅ user_id removed | Aggregated counts for product analytics |
-| Error logs | — | ✅ user_id removed | 30 days for debugging |
-| Backups | — | — | Overwritten on 30-day cycle |
+| Tasks | âœ… Hard delete | â€” | â€” |
+| Habits & logs | âœ… Hard delete | â€” | â€” |
+| Goals | âœ… Hard delete | â€” | â€” |
+| Projects | âœ… Hard delete | â€” | â€” |
+| Courses | âœ… Hard delete | â€” | â€” |
+| Income | âœ… Hard delete | â€” | â€” |
+| Sleep logs | âœ… Hard delete | â€” | â€” |
+| Time entries | âœ… Hard delete | â€” | â€” |
+| Ideas | âœ… Hard delete | â€” | â€” |
+| Resources | âœ… Hard delete | â€” | â€” |
+| Opportunities | âœ… Hard delete | â€” | â€” |
+| Chat messages | âœ… Hard delete | â€” | â€” |
+| Briefings | âœ… Hard delete | â€” | â€” |
+| Auth user | âœ… Delete from auth.users | â€” | â€” |
+| Email logs | â€” | â€” | Retained 90 days (operational) |
+| Analytics events | â€” | âœ… user_id removed | Aggregated counts for product analytics |
+| Error logs | â€” | âœ… user_id removed | 30 days for debugging |
+| Backups | â€” | â€” | Overwritten on 30-day cycle |
 
 #### 3.5.3 Exceptions
 
@@ -492,35 +492,35 @@ All exports are provided in **JSON** format (machine-readable, structured, commo
 
 | Data Category | Included | Notes |
 |---|---|---|
-| Profile data | ✅ | Name, email, avatar URL |
-| Tasks | ✅ | All fields including timestamps |
-| Habits + logs | ✅ | Habit definitions + all completion logs |
-| Goals | ✅ | All fields including milestones |
-| Projects | ✅ | All fields including links |
-| Courses | ✅ | All fields including notes |
-| Income entries | ✅ | All fields |
-| Sleep logs | ✅ | All entries |
-| Time entries | ✅ | All entries |
-| Ideas | ✅ | All fields |
-| Resources | ✅ | All fields |
-| Opportunities | ✅ | All fields |
-| Chat messages | ✅ | Full conversation history |
-| Briefings | ✅ | All generated briefings |
-| User preferences | ✅ | Settings, consent records |
+| Profile data | âœ… | Name, email, avatar URL |
+| Tasks | âœ… | All fields including timestamps |
+| Habits + logs | âœ… | Habit definitions + all completion logs |
+| Goals | âœ… | All fields including milestones |
+| Projects | âœ… | All fields including links |
+| Courses | âœ… | All fields including notes |
+| Income entries | âœ… | All fields |
+| Sleep logs | âœ… | All entries |
+| Time entries | âœ… | All entries |
+| Ideas | âœ… | All fields |
+| Resources | âœ… | All fields |
+| Opportunities | âœ… | All fields |
+| Chat messages | âœ… | Full conversation history |
+| Briefings | âœ… | All generated briefings |
+| User preferences | âœ… | Settings, consent records |
 
 #### 3.6.3 What's Excluded
 
 | Data Category | Excluded | Reason |
 |---|---|---|
-| Authentication tokens | ✅ | Security — tokens are ephemeral and session-bound |
-| Analytics events | ✅ | Aggregated/anonymized — cannot be attributed to user after export window |
-| Error logs | ✅ | May contain system data not belonging to user |
-| Application configuration | ✅ | System-level, not user-generated |
-| Database metadata | ✅ | Internal IDs, foreign keys without user data |
+| Authentication tokens | âœ… | Security â€” tokens are ephemeral and session-bound |
+| Analytics events | âœ… | Aggregated/anonymized â€” cannot be attributed to user after export window |
+| Error logs | âœ… | May contain system data not belonging to user |
+| Application configuration | âœ… | System-level, not user-generated |
+| Database metadata | âœ… | Internal IDs, foreign keys without user data |
 
 #### 3.6.4 Delivery Method
 
-- **Instant download**: Available immediately via Settings → Export My Data
+- **Instant download**: Available immediately via Settings â†’ Export My Data
 - **Email delivery**: For large exports or DSAR requests, delivered as encrypted attachment
 - **Secure link**: Download link with 14-day expiry, delivered via email
 
@@ -581,39 +581,39 @@ All exports are provided in **JSON** format (machine-readable, structured, commo
 
 | DPDP Act Requirement | Status | Implementation |
 |---|---|---|
-| **Consent Manager** | 🟡 Partial | Consent collected via UI toggles; formal consent manager (withdrawal, records) needed |
-| **Data Fiduciary Responsibilities** | 🟢 Compliant | Developer acts as Data Fiduciary; all obligations documented in this policy |
-| **Data Principal Rights** | 🟢 Compliant | All rights (access, correction, erasure, portability, grievance redressal) implemented |
-| **Data Breach Notification** | 🟡 Partial | Procedure defined (Section 3.7); notification to DPBI needs final template |
-| **Data Localization** | 🟢 Compliant | Supabase can be configured for Mumbai region (ap-south-1); data stored in India |
-| **Children's Data** | 🟢 N/A | System is designed for adults 18+; no children's data collected |
-| **Data Retention** | 🟡 Partial | Retention defined (Section 7); automated enforcement needed |
-| **Grievance Redressal** | 🟡 Partial | DPO contact defined; formal grievance mechanism needs implementation |
-| **Data Protection Impact Assessment** | 🔴 Missing | DPIA not yet conducted; template provided in Appendix F |
-| **Data Fiduciary Registration** | 🟢 Compliant | Not required (fewer than 1 million users); monitor threshold |
+| **Consent Manager** | ðŸŸ¡ Partial | Consent collected via UI toggles; formal consent manager (withdrawal, records) needed |
+| **Data Fiduciary Responsibilities** | ðŸŸ¢ Compliant | Developer acts as Data Fiduciary; all obligations documented in this policy |
+| **Data Principal Rights** | ðŸŸ¢ Compliant | All rights (access, correction, erasure, portability, grievance redressal) implemented |
+| **Data Breach Notification** | ðŸŸ¡ Partial | Procedure defined (Section 3.7); notification to DPBI needs final template |
+| **Data Localization** | ðŸŸ¢ Compliant | Supabase can be configured for Mumbai region (ap-south-1); data stored in India |
+| **Children's Data** | ðŸŸ¢ N/A | System is designed for adults 18+; no children's data collected |
+| **Data Retention** | ðŸŸ¡ Partial | Retention defined (Section 7); automated enforcement needed |
+| **Grievance Redressal** | ðŸŸ¡ Partial | DPO contact defined; formal grievance mechanism needs implementation |
+| **Data Protection Impact Assessment** | ðŸ”´ Missing | DPIA not yet conducted; template provided in Appendix F |
+| **Data Fiduciary Registration** | ðŸŸ¢ Compliant | Not required (fewer than 1 million users); monitor threshold |
 
 ### 4.2 Compliance Gap Analysis
 
 | Requirement | Current Status | Action Needed | Priority | Target Date | Owner |
 |---|---|---|---|---|---|
-| Consent collection | 🟡 Partial (OAuth implicit) | Add explicit consent UI with granular preferences | **P1** | 2026-07-15 | Frontend |
-| Privacy policy | 🔴 Missing (not published) | Create and publish privacy notice at /privacy | **P1** | 2026-07-01 | Legal |
-| Data retention policy | 🟡 Defined but not enforced | Implement automated Supabase cron jobs for data deletion | **P1** | 2026-08-01 | Backend |
-| Breach notification process | 🟡 Procedure defined | Implement automated notification system (email + in-app) | **P1** | 2026-08-15 | Backend |
-| Grievance redressal mechanism | 🔴 Missing | Add grievance contact form in settings + auto-response | **P2** | 2026-09-01 | Frontend |
-| Data Protection Impact Assessment | 🔴 Not conducted | Schedule and conduct DPIA | **P2** | 2026-09-30 | DPO |
-| Consent manager dashboard | 🔴 Not implemented | Build consent management UI with withdrawal history | **P2** | 2026-10-01 | Frontend |
-| Data fiduciary registration | 🟢 Not required | Monitor user count; register if >1M users | **P3** | Ongoing | Operations |
-| DPDP Act privacy notice addendum | 🔴 Missing | Add India-specific disclosures to privacy policy | **P2** | 2026-07-15 | Legal |
-| Data localization verification | 🟡 Supabase configured | Verify Supabase project region is India (ap-south-1) | **P2** | 2026-07-01 | Backend |
+| Consent collection | ðŸŸ¡ Partial (OAuth implicit) | Add explicit consent UI with granular preferences | **P1** | 2026-07-15 | Frontend |
+| Privacy policy | ðŸ”´ Missing (not published) | Create and publish privacy notice at /privacy | **P1** | 2026-07-01 | Legal |
+| Data retention policy | ðŸŸ¡ Defined but not enforced | Implement automated Supabase cron jobs for data deletion | **P1** | 2026-08-01 | Backend |
+| Breach notification process | ðŸŸ¡ Procedure defined | Implement automated notification system (email + in-app) | **P1** | 2026-08-15 | Backend |
+| Grievance redressal mechanism | ðŸ”´ Missing | Add grievance contact form in settings + auto-response | **P2** | 2026-09-01 | Frontend |
+| Data Protection Impact Assessment | ðŸ”´ Not conducted | Schedule and conduct DPIA | **P2** | 2026-09-30 | DPO |
+| Consent manager dashboard | ðŸ”´ Not implemented | Build consent management UI with withdrawal history | **P2** | 2026-10-01 | Frontend |
+| Data fiduciary registration | ðŸŸ¢ Not required | Monitor user count; register if >1M users | **P3** | Ongoing | Operations |
+| DPDP Act privacy notice addendum | ðŸ”´ Missing | Add India-specific disclosures to privacy policy | **P2** | 2026-07-15 | Legal |
+| Data localization verification | ðŸŸ¡ Supabase configured | Verify Supabase project region is India (ap-south-1) | **P2** | 2026-07-01 | Backend |
 
 ### 4.3 Data Principal Rights under DPDP Act 2023
 
 | Right | Section | Implementation | Timeline |
 |---|---|---|---|
-| Right to access | Sec. 11 | Settings → Export My Data | Instant |
+| Right to access | Sec. 11 | Settings â†’ Export My Data | Instant |
 | Right to correction | Sec. 12 | Edit forms in all modules | Instant |
-| Right to erasure | Sec. 13 | Settings → Delete Account | 7 days |
+| Right to erasure | Sec. 13 | Settings â†’ Delete Account | 7 days |
 | Right to grievance redressal | Sec. 14 | Contact DPO via email | 45 days |
 | Right to nominate | Sec. 15 | Not implemented (future feature) | Future |
 
@@ -625,7 +625,7 @@ Under DPDP Act 2023, a consent manager must:
 3. Record consent in an auditable manner
 
 **Implementation Plan**:
-- Build a consent dashboard at Settings → Privacy → Consent Manager
+- Build a consent dashboard at Settings â†’ Privacy â†’ Consent Manager
 - Display all active consents with grant dates and versions
 - Provide one-click withdrawal
 - Maintain audit log of consent changes
@@ -638,10 +638,10 @@ Under DPDP Act 2023, a consent manager must:
 
 | AI Component | Data Sent | Data Stored | Duration | User Control |
 |---|---|---|---|---|
-| **Ollama (Local Model)** | User message text + conversation context | Nothing stored — runs entirely on user's local machine | N/A | Full control — operates locally, no network calls |
-| **Claude API (Anthropic)** | User message text + conversation context + system instructions | Anthropic stores for 30 days (abuse monitoring); may train on non-API requests | 30 days (Anthropic) | Opt-in required — can be disabled at any time |
-| **Briefing Agent** | Task data, habit data, sleep logs, goals (queried from DB) | Generated briefing text stored in Supabase `briefings` table | 90 days (auto-deleted) | Opt-in required — can disable briefing generation |
-| **Opportunity Radar** | User skills, interests, enrolled courses, past projects (queried from DB) | Nothing stored in real-time — matches against opportunity database | Real-time only | Opt-in required — can disable scanning |
+| **Ollama (Local Model)** | User message text + conversation context | Nothing stored â€” runs entirely on user's local machine | N/A | Full control â€” operates locally, no network calls |
+| **Claude API (Anthropic)** | User message text + conversation context + system instructions | Anthropic stores for 30 days (abuse monitoring); may train on non-API requests | 30 days (Anthropic) | Opt-in required â€” can be disabled at any time |
+| **Briefing Agent** | Task data, habit data, sleep logs, goals (queried from DB) | Generated briefing text stored in Supabase `briefings` table | 90 days (auto-deleted) | Opt-in required â€” can disable briefing generation |
+| **Opportunity Radar** | User skills, interests, enrolled courses, past projects (queried from DB) | Nothing stored in real-time â€” matches against opportunity database | Real-time only | Opt-in required â€” can disable scanning |
 | **AI Chat History** | Full conversation (user messages + AI responses) | Stored in Supabase `chat_messages` table | Last 500 active; full history archived 5 years | User can delete individual conversations or full history |
 
 ### 5.2 AI Data Flow Details
@@ -650,32 +650,32 @@ Under DPDP Act 2023, a consent manager must:
 
 ```
 User types message in chat
-        │
-        ▼
+        â”‚
+        â–¼
 Frontend sends message to FastAPI /api/chat endpoint
-        │
-        ▼
+        â”‚
+        â–¼
 Backend retrieves conversation history (last N messages)
-        │
-        ▼
+        â”‚
+        â–¼
 Backend constructs message payload:
   {
     "model": "claude-3-opus-20240229",
     "messages": [...conversation_history..., user_message],
     "system": "You are a helpful AI assistant. [NO PERSONAL DATA IN SYSTEM PROMPT]"
   }
-        │
-        ▼
+        â”‚
+        â–¼
 Backend sends request to Anthropic Claude API (api.anthropic.com)
-        │
-        ▼
+        â”‚
+        â–¼
 Anthropic receives: message content + metadata (timestamps, message IDs)
 Anthropic does NOT receive: user's real name, email, or other PII unless in message
-        │
-        ▼
+        â”‚
+        â–¼
 Backend receives response, stores user_message + assistant_message in Supabase
-        │
-        ▼
+        â”‚
+        â–¼
 Response sent to frontend, displayed to user
 ```
 
@@ -683,12 +683,12 @@ Response sent to frontend, displayed to user
 
 | Measure | Implementation | Status |
 |---|---|---|
-| **No PII in system prompts** | System prompt contains no user-identifiable information; only behavioral context ("User has 3 incomplete tasks") | ✅ |
-| **User control of history** | Users can delete individual messages or entire conversations | ✅ |
-| **Local-first fallback** | If Claude API consent is withdrawn, chat falls back to Ollama (local model) | ✅ |
-| **Data minimization** | Only the most recent N messages sent as context (configurable, default 20) | ✅ |
-| **Opt-in required** | Claude API features disabled by default — user must explicitly enable | ✅ |
-| **Clear disclosure** | "Your messages are sent to Anthropic (Claude) for AI processing" displayed in chat when cloud AI is active | ✅ |
+| **No PII in system prompts** | System prompt contains no user-identifiable information; only behavioral context ("User has 3 incomplete tasks") | âœ… |
+| **User control of history** | Users can delete individual messages or entire conversations | âœ… |
+| **Local-first fallback** | If Claude API consent is withdrawn, chat falls back to Ollama (local model) | âœ… |
+| **Data minimization** | Only the most recent N messages sent as context (configurable, default 20) | âœ… |
+| **Opt-in required** | Claude API features disabled by default â€” user must explicitly enable | âœ… |
+| **Clear disclosure** | "Your messages are sent to Anthropic (Claude) for AI processing" displayed in chat when cloud AI is active | âœ… |
 
 ### 5.3 Privacy Measures for AI
 
@@ -705,20 +705,20 @@ All AI features include clear, contextual disclosure:
 Cloud AI features are **opt-in only**:
 
 ```
-┌──────────────────────────────────────────────────┐
-│              Enable Cloud AI Features           │
-│                                                  │
-│  Enable Claude API for AI Chat                  │
-│  Your messages will be sent to Anthropic's       │
-│  servers. See [Privacy Policy] for details.     │
-│                                                  │
-│           [○] Off  ● On                         │
-│                                                  │
-│  Only enable if you consent to cloud AI          │
-│  processing of your chat data.                   │
-│                                                  │
-│        [Learn More]   [Save Settings]            │
-└──────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              Enable Cloud AI Features           â”‚
+â”‚                                                  â”‚
+â”‚  Enable Claude API for AI Chat                  â”‚
+â”‚  Your messages will be sent to Anthropic's       â”‚
+â”‚  servers. See [Privacy Policy] for details.     â”‚
+â”‚                                                  â”‚
+â”‚           [â—‹] Off  â— On                         â”‚
+â”‚                                                  â”‚
+â”‚  Only enable if you consent to cloud AI          â”‚
+â”‚  processing of your chat data.                   â”‚
+â”‚                                                  â”‚
+â”‚        [Learn More]   [Save Settings]            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 #### 5.3.3 Data Deletion for AI
@@ -746,20 +746,20 @@ When AI features are disabled or unavailable, the system falls back to:
 
 | Control | Implementation | Status | Description |
 |---|---|---|---|
-| **Encryption at rest** | Supabase PostgreSQL (AES-256) | ✅ Built-in | All data stored on disk encrypted with AES-256. Supabase manages encryption keys. |
-| **Encryption in transit** | HTTPS/TLS 1.3 (Vercel + Railway) | ✅ Built-in | All frontend-backend and backend-external API communications over TLS 1.3. |
-| **Database encryption** | Supabase column-level encryption | 🟡 Partial | Additional encryption for highly sensitive fields (income amounts) using pgcrypto |
-| **Access control** | Row-Level Security (RLS) | 🟡 Partial (not all tables enabled) | RLS policies must be enabled on ALL user-data tables; audit to verify |
-| **Authentication** | Google OAuth 2.0 + JWT (Supabase Auth) | ✅ Implemented | All API requests authenticated via JWT bearer token |
-| **Authorization** | `user_id` filter on all queries | ✅ Implemented | Every query includes `user_id = auth.uid()` filter |
-| **API security** | Rate limiting (100 req/min/user) | ✅ Implemented | Rate limiter middleware in FastAPI; returns 429 on exceed |
-| **Input validation** | Pydantic models (FastAPI) | ✅ Implemented | All request bodies validated against Pydantic schemas; strict type enforcement |
-| **Secret management** | Environment variables (.env) | ✅ Implemented | All API keys, tokens, secrets stored in environment variables, not in code |
-| **Audit logging** | Logger middleware | ✅ Implemented | Structured JSON logging for all API requests; log_request, log_response, log_error |
-| **SQL injection protection** | Supabase SDK (parameterized queries) | ✅ Built-in | Supabase JavaScript/Python SDKs use parameterized queries; no raw SQL |
-| **CORS** | Whitelist of allowed origins | ✅ Implemented | Only specific frontend URLs allowed to access API |
-| **Session management** | HTTP-only cookies + short-lived JWTs | ✅ Implemented | Access tokens: 1 hour; Refresh tokens: 30 days |
-| **DDoS protection** | Vercel + Railway built-in | ✅ Built-in | Platform-level DDoS protection at edge |
+| **Encryption at rest** | Supabase PostgreSQL (AES-256) | âœ… Built-in | All data stored on disk encrypted with AES-256. Supabase manages encryption keys. |
+| **Encryption in transit** | HTTPS/TLS 1.3 (Vercel + Railway) | âœ… Built-in | All frontend-backend and backend-external API communications over TLS 1.3. |
+| **Database encryption** | Supabase column-level encryption | ðŸŸ¡ Partial | Additional encryption for highly sensitive fields (income amounts) using pgcrypto |
+| **Access control** | Row-Level Security (RLS) | ðŸŸ¡ Partial (not all tables enabled) | RLS policies must be enabled on ALL user-data tables; audit to verify |
+| **Authentication** | Google OAuth 2.0 + JWT (Supabase Auth) | âœ… Implemented | All API requests authenticated via JWT bearer token |
+| **Authorization** | `user_id` filter on all queries | âœ… Implemented | Every query includes `user_id = auth.uid()` filter |
+| **API security** | Rate limiting (100 req/min/user) | âœ… Implemented | Rate limiter middleware in FastAPI; returns 429 on exceed |
+| **Input validation** | Pydantic models (FastAPI) | âœ… Implemented | All request bodies validated against Pydantic schemas; strict type enforcement |
+| **Secret management** | Environment variables (.env) | âœ… Implemented | All API keys, tokens, secrets stored in environment variables, not in code |
+| **Audit logging** | Logger middleware | âœ… Implemented | Structured JSON logging for all API requests; log_request, log_response, log_error |
+| **SQL injection protection** | Supabase SDK (parameterized queries) | âœ… Built-in | Supabase JavaScript/Python SDKs use parameterized queries; no raw SQL |
+| **CORS** | Whitelist of allowed origins | âœ… Implemented | Only specific frontend URLs allowed to access API |
+| **Session management** | HTTP-only cookies + short-lived JWTs | âœ… Implemented | Access tokens: 1 hour; Refresh tokens: 30 days |
+| **DDoS protection** | Vercel + Railway built-in | âœ… Built-in | Platform-level DDoS protection at edge |
 
 ### 6.2 Organizational Controls
 
@@ -787,21 +787,21 @@ WITH CHECK (auth.uid() = user_id);
 ```
 
 **RLS Audit Checklist**:
-- [ ] `tasks` — RLS enabled
-- [ ] `habits` — RLS enabled
-- [ ] `habit_logs` — RLS enabled
-- [ ] `goals` — RLS enabled
-- [ ] `projects` — RLS enabled
-- [ ] `courses` — RLS enabled
-- [ ] `income` — RLS enabled
-- [ ] `sleep_logs` — RLS enabled
-- [ ] `time_entries` — RLS enabled
-- [ ] `ideas` — RLS enabled
-- [ ] `resources` — RLS enabled
-- [ ] `opportunities` — RLS enabled
-- [ ] `chat_messages` — RLS enabled
-- [ ] `briefings` — RLS enabled
-- [ ] `user_preferences` — RLS enabled
+- [ ] `tasks` â€” RLS enabled
+- [ ] `habits` â€” RLS enabled
+- [ ] `habit_logs` â€” RLS enabled
+- [ ] `goals` â€” RLS enabled
+- [ ] `projects` â€” RLS enabled
+- [ ] `courses` â€” RLS enabled
+- [ ] `income` â€” RLS enabled
+- [ ] `sleep_logs` â€” RLS enabled
+- [ ] `time_entries` â€” RLS enabled
+- [ ] `ideas` â€” RLS enabled
+- [ ] `resources` â€” RLS enabled
+- [ ] `opportunities` â€” RLS enabled
+- [ ] `chat_messages` â€” RLS enabled
+- [ ] `briefings` â€” RLS enabled
+- [ ] `user_preferences` â€” RLS enabled
 
 ---
 
@@ -926,12 +926,12 @@ After any deletion:
 
 | Processor | DPA Status | Key Provisions |
 |---|---|---|
-| **Supabase** | ✅ Executed | Scope: database hosting, auth; duration: until account termination; data types: all user data; security measures: encryption, access controls; sub-processors: AWS |
-| **Vercel** | ✅ Executed | Scope: frontend hosting, CDN; duration: service term; data types: request metadata; security measures: TLS, WAF; sub-processors: AWS, Cloudflare |
-| **Railway** | 🟡 Requested | Scope: backend hosting; duration: service term; data types: transient API data; security measures: encryption, network isolation; sub-processors: AWS |
-| **Anthropic** | ✅ Executed | Scope: AI processing; duration: 30-day retention; data types: chat messages; security measures: encryption, access control; sub-processors: AWS |
-| **Resend** | ✅ Executed | Scope: email delivery; duration: 90-day retention; data types: email content/address; security measures: encryption; sub-processors: AWS |
-| **Google** | ✅ Executed (Google Workspace) | Scope: identity verification; duration: OAuth session; data types: name, email, avatar; security measures: Google's security infrastructure; sub-processors: global Google infrastructure |
+| **Supabase** | âœ… Executed | Scope: database hosting, auth; duration: until account termination; data types: all user data; security measures: encryption, access controls; sub-processors: AWS |
+| **Vercel** | âœ… Executed | Scope: frontend hosting, CDN; duration: service term; data types: request metadata; security measures: TLS, WAF; sub-processors: AWS, Cloudflare |
+| **Railway** | ðŸŸ¡ Requested | Scope: backend hosting; duration: service term; data types: transient API data; security measures: encryption, network isolation; sub-processors: AWS |
+| **Anthropic** | âœ… Executed | Scope: AI processing; duration: 30-day retention; data types: chat messages; security measures: encryption, access control; sub-processors: AWS |
+| **Resend** | âœ… Executed | Scope: email delivery; duration: 90-day retention; data types: email content/address; security measures: encryption; sub-processors: AWS |
+| **Google** | âœ… Executed (Google Workspace) | Scope: identity verification; duration: OAuth session; data types: name, email, avatar; security measures: Google's security infrastructure; sub-processors: global Google infrastructure |
 
 ### 8.3 Sub-Processor List
 
@@ -942,7 +942,7 @@ After any deletion:
 | Railway | AWS | Cloud infrastructure | US (us-west-2) |
 | Anthropic | AWS, Google Cloud | Cloud infrastructure | US |
 | Resend | AWS | Cloud infrastructure | US |
-| Google | — | Internal infrastructure | Global |
+| Google | â€” | Internal infrastructure | Global |
 
 ### 8.4 Vendor Assessment Checklist
 
@@ -990,10 +990,10 @@ Each new third-party processor is assessed against:
 
 | Feature | Location | Description |
 |---|---|---|
-| Consent toggles | Settings → Privacy | Granular control over AI, notifications, analytics |
-| Data export | Settings → Export My Data | One-click JSON export of all user data |
-| Account deletion | Settings → Delete Account | Complete self-service erasure |
-| Chat history management | Chat UI → Settings | Delete individual messages or full conversations |
+| Consent toggles | Settings â†’ Privacy | Granular control over AI, notifications, analytics |
+| Data export | Settings â†’ Export My Data | One-click JSON export of all user data |
+| Account deletion | Settings â†’ Delete Account | Complete self-service erasure |
+| Chat history management | Chat UI â†’ Settings | Delete individual messages or full conversations |
 | AI disclosure banners | Chat UI, Briefing settings | Contextual notice when cloud AI is active |
 | Privacy policy | /privacy route | Full disclosure of data practices |
 | Cookie/consent banner | First visit | Notice of analytics collection |
@@ -1050,7 +1050,7 @@ Each new third-party processor is assessed against:
 #### 10.3.1 User Breach Notification Template
 
 ```
-Subject: Security Incident — Second Brain OS — Action Required
+Subject: Security Incident â€” Second Brain OS â€” Action Required
 
 Date: {date}
 From: Second Brain OS Security Team <security@secondbrainos.app>
@@ -1060,48 +1060,48 @@ Dear {user_name},
 We are writing to inform you of a security incident that may have affected your
 account on Second Brain OS.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 WHAT HAPPENED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 
 On {incident_date}, we detected {brief description of incident}. Our investigation
 indicates that {what was accessed} may have been accessed without authorization.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 WHAT DATA WAS IMPACTED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 
 Based on our investigation, the following data may have been affected:
-• {list data categories affected}
+â€¢ {list data categories affected}
 
 We have no evidence that your {passwords / financial information / specific data
 type not stored} was compromised, as {explanation of protection}.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 WHAT WE HAVE DONE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 
-• {Action 1: e.g., Revoked compromised access tokens}
-• {Action 2: e.g., Patched the vulnerability}
-• {Action 3: e.g., Engaged security researchers}
-• {Action 4: e.g., Notified relevant authorities}
+â€¢ {Action 1: e.g., Revoked compromised access tokens}
+â€¢ {Action 2: e.g., Patched the vulnerability}
+â€¢ {Action 3: e.g., Engaged security researchers}
+â€¢ {Action 4: e.g., Notified relevant authorities}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 WHAT YOU SHOULD DO
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 
-• {Recommendation 1: e.g., Change your Google account password}
-• {Recommendation 2: e.g., Review recent account activity}
-• {Recommendation 3: e.g., Enable two-factor authentication on Google}
-• {Recommendation 4: e.g., Be cautious of phishing attempts}
+â€¢ {Recommendation 1: e.g., Change your Google account password}
+â€¢ {Recommendation 2: e.g., Review recent account activity}
+â€¢ {Recommendation 3: e.g., Enable two-factor authentication on Google}
+â€¢ {Recommendation 4: e.g., Be cautious of phishing attempts}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 CONTACT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
 
 If you have questions or concerns, please contact:
-• Email: dpo@secondbrainos.app
-• Response time: Within 24 hours
+â€¢ Email: dpo@secondbrainos.app
+â€¢ Response time: Within 24 hours
 
 We take your privacy and security seriously. We apologize for this incident and
 are working to prevent it from happening again.
@@ -1114,7 +1114,7 @@ Second Brain OS
 #### 10.3.2 Regulatory Notification Template
 
 ```
-Subject: Personal Data Breach Notification — Second Brain OS
+Subject: Personal Data Breach Notification â€” Second Brain OS
 Date: {date}
 To: {Supervisory Authority}
 
@@ -1126,25 +1126,25 @@ we hereby notify you of a personal data breach.
    DPO: [DPO Name], dpo@secondbrainos.app, [Phone]
 
 2. NATURE OF THE BREACH
-   • Date of breach: {date}
-   • Date of discovery: {date}
-   • Nature: {description}
-   • Category of data subjects: {users affected}
-   • Approximate number of data subjects: {count}
-   • Approximate number of records: {count}
-   • Categories of data: {list}
+   â€¢ Date of breach: {date}
+   â€¢ Date of discovery: {date}
+   â€¢ Nature: {description}
+   â€¢ Category of data subjects: {users affected}
+   â€¢ Approximate number of data subjects: {count}
+   â€¢ Approximate number of records: {count}
+   â€¢ Categories of data: {list}
 
 3. LIKELY CONSEQUENCES
-   • {consequence 1}
-   • {consequence 2}
+   â€¢ {consequence 1}
+   â€¢ {consequence 2}
 
 4. MEASURES TAKEN
-   • {measure 1}
-   • {measure 2}
-   • {measure 3}
+   â€¢ {measure 1}
+   â€¢ {measure 2}
+   â€¢ {measure 3}
 
 5. RECOMMENDATIONS
-   • {recommendation for affected users}
+   â€¢ {recommendation for affected users}
 
 This notification is being made within 72 hours of becoming aware of the breach.
 
@@ -1160,12 +1160,12 @@ Second Brain OS
 
 ### Appendix A: Full Data Inventory Table
 
-(See Section 2.1 — Data Inventory Table above for the complete inventory.)
+(See Section 2.1 â€” Data Inventory Table above for the complete inventory.)
 
 ### Appendix B: Privacy Notice Template
 
 ```
-# Privacy Notice — Second Brain OS
+# Privacy Notice â€” Second Brain OS
 
 **Last Updated:** {date}
 **Version:** 1.0
@@ -1194,18 +1194,18 @@ We collect the following categories of personal data:
 
 ## 3. How We Use Your Data
 
-• To provide and maintain the service
-• To improve the service (anonymized analytics)
-• With your consent: AI processing via Claude API
-• To send notifications (with your consent)
+â€¢ To provide and maintain the service
+â€¢ To improve the service (anonymized analytics)
+â€¢ With your consent: AI processing via Claude API
+â€¢ To send notifications (with your consent)
 
 ## 4. Legal Basis
 
 We process your data under:
-• **Contract**: Core service features (tasks, habits, etc.)
-• **Consent**: AI features, notifications
-• **Legitimate interest**: Analytics, security
-• **Legal obligation**: Tax records (income)
+â€¢ **Contract**: Core service features (tasks, habits, etc.)
+â€¢ **Consent**: AI features, notifications
+â€¢ **Legitimate interest**: Analytics, security
+â€¢ **Legal obligation**: Tax records (income)
 
 ## 5. Who We Share Data With
 
@@ -1214,13 +1214,13 @@ See our full list of data processors at {link to processor list}.
 ## 6. Your Rights
 
 You have the right to:
-• Access your data (Settings → Export)
-• Correct your data (edit forms)
-• Delete your data (Settings → Delete Account)
-• Restrict processing (disable AI features)
-• Port your data (JSON export)
-• Object to processing
-• Withdraw consent at any time
+â€¢ Access your data (Settings â†’ Export)
+â€¢ Correct your data (edit forms)
+â€¢ Delete your data (Settings â†’ Delete Account)
+â€¢ Restrict processing (disable AI features)
+â€¢ Port your data (JSON export)
+â€¢ Object to processing
+â€¢ Withdraw consent at any time
 
 ## 7. Data Retention
 
@@ -1248,239 +1248,239 @@ We will notify you of material changes via email or in-app notice.
 ### Appendix C: Consent Form Template
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                    CONSENT FORM — AI PROCESSING                      │
-│                        Second Brain OS                              │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  FEATURE: Cloud AI Chat (Claude by Anthropic)                        │
-│                                                                      │
-│  I consent to Second Brain OS sending my chat messages and           │
-│  conversation context to Anthropic (Claude API) for AI processing.   │
-│                                                                      │
-│  I understand that:                                                  │
-│  ☐ My messages will be processed by Anthropic in the US              │
-│  ☐ Anthropic retains messages for 30 days (abuse monitoring)         │
-│  ☐ I can withdraw consent at any time via Settings                   │
-│  ☐ Withdrawal will not affect core service functionality            │
-│  ☐ My data will not be used for model training (API-only usage)     │
-│                                                                      │
-│  [  ] I CONSENT to cloud AI processing of my chat messages           │
-│  [  ] I DO NOT CONSENT (local-only AI processing)                   │
-│                                                                      │
-│  ──────────────────────────────────────────────────────────────      │
-│  User: {name} ({email})                                             │
-│  Date: {date}                                                        │
-│  Consent Version: 1.0                                                │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    CONSENT FORM â€” AI PROCESSING                      â”‚
+â”‚                        Second Brain OS                              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                      â”‚
+â”‚  FEATURE: Cloud AI Chat (Claude by Anthropic)                        â”‚
+â”‚                                                                      â”‚
+â”‚  I consent to Second Brain OS sending my chat messages and           â”‚
+â”‚  conversation context to Anthropic (Claude API) for AI processing.   â”‚
+â”‚                                                                      â”‚
+â”‚  I understand that:                                                  â”‚
+â”‚  â˜ My messages will be processed by Anthropic in the US              â”‚
+â”‚  â˜ Anthropic retains messages for 30 days (abuse monitoring)         â”‚
+â”‚  â˜ I can withdraw consent at any time via Settings                   â”‚
+â”‚  â˜ Withdrawal will not affect core service functionality            â”‚
+â”‚  â˜ My data will not be used for model training (API-only usage)     â”‚
+â”‚                                                                      â”‚
+â”‚  [  ] I CONSENT to cloud AI processing of my chat messages           â”‚
+â”‚  [  ] I DO NOT CONSENT (local-only AI processing)                   â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€      â”‚
+â”‚  User: {name} ({email})                                             â”‚
+â”‚  Date: {date}                                                        â”‚
+â”‚  Consent Version: 1.0                                                â”‚
+â”‚                                                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix D: DSAR Request Form Template
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│            DATA SUBJECT ACCESS REQUEST (DSAR) FORM                   │
-│                        Second Brain OS                              │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  Request Date: {date}                                                │
-│                                                                      │
-│  USER INFORMATION                                                    │
-│  Full Name: {name}                                                   │
-│  Email Address: {email} (must match registered email)                │
-│  User ID (if known): {uuid}                                          │
-│                                                                      │
-│  REQUEST SCOPE                                                       │
-│  I am requesting access to:                                          │
-│  ☐ All my personal data                                              │
-│  ☐ Specific categories (select below):                               │
-│     ☐ Account & profile data                                         │
-│     ☐ Tasks, habits, goals, projects, courses                        │
-│     ☐ Financial records (income)                                     │
-│     ☐ Sleep logs & time entries                                      │
-│     ☐ Ideas, resources, opportunities                                │
-│     ☐ AI chat messages                                               │
-│     ☐ Usage analytics                                                │
-│     ☐ Technical logs                                                 │
-│                                                                      │
-│  PREFERRED FORMAT                                                    │
-│  ☐ JSON (machine-readable)                                           │
-│  ☐ CSV (spreadsheet-compatible)                                      │
-│  ☐ Both                                                              │
-│                                                                      │
-│  DELIVERY METHOD                                                     │
-│  ☐ Encrypted email attachment                                        │
-│  ☐ Secure download link                                              │
-│                                                                      │
-│  ──────────────────────────────────────────────────────────────      │
-│  FOR OFFICIAL USE ONLY                                               │
-│  Request ID: DSAR-{year}-{sequential}                                │
-│  Verification Status: ☐ Verified ☐ Pending ☐ Failed                 │
-│  Verification Date: {date}                                           │
-│  Fulfillment Date: {date}                                            │
-│  Data Package Size: {size}                                           │
-│  Notes:                                                              │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚            DATA SUBJECT ACCESS REQUEST (DSAR) FORM                   â”‚
+â”‚                        Second Brain OS                              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                      â”‚
+â”‚  Request Date: {date}                                                â”‚
+â”‚                                                                      â”‚
+â”‚  USER INFORMATION                                                    â”‚
+â”‚  Full Name: {name}                                                   â”‚
+â”‚  Email Address: {email} (must match registered email)                â”‚
+â”‚  User ID (if known): {uuid}                                          â”‚
+â”‚                                                                      â”‚
+â”‚  REQUEST SCOPE                                                       â”‚
+â”‚  I am requesting access to:                                          â”‚
+â”‚  â˜ All my personal data                                              â”‚
+â”‚  â˜ Specific categories (select below):                               â”‚
+â”‚     â˜ Account & profile data                                         â”‚
+â”‚     â˜ Tasks, habits, goals, projects, courses                        â”‚
+â”‚     â˜ Financial records (income)                                     â”‚
+â”‚     â˜ Sleep logs & time entries                                      â”‚
+â”‚     â˜ Ideas, resources, opportunities                                â”‚
+â”‚     â˜ AI chat messages                                               â”‚
+â”‚     â˜ Usage analytics                                                â”‚
+â”‚     â˜ Technical logs                                                 â”‚
+â”‚                                                                      â”‚
+â”‚  PREFERRED FORMAT                                                    â”‚
+â”‚  â˜ JSON (machine-readable)                                           â”‚
+â”‚  â˜ CSV (spreadsheet-compatible)                                      â”‚
+â”‚  â˜ Both                                                              â”‚
+â”‚                                                                      â”‚
+â”‚  DELIVERY METHOD                                                     â”‚
+â”‚  â˜ Encrypted email attachment                                        â”‚
+â”‚  â˜ Secure download link                                              â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€      â”‚
+â”‚  FOR OFFICIAL USE ONLY                                               â”‚
+â”‚  Request ID: DSAR-{year}-{sequential}                                â”‚
+â”‚  Verification Status: â˜ Verified â˜ Pending â˜ Failed                 â”‚
+â”‚  Verification Date: {date}                                           â”‚
+â”‚  Fulfillment Date: {date}                                            â”‚
+â”‚  Data Package Size: {size}                                           â”‚
+â”‚  Notes:                                                              â”‚
+â”‚                                                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix E: Data Erasure Request Form
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                 DATA ERASURE REQUEST FORM                            │
-│                        Second Brain OS                              │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  Request Date: {date}                                                │
-│                                                                      │
-│  USER INFORMATION                                                    │
-│  Full Name: {name}                                                   │
-│  Email Address: {email} (must match registered email)                │
-│  User ID (if known): {uuid}                                          │
-│                                                                      │
-│  ERASURE SCOPE                                                       │
-│  I request erasure of:                                               │
-│  ☐ My entire account and all associated data                         │
-│  ☐ Specific data categories:                                         │
-│     ☐ Chat messages only                                             │
-│     ☐ Analytics data only                                            │
-│     ☐ Financial data only (note: may be required for tax purposes)   │
-│     ☐ {other: specify}                                               │
-│                                                                      │
-│  REASON FOR ERASURE                                                  │
-│  ☐ Withdrawing consent                                               │
-│  ☐ Objecting to processing                                           │
-│  ☐ Data no longer needed                                             │
-│  ☐ Other: {specify}                                                  │
-│                                                                      │
-│  ACKNOWLEDGMENT                                                      │
-│  ☐ I understand that data erasure is permanent and irreversible      │
-│  ☐ I understand that some data may be retained for legal/            │
-│     compliance purposes (income records: 7 years, Indian tax law)    │
-│  ☐ I understand that I will lose access to all features              │
-│                                                                      │
-│  Signature/Confirmation: {name}                                      │
-│                                                                      │
-│  ──────────────────────────────────────────────────────────────      │
-│  FOR OFFICIAL USE ONLY                                               │
-│  Request ID: ERASE-{year}-{sequential}                               │
-│  Verification: ☐ Email sent ☐ Link clicked                          │
-│  Grace Period End: {date + 7 days}                                   │
-│  Deletion Executed: ☐ Yes ☐ No  Date: {date}                        │
-│  Confirmation Sent: ☐ Yes ☐ No                                      │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 DATA ERASURE REQUEST FORM                            â”‚
+â”‚                        Second Brain OS                              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                      â”‚
+â”‚  Request Date: {date}                                                â”‚
+â”‚                                                                      â”‚
+â”‚  USER INFORMATION                                                    â”‚
+â”‚  Full Name: {name}                                                   â”‚
+â”‚  Email Address: {email} (must match registered email)                â”‚
+â”‚  User ID (if known): {uuid}                                          â”‚
+â”‚                                                                      â”‚
+â”‚  ERASURE SCOPE                                                       â”‚
+â”‚  I request erasure of:                                               â”‚
+â”‚  â˜ My entire account and all associated data                         â”‚
+â”‚  â˜ Specific data categories:                                         â”‚
+â”‚     â˜ Chat messages only                                             â”‚
+â”‚     â˜ Analytics data only                                            â”‚
+â”‚     â˜ Financial data only (note: may be required for tax purposes)   â”‚
+â”‚     â˜ {other: specify}                                               â”‚
+â”‚                                                                      â”‚
+â”‚  REASON FOR ERASURE                                                  â”‚
+â”‚  â˜ Withdrawing consent                                               â”‚
+â”‚  â˜ Objecting to processing                                           â”‚
+â”‚  â˜ Data no longer needed                                             â”‚
+â”‚  â˜ Other: {specify}                                                  â”‚
+â”‚                                                                      â”‚
+â”‚  ACKNOWLEDGMENT                                                      â”‚
+â”‚  â˜ I understand that data erasure is permanent and irreversible      â”‚
+â”‚  â˜ I understand that some data may be retained for legal/            â”‚
+â”‚     compliance purposes (income records: 7 years, Indian tax law)    â”‚
+â”‚  â˜ I understand that I will lose access to all features              â”‚
+â”‚                                                                      â”‚
+â”‚  Signature/Confirmation: {name}                                      â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€      â”‚
+â”‚  FOR OFFICIAL USE ONLY                                               â”‚
+â”‚  Request ID: ERASE-{year}-{sequential}                               â”‚
+â”‚  Verification: â˜ Email sent â˜ Link clicked                          â”‚
+â”‚  Grace Period End: {date + 7 days}                                   â”‚
+â”‚  Deletion Executed: â˜ Yes â˜ No  Date: {date}                        â”‚
+â”‚  Confirmation Sent: â˜ Yes â˜ No                                      â”‚
+â”‚                                                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix F: DPIA (Data Protection Impact Assessment) Template
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│            DATA PROTECTION IMPACT ASSESSMENT (DPIA)                  │
-│                        Second Brain OS                              │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  DPIA ID: DPIA-{year}-{sequential}                                   │
-│  Assessment Date: {date}                                             │
-│  Assessor: {name/role}                                               │
-│  Review Date: {date + 1 year}                                        │
-│                                                                      │
-│  1. SYSTEM DESCRIPTION                                                │
-│     Name: Second Brain OS (ARIA OS)                                  │
-│     Type: Personal AI Productivity System                            │
-│     Data Controller: {Developer Name}                                │
-│     Data Processors: Supabase, Vercel, Railway, Anthropic, Resend    │
-│                                                                      │
-│  2. DATA PROCESSING DESCRIPTION                                      │
-│     • What data: See Data Inventory (Section 2.1)                    │
-│     • Why: Productivity management, AI assistance, analytics         │
-│     • How: User input → Frontend → API → Database/AI                 │
-│     • Where: Supabase (PostgreSQL), Anthropic (Claude), local model  │
-│     • Retention: See Retention Schedule (Section 7.1)                │
-│                                                                      │
-│  3. NECESSITY & PROPORTIONALITY                                      │
-│     • Is processing necessary for purpose? Yes                       │
-│     • Can purpose be achieved with less data? Partially              │
-│       (some analytics can be reduced, AI can be local-only)          │
-│     • Are there less intrusive alternatives? Yes — local AI          │
-│     • What safeguards are in place? RLS, encryption, consent         │
-│                                                                      │
-│  4. RISK ASSESSMENT                                                  │
-│     Risk | Likelihood | Impact | Risk Level | Mitigation              │
-│     ──────┼────────────┼────────┼───────────┼─────────────────────   │
-│     Data breach | Low | High | Medium | RLS, encryption, monitoring  │
-│     Unauthorized access | Low | High | Medium | Auth, RLS, audit     │
-│     AI data exposure | Low | Medium | Low | Opt-in, disclosure       │
-│     Data loss | Low | High | Medium | Backups, redundancy            │
-│     Consent withdrawal complexity | Medium | Low | Low | Clear UI    │
-│                                                                      │
-│  5. RISK TREATMENT                                                   │
-│     Accepted risks: Consent withdrawal complexity (mitigated by UI)  │
-│     Mitigated risks: Breach, unauthorized access (controls in place) │
-│     Transferred risks: AI processing (to Anthropic via DPA)          │
-│     Avoided risks: No unnecessary data collection                    │
-│                                                                      │
-│  6. CONSULTATION                                                    │
-│     • Is DPA consultation required? No (low-medium risk)             │
-│     • Have data subjects been consulted? Via privacy notice          │
-│                                                                      │
-│  7. APPROVAL                                                        │
-│     Assessor: {name} Date: {date}                                    │
-│     DPO: {name} Date: {date}                                         │
-│     Next Review: {date + 1 year}                                     │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚            DATA PROTECTION IMPACT ASSESSMENT (DPIA)                  â”‚
+â”‚                        Second Brain OS                              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                      â”‚
+â”‚  DPIA ID: DPIA-{year}-{sequential}                                   â”‚
+â”‚  Assessment Date: {date}                                             â”‚
+â”‚  Assessor: {name/role}                                               â”‚
+â”‚  Review Date: {date + 1 year}                                        â”‚
+â”‚                                                                      â”‚
+â”‚  1. SYSTEM DESCRIPTION                                                â”‚
+â”‚     Name: Second Brain OS (ARIA OS)                                  â”‚
+â”‚     Type: Personal AI Productivity System                            â”‚
+â”‚     Data Controller: {Developer Name}                                â”‚
+â”‚     Data Processors: Supabase, Vercel, Railway, Anthropic, Resend    â”‚
+â”‚                                                                      â”‚
+â”‚  2. DATA PROCESSING DESCRIPTION                                      â”‚
+â”‚     â€¢ What data: See Data Inventory (Section 2.1)                    â”‚
+â”‚     â€¢ Why: Productivity management, AI assistance, analytics         â”‚
+â”‚     â€¢ How: User input â†’ Frontend â†’ API â†’ Database/AI                 â”‚
+â”‚     â€¢ Where: Supabase (PostgreSQL), Anthropic (Claude), local model  â”‚
+â”‚     â€¢ Retention: See Retention Schedule (Section 7.1)                â”‚
+â”‚                                                                      â”‚
+â”‚  3. NECESSITY & PROPORTIONALITY                                      â”‚
+â”‚     â€¢ Is processing necessary for purpose? Yes                       â”‚
+â”‚     â€¢ Can purpose be achieved with less data? Partially              â”‚
+â”‚       (some analytics can be reduced, AI can be local-only)          â”‚
+â”‚     â€¢ Are there less intrusive alternatives? Yes â€” local AI          â”‚
+â”‚     â€¢ What safeguards are in place? RLS, encryption, consent         â”‚
+â”‚                                                                      â”‚
+â”‚  4. RISK ASSESSMENT                                                  â”‚
+â”‚     Risk | Likelihood | Impact | Risk Level | Mitigation              â”‚
+â”‚     â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€   â”‚
+â”‚     Data breach | Low | High | Medium | RLS, encryption, monitoring  â”‚
+â”‚     Unauthorized access | Low | High | Medium | Auth, RLS, audit     â”‚
+â”‚     AI data exposure | Low | Medium | Low | Opt-in, disclosure       â”‚
+â”‚     Data loss | Low | High | Medium | Backups, redundancy            â”‚
+â”‚     Consent withdrawal complexity | Medium | Low | Low | Clear UI    â”‚
+â”‚                                                                      â”‚
+â”‚  5. RISK TREATMENT                                                   â”‚
+â”‚     Accepted risks: Consent withdrawal complexity (mitigated by UI)  â”‚
+â”‚     Mitigated risks: Breach, unauthorized access (controls in place) â”‚
+â”‚     Transferred risks: AI processing (to Anthropic via DPA)          â”‚
+â”‚     Avoided risks: No unnecessary data collection                    â”‚
+â”‚                                                                      â”‚
+â”‚  6. CONSULTATION                                                    â”‚
+â”‚     â€¢ Is DPA consultation required? No (low-medium risk)             â”‚
+â”‚     â€¢ Have data subjects been consulted? Via privacy notice          â”‚
+â”‚                                                                      â”‚
+â”‚  7. APPROVAL                                                        â”‚
+â”‚     Assessor: {name} Date: {date}                                    â”‚
+â”‚     DPO: {name} Date: {date}                                         â”‚
+â”‚     Next Review: {date + 1 year}                                     â”‚
+â”‚                                                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix G: Third-Party Security Assessment Checklist
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│            THIRD-PARTY SECURITY ASSESSMENT CHECKLIST                 │
-│                        Second Brain OS                              │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  Vendor Name: ___________________  Assessment Date: ________________ │
-│  Service: _______________________  Assessor: _______________________ │
-│                                                                      │
-│  ── DATA PROTECTION ──                                               │
-│  ☐ Vendor has published DPA                                         │
-│  ☐ DPA covers subcontractors                                        │
-│  ☐ Data processing described in DPA matches our usage               │
-│  ☐ Vendor provides data retention/deletion commitments              │
-│  ☐ Vendor notifies within 72 hours of breach                        │
-│  ☐ Vendor allows right to audit (contractual or third-party)        │
-│                                                                      │
-│  ── SECURITY CERTIFICATIONS ──                                       │
-│  ☐ SOC 2 Type II (or equivalent)                                    │
-│  ☐ ISO 27001 (or equivalent)                                        │
-│  ☐ GDPR compliance statement                                        │
-│  ☐ DPDP Act compliance (if India-based)                             │
-│  ☐ Penetration testing conducted (annual)                           │
-│                                                                      │
-│  ── TECHNICAL CONTROLS ──                                            │
-│  ☐ Encryption at rest (AES-256 or equivalent)                       │
-│  ☐ Encryption in transit (TLS 1.2+)                                 │
-│  ☐ Access controls (least privilege, MFA)                           │
-│  ☐ Audit logging                                                    │
-│  ☐ Incident response plan                                           │
-│  ☐ Vulnerability management program                                 │
-│  ☐ Data backup and disaster recovery                                │
-│                                                                      │
-│  ── DATA LOCALIZATION ──                                             │
-│  ☐ Data processing location: ______________                         │
-│  ☐ Sub-processor locations: _______________                         │
-│  ☐ Data residency options available: ☐ Yes ☐ No                    │
-│  ☐ Data export mechanisms (SCCs, adequacy decisions)                │
-│                                                                      │
-│  ── RISK RATING ──                                                   │
-│  Overall Risk: ☐ Low ☐ Medium ☐ High ☐ Critical                     │
-│  Notes: ___________________________________________________________ │
-│  Approved by: _______________________ Date: _______________________ │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚            THIRD-PARTY SECURITY ASSESSMENT CHECKLIST                 â”‚
+â”‚                        Second Brain OS                              â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚                                                                      â”‚
+â”‚  Vendor Name: ___________________  Assessment Date: ________________ â”‚
+â”‚  Service: _______________________  Assessor: _______________________ â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€ DATA PROTECTION â”€â”€                                               â”‚
+â”‚  â˜ Vendor has published DPA                                         â”‚
+â”‚  â˜ DPA covers subcontractors                                        â”‚
+â”‚  â˜ Data processing described in DPA matches our usage               â”‚
+â”‚  â˜ Vendor provides data retention/deletion commitments              â”‚
+â”‚  â˜ Vendor notifies within 72 hours of breach                        â”‚
+â”‚  â˜ Vendor allows right to audit (contractual or third-party)        â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€ SECURITY CERTIFICATIONS â”€â”€                                       â”‚
+â”‚  â˜ SOC 2 Type II (or equivalent)                                    â”‚
+â”‚  â˜ ISO 27001 (or equivalent)                                        â”‚
+â”‚  â˜ GDPR compliance statement                                        â”‚
+â”‚  â˜ DPDP Act compliance (if India-based)                             â”‚
+â”‚  â˜ Penetration testing conducted (annual)                           â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€ TECHNICAL CONTROLS â”€â”€                                            â”‚
+â”‚  â˜ Encryption at rest (AES-256 or equivalent)                       â”‚
+â”‚  â˜ Encryption in transit (TLS 1.2+)                                 â”‚
+â”‚  â˜ Access controls (least privilege, MFA)                           â”‚
+â”‚  â˜ Audit logging                                                    â”‚
+â”‚  â˜ Incident response plan                                           â”‚
+â”‚  â˜ Vulnerability management program                                 â”‚
+â”‚  â˜ Data backup and disaster recovery                                â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€ DATA LOCALIZATION â”€â”€                                             â”‚
+â”‚  â˜ Data processing location: ______________                         â”‚
+â”‚  â˜ Sub-processor locations: _______________                         â”‚
+â”‚  â˜ Data residency options available: â˜ Yes â˜ No                    â”‚
+â”‚  â˜ Data export mechanisms (SCCs, adequacy decisions)                â”‚
+â”‚                                                                      â”‚
+â”‚  â”€â”€ RISK RATING â”€â”€                                                   â”‚
+â”‚  Overall Risk: â˜ Low â˜ Medium â˜ High â˜ Critical                     â”‚
+â”‚  Notes: ___________________________________________________________ â”‚
+â”‚  Approved by: _______________________ Date: _______________________ â”‚
+â”‚                                                                      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Appendix H: Revision History
@@ -1488,8 +1488,8 @@ We will notify you of material changes via email or in-app notice.
 | Version | Date | Author | Changes | Approved By |
 |---|---|---|---|---|
 | 1.0 | 2026-06-11 | Data Protection Team | Initial document | [DPO Name] |
-| — | — | — | — | — |
-| — | — | — | — | — |
+| â€” | â€” | â€” | â€” | â€” |
+| â€” | â€” | â€” | â€” | â€” |
 
 ---
 

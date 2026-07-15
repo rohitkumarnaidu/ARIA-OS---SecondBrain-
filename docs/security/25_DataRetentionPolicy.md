@@ -1,6 +1,6 @@
-# Data Retention Policy
+﻿# Data Retention Policy
 
-> **Document ID:** SB-SEC-DRP-001
+> **Document ID:SEC-DRP-001 SB-SEC-DRP-001
 > **Version:** 1.0.0
 > **Last Updated:** 2026-06-22
 > **Status:** Active
@@ -20,8 +20,8 @@ This policy defines data retention periods for all data stored in ARIA OS. It en
 |---|---|---|---|
 | **User Profile** | Email, name, preferences | Account lifetime + 90 days | Anonymize after 90d inactivity |
 | **Core Content** | Tasks, goals, habits, projects | Account lifetime | Hard delete on account closure |
-| **Activity Logs** | Habit logs, time entries, sleep | 24 months | Aggregated → raw deleted |
-| **Chat History** | AI conversations | 12 months | Summarized → raw deleted |
+| **Activity Logs** | Habit logs, time entries, sleep | 24 months | Aggregated â†’ raw deleted |
+| **Chat History** | AI conversations | 12 months | Summarized â†’ raw deleted |
 | **Audit Logs** | All mutations | 36 months (statutory) | Archived to cold storage |
 | **Session Data** | JWT tokens, refresh tokens | Token expiry + 24h | Hard delete on expiry |
 | **Analytics** | Usage metrics, page views | 24 months | Aggregated only after 24m |
@@ -45,7 +45,7 @@ This policy defines data retention periods for all data stored in ARIA OS. It en
 
 ### 4.1 Right to Access
 - Endpoint: `GET /api/v1/data-export`
-- Response: JSON with all user data across 18 tables
+- Response: JSON with all user data across 27 tables
 - SLA: Within 30 days of request
 
 ### 4.2 Right to Deletion
