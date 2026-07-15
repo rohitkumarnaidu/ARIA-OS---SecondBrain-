@@ -3,6 +3,7 @@
 import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi.testclient import TestClient
+from ai.client import LLMProviderUnavailableError
 
 
 @pytest.mark.api
@@ -195,9 +196,19 @@ class MockQueryBuilder:
     def text_search(self, col, val):
         return self
 
+    def in_(self, col, val):
+        return self
+
+    def not_(self, *args, **kwargs):
+        return self
+
+    def is_(self, *args, **kwargs):
+        return self
+
     def execute(self):
         result = MagicMock()
         result.data = self._return_data
+        result.count = len(self._return_data)
         if self._error_message:
             result.error = MagicMock(message=self._error_message)
         else:
@@ -404,6 +415,7 @@ def _get_router_modules():
         "app.api.chat",
         "app.api.feedback",
         "app.api.monitoring",
+        "app.api.notifications",
     ]
 
 
@@ -439,7 +451,7 @@ def _register_mock_agent_modules():
 
 @pytest.fixture(scope="module")
 def app():
-    """Build a FastAPI app with all 13 routers (no middleware)."""
+    """Build a FastAPI app with all routers (no middleware)."""
     from fastapi import FastAPI
     from app.api import (
         tasks,
@@ -457,6 +469,7 @@ def app():
         automation,
         feedback,
         monitoring,
+        notifications,
     )
 
     application = FastAPI(title="Test API")
@@ -475,6 +488,7 @@ def app():
     application.include_router(automation.router, prefix="/api/v1/automation", tags=["automation"])
     application.include_router(feedback.router, prefix="/api/v1/feedback", tags=["feedback"])
     application.include_router(monitoring.router, prefix="/api/v1/monitoring", tags=["monitoring"])
+    application.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
     return application
 
 
@@ -545,15 +559,17 @@ class TestTaskEndpoints:
         resp = client.get("/api/v1/tasks/", headers=AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
-        assert isinstance(body, list)
-        assert len(body) == 1
-        assert body[0]["id"] == "task-1"
+        assert isinstance(body, dict)
+        assert "data" in body and "total" in body
+        assert len(body["data"]) == 1
+        assert body["data"][0]["id"] == "task-1"
+        assert body["total"] == 1
 
     def test_list_tasks_empty(self, client, mock_supabase):
         _cfg(mock_supabase, [])
         resp = client.get("/api/v1/tasks/", headers=AUTH_HEADER)
         assert resp.status_code == 200
-        assert resp.json() == []
+        assert resp.json() == {"data": [], "total": 0, "limit": 20, "offset": 0}
 
     def test_create_task(self, client, mock_supabase):
         _cfg(mock_supabase, [SAMPLE_TASK])
@@ -1284,14 +1300,42 @@ class TestChatEndpoints:
         assert resp.status_code == 201
         assert "understand" in resp.json()["response"].lower()
 
+    def test_chat_streaming(self, client, mock_supabase):
+        self._setup_chat_mocks(mock_supabase)
+        async def _mock_stream(*args, **kwargs):
+            yield "Hello"
+            yield " from"
+            yield " ARIA"
+        with patch("app.api.chat.llm.generate_stream", return_value=_mock_stream()):
+            resp = client.post("/api/v1/chat/?stream=true", json={"message": "Hello"}, headers=AUTH_HEADER)
+            assert resp.status_code == 200
+            assert "text/event-stream" in resp.headers.get("content-type", "")
+
+    def test_chat_streaming_fallback(self, client, mock_supabase):
+        self._setup_chat_mocks(mock_supabase)
+        with patch("app.api.chat.llm.generate_stream", side_effect=LLMProviderUnavailableError("unavailable")):
+            resp = client.post("/api/v1/chat/?stream=true", json={"message": "Hello"}, headers=AUTH_HEADER)
+            assert resp.status_code == 200
+            assert "text/event-stream" in resp.headers.get("content-type", "")
+
     def test_chat_unauthorized(self, client, no_auth):
         resp = client.post("/api/v1/chat/", json={"message": "hi"})
         assert resp.status_code == 401
 
-
-# ===========================================================================
-# AUTOMATION — 6 trigger endpoints
-# ===========================================================================
+    def test_chat_streaming_store_interaction_fails(self, client, mock_supabase):
+        self._setup_chat_mocks(mock_supabase)
+        async def _mock_stream(*args, **kwargs):
+            yield "Hello"
+            yield " from"
+            yield " ARIA"
+        with patch("app.api.chat.llm.generate_stream", return_value=_mock_stream()):
+            with patch("app.api.chat.store_interaction", side_effect=Exception("Memory error")):
+                resp = client.post("/api/v1/chat/?stream=true", json={"message": "Hello"}, headers=AUTH_HEADER)
+                assert resp.status_code == 200
+                assert "text/event-stream" in resp.headers.get("content-type", "")
+                assert "Hello" in resp.text
+                assert " from" in resp.text
+                assert " ARIA" in resp.text
 
 
 @pytest.mark.api
@@ -1484,4 +1528,149 @@ class TestMonitoringEndpoints:
                 "completion_tokens": 0,
             },
         )
+        assert resp.status_code == 401
+
+
+# ===========================================================================
+# NOTIFICATIONS — nudge listing endpoint
+# ===========================================================================
+
+
+@pytest.mark.api
+class TestNotificationEndpoints:
+    """Test notification and nudge endpoints."""
+
+    def test_list_nudges(self, client, mock_supabase):
+        _cfg(
+            mock_supabase,
+            [
+                {
+                    "id": "nudge-1",
+                    "user_id": "user-1",
+                    "title": "Overdue task",
+                    "message": "Task past deadline",
+                    "category": "task",
+                    "priority": "high",
+                    "read": False,
+                    "action_url": "/dashboard/tasks",
+                    "icon": "alert-circle",
+                    "created_at": "2026-06-14T12:00:00",
+                }
+            ],
+        )
+        resp = client.get("/api/v1/notifications/nudges", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert isinstance(body, list)
+        assert len(body) == 1
+        assert body[0]["type"] == "task"
+        assert body[0]["severity"] == "critical"
+
+    def test_list_nudges_empty(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        resp = client.get("/api/v1/notifications/nudges", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+    def test_list_nudges_filter_read(self, client, mock_supabase):
+        _cfg(
+            mock_supabase,
+            [
+                {
+                    "id": "n-1",
+                    "user_id": "user-1",
+                    "title": "Read nudge",
+                    "message": "Already seen",
+                    "category": "task",
+                    "priority": "low",
+                    "read": True,
+                    "action_url": "/tasks",
+                    "icon": "bell",
+                    "created_at": "2026-06-14T12:00:00",
+                }
+            ],
+        )
+        resp = client.get("/api/v1/notifications/nudges?read=true", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert len(body) == 1
+        assert body[0]["severity"] == "info"
+
+    def test_list_nudges_db_error(self, client, mock_supabase):
+        mock_supabase.from_.return_value.select.return_value.eq.return_value.in_.return_value.order.return_value.range.side_effect = Exception("DB error")
+        resp = client.get("/api/v1/notifications/nudges", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+    def test_list_notifications(self, client, mock_supabase):
+        _cfg(
+            mock_supabase,
+            [
+                {
+                    "id": "notif-1",
+                    "user_id": "user-1",
+                    "title": "Test notification",
+                    "message": "Test message",
+                    "category": "system",
+                    "priority": "low",
+                    "read": False,
+                    "action_url": "/dashboard",
+                    "icon": "bell",
+                    "created_at": "2026-06-14T12:00:00",
+                }
+            ],
+        )
+        resp = client.get("/api/v1/notifications/", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert isinstance(body, list)
+        assert len(body) == 1
+        assert body[0]["title"] == "Test notification"
+
+    def test_list_notifications_empty(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        resp = client.get("/api/v1/notifications/", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+    def test_list_notifications_db_error(self, client, mock_supabase):
+        mock_supabase.from_.return_value.select.return_value.eq.return_value.order.return_value.range.side_effect = Exception("DB error")
+        resp = client.get("/api/v1/notifications/", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json() == []
+
+    def test_mark_read(self, client, mock_supabase):
+        _cfg(mock_supabase, [{"id": "notif-1", "read": True}])
+        resp = client.patch("/api/v1/notifications/notif-1/read", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "ok"
+
+    def test_mark_read_not_found(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        resp = client.patch("/api/v1/notifications/nonexistent/read", headers=AUTH_HEADER)
+        assert resp.status_code == 404
+
+    def test_mark_all_read(self, client, mock_supabase):
+        _cfg(mock_supabase, [])
+        resp = client.post("/api/v1/notifications/read-all", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "ok"
+
+    def test_generate_proactive_nudges(self, client, mock_supabase):
+        def side_effect(table):
+            builders = {
+                "tasks": MockQueryBuilder(return_data=[{"id": "t1", "title": "Overdue task", "status": "pending", "priority": "high", "due_date": "2025-01-01T00:00:00"}]),
+                "habits": MockQueryBuilder(return_data=[]),
+                "sleep_logs": MockQueryBuilder(return_data=[]),
+                "notifications": MockQueryBuilder(return_data=[]),
+            }
+            return builders.get(table, MockQueryBuilder(return_data=[]))
+        mock_supabase.from_.side_effect = side_effect
+        resp = client.post("/api/v1/notifications/generate", headers=AUTH_HEADER)
+        assert resp.status_code == 200
+        body = resp.json()
+        assert isinstance(body, list)
+
+    def test_notifications_unauthorized(self, client, no_auth):
+        resp = client.get("/api/v1/notifications/")
         assert resp.status_code == 401
