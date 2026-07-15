@@ -106,8 +106,8 @@ async def get_prompt_history(name: str, current_user=Depends(get_current_user)):
                 try:
                     additions += int(parts[0]) if parts[0] != "-" else 0
                     deletions += int(parts[1]) if parts[1] != "-" else 0
-                except ValueError:
-                    pass
+                except ValueError as e:
+                    logger.warn("Failed to parse git stat line in prompt history", error=str(e))
 
         commits.append(
             PromptCommit(
