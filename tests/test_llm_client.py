@@ -89,6 +89,11 @@ class TestGetProviders:
 class TestLLMClientGenerate:
     """Test LLMClient.generate full flow."""
 
+    @pytest.fixture(autouse=True)
+    def _clear_ai_cache(self):
+        from ai.client import ai_cache
+        ai_cache.clear()
+
     @pytest.fixture
     def client(self):
         with patch("ai.client.LLMClient.__init__", return_value=None):
@@ -335,6 +340,51 @@ class TestLLMClientCache:
             result = await client.generate("test prompt")
             assert result == "fresh response"
             mock_cache.set.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_ai_cache_l1_hit_returns_immediately(self, client):
+        from ai.client import ai_cache
+
+        ai_cache.set("", "test prompt l1", "mistral", "cached-l1-response", 100)
+        client._call_ollama = AsyncMock(return_value="fresh response")
+        with patch("ai.client.cache") as mock_cache:
+            mock_cache.get = AsyncMock()
+            mock_cache.set = AsyncMock()
+            result = await client.generate("test prompt l1")
+            assert result == "cached-l1-response"
+            client._call_ollama.assert_not_awaited()
+            mock_cache.get.assert_not_called()
+        ai_cache.invalidate("test prompt l1")
+
+    @pytest.mark.asyncio
+    async def test_ai_cache_l1_miss_falls_through_to_l2(self, client):
+        from ai.client import ai_cache
+
+        ai_cache.clear()
+        with patch("ai.client.cache") as mock_cache:
+            mock_cache.get = AsyncMock(return_value="cached-l2-response")
+            mock_cache.set = AsyncMock()
+            client._call_ollama = AsyncMock(return_value="fresh response")
+            result = await client.generate("test prompt l2 miss")
+            assert result == "cached-l2-response"
+            client._call_ollama.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_ai_cache_and_simple_cache_both_populated(self, client):
+        from ai.client import ai_cache
+
+        ai_cache.clear()
+        with patch("ai.client.cache") as mock_cache:
+            mock_cache.get = AsyncMock(return_value=None)
+            mock_cache.set = AsyncMock()
+            client._call_ollama = AsyncMock(return_value="fresh response")
+            result = await client.generate("test prompt both caches")
+            assert result == "fresh response"
+            mock_cache.set.assert_awaited_once()
+            # Verify both cache layers are populated
+            cached = ai_cache.get("", "test prompt both caches", "mistral")
+            assert cached == "fresh response"
+        ai_cache.clear()
 
 
 @pytest.mark.agent
@@ -760,3 +810,724 @@ class TestLLMClientEdgeCases:
                 duration_ms=0,
             )
             mock_post.assert_not_called()
+
+
+@pytest.mark.agent
+class TestGenerateStream:
+    """Test LLMClient.generate_stream method."""
+
+    @pytest.fixture
+    def client(self):
+        with patch("ai.client.LLMClient.__init__", return_value=None):
+            from ai.client import LLMClient
+            c = LLMClient()
+            c.ollama_base = "http://localhost:11434"
+            c.claude_key = "sk-test"
+            c.use_local = True
+            c.model = "mistral"
+            c.claude_model = "claude-sonnet-4-20250514"
+            c.max_retries = 2
+            c.base_delay = 0.01
+            c.ollama_timeout = 30
+            c.claude_timeout = 30
+            c.ollama_circuit = MagicMock()
+            c.claude_circuit = MagicMock()
+            c.ollama_circuit.call = AsyncMock(side_effect=lambda fn, *a, **kw: fn(*a, **kw))
+            c.claude_circuit.call = AsyncMock(side_effect=lambda fn, *a, **kw: fn(*a, **kw))
+            return c
+
+    @pytest.fixture
+    def client_ollama_only(self):
+        with patch("ai.client.LLMClient.__init__", return_value=None):
+            from ai.client import LLMClient
+            c = LLMClient()
+            c.ollama_base = "http://localhost:11434"
+            c.claude_key = None
+            c.use_local = True
+            c.model = "mistral"
+            c.max_retries = 2
+            c.base_delay = 0.01
+            c.ollama_timeout = 30
+            c.claude_timeout = 30
+            c.ollama_circuit = MagicMock()
+            c.claude_circuit = MagicMock()
+            c.ollama_circuit.call = AsyncMock(side_effect=lambda fn, *a, **kw: fn(*a, **kw))
+            c.claude_circuit.call = AsyncMock(side_effect=lambda fn, *a, **kw: fn(*a, **kw))
+            return c
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_ollama_success(self, client):
+        async def _stream(*a, **kw):
+            yield "Hello "
+            yield "world"
+        client._call_ollama_stream = _stream
+        collected = []
+        async for token in client.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "Hello world"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_claude_success(self, client):
+        client.use_local = False
+        async def _stream(*a, **kw):
+            yield "Claude "
+            yield "response"
+        client._call_claude_stream = _stream
+        collected = []
+        async for token in client.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "Claude response"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_on_token_sync_callback(self, client):
+        async def _stream(*a, **kw):
+            yield "a"
+            yield "b"
+        client._call_ollama_stream = _stream
+        tokens = []
+        async for _ in client.generate_stream("test", on_token=lambda t: tokens.append(t)):
+            pass
+        assert tokens == ["a", "b"]
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_on_token_async_callback(self, client):
+        async def _stream(*a, **kw):
+            yield "x"
+        client._call_ollama_stream = _stream
+        tokens = []
+        async def cb(t):
+            tokens.append(t)
+        async for _ in client.generate_stream("test", on_token=cb):
+            pass
+        assert tokens == ["x"]
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_signal_cancels_mid_stream(self, client):
+        import asyncio
+        signal = asyncio.Event()
+        async def _stream(*a, **kw):
+            yield "before"
+            signal.set()
+            yield "after"
+        client._call_ollama_stream = _stream
+        collected = []
+        async for token in client.generate_stream("test", signal=signal):
+            collected.append(token)
+        assert "".join(collected) == "before"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_signal_set_before_start(self, client):
+        import asyncio
+        signal = asyncio.Event()
+        signal.set()
+        called = False
+        async def _never(*a, **kw):
+            nonlocal called
+            called = True
+            yield "should not reach"
+        client._call_ollama_stream = _never
+        collected = []
+        async for token in client.generate_stream("test", signal=signal):
+            collected.append(token)
+        assert collected == []
+        assert not called
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_retries_on_timeout(self, client_ollama_only):
+        call_count = 0
+        async def _stream(*a, **kw):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise httpx.ReadTimeout("timeout")
+            yield "recovered"
+        client_ollama_only._call_ollama_stream = _stream
+        collected = []
+        async for token in client_ollama_only.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "recovered"
+        assert call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_retries_on_http_status_error(self, client_ollama_only):
+        call_count = 0
+        async def _stream(*a, **kw):
+            nonlocal call_count
+            call_count += 1
+            if call_count <= 1:
+                mock_r = MagicMock(spec=httpx.Response)
+                mock_r.status_code = 500
+                raise httpx.HTTPStatusError("err", request=MagicMock(spec=httpx.Request), response=mock_r)
+            yield "ok"
+        client_ollama_only._call_ollama_stream = _stream
+        collected = []
+        async for token in client_ollama_only.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "ok"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_fallback_on_provider_unavailable(self, client):
+        from ai.client import LLMProviderUnavailableError
+        async def _fail(*a, **kw):
+            raise LLMProviderUnavailableError("ollama down")
+            yield  # pragma: no cover
+        async def _ok(*a, **kw):
+            yield "claude rescued"
+        client._call_ollama_stream = _fail
+        client._call_claude_stream = _ok
+        collected = []
+        async for token in client.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "claude rescued"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_fallback_on_circuit_open(self, client):
+        from shared.utils.retry import CircuitBreakerOpenError
+        async def _fail(*a, **kw):
+            raise CircuitBreakerOpenError("circuit open")
+            yield  # pragma: no cover
+        async def _ok(*a, **kw):
+            yield "claude fallback"
+        client._call_ollama_stream = _fail
+        client._call_claude_stream = _ok
+        collected = []
+        async for token in client.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "claude fallback"
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_rate_limit_retries(self, client_ollama_only):
+        from ai.client import LLMRateLimitError
+        call_count = 0
+        async def _stream(*a, **kw):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise LLMRateLimitError("rate limited", retry_after=1)
+            yield "ok"
+        client_ollama_only._call_ollama_stream = _stream
+        collected = []
+        async for token in client_ollama_only.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "ok"
+        assert call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_unexpected_error_retries(self, client_ollama_only):
+        call_count = 0
+        async def _stream(*a, **kw):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise ValueError("unexpected")
+            yield "ok"
+        client_ollama_only._call_ollama_stream = _stream
+        collected = []
+        async for token in client_ollama_only.generate_stream("test"):
+            collected.append(token)
+        assert "".join(collected) == "ok"
+        assert call_count == 2
+
+    @pytest.mark.asyncio
+    async def test_generate_stream_all_providers_exhausted(self, client_ollama_only):
+        from ai.client import LLMProviderUnavailableError
+        async def _fail(*a, **kw):
+            raise httpx.ReadTimeout("always timeout")
+            yield  # pragma: no cover
+        client_ollama_only._call_ollama_stream = _fail
+        with pytest.raises(LLMProviderUnavailableError, match="All AI providers failed"):
+            async for _ in client_ollama_only.generate_stream("test"):
+                pass
+
+
+@pytest.mark.agent
+class TestCallOllamaStream:
+    """Test _call_ollama_stream internal method."""
+
+    @pytest.fixture
+    def client(self):
+        with patch("ai.client.LLMClient.__init__", return_value=None):
+            from ai.client import LLMClient
+            c = LLMClient()
+            c.ollama_base = "http://localhost:11434"
+            c.model = "mistral"
+            c.ollama_timeout = 30
+            c.ollama_circuit = MagicMock()
+            c.ollama_circuit.state = "closed"
+            c.ollama_circuit.failure_count = 0
+            c.ollama_circuit.failure_threshold = 3
+            return c
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_success(self, client):
+        lines = [
+            '{"response":"Hello "}',
+            '{"response":"world","done":true,"prompt_eval_count":10,"eval_count":5}',
+        ]
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            for line in lines:
+                yield (line + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "Hello world"
+            assert client.ollama_circuit.failure_count == 0
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_with_system_and_temperature(self, client):
+        lines = ['{"response":"ok","done":true}']
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            for line in lines:
+                yield (line + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("hi", system="sys", max_tokens=512, temperature=0.5):
+                collected.append(token)
+            assert "".join(collected) == "ok"
+            mock_client.stream.assert_called_once()
+            call_kwargs = mock_client.stream.call_args.kwargs
+            assert call_kwargs["json"]["options"]["temperature"] == 0.5
+            assert call_kwargs["json"]["system"] == "sys"
+            assert call_kwargs["json"]["options"]["num_predict"] == 512
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_circuit_open_raises(self, client):
+        import time
+        from shared.utils.retry import CircuitBreakerOpenError
+        client.ollama_circuit.state = "open"
+        client.ollama_circuit.last_failure_time = time.time()
+        client.ollama_circuit.recovery_timeout = 3600
+
+        with pytest.raises(CircuitBreakerOpenError, match="Ollama circuit breaker is OPEN for stream"):
+            async for _ in client._call_ollama_stream("test"):
+                pass
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_half_open_recovers(self, client):
+        client.ollama_circuit.state = "open"
+        client.ollama_circuit.last_failure_time = 0
+        client.ollama_circuit.recovery_timeout = 0.001
+
+        lines = ['{"response":"ok","done":true}']
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            for line in lines:
+                yield (line + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "ok"
+            assert client.ollama_circuit.state == "closed"
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_signal_cancellation(self, client):
+        import asyncio
+        signal = asyncio.Event()
+        before = '{"response":"before"}'
+        after = '{"response":"after"}'
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield (before + "\n").encode()
+            signal.set()
+            yield (after + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("test", signal=signal):
+                collected.append(token)
+            assert "".join(collected) == "before"
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_http_error_opens_circuit(self, client):
+        from shared.utils.retry import CircuitBreaker
+        client.ollama_circuit = CircuitBreaker(
+            failure_threshold=1, recovery_timeout=60, expected_exception=(httpx.RequestError,)
+        )
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(side_effect=httpx.ReadTimeout("stream timeout"))
+
+            with pytest.raises(httpx.ReadTimeout):
+                async for _ in client._call_ollama_stream("test"):
+                    pass
+            assert client.ollama_circuit.state == "open"
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_http_status_error_opens_circuit(self, client):
+        from shared.utils.retry import CircuitBreaker
+        client.ollama_circuit = CircuitBreaker(
+            failure_threshold=1, recovery_timeout=60, expected_exception=(httpx.RequestError,)
+        )
+        mock_r = MagicMock(spec=httpx.Response)
+        mock_r.status_code = 503
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(
+                side_effect=httpx.HTTPStatusError("503", request=MagicMock(spec=httpx.Request), response=mock_r)
+            )
+
+            with pytest.raises(httpx.HTTPStatusError):
+                async for _ in client._call_ollama_stream("test"):
+                    pass
+            assert client.ollama_circuit.state == "open"
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_skips_empty_lines_and_bad_json(self, client):
+        lines = [
+            "",
+            "not json at all",
+            '{"response":"valid","done":true}',
+        ]
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            for line in lines:
+                yield (line + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "valid"
+
+    @pytest.mark.asyncio
+    async def test_ollama_stream_no_temperature_no_system(self, client):
+        lines = ['{"response":"bare","done":true}']
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            for line in lines:
+                yield (line + "\n").encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_ollama_stream("hello"):
+                collected.append(token)
+            assert "".join(collected) == "bare"
+            mock_client.stream.assert_called_once()
+            call_kwargs = mock_client.stream.call_args.kwargs
+            assert "temperature" not in call_kwargs["json"].get("options", {})
+            assert "system" not in call_kwargs["json"]
+
+
+@pytest.mark.agent
+class TestCallClaudeStream:
+    """Test _call_claude_stream internal method."""
+
+    @pytest.fixture
+    def client(self):
+        with patch("ai.client.LLMClient.__init__", return_value=None):
+            from ai.client import LLMClient
+            c = LLMClient()
+            c.claude_key = "sk-ant-test"
+            c.claude_model = "claude-sonnet-4-20250514"
+            c.claude_timeout = 60
+            c.claude_circuit = MagicMock()
+            c.claude_circuit.state = "closed"
+            c.claude_circuit.failure_count = 0
+            c.claude_circuit.failure_threshold = 3
+            return c
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_success(self, client):
+        sse = (
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"Hello"}}\n'
+            '\n'
+            'event: message_delta\n'
+            'data: {"type":"message_delta","usage":{"input_tokens":10,"output_tokens":5}}\n'
+            '\n'
+            'data: [DONE]\n'
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "Hello"
+            assert client.claude_circuit.failure_count == 0
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_multiple_deltas(self, client):
+        sse = (
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"Hello "}}\n'
+            '\n'
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"world"}}\n'
+            '\n'
+            'data: [DONE]\n'
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "Hello world"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_rate_limited(self, client):
+        from ai.client import LLMRateLimitError
+        mock_resp = MagicMock()
+        mock_resp.status_code = 429
+        mock_resp.headers = {"retry-after": "30"}
+        async def aiter_bytes():
+            yield b""
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            with pytest.raises(LLMRateLimitError, match="Claude rate limited during stream"):
+                async for _ in client._call_claude_stream("test"):
+                    pass
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_circuit_open_raises(self, client):
+        import time
+        from shared.utils.retry import CircuitBreakerOpenError
+        client.claude_circuit.state = "open"
+        client.claude_circuit.last_failure_time = time.time()
+        client.claude_circuit.recovery_timeout = 3600
+
+        with pytest.raises(CircuitBreakerOpenError, match="Claude circuit breaker is OPEN for stream"):
+            async for _ in client._call_claude_stream("test"):
+                pass
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_half_open_recovers(self, client):
+        client.claude_circuit.state = "open"
+        client.claude_circuit.last_failure_time = 0
+        client.claude_circuit.recovery_timeout = 0.001
+
+        sse = (
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"ok"}}\n'
+            '\n'
+            'data: [DONE]\n'
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "ok"
+            assert client.claude_circuit.state == "closed"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_signal_cancellation(self, client):
+        import asyncio
+        signal = asyncio.Event()
+        sse_before = (
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"before"}}\n'
+            '\n'
+        )
+        sse_after = (
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"after"}}\n'
+            '\n'
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse_before.encode()
+            signal.set()
+            yield sse_after.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("test", signal=signal):
+                collected.append(token)
+            assert "".join(collected) == "before"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_http_error_opens_circuit(self, client):
+        from shared.utils.retry import CircuitBreaker
+        client.claude_circuit = CircuitBreaker(
+            failure_threshold=1, recovery_timeout=60, expected_exception=(httpx.RequestError,)
+        )
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(side_effect=httpx.ReadTimeout("stream timeout"))
+
+            with pytest.raises(httpx.ReadTimeout):
+                async for _ in client._call_claude_stream("test"):
+                    pass
+            assert client.claude_circuit.state == "open"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_http_status_error_opens_circuit(self, client):
+        from shared.utils.retry import CircuitBreaker
+        client.claude_circuit = CircuitBreaker(
+            failure_threshold=1, recovery_timeout=60, expected_exception=(httpx.RequestError,)
+        )
+        mock_r = MagicMock(spec=httpx.Response)
+        mock_r.status_code = 503
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(
+                side_effect=httpx.HTTPStatusError("503", request=MagicMock(spec=httpx.Request), response=mock_r)
+            )
+
+            with pytest.raises(httpx.HTTPStatusError):
+                async for _ in client._call_claude_stream("test"):
+                    pass
+            assert client.claude_circuit.state == "open"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_skips_bad_json_data(self, client):
+        sse = (
+            'event: content_block_delta\n'
+            'data: not valid json\n'
+            '\n'
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","delta":{"text":"valid"}}\n'
+            '\n'
+            'data: [DONE]\n'
+        )
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("test"):
+                collected.append(token)
+            assert "".join(collected) == "valid"
+
+    @pytest.mark.asyncio
+    async def test_claude_stream_with_system_and_temperature(self, client):
+        sse = 'data: [DONE]\n'
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.raise_for_status = MagicMock()
+        async def aiter_bytes():
+            yield sse.encode()
+        mock_resp.aiter_bytes = aiter_bytes
+
+        with patch("httpx.AsyncClient") as mock_http:
+            mock_client = mock_http.return_value.__aenter__.return_value
+            mock_stream_ctx = AsyncMock()
+            mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+            mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+
+            collected = []
+            async for token in client._call_claude_stream("hi", system="sys", max_tokens=512, temperature=0.5):
+                collected.append(token)
+            assert collected == []
+            mock_client.stream.assert_called_once()
+            call_kwargs = mock_client.stream.call_args.kwargs
+            assert call_kwargs["json"]["temperature"] == 0.5
+            assert call_kwargs["json"]["system"] == "sys"
+            assert call_kwargs["json"]["max_tokens"] == 512
