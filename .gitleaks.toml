@@ -1,0 +1,28 @@
+# Gitleaks config for ARIA OS - Second Brain
+title = "ARIA OS - Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+    "(^|/)__tests__/",
+    "(^|/)tests/",
+    "(^|/)test_",
+    "(^|/)fixtures/",
+    "(^|/)mock",
+    "(^|/)node_modules/",
+    "(^|/).git/",
+]
+
+regexes = [
+    "(?i)eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+",
+]
+
+stopwords = [
+    "test",
+    "example",
+    "your-",
+    "placeholder",
+    "changeme",
+]

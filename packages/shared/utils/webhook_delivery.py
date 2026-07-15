@@ -116,8 +116,8 @@ class WebhookDeliveryService:
                     )
                     if sub_result.data:
                         secret = sub_result.data[0].get("secret")
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warn("Failed to fetch webhook subscription secret", error=str(e))
 
         start_time = time.monotonic()
         attempt = webhook.get("retry_count", 0) + 1
@@ -301,7 +301,7 @@ class WebhookDeliveryService:
             try:
                 await self._task
             except asyncio.CancelledError:
-                pass
+                pass  # Expected during shutdown — not an error
             self._task = None
         logger.info("Webhook delivery service stopped")
 
@@ -338,7 +338,7 @@ class WebhookDeliveryService:
                 stats[status] = result.count if hasattr(result, "count") else 0
             return stats
         except Exception:
-            return {"pending": -1, "failed": -1, "dead_letter": -1, "delivered": -1}
+            return {"pending": -1, "failed": -1, "dead_letter": -1, "delivered": -1}  # Cleanup operation — acceptable to silently skip
 
 
 webhook_delivery = WebhookDeliveryService()

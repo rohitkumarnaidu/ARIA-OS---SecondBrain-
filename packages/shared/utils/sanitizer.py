@@ -1,3 +1,4 @@
+import json
 import re
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -49,7 +50,7 @@ class InputSanitizer(BaseHTTPMiddleware):
             if "application/json" in content_type:
                 body = await request.json()
                 sanitized = sanitize_dict(body)
-                request._body = sanitized
+                request._body = json.dumps(sanitized).encode("utf-8")
 
         response = await call_next(request)
         return response
