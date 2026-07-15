@@ -340,8 +340,9 @@ export default function CoursesPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Title <span className="text-accent-error">*</span></label>
+                  <label htmlFor="course-title" className="block text-sm font-medium text-text-primary mb-2">Title <span className="text-accent-error">*</span></label>
                   <input
+                    id="course-title"
                     type="text"
                     value={newCourse.title}
                     onChange={e => setNewCourse({ ...newCourse, title: e.target.value })}
@@ -352,8 +353,9 @@ export default function CoursesPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Platform</label>
+                    <label htmlFor="course-platform" className="block text-sm font-medium text-text-primary mb-2">Platform</label>
                     <select
+                      id="course-platform"
                       value={newCourse.platform}
                       onChange={e => setNewCourse({ ...newCourse, platform: e.target.value as typeof platforms[number] })}
                       className="input capitalize"
@@ -364,8 +366,9 @@ export default function CoursesPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-text-primary mb-2">Total Videos</label>
+                    <label htmlFor="course-total-videos" className="block text-sm font-medium text-text-primary mb-2">Total Videos</label>
                     <input
+                      id="course-total-videos"
                       type="number"
                       value={newCourse.total_videos}
                       onChange={e => setNewCourse({ ...newCourse, total_videos: parseInt(e.target.value) || 0 })}
@@ -376,8 +379,9 @@ export default function CoursesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Deadline <span className="text-accent-error">*</span></label>
+                  <label htmlFor="course-deadline" className="block text-sm font-medium text-text-primary mb-2">Deadline <span className="text-accent-error">*</span></label>
                   <input
+                    id="course-deadline"
                     type="date"
                     value={newCourse.deadline}
                     onChange={e => setNewCourse({ ...newCourse, deadline: e.target.value })}
@@ -386,8 +390,9 @@ export default function CoursesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-text-primary mb-2">Why Enrolled?</label>
+                  <label htmlFor="course-why-enrolled" className="block text-sm font-medium text-text-primary mb-2">Why Enrolled?</label>
                   <textarea
+                    id="course-why-enrolled"
                     value={newCourse.why_enrolled}
                     onChange={e => setNewCourse({ ...newCourse, why_enrolled: e.target.value })}
                     className="input min-h-[80px] resize-none"
