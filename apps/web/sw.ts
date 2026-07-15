@@ -12,6 +12,9 @@ declare const self: WorkerGlobalScope
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
+  precacheOptions: {
+    navigateFallback: '/offline',
+  },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
