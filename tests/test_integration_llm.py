@@ -12,6 +12,16 @@ from fastapi.testclient import TestClient
 from config.core.auth import get_current_user
 
 
+@pytest.fixture(autouse=True, scope="session")
+def _disable_csrf():
+    """Remove CSRF middleware for integration tests."""
+    from apps.api.main import app
+    app.user_middleware = [m for m in app.user_middleware
+                          if m.cls.__name__ != "CSRFMiddleware"]
+    app.middleware_stack = None
+    yield
+
+
 class MockUser:
     class InnerUser:
         id = "test-integration-user-llm"
