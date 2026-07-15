@@ -1,13 +1,37 @@
+﻿import json
+import importlib
+import hashlib
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone
 from config.core.supabase import get_supabase_client
 from shared.utils.logger import logger
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
+from ai.memory.orchestrator import MemoryOrchestrator
+
+
+_orchestrator: Optional[MemoryOrchestrator] = None
+
+
+def get_orchestrator() -> MemoryOrchestrator:
+    global _orchestrator
+    if _orchestrator is None:
+        _orchestrator = MemoryOrchestrator()
+    return _orchestrator
 
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+_VALID_MEMORY_TYPES = frozenset({"buffer", "working", "episodic", "semantic", "procedural", "query", "consolidated", "preference", "fact", "pattern", "interaction"})
+
+
+def validate_memory_type(mtype: str) -> str:
+    if mtype not in _VALID_MEMORY_TYPES:
+        logger.warn("Invalid memory type, defaulting to episodic", provided=mtype)
+        return "episodic"
+    return mtype
 
 
 async def store_interaction(
@@ -17,14 +41,38 @@ async def store_interaction(
     metadata: Dict[str, Any] = None,
 ) -> Optional[dict]:
     try:
+        mtype = validate_memory_type(interaction_type)
         supabase = get_supabase_client()
+        import hashlib
+        dedup_key = hashlib.sha256(f"{user_id}:{mtype}:{content[:200]}".encode()).hexdigest()[:24]
+        existing = (
+            supabase.from_("memory")
+            .select("id, value")
+            .eq("user_id", user_id)
+            .eq("type", mtype)
+            .eq("key", dedup_key)
+            .execute()
+        )
+        if existing.data:
+            try:
+                current_val = json.loads(existing.data[0]["value"]) if isinstance(existing.data[0].get("value"), str) else existing.data[0].get("value", {})
+            except (json.JSONDecodeError, TypeError):
+                current_val = {}
+            current_val["updated_content"] = content
+            current_val["metadata"] = metadata or {}
+            current_val["reference_count"] = current_val.get("reference_count", 1) + 1
+            supabase.from_("memory").update({
+                "value": json.dumps(current_val),
+            }).eq("id", existing.data[0]["id"]).execute()
+            logger.debug("Dedup: updated existing memory", user_id=user_id, key=dedup_key)
+            return existing.data[0]
         data = {
             "user_id": user_id,
-            "type": interaction_type,
-            "key": f"{interaction_type}:{_utc_now()}",
-            "value": {"content": content, "metadata": metadata or {}},
+            "type": mtype,
+            "key": dedup_key,
+            "value": json.dumps({"content": content, "metadata": metadata or {}, "reference_count": 1}),
             "importance": "medium",
-            "tags": [interaction_type],
+            "tags": [mtype],
         }
         response = supabase.from_("memory").insert(data).execute()
         return response.data[0] if response.data else None
@@ -437,3 +485,222 @@ async def prune_expired_memories(user_id: str) -> int:
     except Exception as e:
         logger.error("prune_expired_memories failed", user_id=user_id, error=str(e))
         return 0
+
+
+async def extract_memory_from_chat(user_msg: str, ai_msg: str) -> Optional[dict]:
+    try:
+        loaded = prompts.get_agent("memory_agent")
+        if loaded:
+            system_prompt = loaded.system_prompt
+            user_prompt = (
+                "Extract any user preferences, facts, or patterns from this chat exchange. "
+                "Return JSON with 'memory_type' (preference|fact|pattern), 'content', "
+                "'confidence' (0-1), and 'domain' (general|work|study|health|social). "
+                "If nothing extractable, return null.\n\n"
+                f"User: {user_msg}\nAI: {ai_msg}"
+            )
+        else:
+            system_prompt = "You are a memory extraction assistant. Extract structured memories from conversations."
+            user_prompt = (
+                f"Extract preferences, facts, or patterns from:\nUser: {user_msg}\nAI: {ai_msg}\n"
+                "Return JSON with memory_type, content, confidence, domain or null."
+            )
+        try:
+            result = await llm.generate_json(user_prompt, system=system_prompt, max_tokens=512, temperature=0.3)
+        except LLMProviderUnavailableError:
+            result = {}
+        if not result or result.get("content") is None:
+            return None
+        return {
+            "memory_type": result.get("memory_type", "fact"),
+            "content": result["content"],
+            "confidence": result.get("confidence", 0.5),
+            "domain": result.get("domain", "general"),
+        }
+    except Exception as e:
+        logger.error("extract_memory_from_chat failed", error=str(e))
+        return None
+
+
+async def deduplicate_memories(user_id: str) -> int:
+    try:
+        supabase = get_supabase_client()
+        resp = supabase.from_("memory").select("id, key, value, type").eq("user_id", user_id).execute()
+        memories = resp.data or []
+        seen: Dict[str, list] = {}
+        merged_count = 0
+        for mem in memories:
+            try:
+                val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
+                content = val.get("content", "") if isinstance(val, dict) else str(val)
+            except (json.JSONDecodeError, TypeError):
+                content = str(mem.get("value", ""))
+            norm_key = content.strip().lower()[:100]
+            mtype = mem.get("type", "episodic")
+            group_key = f"{mtype}:{hashlib.sha256(norm_key.encode()).hexdigest()[:16]}"
+            if group_key in seen:
+                primary = seen[group_key][0]
+                try:
+                    primary_val = json.loads(primary["value"]) if isinstance(primary.get("value"), str) else primary.get("value", {})
+                except (json.JSONDecodeError, TypeError):
+                    primary_val = {}
+                if isinstance(primary_val, dict):
+                    primary_val["reference_count"] = primary_val.get("reference_count", 1) + 1
+                    supabase.from_("memory").update({"value": json.dumps(primary_val)}).eq("id", primary["id"]).execute()
+                supabase.from_("memory").delete().eq("id", mem["id"]).execute()
+                merged_count += 1
+            else:
+                seen[group_key] = [mem]
+        if merged_count:
+            logger.info("Deduplicated memories", user_id=user_id, merged=merged_count)
+        return merged_count
+    except Exception as e:
+        logger.error("deduplicate_memories failed", user_id=user_id, error=str(e))
+        return 0
+
+
+async def apply_confidence_decay(user_id: str) -> int:
+    try:
+        supabase = get_supabase_client()
+        resp = supabase.from_("memory").select("id, value, type").eq("user_id", user_id).execute()
+        memories = resp.data or []
+        decayed = 0
+        decay_rate = 0.05
+        for mem in memories:
+            try:
+                val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
+            except (json.JSONDecodeError, TypeError):
+                continue
+            if isinstance(val, dict):
+                old_conf = val.get("confidence", 0.5)
+                new_conf = max(0.05, old_conf - decay_rate)
+                if new_conf < old_conf:
+                    val["confidence"] = round(new_conf, 4)
+                    supabase.from_("memory").update({"value": json.dumps(val)}).eq("id", mem["id"]).execute()
+                    decayed += 1
+        if decayed:
+            logger.info("Confidence decay applied", user_id=user_id, memories=decayed)
+        return decayed
+    except Exception as e:
+        logger.error("apply_confidence_decay failed", user_id=user_id, error=str(e))
+        return 0
+
+
+async def run_weekly_deep_consolidation(user_id: str) -> dict:
+    try:
+        result = await deep_consolidation(user_id)
+        deduped = await deduplicate_memories(user_id)
+        decayed = await apply_confidence_decay(user_id)
+        summary = result.get("summary", "Weekly deep consolidation completed.")
+        return {
+            "status": "completed",
+            "user_id": user_id,
+            "consolidation": result,
+            "deduplicated": deduped,
+            "confidence_decayed": decayed,
+            "summary": summary,
+            "week": datetime.now(timezone.utc).strftime("%Y-W%W"),
+        }
+    except Exception as e:
+        logger.error("run_weekly_deep_consolidation failed", user_id=user_id, error=str(e))
+        return {
+            "status": "failed",
+            "user_id": user_id,
+            "error": str(e),
+            "deduplicated": 0,
+            "confidence_decayed": 0,
+        }
+
+
+WEEKLY_DEEP_CONSOLIDATION_SCHEDULE = {"day_of_week": "sun", "hour": 2, "minute": 0}
+
+
+async def chat_store_interaction(
+    user_id: str,
+    user_msg: str,
+    ai_msg: str,
+    context: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    orchestrator = get_orchestrator()
+    result = await orchestrator.store_interaction(user_id, user_msg, ai_msg, context)
+
+    try:
+        extracted = await orchestrator.extract_facts_from_interaction(user_id, user_msg, ai_msg)
+        if extracted:
+            result["facts_extracted"] = extracted
+    except Exception as e:
+        logger.warn("Fact extraction failed (degraded)", user_id=user_id, error=str(e))
+        result["facts_extracted"] = 0
+
+    return result
+
+
+async def confidence_decay(user_id: str) -> Dict[str, Any]:
+    try:
+        orchestrator = get_orchestrator()
+        decayed = await orchestrator.semantic.decay_all(user_id)
+        logger.info("Confidence decay applied", user_id=user_id, memories_affected=decayed)
+        return {"decayed": decayed, "status": "completed"}
+    except Exception as e:
+        logger.error("confidence_decay failed", user_id=user_id, error=str(e))
+        return {"decayed": 0, "status": "failed", "error": str(e)}
+
+
+async def deep_consolidation(user_id: str) -> Dict[str, Any]:
+    try:
+        orchestrator = get_orchestrator()
+        consolidated = await orchestrator.consolidate_all(user_id)
+
+        pruned = orchestrator.compressor.prune_old_memories(user_id, days=90)
+        consolidated["pruned_old"] = pruned
+
+        try:
+            supabase = get_supabase_client()
+            all_semantic = (
+                supabase.from_("memory")
+                .select("id, value")
+                .eq("user_id", user_id)
+                .eq("type", "semantic")
+                .execute()
+            )
+            updated_count = 0
+            for mem in all_semantic.data or []:
+                try:
+                    val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                if isinstance(val, dict):
+                    old_conf = val.get("confidence", 0.5)
+                    new_conf = max(0.05, old_conf - 0.05)
+                    if new_conf < old_conf:
+                        val["confidence"] = round(new_conf, 4)
+                        supabase.from_("memory").update({
+                            "value": json.dumps(val),
+                        }).eq("id", mem["id"]).execute()
+                        updated_count += 1
+            consolidated["deep_decayed"] = updated_count
+        except Exception as inner_e:
+            logger.warn("Deep decay step failed", error=str(inner_e))
+            consolidated["deep_decayed"] = 0
+
+        temp_dir = str(importlib.import_module("tempfile").gettempdir())
+        snapshot_path = f"{temp_dir}/memory_snapshot_{user_id}_{_utc_now().replace(':', '-')}.json"
+        profile = await orchestrator.get_user_profile(user_id)
+        with open(snapshot_path, "w") as f:
+            json.dump(profile, f, indent=2, default=str)
+        consolidated["snapshot_path"] = snapshot_path
+
+        consolidated["status"] = "completed"
+        logger.info("Deep consolidation completed", user_id=user_id, results=consolidated)
+        return consolidated
+    except Exception as e:
+        logger.error("deep_consolidation failed", user_id=user_id, error=str(e))
+        return {
+            "status": "failed",
+            "error": str(e),
+            "episodic_merged": 0,
+            "semantic_decayed": 0,
+            "pruned_old": 0,
+            "deep_decayed": 0,
+        }
+

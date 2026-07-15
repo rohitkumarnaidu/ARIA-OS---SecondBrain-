@@ -11,6 +11,7 @@ from . import (
     opportunity_matching_agent,
     skill_agent,
 )
+from ai.context_engine import ContextEngine, NEEDS_MAP
 
 __all__ = [
     "task_agent",
@@ -24,4 +25,6 @@ __all__ = [
     "roadmap_agent",
     "opportunity_matching_agent",
     "skill_agent",
+    "ContextEngine",
+    "NEEDS_MAP",
 ]
