@@ -892,19 +892,19 @@ class TestNotifications:
 
     def test_send_push_notification(self):
         result = send_push_notification("user-1", "Title", "Body")
-        assert result is True
+        assert result["success"] is True
 
     def test_send_push_notification_with_data(self):
         result = send_push_notification("u1", "T", "B", data={"k": "v"})
-        assert result is True
+        assert result["success"] is True
 
     def test_send_email_notification(self):
         result = send_email_notification("user@test.com", "Subject", "Body")
-        assert result is True
+        assert result["success"] is True
 
     def test_send_sms_notification(self):
         result = send_sms_notification("+1234567890", "SMS body")
-        assert result is True
+        assert result["success"] is True
 
     def test_notify_task_overdue(self):
         result = notify_task_overdue("Finish report", "user@test.com")
@@ -1253,7 +1253,7 @@ class TestSanitizer:
         sanitizer = InputSanitizer(MagicMock())
         call_next = AsyncMock(return_value=MagicMock())
         await sanitizer.dispatch(mock_request, call_next)
-        assert mock_request._body == {"name": ""}
+        assert json.loads(mock_request._body) == {"name": ""}
         call_next.assert_awaited_once()
 
     async def test_input_sanitizer_skips_non_json(self):
@@ -1276,7 +1276,7 @@ class TestSanitizer:
         sanitizer = InputSanitizer(MagicMock())
         call_next = AsyncMock(return_value=MagicMock())
         await sanitizer.dispatch(mock_request, call_next)
-        assert mock_request._body == {"desc": ""}
+        assert json.loads(mock_request._body) == {"desc": ""}
 
     async def test_input_sanitizer_handles_patch(self):
         mock_request = MagicMock()
@@ -1287,7 +1287,7 @@ class TestSanitizer:
         sanitizer = InputSanitizer(MagicMock())
         call_next = AsyncMock(return_value=MagicMock())
         await sanitizer.dispatch(mock_request, call_next)
-        assert mock_request._body == {"title": "clean"}
+        assert json.loads(mock_request._body) == {"title": "clean"}
 
     async def test_input_sanitizer_no_content_type_header(self):
         mock_request = MagicMock()
@@ -3017,8 +3017,7 @@ class TestFeatureFlagStore:
 # ──────────────────────────────────────────────
 
 
-
-class TestResponseCacheMiddleware:
+class TestResponseCacheMiddlewareModule:
 
     async def test_init_defaults(self):
         mw = ResponseCacheMiddleware(MagicMock())
@@ -3081,12 +3080,17 @@ class TestResponseCacheMiddleware:
         request.headers.get.return_value = ""
         request.query_params.items.return_value = []
         cached_body = b'{"data":"test"}'
-        with patch("shared.utils.cache_middleware.cache.get", AsyncMock(return_value={
-            "body": cached_body,
-            "status": 200,
-            "media_type": "application/json",
-            "headers": {"content-type": "application/json"},
-        })):
+        with patch(
+            "shared.utils.cache_middleware.cache.get",
+            AsyncMock(
+                return_value={
+                    "body": cached_body,
+                    "status": 200,
+                    "media_type": "application/json",
+                    "headers": {"content-type": "application/json"},
+                }
+            ),
+        ):
             result = await mw.dispatch(request, AsyncMock())
             assert result.status_code == 200
             assert result.headers["X-Cache"] == "HIT"
@@ -3141,7 +3145,6 @@ class TestResponseCacheMiddleware:
 # ──────────────────────────────────────────────
 # csrf.py
 # ──────────────────────────────────────────────
-
 
 
 class TestCSRFMiddlewareV2:
@@ -3214,8 +3217,7 @@ class TestCSRFMiddlewareV2:
 # ──────────────────────────────────────────────
 
 
-
-class TestSanitizer:
+class TestSanitizerModule:
 
     def test_sanitize_value_removes_script(self):
         result = sanitize_value("<script>alert(1)</script>")
@@ -3276,6 +3278,7 @@ class TestSanitizer:
         result = await mw.dispatch(request, call_next)
         assert result == "ok"
         import json
+
         assert json.loads(request._body) == {"title": "", "desc": "hello"}
 
     async def test_input_sanitizer_non_json(self):
@@ -3295,8 +3298,7 @@ class TestSanitizer:
 # ──────────────────────────────────────────────
 
 
-
-class TestNotifications:
+class TestNotificationsModule:
 
     def test_send_push_notification(self):
         with patch("builtins.print") as mock_print:
@@ -3312,7 +3314,7 @@ class TestNotifications:
                 mock_print.assert_called_once_with("[EMAIL] To a@b.com: Subj")
 
     def test_send_email_notification_with_key(self):
-        with patch("builtins.print") as mock_print:
+        with patch("builtins.print"):
             with patch("shared.utils.notifications.os.getenv", return_value="key-123"):
                 with patch("shared.utils.notifications.httpx.post") as mock_post:
                     mock_response = MagicMock()
@@ -3357,7 +3359,6 @@ class TestNotifications:
 # ──────────────────────────────────────────────
 # retention.py
 # ──────────────────────────────────────────────
-
 
 
 class TestRetentionPolicies:
@@ -3415,8 +3416,7 @@ class TestRetentionPolicies:
 # ──────────────────────────────────────────────
 
 
-
-class TestRetryWithBackoff:
+class TestRetryWithBackoffModule:
 
     async def test_retry_with_backoff_success(self):
         fn = AsyncMock(return_value="ok")
@@ -3456,7 +3456,7 @@ class TestRetryWithBackoff:
             assert call_count == 3
 
 
-class TestCircuitBreaker:
+class TestCircuitBreakerModule:
 
     async def test_init(self):
         cb = CircuitBreaker(failure_threshold=3, recovery_timeout=30)
@@ -3517,32 +3517,37 @@ class TestCircuitBreaker:
 # ──────────────────────────────────────────────
 
 
-class TestSecuritySanitizeObject:
+class TestSecuritySanitizeObjectModule:
 
     def test_sanitize_object_string(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object("<script>alert(1)</script>")
         assert result == ""
 
     def test_sanitize_object_dict(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object({"a": "<script>alert(1)</script>", "b": "hello"})
         assert result["a"] == ""
         assert result["b"] == "hello"
 
     def test_sanitize_object_list(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object(["<script>a</script>", "hello"])
         assert result[0] == ""
         assert result[1] == "hello"
 
     def test_sanitize_object_nested(self):
         from shared.utils.security import sanitize_object
+
         result = sanitize_object({"a": {"b": "<script>x</script>"}})
         assert result["a"]["b"] == ""
 
     def test_sanitize_object_non_string(self):
         from shared.utils.security import sanitize_object
+
         assert sanitize_object(42) == 42
         assert sanitize_object(None) is None
         assert sanitize_object(True) is True
@@ -3551,7 +3556,6 @@ class TestSecuritySanitizeObject:
 # ──────────────────────────────────────────────
 # validators.py — remaining coverage
 # ──────────────────────────────────────────────
-
 
 
 class TestValidatorsExtended:
@@ -3602,9 +3606,7 @@ class TestValidatorsExtended:
         assert any("unknown" in e for e in errors)
 
     def test_sanitize_and_validate_sanitizes(self):
-        sanitized, errors = sanitize_and_validate(
-            {"title": "<script>alert(1)</script>", "priority": "high"}, "task"
-        )
+        sanitized, errors = sanitize_and_validate({"title": "<script>alert(1)</script>", "priority": "high"}, "task")
         assert sanitized["title"] == ""
         assert "title is required" in errors
 

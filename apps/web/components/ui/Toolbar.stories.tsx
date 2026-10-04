@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Bold, Italic, Underline, Type, AlignLeft, AlignCenter, AlignRight, Image, Link } from 'lucide-react'
+import { Bold, Italic, Underline, Type, AlignLeft, AlignCenter, AlignRight, Image as ImageIcon, Link } from 'lucide-react'
 import { Toolbar, ToolbarSeparator } from './Toolbar'
 import { Button } from './Button'
 
@@ -65,8 +65,8 @@ export const WithOverflow: Story = {
         <Button variant="ghost" size="sm"><Italic size={16} /></Button>
         <Button variant="ghost" size="sm"><Underline size={16} /></Button>
         <ToolbarSeparator />
-        <Button variant="ghost" size="sm"><Image size={16} /></Button>
-        <Button variant="ghost" size="sm"><Link size={16} /></Button>
+        <Button variant="ghost" size="sm" aria-label="Insert image"><ImageIcon size={16} aria-hidden="true" /></Button>
+        <Button variant="ghost" size="sm" aria-label="Insert link"><Link size={16} aria-hidden="true" /></Button>
         <ToolbarSeparator />
         <Button variant="ghost" size="sm"><Type size={16} /></Button>
       </>

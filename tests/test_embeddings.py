@@ -34,7 +34,8 @@ class TestGenerateEmbedding:
     async def test_returns_cached_result(self, embedder):
         cached_vec = [0.5] * 768
         embedder._cache[embedder._cache_key("hello", embedder.model)] = {
-            "embedding": cached_vec, "time": __import__("time").time()
+            "embedding": cached_vec,
+            "time": __import__("time").time(),
         }
         with patch.object(embedder, "_call_ollama", new=AsyncMock()) as mock:
             result = await embedder.generate_embedding("hello")
@@ -82,18 +83,16 @@ class TestGenerateEmbedding:
     @pytest.mark.asyncio
     async def test_respects_preferred_model(self, embedder):
         embedder.openai_key = "sk-test"
-        with patch.object(embedder, "_call_openai", new=AsyncMock(return_value=[0.4] * 1536)) as mock:
+        with patch.object(embedder, "_call_openai", new=AsyncMock(return_value=[0.4] * 1536)):
             result = await embedder.generate_embedding("openai test", preferred_model="text-embedding-ada-002")
             assert len(result) == 1536
 
     @pytest.mark.asyncio
     async def test_cache_expires(self, embedder):
         embedder._cache_ttl = -1
-        embedder._cache[embedder._cache_key("stale", embedder.model)] = {
-            "embedding": [0.9] * 768, "time": 0
-        }
+        embedder._cache[embedder._cache_key("stale", embedder.model)] = {"embedding": [0.9] * 768, "time": 0}
         with patch.object(embedder, "_call_ollama", new=AsyncMock(return_value=[0.1] * 768)) as mock:
-            result = await embedder.generate_embedding("stale")
+            await embedder.generate_embedding("stale")
             mock.assert_called_once()
             assert embedder._stats["misses"] >= 1
 
@@ -118,7 +117,8 @@ class TestGenerateEmbeddings:
     async def test_batch_uses_cache(self, embedder):
         cached = [0.5] * 768
         embedder._cache[embedder._cache_key("cached_text", embedder.model)] = {
-            "embedding": cached, "time": __import__("time").time()
+            "embedding": cached,
+            "time": __import__("time").time(),
         }
         texts = ["cached_text", "new_text"]
         new_vec = [0.2] * 768
@@ -132,7 +132,8 @@ class TestGenerateEmbeddings:
     @pytest.mark.asyncio
     async def test_batch_mixed_cache_and_new(self, embedder):
         embedder._cache[embedder._cache_key("a", embedder.model)] = {
-            "embedding": [0.1] * 768, "time": __import__("time").time()
+            "embedding": [0.1] * 768,
+            "time": __import__("time").time(),
         }
         with patch.object(embedder, "_ollama_embed_batch", new=AsyncMock(return_value=[[0.2] * 768])):
             results = await embedder.generate_embeddings(["a", "b"])
@@ -155,9 +156,7 @@ class TestCacheManagement:
         assert len(embedder._cache) == 0
 
     def test_invalidate_specific(self, embedder):
-        embedder._cache[embedder._cache_key("specific", embedder.model)] = {
-            "embedding": [0.1] * 768, "time": 0
-        }
+        embedder._cache[embedder._cache_key("specific", embedder.model)] = {"embedding": [0.1] * 768, "time": 0}
         embedder.invalidate_cache(text="specific", model=embedder.model)
         assert embedder._cache_key("specific", embedder.model) not in embedder._cache
 

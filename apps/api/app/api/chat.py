@@ -189,9 +189,7 @@ async def _build_chat_context(
     )
     time_resp = (
         supabase.from_("time_entries")
-        .select(
-            "id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at"
-        )
+        .select("id, user_id, start_time, end_time, duration_minutes, category, is_deep_work, description, created_at")
         .eq("user_id", current_user.user.id)
         .gte("start_time", datetime.now().strftime("%Y-%m-%d"))
         .execute()
@@ -253,7 +251,9 @@ def _keyword_fallback(message: str, pending_tasks, active_goals, courses, habits
         if active_goals:
             return f"You have {len(active_goals)} active goals. Your goals are: {', '.join([g.get('title', '') for g in active_goals[:3]])}. Keep pushing towards them!"
         else:
-            return "You don't have any active goals. Setting goals helps you stay focused. Would you like to create one?"
+            return (
+                "You don't have any active goals. Setting goals helps you stay focused. Would you like to create one?"
+            )
     elif "course" in message_lower or "learn" in message_lower:
         in_progress = [c for c in courses if c.get("status") == "in_progress"]
         if in_progress:
@@ -313,7 +313,7 @@ async def _stream_llm_response(
 
 
 def _chunk_text(text: str, size: int = 5) -> list[str]:
-    return [text[i:i + size] for i in range(0, len(text), size)]
+    return [text[i : i + size] for i in range(0, len(text), size)]
 
 
 @router.post("/", summary="Send a chat message", status_code=201, response_model=ChatResponse)
@@ -332,7 +332,12 @@ async def chat(
 
     # Save user message immediately
     supabase.from_("chat_messages").insert(
-        {"user_id": current_user.user.id, "role": "user", "content": message, "conversation_id": request_body.conversation_id or "default"}
+        {
+            "user_id": current_user.user.id,
+            "role": "user",
+            "content": message,
+            "conversation_id": request_body.conversation_id or "default",
+        }
     ).execute()
 
     if stream:
@@ -340,7 +345,9 @@ async def chat(
             current_user, message, request_body
         )
         return StreamingResponse(
-            _stream_llm_response(system, user_prompt, message, current_user, pending_tasks, active_goals, courses, habits),
+            _stream_llm_response(
+                system, user_prompt, message, current_user, pending_tasks, active_goals, courses, habits
+            ),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
@@ -363,7 +370,12 @@ async def chat(
         response_text = _keyword_fallback(message, pending_tasks, active_goals, courses, habits)
 
     supabase.from_("chat_messages").insert(
-        {"user_id": current_user.user.id, "role": "assistant", "content": response_text, "conversation_id": request_body.conversation_id or "default"}
+        {
+            "user_id": current_user.user.id,
+            "role": "assistant",
+            "content": response_text,
+            "conversation_id": request_body.conversation_id or "default",
+        }
     ).execute()
 
     try:

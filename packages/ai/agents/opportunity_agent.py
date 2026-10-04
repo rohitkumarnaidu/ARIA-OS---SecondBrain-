@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional
 from config.core.supabase import get_supabase_client
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
+
 try:
     from ai.brave_search import fetch_opportunities_from_web
 except ImportError:
@@ -188,6 +189,7 @@ async def fetch_rss_feeds(feed_urls: List[str]) -> List[dict]:
 
 def _parse_rss_xml(xml_text: str, source_url: str) -> List[dict]:
     import re
+
     items: List[dict] = []
     item_pattern = re.compile(r"<item>(.*?)</item>", re.DOTALL)
     title_pattern = re.compile(r"<title>(.*?)</title>", re.DOTALL)
@@ -205,15 +207,17 @@ def _parse_rss_xml(xml_text: str, source_url: str) -> List[dict]:
             deadline = parsed_date.strftime("%Y-%m-%d")
         except (ValueError, TypeError):
             deadline = (datetime.now() + timedelta(days=30)).isoformat()[:10]
-        items.append({
-            "title": title,
-            "url": link,
-            "description": desc[:300],
-            "deadline": deadline,
-            "category": "rss",
-            "source_url": source_url,
-            "match_score": 50,
-        })
+        items.append(
+            {
+                "title": title,
+                "url": link,
+                "description": desc[:300],
+                "deadline": deadline,
+                "category": "rss",
+                "source_url": source_url,
+                "match_score": 50,
+            }
+        )
     return items
 
 
@@ -225,7 +229,14 @@ def _extract_first(pattern, text: str) -> Optional[str]:
 def _unescape_xml(text: Optional[str]) -> Optional[str]:
     if not text:
         return text
-    text = text.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"').replace("&#39;", "'")
+    text = (
+        text.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&#39;", "'")
+    )
     import re
+
     text = re.sub(r"<[^>]+>", "", text)
     return text.strip()

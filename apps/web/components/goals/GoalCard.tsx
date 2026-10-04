@@ -41,15 +41,15 @@ export const GoalCard = memo(function GoalCard({ goal, onEdit, onDelete, onToggl
             <Target size={20} className="text-accent-primary" aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3
-              className="font-medium text-text-primary truncate group-hover:text-accent-primary transition-colors cursor-pointer"
-              onClick={() => onEdit?.(goal)}
-              onKeyDown={(e) => { if (e.key === 'Enter') onEdit?.(goal) }}
-              tabIndex={0}
-              role="button"
-              aria-label={`Edit ${goal.title}`}
-            >
-              {goal.title}
+            <h3 className="font-medium text-text-primary group-hover:text-accent-primary transition-colors">
+              <button
+                type="button"
+                onClick={() => onEdit?.(goal)}
+                aria-label={`Edit ${goal.title}`}
+                className="block w-full min-w-0 truncate text-left cursor-pointer"
+              >
+                {goal.title}
+              </button>
             </h3>
             {goal.description && (
               <p className="text-sm text-text-tertiary mt-0.5 line-clamp-2">{goal.description}</p>

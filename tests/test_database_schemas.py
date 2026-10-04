@@ -1615,19 +1615,39 @@ class TestApiKeyResponse:
 
     def test_missing_id(self):
         with pytest.raises(ValidationError):
-            ApiKeyResponse(name="Key", key_prefix="sb_", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+            ApiKeyResponse(
+                name="Key",
+                key_prefix="sb_",
+                tier="free",
+                is_active=True,
+                expires_at=None,
+                last_used_at=None,
+                created_at=NOW,
+            )
 
     def test_missing_name(self):
         with pytest.raises(ValidationError):
-            ApiKeyResponse(id="ak-1", key_prefix="sb_", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+            ApiKeyResponse(
+                id="ak-1",
+                key_prefix="sb_",
+                tier="free",
+                is_active=True,
+                expires_at=None,
+                last_used_at=None,
+                created_at=NOW,
+            )
 
     def test_missing_key_prefix(self):
         with pytest.raises(ValidationError):
-            ApiKeyResponse(id="ak-1", name="Key", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW)
+            ApiKeyResponse(
+                id="ak-1", name="Key", tier="free", is_active=True, expires_at=None, last_used_at=None, created_at=NOW
+            )
 
     def test_missing_is_active(self):
         with pytest.raises(ValidationError):
-            ApiKeyResponse(id="ak-1", name="Key", key_prefix="sb_", tier="free", expires_at=None, last_used_at=None, created_at=NOW)
+            ApiKeyResponse(
+                id="ak-1", name="Key", key_prefix="sb_", tier="free", expires_at=None, last_used_at=None, created_at=NOW
+            )
 
     def test_serialization(self):
         k = ApiKeyResponse(

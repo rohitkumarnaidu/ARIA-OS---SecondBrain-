@@ -143,9 +143,7 @@ class EmbeddingService:
         self._set_cache(text, model, zero_vec)
         return zero_vec
 
-    async def generate_embeddings(
-        self, texts: List[str], preferred_model: Optional[str] = None
-    ) -> List[List[float]]:
+    async def generate_embeddings(self, texts: List[str], preferred_model: Optional[str] = None) -> List[List[float]]:
         if not texts:
             return []
 

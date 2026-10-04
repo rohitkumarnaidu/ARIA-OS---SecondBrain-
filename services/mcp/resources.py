@@ -169,11 +169,14 @@ class MCPResourceRegistry:
             TextResourceContents(
                 uri=uri,
                 mimeType="application/json",
-                text=json.dumps({
-                    "uri": uri,
-                    "description": description,
-                    "note": "This resource is a template. Use the corresponding MCP tool to fetch live data.",
-                    "resolved_at": datetime.now(timezone.utc).isoformat(),
-                }, indent=2),
+                text=json.dumps(
+                    {
+                        "uri": uri,
+                        "description": description,
+                        "note": "This resource is a template. Use the corresponding MCP tool to fetch live data.",
+                        "resolved_at": datetime.now(timezone.utc).isoformat(),
+                    },
+                    indent=2,
+                ),
             )
         ]

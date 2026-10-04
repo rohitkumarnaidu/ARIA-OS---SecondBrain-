@@ -1,6 +1,7 @@
-﻿import json
-import importlib
+import json
 import hashlib
+import threading
+from collections import OrderedDict
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone
 from config.core.supabase import get_supabase_client
@@ -8,23 +9,82 @@ from shared.utils.logger import logger
 from ai.client import llm, LLMProviderUnavailableError
 from ai.prompt_loader import prompts
 from ai.memory.orchestrator import MemoryOrchestrator
+from ai.memory.tiers import SemanticMemory
+
+# Per-user orchestrator cache. An orchestrator owns the raw conversation
+# buffer and the live working-memory cache for exactly one tenant, so a single
+# process-global instance would serve one user's chat history to everyone else
+# (and prune_all() would wipe every user's buffer). Bounded LRU: the least
+# recently used tenant's in-memory state is dropped when the bound is reached,
+# which forgets a conversation — it never cross-contaminates one.
+MAX_CACHED_ORCHESTRATORS = 256
+_orchestrators: "OrderedDict[str, MemoryOrchestrator]" = OrderedDict()
+_orchestrators_lock = threading.Lock()
 
 
-_orchestrator: Optional[MemoryOrchestrator] = None
+def get_orchestrator(user_id: str) -> MemoryOrchestrator:
+    """Return the MemoryOrchestrator bound to ``user_id``, creating it if needed.
+
+    Raises ValueError for a missing user_id rather than falling back to a
+    shared instance — an unscoped orchestrator is the cross-tenant leak.
+    """
+    if not user_id or not isinstance(user_id, str):
+        raise ValueError("get_orchestrator requires a non-empty user_id")
+    with _orchestrators_lock:
+        existing = _orchestrators.get(user_id)
+        if existing is not None:
+            _orchestrators.move_to_end(user_id)
+            return existing
+        orchestrator = MemoryOrchestrator(user_id=user_id)
+        _orchestrators[user_id] = orchestrator
+        while len(_orchestrators) > MAX_CACHED_ORCHESTRATORS:
+            evicted_user_id, _ = _orchestrators.popitem(last=False)
+            logger.info("Evicted memory orchestrator from cache", user_id=evicted_user_id)
+        return orchestrator
 
 
-def get_orchestrator() -> MemoryOrchestrator:
-    global _orchestrator
-    if _orchestrator is None:
-        _orchestrator = MemoryOrchestrator()
-    return _orchestrator
+def reset_orchestrator_cache() -> None:
+    """Drop every cached orchestrator. Test hook and shutdown helper."""
+    with _orchestrators_lock:
+        _orchestrators.clear()
+
+
+# Upper bound on rows a single batched write fan-out will touch.
+_DEDUP_MAX_ROWS = 500
+_WRITE_CHUNK = 50
+
+
+def _decode_value(row: Dict[str, Any]) -> Dict[str, Any]:
+    """Decode a memory row's ``value`` column, tolerating both writer shapes."""
+    raw = row.get("value", "{}")
+    if isinstance(raw, str):
+        try:
+            parsed = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+    return raw if isinstance(raw, dict) else {}
 
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-_VALID_MEMORY_TYPES = frozenset({"buffer", "working", "episodic", "semantic", "procedural", "query", "consolidated", "preference", "fact", "pattern", "interaction"})
+_VALID_MEMORY_TYPES = frozenset(
+    {
+        "buffer",
+        "working",
+        "episodic",
+        "semantic",
+        "procedural",
+        "query",
+        "consolidated",
+        "preference",
+        "fact",
+        "pattern",
+        "interaction",
+    }
+)
 
 
 def validate_memory_type(mtype: str) -> str:
@@ -44,6 +104,7 @@ async def store_interaction(
         mtype = validate_memory_type(interaction_type)
         supabase = get_supabase_client()
         import hashlib
+
         dedup_key = hashlib.sha256(f"{user_id}:{mtype}:{content[:200]}".encode()).hexdigest()[:24]
         existing = (
             supabase.from_("memory")
@@ -55,15 +116,23 @@ async def store_interaction(
         )
         if existing.data:
             try:
-                current_val = json.loads(existing.data[0]["value"]) if isinstance(existing.data[0].get("value"), str) else existing.data[0].get("value", {})
+                current_val = (
+                    json.loads(existing.data[0]["value"])
+                    if isinstance(existing.data[0].get("value"), str)
+                    else existing.data[0].get("value", {})
+                )
             except (json.JSONDecodeError, TypeError):
                 current_val = {}
             current_val["updated_content"] = content
             current_val["metadata"] = metadata or {}
             current_val["reference_count"] = current_val.get("reference_count", 1) + 1
-            supabase.from_("memory").update({
-                "value": json.dumps(current_val),
-            }).eq("id", existing.data[0]["id"]).execute()
+            supabase.from_("memory").update(
+                {
+                    "value": json.dumps(current_val),
+                }
+            ).eq(
+                "id", existing.data[0]["id"]
+            ).eq("user_id", user_id).execute()
             logger.debug("Dedup: updated existing memory", user_id=user_id, key=dedup_key)
             return existing.data[0]
         data = {
@@ -346,6 +415,9 @@ async def consolidate_memories(user_id: str) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error("consolidate_memories failed", user_id=user_id, error=str(e))
+        # The client-safe message must not embed str(e): apps/api/app/api/memory.py
+        # returns this dict straight to the HTTP client, and exception text can
+        # carry SQL, table names, or connection details.
         return {
             "consolidation_type": "error",
             "memories_created": 0,
@@ -353,7 +425,7 @@ async def consolidate_memories(user_id: str) -> Dict[str, Any]:
             "memories_discarded": 0,
             "patterns_detected": 0,
             "contradictions_found": 0,
-            "summary": f"Consolidation failed: {str(e)}",
+            "summary": "Consolidation failed, no changes made.",
             "details": None,
         }
 
@@ -523,34 +595,119 @@ async def extract_memory_from_chat(user_msg: str, ai_msg: str) -> Optional[dict]
 
 
 async def deduplicate_memories(user_id: str) -> int:
+    """Fold duplicate memories into a primary row and drop the duplicates.
+
+    Bounded select (``_DEDUP_MAX_ROWS``), one aggregated update per primary
+    rather than one per duplicate, and chunked deletes. Every write is scoped
+    to ``user_id``. Content is written to the primary BEFORE any duplicate is
+    deleted, so a mid-run failure can duplicate content but never lose it.
+    """
     try:
         supabase = get_supabase_client()
-        resp = supabase.from_("memory").select("id, key, value, type").eq("user_id", user_id).execute()
+        resp = (
+            supabase.from_("memory")
+            .select("id, user_id, type, key, value")
+            .eq("user_id", user_id)
+            .order("created_at", ascending=True)
+            .limit(_DEDUP_MAX_ROWS)
+            .execute()
+        )
         memories = resp.data or []
-        seen: Dict[str, list] = {}
-        merged_count = 0
+
+        groups: Dict[str, List[Dict[str, Any]]] = {}
         for mem in memories:
-            try:
-                val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
-                content = val.get("content", "") if isinstance(val, dict) else str(val)
-            except (json.JSONDecodeError, TypeError):
-                content = str(mem.get("value", ""))
-            norm_key = content.strip().lower()[:100]
+            content = _decode_value(mem).get("content", "")
+            norm_key = str(content).strip().lower()[:100]
             mtype = mem.get("type", "episodic")
             group_key = f"{mtype}:{hashlib.sha256(norm_key.encode()).hexdigest()[:16]}"
-            if group_key in seen:
-                primary = seen[group_key][0]
-                try:
-                    primary_val = json.loads(primary["value"]) if isinstance(primary.get("value"), str) else primary.get("value", {})
-                except (json.JSONDecodeError, TypeError):
-                    primary_val = {}
-                if isinstance(primary_val, dict):
-                    primary_val["reference_count"] = primary_val.get("reference_count", 1) + 1
-                    supabase.from_("memory").update({"value": json.dumps(primary_val)}).eq("id", primary["id"]).execute()
-                supabase.from_("memory").delete().eq("id", mem["id"]).execute()
-                merged_count += 1
-            else:
-                seen[group_key] = [mem]
+            groups.setdefault(group_key, []).append(mem)
+
+        primary_updates: List[Dict[str, Any]] = []
+        # (duplicate_id, primary_id) — the primary link decides whether the
+        # duplicate may be deleted once the primary write is confirmed.
+        duplicate_pairs: List[tuple] = []
+        for group in groups.values():
+            if len(group) < 2:
+                continue
+            primary = group[0]
+            duplicates = group[1:]
+            primary_row_key = primary.get("key")
+            if not primary_row_key:
+                # Without the unique key the chunk cannot be targeted safely;
+                # skip the whole group rather than risk inserting a new row.
+                logger.warn(
+                    "Skipped dedup group — primary row has no key",
+                    user_id=user_id,
+                    memory_id=primary.get("id"),
+                )
+                continue
+
+            primary_val = _decode_value(primary)
+            # Aggregate every duplicate into the primary in a single write.
+            primary_val["reference_count"] = primary_val.get("reference_count", 1) + len(duplicates)
+            merged_source_ids = list(primary_val.get("merged_source_ids") or [])
+            for dup in duplicates:
+                dup_val = _decode_value(dup)
+                carried = dup_val.get("content") or dup_val.get("summary")
+                if carried and str(carried)[:200] not in merged_source_ids:
+                    merged_source_ids.append(str(carried)[:200])
+                if dup.get("id"):
+                    duplicate_pairs.append((dup["id"], primary["id"]))
+            primary_val["merged_source_ids"] = merged_source_ids
+            primary_updates.append(
+                {
+                    "id": primary["id"],
+                    "user_id": user_id,
+                    "type": primary.get("type", "episodic"),
+                    "key": primary_row_key,
+                    "value": json.dumps(primary_val),
+                }
+            )
+
+        if not primary_updates:
+            return 0
+
+        updated_ids: List[str] = []
+        for start in range(0, len(primary_updates), _WRITE_CHUNK):
+            chunk = primary_updates[start : start + _WRITE_CHUNK]
+            try:
+                supabase.from_("memory").upsert(chunk, on_conflict="user_id,type,key").execute()
+                updated_ids.extend(u["id"] for u in chunk)
+            except Exception as chunk_e:
+                logger.warn(
+                    "Dedup primary upsert chunk failed", user_id=user_id, chunk_size=len(chunk), error=str(chunk_e)
+                )
+                for update_row in chunk:
+                    try:
+                        result = (
+                            supabase.from_("memory")
+                            .update({"value": update_row["value"]})
+                            .eq("id", update_row["id"])
+                            .eq("user_id", user_id)
+                            .execute()
+                        )
+                        if result.data:
+                            updated_ids.append(update_row["id"])
+                    except Exception as row_e:
+                        logger.error(
+                            "Dedup primary update failed",
+                            user_id=user_id,
+                            memory_id=update_row["id"],
+                            error=str(row_e),
+                        )
+
+        # Delete a duplicate only once its primary is confirmed written.
+        confirmed = set(updated_ids)
+        deletable = [dup_id for dup_id, primary_id in duplicate_pairs if primary_id in confirmed]
+        merged_count = 0
+        for start in range(0, len(deletable), _WRITE_CHUNK):
+            chunk = deletable[start : start + _WRITE_CHUNK]
+            try:
+                supabase.from_("memory").delete().eq("user_id", user_id).in_("id", chunk).execute()
+                merged_count += len(chunk)
+            except Exception as chunk_e:
+                logger.warn("Dedup delete chunk failed", user_id=user_id, chunk_size=len(chunk), error=str(chunk_e))
+
         if merged_count:
             logger.info("Deduplicated memories", user_id=user_id, merged=merged_count)
         return merged_count
@@ -560,24 +717,16 @@ async def deduplicate_memories(user_id: str) -> int:
 
 
 async def apply_confidence_decay(user_id: str) -> int:
+    """Decay memory confidence for a user.
+
+    Delegates to :meth:`SemanticMemory.decay_all` — the single confidence-decay
+    implementation. This previously applied a second, independent -0.05 pass on
+    top of ``decay_all`` (and ``deep_consolidation`` applied a third), so facts
+    decayed roughly three times faster than intended.
+    """
     try:
-        supabase = get_supabase_client()
-        resp = supabase.from_("memory").select("id, value, type").eq("user_id", user_id).execute()
-        memories = resp.data or []
-        decayed = 0
-        decay_rate = 0.05
-        for mem in memories:
-            try:
-                val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
-            except (json.JSONDecodeError, TypeError):
-                continue
-            if isinstance(val, dict):
-                old_conf = val.get("confidence", 0.5)
-                new_conf = max(0.05, old_conf - decay_rate)
-                if new_conf < old_conf:
-                    val["confidence"] = round(new_conf, 4)
-                    supabase.from_("memory").update({"value": json.dumps(val)}).eq("id", mem["id"]).execute()
-                    decayed += 1
+        semantic = SemanticMemory()
+        decayed = await semantic.decay_all(user_id)
         if decayed:
             logger.info("Confidence decay applied", user_id=user_id, memories=decayed)
         return decayed
@@ -590,14 +739,13 @@ async def run_weekly_deep_consolidation(user_id: str) -> dict:
     try:
         result = await deep_consolidation(user_id)
         deduped = await deduplicate_memories(user_id)
-        decayed = await apply_confidence_decay(user_id)
         summary = result.get("summary", "Weekly deep consolidation completed.")
         return {
             "status": "completed",
             "user_id": user_id,
             "consolidation": result,
             "deduplicated": deduped,
-            "confidence_decayed": decayed,
+            "confidence_decayed": result.get("deep_decayed", 0),
             "summary": summary,
             "week": datetime.now(timezone.utc).strftime("%Y-W%W"),
         }
@@ -606,7 +754,7 @@ async def run_weekly_deep_consolidation(user_id: str) -> dict:
         return {
             "status": "failed",
             "user_id": user_id,
-            "error": str(e),
+            "error": "Weekly deep consolidation failed.",
             "deduplicated": 0,
             "confidence_decayed": 0,
         }
@@ -621,7 +769,7 @@ async def chat_store_interaction(
     ai_msg: str,
     context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    orchestrator = get_orchestrator()
+    orchestrator = get_orchestrator(user_id)
     result = await orchestrator.store_interaction(user_id, user_msg, ai_msg, context)
 
     try:
@@ -637,58 +785,34 @@ async def chat_store_interaction(
 
 async def confidence_decay(user_id: str) -> Dict[str, Any]:
     try:
-        orchestrator = get_orchestrator()
+        orchestrator = get_orchestrator(user_id)
         decayed = await orchestrator.semantic.decay_all(user_id)
         logger.info("Confidence decay applied", user_id=user_id, memories_affected=decayed)
         return {"decayed": decayed, "status": "completed"}
     except Exception as e:
         logger.error("confidence_decay failed", user_id=user_id, error=str(e))
-        return {"decayed": 0, "status": "failed", "error": str(e)}
+        return {"decayed": 0, "status": "failed", "error": "Confidence decay failed."}
 
 
 async def deep_consolidation(user_id: str) -> Dict[str, Any]:
     try:
-        orchestrator = get_orchestrator()
+        orchestrator = get_orchestrator(user_id)
         consolidated = await orchestrator.consolidate_all(user_id)
 
         pruned = orchestrator.compressor.prune_old_memories(user_id, days=90)
         consolidated["pruned_old"] = pruned
 
-        try:
-            supabase = get_supabase_client()
-            all_semantic = (
-                supabase.from_("memory")
-                .select("id, value")
-                .eq("user_id", user_id)
-                .eq("type", "semantic")
-                .execute()
-            )
-            updated_count = 0
-            for mem in all_semantic.data or []:
-                try:
-                    val = json.loads(mem["value"]) if isinstance(mem.get("value"), str) else mem.get("value", {})
-                except (json.JSONDecodeError, TypeError):
-                    continue
-                if isinstance(val, dict):
-                    old_conf = val.get("confidence", 0.5)
-                    new_conf = max(0.05, old_conf - 0.05)
-                    if new_conf < old_conf:
-                        val["confidence"] = round(new_conf, 4)
-                        supabase.from_("memory").update({
-                            "value": json.dumps(val),
-                        }).eq("id", mem["id"]).execute()
-                        updated_count += 1
-            consolidated["deep_decayed"] = updated_count
-        except Exception as inner_e:
-            logger.warn("Deep decay step failed", error=str(inner_e))
-            consolidated["deep_decayed"] = 0
+        # Confidence decay already ran once inside consolidate_all()
+        # (SemanticMemory.decay_all — the single decay implementation). This
+        # used to apply a second, independent -0.05 pass on top of it.
+        consolidated["deep_decayed"] = consolidated.get("semantic_decayed", 0)
 
-        temp_dir = str(importlib.import_module("tempfile").gettempdir())
-        snapshot_path = f"{temp_dir}/memory_snapshot_{user_id}_{_utc_now().replace(':', '-')}.json"
+        # No on-disk snapshot. The previous implementation dumped the user's
+        # entire memory profile to %TEMP% in plaintext under their raw UUID with
+        # default permissions, no TTL and no cleanup. The profile summary is
+        # returned in the response instead.
         profile = await orchestrator.get_user_profile(user_id)
-        with open(snapshot_path, "w") as f:
-            json.dump(profile, f, indent=2, default=str)
-        consolidated["snapshot_path"] = snapshot_path
+        consolidated["profile_summary"] = profile.get("summary", "")
 
         consolidated["status"] = "completed"
         logger.info("Deep consolidation completed", user_id=user_id, results=consolidated)
@@ -697,10 +821,9 @@ async def deep_consolidation(user_id: str) -> Dict[str, Any]:
         logger.error("deep_consolidation failed", user_id=user_id, error=str(e))
         return {
             "status": "failed",
-            "error": str(e),
+            "error": "Deep consolidation failed.",
             "episodic_merged": 0,
             "semantic_decayed": 0,
             "pruned_old": 0,
             "deep_decayed": 0,
         }
-

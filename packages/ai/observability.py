@@ -10,7 +10,6 @@ import httpx
 
 from config.core.config import settings
 
-
 _OLLAMA_PRICE_PER_INPUT_TOKEN: float = 0.0
 _OLLAMA_PRICE_PER_OUTPUT_TOKEN: float = 0.0
 _CLAUDE_PRICE_PER_INPUT_TOKEN: float = 3.0 / 1_000_000
@@ -30,21 +29,11 @@ class AIObservability:
     """Observability for AI agent calls — token usage, latency, errors, and metrics."""
 
     def __init__(self):
-        self._usage: dict[str, deque[dict]] = defaultdict(
-            lambda: deque(maxlen=10000)
-        )
-        self._latency: dict[str, deque[dict]] = defaultdict(
-            lambda: deque(maxlen=10000)
-        )
-        self._errors: dict[str, deque[dict]] = defaultdict(
-            lambda: deque(maxlen=5000)
-        )
-        self._agent_usage: dict[str, deque[dict]] = defaultdict(
-            lambda: deque(maxlen=10000)
-        )
-        self._provider_usage: dict[str, deque[dict]] = defaultdict(
-            lambda: deque(maxlen=10000)
-        )
+        self._usage: dict[str, deque[dict]] = defaultdict(lambda: deque(maxlen=10000))
+        self._latency: dict[str, deque[dict]] = defaultdict(lambda: deque(maxlen=10000))
+        self._errors: dict[str, deque[dict]] = defaultdict(lambda: deque(maxlen=5000))
+        self._agent_usage: dict[str, deque[dict]] = defaultdict(lambda: deque(maxlen=10000))
+        self._provider_usage: dict[str, deque[dict]] = defaultdict(lambda: deque(maxlen=10000))
         self._api_base = f"http://localhost:{settings.api_port if hasattr(settings, 'api_port') else 8000}"
 
     # ── Token tracking ────────────────────────────────────────────────────────
@@ -222,12 +211,14 @@ class AIObservability:
 
     def record_latency(self, agent_name: str, duration_ms: int, endpoint: str = "unknown") -> None:
         """Record latency for an agent call."""
-        self._latency[agent_name].append({
-            "timestamp": _now_iso(),
-            "agent": agent_name,
-            "duration_ms": duration_ms,
-            "endpoint": endpoint,
-        })
+        self._latency[agent_name].append(
+            {
+                "timestamp": _now_iso(),
+                "agent": agent_name,
+                "duration_ms": duration_ms,
+                "endpoint": endpoint,
+            }
+        )
 
     def get_latency_percentiles(
         self,
@@ -263,10 +254,7 @@ class AIObservability:
             agent_avgs.append((agent_name, round(avg, 2), len(durations)))
 
         agent_avgs.sort(key=lambda x: x[1], reverse=True)
-        return [
-            {"agent": name, "avg_latency_ms": avg, "samples": count}
-            for name, avg, count in agent_avgs[:top_n]
-        ]
+        return [{"agent": name, "avg_latency_ms": avg, "samples": count} for name, avg, count in agent_avgs[:top_n]]
 
     # ── Error tracking ────────────────────────────────────────────────────────
 
@@ -278,13 +266,15 @@ class AIObservability:
         provider: str = "unknown",
     ) -> None:
         """Record an error for an agent call."""
-        self._errors[agent_name].append({
-            "timestamp": _now_iso(),
-            "agent": agent_name,
-            "error_type": error_type,
-            "error_message": error_message[:500],
-            "provider": provider,
-        })
+        self._errors[agent_name].append(
+            {
+                "timestamp": _now_iso(),
+                "agent": agent_name,
+                "error_type": error_type,
+                "error_message": error_message[:500],
+                "provider": provider,
+            }
+        )
 
     def get_error_rate(self, agent_name: str, window_minutes: int = 60) -> float:
         """Get error rate for an agent over a rolling time window."""
@@ -303,10 +293,7 @@ class AIObservability:
                 error_counts[r["error_type"]] += 1
 
         sorted_errors = sorted(error_counts.items(), key=lambda x: x[1], reverse=True)
-        return [
-            {"error_type": etype, "count": count}
-            for etype, count in sorted_errors[:top_n]
-        ]
+        return [{"error_type": etype, "count": count} for etype, count in sorted_errors[:top_n]]
 
     # ── Prometheus metrics ────────────────────────────────────────────────────
 
@@ -334,13 +321,15 @@ class AIObservability:
                 f'status="{status}"}} {count}'
             )
 
-        lines.extend([
-            "",
-            "# HELP ai_latency_seconds AI request latency in seconds",
-            "# TYPE ai_latency_seconds histogram",
-            "# HELP ai_tokens_total Total tokens processed by AI",
-            "# TYPE ai_tokens_total counter",
-        ])
+        lines.extend(
+            [
+                "",
+                "# HELP ai_latency_seconds AI request latency in seconds",
+                "# TYPE ai_latency_seconds histogram",
+                "# HELP ai_tokens_total Total tokens processed by AI",
+                "# TYPE ai_tokens_total counter",
+            ]
+        )
 
         token_counts: dict[tuple[str, str], int] = defaultdict(int)
         token_types: dict[tuple[str, str, str], int] = defaultdict(int)
@@ -355,16 +344,15 @@ class AIObservability:
             token_types[(agent_s, provider_s, "output")] += r.get("output_tokens", 0)
 
         for (agent, provider, ttype), count in sorted(token_types.items()):
-            lines.append(
-                f'ai_tokens_total{{agent="{agent}",provider="{provider}",'
-                f'type="{ttype}"}} {count}'
-            )
+            lines.append(f'ai_tokens_total{{agent="{agent}",provider="{provider}",' f'type="{ttype}"}} {count}')
 
-        lines.extend([
-            "",
-            "# HELP ai_errors_total Total number of AI errors",
-            "# TYPE ai_errors_total counter",
-        ])
+        lines.extend(
+            [
+                "",
+                "# HELP ai_errors_total Total number of AI errors",
+                "# TYPE ai_errors_total counter",
+            ]
+        )
 
         error_counts: dict[tuple[str, str], int] = defaultdict(int)
         for records in self._errors.values():
@@ -376,13 +364,16 @@ class AIObservability:
         for (agent, etype), count in sorted(error_counts.items()):
             lines.append(f'ai_errors_total{{agent="{agent}",error_type="{etype}"}} {count}')
 
-        lines.extend([
-            "",
-            "# HELP ai_circuit_breaker_state Circuit breaker state per provider (1=closed, 0=open)",
-            "# TYPE ai_circuit_breaker_state gauge",
-        ])
+        lines.extend(
+            [
+                "",
+                "# HELP ai_circuit_breaker_state Circuit breaker state per provider (1=closed, 0=open)",
+                "# TYPE ai_circuit_breaker_state gauge",
+            ]
+        )
 
         from ai.client import llm as _llm_client
+
         for provider_name, cb in [("ollama", _llm_client.ollama_circuit), ("claude", _llm_client.claude_circuit)]:
             state_val = 1.0 if cb.state == "closed" else 0.0
             lines.append(f'ai_circuit_breaker_state{{provider="{provider_name}"}} {state_val}')
@@ -491,6 +482,7 @@ class AIObservability:
         provider: str = "unknown",
     ) -> Callable:
         """Decorator to automatically track agent calls with observability."""
+
         def decorator(func: Callable) -> Callable:
             @functools.wraps(func)
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -519,7 +511,9 @@ class AIObservability:
                     )
                     self.record_latency(agent_name, duration_ms, endpoint=func.__name__)
                     raise
+
             return wrapper
+
         return decorator
 
     # ── Persistence ───────────────────────────────────────────────────────────

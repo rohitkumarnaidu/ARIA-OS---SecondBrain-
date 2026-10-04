@@ -110,11 +110,6 @@ def discover_agent_tools(registry: Optional[ToolRegistry] = None) -> ToolRegistr
                 description_lines.append(f"Execute {func_name} from {mod_name}")
 
             permissions = ["user"] if user_id_param else ["system"]
-            first_param = next(
-                (p for p in param_list if p not in ("self", "cls")),
-                None,
-            )
-            handler_first_param = first_param or ""
 
             description = " ".join(description_lines)
             timeout = 60 if func_name in ("generate_briefing", "generate_weekly_review") else 30

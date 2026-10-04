@@ -49,9 +49,7 @@ def parse_requirements(path: str) -> list[dict[str, Any]]:
                 line = line.strip()
                 if not line or line.startswith("#") or line.startswith("-"):
                     continue
-                match = re.match(
-                    r"^([a-zA-Z0-9_.-]+)\s*([><=!~]+)\s*([a-zA-Z0-9_.*-]+)", line
-                )
+                match = re.match(r"^([a-zA-Z0-9_.-]+)\s*([><=!~]+)\s*([a-zA-Z0-9_.*-]+)", line)
                 if match:
                     entries.append(
                         {
@@ -327,9 +325,7 @@ def main() -> None:
 
     # 5. Generate report
     print("[5/5] Generating report...")
-    report_text, report_data = generate_report(
-        python_vulns, npm_findings, python_deps, npm_deps
-    )
+    report_text, report_data = generate_report(python_vulns, npm_findings, python_deps, npm_deps)
 
     report_path = repo_root / OUTPUT_REPORT
     json_path = repo_root / OUTPUT_JSON

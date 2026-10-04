@@ -19,7 +19,6 @@ from ai.agents import (
 )
 from ai.notification_dispatcher import NotificationDispatcher
 
-
 _AGENT_MODULES = [
     "ai.agents.task_agent",
     "ai.agents.memory_agent",
@@ -37,6 +36,7 @@ _AGENT_MODULES = [
 @pytest.fixture(autouse=True)
 def mock_supabase(mocker):
     client = MagicMock()
+
     class _AutoBuilders(dict):
         def __missing__(self, key):
             val = MagicMock()
@@ -44,15 +44,20 @@ def mock_supabase(mocker):
             for m in ("select", "eq", "order", "limit", "gte", "lt", "range", "text_search", "or_", "match"):
                 getattr(val, m).return_value = val
             val.update.return_value = val
+
             def _insert_side_effect(data):
                 result = {"id": "mock-id", **(data or {})}
                 return MagicMock(execute=MagicMock(return_value=MagicMock(data=[result], error=None)))
+
             val.insert.side_effect = _insert_side_effect
             self[key] = val
             return val
+
     builders = _AutoBuilders()
+
     def from_side(table):
         return builders[table]
+
     client.from_.side_effect = from_side
     client._builders = builders
     for mod in _AGENT_MODULES:
@@ -160,7 +165,10 @@ class TestMemoryAgentPhase2:
         assert count == 0
 
     @pytest.mark.asyncio
-    async def test_apply_confidence_decay_empty(self):
+    async def test_apply_confidence_decay_empty(self, mock_supabase, mocker):
+        # apply_confidence_decay delegates to SemanticMemory.decay_all, which
+        # resolves its Supabase client from ai.memory.tiers.
+        mocker.patch("ai.memory.tiers.get_supabase_client", return_value=mock_supabase)
         count = await memory_agent.apply_confidence_decay("user-1")
         assert count == 0
 
@@ -219,21 +227,15 @@ class TestLearningAgentPhase2:
 class TestOpportunityAgentPhase2:
 
     def test_calculate_skill_overlap_full(self):
-        overlap = opportunity_agent.calculate_skill_overlap(
-            ["Python", "React"], ["Python", "React"]
-        )
+        overlap = opportunity_agent.calculate_skill_overlap(["Python", "React"], ["Python", "React"])
         assert overlap == 1.0
 
     def test_calculate_skill_overlap_partial(self):
-        overlap = opportunity_agent.calculate_skill_overlap(
-            ["Python", "React", "SQL"], ["Python", "Java"]
-        )
+        overlap = opportunity_agent.calculate_skill_overlap(["Python", "React", "SQL"], ["Python", "Java"])
         assert 0.25 <= overlap <= 0.5
 
     def test_calculate_skill_overlap_no_match(self):
-        overlap = opportunity_agent.calculate_skill_overlap(
-            ["Python"], ["Java", "C++"]
-        )
+        overlap = opportunity_agent.calculate_skill_overlap(["Python"], ["Java", "C++"])
         assert overlap == 0.0
 
     def test_calculate_skill_overlap_empty(self):
@@ -292,7 +294,9 @@ class TestRoadmapAgentPhase2:
         assert stale == []
 
     def test_detect_stale_nodes_all_stale(self):
-        roadmap = {"milestones": [{"title": "Old Skill", "last_activity": (datetime.now() - timedelta(days=60)).isoformat()}]}
+        roadmap = {
+            "milestones": [{"title": "Old Skill", "last_activity": (datetime.now() - timedelta(days=60)).isoformat()}]
+        }
         stale = roadmap_agent.detect_stale_nodes(roadmap, threshold_days=30)
         assert len(stale) == 1
 
@@ -351,7 +355,9 @@ class TestRoadmapAgentPhase2:
         assert enriched["skills_analyzed"] == 0
 
     def test_enrich_with_external_data_estimation(self):
-        enriched = roadmap_agent.enrich_with_external_data({"skills": ["Python", "Machine Learning", "DevOps"], "milestones": []})
+        enriched = roadmap_agent.enrich_with_external_data(
+            {"skills": ["Python", "Machine Learning", "DevOps"], "milestones": []}
+        )
         ext = enriched["external_data"]
         assert ext["Python"]["demand"] == "high"
         assert ext["Machine Learning"]["salaries"]["median"] == "$140k"
@@ -547,7 +553,11 @@ class TestOpportunityMatchingAgentPhase2:
         assert alignment == 0.0
 
     def test_calculate_goal_alignment_with_goals(self):
-        opp = {"title": "AI Research Intern", "description": "Work on machine learning models", "category": "internship"}
+        opp = {
+            "title": "AI Research Intern",
+            "description": "Work on machine learning models",
+            "category": "internship",
+        }
         goals = [{"title": "Become ML Engineer", "description": "Learn machine learning and AI"}]
         alignment = opportunity_matching_agent.calculate_goal_alignment(opp, goals)
         assert alignment > 0
@@ -604,9 +614,11 @@ class TestUpsertUtility:
     def test_upsert_fails_on_error(self, mock_supabase):
         def side_effect(data):
             raise Exception("DB error")
+
         mock_supabase._builders["test"].insert.side_effect = side_effect
         import importlib
         import shared.utils.upsert as upsert_mod
+
         importlib.reload(upsert_mod)
         with pytest.raises(Exception):
             upsert_mod.upsert("test", {"id": "1"}, ["id"])

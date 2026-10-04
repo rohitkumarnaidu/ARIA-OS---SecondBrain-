@@ -1,5 +1,28 @@
 """ToolCalling System — ToolDefinition, ToolRegistry, ToolExecutor, ToolCallingAgent."""
 
+# PEP 563. Required for this module to be importable at all on CPython <= 3.13.
+# `ToolRegistry.list` (line 81) binds the name `list` in the class body, which
+# shadows the builtin for every LATER annotation in that class body. So
+#     def search(self, query: str) -> list[ToolDefinition]   # line 86
+#     def get_categories(self) -> list[str]                 # line 94
+# evaluate `list` to the *method* and raise
+#     TypeError: 'function' object is not subscriptable
+# at import time. It only appeared to work on CPython 3.14, where PEP 649 makes
+# annotations lazy by default; this project's pins force CPython <= 3.12
+# (pydantic-core 2.14.x has no cp313/cp314 wheels), so every supported
+# interpreter crashed on `import ai.tool_calling`.
+#
+# This is the minimal import-only fix. It changes no runtime behaviour: it only
+# defers when annotations are evaluated. Nothing in the repo reads
+# `__annotations__` or calls `typing.get_type_hints`, and pydantic v2 resolves
+# the stringified field annotations of ToolDefinition / ToolResult itself.
+#
+# The PROPER fix is to rename `ToolRegistry.list` (it is called at
+# tool_calling.py:441,451,473,478 and services/mcp/tools.py:47), which WOULD
+# change the public API and is therefore deliberately left alone. See FINAL
+# REPORT bug #1.
+from __future__ import annotations
+
 import asyncio
 import json
 import time
@@ -85,11 +108,7 @@ class ToolRegistry:
 
     def search(self, query: str) -> list[ToolDefinition]:
         q = query.lower()
-        return [
-            t
-            for t in self._tools.values()
-            if q in t.name.lower() or q in t.description.lower()
-        ]
+        return [t for t in self._tools.values() if q in t.name.lower() or q in t.description.lower()]
 
     def get_categories(self) -> list[str]:
         cats: set[str] = set()
@@ -137,8 +156,7 @@ class ToolExecutionContext:
         elapsed = time.time() - self.started_at
         if elapsed > self.timeout:
             raise TimeoutError(
-                f"Tool '{self.tool_name}' exceeded timeout of {self.timeout}s "
-                f"(elapsed: {elapsed:.2f}s)"
+                f"Tool '{self.tool_name}' exceeded timeout of {self.timeout}s " f"(elapsed: {elapsed:.2f}s)"
             )
 
     def to_dict(self) -> dict[str, Any]:
@@ -167,10 +185,7 @@ class ToolResult(BaseModel):
         if self.success:
             formatted = json.dumps(self.data or {}, indent=2, default=str)
             return f"Tool '{self.tool_name}' completed successfully in {self.duration_ms}ms:\n{formatted}"
-        return (
-            f"Tool '{self.tool_name}' failed after {self.duration_ms}ms: "
-            f"{self.error or 'Unknown error'}"
-        )
+        return f"Tool '{self.tool_name}' failed after {self.duration_ms}ms: " f"{self.error or 'Unknown error'}"
 
 
 class ToolNotFoundError(Exception):
@@ -191,6 +206,7 @@ def _resolve_handler(handler_path: str) -> Callable:
     func_name = parts[-1]
     try:
         import importlib
+
         module = importlib.import_module(module_name)
         handler = getattr(module, func_name, None)
         if handler is None:
@@ -222,13 +238,6 @@ class ToolExecutor:
             )
 
         rid = request_id or str(uuid.uuid4())
-        ctx = ToolExecutionContext(
-            tool_name=tool_name,
-            parameters=parameters,
-            user_id=user_id,
-            request_id=rid,
-            timeout=tool.timeout,
-        )
 
         validation_errors = tool.validate_parameters(parameters)
         if validation_errors:
@@ -254,6 +263,7 @@ class ToolExecutor:
         start = time.time()
         try:
             import inspect
+
             sig = inspect.signature(handler)
             filtered_params = {k: v for k, v in parameters.items() if k in sig.parameters}
             result = await asyncio.wait_for(
@@ -506,11 +516,13 @@ class ToolCallingAgent:
                     arguments = json.loads(function.get("arguments", "{}"))
                 except (json.JSONDecodeError, TypeError):
                     arguments = {}
-                calls.append({
-                    "tool_name": function.get("name", ""),
-                    "parameters": arguments,
-                    "request_id": tc.get("id"),
-                })
+                calls.append(
+                    {
+                        "tool_name": function.get("name", ""),
+                        "parameters": arguments,
+                        "request_id": tc.get("id"),
+                    }
+                )
         return calls
 
     def parse_tool_calls_from_claude(self, response: dict[str, Any]) -> list[dict[str, Any]]:
@@ -518,11 +530,13 @@ class ToolCallingAgent:
         content = response.get("content", [])
         for block in content:
             if block.get("type") == "tool_use":
-                calls.append({
-                    "tool_name": block.get("name", ""),
-                    "parameters": block.get("input", {}),
-                    "request_id": block.get("id"),
-                })
+                calls.append(
+                    {
+                        "tool_name": block.get("name", ""),
+                        "parameters": block.get("input", {}),
+                        "request_id": block.get("id"),
+                    }
+                )
         return calls
 
 

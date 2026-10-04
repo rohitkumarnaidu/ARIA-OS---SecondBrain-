@@ -93,7 +93,10 @@ class TestBatchExecutor:
         from shared.utils.batch import BatchExecutor
 
         e = BatchExecutor()
-        fn = lambda: None
+
+        def fn():
+            return None
+
         e.add("k1", fn, "arg1", extra="val")
         assert len(e._queries) == 1
         assert e._queries[0][0] == "k1"
@@ -831,7 +834,7 @@ class TestLogger:
         mock_lt.client = mock_client
         mock_lt.emit = MagicMock(return_value=asyncio.Future())
         log = Logger("test-lt-emit")
-        with patch.object(log, "logger") as mock_std_logger:
+        with patch.object(log, "logger"):
             log.info("test")
         assert mock_lt.client is not None
 
@@ -1231,9 +1234,7 @@ class TestFeatureFlagStoreGet:
         from shared.utils.feature_flags import FeatureFlag, FeatureFlagStore
 
         store = FeatureFlagStore()
-        store._flags = {
-            "test": FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["user1"])
-        }
+        store._flags = {"test": FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["user1"])}
         assert store.get("test", user_id="user1") is True
         assert store.get("test", user_id="user2") is False
 
@@ -1290,9 +1291,7 @@ class TestFeatureFlagStoreGetVariant:
         from shared.utils.feature_flags import FeatureFlag, FeatureFlagStore
 
         store = FeatureFlagStore()
-        store._flags = {
-            "test": FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["user1"])
-        }
+        store._flags = {"test": FeatureFlag("test", enabled=True, rollout_percentage=0, user_segments=["user1"])}
         assert store.get_variant("test", "user1") == "treatment"
 
     def test_bucket_under_threshold(self):
@@ -1383,7 +1382,13 @@ class TestFeatureFlagStoreRefresh:
         mock_result = MagicMock()
         mock_result.data = [
             {"key": "flag.a", "enabled": True, "rollout_percentage": 100, "user_segments": None, "metadata": {}},
-            {"key": "flag.b", "enabled": False, "rollout_percentage": 0, "user_segments": ["admin"], "metadata": {"x": 1}},
+            {
+                "key": "flag.b",
+                "enabled": False,
+                "rollout_percentage": 0,
+                "user_segments": ["admin"],
+                "metadata": {"x": 1},
+            },
         ]
         mock_supabase.from_.return_value.select.return_value.execute.return_value = mock_result
 

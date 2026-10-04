@@ -84,9 +84,7 @@ class ARIAServer:
             return self.prompt_registry.list_prompts()
 
         @self.server.get_prompt()
-        async def handle_get_prompt(
-            name: str, arguments: Optional[dict[str, str]] = None
-        ) -> types.GetPromptResult:
+        async def handle_get_prompt(name: str, arguments: Optional[dict[str, str]] = None) -> types.GetPromptResult:
             return self.prompt_registry.get_prompt(name, arguments or {})
 
     async def run(self):

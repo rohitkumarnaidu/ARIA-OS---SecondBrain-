@@ -34,6 +34,7 @@ def mock_current_user():
 @pytest.fixture
 def mock_response():
     from fastapi import Response
+
     return Response()
 
 
@@ -98,7 +99,9 @@ class TestFeatureFlagRoutes:
     @patch("app.api.feature_flags.FeatureFlag")
     @patch("app.api.feature_flags.flags")
     @pytest.mark.asyncio
-    async def test_create_feature_flag_success(self, mock_flags, mock_ff_class, mock_flag, mock_current_user, mock_response):
+    async def test_create_feature_flag_success(
+        self, mock_flags, mock_ff_class, mock_flag, mock_current_user, mock_response
+    ):
         mock_flags.get_flag.return_value = None
         mock_ff_class.return_value = mock_flag
         from app.api.feature_flags import create_feature_flag
@@ -118,7 +121,9 @@ class TestFeatureFlagRoutes:
     @patch("app.api.feature_flags.FeatureFlag")
     @patch("app.api.feature_flags.flags")
     @pytest.mark.asyncio
-    async def test_create_feature_flag_conflict(self, mock_flags, mock_ff_class, mock_flag, mock_current_user, mock_response):
+    async def test_create_feature_flag_conflict(
+        self, mock_flags, mock_ff_class, mock_flag, mock_current_user, mock_response
+    ):
         mock_flags.get_flag.return_value = mock_flag
         from app.api.feature_flags import create_feature_flag
         from database.schemas.feature_flag import FeatureFlagCreate

@@ -7,11 +7,46 @@ from shared.utils.logger import logger
 from shared.utils.upsert import upsert
 
 REVIEW_PROFILES = {
-    "balanced": {"name": "Balanced", "emphasis": "overall", "task_weight": 1.0, "course_weight": 1.0, "habit_weight": 1.0, "goal_weight": 1.0},
-    "deep-focus": {"name": "Deep Focus", "emphasis": "deep_work", "task_weight": 1.5, "course_weight": 1.2, "habit_weight": 0.8, "goal_weight": 0.8},
-    "backlog-buster": {"name": "Backlog Buster", "emphasis": "tasks", "task_weight": 2.0, "course_weight": 0.5, "habit_weight": 1.0, "goal_weight": 0.7},
-    "skill-growth": {"name": "Skill Growth", "emphasis": "learning", "task_weight": 0.7, "course_weight": 2.0, "habit_weight": 0.8, "goal_weight": 1.3},
-    "quick-check": {"name": "Quick Check", "emphasis": "morale", "task_weight": 0.5, "course_weight": 0.5, "habit_weight": 0.5, "goal_weight": 0.5},
+    "balanced": {
+        "name": "Balanced",
+        "emphasis": "overall",
+        "task_weight": 1.0,
+        "course_weight": 1.0,
+        "habit_weight": 1.0,
+        "goal_weight": 1.0,
+    },
+    "deep-focus": {
+        "name": "Deep Focus",
+        "emphasis": "deep_work",
+        "task_weight": 1.5,
+        "course_weight": 1.2,
+        "habit_weight": 0.8,
+        "goal_weight": 0.8,
+    },
+    "backlog-buster": {
+        "name": "Backlog Buster",
+        "emphasis": "tasks",
+        "task_weight": 2.0,
+        "course_weight": 0.5,
+        "habit_weight": 1.0,
+        "goal_weight": 0.7,
+    },
+    "skill-growth": {
+        "name": "Skill Growth",
+        "emphasis": "learning",
+        "task_weight": 0.7,
+        "course_weight": 2.0,
+        "habit_weight": 0.8,
+        "goal_weight": 1.3,
+    },
+    "quick-check": {
+        "name": "Quick Check",
+        "emphasis": "morale",
+        "task_weight": 0.5,
+        "course_weight": 0.5,
+        "habit_weight": 0.5,
+        "goal_weight": 0.5,
+    },
 }
 
 
@@ -30,7 +65,14 @@ async def include_income_data(review: dict, user_id: str) -> dict:
         supabase = get_supabase_client()
         week_end = review.get("week_end", datetime.now().date().isoformat())
         week_start = review.get("week_start", (datetime.now().date() - timedelta(days=7)).isoformat())
-        resp = supabase.from_("income_entries").select("amount, date, source").eq("user_id", user_id).gte("date", week_start).lte("date", week_end).execute()
+        resp = (
+            supabase.from_("income_entries")
+            .select("amount, date, source")
+            .eq("user_id", user_id)
+            .gte("date", week_start)
+            .lte("date", week_end)
+            .execute()
+        )
         entries = resp.data or []
         total = sum(e.get("amount", 0) or 0 for e in entries)
         review["income"] = {
@@ -49,12 +91,20 @@ async def include_sleep_data(review: dict, user_id: str) -> dict:
         supabase = get_supabase_client()
         week_end = review.get("week_end", datetime.now().date().isoformat())
         week_start = review.get("week_start", (datetime.now().date() - timedelta(days=7)).isoformat())
-        resp = supabase.from_("sleep_logs").select("date, quality, duration_hours, sleep_debt_hours").eq("user_id", user_id).gte("date", week_start).lte("date", week_end).order("date", ascending=True).execute()
+        resp = (
+            supabase.from_("sleep_logs")
+            .select("date, quality, duration_hours, sleep_debt_hours")
+            .eq("user_id", user_id)
+            .gte("date", week_start)
+            .lte("date", week_end)
+            .order("date", ascending=True)
+            .execute()
+        )
         logs = resp.data or []
         if logs:
-            qualities = [l.get("quality", 0) for l in logs]
+            qualities = [log.get("quality", 0) for log in logs]
             avg_quality = sum(qualities) / len(qualities)
-            total_debt = sum(l.get("sleep_debt_hours", 0) or 0 for l in logs)
+            total_debt = sum(log.get("sleep_debt_hours", 0) or 0 for log in logs)
             review["sleep"] = {
                 "avg_quality": round(avg_quality, 1),
                 "total_debt_hours": round(total_debt, 1),
@@ -72,7 +122,9 @@ async def include_sleep_data(review: dict, user_id: str) -> dict:
 async def deduplicate_review(user_id: str, week_start: str) -> bool:
     try:
         supabase = get_supabase_client()
-        existing = supabase.from_("weekly_reviews").select("id").eq("user_id", user_id).eq("week_start", week_start).execute()
+        existing = (
+            supabase.from_("weekly_reviews").select("id").eq("user_id", user_id).eq("week_start", week_start).execute()
+        )
         return bool(existing.data)
     except Exception as e:
         logger.error("deduplicate_review check failed", user_id=user_id, week_start=week_start, error=str(e))
@@ -87,7 +139,13 @@ async def generate_weekly_review(user_id: str) -> Dict[str, Any]:
 
     if await deduplicate_review(user_id, week_start.isoformat()):
         logger.info("Weekly review already exists", user_id=user_id, week_start=week_start.isoformat())
-        existing = supabase.from_("weekly_reviews").select("*").eq("user_id", user_id).eq("week_start", week_start.isoformat()).execute()
+        existing = (
+            supabase.from_("weekly_reviews")
+            .select("*")
+            .eq("user_id", user_id)
+            .eq("week_start", week_start.isoformat())
+            .execute()
+        )
         if existing.data:
             return existing.data[0]
 

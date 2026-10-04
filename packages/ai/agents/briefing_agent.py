@@ -33,8 +33,14 @@ def generate_day_profile(day_of_week: int) -> dict:
 async def include_opportunity_data(briefing: dict, user_id: str) -> dict:
     try:
         supabase = get_supabase_client()
-        now = datetime.now().isoformat()
-        opps_resp = supabase.from_("opportunities").select("title, url, match_score, deadline, category").eq("user_id", user_id).gte("match_score", 70).limit(3).execute()
+        opps_resp = (
+            supabase.from_("opportunities")
+            .select("title, url, match_score, deadline, category")
+            .eq("user_id", user_id)
+            .gte("match_score", 70)
+            .limit(3)
+            .execute()
+        )
         opportunities = opps_resp.data or []
         briefing["top_opportunities"] = [
             {
@@ -54,14 +60,23 @@ async def include_opportunity_data(briefing: dict, user_id: str) -> dict:
 async def include_habit_data(briefing: dict, user_id: str) -> dict:
     try:
         supabase = get_supabase_client()
-        habits_resp = supabase.from_("habits").select("name, current_streak, best_streak, is_active").eq("user_id", user_id).execute()
+        habits_resp = (
+            supabase.from_("habits")
+            .select("name, current_streak, best_streak, is_active")
+            .eq("user_id", user_id)
+            .execute()
+        )
         habits = habits_resp.data or []
         active = [h for h in habits if h.get("is_active")]
         briefing["habits"] = {
             "active_count": len(active),
             "total": len(habits),
             "streaks": [
-                {"name": h.get("name"), "current_streak": h.get("current_streak", 0), "best_streak": h.get("best_streak", 0)}
+                {
+                    "name": h.get("name"),
+                    "current_streak": h.get("current_streak", 0),
+                    "best_streak": h.get("best_streak", 0),
+                }
                 for h in active[:5]
             ],
             "longest_streak": max((h.get("current_streak", 0) for h in active), default=0),

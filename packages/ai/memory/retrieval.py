@@ -1,3 +1,24 @@
+"""Memory retrieval across the episodic / semantic / procedural tiers.
+
+PERFORMANCE WARNING — blocking I/O inside ``async def``
+--------------------------------------------------------
+Every coroutine here is declared ``async`` but drives the SYNCHRONOUS
+``postgrest-py`` client, whose ``.execute()`` is a blocking HTTP round trip.
+There is no awaitable PostgREST/Supabase client in this project's dependency
+set, so these calls cannot simply be awaited. Called straight from a FastAPI
+route they block the event loop for the duration of the round trip, stalling
+every other concurrent request on the same worker.
+
+Migration path — do NOT do this piecemeal, it changes error semantics:
+wrap each Supabase interaction in ``await asyncio.to_thread(...)`` (or
+``loop.run_in_executor``), or migrate to an async PostgREST client. Until
+then this is a latency issue, not a correctness one.
+
+Query counts here are deliberately kept at one round trip per method (see
+``retrieve()``, which fetches all requested tiers in a single ``.in_("type", …)``
+call rather than one call per tier).
+"""
+
 import json
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple
@@ -12,6 +33,10 @@ def _utc_dt() -> datetime:
 
 def _estimate_tokens(text: str) -> int:
     return len(text.split())
+
+
+# Rows fetched per requested memory type in ``retrieve``.
+_ROWS_PER_TIER = 50
 
 
 class MemoryRetriever:
@@ -35,21 +60,18 @@ class MemoryRetriever:
             return []
         try:
             supabase = get_supabase_client()
-            all_results: List[Tuple[float, Dict[str, Any]]] = []
-            for mtype in target_types:
-                result = (
-                    supabase.from_(self._table)
-                    .select("*")
-                    .eq("user_id", user_id)
-                    .eq("type", mtype)
-                    .order("created_at", desc=True)
-                    .limit(50)
-                    .execute()
-                )
-                scored = self._rank_results(result.data or [], query)
-                all_results.extend(scored)
-            all_results.sort(key=lambda x: x[0], reverse=True)
-            return [r for _, r in all_results[:k]]
+            result = (
+                supabase.from_(self._table)
+                .select("*")
+                .eq("user_id", user_id)
+                .in_("type", target_types)
+                .order("created_at", desc=True)
+                .limit(_ROWS_PER_TIER * len(target_types))
+                .execute()
+            )
+            scored = self._rank_results(result.data or [], query)
+            scored.sort(key=lambda x: x[0], reverse=True)
+            return [r for _, r in scored[:k]]
         except Exception as e:
             logger.error("retrieve failed", user_id=user_id, query=query[:50], error=str(e))
             return []
@@ -93,7 +115,6 @@ class MemoryRetriever:
 
             for mem in all_memories:
                 score = 0.0
-                mem_type = mem.get("type", "")
                 mem_text = json.dumps(mem.get("value", {})).lower() + " " + " ".join(mem.get("tags", [])).lower()
                 mem_text += " " + mem.get("key", "").lower()
 

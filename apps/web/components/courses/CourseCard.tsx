@@ -44,15 +44,15 @@ export const CourseCard = memo(function CourseCard({ course, onDelete, onEdit }:
             <BookOpen size={20} className="text-accent-primary" aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">
-            <h3
-              className="font-medium text-text-primary truncate group-hover:text-accent-primary transition-colors cursor-pointer"
-              onClick={() => onEdit?.(course)}
-              onKeyDown={(e) => { if (e.key === 'Enter') onEdit?.(course) }}
-              tabIndex={0}
-              role="button"
-              aria-label={`Edit ${course.title}`}
-            >
-              {course.title}
+            <h3 className="font-medium text-text-primary group-hover:text-accent-primary transition-colors">
+              <button
+                type="button"
+                onClick={() => onEdit?.(course)}
+                aria-label={`Edit ${course.title}`}
+                className="block w-full min-w-0 truncate text-left cursor-pointer"
+              >
+                {course.title}
+              </button>
             </h3>
             <p className="text-sm text-text-tertiary mt-0.5">{course.platform}</p>
           </div>

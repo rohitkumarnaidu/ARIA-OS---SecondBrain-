@@ -10,7 +10,6 @@ from unittest.mock import MagicMock, patch
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-
 _AUTH_HEADER = {"Authorization": "Bearer test-token"}
 _TEST_USER_ID = "user-1"
 
@@ -152,8 +151,9 @@ class TestFeatureFlagEndpoints:
     def test_evaluate_flag_enabled(self):
         app = self._make_app()
         with TestClient(app) as client:
-            with patch("app.api.feature_flags.flags.get", return_value=True), patch(
-                "app.api.feature_flags.flags.get_variant", return_value=None
+            with (
+                patch("app.api.feature_flags.flags.get", return_value=True),
+                patch("app.api.feature_flags.flags.get_variant", return_value=None),
             ):
                 resp = client.get("/api/v1/feature-flags/test.feature/evaluate", headers=_AUTH_HEADER)
                 assert resp.status_code == 200
@@ -162,8 +162,9 @@ class TestFeatureFlagEndpoints:
     def test_evaluate_flag_disabled(self):
         app = self._make_app()
         with TestClient(app) as client:
-            with patch("app.api.feature_flags.flags.get", return_value=False), patch(
-                "app.api.feature_flags.flags.get_variant", return_value=None
+            with (
+                patch("app.api.feature_flags.flags.get", return_value=False),
+                patch("app.api.feature_flags.flags.get_variant", return_value=None),
             ):
                 resp = client.get("/api/v1/feature-flags/disabled.flag/evaluate", headers=_AUTH_HEADER)
                 assert resp.status_code == 200
@@ -172,9 +173,7 @@ class TestFeatureFlagEndpoints:
     def test_create_flag(self):
         app = self._make_app()
         with TestClient(app) as client:
-            with patch("app.api.feature_flags.flags._flags", {}), patch(
-                "app.api.feature_flags.flags.set"
-            ) as mock_set:
+            with patch("app.api.feature_flags.flags._flags", {}), patch("app.api.feature_flags.flags.set") as mock_set:
                 resp = client.post(
                     "/api/v1/feature-flags/",
                     json={"key": "new.flag", "enabled": True},
@@ -199,9 +198,10 @@ class TestFeatureFlagEndpoints:
         app = self._make_app()
         flag = self._mock_flag("update.me")
         with TestClient(app) as client:
-            with patch("app.api.feature_flags.flags._flags", {"update.me": flag}), patch(
-                "app.api.feature_flags.flags.set"
-            ) as mock_set:
+            with (
+                patch("app.api.feature_flags.flags._flags", {"update.me": flag}),
+                patch("app.api.feature_flags.flags.set") as mock_set,
+            ):
                 resp = client.put(
                     "/api/v1/feature-flags/update.me",
                     json={"enabled": False},
@@ -238,6 +238,7 @@ class TestFeatureFlagEndpoints:
     def test_list_flags_unauthorized(self):
         app = FastAPI()
         from app.api.feature_flags import router
+
         app.include_router(router, prefix="/api/v1/feature-flags", tags=["feature_flags"])
         with TestClient(app) as client:
             resp = client.get("/api/v1/feature-flags/")
@@ -246,6 +247,7 @@ class TestFeatureFlagEndpoints:
     def test_create_flag_unauthorized(self):
         app = FastAPI()
         from app.api.feature_flags import router
+
         app.include_router(router, prefix="/api/v1/feature-flags", tags=["feature_flags"])
         with TestClient(app) as client:
             resp = client.post("/api/v1/feature-flags/", json={"key": "test", "enabled": True})
@@ -494,7 +496,9 @@ class TestSkillRelationshipFunctions(_SkillsTestBase):
 
         self._sb.from_.return_value = MockQueryBuilder(return_data=[self.SAMPLE])
         result = await create_relationship(
-            rel=SkillRelationshipCreate(from_skill_id="skill-1", to_skill_id="skill-2", relationship_type="prerequisite"),
+            rel=SkillRelationshipCreate(
+                from_skill_id="skill-1", to_skill_id="skill-2", relationship_type="prerequisite"
+            ),
             current_user=_make_auth_mock_user(),
         )
         assert result["relationship_id"] == "rel-1"
@@ -1198,7 +1202,9 @@ class TestSkillHistoryAndViewFunctions(_SkillsTestBase):
     async def test_list_taxonomy_history(self):
         from app.api.skills import list_taxonomy_history
 
-        self._sb.from_.return_value = MockQueryBuilder(return_data=[{"id": "th-1", "entity_type": "skill", "entity_id": "skill-1"}])
+        self._sb.from_.return_value = MockQueryBuilder(
+            return_data=[{"id": "th-1", "entity_type": "skill", "entity_id": "skill-1"}]
+        )
         result = await list_taxonomy_history(current_user=_make_auth_mock_user(), limit=50, offset=0)
         assert len(result) == 1
 
@@ -1206,7 +1212,9 @@ class TestSkillHistoryAndViewFunctions(_SkillsTestBase):
     async def test_list_user_skill_history(self):
         from app.api.skills import list_user_skill_history
 
-        self._sb.from_.return_value = MockQueryBuilder(return_data=[{"id": "ush-1", "user_id": _TEST_USER_ID, "skill_id": "skill-1"}])
+        self._sb.from_.return_value = MockQueryBuilder(
+            return_data=[{"id": "ush-1", "user_id": _TEST_USER_ID, "skill_id": "skill-1"}]
+        )
         result = await list_user_skill_history(current_user=_make_auth_mock_user(), limit=50, offset=0)
         assert len(result) == 1
 

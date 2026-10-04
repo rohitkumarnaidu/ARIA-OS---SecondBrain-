@@ -167,7 +167,9 @@ class TestValidateOutput:
     def test_not_a_refusal_when_appropriate(self, guardrails: Guardrails):
         result = guardrails.validate_output("I cannot confirm that without more data.")
         assert result["safe"] is False
-        assert any("hallucination_markers" in i for i in result["issues"]) or any("refusal_detected" in i for i in result["issues"])
+        assert any("hallucination_markers" in i for i in result["issues"]) or any(
+            "refusal_detected" in i for i in result["issues"]
+        )
 
     def test_single_refusal_word_not_flagged(self, guardrails: Guardrails):
         result = guardrails.validate_output("I cannot do that.")

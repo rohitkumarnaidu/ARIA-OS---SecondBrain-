@@ -338,7 +338,12 @@ class WebhookDeliveryService:
                 stats[status] = result.count if hasattr(result, "count") else 0
             return stats
         except Exception:
-            return {"pending": -1, "failed": -1, "dead_letter": -1, "delivered": -1}  # Cleanup operation — acceptable to silently skip
+            return {
+                "pending": -1,
+                "failed": -1,
+                "dead_letter": -1,
+                "delivered": -1,
+            }  # Cleanup operation — acceptable to silently skip
 
 
 webhook_delivery = WebhookDeliveryService()

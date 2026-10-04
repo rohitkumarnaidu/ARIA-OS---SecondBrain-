@@ -143,7 +143,9 @@ async def get_agent_activity_feed(
     try:
         result = (
             supabase.from_("agent_activity_log")
-            .select("id, user_id, agent_name, status, started_at, completed_at, duration_ms, error_message, input_summary, output_summary, created_at")
+            .select(
+                "id, user_id, agent_name, status, started_at, completed_at, duration_ms, error_message, input_summary, output_summary, created_at"
+            )
             .eq("user_id", current_user.user.id)
             .order("started_at", desc=True)
             .range(offset, offset + limit - 1)
@@ -286,14 +288,16 @@ async def get_metrics(
     for name, data in agents_map.items():
         avg_dur = round(sum(data["durations"]) / max(len(data["durations"]), 1), 1) if data["durations"] else 0
         err_rate = round(data["errors"] / max(data["calls"], 1) * 100, 2)
-        agent_list.append({
-            "name": name,
-            "calls": data["calls"],
-            "tokens": data["tokens"],
-            "avg_duration_ms": avg_dur,
-            "error_rate": err_rate,
-            "cost_usd": round(data["cost"], 6),
-        })
+        agent_list.append(
+            {
+                "name": name,
+                "calls": data["calls"],
+                "tokens": data["tokens"],
+                "avg_duration_ms": avg_dur,
+                "error_rate": err_rate,
+                "cost_usd": round(data["cost"], 6),
+            }
+        )
     agent_list.sort(key=lambda x: x["calls"], reverse=True)
 
     # Overall current values
@@ -315,12 +319,23 @@ async def get_metrics(
         t0 = datetime.now(timezone.utc)
         supabase.from_("users").select("count", count="exact").limit(1).execute()
         db_latency = int((datetime.now(timezone.utc) - t0).total_seconds() * 1000)
-        services["supabase"] = {"status": "ok", "uptime": 99.8, "last_checked": now.isoformat(), "latency_ms": db_latency}
+        services["supabase"] = {
+            "status": "ok",
+            "uptime": 99.8,
+            "last_checked": now.isoformat(),
+            "latency_ms": db_latency,
+        }
     except Exception:
-        services["supabase"] = {"status": "unavailable", "uptime": 0.0, "last_checked": now.isoformat(), "latency_ms": 0}
+        services["supabase"] = {
+            "status": "unavailable",
+            "uptime": 0.0,
+            "last_checked": now.isoformat(),
+            "latency_ms": 0,
+        }
     try:
         if settings.use_local_ai:
             import httpx
+
             t0 = datetime.now(timezone.utc)
             resp = httpx.get(f"{settings.ollama_base_url}/api/tags", timeout=5)
             ai_latency = int((datetime.now(timezone.utc) - t0).total_seconds() * 1000)

@@ -64,9 +64,11 @@ def calculate_goal_alignment(opportunity: dict, goals: List[dict]) -> float:
     if not goals:
         return 0.0
     opp_text = (
-        (opportunity.get("title") or "") + " " +
-        (opportunity.get("description") or "") + " " +
-        (opportunity.get("category") or "")
+        (opportunity.get("title") or "")
+        + " "
+        + (opportunity.get("description") or "")
+        + " "
+        + (opportunity.get("category") or "")
     ).lower()
     match_count = 0
     for goal in goals:
@@ -92,7 +94,9 @@ async def match_opportunities(user_id: str) -> List[Dict[str, Any]]:
     else:
         user_goals = []
 
-    goals_resp = supabase.from_("goals").select("title, description").eq("user_id", user_id).eq("status", "active").execute()
+    goals_resp = (
+        supabase.from_("goals").select("title, description").eq("user_id", user_id).eq("status", "active").execute()
+    )
     if goals_resp.data:
         user_goals.extend(goals_resp.data)
 
@@ -131,14 +135,16 @@ async def match_opportunities(user_id: str) -> List[Dict[str, Any]]:
                 alg_score = compute_algorithmic_score(opp, user_skills, user_goals)
                 gaps = identify_skill_gaps(opp, user_skills)
                 goal_align = calculate_goal_alignment(opp, user_goals)
-                ranked["recommendations"].append({
-                    "opportunity_id": opp.get("id"),
-                    "match_score": alg_score,
-                    "reasoning": f"Algorithmic score: {alg_score}/100. Skill gaps: {gaps[:3]}",
-                    "action_tip": "Review and apply" if alg_score > 60 else "Consider upskilling",
-                    "skill_gaps": gaps,
-                    "goal_alignment": goal_align,
-                })
+                ranked["recommendations"].append(
+                    {
+                        "opportunity_id": opp.get("id"),
+                        "match_score": alg_score,
+                        "reasoning": f"Algorithmic score: {alg_score}/100. Skill gaps: {gaps[:3]}",
+                        "action_tip": "Review and apply" if alg_score > 60 else "Consider upskilling",
+                        "skill_gaps": gaps,
+                        "goal_alignment": goal_align,
+                    }
+                )
 
     recommendations = ranked.get("recommendations", [])
 

@@ -1,7 +1,7 @@
 """Tests for utility scripts: validate_migrations, gen_sdb_full, validate_skills_schema."""
+
 import pytest
 from unittest.mock import patch
-
 
 # ── validate_migrations.py ──
 
@@ -97,6 +97,7 @@ def test_validate_migrations_main_with_files(tmp_path):
 
 def test_validate_migrations_entry_point():
     import scripts.validate_migrations as vm
+
     assert hasattr(vm, "main")
     assert callable(vm.main)
 
@@ -122,8 +123,10 @@ def test_validate_migrations_main_cross_failures(tmp_path):
     (mig_dir / "000_skills_complete_ddl.sql").write_text("CREATE TABLE foo (id int);", encoding="utf-8")
     (mig_dir / "001_skills_core_taxonomy.sql").write_text("CREATE TABLE bar (id int);", encoding="utf-8")
     for fname in [
-        "002_skills_user_tables.sql", "003_skills_intelligence_supporting.sql",
-        "004_skills_audit_events_analytics.sql", "005_skills_security_rls.sql",
+        "002_skills_user_tables.sql",
+        "003_skills_intelligence_supporting.sql",
+        "004_skills_audit_events_analytics.sql",
+        "005_skills_security_rls.sql",
         "006_skills_materialized_views.sql",
     ]:
         (mig_dir / fname).write_text("SELECT 1", encoding="utf-8")
@@ -239,7 +242,7 @@ def test_gen_sdb_main_output(tmp_path):
     out_file = tmp_path / "aggregate.sql"
 
     with patch("sys.argv", ["prog", "--output", str(out_file), "--migrations-dir", str(mig_dir)]):
-            main()
+        main()
     assert out_file.exists()
     assert "Begin: 000_skills_complete_ddl.sql" in out_file.read_text(encoding="utf-8")
 
@@ -263,7 +266,12 @@ def test_gen_sdb_main_generate_api_stubs(tmp_path):
     (mig_dir / "000_skills_complete_ddl.sql").write_text("SELECT 1", encoding="utf-8")
 
     with patch("sys.argv", ["prog", "--generate-api-stubs", "--migrations-dir", str(mig_dir)]):
-        main()
+        # generate_api_stubs() writes to a hardcoded path inside the live
+        # package (apps/api/app/api/). Patch it so running the test suite does
+        # not regenerate apps/api/app/api/api_stubs_generated.py in the repo.
+        with patch("scripts.gen_sdb_full.generate_api_stubs") as mock_stubs:
+            main()
+    mock_stubs.assert_called_once()
 
 
 def test_gen_sdb_main_no_options(tmp_path):
@@ -288,6 +296,7 @@ def test_gen_sdb_main_missing_directory(tmp_path):
 
 def test_gen_sdb_entry_point():
     import scripts.gen_sdb_full as gs
+
     assert hasattr(gs, "main")
     assert callable(gs.main)
 
@@ -298,6 +307,7 @@ def test_gen_sdb_entry_point():
 def test_validate_skills_schema_regex_helpers():
     """Test that basic regex patterns work with the validator"""
     import re
+
     assert re.search(r"CREATE TABLE skills", "CREATE TABLE skills", re.IGNORECASE)
     assert not re.search(r"CREATE TABLE skills", "DROP TABLE skills", re.IGNORECASE)
 
@@ -364,7 +374,8 @@ def test_validate_skills_schema_validate_ddl_coverage(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     ddl = tmp_path / "ddl.sql"
-    ddl.write_text("""
+    ddl.write_text(
+        """
     CREATE TABLE IF NOT EXISTS skill_categories ();
     CREATE TABLE IF NOT EXISTS skills ();
     CREATE TABLE IF NOT EXISTS skill_relationships ();
@@ -415,7 +426,9 @@ def test_validate_skills_schema_validate_ddl_coverage(tmp_path):
     CREATE MATERIALIZED VIEW mv_skill_roadmap_progress AS SELECT 1;
     ALTER TABLE user_skills ENABLE ROW LEVEL SECURITY;
     ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_ddl_coverage(ddl)
@@ -434,7 +447,10 @@ def test_validate_skills_schema_validate_notify_triggers(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     ddl = tmp_path / "ddl.sql"
-    ddl.write_text("fn_notify_taxonomy_change trg_skills_notify trg_categories_notify skill_notify_audit_event trg_audit_log_notify", encoding="utf-8")
+    ddl.write_text(
+        "fn_notify_taxonomy_change trg_skills_notify trg_categories_notify skill_notify_audit_event trg_audit_log_notify",
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_notify_triggers(ddl)
@@ -446,11 +462,23 @@ def test_validate_skills_schema_validate_audit_triggers(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     ddl = tmp_path / "ddl.sql"
-    ddl.write_text(" ".join(f"trg_{t}_audit" for t in [
-        "skills", "skill_categories", "user_skills", "user_skill_evidence",
-        "user_skill_targets", "user_skill_assessments", "skill_market_data",
-        "skill_relationships", "skill_certifications",
-    ]), encoding="utf-8")
+    ddl.write_text(
+        " ".join(
+            f"trg_{t}_audit"
+            for t in [
+                "skills",
+                "skill_categories",
+                "user_skills",
+                "user_skill_evidence",
+                "user_skill_targets",
+                "user_skill_assessments",
+                "skill_market_data",
+                "skill_relationships",
+                "skill_certifications",
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_audit_triggers(ddl)
@@ -462,10 +490,21 @@ def test_validate_skills_schema_validate_partitions(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     ddl = tmp_path / "ddl.sql"
-    ddl.write_text("\n".join(f"PARTITION OF {t}" for t in [
-        "user_skill_evidence", "user_skill_versions", "skill_user_activity_log",
-        "skill_audit_log", "skill_events", "skill_webhook_queue", "skill_analytics_snapshots",
-    ]), encoding="utf-8")
+    ddl.write_text(
+        "\n".join(
+            f"PARTITION OF {t}"
+            for t in [
+                "user_skill_evidence",
+                "user_skill_versions",
+                "skill_user_activity_log",
+                "skill_audit_log",
+                "skill_events",
+                "skill_webhook_queue",
+                "skill_analytics_snapshots",
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_partitions(ddl)
@@ -477,11 +516,20 @@ def test_validate_skills_schema_validate_cron_jobs(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     cron = tmp_path / "cron.sql"
-    cron.write_text(" ".join([
-        "skill-proficiency-refresh", "skill-market-refresh", "skill-update-stale-flags",
-        "skill-process-outbox", "skill-process-webhooks", "skill-vacuum-main",
-        "skill-partman-maintenance",
-    ]), encoding="utf-8")
+    cron.write_text(
+        " ".join(
+            [
+                "skill-proficiency-refresh",
+                "skill-market-refresh",
+                "skill-update-stale-flags",
+                "skill-process-outbox",
+                "skill-process-webhooks",
+                "skill-vacuum-main",
+                "skill-partman-maintenance",
+            ]
+        ),
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_cron_jobs(cron)
@@ -522,10 +570,14 @@ def test_validate_skills_schema_main(tmp_path):
     mig_dir = tmp_path / "scripts" / "migrations"
     mig_dir.mkdir(parents=True)
     for fname in [
-        "000_skills_complete_ddl.sql", "001_skills_core_taxonomy.sql",
-        "002_skills_user_tables.sql", "003_skills_intelligence_supporting.sql",
-        "004_skills_audit_events_analytics.sql", "005_skills_security_rls.sql",
-        "006_skills_materialized_views.sql", "007_skills_partman_cron.sql",
+        "000_skills_complete_ddl.sql",
+        "001_skills_core_taxonomy.sql",
+        "002_skills_user_tables.sql",
+        "003_skills_intelligence_supporting.sql",
+        "004_skills_audit_events_analytics.sql",
+        "005_skills_security_rls.sql",
+        "006_skills_materialized_views.sql",
+        "007_skills_partman_cron.sql",
     ]:
         (mig_dir / fname).write_text("SELECT 1", encoding="utf-8")
 
@@ -550,6 +602,7 @@ def test_validate_skills_schema_main_no_migrations(tmp_path):
 
 def test_validate_skills_schema_entry_point():
     import scripts.validate_skills_schema as vss
+
     assert hasattr(vss, "main")
     assert callable(vss.main)
 
@@ -570,9 +623,12 @@ def test_validate_skills_schema_partition_findall(tmp_path):
     from scripts.validate_skills_schema import SchemaValidator
 
     ddl = tmp_path / "ddl.sql"
-    ddl.write_text("""
+    ddl.write_text(
+        """
     CREATE TABLE IF NOT EXISTS skill_audit_log () PARTITION BY RANGE (created_at);
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     v = SchemaValidator()
     v.validate_ddl_coverage(ddl)
@@ -584,7 +640,7 @@ def test_validate_skills_schema_with_warnings(tmp_path):
 
     v = SchemaValidator()
     v.check(False, "test warning", level="warn")
-    code = v.report()
+    v.report()
     assert len(v.warnings) >= 1
 
 
@@ -594,10 +650,14 @@ def test_validate_skills_schema_model_check(tmp_path):
     mig_dir = tmp_path / "scripts" / "migrations"
     mig_dir.mkdir(parents=True)
     for fname in [
-        "000_skills_complete_ddl.sql", "001_skills_core_taxonomy.sql",
-        "002_skills_user_tables.sql", "003_skills_intelligence_supporting.sql",
-        "004_skills_audit_events_analytics.sql", "005_skills_security_rls.sql",
-        "006_skills_materialized_views.sql", "007_skills_partman_cron.sql",
+        "000_skills_complete_ddl.sql",
+        "001_skills_core_taxonomy.sql",
+        "002_skills_user_tables.sql",
+        "003_skills_intelligence_supporting.sql",
+        "004_skills_audit_events_analytics.sql",
+        "005_skills_security_rls.sql",
+        "006_skills_materialized_views.sql",
+        "007_skills_partman_cron.sql",
     ]:
         (mig_dir / fname).write_text("SELECT 1", encoding="utf-8")
 
@@ -610,7 +670,9 @@ def test_validate_skills_schema_model_check(tmp_path):
     schema_dir.mkdir(parents=True)
     (schema_dir / "skill.py").write_text("SkillAuditLogCreate = None", encoding="utf-8")
 
-    with patch("sys.argv", ["prog", "--migrations-dir", str(mig_dir), "--gen-script", str(gen_dir / "gen_sdb_full.py")]):
+    with patch(
+        "sys.argv", ["prog", "--migrations-dir", str(mig_dir), "--gen-script", str(gen_dir / "gen_sdb_full.py")]
+    ):
         with patch("scripts.validate_skills_schema.Path.cwd", return_value=tmp_path):
             code = main()
         # Should pass or fail gracefully

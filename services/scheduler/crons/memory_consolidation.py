@@ -23,4 +23,5 @@ async def run_memory_consolidation():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(run_memory_consolidation())

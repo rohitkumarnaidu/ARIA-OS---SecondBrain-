@@ -74,13 +74,7 @@ class MemoryCompressor:
         try:
             supabase = get_supabase_client()
             cutoff = (_utc_dt() - timedelta(days=days)).isoformat()
-            result = (
-                supabase.from_("memory")
-                .delete()
-                .eq("user_id", user_id)
-                .lt("created_at", cutoff)
-                .execute()
-            )
+            result = supabase.from_("memory").delete().eq("user_id", user_id).lt("created_at", cutoff).execute()
             pruned = len(result.data or [])
             if pruned:
                 logger.info("Pruned old memories", user_id=user_id, days=days, count=pruned)
@@ -107,18 +101,22 @@ class MemoryCompressor:
             end_ts = (bucket + 1) * bin_days * 86400
             compressed_summary = self.summarize_memories(group)
             types = list(set(m.get("type", "unknown") for m in group))
-            result.append({
-                "bucket_start": datetime.fromtimestamp(start_ts, tz=timezone.utc).isoformat(),
-                "bucket_end": datetime.fromtimestamp(end_ts, tz=timezone.utc).isoformat(),
-                "count": len(group),
-                "types": types,
-                "summary": compressed_summary,
-            })
+            result.append(
+                {
+                    "bucket_start": datetime.fromtimestamp(start_ts, tz=timezone.utc).isoformat(),
+                    "bucket_end": datetime.fromtimestamp(end_ts, tz=timezone.utc).isoformat(),
+                    "count": len(group),
+                    "types": types,
+                    "summary": compressed_summary,
+                }
+            )
         return result
 
     def _compress_single(self, entry: Dict[str, Any], age_days: float) -> Dict[str, Any]:
         try:
-            val = json.loads(entry.get("value", "{}")) if isinstance(entry.get("value"), str) else entry.get("value", {})
+            val = (
+                json.loads(entry.get("value", "{}")) if isinstance(entry.get("value"), str) else entry.get("value", {})
+            )
         except (json.JSONDecodeError, TypeError):
             val = {}
         if age_days < self._lossless_days:
@@ -168,13 +166,15 @@ class MemoryCompressor:
         if budget <= 0:
             return None
         try:
-            val = json.loads(entry.get("value", "{}")) if isinstance(entry.get("value"), str) else entry.get("value", {})
+            val = (
+                json.loads(entry.get("value", "{}")) if isinstance(entry.get("value"), str) else entry.get("value", {})
+            )
         except (json.JSONDecodeError, TypeError):
             val = {}
         if isinstance(val, dict):
             for k in list(val.keys()):
                 if isinstance(val[k], str) and _estimate_tokens(val[k]) > budget:
-                    val[k] = val[k][:budget * 4]
+                    val[k] = val[k][: budget * 4]
             return {**entry, "value": json.dumps(val)}
         return entry
 

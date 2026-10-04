@@ -240,7 +240,9 @@ async def test_event_outbox_poll_once_no_data():
 
     processor = EventOutboxProcessor()
     mock_supabase = MagicMock()
-    mock_supabase.table.return_value.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(data=[])
+    mock_supabase.table.return_value.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
+        data=[]
+    )
     processor._supabase = mock_supabase
 
     processed, failed = await processor.poll_once()
@@ -256,7 +258,19 @@ async def test_event_outbox_poll_once_skip_scheduled():
     mock_supabase = MagicMock()
     future_ms = 99999999999999
     mock_supabase.table.return_value.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-        data=[{"outbox_id": "o1", "event_type": "test", "aggregate_type": "skill", "aggregate_id": "abc", "payload": "{}", "headers": "{}", "retry_count": 0, "max_retries": 3, "scheduled_at": future_ms}]
+        data=[
+            {
+                "outbox_id": "o1",
+                "event_type": "test",
+                "aggregate_type": "skill",
+                "aggregate_id": "abc",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": future_ms,
+            }
+        ]
     )
     processor._supabase = mock_supabase
 
@@ -272,7 +286,19 @@ async def test_event_outbox_poll_once_success():
     processor = EventOutboxProcessor()
     mock_supabase = MagicMock()
     mock_supabase.table.return_value.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-        data=[{"outbox_id": "o1", "event_type": "test.event", "aggregate_type": "skill", "aggregate_id": "abc", "payload": '{"key":"val"}', "headers": "{}", "retry_count": 0, "max_retries": 3, "scheduled_at": None}]
+        data=[
+            {
+                "outbox_id": "o1",
+                "event_type": "test.event",
+                "aggregate_type": "skill",
+                "aggregate_id": "abc",
+                "payload": '{"key":"val"}',
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": None,
+            }
+        ]
     )
     # Make the processing update return success
     mock_supabase.table.return_value.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
@@ -298,7 +324,19 @@ async def test_event_outbox_poll_once_processing_error():
 
     mock_table = MagicMock()
     mock_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-        data=[{"outbox_id": "o1", "event_type": "test.event", "aggregate_type": "skill", "aggregate_id": "abc", "payload": "{}", "headers": "{}", "retry_count": 0, "max_retries": 3, "scheduled_at": None}]
+        data=[
+            {
+                "outbox_id": "o1",
+                "event_type": "test.event",
+                "aggregate_type": "skill",
+                "aggregate_id": "abc",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": None,
+            }
+        ]
     )
     # First update (mark processing) succeeds
     mock_table.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
@@ -366,11 +404,21 @@ async def test_event_outbox_route_to_webhooks():
     processor = EventOutboxProcessor()
     mock_supabase = MagicMock()
     mock_supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(
-        data=[{"subscription_id": "sub-1", "event_types": ["test.event"], "url": "https://hooks.example.com", "headers": {}, "retry_policy": {"max_retries": 3}}]
+        data=[
+            {
+                "subscription_id": "sub-1",
+                "event_types": ["test.event"],
+                "url": "https://hooks.example.com",
+                "headers": {},
+                "retry_policy": {"max_retries": 3},
+            }
+        ]
     )
     processor._supabase = mock_supabase
 
-    await processor._route_to_webhooks({"event_type": "test.event", "aggregate_type": "skill", "aggregate_id": "abc", "payload": "{}"}, mock_supabase)
+    await processor._route_to_webhooks(
+        {"event_type": "test.event", "aggregate_type": "skill", "aggregate_id": "abc", "payload": "{}"}, mock_supabase
+    )
 
     # Should have inserted into skill_webhook_queue
     mock_supabase.table.assert_called_with("skill_webhook_queue")
@@ -383,7 +431,15 @@ async def test_event_outbox_route_to_webhooks_no_match():
     processor = EventOutboxProcessor()
     mock_supabase = MagicMock()
     mock_supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(
-        data=[{"subscription_id": "sub-1", "event_types": ["other.event"], "url": "https://hooks.example.com", "headers": {}, "retry_policy": {}}]
+        data=[
+            {
+                "subscription_id": "sub-1",
+                "event_types": ["other.event"],
+                "url": "https://hooks.example.com",
+                "headers": {},
+                "retry_policy": {},
+            }
+        ]
     )
     processor._supabase = mock_supabase
 
@@ -424,7 +480,9 @@ async def test_event_outbox_reprocess_dead_letters():
 
     processor = EventOutboxProcessor()
     mock_supabase = MagicMock()
-    mock_supabase.table.return_value.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"outbox_id": "dead1"}])
+    mock_supabase.table.return_value.update.return_value.eq.return_value.execute.return_value = MagicMock(
+        data=[{"outbox_id": "dead1"}]
+    )
     processor._supabase = mock_supabase
 
     count = await processor.reprocess_dead_letters()
@@ -849,11 +907,13 @@ async def test_neo4j_get_graph_statistics():
 
     svc = Neo4jSyncService()
     svc._enabled = True
-    svc._run = AsyncMock(side_effect=[
-        [{"total_nodes": 10}],
-        [{"total_relationships": 25}],
-        [{"labels": ["Skill", "Category"], "count": 5}],
-    ])
+    svc._run = AsyncMock(
+        side_effect=[
+            [{"total_nodes": 10}],
+            [{"total_relationships": 25}],
+            [{"labels": ["Skill", "Category"], "count": 5}],
+        ]
+    )
     stats = await svc.get_graph_statistics()
     assert stats["total_nodes"] == 10
     assert stats["total_relationships"] == 25
@@ -1195,6 +1255,7 @@ async def test_redis_invalidate_all():
     cache._enabled = True
     # Set something in memory cache so clearing is meaningful
     from shared.utils.cache import cache as memory_cache
+
     await memory_cache.set("test", 1)
 
     await cache.invalidate_all()

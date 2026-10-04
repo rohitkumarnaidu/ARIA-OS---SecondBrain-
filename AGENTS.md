@@ -226,7 +226,9 @@ import type { Task } from '@/types'
 - Define interfaces for ALL data structures in `packages/types/`.
 - Use `type` for unions/intersections, `interface` for object shapes.
 - Prefer `const` over `let`. Never use `var`.
-- Use `strict` mode in tsconfig. Enable `noUncheckedIndexedAccess`.
+- Use `strict` mode in tsconfig (enabled). `noUncheckedIndexedAccess` is **NOT** currently
+  enabled — enabling it surfaces ~142 errors (mostly TS18048 / TS2532 "possibly undefined"
+  across `app/` and `components/`). Treat it as a separate hardening task, not a default.
 - All function return types MUST be explicitly annotated.
 
 #### Error Handling (Frontend)

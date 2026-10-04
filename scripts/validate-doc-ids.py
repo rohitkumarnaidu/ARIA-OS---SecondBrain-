@@ -30,9 +30,7 @@ def main() -> int:
         content = fp.read_text(encoding="utf-8")
         doc_id = find_doc_id(content)
         if doc_id is None:
-            errors.append(
-                f"{fp.relative_to(DOCS_DIR.parent)}: Missing Document ID in Document Control table"
-            )
+            errors.append(f"{fp.relative_to(DOCS_DIR.parent)}: Missing Document ID in Document Control table")
             continue
         if not DOC_ID_PATTERN.match(doc_id):
             errors.append(

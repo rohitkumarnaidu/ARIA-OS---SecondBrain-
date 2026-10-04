@@ -30,7 +30,7 @@ class TestContextEngine:
     def engine(self, mock_supabase):
         from ai.context_engine import ContextEngine
 
-        eng = ContextEngine(supabase_client=mock_supabase, cache_ttl=300)
+        eng = ContextEngine(supabase_client=mock_supabase, default_cache_ttl=300)
         eng._cache.clear()
         return eng
 
@@ -115,6 +115,27 @@ class TestContextEngine:
     async def test_empty_data_handling(self, engine, mock_supabase):
         mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
         result = await engine.assemble_context("user-1", ["tasks_pending"])
+        # An empty section renders the section's configured fallback TEXT, not
+        # the empty string. NEEDS_METADATA["tasks_pending"].fallback is
+        # "No pending tasks." and _format_section returns it verbatim when
+        # `data` is falsy (context_engine.py:272-273). That fallback is
+        # deliberate: it tells the agent "this section was checked and is
+        # genuinely empty" instead of silently omitting it.
+        assert result == "No pending tasks."
+
+    @pytest.mark.asyncio
+    async def test_empty_section_with_no_fallback_renders_empty_string(self, engine, mock_supabase):
+        """A section whose fallback is "" renders nothing at all."""
+        from ai.context_engine import NEEDS_METADATA
+
+        config = NEEDS_METADATA["tasks_pending"]
+        original = config.fallback
+        config.fallback = ""
+        try:
+            mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[])
+            result = await engine.assemble_context("user-1", ["tasks_pending"])
+        finally:
+            config.fallback = original
         assert result == ""
 
     @pytest.mark.asyncio
@@ -132,9 +153,18 @@ class TestContextEngine:
         assert result == {}
 
     def test_estimate_tokens(self, engine):
-        assert engine.estimate_tokens("hello world") == 3
-        assert engine.estimate_tokens("a" * 100) == 26
-        assert engine.estimate_tokens("") == 1
+        # ContextEngine.estimate_tokens is `max(1, len(text) // 4)`
+        # (packages/ai/context_engine.py:296-298).
+        # These numbers used to be the ones for the OTHER token estimator in
+        # the same package, ContextAssembly.estimate_tokens, which is
+        # `len(text) // 4 + 1` (packages/ai/context_assembly.py:35-36) and is
+        # still asserted correctly in test_ai_modules.py. The two classes
+        # legitimately differ by one token; this test was asserting
+        # ContextAssembly's formula against ContextEngine.
+        assert engine.estimate_tokens("hello world") == 2  # 11 // 4
+        assert engine.estimate_tokens("a" * 100) == 25  # 100 // 4
+        assert engine.estimate_tokens("") == 1  # max(1, 0)
+        assert engine.estimate_tokens("a") == 1  # max(1, 0)
 
     def test_format_section(self, engine):
         data = [{"title": "Task A"}, {"title": "Task B"}]
@@ -146,7 +176,7 @@ class TestContextEngine:
     def test_format_section_max_five_items(self, engine):
         data = [{"title": f"Task {i}"} for i in range(10)]
         result = engine._format_section("tasks_pending", data)
-        lines = [l for l in result.split("\n") if l.startswith("  - ")]
+        lines = [line for line in result.split("\n") if line.startswith("  - ")]
         assert len(lines) == 5
 
     def test_format_section_fallback_labels(self, engine):
@@ -212,10 +242,10 @@ class TestContextEngine:
     async def test_fetch_with_order_no_desc(self, engine, mock_supabase):
         from ai.context_engine import NEEDS_MAP
 
-        mock_supabase._builders["tasks"].execute.return_value = MagicMock(
-            data=[{"id": "t1", "title": "Ordered task"}]
-        )
-        with patch.dict(NEEDS_MAP, {"tasks_ordered": {"table": "tasks", "filter": {}, "order": "created_at", "limit": 5}}):
+        mock_supabase._builders["tasks"].execute.return_value = MagicMock(data=[{"id": "t1", "title": "Ordered task"}])
+        with patch.dict(
+            NEEDS_MAP, {"tasks_ordered": {"table": "tasks", "filter": {}, "order": "created_at", "limit": 5}}
+        ):
             engine._cache.clear()
             result = await engine.assemble_context("user-1", ["tasks_ordered"])
             assert "Ordered task" in result
@@ -223,17 +253,23 @@ class TestContextEngine:
 
     @pytest.mark.asyncio
     async def test_fetch_supabase_exception_returns_empty(self, engine, mock_supabase):
+        # Assert on _fetch (the unit the test name describes), not on
+        # assemble_context. _fetch swallows the driver error and returns []
+        # (context_engine.py:265-267). assemble_context then formats that empty
+        # list into the section's fallback string, so asserting "" there was
+        # really asserting that the fallback feature does not exist.
         builder = mock_supabase._builders["tasks"]
         builder.execute.side_effect = Exception("DB connection timeout")
-        result = await engine.assemble_context("user-1", ["tasks_pending"])
-        assert result == ""
+        assert await engine._fetch("user-1", "tasks_pending") == []
+
+        assembled = await engine.assemble_context("user-1", ["tasks_pending"])
+        assert assembled == "No pending tasks."
 
     @pytest.mark.asyncio
     async def test_fetch_supabase_returns_none_instead_of_list(self, engine, mock_supabase):
         builder = mock_supabase._builders["tasks"]
         builder.execute.return_value = MagicMock(data=None)
-        result = await engine.assemble_context("user-1", ["tasks_pending"])
-        assert result == ""
+        assert await engine._fetch("user-1", "tasks_pending") == []
 
     @pytest.mark.asyncio
     async def test_assemble_context_dict_with_unknown_need(self, engine):

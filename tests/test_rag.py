@@ -99,7 +99,7 @@ class TestIngest:
     @pytest.mark.asyncio
     async def test_ingest_text_passes_metadata(self, rag):
         rag._upsert_chunk = AsyncMock()
-        doc_id = await rag.ingest_text(
+        await rag.ingest_text(
             "Test content",
             metadata={"title": "Doc", "user_id": "u1"},
             source_table="tasks",
@@ -166,8 +166,12 @@ class TestSearch:
         rag.supabase.rpc.side_effect = Exception("RPC failed")
         mock_result = MagicMock()
         mock_result.data = [{"id": "1", "content": "fallback doc", "metadata": {}}]
-        rag.supabase.table.return_value.select.return_value.eq.return_value.limit.return_value.order.return_value.execute.return_value = mock_result
-        rag.supabase.table.return_value.select.return_value.limit.return_value.order.return_value.execute.return_value = mock_result
+        rag.supabase.table.return_value.select.return_value.eq.return_value.limit.return_value.order.return_value.execute.return_value = (
+            mock_result
+        )
+        rag.supabase.table.return_value.select.return_value.limit.return_value.order.return_value.execute.return_value = (
+            mock_result
+        )
 
         result = await rag.search("test")
         assert len(result) == 1
@@ -352,8 +356,12 @@ class TestEdgeCases:
     async def test_search_very_long_query(self, rag):
         long_query = "query " * 500
         rag.supabase.rpc.side_effect = Exception("RPC fail")
-        rag.supabase.table.return_value.select.return_value.eq.return_value.limit.return_value.order.return_value.execute.side_effect = Exception("also fail")
-        rag.supabase.table.return_value.select.return_value.limit.return_value.order.return_value.execute.side_effect = Exception("also fail")
+        rag.supabase.table.return_value.select.return_value.eq.return_value.limit.return_value.order.return_value.execute.side_effect = Exception(
+            "also fail"
+        )
+        rag.supabase.table.return_value.select.return_value.limit.return_value.order.return_value.execute.side_effect = Exception(
+            "also fail"
+        )
         with patch.object(rag, "_keyword_search", new=AsyncMock(return_value=[])):
             result = await rag.search(long_query)
             assert result == []

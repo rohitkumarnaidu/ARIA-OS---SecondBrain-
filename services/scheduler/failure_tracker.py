@@ -65,11 +65,7 @@ class FailureTracker:
                     for name, count in self._consecutive_failures.items()
                     if count > 0
                 ],
-                "open_circuits": [
-                    name
-                    for name, count in self._consecutive_failures.items()
-                    if count >= 5
-                ],
+                "open_circuits": [name for name, count in self._consecutive_failures.items() if count >= 5],
             }
 
 

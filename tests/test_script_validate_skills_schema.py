@@ -1,7 +1,6 @@
 """Tests for scripts/validate_skills_schema.py — schema validator."""
 
 
-
 class TestSchemaValidator:
     def test_initialization(self):
         from scripts.validate_skills_schema import SchemaValidator
@@ -196,7 +195,9 @@ class TestSchemaValidator:
         ddl_content += "ALTER TABLE user_skills ENABLE ROW LEVEL SECURITY;\n"
         ddl_content += "ALTER TABLE skills ENABLE ROW LEVEL SECURITY;\n"
         ddl_content += "PARTITION BY RANGE;\n"
-        ddl_content += "CREATE TABLE IF NOT EXISTS user_skill_evidence (\n  gap_size int GENERATED ALWAYS AS (1) STORED\n);\n"
+        ddl_content += (
+            "CREATE TABLE IF NOT EXISTS user_skill_evidence (\n  gap_size int GENERATED ALWAYS AS (1) STORED\n);\n"
+        )
         ddl_content += "no_overlapping_prereqs;\n"
         ddl_content += "PARTITION OF skill_events;\n"
         ddl_content += "PARTITION OF skill_webhook_queue;\n"
@@ -210,7 +211,6 @@ class TestSchemaValidator:
         v = SchemaValidator()
         v.validate_ddl_coverage(ddl_path)
         passes = v.checks["pass"]
-        fails = v.checks["fail"]
         assert passes > 0
 
     def test_validate_notify_triggers(self, tmp_path):

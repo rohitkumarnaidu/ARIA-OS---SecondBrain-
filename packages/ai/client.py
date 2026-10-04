@@ -211,7 +211,9 @@ class LLMClient:
                     if attempt < self.max_retries:
                         await asyncio.sleep(self.base_delay)
 
-        observability.record_error(agent_name, "LLMProviderUnavailableError", f"All providers failed: {last_error}", provider="all")
+        observability.record_error(
+            agent_name, "LLMProviderUnavailableError", f"All providers failed: {last_error}", provider="all"
+        )
         logger.error("All LLM providers exhausted", last_error=str(last_error))
         raise LLMProviderUnavailableError(f"All AI providers failed. Last error: {last_error}") from last_error
 
@@ -253,9 +255,13 @@ class LLMClient:
                     logger.debug("LLM stream request", provider=name, attempt=attempt, max_tokens=max_tokens)
 
                     if name == "ollama":
-                        gen = self._call_ollama_stream(sanitized_prompt, sanitized_system, max_tokens, temperature, signal)
+                        gen = self._call_ollama_stream(
+                            sanitized_prompt, sanitized_system, max_tokens, temperature, signal
+                        )
                     else:
-                        gen = self._call_claude_stream(sanitized_prompt, sanitized_system, max_tokens, temperature, signal)
+                        gen = self._call_claude_stream(
+                            sanitized_prompt, sanitized_system, max_tokens, temperature, signal
+                        )
 
                     async for token in gen:
                         if signal and signal.is_set():
@@ -318,7 +324,9 @@ class LLMClient:
                 except (LLMTimeoutError, httpx.RequestError, httpx.HTTPStatusError) as e:
                     last_error = e
                     delay = self.base_delay * (2 ** (attempt - 1))
-                    logger.warn("LLM stream error", provider=name, attempt=attempt, error=str(e), next_retry_delay=delay)
+                    logger.warn(
+                        "LLM stream error", provider=name, attempt=attempt, error=str(e), next_retry_delay=delay
+                    )
                     observability.record_error(agent_name, type(e).__name__, str(e), provider=name)
                     if attempt < self.max_retries:
                         await asyncio.sleep(delay)
@@ -329,7 +337,9 @@ class LLMClient:
                     if attempt < self.max_retries:
                         await asyncio.sleep(self.base_delay)
 
-        observability.record_error(agent_name, "LLMProviderUnavailableError", f"All providers failed for stream: {last_error}", provider="all")
+        observability.record_error(
+            agent_name, "LLMProviderUnavailableError", f"All providers failed for stream: {last_error}", provider="all"
+        )
         logger.error("All LLM providers exhausted for stream", last_error=str(last_error))
         raise LLMProviderUnavailableError(f"All AI providers failed. Last error: {last_error}")
 
@@ -427,7 +437,9 @@ class LLMClient:
 
         try:
             async with httpx.AsyncClient(timeout=self.claude_timeout) as client:
-                async with client.stream("POST", "https://api.anthropic.com/v1/messages", json=payload, headers=headers) as resp:
+                async with client.stream(
+                    "POST", "https://api.anthropic.com/v1/messages", json=payload, headers=headers
+                ) as resp:
                     if resp.status_code == 429:
                         retry_after = int(resp.headers.get("retry-after", 60))
                         raise LLMRateLimitError("Claude rate limited during stream", retry_after=retry_after)
@@ -658,7 +670,9 @@ class LLMClient:
             formatted.append(entry)
         return formatted
 
-    def parse_tool_calls_from_response(self, response: dict[str, Any], provider: str = "ollama") -> list[dict[str, Any]]:
+    def parse_tool_calls_from_response(
+        self, response: dict[str, Any], provider: str = "ollama"
+    ) -> list[dict[str, Any]]:
         if provider == "openai":
             return self._parse_openai_tool_calls(response)
         elif provider == "claude":
@@ -677,11 +691,13 @@ class LLMClient:
                     arguments = json.loads(function.get("arguments", "{}"))
                 except (json.JSONDecodeError, TypeError):
                     arguments = {}
-                calls.append({
-                    "tool_name": function.get("name", ""),
-                    "parameters": arguments,
-                    "request_id": tc.get("id"),
-                })
+                calls.append(
+                    {
+                        "tool_name": function.get("name", ""),
+                        "parameters": arguments,
+                        "request_id": tc.get("id"),
+                    }
+                )
         return calls
 
     def _parse_claude_tool_calls(self, response: dict[str, Any]) -> list[dict[str, Any]]:
@@ -689,11 +705,13 @@ class LLMClient:
         content = response.get("content", [])
         for block in content:
             if block.get("type") == "tool_use":
-                calls.append({
-                    "tool_name": block.get("name", ""),
-                    "parameters": block.get("input", {}),
-                    "request_id": block.get("id"),
-                })
+                calls.append(
+                    {
+                        "tool_name": block.get("name", ""),
+                        "parameters": block.get("input", {}),
+                        "request_id": block.get("id"),
+                    }
+                )
         return calls
 
     def _parse_generic_tool_calls(self, response: dict[str, Any]) -> list[dict[str, Any]]:
@@ -706,11 +724,13 @@ class LLMClient:
                 if isinstance(tc_list, dict):
                     tc_list = [tc_list]
                 for tc in tc_list:
-                    calls.append({
-                        "tool_name": tc.get("tool_name", tc.get("name", "")),
-                        "parameters": tc.get("parameters", tc.get("arguments", {})),
-                        "request_id": tc.get("request_id", tc.get("id")),
-                    })
+                    calls.append(
+                        {
+                            "tool_name": tc.get("tool_name", tc.get("name", "")),
+                            "parameters": tc.get("parameters", tc.get("arguments", {})),
+                            "request_id": tc.get("request_id", tc.get("id")),
+                        }
+                    )
         return calls
 
 

@@ -199,6 +199,7 @@ class TestCachedDecorator:
         assert call_count == 1
         # simulate expiry by clearing the underlying cache
         import shared.utils.cache as cache_mod
+
         await cache_mod.cache.clear()
         assert await quick() == "fresh"
         assert call_count == 2

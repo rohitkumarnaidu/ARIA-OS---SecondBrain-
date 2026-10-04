@@ -50,10 +50,10 @@ class Settings(BaseSettings):
     # External APIs
     brave_api_key: Optional[str] = None
 
-
     def validate_jwt_secret(self):
         if self.jwt_secret in ("your-secret-key-change-in-production", "local-dev-jwt-secret-not-for-production", ""):
             import warnings
+
             warnings.warn(
                 "CRITICAL: JWT_SECRET is set to a default/placeholder value. "
                 "Set a strong random secret in production. See .env.example for details.",

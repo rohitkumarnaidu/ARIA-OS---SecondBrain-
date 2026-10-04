@@ -121,10 +121,12 @@ async def test_opportunities_within_48h_send_alerts(mocker):
     now = datetime.now(timezone.utc)
     future = (now + timedelta(hours=12)).isoformat()
 
-    supabase = _FakeSupabase(opportunities_data=[
-        {"id": "opp1", "title": "Google Internship", "deadline": future, "match_score": 92, "user_id": "user1"},
-        {"id": "opp2", "title": "Microsoft Scholarship", "deadline": future, "match_score": 85, "user_id": "user1"},
-    ])
+    supabase = _FakeSupabase(
+        opportunities_data=[
+            {"id": "opp1", "title": "Google Internship", "deadline": future, "match_score": 92, "user_id": "user1"},
+            {"id": "opp2", "title": "Microsoft Scholarship", "deadline": future, "match_score": 85, "user_id": "user1"},
+        ]
+    )
     mocker.patch("crons.deadline_alert.get_supabase_client", return_value=supabase)
     _patch_datetime(mocker, now)
 
@@ -166,9 +168,11 @@ async def test_urgency_critical_below_24h(mocker):
     now = datetime.now(timezone.utc)
     near = (now + timedelta(hours=6)).isoformat()
 
-    supabase = _FakeSupabase(opportunities_data=[
-        {"id": "opp1", "title": "Critical Opp", "deadline": near, "match_score": 90, "user_id": "user1"},
-    ])
+    supabase = _FakeSupabase(
+        opportunities_data=[
+            {"id": "opp1", "title": "Critical Opp", "deadline": near, "match_score": 90, "user_id": "user1"},
+        ]
+    )
     mocker.patch("crons.deadline_alert.get_supabase_client", return_value=supabase)
     _patch_datetime(mocker, now)
 
@@ -185,9 +189,11 @@ async def test_urgency_warning_24_to_48h(mocker):
     now = datetime.now(timezone.utc)
     far = (now + timedelta(hours=36)).isoformat()
 
-    supabase = _FakeSupabase(opportunities_data=[
-        {"id": "opp1", "title": "Warning Opp", "deadline": far, "match_score": 75, "user_id": "user1"},
-    ])
+    supabase = _FakeSupabase(
+        opportunities_data=[
+            {"id": "opp1", "title": "Warning Opp", "deadline": far, "match_score": 75, "user_id": "user1"},
+        ]
+    )
     mocker.patch("crons.deadline_alert.get_supabase_client", return_value=supabase)
     _patch_datetime(mocker, now)
 
@@ -204,9 +210,11 @@ async def test_expired_deadlines_ignored(mocker):
     now = datetime.now(timezone.utc)
     past = (now - timedelta(hours=2)).isoformat()
 
-    supabase = _FakeSupabase(opportunities_data=[
-        {"id": "opp1", "title": "Expired Opp", "deadline": past, "match_score": 50, "user_id": "user1"},
-    ])
+    supabase = _FakeSupabase(
+        opportunities_data=[
+            {"id": "opp1", "title": "Expired Opp", "deadline": past, "match_score": 50, "user_id": "user1"},
+        ]
+    )
     mocker.patch("crons.deadline_alert.get_supabase_client", return_value=supabase)
     _patch_datetime(mocker, now)
 
@@ -220,6 +228,7 @@ async def test_expired_deadlines_ignored(mocker):
 @pytest.mark.asyncio
 async def test_supabase_error_handled_gracefully(mocker):
     """A Supabase error during fetch returns 0 without crashing."""
+
     class BrokenSupabase:
         def from_(self, table):
             raise Exception("DB connection failed")
@@ -239,9 +248,11 @@ async def test_hours_left_in_message(mocker):
     now = datetime.now(timezone.utc)
     deadline = (now + timedelta(hours=10)).isoformat()
 
-    supabase = _FakeSupabase(opportunities_data=[
-        {"id": "opp1", "title": "Test Opp", "deadline": deadline, "match_score": 88, "user_id": "user1"},
-    ])
+    supabase = _FakeSupabase(
+        opportunities_data=[
+            {"id": "opp1", "title": "Test Opp", "deadline": deadline, "match_score": 88, "user_id": "user1"},
+        ]
+    )
     mocker.patch("crons.deadline_alert.get_supabase_client", return_value=supabase)
     _patch_datetime(mocker, now)
 
@@ -252,7 +263,7 @@ async def test_hours_left_in_message(mocker):
     assert result == 1
 
 
-@ pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_notification_insert_exception_handled(mocker):
     """An exception during notification insert is caught and logged without crashing."""
     now = datetime.now(timezone.utc)

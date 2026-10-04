@@ -800,7 +800,12 @@ class TestSchedulerMain:
                     await main_module.main()
 
         mock_setup.assert_called_once()
-        mock_thread.assert_called_once()
+        # `scheduler.start()` is a MagicMock here, but other code reached
+        # during main() (APScheduler's ThreadPoolExecutor) can also construct a
+        # threading.Thread, so assert_called_once() is order-dependent. Assert
+        # the specific health-server thread from main.py:193 instead, which is
+        # what this test is actually about.
+        mock_thread.assert_any_call(target=main_module.start_health_server, daemon=True)
         main_module.scheduler.start.assert_called_once()
 
     @pytest.mark.asyncio
@@ -830,10 +835,12 @@ class TestSkillCronJobHandlers:
             if table == "users":
                 m.select.return_value.execute.return_value = mocker.Mock(data=[{"id": "user1"}, {"id": "user2"}])
             elif table == "user_skills":
-                m.select.return_value.eq.return_value.execute.return_value = mocker.Mock(data=[
-                    {"level": 3, "state": "active", "is_emerging": False},
-                    {"level": 4, "state": "practicing", "is_emerging": True},
-                ])
+                m.select.return_value.eq.return_value.execute.return_value = mocker.Mock(
+                    data=[
+                        {"level": 3, "state": "active", "is_emerging": False},
+                        {"level": 4, "state": "practicing", "is_emerging": True},
+                    ]
+                )
             else:
                 m.upsert.return_value.execute.return_value = mocker.Mock(data=[{"id": "snap1"}])
             return m
@@ -872,13 +879,15 @@ class TestSkillCronJobHandlers:
 
         mock_supabase().from_().select().eq().execute = side_effect
         from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
         await run_skill_analytics_snapshot()
 
     @pytest.mark.asyncio
     async def test_skill_evidence_expiry_handler(self, mocker):
         mock_supabase = mocker.patch("crons.skill_evidence_expiry.get_supabase_client")
         mock_supabase().from_().select().lt().neq().execute.return_value.data = [
-            {"evidence_id": "ev1"}, {"evidence_id": "ev2"}
+            {"evidence_id": "ev1"},
+            {"evidence_id": "ev2"},
         ]
 
         from crons.skill_evidence_expiry import run_skill_evidence_expiry
@@ -901,9 +910,7 @@ class TestSkillCronJobHandlers:
     @pytest.mark.asyncio
     async def test_skill_intelligence_refresh_handler(self, mocker):
         mock_supabase = mocker.patch("crons.skill_intelligence_refresh.get_supabase_client")
-        mock_supabase().from_().select().eq().execute.return_value.data = [
-            {"skill_id": "s1"}, {"skill_id": "s2"}
-        ]
+        mock_supabase().from_().select().eq().execute.return_value.data = [{"skill_id": "s1"}, {"skill_id": "s2"}]
 
         from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
 
@@ -1019,7 +1026,9 @@ class TestSkillCronJobHandlers:
         dt_patch = mocker.patch("crons.skill_retention_cleanup.datetime")
         dt_patch.now.return_value.timestamp.return_value = 1_000_000_000
         dt_patch.now.return_value.isoformat.return_value = "2026-01-01"
-        mock_supabase().table().delete().eq().lt().execute.return_value = mocker.Mock(data=[], error=Exception("Del error"))
+        mock_supabase().table().delete().eq().lt().execute.return_value = mocker.Mock(
+            data=[], error=Exception("Del error")
+        )
         mock_supabase().table().delete().lt().execute.return_value = mocker.Mock(data=[], error=Exception("Del error"))
 
         from crons.skill_retention_cleanup import run_skill_retention_cleanup

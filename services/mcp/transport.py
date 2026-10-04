@@ -56,9 +56,7 @@ class SSETransport:
         sse_transport = SseServerTransport("/mcp/")
 
         async def handle_sse(scope, receive, send):
-            async with sse_transport.connect_sse(
-                scope, receive, send
-            ) as (read_stream, write_stream):
+            async with sse_transport.connect_sse(scope, receive, send) as (read_stream, write_stream):
                 await self.server.server.run(
                     read_stream,
                     write_stream,
@@ -73,26 +71,30 @@ class SSETransport:
                 )
 
         async def handle_health(request):
-            return JSONResponse({
-                "status": "healthy",
-                "server": "aria-os-mcp",
-                "transport": "sse",
-                "uptime_seconds": self.server.uptime_seconds,
-                "tools_count": len(self.server.tool_registry.list_tools()),
-            })
+            return JSONResponse(
+                {
+                    "status": "healthy",
+                    "server": "aria-os-mcp",
+                    "transport": "sse",
+                    "uptime_seconds": self.server.uptime_seconds,
+                    "tools_count": len(self.server.tool_registry.list_tools()),
+                }
+            )
 
         async def handle_tools_list(request):
             tools = self.server.tool_registry.list_tools()
-            return JSONResponse({
-                "tools": [
-                    {
-                        "name": t.name,
-                        "description": t.description,
-                        "input_schema": t.inputSchema,
-                    }
-                    for t in tools
-                ]
-            })
+            return JSONResponse(
+                {
+                    "tools": [
+                        {
+                            "name": t.name,
+                            "description": t.description,
+                            "input_schema": t.inputSchema,
+                        }
+                        for t in tools
+                    ]
+                }
+            )
 
         async def handle_tool_call(request):
             try:
@@ -106,17 +108,15 @@ class SSETransport:
                 return JSONResponse({"error": "Missing 'name' field"}, status_code=400)
 
             result = await self.server.tool_registry.execute_tool(name, arguments)
-            return JSONResponse({
-                "content": [
-                    {"type": r.type, "text": r.text}
-                    for r in result
-                ]
-            })
+            return JSONResponse({"content": [{"type": r.type, "text": r.text} for r in result]})
 
         routes = [
-            Mount("/mcp", routes=[
-                Route("/sse", endpoint=handle_sse),
-            ]),
+            Mount(
+                "/mcp",
+                routes=[
+                    Route("/sse", endpoint=handle_sse),
+                ],
+            ),
             Route("/health", endpoint=handle_health),
             Route("/tools", endpoint=handle_tools_list),
             Route("/tools/{name}", endpoint=handle_tool_call, methods=["POST"]),

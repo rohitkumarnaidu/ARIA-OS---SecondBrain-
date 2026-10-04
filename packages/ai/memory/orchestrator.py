@@ -5,7 +5,8 @@ from shared.utils.logger import logger
 from ai.memory.tiers import BufferMemory, WorkingMemory, EpisodicMemory, SemanticMemory, ProceduralMemory
 from ai.memory.compression import MemoryCompressor
 from ai.memory.retrieval import MemoryRetriever
-from ai.client import llm
+from ai.client import llm, LLMProviderUnavailableError
+from ai.prompt_loader import prompts
 
 
 def _utc_now() -> str:
@@ -13,16 +14,35 @@ def _utc_now() -> str:
 
 
 class MemoryOrchestrator:
-    """Single entry point coordinating all 5 memory tiers with graceful degradation."""
+    """Single entry point coordinating all 5 memory tiers with graceful degradation.
 
-    def __init__(self):
+    TENANCY: an orchestrator belongs to exactly one user. Its in-memory tiers
+    (``buffer`` holding raw conversation turns, ``working`` holding live
+    context) are bound to that user at construction, so one instance can never
+    serve another user's conversation history and ``prune_all()`` can never
+    clear another user's buffer. ``memory_agent.get_orchestrator(user_id)``
+    resolves one instance per user.
+
+    The in-memory tiers honour ``self.user_id``; the persisted tiers
+    (episodic / semantic / procedural) still take ``user_id`` per call because
+    every query they issue is explicitly scoped to the caller.
+    """
+
+    def __init__(self, user_id: str):
+        if not user_id or not isinstance(user_id, str):
+            raise ValueError("MemoryOrchestrator requires a non-empty user_id")
+        self.user_id = user_id
         self.buffer = BufferMemory()
-        self.working = WorkingMemory()
+        self.working = WorkingMemory(user_id=user_id)
         self.episodic = EpisodicMemory()
         self.semantic = SemanticMemory()
         self.procedural = ProceduralMemory()
         self.compressor = MemoryCompressor()
         self.retriever = MemoryRetriever()
+
+    def _owns(self, user_id: str) -> bool:
+        """True when ``user_id`` is this orchestrator's bound tenant."""
+        return user_id == self.user_id
 
     async def store_interaction(
         self,
@@ -33,15 +53,24 @@ class MemoryOrchestrator:
     ) -> Dict[str, Any]:
         results: Dict[str, Any] = {"buffer": False, "working": False, "episodic": False}
 
-        self.buffer.add(user_msg, ai_msg, metadata=context)
-        results["buffer"] = True
-        results["working"] = True
-
-        if context:
-            for key, value in context.items():
-                if isinstance(value, (str, int, float, bool)):
-                    self.working.set(f"ctx:{key}", value, ttl=43200)
+        # In-memory tiers are bound to self.user_id. If a caller hands us a
+        # different tenant we must not write their turns into this owner's
+        # buffer or working cache — fail closed instead.
+        if self._owns(user_id):
+            self.buffer.add(user_msg, ai_msg, metadata=context)
+            results["buffer"] = True
             results["working"] = True
+            if context:
+                for key, value in context.items():
+                    if isinstance(value, (str, int, float, bool)):
+                        self.working.set(f"ctx:{key}", value, ttl=43200, user_id=self.user_id)
+                results["working"] = True
+        else:
+            logger.error(
+                "Rejected interaction for a foreign tenant",
+                owner_user_id=self.user_id,
+                requested_user_id=user_id,
+            )
 
         try:
             importance = self._assess_importance(user_msg, ai_msg)
@@ -59,6 +88,7 @@ class MemoryOrchestrator:
                     user_id=user_id,
                     session_data={"user_msg": user_msg, "ai_msg": ai_msg, "context": context},
                     summary=user_msg[:200],
+                    tags=context.get("tags") or ["chat"],
                 )
                 if episode_id:
                     results["episodic"] = True
@@ -82,8 +112,16 @@ class MemoryOrchestrator:
             "procedural": [],
         }
 
-        result["buffer"] = self.buffer.get_context(k=min(k, 5))
-        result["working"] = self.working.get_all()
+        if self._owns(user_id):
+            result["buffer"] = self.buffer.get_context(k=min(k, 5))
+            result["working"] = self.working.get_all(user_id=self.user_id)
+        else:
+            logger.error(
+                "Refused context read for a foreign tenant",
+                owner_user_id=self.user_id,
+                requested_user_id=user_id,
+            )
+            return result
 
         try:
             retrieved = await self.retriever.hybrid_retrieve(user_id, query, k=k)
@@ -127,9 +165,7 @@ class MemoryOrchestrator:
             logger.warn("Procedural pattern check failed", user_id=user_id, error=str(e))
             results["procedural_patterns"] = 0
 
-        total = sum(
-            v if isinstance(v, int) else v.get("merged", 0) for v in results.values()
-        )
+        total = sum(v if isinstance(v, int) else v.get("merged", 0) for v in results.values())
         results["total_actions"] = total
         logger.info("Consolidation complete", user_id=user_id, results=results)
         return results
@@ -173,13 +209,21 @@ class MemoryOrchestrator:
     async def prune_all(self, user_id: str) -> Dict[str, Any]:
         results: Dict[str, Any] = {}
         try:
-            self.buffer.clear()
-            results["buffer_cleared"] = True
+            if self._owns(user_id):
+                self.buffer.clear()
+                results["buffer_cleared"] = True
+            else:
+                logger.error(
+                    "Refused buffer clear for a foreign tenant",
+                    owner_user_id=self.user_id,
+                    requested_user_id=user_id,
+                )
+                results["buffer_cleared"] = False
         except Exception as e:
             logger.warn("Buffer clear failed", error=str(e))
             results["buffer_cleared"] = False
         try:
-            expired = self.working.clear_expired()
+            expired = self.working.clear_expired(user_id=self.user_id)
             results["working_expired"] = expired
         except Exception as e:
             logger.warn("Working memory clear failed", error=str(e))
@@ -198,19 +242,29 @@ class MemoryOrchestrator:
         user_msg: str,
         ai_msg: str,
     ) -> int:
+        loaded = prompts.get_agent("memory_agent")
+        if loaded:
+            system_prompt = loaded.system_prompt
+        else:
+            system_prompt = "You are a fact extraction system. Output only valid JSON arrays."
+        prompt = (
+            "Extract factual statements from this conversation that should be remembered. "
+            "Return a JSON array of objects with keys: 'fact', 'category', 'confidence' (0-1). "
+            "Only extract clear, useful facts. Return [] if nothing to extract.\n\n"
+            f"User: {user_msg[:500]}\nAI: {ai_msg[:500]}"
+        )
         try:
-            prompt = (
-                "Extract factual statements from this conversation that should be remembered. "
-                "Return a JSON array of objects with keys: 'fact', 'category', 'confidence' (0-1). "
-                "Only extract clear, useful facts. Return [] if nothing to extract.\n\n"
-                f"User: {user_msg[:500]}\nAI: {ai_msg[:500]}"
-            )
-            system = "You are a fact extraction system. Output only valid JSON arrays."
-            response = await llm.generate_json(prompt, system=system, max_tokens=1024, temperature=0.2)
-        except Exception:
+            response = await llm.generate_json(prompt, system=system_prompt, max_tokens=1024, temperature=0.2)
+        except LLMProviderUnavailableError:
+            logger.warn("LLM unavailable, skipping fact extraction", user_id=user_id)
+            response = {}
+        except Exception as e:
+            logger.error("Fact extraction failed", user_id=user_id, error=str(e))
             response = {}
 
-        items = response if isinstance(response, list) else response.get("items", response.get("facts", []))
+        if not isinstance(response, (list, dict)):
+            response = {}
+        items = response.get("items", response.get("facts", [])) if isinstance(response, dict) else response
         if not isinstance(items, list):
             items = []
 

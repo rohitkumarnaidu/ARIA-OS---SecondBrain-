@@ -14,6 +14,7 @@ pytest.importorskip("apscheduler")
 # FailureTracker
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @pytest.mark.scheduler
 class TestFailureTrackerCoverage:
     """Covers remaining paths in failure_tracker.py (lines 20-27, 30-32, 35-36, 39-40, 51-52, 55-56, 59-60)."""
@@ -170,6 +171,7 @@ class TestFailureTrackerCoverage:
 # ═══════════════════════════════════════════════════════════════════════════════
 # Alerting
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 @pytest.mark.scheduler
 class TestAlertingCoverage:
@@ -337,12 +339,14 @@ class TestAlertingCoverage:
         mocker.patch.object(alerting, "_get_client", AsyncMock(return_value=mock_client))
         mocker.patch("alerting.logger")
 
-        await alerting._deliver_webhook({
-            "severity": "CRITICAL",
-            "message": "Server down",
-            "job_name": "checker",
-            "extra_field": "val",
-        })
+        await alerting._deliver_webhook(
+            {
+                "severity": "CRITICAL",
+                "message": "Server down",
+                "job_name": "checker",
+                "extra_field": "val",
+            }
+        )
 
         mock_client.post.assert_awaited_once()
         args, kwargs = mock_client.post.call_args
@@ -362,10 +366,12 @@ class TestAlertingCoverage:
         mocker.patch.object(alerting, "_get_client", AsyncMock(return_value=mock_client))
         mocker.patch("alerting.logger")
 
-        await alerting._deliver_webhook({
-            "severity": "WARNING",
-            "message": "Degraded",
-        })
+        await alerting._deliver_webhook(
+            {
+                "severity": "WARNING",
+                "message": "Degraded",
+            }
+        )
 
         args, kwargs = mock_client.post.call_args
         assert kwargs["json"]["attachments"][0]["color"] == "warning"
@@ -381,10 +387,12 @@ class TestAlertingCoverage:
         mocker.patch.object(alerting, "_get_client", AsyncMock(return_value=mock_client))
         mocker.patch("alerting.logger")
 
-        await alerting._deliver_webhook({
-            "severity": "INFO",
-            "message": "All good",
-        })
+        await alerting._deliver_webhook(
+            {
+                "severity": "INFO",
+                "message": "All good",
+            }
+        )
 
         args, kwargs = mock_client.post.call_args
         assert kwargs["json"]["attachments"][0]["color"] == "good"
@@ -508,6 +516,7 @@ class TestAlertingCoverage:
     async def test_flush_pending(self):
         """flush_pending is a no-op placeholder."""
         from alerting import alerting
+
         await alerting.flush_pending()
 
     @pytest.mark.asyncio
@@ -529,6 +538,7 @@ class TestAlertingCoverage:
 # ═══════════════════════════════════════════════════════════════════════════════
 # Health Check
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 @pytest.mark.scheduler
 class TestHealthCheckCoverage:
@@ -557,13 +567,15 @@ class TestHealthCheckCoverage:
         """Line 19-69: All endpoints respond, status = healthy."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -577,6 +589,7 @@ class TestHealthCheckCoverage:
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_open.assert_called_once()
@@ -586,13 +599,15 @@ class TestHealthCheckCoverage:
         """Lines 31-32: Supabase unavailable logged."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         self._mock_supabase.side_effect = Exception("DB connection refused")
         mock_logger = mocker.patch("crons.health_check.logger")
@@ -608,6 +623,7 @@ class TestHealthCheckCoverage:
         mocker.patch("builtins.open", MagicMock())
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_logger.warn.assert_called_with("Health check: Supabase unavailable", error="DB connection refused")
@@ -617,13 +633,15 @@ class TestHealthCheckCoverage:
         """Lines 40-43: Ollama HTTP error returns False."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -637,6 +655,7 @@ class TestHealthCheckCoverage:
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         # Should reach file write with ollama_ok=False
@@ -647,13 +666,15 @@ class TestHealthCheckCoverage:
         """Lines 42-43: Ollama request throws exception, ollama_ok = False."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -667,6 +688,7 @@ class TestHealthCheckCoverage:
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_open.assert_called_once()
@@ -677,22 +699,24 @@ class TestHealthCheckCoverage:
         os.environ["USE_LOCAL_AI"] = "false"
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
-        mock_client = AsyncMock()
         mock_ctx = MagicMock()
         mocker.patch("crons.health_check.httpx.AsyncClient", return_value=mock_ctx)
         mock_open = mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_open.assert_called_once()
@@ -704,13 +728,15 @@ class TestHealthCheckCoverage:
         """Lines 66-67: File write failure logged."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -720,28 +746,29 @@ class TestHealthCheckCoverage:
         mock_ctx.__aexit__ = AsyncMock(return_value=None)
         mocker.patch("crons.health_check.httpx.AsyncClient", return_value=mock_ctx)
 
-        mock_open = mocker.patch("builtins.open", side_effect=OSError("Permission denied"))
+        mocker.patch("builtins.open", side_effect=OSError("Permission denied"))
         mock_logger = mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
-        mock_logger.error.assert_called_with(
-            "Failed to write health status file", error="Permission denied"
-        )
+        mock_logger.error.assert_called_with("Failed to write health status file", error="Permission denied")
 
     @pytest.mark.asyncio
     async def test_health_check_open_circuits_triggers_alert(self, mocker):
         """Lines 45-46, 71-79: Open circuits cause degraded status and alert."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": ["checker_job"],
-                "failing_jobs": [{"job_name": "checker_job", "consecutive_failures": 5}],
-                "total_daily_failures": 5,
-                "consecutive_failures": {"checker_job": 5},
-                "daily_failures": {"checker_job": 5},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": ["checker_job"],
+                    "failing_jobs": [{"job_name": "checker_job", "consecutive_failures": 5}],
+                    "total_daily_failures": 5,
+                    "consecutive_failures": {"checker_job": 5},
+                    "daily_failures": {"checker_job": 5},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -756,6 +783,7 @@ class TestHealthCheckCoverage:
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_alert.assert_awaited_once()
@@ -765,13 +793,15 @@ class TestHealthCheckCoverage:
         """Lines 71: No open circuits skips alerting."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 0,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -786,6 +816,7 @@ class TestHealthCheckCoverage:
         mocker.patch("crons.health_check.logger")
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
         mock_alert.assert_not_called()
@@ -795,13 +826,15 @@ class TestHealthCheckCoverage:
         """Line 69: Logger receives completion info."""
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [],
-                "failing_jobs": [],
-                "total_daily_failures": 2,
-                "consecutive_failures": {},
-                "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 2,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
 
         mock_client = AsyncMock()
@@ -815,16 +848,16 @@ class TestHealthCheckCoverage:
         mocker.patch("builtins.open", MagicMock())
 
         from crons.health_check import run_health_check
+
         await run_health_check()
 
-        mock_logger.info.assert_called_with(
-            "Health check completed", status="healthy", failing_jobs=0
-        )
+        mock_logger.info.assert_called_with("Health check completed", status="healthy", failing_jobs=0)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Main Module (wrap, listener, health_server, write_initial)
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 @pytest.mark.scheduler
 class TestMainCoverage:
@@ -927,10 +960,13 @@ class TestMainCoverage:
         result = await wrapped()
         assert result == {"key": "value", "num": 42}
 
-    @pytest.mark.parametrize("event_code,event_attr,expected_msg", [
-        ("EVENT_JOB_ERROR", {"exception": ValueError("bad")}, "Unhandled exception in job"),
-        ("EVENT_JOB_MISSED", {"scheduled_run_time": "2026-01-01T00:00:00"}, "Cron job missed its scheduled run"),
-    ])
+    @pytest.mark.parametrize(
+        "event_code,event_attr,expected_msg",
+        [
+            ("EVENT_JOB_ERROR", {"exception": ValueError("bad")}, "Unhandled exception in job"),
+            ("EVENT_JOB_MISSED", {"scheduled_run_time": "2026-01-01T00:00:00"}, "Cron job missed its scheduled run"),
+        ],
+    )
     @pytest.mark.asyncio
     async def test_scheduler_listener(self, mocker, event_code, event_attr, expected_msg):
         """Lines 73-92: Listener handles EVENT_JOB_ERROR and EVENT_JOB_MISSED."""
@@ -1012,9 +1048,7 @@ class TestMainCoverage:
 
         write_initial_health()
 
-        mock_logger.warn.assert_called_with(
-            "Failed to write initial health status", error="Disk full"
-        )
+        mock_logger.warn.assert_called_with("Failed to write initial health status", error="Disk full")
 
     def test_health_handler_ready_healthy(self, mocker):
         """Line 157: /health/ready returns 200 when status == healthy."""
@@ -1146,16 +1180,23 @@ class TestMainCoverage:
 # Main Module — Job Registration Details
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @pytest.mark.scheduler
 class TestMainJobRegistration:
     """Covers remaining paths in main.py job definitions."""
 
-    def test_all_14_jobs_have_correct_triggers(self):
-        """Verify all 14 job definitions have valid CronTrigger instances."""
+    def test_all_jobs_have_correct_triggers(self):
+        """Verify all job definitions have valid CronTrigger instances.
+
+        Count is 15, not 14: JOB_DEFINITIONS in services/scheduler/main.py
+        grew by `memory_consolidation` (weekly deep consolidation, Sun 02:00)
+        on top of the 5 skills jobs. AGENTS.md sections 3 / 9.3 documents 15
+        cron jobs.
+        """
         from main import JOB_DEFINITIONS
         from apscheduler.triggers.cron import CronTrigger
 
-        assert len(JOB_DEFINITIONS) == 14
+        assert len(JOB_DEFINITIONS) == 15
         for func, trigger, job_id, job_name in JOB_DEFINITIONS:
             assert callable(func), f"{job_id} func is not callable"
             assert isinstance(trigger, CronTrigger), f"{job_id} trigger is not CronTrigger"
@@ -1212,13 +1253,13 @@ class TestMainJobRegistration:
         assert mock_add_listener.call_args[0][1] is not None
 
     @pytest.mark.asyncio
-    async def test_setup_cron_jobs_adds_all_14_jobs(self, mocker):
-        """All 14 jobs are added to the scheduler."""
+    async def test_setup_cron_jobs_adds_all_jobs(self, mocker):
+        """All 15 jobs are added to the scheduler."""
         import main as main_module
 
         main_module.scheduler = MagicMock()
         jobs = []
-        for i in range(14):
+        for i in range(15):
             j = MagicMock(id=f"job_{i}", name=f"Job {i}", spec=["id", "name"])
             j.name = f"Job {i}"
             jobs.append(j)
@@ -1227,7 +1268,7 @@ class TestMainJobRegistration:
 
         main_module.setup_cron_jobs()
 
-        assert main_module.scheduler.add_job.call_count == 14
+        assert main_module.scheduler.add_job.call_count == 15
 
     @pytest.mark.asyncio
     async def test_scheduler_starts_without_error(self, mocker):

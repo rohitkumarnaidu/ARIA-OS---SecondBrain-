@@ -137,5 +137,3 @@ async def delete_sleep(sleep_id: str, current_user=Depends(get_current_user)):
     if response.error:
         raise HTTPException(status_code=400, detail=response.error.message)
     return None
-
-

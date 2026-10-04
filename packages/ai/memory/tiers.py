@@ -1,5 +1,27 @@
+"""Memory tier implementations (tiers 0-4) for the Second Brain memory system.
+
+PERFORMANCE WARNING — blocking I/O inside ``async def``
+--------------------------------------------------------
+Every coroutine in this module is declared ``async`` but drives the
+SYNCHRONOUS ``postgrest-py`` client, whose ``.execute()`` is a blocking HTTP
+round trip. There is no awaitable PostgREST/Supabase client in this project's
+dependency set, so these calls cannot simply be awaited. Invoked directly from
+a FastAPI route they block the event loop: one slow query stalls every other
+concurrent request served by the same worker for the duration of the round
+trip.
+
+Migration path — do NOT do this piecemeal, it changes error semantics:
+wrap each Supabase interaction in ``await asyncio.to_thread(...)`` (or
+``loop.run_in_executor``), or migrate to an async PostgREST client. Until
+then, treat this as a latency/scalability issue rather than a correctness one:
+the results are correct, they just occupy the loop while in flight. The write
+sites below are additionally bounded (``_DECAY_MAX_ROWS``) so no single
+request can fan out into an unbounded number of round trips.
+"""
+
 import hashlib
 import json
+import re
 import uuid
 from collections import OrderedDict
 from datetime import datetime, timezone, timedelta
@@ -7,6 +29,79 @@ from typing import Optional, Dict, Any, List, Tuple
 
 from config.core.supabase import get_supabase_client
 from shared.utils.logger import logger
+
+# Upper bound on rows any single batched write fan-out will touch. Bounds the
+# worst-case round-trip count of decay_all() to (_DECAY_MAX_ROWS / _WRITE_CHUNK).
+_DECAY_MAX_ROWS = 500
+_WRITE_CHUNK = 50
+# Confidence never decays below this floor.
+_CONFIDENCE_FLOOR = 0.05
+# Cap on the number of source summaries folded onto a single episodic survivor.
+# Bounded so the survivor's JSONB payload cannot grow without limit while no
+# summary is ever discarded — overflow simply starts a new survivor.
+_EPISODIC_MERGE_BATCH = 25
+
+_EPISODIC_TAG_STOPWORDS = frozenset(
+    {
+        "about",
+        "after",
+        "again",
+        "also",
+        "been",
+        "before",
+        "being",
+        "between",
+        "both",
+        "does",
+        "doing",
+        "done",
+        "each",
+        "from",
+        "have",
+        "having",
+        "here",
+        "into",
+        "just",
+        "like",
+        "make",
+        "more",
+        "most",
+        "much",
+        "must",
+        "need",
+        "only",
+        "other",
+        "over",
+        "same",
+        "should",
+        "some",
+        "such",
+        "than",
+        "that",
+        "them",
+        "then",
+        "there",
+        "these",
+        "they",
+        "this",
+        "those",
+        "through",
+        "under",
+        "very",
+        "want",
+        "were",
+        "what",
+        "when",
+        "where",
+        "which",
+        "while",
+        "will",
+        "with",
+        "would",
+        "your",
+        "yours",
+    }
+)
 
 
 def _utc_now() -> str:
@@ -26,6 +121,52 @@ def _make_key(*parts: str) -> str:
     return hashlib.sha256(raw.encode()).hexdigest()[:24]
 
 
+def _make_working_key(user_id: str, key: str) -> str:
+    """Storage key for a working-memory entry.
+
+    ``user_id`` is part of the digest so two tenants can never collide on the
+    ``working_memory`` PRIMARY KEY, and so the row a user reads back is always
+    the row they wrote.
+    """
+    return _make_key("wm", user_id, key)
+
+
+def _decode_value(row: Dict[str, Any]) -> Dict[str, Any]:
+    """Decode a memory row's ``value`` column, tolerating both writer shapes."""
+    raw = row.get("value", "{}")
+    if isinstance(raw, str):
+        try:
+            parsed = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+    return raw if isinstance(raw, dict) else {}
+
+
+def _derive_episodic_tags(text: str, limit: int = 4) -> List[str]:
+    """Derive stable topical tags from episode content.
+
+    ``store_episode`` used to force ``tags = ["episodic"]`` on every row, so
+    ``consolidate()``'s tag-tuple grouping collapsed the whole episodic tier
+    into one group and deleted all but a single row. Tags are now derived from
+    the episode text (caller-supplied tags still win) so genuinely related
+    episodes group together and unrelated ones do not.
+    """
+    if not text:
+        return []
+    counts: Dict[str, int] = {}
+    first_seen: List[str] = []
+    for word in re.findall(r"[a-z0-9']+", text.lower()):
+        if len(word) < 4 or len(word) > 24 or word in _EPISODIC_TAG_STOPWORDS:
+            continue
+        if word not in counts:
+            first_seen.append(word)
+        counts[word] = counts.get(word, 0) + 1
+    # Stable sort: ties keep first-occurrence order, so tags are deterministic.
+    ranked = sorted(first_seen, key=lambda w: -counts[w])
+    return ranked[:limit]
+
+
 class BufferMemory:
     """Tier 0: Session-level ephemeral ring buffer of recent conversation turns."""
 
@@ -36,26 +177,32 @@ class BufferMemory:
 
     def add(self, user_msg: str, ai_msg: str, metadata: Optional[Dict[str, Any]] = None) -> None:
         now = _utc_now()
-        self._messages.append({
-            "role": "user",
-            "content": user_msg,
-            "metadata": metadata or {},
-            "timestamp": now,
-        })
-        self._messages.append({
-            "role": "assistant",
-            "content": ai_msg,
-            "metadata": metadata or {},
-            "timestamp": now,
-        })
+        self._messages.append(
+            {
+                "role": "user",
+                "content": user_msg,
+                "metadata": metadata or {},
+                "timestamp": now,
+            }
+        )
+        self._messages.append(
+            {
+                "role": "assistant",
+                "content": ai_msg,
+                "metadata": metadata or {},
+                "timestamp": now,
+            }
+        )
         while len(self._messages) > self.capacity * 2:
             removed = self._messages.pop(0)
-            logger.debug("Buffer evicted oldest message", role=removed.get("role"), preview=removed.get("content", "")[:50])
+            logger.debug(
+                "Buffer evicted oldest message", role=removed.get("role"), preview=removed.get("content", "")[:50]
+            )
 
     def get_context(self, k: int = 10) -> List[Dict[str, Any]]:
         if k <= 0:
             return []
-        return list(self._messages[-k * 2:])
+        return list(self._messages[-k * 2 :])
 
     def get_token_count(self) -> int:
         total = 0
@@ -100,31 +247,60 @@ class BufferMemory:
 
 
 class WorkingMemory:
-    """Tier 1: Day-level key-value store with TTL, backed by Supabase."""
+    """Tier 1: Day-level key-value store with TTL, backed by Supabase.
 
-    def __init__(self, default_ttl: int = 43200):
+    Every method is tenant-scoped. ``user_id`` is mandatory: it is bound at
+    construction *and* threaded into the storage key digest and the query
+    filter, so no two users can read, overwrite, or expire each other's
+    entries. An explicit per-call ``user_id`` that disagrees with the bound
+    owner is rejected rather than silently honoured — a mismatch is precisely
+    the cross-tenant access this class must never perform.
+    """
+
+    def __init__(self, user_id: str, default_ttl: int = 43200):
+        if not user_id or not isinstance(user_id, str):
+            raise ValueError("WorkingMemory requires a non-empty user_id")
+        self.user_id = user_id
         self.default_ttl = default_ttl
         self._local: Dict[str, Tuple[Any, float]] = OrderedDict()
         self._dirty_keys: set = set()
 
-    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+    def _resolve_owner(self, user_id: Optional[str]) -> str:
+        owner = user_id if user_id is not None else self.user_id
+        if not owner or not isinstance(owner, str):
+            raise ValueError("WorkingMemory requires a non-empty user_id")
+        if owner != self.user_id:
+            raise ValueError("WorkingMemory user_id does not match the bound owner")
+        return owner
+
+    def set(
+        self,
+        key: str,
+        value: Any,
+        ttl: Optional[int] = None,
+        user_id: Optional[str] = None,
+    ) -> None:
+        owner = self._resolve_owner(user_id)
         ttl = ttl or self.default_ttl
         expires_at = _utc_dt() + timedelta(seconds=ttl)
         self._local[key] = (value, expires_at.timestamp())
         self._dirty_keys.add(key)
         try:
             supabase = get_supabase_client()
-            supabase.from_("working_memory").upsert({
-                "key": _make_key("wm", key),
-                "user_id": "system",
-                "type": "working",
-                "value": json.dumps({"key": key, "value": value}),
-                "expires_at": expires_at.isoformat(),
-            }).execute()
+            supabase.from_("working_memory").upsert(
+                {
+                    "key": _make_working_key(owner, key),
+                    "user_id": owner,
+                    "type": "working",
+                    "value": json.dumps({"key": key, "value": value}),
+                    "expires_at": expires_at.isoformat(),
+                }
+            ).execute()
         except Exception as e:
-            logger.warn("WorkingMemory.set supabase failed", key=key, error=str(e))
+            logger.warn("WorkingMemory.set supabase failed", key=key, user_id=owner, error=str(e))
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str, user_id: Optional[str] = None) -> Optional[Any]:
+        owner = self._resolve_owner(user_id)
         if key in self._local:
             value, expires = self._local[key]
             if datetime.fromtimestamp(expires, tz=timezone.utc) > _utc_dt():
@@ -132,16 +308,23 @@ class WorkingMemory:
             del self._local[key]
         try:
             supabase = get_supabase_client()
-            result = supabase.from_("working_memory").select("value").eq("key", _make_key("wm", key)).execute()
+            result = (
+                supabase.from_("working_memory")
+                .select("value")
+                .eq("user_id", owner)
+                .eq("key", _make_working_key(owner, key))
+                .execute()
+            )
             if result.data:
                 parsed = json.loads(result.data[0]["value"])
                 self._local[key] = (parsed["value"], _utc_dt().timestamp() + self.default_ttl)
                 return parsed["value"]
         except Exception as e:
-            logger.warn("WorkingMemory.get supabase failed", key=key, error=str(e))
+            logger.warn("WorkingMemory.get supabase failed", key=key, user_id=owner, error=str(e))
         return None
 
-    def get_all(self) -> Dict[str, Any]:
+    def get_all(self, user_id: Optional[str] = None) -> Dict[str, Any]:
+        self._resolve_owner(user_id)
         result: Dict[str, Any] = {}
         now = _utc_dt()
         expired_keys = []
@@ -154,19 +337,21 @@ class WorkingMemory:
             del self._local[k]
         return result
 
-    def clear_expired(self) -> int:
+    def clear_expired(self, user_id: Optional[str] = None) -> int:
+        owner = self._resolve_owner(user_id)
         now = _utc_dt()
         expired = [k for k, (_, e) in self._local.items() if datetime.fromtimestamp(e, tz=timezone.utc) <= now]
         for k in expired:
             del self._local[k]
         try:
             supabase = get_supabase_client()
-            supabase.from_("working_memory").delete().lt("expires_at", _utc_now()).execute()
+            supabase.from_("working_memory").delete().eq("user_id", owner).lt("expires_at", _utc_now()).execute()
         except Exception as e:
-            logger.warn("WorkingMemory.clear_expired supabase failed", error=str(e))
+            logger.warn("WorkingMemory.clear_expired supabase failed", user_id=owner, error=str(e))
         return len(expired)
 
-    def snapshot(self) -> Dict[str, Any]:
+    def snapshot(self, user_id: Optional[str] = None) -> Dict[str, Any]:
+        self._resolve_owner(user_id)
         result: Dict[str, Any] = {}
         now = _utc_dt()
         for key, (value, expires) in self._local.items():
@@ -174,19 +359,24 @@ class WorkingMemory:
                 result[key] = value
         return result
 
-    def clear(self) -> None:
+    def clear(self, user_id: Optional[str] = None) -> None:
+        self._resolve_owner(user_id)
         self._local.clear()
         self._dirty_keys.clear()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, user_id: Optional[str] = None) -> Dict[str, Any]:
         return {
+            "user_id": self.user_id,
             "default_ttl": self.default_ttl,
-            "entries": self.snapshot(),
+            "entries": self.snapshot(user_id),
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "WorkingMemory":
-        instance = cls(default_ttl=data.get("default_ttl", 43200))
+    def from_dict(cls, data: Dict[str, Any], user_id: Optional[str] = None) -> "WorkingMemory":
+        owner = user_id or data.get("user_id")
+        if not owner:
+            raise ValueError("WorkingMemory.from_dict requires a user_id")
+        instance = cls(user_id=owner, default_ttl=data.get("default_ttl", 43200))
         for key, value in data.get("entries", {}).items():
             instance.set(key, value)
         return instance
@@ -200,6 +390,35 @@ class EpisodicMemory:
 
     def __init__(self):
         self._table = "memory"
+
+    @staticmethod
+    def _resolve_tags(
+        tags: Optional[List[str]],
+        summary: str,
+        session_data: Dict[str, Any],
+    ) -> List[str]:
+        """Build the tag set for an episode.
+
+        The ``"episodic"`` tier marker is always present so ``consolidate()``
+        can exclude it from the grouping key. Caller-supplied topical tags win;
+        otherwise tags are derived from the episode content. Falling back to the
+        bare marker alone (the previous behaviour) is what made every episode
+        land in one consolidation group.
+        """
+        resolved: List[str] = ["episodic"]
+        for tag in tags or []:
+            normalised = str(tag).strip().lower()
+            if normalised and normalised not in resolved:
+                resolved.append(normalised)
+        if len(resolved) == 1:
+            try:
+                content = json.dumps(session_data, default=str)
+            except (TypeError, ValueError):
+                content = str(session_data)
+            for derived in _derive_episodic_tags(f"{summary or ''} {content}"):
+                if derived not in resolved:
+                    resolved.append(derived)
+        return resolved
 
     async def store_episode(
         self,
@@ -217,7 +436,7 @@ class EpisodicMemory:
                 "key": key,
                 "value": json.dumps({"session_data": session_data, "summary": summary}),
                 "importance": "medium",
-                "tags": tags or ["episodic"],
+                "tags": self._resolve_tags(tags, summary, session_data),
             }
             result = supabase.from_(self._table).insert(data).execute()
             if result.data:
@@ -297,42 +516,125 @@ class EpisodicMemory:
             if len(episodes) < 2:
                 return {"merged": 0, "summary": "Not enough episodes to consolidate"}
 
-            groups: Dict[str, List[Dict[str, Any]]] = {}
-            for ep in episodes:
-                tags = tuple(sorted(ep.get("tags", [])))
-                key_summary = str(ep.get("value", {})).lower()[:200]
-                group_key = tags if tags else (key_summary[:50],)
-                if group_key not in groups:
-                    groups[group_key] = []
-                groups[group_key].append(ep)
+            groups = self._group_episodes(episodes)
 
             merged_count = 0
-            supabase = get_supabase_client()
-            for group_key, group in groups.items():
+            for group in groups.values():
                 if len(group) < 2:
                     continue
-                keep = group[0]
-                summaries = []
-                for ep in group[1:]:
-                    try:
-                        val = json.loads(ep.get("value", "{}")) if isinstance(ep.get("value"), str) else ep.get("value", {})
-                        summaries.append(val.get("summary", ""))
-                        supabase.from_(self._table).delete().eq("id", ep["id"]).eq("user_id", user_id).execute()
-                        merged_count += 1
-                    except Exception as inner_e:
-                        logger.warn("Failed to delete duplicate episode", episode_id=ep.get("id"), error=str(inner_e))
-                if summaries:
-                    try:
-                        existing_val = json.loads(keep.get("value", "{}")) if isinstance(keep.get("value"), str) else keep.get("value", {})
-                        existing_val["consolidated_summaries"] = summaries
-                        supabase.from_(self._table).update({"value": json.dumps(existing_val)}).eq("id", keep["id"]).execute()
-                    except Exception as inner_e:
-                        logger.warn("Failed to update consolidated episode", error=str(inner_e))
+                for start in range(0, len(group), _EPISODIC_MERGE_BATCH):
+                    batch = group[start : start + _EPISODIC_MERGE_BATCH]
+                    if len(batch) < 2:
+                        continue
+                    merged_count += self._merge_episode_batch(user_id, batch)
 
             return {"merged": merged_count, "groups_found": len(groups)}
         except Exception as e:
             logger.error("consolidate episodes failed", user_id=user_id, error=str(e))
             return {"merged": 0, "groups_found": 0}
+
+    @staticmethod
+    def _group_episodes(episodes: List[Dict[str, Any]]) -> Dict[Tuple[str, ...], List[Dict[str, Any]]]:
+        """Bucket episodes by their topical tag set (the tier marker excluded).
+
+        An episode with no topical tag gets a key derived from its own id, so
+        it can never be grouped with another untagged episode. That guarantee is
+        what stops an all-``["episodic"]`` tier from collapsing into one group.
+        """
+        groups: Dict[Tuple[str, ...], List[Dict[str, Any]]] = {}
+        for ep in episodes:
+            raw_tags = ep.get("tags") or []
+            if isinstance(raw_tags, str):
+                try:
+                    raw_tags = json.loads(raw_tags)
+                except (json.JSONDecodeError, TypeError):
+                    raw_tags = []
+            if not isinstance(raw_tags, list):
+                raw_tags = []
+            topical = sorted(
+                {str(t).strip().lower() for t in raw_tags if str(t).strip() and str(t).strip().lower() != "episodic"}
+            )
+            group_key: Tuple[str, ...] = tuple(topical) if topical else (f"__ungrouped__:{ep.get('id')}",)
+            groups.setdefault(group_key, []).append(ep)
+        return groups
+
+    def _merge_episode_batch(self, user_id: str, batch: List[Dict[str, Any]]) -> int:
+        """Fold ``batch`` into ``batch[0]`` (the survivor) without losing content.
+
+        Crash-safe ordering: the survivor is written FIRST carrying every source
+        summary, then re-read to prove the content actually landed, and only
+        then are the source rows deleted. A crash at any point leaves each
+        summary either on the survivor or still on its original row — never
+        neither. An unverifiable write aborts the merge for that batch.
+        """
+        keep = batch[0]
+        sources = batch[1:]
+        summaries = [str(_decode_value(ep).get("summary", "") or "") for ep in batch]
+
+        merged_val = _decode_value(keep)
+        merged_summaries: List[str] = list(merged_val.get("consolidated_summaries") or [])
+        merged_ids: List[str] = list(merged_val.get("consolidated_source_ids") or [])
+        for ep, summary in zip(batch, summaries):
+            if summary and summary not in merged_summaries:
+                merged_summaries.append(summary)
+            ep_id = ep.get("id")
+            if ep_id and ep_id not in merged_ids:
+                merged_ids.append(ep_id)
+        merged_val["consolidated_summaries"] = merged_summaries
+        merged_val["consolidated_source_ids"] = merged_ids
+        merged_val["consolidated_at"] = _utc_now()
+
+        supabase = get_supabase_client()
+        try:
+            supabase.from_(self._table).update(
+                {
+                    "value": json.dumps(merged_val),
+                }
+            ).eq(
+                "id", keep["id"]
+            ).eq("user_id", user_id).execute()
+        except Exception as inner_e:
+            logger.warn(
+                "Failed to write consolidated episode", user_id=user_id, episode_id=keep.get("id"), error=str(inner_e)
+            )
+            return 0
+
+        if not self._summaries_present(user_id, keep["id"], [s for s in summaries if s]):
+            logger.warn(
+                "Episodic merge aborted — survivor does not carry the merged content",
+                user_id=user_id,
+                episode_id=keep.get("id"),
+            )
+            return 0
+
+        deleted = 0
+        for ep in sources:
+            try:
+                supabase.from_(self._table).delete().eq("id", ep["id"]).eq("user_id", user_id).execute()
+                deleted += 1
+            except Exception as inner_e:
+                logger.warn(
+                    "Failed to delete merged episode",
+                    user_id=user_id,
+                    episode_id=ep.get("id"),
+                    error=str(inner_e),
+                )
+        return deleted
+
+    def _summaries_present(self, user_id: str, survivor_id: str, summaries: List[str]) -> bool:
+        """Verify every summary is readable on the survivor before deleting sources."""
+        if not summaries:
+            return False
+        try:
+            supabase = get_supabase_client()
+            result = supabase.from_(self._table).select("value").eq("id", survivor_id).eq("user_id", user_id).execute()
+            if not result.data:
+                return False
+            present = _decode_value(result.data[0]).get("consolidated_summaries") or []
+            return all(s in present for s in summaries)
+        except Exception as e:
+            logger.warn("Failed to verify consolidated episode", user_id=user_id, episode_id=survivor_id, error=str(e))
+            return False
 
 
 class SemanticMemory:
@@ -373,16 +675,22 @@ class SemanticMemory:
             )
             if existing.data:
                 try:
-                    existing_val = json.loads(existing.data[0]["value"]) if isinstance(existing.data[0].get("value"), str) else existing.data[0].get("value", {})
+                    existing_val = (
+                        json.loads(existing.data[0]["value"])
+                        if isinstance(existing.data[0].get("value"), str)
+                        else existing.data[0].get("value", {})
+                    )
                 except (json.JSONDecodeError, TypeError):
                     existing_val = {}
                 existing_val.update(value)
                 existing_val["confidence"] = max(existing_val.get("confidence", confidence), confidence)
                 existing_val["reference_count"] = existing_val.get("reference_count", 1) + 1
-                supabase.from_(self._table).update({
-                    "value": json.dumps(existing_val),
-                    "importance": self._confidence_to_importance(existing_val["confidence"]),
-                }).eq("id", existing.data[0]["id"]).execute()
+                supabase.from_(self._table).update(
+                    {
+                        "value": json.dumps(existing_val),
+                        "importance": self._confidence_to_importance(existing_val["confidence"]),
+                    }
+                ).eq("id", existing.data[0]["id"]).eq("user_id", user_id).execute()
                 logger.info("Semantic fact updated", user_id=user_id, fact=fact[:80])
                 return existing.data[0]["id"]
             else:
@@ -424,7 +732,11 @@ class SemanticMemory:
             for fact in facts:
                 score = 0.0
                 try:
-                    val = json.loads(fact.get("value", "{}")) if isinstance(fact.get("value"), str) else fact.get("value", {})
+                    val = (
+                        json.loads(fact.get("value", "{}"))
+                        if isinstance(fact.get("value"), str)
+                        else fact.get("value", {})
+                    )
                 except (json.JSONDecodeError, TypeError):
                     val = {}
                 fact_text = json.dumps(val).lower()
@@ -460,15 +772,21 @@ class SemanticMemory:
             if not result.data:
                 return False
             try:
-                val = json.loads(result.data[0]["value"]) if isinstance(result.data[0].get("value"), str) else result.data[0].get("value", {})
+                val = (
+                    json.loads(result.data[0]["value"])
+                    if isinstance(result.data[0].get("value"), str)
+                    else result.data[0].get("value", {})
+                )
             except (json.JSONDecodeError, TypeError):
                 val = {}
             new_confidence = max(0.0, min(1.0, val.get("confidence", 0.5) + delta))
             val["confidence"] = new_confidence
-            supabase.from_(self._table).update({
-                "value": json.dumps(val),
-                "importance": self._confidence_to_importance(new_confidence),
-            }).eq("id", fact_id).execute()
+            supabase.from_(self._table).update(
+                {
+                    "value": json.dumps(val),
+                    "importance": self._confidence_to_importance(new_confidence),
+                }
+            ).eq("id", fact_id).eq("user_id", user_id).execute()
             return True
         except Exception as e:
             logger.error("update_confidence failed", user_id=user_id, fact_id=fact_id, error=str(e))
@@ -500,7 +818,11 @@ class SemanticMemory:
             seen_categories: Dict[str, str] = {}
             for fact in facts:
                 try:
-                    val = json.loads(fact.get("value", "{}")) if isinstance(fact.get("value"), str) else fact.get("value", {})
+                    val = (
+                        json.loads(fact.get("value", "{}"))
+                        if isinstance(fact.get("value"), str)
+                        else fact.get("value", {})
+                    )
                 except (json.JSONDecodeError, TypeError):
                     val = {}
                 category = val.get("category", "general")
@@ -509,64 +831,137 @@ class SemanticMemory:
                     seen_categories[category] = cat_id
                     nodes.append({"id": cat_id, "label": category, "type": "category"})
                 fact_id = fact.get("id", _make_key("kg_fact", str(fact.get("key", ""))))
-                nodes.append({
-                    "id": fact_id,
-                    "label": val.get("fact", fact.get("key", ""))[:60],
-                    "type": "fact",
-                    "confidence": val.get("confidence", 0.5),
-                    "category": category,
-                })
+                nodes.append(
+                    {
+                        "id": fact_id,
+                        "label": val.get("fact", fact.get("key", ""))[:60],
+                        "type": "fact",
+                        "confidence": val.get("confidence", 0.5),
+                        "category": category,
+                    }
+                )
                 edges.append({"source": seen_categories[category], "target": fact_id, "label": "contains"})
             return {"nodes": nodes, "edges": edges}
         except Exception as e:
             logger.error("get_knowledge_graph failed", user_id=user_id, error=str(e))
             return {"nodes": [], "edges": []}
 
-    async def decay_all(self, user_id: str) -> int:
+    async def decay_all(self, user_id: str, batch_size: int = _WRITE_CHUNK) -> int:
+        """Decay every semantic fact's confidence by time since last access.
+
+        This is the single confidence-decay implementation for the whole
+        subsystem (``memory_agent.apply_confidence_decay`` delegates here).
+
+        The select is bounded by ``_DECAY_MAX_ROWS`` and the writes are issued in
+        ``batch_size`` chunks via a multi-row upsert on the table's
+        ``UNIQUE (user_id, type, key)`` constraint, so one request issues a
+        handful of round trips instead of one per row. If a chunk upsert fails
+        the chunk's rows are retried individually with an id- and user-scoped
+        update, so a partial failure never silently skips a row.
+        """
         try:
             supabase = get_supabase_client()
             facts = (
                 supabase.from_(self._table)
-                .select("id, value, importance")
+                .select("id, user_id, type, key, value, importance")
                 .eq("user_id", user_id)
                 .eq("type", "semantic")
+                .order("created_at", ascending=True)
+                .limit(_DECAY_MAX_ROWS)
                 .execute()
             )
-            decayed = 0
+            updates: List[Dict[str, Any]] = []
             for fact in facts.data or []:
-                try:
-                    val = json.loads(fact.get("value", "{}")) if isinstance(fact.get("value"), str) else fact.get("value", {})
-                except (json.JSONDecodeError, TypeError):
+                row_id = fact.get("id")
+                row_key = fact.get("key")
+                if not row_id or not row_key:
+                    # Without both the id and the unique key the chunk cannot be
+                    # targeted safely; leave the row untouched this pass.
                     continue
+                val = _decode_value(fact)
                 old_conf = val.get("confidence", 0.5)
                 days_since = 1
                 try:
                     accessed = val.get("last_accessed", _utc_now())
-                    accessed_dt = datetime.fromisoformat(accessed.replace("Z", "+00:00"))
+                    accessed_dt = datetime.fromisoformat(str(accessed).replace("Z", "+00:00"))
                     days_since = max(1, (_utc_dt() - accessed_dt).days)
                 except (ValueError, TypeError):
                     pass
-                new_conf = max(0.05, old_conf - self._decay_rate * days_since)
-                if new_conf < old_conf:
-                    val["confidence"] = round(new_conf, 4)
-                    supabase.from_(self._table).update({
+                new_conf = max(_CONFIDENCE_FLOOR, old_conf - self._decay_rate * days_since)
+                if new_conf >= old_conf:
+                    continue
+                val["confidence"] = round(new_conf, 4)
+                updates.append(
+                    {
+                        "id": row_id,
+                        "user_id": fact.get("user_id") or user_id,
+                        "type": "semantic",
+                        "key": row_key,
                         "value": json.dumps(val),
                         "importance": self._confidence_to_importance(new_conf),
-                    }).eq("id", fact["id"]).execute()
-                    decayed += 1
+                    }
+                )
+
+            if not updates:
+                return 0
+
+            decayed = 0
+            for start in range(0, len(updates), batch_size):
+                chunk = updates[start : start + batch_size]
+                chunk_ids = [u["id"] for u in chunk]
+                landed: List[Dict[str, Any]] = []
+                try:
+                    supabase.from_(self._table).upsert(chunk, on_conflict="user_id,type,key").execute()
+                    landed = chunk
+                except Exception as chunk_e:
+                    logger.warn(
+                        "decay_all chunk upsert failed", user_id=user_id, chunk_size=len(chunk), error=str(chunk_e)
+                    )
+                if landed:
+                    decayed += len(landed)
+                    continue
+                for update_row in chunk:
+                    try:
+                        result = (
+                            supabase.from_(self._table)
+                            .update({"value": update_row["value"], "importance": update_row["importance"]})
+                            .eq("id", update_row["id"])
+                            .eq("user_id", user_id)
+                            .execute()
+                        )
+                        if result.data:
+                            decayed += 1
+                    except Exception as row_e:
+                        logger.error(
+                            "decay_all row update failed",
+                            user_id=user_id,
+                            memory_id=update_row["id"],
+                            error=str(row_e),
+                        )
+                logger.warn(
+                    "decay_all fell back to per-row updates",
+                    user_id=user_id,
+                    chunk_size=len(chunk_ids),
+                )
             return decayed
         except Exception as e:
             logger.error("decay_all failed", user_id=user_id, error=str(e))
             return 0
 
     def _confidence_to_importance(self, confidence: float) -> str:
+        """Map confidence to a retrieval weight, monotonically.
+
+        Previously a confidence below 0.2 (down to and including 0) mapped to
+        ``"critical"``, which every consumer ranks highest
+        (``retrieval.py`` importance_map) — so the least-trusted memories were
+        surfaced first. ``"critical"`` is now reserved for values written
+        directly by the consolidation LLM and never derived from confidence.
+        """
         if confidence >= 0.8:
             return "high"
         elif confidence >= 0.5:
             return "medium"
-        elif confidence >= 0.2:
-            return "low"
-        return "critical" if confidence > 0 else "low"
+        return "low"
 
 
 class ProceduralMemory:
@@ -603,16 +998,22 @@ class ProceduralMemory:
             )
             if existing.data:
                 try:
-                    existing_val = json.loads(existing.data[0]["value"]) if isinstance(existing.data[0].get("value"), str) else existing.data[0].get("value", {})
+                    existing_val = (
+                        json.loads(existing.data[0]["value"])
+                        if isinstance(existing.data[0].get("value"), str)
+                        else existing.data[0].get("value", {})
+                    )
                 except (json.JSONDecodeError, TypeError):
                     existing_val = {}
                 existing_val["observation_count"] = existing_val.get("observation_count", 0) + 1
                 existing_val["last_observed"] = _utc_now()
                 existing_val["confidence"] = min(1.0, existing_val.get("confidence", 0.5) + 0.05)
-                supabase.from_(self._table).update({
-                    "value": json.dumps(existing_val),
-                    "importance": "high" if existing_val["confidence"] >= 0.7 else "medium",
-                }).eq("id", existing.data[0]["id"]).execute()
+                supabase.from_(self._table).update(
+                    {
+                        "value": json.dumps(existing_val),
+                        "importance": "high" if existing_val["confidence"] >= 0.7 else "medium",
+                    }
+                ).eq("id", existing.data[0]["id"]).eq("user_id", user_id).execute()
                 return existing.data[0]["id"]
             else:
                 data_payload = {
@@ -639,12 +1040,7 @@ class ProceduralMemory:
     ) -> List[Dict[str, Any]]:
         try:
             supabase = get_supabase_client()
-            query = (
-                supabase.from_(self._table)
-                .select("*")
-                .eq("user_id", user_id)
-                .eq("type", "procedural")
-            )
+            query = supabase.from_(self._table).select("*").eq("user_id", user_id).eq("type", "procedural")
             if pattern_type:
                 query = query.contains("tags", [pattern_type])
             result = query.order("importance", desc=True).limit(50).execute()
@@ -670,7 +1066,11 @@ class ProceduralMemory:
             matches: List[Tuple[float, Dict[str, Any]]] = []
             for pat in patterns:
                 try:
-                    val = json.loads(pat.get("value", "{}")) if isinstance(pat.get("value"), str) else pat.get("value", {})
+                    val = (
+                        json.loads(pat.get("value", "{}"))
+                        if isinstance(pat.get("value"), str)
+                        else pat.get("value", {})
+                    )
                 except (json.JSONDecodeError, TypeError):
                     continue
                 pat_data = val.get("data", {})
@@ -681,10 +1081,12 @@ class ProceduralMemory:
                     if len(kw) > 3 and kw in pat_str:
                         match_score += 1.0 / max(1, len(pat_str))
                 if match_score > 0:
-                    matches.append((
-                        match_score * val.get("confidence", 0.5),
-                        val,
-                    ))
+                    matches.append(
+                        (
+                            match_score * val.get("confidence", 0.5),
+                            val,
+                        )
+                    )
 
             if not matches:
                 return {"prediction": None, "confidence": 0.0, "matched_patterns": 0}

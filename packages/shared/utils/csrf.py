@@ -13,9 +13,7 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         if request.method in SAFE_METHODS:
             return await call_next(request)
 
-        allowed_origins = [
-            o.strip() for o in settings.cors_origins.split(",") if o.strip()
-        ]
+        allowed_origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 
         origin = request.headers.get("origin", "")
         referer = request.headers.get("referer", "")

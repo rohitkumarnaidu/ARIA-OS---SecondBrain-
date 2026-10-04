@@ -5,6 +5,7 @@ import pytest
 from unittest.mock import MagicMock, patch, AsyncMock
 from fastapi.testclient import TestClient
 from datetime import datetime, timezone
+import datetime as real_datetime
 
 # ===========================================================================
 # Reuse helpers from test_api_endpoints.py — imports are guarded to run
@@ -4224,19 +4225,21 @@ class TestMonitoringEndpoints:
         assert resp.status_code == 422
 
     def test_get_agent_activity_feed(self, client, mock_supabase):
-        data = [{
-            "id": "act-1",
-            "user_id": "user-1",
-            "agent_name": "briefing",
-            "status": "completed",
-            "started_at": "2026-06-20T06:00:00",
-            "completed_at": "2026-06-20T06:05:00",
-            "duration_ms": 300000,
-            "error_message": None,
-            "input_summary": "Gen",
-            "output_summary": "Done",
-            "created_at": "2026-06-20T06:05:00",
-        }]
+        data = [
+            {
+                "id": "act-1",
+                "user_id": "user-1",
+                "agent_name": "briefing",
+                "status": "completed",
+                "started_at": "2026-06-20T06:00:00",
+                "completed_at": "2026-06-20T06:05:00",
+                "duration_ms": 300000,
+                "error_message": None,
+                "input_summary": "Gen",
+                "output_summary": "Done",
+                "created_at": "2026-06-20T06:05:00",
+            }
+        ]
         builder = MagicMock()
         count_result = MagicMock()
         count_result.count = 1
@@ -4244,7 +4247,9 @@ class TestMonitoringEndpoints:
         data_result = MagicMock()
         data_result.data = data
         data_result.error = None
-        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = data_result
+        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = (
+            data_result
+        )
         mock_supabase.from_.return_value = builder
         resp = client.get("/api/v1/monitoring/activity", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -4261,7 +4266,9 @@ class TestMonitoringEndpoints:
         data_result = MagicMock()
         data_result.data = []
         data_result.error = None
-        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = data_result
+        builder.select.return_value.eq.return_value.order.return_value.range.return_value.execute.return_value = (
+            data_result
+        )
         mock_supabase.from_.return_value = builder
         resp = client.get("/api/v1/monitoring/activity", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -4289,9 +4296,27 @@ class TestMonitoringEndpoints:
 
     def test_get_metrics(self, client, mock_supabase):
         data = [
-            {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
-            {"agent": "briefing", "total_tokens": 2000, "duration_ms": 1500, "cost_usd": 0.0, "created_at": "2026-06-20T13:00:00"},
-            {"agent": "memory", "total_tokens": 500, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T12:30:00"},
+            {
+                "agent": "briefing",
+                "total_tokens": 1000,
+                "duration_ms": 500,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T12:00:00",
+            },
+            {
+                "agent": "briefing",
+                "total_tokens": 2000,
+                "duration_ms": 1500,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T13:00:00",
+            },
+            {
+                "agent": "memory",
+                "total_tokens": 500,
+                "duration_ms": 200,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T12:30:00",
+            },
         ]
         _cfg(mock_supabase, data)
         with patch("app.api.monitoring.settings.use_local_ai", False):
@@ -4307,7 +4332,13 @@ class TestMonitoringEndpoints:
 
     def test_get_metrics_with_agent_filter(self, client, mock_supabase):
         data = [
-            {"agent": "briefing", "total_tokens": 1000, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
+            {
+                "agent": "briefing",
+                "total_tokens": 1000,
+                "duration_ms": 500,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T12:00:00",
+            },
         ]
         _cfg(mock_supabase, data)
         with patch("app.api.monitoring.settings.use_local_ai", False):
@@ -4327,8 +4358,20 @@ class TestMonitoringEndpoints:
 
     def test_get_metrics_trend_up(self, client, mock_supabase):
         data = [
-            {"agent": "briefing", "total_tokens": 100, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-19T10:00:00"},
-            {"agent": "briefing", "total_tokens": 200, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T10:00:00"},
+            {
+                "agent": "briefing",
+                "total_tokens": 100,
+                "duration_ms": 100,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-19T10:00:00",
+            },
+            {
+                "agent": "briefing",
+                "total_tokens": 200,
+                "duration_ms": 200,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T10:00:00",
+            },
         ]
         _cfg(mock_supabase, data)
         with patch("app.api.monitoring.settings.use_local_ai", False):
@@ -4339,8 +4382,20 @@ class TestMonitoringEndpoints:
 
     def test_get_metrics_trend_down(self, client, mock_supabase):
         data = [
-            {"agent": "briefing", "total_tokens": 300, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-19T10:00:00"},
-            {"agent": "briefing", "total_tokens": 100, "duration_ms": 200, "cost_usd": 0.0, "created_at": "2026-06-20T10:00:00"},
+            {
+                "agent": "briefing",
+                "total_tokens": 300,
+                "duration_ms": 100,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-19T10:00:00",
+            },
+            {
+                "agent": "briefing",
+                "total_tokens": 100,
+                "duration_ms": 200,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T10:00:00",
+            },
         ]
         _cfg(mock_supabase, data)
         with patch("app.api.monitoring.settings.use_local_ai", False):
@@ -4349,7 +4404,15 @@ class TestMonitoringEndpoints:
 
     def test_get_metrics_with_activity_data(self, client, mock_supabase):
         data = [
-            {"agent": "briefing", "total_tokens": 100, "duration_ms": 100, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00", "agent_name": "briefing", "status": "failed"},
+            {
+                "agent": "briefing",
+                "total_tokens": 100,
+                "duration_ms": 100,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T12:00:00",
+                "agent_name": "briefing",
+                "status": "failed",
+            },
         ]
         _cfg(mock_supabase, data)
         with patch("app.api.monitoring.settings.use_local_ai", False):
@@ -4402,31 +4465,41 @@ class TestMonitoringEndpoints:
     def test_compute_cost_opus(self, client, mock_supabase):
         """_compute_cost with opus model uses $15/M input, $75/M output."""
         from app.api.monitoring import _compute_cost
+
         cost = _compute_cost("claude-3-opus", 1000, 500)
         assert cost == (1000 / 1_000_000 * 15) + (500 / 1_000_000 * 75)
 
     def test_compute_cost_sonnet(self, client, mock_supabase):
         """_compute_cost with sonnet model uses $3/M input, $15/M output."""
         from app.api.monitoring import _compute_cost
+
         cost = _compute_cost("claude-3-sonnet", 1000, 500)
         assert cost == (1000 / 1_000_000 * 3) + (500 / 1_000_000 * 15)
 
     def test_compute_cost_haiku(self, client, mock_supabase):
         """_compute_cost with haiku model uses $0.25/M input, $1.25/M output."""
         from app.api.monitoring import _compute_cost
+
         cost = _compute_cost("claude-3-haiku", 1000, 500)
         assert cost == (1000 / 1_000_000 * 0.25) + (500 / 1_000_000 * 1.25)
 
     def test_compute_cost_default(self, client, mock_supabase):
         """_compute_cost with unknown model uses default $3/M for total."""
         from app.api.monitoring import _compute_cost
+
         cost = _compute_cost("unknown-model", 1000, 500)
         assert cost == (1500 / 1_000_000 * 3)
 
     def test_get_metrics_supabase_unavailable(self, client, mock_supabase):
         """get_metrics handles supabase service check failure."""
         token_data = [
-            {"agent": "briefing", "total_tokens": 100, "duration_ms": 500, "cost_usd": 0.0, "created_at": "2026-06-20T12:00:00"},
+            {
+                "agent": "briefing",
+                "total_tokens": 100,
+                "duration_ms": 500,
+                "cost_usd": 0.0,
+                "created_at": "2026-06-20T12:00:00",
+            },
         ]
 
         def mock_from(table_name):
@@ -4475,19 +4548,34 @@ class TestLearningInsights:
     def test_get_insights(self, client, mock_supabase):
         def mock_from(table_name):
             builders = {
-                "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5, "completion_rate": 80}}]),
-                "tasks": MockQueryBuilder(return_data=[
-                    {"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"},
-                ]),
-                "courses": MockQueryBuilder(return_data=[
-                    {"title": "React", "status": "in_progress", "progress_pct": 50},
-                ]),
-                "habits": MockQueryBuilder(return_data=[
-                    {"title": "Read", "is_active": True, "current_streak": 5, "consistency_percentage": 80},
-                ]),
-                "time_entries": MockQueryBuilder(return_data=[
-                    {"duration_minutes": 60, "is_deep_work": True, "start_time": "2026-06-20T09:00:00"},
-                ]),
+                "learning_progress": MockQueryBuilder(
+                    return_data=[{"data": {"tasks_completed": 5, "completion_rate": 80}}]
+                ),
+                "tasks": MockQueryBuilder(
+                    return_data=[
+                        {
+                            "status": "completed",
+                            "priority": "high",
+                            "created_at": "2026-06-20T12:00:00",
+                            "completed_at": "2026-06-20T12:00:00",
+                        },
+                    ]
+                ),
+                "courses": MockQueryBuilder(
+                    return_data=[
+                        {"title": "React", "status": "in_progress", "progress_pct": 50},
+                    ]
+                ),
+                "habits": MockQueryBuilder(
+                    return_data=[
+                        {"title": "Read", "is_active": True, "current_streak": 5, "consistency_percentage": 80},
+                    ]
+                ),
+                "time_entries": MockQueryBuilder(
+                    return_data=[
+                        {"duration_minutes": 60, "is_deep_work": True, "start_time": "2026-06-20T09:00:00"},
+                    ]
+                ),
             }
             return builders.get(table_name, MockQueryBuilder(return_data=[]))
 
@@ -4523,11 +4611,25 @@ class TestLearningInsights:
         assert body["insights"] == []
 
     def test_get_insights_refresh(self, client, mock_supabase):
-        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(return_data=[
-            {"id": "t-1", "status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"},
-            {"id": "c-1", "title": "ML", "status": "in_progress", "progress_pct": 30},
-            {"id": "h-1", "title": "Exercise", "is_active": True, "current_streak": 3, "consistency_percentage": 70},
-        ])
+        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(
+            return_data=[
+                {
+                    "id": "t-1",
+                    "status": "completed",
+                    "priority": "high",
+                    "created_at": "2026-06-20T12:00:00",
+                    "completed_at": "2026-06-20T12:00:00",
+                },
+                {"id": "c-1", "title": "ML", "status": "in_progress", "progress_pct": 30},
+                {
+                    "id": "h-1",
+                    "title": "Exercise",
+                    "is_active": True,
+                    "current_streak": 3,
+                    "consistency_percentage": 70,
+                },
+            ]
+        )
         resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -4535,8 +4637,12 @@ class TestLearningInsights:
 
     def test_get_insights_refresh_error(self, client, mock_supabase):
         _cfg(mock_supabase, [])
-        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")):
-            with patch("app.api.learning.track_user_progress", new_callable=AsyncMock, side_effect=Exception("progress fail")):
+        with patch(
+            "app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")
+        ):
+            with patch(
+                "app.api.learning.track_user_progress", new_callable=AsyncMock, side_effect=Exception("progress fail")
+            ):
                 resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
         assert resp.status_code == 200
         body = resp.json()
@@ -4553,9 +4659,11 @@ class TestLearningInsights:
         assert body["productivity_patterns"]["total_tasks"] == 0
 
     def test_get_insights_refresh_partial_data(self, client, mock_supabase):
-        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(return_data=[
-            {"status": "pending", "priority": "low", "created_at": "2026-06-20T12:00:00"},
-        ])
+        mock_supabase.from_.side_effect = lambda t: MockQueryBuilder(
+            return_data=[
+                {"status": "pending", "priority": "low", "created_at": "2026-06-20T12:00:00"},
+            ]
+        )
         with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=["Stay focused"]):
             resp = client.get("/api/v1/learning/insights?refresh=true", headers=_AUTH_HEADER)
         assert resp.status_code == 200
@@ -4566,15 +4674,28 @@ class TestLearningInsights:
 
     def test_get_insights_time_entry_error(self, client, mock_supabase):
         """Invalid time entry start_time is handled gracefully."""
+
         def mock_from(table_name):
             builders = {
                 "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5}}]),
-                "tasks": MockQueryBuilder(return_data=[{"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"}]),
+                "tasks": MockQueryBuilder(
+                    return_data=[
+                        {
+                            "status": "completed",
+                            "priority": "high",
+                            "created_at": "2026-06-20T12:00:00",
+                            "completed_at": "2026-06-20T12:00:00",
+                        }
+                    ]
+                ),
                 "courses": MockQueryBuilder(return_data=[]),
                 "habits": MockQueryBuilder(return_data=[]),
-                "time_entries": MockQueryBuilder(return_data=[{"duration_minutes": 30, "is_deep_work": False, "start_time": "not-a-date"}]),
+                "time_entries": MockQueryBuilder(
+                    return_data=[{"duration_minutes": 30, "is_deep_work": False, "start_time": "not-a-date"}]
+                ),
             }
             return builders.get(table_name, MockQueryBuilder(return_data=[]))
+
         mock_supabase.from_.side_effect = mock_from
         with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, return_value=[]):
             resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
@@ -4585,17 +4706,30 @@ class TestLearningInsights:
 
     def test_get_insights_pattern_detection_failure_non_refresh(self, client, mock_supabase):
         """Pattern detection failure in non-refresh mode returns empty insights."""
+
         def mock_from(table_name):
             builders = {
                 "learning_progress": MockQueryBuilder(return_data=[{"data": {"tasks_completed": 5}}]),
-                "tasks": MockQueryBuilder(return_data=[{"status": "completed", "priority": "high", "created_at": "2026-06-20T12:00:00", "completed_at": "2026-06-20T12:00:00"}]),
+                "tasks": MockQueryBuilder(
+                    return_data=[
+                        {
+                            "status": "completed",
+                            "priority": "high",
+                            "created_at": "2026-06-20T12:00:00",
+                            "completed_at": "2026-06-20T12:00:00",
+                        }
+                    ]
+                ),
                 "courses": MockQueryBuilder(return_data=[]),
                 "habits": MockQueryBuilder(return_data=[]),
                 "time_entries": MockQueryBuilder(return_data=[]),
             }
             return builders.get(table_name, MockQueryBuilder(return_data=[]))
+
         mock_supabase.from_.side_effect = mock_from
-        with patch("app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")):
+        with patch(
+            "app.api.learning.detect_learning_patterns", new_callable=AsyncMock, side_effect=Exception("AI fail")
+        ):
             resp = client.get("/api/v1/learning/insights", headers=_AUTH_HEADER)
         assert resp.status_code == 200
         assert resp.json()["insights"] == []
@@ -4604,8 +4738,6 @@ class TestLearningInsights:
 # ===========================================================================
 # SLEEP — wind-down endpoint
 # ===========================================================================
-
-import datetime as real_datetime
 
 
 @pytest.mark.api

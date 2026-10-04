@@ -26,6 +26,7 @@ pytestmark = pytest.mark.asyncio
 _HAVE_APSCHEDULER = False
 try:
     import apscheduler  # noqa: F401
+
     _HAVE_APSCHEDULER = True
 except ImportError:
     pass
@@ -40,11 +41,13 @@ NEED_APSCHEDULER = pytest.mark.skipif(
 # FailureTracker — unit coverage
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestFailureTracker:
     """Cover every method of FailureTracker including global instance."""
 
     async def test_init_defaults(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         assert ft._consecutive_failures == {}
         assert ft._last_failure_time == {}
@@ -54,6 +57,7 @@ class TestFailureTracker:
 
     async def test_record_failure_first(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("job_a", "first error")
         assert await ft.get_consecutive_failures("job_a") == 1
@@ -62,6 +66,7 @@ class TestFailureTracker:
 
     async def test_record_failure_multiple(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for i in range(3):
             await ft.record_failure("job_b", f"error {i}")
@@ -70,6 +75,7 @@ class TestFailureTracker:
 
     async def test_record_failure_date_change(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("job_x", "day1")
         assert await ft.get_daily_failure_count() == 1
@@ -79,6 +85,7 @@ class TestFailureTracker:
 
     async def test_record_success_resets(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("job_c", "e1")
         await ft.record_failure("job_c", "e2")
@@ -88,23 +95,27 @@ class TestFailureTracker:
 
     async def test_record_success_unknown_job(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_success("never_failed")
         assert await ft.get_consecutive_failures("never_failed") == 0
 
     async def test_get_consecutive_failures_has(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("j1", "e")
         assert await ft.get_consecutive_failures("j1") == 1
 
     async def test_get_consecutive_failures_none(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         assert await ft.get_consecutive_failures("nonexistent") == 0
 
     async def test_get_failing_jobs_above_threshold(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for _ in range(5):
             await ft.record_failure("j_fail", "e")
@@ -115,17 +126,20 @@ class TestFailureTracker:
 
     async def test_get_failing_jobs_below_threshold(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("j1", "e")
         assert await ft.get_failing_jobs(threshold=5) == []
 
     async def test_get_failing_jobs_empty(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         assert await ft.get_failing_jobs() == []
 
     async def test_get_daily_failure_count_sum(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         await ft.record_failure("a", "e")
         await ft.record_failure("b", "e")
@@ -134,16 +148,19 @@ class TestFailureTracker:
 
     async def test_get_daily_failure_count_zero(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         assert await ft.get_daily_failure_count() == 0
 
     async def test_is_circuit_open_closed(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         assert not await ft.is_circuit_open("any_job")
 
     async def test_is_circuit_open_open(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for _ in range(5):
             await ft.record_failure("circuit_b", "e")
@@ -151,6 +168,7 @@ class TestFailureTracker:
 
     async def test_is_circuit_open_four(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for _ in range(4):
             await ft.record_failure("four", "e")
@@ -158,6 +176,7 @@ class TestFailureTracker:
 
     async def test_get_summary_empty(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         s = await ft.get_summary()
         assert s["total_daily_failures"] == 0
@@ -166,6 +185,7 @@ class TestFailureTracker:
 
     async def test_get_summary_with_failures(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for _ in range(3):
             await ft.record_failure("j_a", "e")
@@ -178,6 +198,7 @@ class TestFailureTracker:
 
     async def test_get_summary_open_circuits(self):
         from failure_tracker import FailureTracker
+
         ft = FailureTracker()
         for _ in range(5):
             await ft.record_failure("open_j", "e")
@@ -186,6 +207,7 @@ class TestFailureTracker:
 
     async def test_global_instance(self):
         from failure_tracker import failure_tracker
+
         assert failure_tracker is not None
         assert hasattr(failure_tracker, "record_failure")
         assert hasattr(failure_tracker, "record_success")
@@ -196,21 +218,25 @@ class TestFailureTracker:
 # AlertRateLimiter
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestAlertRateLimiter:
 
     async def test_can_alert_first_call(self):
         from alerting import AlertRateLimiter
+
         rl = AlertRateLimiter()
         assert await rl.can_alert("test_key", cooldown=300)
 
     async def test_can_alert_within_cooldown(self):
         from alerting import AlertRateLimiter
+
         rl = AlertRateLimiter()
         assert await rl.can_alert("key1", cooldown=300)
         assert not await rl.can_alert("key1", cooldown=300)
 
     async def test_can_alert_after_cooldown(self):
         from alerting import AlertRateLimiter
+
         rl = AlertRateLimiter()
         assert await rl.can_alert("key2", cooldown=0.05)
         await asyncio.sleep(0.06)
@@ -218,12 +244,14 @@ class TestAlertRateLimiter:
 
     async def test_can_alert_different_keys(self):
         from alerting import AlertRateLimiter
+
         rl = AlertRateLimiter()
         assert await rl.can_alert("key_a", 300)
         assert await rl.can_alert("key_b", 300)
 
     async def test_can_alert_zero_cooldown(self):
         from alerting import AlertRateLimiter
+
         rl = AlertRateLimiter()
         assert await rl.can_alert("zero_key", 0)
         assert await rl.can_alert("zero_key", 0)
@@ -233,11 +261,13 @@ class TestAlertRateLimiter:
 # Alerting
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestAlerting:
 
     @pytest.fixture(autouse=True)
     def reset_alerting(self):
         from alerting import alerting
+
         alerting._http_client = None
         alerting._webhook_url = ""
         alerting._slack_channel = "#aria-alerts"
@@ -260,6 +290,7 @@ class TestAlerting:
         os.environ["ALERT_SLACK_CHANNEL"] = "#custom"
         os.environ["ALERT_LOGTAIL_SOURCE_TOKEN"] = "tok_abc"
         from alerting import Alerting
+
         a = Alerting()
         assert a._webhook_url == "https://hooks.example.com"
         assert a._slack_channel == "#custom"
@@ -269,6 +300,7 @@ class TestAlerting:
         for k in ("ALERT_WEBHOOK_URL", "ALERT_SLACK_CHANNEL", "ALERT_LOGTAIL_SOURCE_TOKEN"):
             os.environ.pop(k, None)
         from alerting import Alerting
+
         a = Alerting()
         assert a._webhook_url == ""
         assert a._slack_channel == "#aria-alerts"
@@ -276,6 +308,7 @@ class TestAlerting:
 
     async def test_get_client_creates_and_reuses(self, mocker):
         from alerting import Alerting
+
         a = Alerting()
         assert a._http_client is None
         mock_instance = AsyncMock()
@@ -288,6 +321,7 @@ class TestAlerting:
 
     async def test_shutdown_closes_client(self, mocker):
         from alerting import Alerting
+
         a = Alerting()
         mock_client = AsyncMock()
         a._http_client = mock_client
@@ -297,17 +331,20 @@ class TestAlerting:
 
     async def test_shutdown_no_client(self):
         from alerting import Alerting
+
         a = Alerting()
         a._http_client = None
         await a.shutdown()
 
     async def test_flush_pending(self):
         from alerting import alerting
+
         await alerting.flush_pending()
 
     def test_log_console_critical(self, mocker):
         import alerting as alerting_mod
         from alerting import alerting
+
         mock_logger = mocker.patch.object(alerting_mod, "logger")
         alerting._log_console("CRITICAL", "crit msg", {"x": 1})
         mock_logger.error.assert_called_once_with("[CRITICAL] crit msg", **{"x": 1})
@@ -315,6 +352,7 @@ class TestAlerting:
     def test_log_console_warning(self, mocker):
         import alerting as alerting_mod
         from alerting import alerting
+
         mock_logger = mocker.patch.object(alerting_mod, "logger")
         alerting._log_console("WARNING", "warn msg")
         mock_logger.warn.assert_called_once_with("[WARNING] warn msg")
@@ -322,6 +360,7 @@ class TestAlerting:
     def test_log_console_info(self, mocker):
         import alerting as alerting_mod
         from alerting import alerting
+
         mock_logger = mocker.patch.object(alerting_mod, "logger")
         alerting._log_console("INFO", "info msg")
         mock_logger.info.assert_called_once_with("[INFO] info msg")
@@ -329,12 +368,14 @@ class TestAlerting:
     def test_log_console_none_details(self, mocker):
         import alerting as alerting_mod
         from alerting import alerting
+
         mock_logger = mocker.patch.object(alerting_mod, "logger")
         alerting._log_console("INFO", "msg", None)
         mock_logger.info.assert_called_once()
 
     async def test_send_logtail_no_token(self, mocker):
         from alerting import alerting
+
         alerting._logtail_token = ""
         mock_get = AsyncMock()
         mocker.patch.object(alerting, "_get_client", mock_get)
@@ -343,17 +384,19 @@ class TestAlerting:
 
     async def test_send_logtail_success(self, mocker):
         from alerting import alerting
+
         alerting._logtail_token = "tok_valid"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=200)
         mocker.patch.object(alerting, "_get_client", AsyncMock(return_value=mock_client))
-        mock_logger = mocker.patch("alerting.logger")
+        mocker.patch("alerting.logger")
         await alerting._send_logtail({"severity": "INFO"})
         mock_client.post.assert_awaited_once()
         assert "Bearer tok_valid" in mock_client.post.call_args[1]["headers"]["Authorization"]
 
     async def test_send_logtail_non_2xx(self, mocker):
         from alerting import alerting
+
         alerting._logtail_token = "tok"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=401)
@@ -364,6 +407,7 @@ class TestAlerting:
 
     async def test_send_logtail_exception(self, mocker):
         from alerting import alerting
+
         alerting._logtail_token = "tok"
         mock_client = AsyncMock()
         mock_client.post.side_effect = Exception("Connection refused")
@@ -374,6 +418,7 @@ class TestAlerting:
 
     async def test_deliver_webhook_no_url(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = ""
         mock_get = AsyncMock()
         mocker.patch.object(alerting, "_get_client", mock_get)
@@ -382,11 +427,12 @@ class TestAlerting:
 
     async def test_deliver_webhook_success(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=200)
         mocker.patch.object(alerting, "_get_client", AsyncMock(return_value=mock_client))
-        mock_logger = mocker.patch("alerting.logger")
+        mocker.patch("alerting.logger")
         await alerting._deliver_webhook({"severity": "INFO", "message": "ok", "job_name": "j"})
         mock_client.post.assert_awaited_once()
         payload = mock_client.post.call_args[1]["json"]
@@ -394,6 +440,7 @@ class TestAlerting:
 
     async def test_deliver_webhook_critical(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=200)
@@ -403,6 +450,7 @@ class TestAlerting:
 
     async def test_deliver_webhook_warning(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=200)
@@ -412,6 +460,7 @@ class TestAlerting:
 
     async def test_deliver_webhook_non_2xx(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_client = AsyncMock()
         mock_client.post.return_value = MagicMock(status_code=500, text="Server Error")
@@ -423,6 +472,7 @@ class TestAlerting:
 
     async def test_deliver_webhook_exception(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_client = AsyncMock()
         mock_client.post.side_effect = Exception("Network timeout")
@@ -433,6 +483,7 @@ class TestAlerting:
 
     async def test_send_alert_assembles_payload(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_log = mocker.patch.object(alerting, "_log_console")
         mock_logtail = mocker.patch.object(alerting, "_send_logtail", AsyncMock())
@@ -444,6 +495,7 @@ class TestAlerting:
 
     async def test_send_alert_rate_limited(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_deliver = mocker.patch.object(alerting, "_deliver_webhook", AsyncMock())
         mocker.patch.object(alerting, "_send_logtail", AsyncMock())
@@ -461,6 +513,7 @@ class TestAlerting:
 
     async def test_send_alert_different_keys_not_rate_limited(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mock_deliver = mocker.patch.object(alerting, "_deliver_webhook", AsyncMock())
         mocker.patch.object(alerting, "_send_logtail", AsyncMock())
@@ -473,16 +526,27 @@ class TestAlerting:
 
     async def test_send_alert_no_details(self, mocker):
         from alerting import alerting
+
         alerting._webhook_url = "https://hooks.example.com"
         mocker.patch.object(alerting, "_deliver_webhook", AsyncMock())
         mocker.patch.object(alerting, "_send_logtail", AsyncMock())
         mocker.patch.object(alerting, "_log_console")
-        alerting._rate_limiter.can_alert = AsyncMock(return_value=True)
+        # MUST be mocker.patch, not a bare attribute assignment. `alerting` is
+        # a module-level singleton (services/scheduler/alerting.py:144), so
+        # `alerting._rate_limiter.can_alert = AsyncMock(...)` permanently
+        # replaced the bound method on the SHARED instance for the rest of the
+        # pytest session. Every later test exercising the real 300s cooldown
+        # then got can_alert()->True, which broke
+        #   test_scheduler_coverage.py::TestAlertingCoverage::
+        #       test_send_alert_assembly_rate_limited   (assert 2 == 1)
+        # purely by file ordering. mocker.patch auto-reverts at teardown.
+        mocker.patch.object(alerting._rate_limiter, "can_alert", AsyncMock(return_value=True))
         await alerting.alert_info("bare", None)
         alerting._send_logtail.assert_awaited_once()
 
     async def test_alert_critical(self, mocker):
         from alerting import alerting
+
         mock_send = AsyncMock()
         mocker.patch.object(alerting, "_send_alert", mock_send)
         await alerting.alert_critical("crit", {"x": 1})
@@ -490,6 +554,7 @@ class TestAlerting:
 
     async def test_alert_warning(self, mocker):
         from alerting import alerting
+
         mock_send = AsyncMock()
         mocker.patch.object(alerting, "_send_alert", mock_send)
         await alerting.alert_warning("warn", {"y": 2})
@@ -497,6 +562,7 @@ class TestAlerting:
 
     async def test_alert_info(self, mocker):
         from alerting import alerting
+
         mock_send = AsyncMock()
         mocker.patch.object(alerting, "_send_alert", mock_send)
         await alerting.alert_info("info", {"z": 3})
@@ -506,6 +572,7 @@ class TestAlerting:
 # ═══════════════════════════════════════════════════════════════════════════════
 # health_check — dependency checks, file I/O, alerts
 # ═══════════════════════════════════════════════════════════════════════════════
+
 
 class TestHealthCheck:
 
@@ -531,10 +598,15 @@ class TestHealthCheck:
     async def test_healthy(self, mocker):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_client = AsyncMock()
         mock_client.get.return_value = MagicMock(status_code=200)
@@ -545,16 +617,22 @@ class TestHealthCheck:
         mock_open = mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_open.assert_called_once()
 
     async def test_supabase_fails(self, mocker, mock_supabase):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_supabase.side_effect = Exception("DB down")
         mock_logger = mocker.patch("crons.health_check.logger")
@@ -566,16 +644,22 @@ class TestHealthCheck:
         mocker.patch("crons.health_check.httpx.AsyncClient", return_value=mock_ctx)
         mocker.patch("builtins.open", MagicMock())
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_logger.warn.assert_called_with("Health check: Supabase unavailable", error="DB down")
 
     async def test_ollama_available(self, mocker):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_client = AsyncMock()
         mock_client.get.return_value = MagicMock(status_code=200)
@@ -586,16 +670,22 @@ class TestHealthCheck:
         mock_open = mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_open.assert_called_once()
 
     async def test_ollama_unavailable(self, mocker):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_client = AsyncMock()
         mock_client.get.return_value = MagicMock(status_code=503)
@@ -606,34 +696,44 @@ class TestHealthCheck:
         mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
 
     async def test_ollama_not_configured(self, mocker):
         os.environ["USE_LOCAL_AI"] = "false"
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_ctx = MagicMock()
         mocker.patch("crons.health_check.httpx.AsyncClient", return_value=mock_ctx)
         mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_ctx.__aenter__.assert_not_called()
 
     async def test_open_circuits_alert(self, mocker):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": ["breaker_job"],
-                "failing_jobs": [{"job_name": "breaker_job", "consecutive_failures": 5}],
-                "total_daily_failures": 5, "consecutive_failures": {"breaker_job": 5},
-                "daily_failures": {"breaker_job": 5},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": ["breaker_job"],
+                    "failing_jobs": [{"job_name": "breaker_job", "consecutive_failures": 5}],
+                    "total_daily_failures": 5,
+                    "consecutive_failures": {"breaker_job": 5},
+                    "daily_failures": {"breaker_job": 5},
+                }
+            ),
         )
         mock_client = AsyncMock()
         mock_client.get.return_value = MagicMock(status_code=200)
@@ -645,6 +745,7 @@ class TestHealthCheck:
         mocker.patch("builtins.open", MagicMock())
         mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_alert.assert_awaited_once()
         assert "circuit breakers open" in mock_alert.await_args[1]["message"]
@@ -652,10 +753,15 @@ class TestHealthCheck:
     async def test_file_write_error(self, mocker):
         mocker.patch(
             "crons.health_check.failure_tracker.get_summary",
-            AsyncMock(return_value={
-                "open_circuits": [], "failing_jobs": [],
-                "total_daily_failures": 0, "consecutive_failures": {}, "daily_failures": {},
-            }),
+            AsyncMock(
+                return_value={
+                    "open_circuits": [],
+                    "failing_jobs": [],
+                    "total_daily_failures": 0,
+                    "consecutive_failures": {},
+                    "daily_failures": {},
+                }
+            ),
         )
         mock_client = AsyncMock()
         mock_client.get.return_value = MagicMock(status_code=200)
@@ -666,6 +772,7 @@ class TestHealthCheck:
         mocker.patch("builtins.open", side_effect=OSError("Disk full"))
         mock_logger = mocker.patch("crons.health_check.logger")
         from crons.health_check import run_health_check
+
         await run_health_check()
         mock_logger.error.assert_called_with("Failed to write health status file", error="Disk full")
 
@@ -674,6 +781,7 @@ class TestHealthCheck:
 # deadline_alert — full coverage (previously untested)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestDeadlineAlert:
 
     async def test_supabase_query_exception(self, mocker):
@@ -681,6 +789,7 @@ class TestDeadlineAlert:
         mock_supabase().from_().select().not_.is_().lte().execute.side_effect = Exception("DB error")
         mock_logger = mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 0
         mock_logger.error.assert_called()
@@ -690,6 +799,7 @@ class TestDeadlineAlert:
         mock_supabase().from_().select().not_.is_().lte().execute.return_value = MagicMock(data=[])
         mock_logger = mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 0
         mock_logger.info.assert_called_with("Deadline alert: no opportunities closing within 48h")
@@ -702,6 +812,7 @@ class TestDeadlineAlert:
         )
         mock_logger = mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 0
         mock_logger.info.assert_called_with("Deadline alert: no upcoming deadlines within 48h")
@@ -711,6 +822,7 @@ class TestDeadlineAlert:
         future = (now + timedelta(hours=12)).isoformat()
         mocker.patch("crons.deadline_alert.datetime")
         from crons.deadline_alert import datetime as dt_fake
+
         dt_fake.now.return_value = now
         dt_fake.fromisoformat.side_effect = lambda s: datetime.fromisoformat(s)
         dt_fake.timedelta = timedelta
@@ -722,8 +834,9 @@ class TestDeadlineAlert:
         mock_supabase().from_().select().eq().eq().execute.return_value = MagicMock(
             data=[{"id": "n1", "action_url": "/opportunities?id=opp1"}]
         )
-        mock_logger = mocker.patch("crons.deadline_alert.logger")
+        mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 0
         mock_supabase().from_().insert.assert_not_called()
@@ -737,8 +850,9 @@ class TestDeadlineAlert:
         )
         mock_supabase().from_().select().eq().eq().execute.return_value = MagicMock(data=[])
         mock_supabase().from_().insert().execute.return_value = MagicMock(data=[{"id": "new_n"}])
-        mock_logger = mocker.patch("crons.deadline_alert.logger")
+        mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 1
         insert_call = mock_supabase().from_().insert.call_args
@@ -756,8 +870,9 @@ class TestDeadlineAlert:
         )
         mock_supabase().from_().select().eq().eq().execute.return_value = MagicMock(data=[])
         mock_supabase().from_().insert().execute.return_value = MagicMock(data=[{"id": "new_n2"}])
-        mock_logger = mocker.patch("crons.deadline_alert.logger")
+        mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 1
         payload = mock_supabase().from_().insert.call_args[0][0]
@@ -773,12 +888,12 @@ class TestDeadlineAlert:
                 {"id": "opp_b", "deadline": future, "title": "B", "match_score": 85, "user_id": "u1"},
             ]
         )
-        calls = [MagicMock(data=[]), Exception("Insert failed")]
         mock_supabase().from_().select().eq().eq().execute.side_effect = [MagicMock(data=[]), None]
         mock_supabase().from_().insert().execute.side_effect = [MagicMock(data=[{"id": "n1"}]), None]
         mock_supabase().from_().insert().execute.side_effect = [MagicMock(data=[{"id": "n1"}]), Exception("Insert err")]
         mock_logger = mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 1
         mock_logger.error.assert_called()
@@ -798,8 +913,9 @@ class TestDeadlineAlert:
             MagicMock(data=[]),
         ]
         mock_supabase().from_().insert().execute.return_value = MagicMock(data=[{"id": "new_y"}])
-        mock_logger = mocker.patch("crons.deadline_alert.logger")
+        mocker.patch("crons.deadline_alert.logger")
         from crons.deadline_alert import run_deadline_alert
+
         result = await run_deadline_alert()
         assert result == 1
         inserted = mock_supabase().from_().insert.call_args[0][0]
@@ -810,15 +926,16 @@ class TestDeadlineAlert:
 # Cron modules — additional edge cases
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestDailyBriefingCron:
 
     async def test_normal_flow(self, mocker):
         mock_supabase = mocker.patch("crons.daily_briefing.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}]
-        mock_gen = mocker.patch("crons.daily_briefing.generate_daily_briefing",
-                                return_value={"productivity_score": 85})
+        mock_gen = mocker.patch("crons.daily_briefing.generate_daily_briefing", return_value={"productivity_score": 85})
         mocker.patch("crons.daily_briefing.sanitize_input", side_effect=lambda x: x)
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
         mock_gen.assert_awaited_once_with("u1")
 
@@ -827,16 +944,20 @@ class TestDailyBriefingCron:
         mock_supabase().from_().select().execute.return_value.data = []
         mock_gen = mocker.patch("crons.daily_briefing.generate_daily_briefing")
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
         mock_gen.assert_not_called()
 
     async def test_user_exception(self, mocker):
         mock_supabase = mocker.patch("crons.daily_briefing.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}, {"id": "u2"}]
-        mock_gen = mocker.patch("crons.daily_briefing.generate_daily_briefing",
-                                side_effect=[Exception("AI error"), {"productivity_score": 90}])
+        mock_gen = mocker.patch(
+            "crons.daily_briefing.generate_daily_briefing",
+            side_effect=[Exception("AI error"), {"productivity_score": 90}],
+        )
         mocker.patch("crons.daily_briefing.sanitize_input", side_effect=lambda x: x)
         from crons.daily_briefing import run_daily_briefing
+
         await run_daily_briefing()
         assert mock_gen.await_count == 2
 
@@ -846,10 +967,10 @@ class TestOpportunityRadarCron:
     async def test_normal_flow(self, mocker):
         mock_supabase = mocker.patch("crons.opportunity_radar.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}]
-        mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar",
-                                  return_value=[{"title": "Opp1"}])
+        mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar", return_value=[{"title": "Opp1"}])
         mocker.patch("crons.opportunity_radar.sanitize_input", side_effect=lambda x: x)
         from crons.opportunity_radar import run_radar
+
         await run_radar()
         mock_radar.assert_awaited_once_with("u1")
 
@@ -858,6 +979,7 @@ class TestOpportunityRadarCron:
         mock_supabase().from_().select().execute.return_value.data = []
         mock_radar = mocker.patch("crons.opportunity_radar.run_opportunity_radar")
         from crons.opportunity_radar import run_radar
+
         await run_radar()
         mock_radar.assert_not_called()
 
@@ -867,20 +989,20 @@ class TestWeeklyReviewCron:
     async def test_normal_flow(self, mocker):
         mock_supabase = mocker.patch("crons.weekly_review.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}]
-        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review",
-                                   return_value={"completion_rate": 0.8})
+        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review", return_value={"completion_rate": 0.8})
         mocker.patch("crons.weekly_review.sanitize_input", side_effect=lambda x: x)
         from crons.weekly_review import run_weekly_review
+
         await run_weekly_review()
         mock_review.assert_awaited_once_with("u1")
 
     async def test_error(self, mocker):
         mock_supabase = mocker.patch("crons.weekly_review.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}]
-        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review",
-                                   side_effect=Exception("Gen failed"))
+        mock_review = mocker.patch("crons.weekly_review.generate_weekly_review", side_effect=Exception("Gen failed"))
         mocker.patch("crons.weekly_review.sanitize_input", side_effect=lambda x: x)
         from crons.weekly_review import run_weekly_review
+
         await run_weekly_review()
         mock_review.assert_awaited_once_with("u1")
 
@@ -901,14 +1023,17 @@ class TestHabitCheckerCron:
         mock_supabase = mocker.patch("crons.habit_checker.get_supabase_client")
         mock_date_patch = mocker.patch("crons.habit_checker.date")
         mock_date_patch.today.return_value.isoformat.return_value = "2026-07-13"
-        chain = self._make_query_chain([
-            MagicMock(data=[{"id": "u1"}]),
-            MagicMock(data=[{"id": "h1", "name": "Read"}]),
-            MagicMock(data=[{"id": "log1"}]),
-        ])
+        chain = self._make_query_chain(
+            [
+                MagicMock(data=[{"id": "u1"}]),
+                MagicMock(data=[{"id": "h1", "name": "Read"}]),
+                MagicMock(data=[{"id": "log1"}]),
+            ]
+        )
         mock_supabase().from_.return_value = chain
         mock_logger = mocker.patch("crons.habit_checker.logger")
         from crons.habit_checker import run_habit_checker
+
         await run_habit_checker()
         mock_logger.info.assert_not_called()
 
@@ -916,14 +1041,17 @@ class TestHabitCheckerCron:
         mock_supabase = mocker.patch("crons.habit_checker.get_supabase_client")
         mock_date_patch = mocker.patch("crons.habit_checker.date")
         mock_date_patch.today.return_value.isoformat.return_value = "2026-07-13"
-        chain = self._make_query_chain([
-            MagicMock(data=[{"id": "u1"}]),
-            MagicMock(data=[{"id": "h1", "name": "Exercise"}]),
-            MagicMock(data=[]),
-        ])
+        chain = self._make_query_chain(
+            [
+                MagicMock(data=[{"id": "u1"}]),
+                MagicMock(data=[{"id": "h1", "name": "Exercise"}]),
+                MagicMock(data=[]),
+            ]
+        )
         mock_supabase().from_.return_value = chain
         mock_logger = mocker.patch("crons.habit_checker.logger")
         from crons.habit_checker import run_habit_checker
+
         await run_habit_checker()
         mock_logger.info.assert_called_with("Habit not logged today", user_id="u1", habit_name="Exercise")
 
@@ -931,12 +1059,15 @@ class TestHabitCheckerCron:
         mock_supabase = mocker.patch("crons.habit_checker.get_supabase_client")
         mock_date_patch = mocker.patch("crons.habit_checker.date")
         mock_date_patch.today.return_value.isoformat.return_value = "2026-07-13"
-        chain = self._make_query_chain([
-            MagicMock(data=[{"id": "u1"}]),
-            MagicMock(data=[]),
-        ])
+        chain = self._make_query_chain(
+            [
+                MagicMock(data=[{"id": "u1"}]),
+                MagicMock(data=[]),
+            ]
+        )
         mock_supabase().from_.return_value = chain
         from crons.habit_checker import run_habit_checker
+
         await run_habit_checker()
 
 
@@ -944,12 +1075,15 @@ class TestMissedTaskCheckerCron:
 
     async def test_marks_overdue_as_missed(self, mocker):
         from crons.missed_task_checker import run_missed_task_checker
+
         mock_supabase = mocker.patch("crons.missed_task_checker.get_supabase_client")
         mocker.patch("crons.missed_task_checker.datetime")
-        it = iter([
-            MagicMock(data=[{"id": "u1"}]),
-            MagicMock(data=[{"id": "t1", "missed_count": 0}]),
-        ])
+        it = iter(
+            [
+                MagicMock(data=[{"id": "u1"}]),
+                MagicMock(data=[{"id": "t1", "missed_count": 0}]),
+            ]
+        )
         chain = MagicMock()
         chain.execute = MagicMock(side_effect=lambda: next(it))
         chain.eq.return_value = chain
@@ -962,12 +1096,15 @@ class TestMissedTaskCheckerCron:
 
     async def test_no_overdue(self, mocker):
         from crons.missed_task_checker import run_missed_task_checker
+
         mock_supabase = mocker.patch("crons.missed_task_checker.get_supabase_client")
         mocker.patch("crons.missed_task_checker.datetime")
-        it = iter([
-            MagicMock(data=[{"id": "u1"}]),
-            MagicMock(data=[]),
-        ])
+        it = iter(
+            [
+                MagicMock(data=[{"id": "u1"}]),
+                MagicMock(data=[]),
+            ]
+        )
         chain = MagicMock()
         chain.execute = MagicMock(side_effect=lambda: next(it))
         chain.eq.return_value = chain
@@ -983,12 +1120,15 @@ class TestSleepReminderCron:
 
     async def test_already_logged(self, mocker):
         from crons.sleep_reminder import run_sleep_reminder
+
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
-        it = iter([
-            MagicMock(data=[{"id": "u1", "sleep_goal_bedtime": "23:00"}]),
-            MagicMock(data=[{"id": "log1"}]),
-        ])
+        it = iter(
+            [
+                MagicMock(data=[{"id": "u1", "sleep_goal_bedtime": "23:00"}]),
+                MagicMock(data=[{"id": "log1"}]),
+            ]
+        )
         chain = MagicMock()
         chain.execute = MagicMock(side_effect=lambda: next(it))
         chain.select.return_value = chain
@@ -1001,20 +1141,22 @@ class TestSleepReminderCron:
 
     async def test_not_logged_sends_nudge(self, mocker):
         from crons.sleep_reminder import run_sleep_reminder
+
         mock_supabase = mocker.patch("crons.sleep_reminder.get_supabase_client")
         mocker.patch("crons.sleep_reminder.date")
-        it = iter([
-            MagicMock(data=[{"id": "u1", "sleep_goal_bedtime": "23:00"}]),
-            MagicMock(data=[]),
-        ])
+        it = iter(
+            [
+                MagicMock(data=[{"id": "u1", "sleep_goal_bedtime": "23:00"}]),
+                MagicMock(data=[]),
+            ]
+        )
         chain = MagicMock()
         chain.execute = MagicMock(side_effect=lambda: next(it))
         chain.select.return_value = chain
         chain.eq.return_value = chain
         chain.gte.return_value = chain
         mock_supabase().from_.return_value = chain
-        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime",
-                                    return_value={"suggested_bedtime": "22:30"})
+        mock_suggest = mocker.patch("crons.sleep_reminder.suggest_bedtime", return_value={"suggested_bedtime": "22:30"})
         mocker.patch("crons.sleep_reminder.sanitize_input", side_effect=lambda x: x)
         await run_sleep_reminder()
         mock_suggest.assert_awaited_once_with("u1")
@@ -1025,20 +1167,26 @@ class TestCourseNudgeCron:
     async def test_normal_with_nudges(self, mocker):
         mock_supabase = mocker.patch("crons.course_nudge.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}]
-        mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges",
-                                  return_value={"total_nudges": 2, "course_nudges": [{}], "habit_nudges": [{}]})
+        mock_nudge = mocker.patch(
+            "crons.course_nudge.run_all_nudges",
+            return_value={"total_nudges": 2, "course_nudges": [{}], "habit_nudges": [{}]},
+        )
         mocker.patch("crons.course_nudge.sanitize_input", side_effect=lambda x: x)
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
         mock_nudge.assert_awaited_once_with("u1")
 
     async def test_exception(self, mocker):
         mock_supabase = mocker.patch("crons.course_nudge.get_supabase_client")
         mock_supabase().from_().select().execute.return_value.data = [{"id": "u1"}, {"id": "u2"}]
-        mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges",
-                                  side_effect=[Exception("fail"), {"total_nudges": 0, "course_nudges": [], "habit_nudges": []}])
+        mock_nudge = mocker.patch(
+            "crons.course_nudge.run_all_nudges",
+            side_effect=[Exception("fail"), {"total_nudges": 0, "course_nudges": [], "habit_nudges": []}],
+        )
         mocker.patch("crons.course_nudge.sanitize_input", side_effect=lambda x: x)
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
         assert mock_nudge.await_count == 2
 
@@ -1047,6 +1195,7 @@ class TestCourseNudgeCron:
         mock_supabase().from_().select().execute.return_value.data = []
         mock_nudge = mocker.patch("crons.course_nudge.run_all_nudges")
         from crons.course_nudge import run_course_nudges
+
         await run_course_nudges()
         mock_nudge.assert_not_called()
 
@@ -1055,6 +1204,7 @@ class TestCourseNudgeCron:
 # main.py — _wrap_cron
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestWrapCron:
     """Cover _wrap_cron success/fast/slow/failure paths."""
@@ -1062,10 +1212,14 @@ class TestWrapCron:
     async def test_success_fast(self, mocker):
         import main as main_module
         from main import _wrap_cron
+
         mocker.patch("main.time.time", side_effect=[100.0, 100.3])
         mocker.patch.object(main_module.failure_tracker, "record_success", AsyncMock())
         mock_logger = mocker.patch("main.logger")
-        async def good(): return "ok"
+
+        async def good():
+            return "ok"
+
         wrapped = _wrap_cron("fast_j", good)
         result = await wrapped()
         assert result == "ok"
@@ -1075,10 +1229,14 @@ class TestWrapCron:
     async def test_success_slow(self, mocker):
         import main as main_module
         from main import _wrap_cron
+
         mocker.patch("main.time.time", side_effect=[100.0, 106.5])
         mocker.patch.object(main_module.failure_tracker, "record_success", AsyncMock())
         mock_logger = mocker.patch("main.logger")
-        async def slow(): return "done"
+
+        async def slow():
+            return "done"
+
         wrapped = _wrap_cron("slow_j", slow)
         result = await wrapped()
         assert result == "done"
@@ -1087,11 +1245,15 @@ class TestWrapCron:
     async def test_failure(self, mocker):
         import main as main_module
         from main import _wrap_cron
+
         mocker.patch("main.time.time", side_effect=[100.0, 101.0])
         mocker.patch.object(main_module.failure_tracker, "record_failure", AsyncMock())
         mock_alert = mocker.patch.object(main_module.alerting, "alert_warning", AsyncMock())
         mocker.patch("main.logger")
-        async def fail(): raise ValueError("broke")
+
+        async def fail():
+            raise ValueError("broke")
+
         wrapped = _wrap_cron("fail_j", fail)
         result = await wrapped()
         assert result is None
@@ -1101,11 +1263,15 @@ class TestWrapCron:
     async def test_failure_details(self, mocker):
         import main as main_module
         from main import _wrap_cron
+
         mocker.patch("main.time.time", side_effect=[200.0, 202.5])
         mocker.patch.object(main_module.failure_tracker, "record_failure", AsyncMock())
         mock_alert = mocker.patch.object(main_module.alerting, "alert_warning", AsyncMock())
         mocker.patch("main.logger")
-        async def err(): raise RuntimeError("crash")
+
+        async def err():
+            raise RuntimeError("crash")
+
         wrapped = _wrap_cron("detail_j", err)
         await wrapped()
         kwargs = mock_alert.await_args[1]
@@ -1116,10 +1282,14 @@ class TestWrapCron:
     async def test_return_value_preserved(self, mocker):
         import main as main_module
         from main import _wrap_cron
+
         mocker.patch("main.time.time", side_effect=[1.0, 1.1])
         mocker.patch.object(main_module.failure_tracker, "record_success", AsyncMock())
         mocker.patch("main.logger")
-        async def returns_dict(): return {"key": "val"}
+
+        async def returns_dict():
+            return {"key": "val"}
+
         wrapped = _wrap_cron("dict_j", returns_dict)
         result = await wrapped()
         assert result == {"key": "val"}
@@ -1129,6 +1299,7 @@ class TestWrapCron:
 # main.py — _scheduler_listener
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestSchedulerListener:
     """Cover EVENT_JOB_ERROR, EVENT_JOB_MISSED, job found/not found, missing attrs."""
@@ -1136,6 +1307,7 @@ class TestSchedulerListener:
     async def test_job_error(self, mocker):
         import main as main_module
         from apscheduler.events import EVENT_JOB_ERROR
+
         mock_event = MagicMock()
         mock_event.job_id = "job1"
         mock_event.code = EVENT_JOB_ERROR
@@ -1149,6 +1321,7 @@ class TestSchedulerListener:
     async def test_job_missed(self, mocker):
         import main as main_module
         from apscheduler.events import EVENT_JOB_MISSED
+
         mock_event = MagicMock()
         mock_event.job_id = "job2"
         mock_event.code = EVENT_JOB_MISSED
@@ -1162,6 +1335,7 @@ class TestSchedulerListener:
     async def test_job_not_found(self, mocker):
         import main as main_module
         from apscheduler.events import EVENT_JOB_ERROR
+
         mock_event = MagicMock()
         mock_event.job_id = "orphan"
         mock_event.code = EVENT_JOB_ERROR
@@ -1175,6 +1349,7 @@ class TestSchedulerListener:
     async def test_missing_event_attributes(self, mocker):
         import main as main_module
         from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_MISSED
+
         main_module.scheduler = MagicMock()
         main_module.scheduler.get_job.return_value = MagicMock(name="anon")
         mock_alert = mocker.patch.object(main_module.alerting, "alert_warning", AsyncMock())
@@ -1193,14 +1368,16 @@ class TestSchedulerListener:
 # main.py — setup_cron_jobs & write_initial_health
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestSetupCronJobs:
 
     def test_registers_all_jobs_and_listener(self, mocker):
         import main as main_module
+
         main_module.scheduler = MagicMock()
         mock_jobs = []
-        for i in range(14):
+        for i in range(15):
             j = MagicMock(spec=["id", "name"])
             j.id = f"j{i}"
             j.name = f"Job {i}"
@@ -1209,7 +1386,7 @@ class TestSetupCronJobs:
         mocker.patch.object(main_module, "_wrap_cron", side_effect=lambda jid, fn: fn)
         mock_add_listener = mocker.patch.object(main_module.scheduler, "add_listener")
         main_module.setup_cron_jobs()
-        assert main_module.scheduler.add_job.call_count == 14
+        assert main_module.scheduler.add_job.call_count == 15
         mock_add_listener.assert_called_once()
 
 
@@ -1218,6 +1395,7 @@ class TestWriteInitialHealth:
 
     def test_success(self):
         from main import write_initial_health
+
         mock_open = MagicMock()
         with patch("builtins.open", mock_open):
             write_initial_health()
@@ -1225,23 +1403,24 @@ class TestWriteInitialHealth:
 
     def test_file_write_exception(self, mocker):
         from main import write_initial_health
+
         mocker.patch("builtins.open", side_effect=OSError("Permission denied"))
         mock_logger = mocker.patch("main.logger")
         write_initial_health()
-        mock_logger.warn.assert_called_with(
-            "Failed to write initial health status", error="Permission denied"
-        )
+        mock_logger.warn.assert_called_with("Failed to write initial health status", error="Permission denied")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # main.py — HealthHandler
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestHealthHandler:
 
     def test_health_returns_200(self, mocker):
         from main import HealthHandler
+
         mocker.patch.object(HealthHandler, "_load_health", return_value={"status": "healthy"})
         mocker.patch.object(HealthHandler, "send_response")
         mocker.patch.object(HealthHandler, "send_header")
@@ -1256,6 +1435,7 @@ class TestHealthHandler:
 
     def test_health_ready_healthy(self, mocker):
         from main import HealthHandler
+
         mocker.patch.object(HealthHandler, "_load_health", return_value={"status": "healthy"})
         mocker.patch.object(HealthHandler, "send_response")
         mocker.patch.object(HealthHandler, "send_header")
@@ -1270,6 +1450,7 @@ class TestHealthHandler:
 
     def test_health_ready_degraded(self, mocker):
         from main import HealthHandler
+
         mocker.patch.object(HealthHandler, "_load_health", return_value={"status": "degraded"})
         mocker.patch.object(HealthHandler, "send_response")
         mocker.patch.object(HealthHandler, "send_header")
@@ -1284,6 +1465,7 @@ class TestHealthHandler:
 
     def test_unknown_path_404(self, mocker):
         from main import HealthHandler
+
         mocker.patch.object(HealthHandler, "send_response")
         mocker.patch.object(HealthHandler, "end_headers")
         handler = HealthHandler.__new__(HealthHandler)
@@ -1295,11 +1477,13 @@ class TestHealthHandler:
     def test_load_health_file_exists(self, mocker):
         from main import HealthHandler
         import tempfile
+
         handler = HealthHandler.__new__(HealthHandler)
         tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
         json.dump({"status": "custom"}, tmp)
         tmp.close()
         import main as main_module
+
         original = main_module.HEALTH_STATUS_FILE
         main_module.HEALTH_STATUS_FILE = Path(tmp.name)
         try:
@@ -1312,6 +1496,7 @@ class TestHealthHandler:
     def test_load_health_file_not_found(self, mocker):
         from main import HealthHandler
         import main as main_module
+
         handler = HealthHandler.__new__(HealthHandler)
         original = main_module.HEALTH_STATUS_FILE
         main_module.HEALTH_STATUS_FILE = Path("nonexistent_XXXX.json")
@@ -1324,6 +1509,7 @@ class TestHealthHandler:
     def test_load_health_read_exception(self, mocker):
         from main import HealthHandler
         import main as main_module
+
         handler = HealthHandler.__new__(HealthHandler)
         original = main_module.HEALTH_STATUS_FILE
         main_module.HEALTH_STATUS_FILE = Path(".")
@@ -1335,6 +1521,7 @@ class TestHealthHandler:
 
     def test_includes_job_count(self, mocker):
         from main import HealthHandler
+
         mocker.patch.object(HealthHandler, "_load_health", return_value={"status": "healthy"})
         mocker.patch.object(HealthHandler, "send_response")
         mocker.patch.object(HealthHandler, "send_header")
@@ -1350,6 +1537,7 @@ class TestHealthHandler:
 
     def test_log_message_silenced(self):
         from main import HealthHandler
+
         handler = HealthHandler.__new__(HealthHandler)
         handler.log_message("some format %s", "arg")
 
@@ -1358,11 +1546,13 @@ class TestHealthHandler:
 # main.py — start_health_server & main()
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestStartHealthServer:
 
     def test_creates_server(self, mocker):
         from main import start_health_server
+
         mock_server = MagicMock()
         mock_server.serve_forever.side_effect = Exception("Stop")
         with patch("main.HTTPServer", return_value=mock_server):
@@ -1378,6 +1568,7 @@ class TestMainFunction:
     async def test_keyboard_interrupt(self, mocker):
         import main as main_module
         import asyncio
+
         main_module.scheduler = MagicMock()
         main_module.scheduler.start = MagicMock()
         mocker.patch.object(main_module, "write_initial_health")
@@ -1386,7 +1577,7 @@ class TestMainFunction:
         mocker.patch.object(asyncio, "sleep", side_effect=KeyboardInterrupt())
         mock_alert_info = mocker.patch.object(main_module.alerting, "alert_info", AsyncMock())
         mock_flush = mocker.patch.object(main_module.alerting, "flush_pending", AsyncMock())
-        mock_shutdown = mocker.patch.object(main_module.alerting, "shutdown", AsyncMock())
+        mocker.patch.object(main_module.alerting, "shutdown", AsyncMock())
         mock_sched_shutdown = mocker.patch.object(main_module.scheduler, "shutdown")
         await main_module.main()
         main_module.write_initial_health.assert_called_once()
@@ -1399,6 +1590,7 @@ class TestMainFunction:
     async def test_system_exit(self, mocker):
         import main as main_module
         import asyncio
+
         main_module.scheduler = MagicMock()
         mocker.patch.object(main_module, "write_initial_health")
         mocker.patch.object(main_module, "setup_cron_jobs")
@@ -1416,16 +1608,22 @@ class TestMainFunction:
 # JOB_DEFINITIONS validation
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 @NEED_APSCHEDULER
 class TestJobDefinitions:
 
-    def test_all_14_jobs_defined(self):
+    def test_all_jobs_defined(self):
+        # 15 jobs, not 14: `memory_consolidation` was added to
+        # services/scheduler/main.py on top of the 5 skills jobs.
+        # AGENTS.md sections 3 / 9.3 documents 15 cron jobs.
         from main import JOB_DEFINITIONS
-        assert len(JOB_DEFINITIONS) == 14
+
+        assert len(JOB_DEFINITIONS) == 15
 
     def test_all_have_callable_func(self):
         from main import JOB_DEFINITIONS
         from apscheduler.triggers.cron import CronTrigger
+
         for func, trigger, job_id, job_name in JOB_DEFINITIONS:
             assert callable(func), f"{job_id} not callable"
             assert isinstance(trigger, CronTrigger), f"{job_id} trigger not CronTrigger"
@@ -1434,24 +1632,37 @@ class TestJobDefinitions:
 
     def test_all_ids_unique(self):
         from main import JOB_DEFINITIONS
+
         ids = [j[2] for j in JOB_DEFINITIONS]
         assert len(ids) == len(set(ids))
 
     def test_expected_ids_present(self):
         from main import JOB_DEFINITIONS
+
         ids = {j[2] for j in JOB_DEFINITIONS}
         expected = {
-            "daily_briefing", "opportunity_radar", "weekly_review",
-            "habit_checker", "missed_task_checker", "sleep_reminder",
-            "course_nudge", "skill_intelligence_refresh", "skill_evidence_expiry",
-            "skill_analytics_snapshot", "skill_mv_refresh", "skill_retention_cleanup",
-            "deadline_alert", "health_check",
+            "daily_briefing",
+            "opportunity_radar",
+            "weekly_review",
+            "habit_checker",
+            "missed_task_checker",
+            "sleep_reminder",
+            "course_nudge",
+            "skill_intelligence_refresh",
+            "skill_evidence_expiry",
+            "skill_analytics_snapshot",
+            "skill_mv_refresh",
+            "skill_retention_cleanup",
+            "deadline_alert",
+            "health_check",
+            "memory_consolidation",
         }
         assert ids == expected
 
     def test_health_check_trigger_every_5min(self):
         from main import JOB_DEFINITIONS
         from datetime import datetime
+
         hc = [j for j in JOB_DEFINITIONS if j[2] == "health_check"][0]
         trigger = hc[1]
         next_fire = trigger.get_next_fire_time(None, datetime(2026, 7, 13, 12, 0))
@@ -1461,6 +1672,7 @@ class TestJobDefinitions:
     def test_deadline_alert_trigger_every_hour(self):
         from main import JOB_DEFINITIONS
         from datetime import datetime
+
         da = [j for j in JOB_DEFINITIONS if j[2] == "deadline_alert"][0]
         trigger = da[1]
         next_fire = trigger.get_next_fire_time(None, datetime(2026, 7, 13, 10, 15))
@@ -1472,6 +1684,7 @@ class TestJobDefinitions:
 # Skill cron modules — additional edge case coverage
 # ═══════════════════════════════════════════════════════════════════════════════
 
+
 class TestSkillIntelligenceRefresh:
 
     async def test_insert_exception(self, mocker):
@@ -1481,14 +1694,17 @@ class TestSkillIntelligenceRefresh:
         )
         mock_supabase().from_().update().eq().execute.return_value = MagicMock(data=[{"skill_id": "s1"}])
         call_count = [0]
+
         def insert_side(*a, **kw):
             call_count[0] += 1
             if call_count[0] == 1:
                 raise Exception("Insert failed")
             return MagicMock(execute=MagicMock(return_value=MagicMock(data=[{"id": "h1"}])))
+
         mock_supabase().from_().insert.side_effect = insert_side
-        mock_logger = mocker.patch("crons.skill_intelligence_refresh.logger")
+        mocker.patch("crons.skill_intelligence_refresh.logger")
         from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+
         await run_skill_intelligence_refresh()
         assert call_count[0] == 2
 
@@ -1496,6 +1712,7 @@ class TestSkillIntelligenceRefresh:
         mock_supabase = mocker.patch("crons.skill_intelligence_refresh.get_supabase_client")
         mock_supabase().from_().select().eq().execute.return_value = MagicMock(data=[])
         from crons.skill_intelligence_refresh import run_skill_intelligence_refresh
+
         await run_skill_intelligence_refresh()
 
 
@@ -1505,6 +1722,7 @@ class TestSkillEvidenceExpiry:
         mock_supabase = mocker.patch("crons.skill_evidence_expiry.get_supabase_client")
         mock_supabase().from_().select().lt().neq().execute.return_value = MagicMock(data=[])
         from crons.skill_evidence_expiry import run_skill_evidence_expiry
+
         await run_skill_evidence_expiry()
 
     async def test_expired_found(self, mocker):
@@ -1513,6 +1731,7 @@ class TestSkillEvidenceExpiry:
             data=[{"evidence_id": "e1"}, {"evidence_id": "e2"}]
         )
         from crons.skill_evidence_expiry import run_skill_evidence_expiry
+
         await run_skill_evidence_expiry()
         mock_supabase().from_().update().in_().execute.assert_called_once()
 
@@ -1523,19 +1742,22 @@ class TestSkillAnalyticsSnapshot:
         mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
         mock_supabase().from_().select().execute.return_value = MagicMock(data=[])
         from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
         await run_skill_analytics_snapshot()
 
     async def test_no_skills_skips_upsert(self, mocker):
         from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
         mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
         mock_supabase().from_().select().execute.return_value = MagicMock(data=[{"id": "u1"}])
         mock_supabase().from_().select().eq().execute.return_value = MagicMock(data=[])
-        mock_logger = mocker.patch("crons.skill_analytics_snapshot.logger")
+        mocker.patch("crons.skill_analytics_snapshot.logger")
         await run_skill_analytics_snapshot()
         mock_supabase().from_().upsert.assert_not_called()
 
     async def test_user_exception(self, mocker):
         from crons.skill_analytics_snapshot import run_skill_analytics_snapshot
+
         mock_supabase = mocker.patch("crons.skill_analytics_snapshot.get_supabase_client")
         mock_supabase().from_().select().execute.return_value = MagicMock(data=[{"id": "u1"}, {"id": "u2"}])
         mock_supabase().from_().select().eq().execute.side_effect = [
@@ -1550,24 +1772,28 @@ class TestSkillMVRefresh:
     async def test_supabase_unavailable(self, mocker):
         mocker.patch("config.core.supabase.get_supabase_client", side_effect=Exception("No conn"))
         from crons.skill_mv_refresh import run_skill_mv_refresh
+
         await run_skill_mv_refresh()
 
     async def test_success(self, mocker):
         mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
         mock_supabase().rpc().execute.return_value = MagicMock(data=[], error=None)
         from crons.skill_mv_refresh import run_skill_mv_refresh
+
         await run_skill_mv_refresh()
 
     async def test_rpc_error(self, mocker):
         mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
         mock_supabase().rpc().execute.return_value = MagicMock(data=[], error=MagicMock(message="RPC fail"))
         from crons.skill_mv_refresh import run_skill_mv_refresh
+
         await run_skill_mv_refresh()
 
     async def test_rpc_exception(self, mocker):
         mock_supabase = mocker.patch("config.core.supabase.get_supabase_client")
         mock_supabase().rpc.side_effect = Exception("Connection lost")
         from crons.skill_mv_refresh import run_skill_mv_refresh
+
         await run_skill_mv_refresh()
 
 
@@ -1576,6 +1802,7 @@ class TestSkillRetentionCleanup:
     async def test_supabase_unavailable(self, mocker):
         mocker.patch("config.core.supabase.get_supabase_client", side_effect=Exception("No conn"))
         from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
         await run_skill_retention_cleanup()
 
     async def test_all_cleanups(self, mocker):
@@ -1586,6 +1813,7 @@ class TestSkillRetentionCleanup:
         mock_supabase().table().delete().eq().lt().execute.return_value = MagicMock(data=[{"id": "ev1"}], error=None)
         mock_supabase().table().delete().lt().execute.return_value = MagicMock(data=[{"id": "al1"}], error=None)
         from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
         await run_skill_retention_cleanup()
         assert mock_supabase().table().delete.call_count >= 3
 
@@ -1597,6 +1825,7 @@ class TestSkillRetentionCleanup:
         mock_supabase().table().delete().eq().lt().execute.side_effect = Exception("Evidence error")
         mock_supabase().table().delete().lt().execute.side_effect = Exception("Activity error")
         from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
         await run_skill_retention_cleanup()
 
     async def test_cleanup_error_results(self, mocker):
@@ -1604,10 +1833,12 @@ class TestSkillRetentionCleanup:
         dt_patch = mocker.patch("crons.skill_retention_cleanup.datetime")
         dt_patch.now.return_value.timestamp.return_value = 1_000_000_000
         dt_patch.now.return_value.isoformat.return_value = "2026-07-13"
-        mock_supabase().table().delete().eq().lt().execute.return_value = MagicMock(data=[], error=MagicMock(message="Del err"))
-        mock_supabase().table().delete().lt().execute.return_value = MagicMock(data=[], error=MagicMock(message="Del err"))
+        mock_supabase().table().delete().eq().lt().execute.return_value = MagicMock(
+            data=[], error=MagicMock(message="Del err")
+        )
+        mock_supabase().table().delete().lt().execute.return_value = MagicMock(
+            data=[], error=MagicMock(message="Del err")
+        )
         from crons.skill_retention_cleanup import run_skill_retention_cleanup
+
         await run_skill_retention_cleanup()
-
-
-

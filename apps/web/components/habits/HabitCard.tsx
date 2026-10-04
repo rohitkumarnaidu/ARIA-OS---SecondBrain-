@@ -51,15 +51,15 @@ export const HabitCard = memo(function HabitCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h3
-                className="font-medium text-text-primary truncate group-hover:text-accent-primary transition-colors cursor-pointer"
-                onClick={() => onEdit?.(habit)}
-                onKeyDown={(e) => { if (e.key === 'Enter') onEdit?.(habit) }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Edit ${habit.name}`}
-              >
-                {habit.name}
+              <h3 className="min-w-0 font-medium text-text-primary group-hover:text-accent-primary transition-colors">
+                <button
+                  type="button"
+                  onClick={() => onEdit?.(habit)}
+                  aria-label={`Edit ${habit.name}`}
+                  className="block w-full min-w-0 truncate text-left cursor-pointer"
+                >
+                  {habit.name}
+                </button>
               </h3>
               {todayLogged && (
                 <CheckCircle2 size={16} className="text-accent-success shrink-0" aria-label="Completed today" />

@@ -1,0 +1,54 @@
+# =============================================================================
+# Second Brain OS — Development / CI toolchain
+# =============================================================================
+# Pinned so that local `make install`, CI (ci.yml) and Release (release.yml)
+# all run the exact same linter/formatter/test harness.
+#
+# These tools are intentionally NOT in apps/api/requirements.txt: that file is
+# the *runtime* dependency set baked into the production image, and shipping
+# pytest/ruff/black there would bloat the image and widen the attack surface.
+#
+# Install (after requirements.txt):
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# ⚠ Requires CPython <= 3.12. See the interpreter constraint in
+#   requirements.txt — pydantic-core 2.14.x has no cp313/cp314 wheels.
+# =============================================================================
+
+# ── Test runner ───────────────────────────────────────────────────────────────
+# >= 8.0 required for pytest-asyncio 0.24 auto mode used by pytest.ini
+pytest==8.3.4
+# >= 0.24 required — pytest.ini sets `asyncio_default_fixture_loop_scope`
+pytest-asyncio==0.24.0
+# pytest.ini `addopts` passes --cov/--cov-fail-under, so this is mandatory
+pytest-cov==6.0.0
+# the `mocker` fixture is used by ~860 call sites across tests/
+pytest-mock==3.14.0
+# 0.30.x is the last line compatible with the pinned httpx==0.27.2 below.
+# 0.31+ requires httpx>=0.28 and will fail to resolve against apps/api pins.
+pytest-httpx==0.30.0
+
+# ── Lint / format / type ──────────────────────────────────────────────────────
+ruff==0.8.6
+black==24.10.0
+mypy==1.14.1
+
+# ── Transitive pin (matching apps/api + services/scheduler) ───────────────────
+# pytest-httpx resolves against the same httpx the app ships, so the two
+# requirement sets can be installed into one environment without conflict.
+httpx==0.27.2
+
+# ── Test-only extra ───────────────────────────────────────────────────────────
+# tests/test_cache_utils.py::TestRedisCacheLayer (4 tests) does
+# `patch("redis.asyncio.from_url", ...)` against
+# packages/shared/utils/redis_cache.py. Neither `redis` nor `redis[hiredis]`
+# appears in apps/api/requirements.txt, services/scheduler/requirements.txt or
+# requirements.txt, so those 4 tests died with ModuleNotFoundError on any
+# machine that did not already have a global redis install.
+#
+# It lives here rather than in requirements.txt because redis_cache.py is
+# currently ORPHANED: a repo-wide grep finds no module that imports
+# shared.utils.redis_cache. It is dead code, so the runtime does not need redis
+# yet. If redis_cache.py is ever wired into a request path, move this pin up to
+# requirements.txt. See FINAL REPORT finding.
+redis==5.2.1

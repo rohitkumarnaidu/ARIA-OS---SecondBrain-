@@ -14,13 +14,12 @@ async def get_tasks(
     offset: int = Query(0, ge=0),
 ):
     supabase = get_supabase_client()
-    count_response = (
-        supabase.from_("tasks")
-        .select("*", count="exact")
-        .eq("user_id", current_user.user.id)
-        .execute()
+    count_response = supabase.from_("tasks").select("*", count="exact").eq("user_id", current_user.user.id).execute()
+    total = (
+        count_response.count
+        if hasattr(count_response, "count") and count_response.count is not None
+        else len(count_response.data)
     )
-    total = count_response.count if hasattr(count_response, "count") and count_response.count is not None else len(count_response.data)
     data_response = (
         supabase.from_("tasks")
         .select(

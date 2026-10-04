@@ -295,7 +295,10 @@ class TestLifespan:
     async def test_startup_event_services_failure(self):
         app = FastAPI()
         with patch("shared.utils.event_outbox.event_outbox.start_background_polling", side_effect=Exception("Failed")):
-            with patch("shared.utils.webhook_delivery.webhook_delivery.start_background_polling", side_effect=Exception("Failed")):
+            with patch(
+                "shared.utils.webhook_delivery.webhook_delivery.start_background_polling",
+                side_effect=Exception("Failed"),
+            ):
                 async with api_main.lifespan(app):
                     assert hasattr(app.state, "start_time")
 
@@ -303,7 +306,10 @@ class TestLifespan:
     async def test_shutdown_event_services_failure(self):
         app = FastAPI()
         with patch("shared.utils.event_outbox.event_outbox.stop_background_polling", side_effect=Exception("Failed")):
-            with patch("shared.utils.webhook_delivery.webhook_delivery.stop_background_polling", side_effect=Exception("Failed")):
+            with patch(
+                "shared.utils.webhook_delivery.webhook_delivery.stop_background_polling",
+                side_effect=Exception("Failed"),
+            ):
                 async with api_main.lifespan(app):
                     pass
 

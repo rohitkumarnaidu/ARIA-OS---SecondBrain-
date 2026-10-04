@@ -38,7 +38,10 @@ repos:
     rev: 24.4.2
     hooks:
       - id: black
-        args: [--line-length=100]
+        # Must match [tool.black] line-length in pyproject.toml (120) and the
+        # `black --check` invocation in CI. Previously 100 here, which made
+        # pre-commit reformat to 100 while CI's --check at 120 then failed.
+        args: [--line-length=120]
         language_version: python3.10
 
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -98,15 +101,19 @@ repos:
 
   # ── JavaScript / TypeScript ────────────────────────────────────────────────
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.7.0
+    # Pinned to ESLint 8.x on purpose: this project uses eslint ^8.57.0 with a
+    # legacy .eslintrc.json. ESLint 9 requires flat config (eslint.config.*),
+    # so a v9 rev here would fail to read the config. Keep in lockstep with
+    # the eslint version in apps/web/package.json.
+    rev: v8.57.0
     hooks:
       - id: eslint
         args: [--fix]
         types: [javascript, jsx, ts, tsx]
         additional_dependencies:
-          - eslint
-          - '@typescript-eslint/eslint-plugin'
-          - '@typescript-eslint/parser'
+          - eslint@^8.57.0
+          - '@typescript-eslint/eslint-plugin@^8.61.0'
+          - '@typescript-eslint/parser@^8.61.0'
         exclude: ^apps/web/\.next/
 
   - repo: https://github.com/pre-commit/mirrors-prettier

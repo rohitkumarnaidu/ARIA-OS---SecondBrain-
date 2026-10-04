@@ -232,7 +232,9 @@ class TestEventOutboxProcessor:
     async def test_poll_once_no_pending(self, processor):
         mock_supabase = MagicMock()
         outbox_table = MagicMock()
-        outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = []
+        outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = (
+            []
+        )
         mock_supabase.table.return_value = outbox_table
         processor._supabase = mock_supabase
 
@@ -248,12 +250,16 @@ class TestEventOutboxProcessor:
 
         outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "outbox_id": "o1", "event_type": "skill.created",
-                "aggregate_type": "skill", "aggregate_id": "s1",
+                "outbox_id": "o1",
+                "event_type": "skill.created",
+                "aggregate_type": "skill",
+                "aggregate_id": "s1",
                 "payload": json.dumps({"name": "Python"}),
                 "headers": json.dumps({"trace_id": "abc"}),
-                "retry_count": 0, "max_retries": 3,
-                "scheduled_at": None, "status": "pending",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": None,
+                "status": "pending",
             }
         ]
 
@@ -294,11 +300,16 @@ class TestEventOutboxProcessor:
         outbox_table = MagicMock()
         outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "outbox_id": "o2", "event_type": "skill.created",
-                "aggregate_type": "skill", "aggregate_id": "s2",
-                "payload": "{}", "headers": "{}",
-                "retry_count": 0, "max_retries": 3,
-                "scheduled_at": future_ms, "status": "pending",
+                "outbox_id": "o2",
+                "event_type": "skill.created",
+                "aggregate_type": "skill",
+                "aggregate_id": "s2",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": future_ms,
+                "status": "pending",
             }
         ]
         mock_supabase.table.return_value = outbox_table
@@ -316,11 +327,16 @@ class TestEventOutboxProcessor:
 
         outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "outbox_id": "o_dead", "event_type": "skill.created",
-                "aggregate_type": "skill", "aggregate_id": "s1",
-                "payload": "{}", "headers": "{}",
-                "retry_count": 2, "max_retries": 3,
-                "scheduled_at": None, "status": "failed",
+                "outbox_id": "o_dead",
+                "event_type": "skill.created",
+                "aggregate_type": "skill",
+                "aggregate_id": "s1",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 2,
+                "max_retries": 3,
+                "scheduled_at": None,
+                "status": "failed",
             }
         ]
 
@@ -365,11 +381,16 @@ class TestEventOutboxProcessor:
 
         outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "outbox_id": "o_retry", "event_type": "skill.created",
-                "aggregate_type": "skill", "aggregate_id": "s1",
-                "payload": "{}", "headers": "{}",
-                "retry_count": 0, "max_retries": 3,
-                "scheduled_at": None, "status": "pending",
+                "outbox_id": "o_retry",
+                "event_type": "skill.created",
+                "aggregate_type": "skill",
+                "aggregate_id": "s1",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": None,
+                "status": "pending",
             }
         ]
 
@@ -423,11 +444,16 @@ class TestEventOutboxProcessor:
 
         outbox_table.select.return_value.in_.return_value.lte.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "outbox_id": "o_dispatch_fail", "event_type": "skill.created",
-                "aggregate_type": "skill", "aggregate_id": "s1",
-                "payload": "{}", "headers": "{}",
-                "retry_count": 0, "max_retries": 3,
-                "scheduled_at": None, "status": "pending",
+                "outbox_id": "o_dispatch_fail",
+                "event_type": "skill.created",
+                "aggregate_type": "skill",
+                "aggregate_id": "s1",
+                "payload": "{}",
+                "headers": "{}",
+                "retry_count": 0,
+                "max_retries": 3,
+                "scheduled_at": None,
+                "status": "pending",
             }
         ]
 
@@ -495,8 +521,10 @@ class TestEventOutboxProcessor:
         subs_table = MagicMock()
         subs_table.select.return_value.eq.return_value.execute.return_value.data = [
             {
-                "subscription_id": "sub1", "event_types": ["skill.created"],
-                "url": "https://example.com/hook", "headers": {"X-Custom": "val"},
+                "subscription_id": "sub1",
+                "event_types": ["skill.created"],
+                "url": "https://example.com/hook",
+                "headers": {"X-Custom": "val"},
                 "retry_policy": {"max_retries": 5},
             }
         ]
@@ -504,7 +532,11 @@ class TestEventOutboxProcessor:
         queue_table.insert.return_value.execute.return_value = MagicMock()
 
         def ts(name):
-            return subs_table if name == "skill_event_subscriptions" else queue_table if name == "skill_webhook_queue" else MagicMock()
+            return (
+                subs_table
+                if name == "skill_event_subscriptions"
+                else queue_table if name == "skill_webhook_queue" else MagicMock()
+            )
 
         mock_supabase.table.side_effect = ts
 
@@ -519,8 +551,11 @@ class TestEventOutboxProcessor:
         subs_table = MagicMock()
         subs_table.select.return_value.eq.return_value.execute.return_value.data = [
             {
-                "subscription_id": "sub1", "event_types": ["skill.deleted"],
-                "url": "https://example.com/hook", "headers": {}, "retry_policy": {},
+                "subscription_id": "sub1",
+                "event_types": ["skill.deleted"],
+                "url": "https://example.com/hook",
+                "headers": {},
+                "retry_policy": {},
             }
         ]
         mock_supabase.table.return_value = subs_table
@@ -539,8 +574,10 @@ class TestEventOutboxProcessor:
         subs_table = MagicMock()
         subs_table.select.return_value.eq.return_value.execute.return_value.data = [
             {
-                "subscription_id": "sub2", "event_types": [],
-                "url": "https://example.com/hook", "headers": {},
+                "subscription_id": "sub2",
+                "event_types": [],
+                "url": "https://example.com/hook",
+                "headers": {},
                 "retry_policy": {"max_retries": 3},
             }
         ]
@@ -548,7 +585,11 @@ class TestEventOutboxProcessor:
         queue_table.insert.return_value.execute.return_value = MagicMock()
 
         def ts(name):
-            return subs_table if name == "skill_event_subscriptions" else queue_table if name == "skill_webhook_queue" else MagicMock()
+            return (
+                subs_table
+                if name == "skill_event_subscriptions"
+                else queue_table if name == "skill_webhook_queue" else MagicMock()
+            )
 
         mock_supabase.table.side_effect = ts
 
@@ -779,6 +820,7 @@ class TestWebhookDeliveryService:
 
     async def test_get_http_client_not_installed(self, svc):
         import sys as _sys
+
         orig = _sys.modules.pop("httpx", None)
         _sys.modules["httpx"] = None
         try:
@@ -821,11 +863,16 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         svc._http_client = mock_client
 
-        result = await svc.deliver({
-            "webhook_id": "w1", "url": "https://example.com/hook",
-            "payload": {"event": "test"}, "headers": {},
-            "retry_count": 0, "subscription_id": None,
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w1",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": None,
+            }
+        )
         assert result.success is True
         assert result.status_code == 200
         assert result.webhook_id == "w1"
@@ -838,11 +885,16 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         svc._http_client = mock_client
 
-        result = await svc.deliver({
-            "webhook_id": "w2", "url": "https://example.com/hook",
-            "payload": {}, "headers": {},
-            "retry_count": 0, "subscription_id": None,
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w2",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": None,
+            }
+        )
         assert result.success is False
         assert result.status_code == 500
         assert "HTTP 500" in result.error
@@ -852,22 +904,32 @@ class TestWebhookDeliveryService:
         mock_client.post.side_effect = ConnectionError("network down")
         svc._http_client = mock_client
 
-        result = await svc.deliver({
-            "webhook_id": "w3", "url": "https://example.com/hook",
-            "payload": {}, "headers": {},
-            "retry_count": 0, "subscription_id": None,
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w3",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": None,
+            }
+        )
         assert result.success is False
         assert "network down" in result.error
 
     async def test_deliver_no_http_client(self, svc):
         svc._http_client = None
         with patch.object(svc, "_get_http_client", return_value=None):
-            result = await svc.deliver({
-                "webhook_id": "w4", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 0, "subscription_id": None,
-            })
+            result = await svc.deliver(
+                {
+                    "webhook_id": "w4",
+                    "url": "https://example.com/hook",
+                    "payload": {},
+                    "headers": {},
+                    "retry_count": 0,
+                    "subscription_id": None,
+                }
+            )
             assert result.success is False
             assert result.error == "HTTP client unavailable"
 
@@ -885,11 +947,16 @@ class TestWebhookDeliveryService:
         mock_supabase.table.return_value = subs_table
         svc._supabase = mock_supabase
 
-        result = await svc.deliver({
-            "webhook_id": "w5", "url": "https://example.com/hook",
-            "payload": {"event": "test"}, "headers": {"X-Custom": "val"},
-            "retry_count": 0, "subscription_id": "sub1",
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w5",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {"X-Custom": "val"},
+                "retry_count": 0,
+                "subscription_id": "sub1",
+            }
+        )
         assert result.success is True
         call_kwargs = mock_client.post.call_args[1]
         assert "X-Signature-256" in call_kwargs["headers"]
@@ -907,11 +974,16 @@ class TestWebhookDeliveryService:
         mock_supabase.table.return_value.select.return_value.eq.return_value.execute.side_effect = Exception("db fail")
         svc._supabase = mock_supabase
 
-        result = await svc.deliver({
-            "webhook_id": "w6", "url": "https://example.com/hook",
-            "payload": {"event": "test"}, "headers": {},
-            "retry_count": 0, "subscription_id": "sub1",
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w6",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": "sub1",
+            }
+        )
         assert result.success is True
 
     async def test_deliver_subscription_no_supabase(self, svc):
@@ -923,11 +995,16 @@ class TestWebhookDeliveryService:
         svc._http_client = mock_client
         svc._supabase = None
 
-        result = await svc.deliver({
-            "webhook_id": "w7", "url": "https://example.com/hook",
-            "payload": {"event": "test"}, "headers": {},
-            "retry_count": 0, "subscription_id": "sub1",
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w7",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": "sub1",
+            }
+        )
         assert result.success is True
 
     async def test_deliver_subscription_no_data(self, svc):
@@ -944,11 +1021,16 @@ class TestWebhookDeliveryService:
         mock_supabase.table.return_value = subs_table
         svc._supabase = mock_supabase
 
-        result = await svc.deliver({
-            "webhook_id": "w8", "url": "https://example.com/hook",
-            "payload": {"event": "test"}, "headers": {},
-            "retry_count": 0, "subscription_id": "sub1",
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w8",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": "sub1",
+            }
+        )
         assert result.success is True
 
     async def test_deliver_string_payload(self, svc):
@@ -959,11 +1041,16 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         svc._http_client = mock_client
 
-        result = await svc.deliver({
-            "webhook_id": "w9", "url": "https://example.com/hook",
-            "payload": "raw_string", "headers": {},
-            "retry_count": 0, "subscription_id": None,
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w9",
+                "url": "https://example.com/hook",
+                "payload": "raw_string",
+                "headers": {},
+                "retry_count": 0,
+                "subscription_id": None,
+            }
+        )
         assert result.success is True
 
     async def test_deliver_headers_none(self, svc):
@@ -974,11 +1061,16 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         svc._http_client = mock_client
 
-        result = await svc.deliver({
-            "webhook_id": "w10", "url": "https://example.com/hook",
-            "payload": {}, "headers": None,
-            "retry_count": 0, "subscription_id": None,
-        })
+        result = await svc.deliver(
+            {
+                "webhook_id": "w10",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": None,
+                "retry_count": 0,
+                "subscription_id": None,
+            }
+        )
         assert result.success is True
 
     # ── poll_once ──
@@ -990,7 +1082,9 @@ class TestWebhookDeliveryService:
 
     async def test_wh_poll_once_no_pending(self, svc):
         mock_supabase = MagicMock()
-        mock_supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = []
+        mock_supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = (
+            []
+        )
         svc._supabase = mock_supabase
 
         d, f = await svc.poll_once()
@@ -1000,10 +1094,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh1", "url": "https://example.com/hook",
-                "payload": {"event": "test"}, "headers": {},
-                "retry_count": 0, "max_retries": 5,
-                "scheduled_at": None, "subscription_id": "sub1", "status": "pending",
+                "webhook_id": "wh1",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {},
+                "retry_count": 0,
+                "max_retries": 5,
+                "scheduled_at": None,
+                "subscription_id": "sub1",
+                "status": "pending",
             }
         ]
 
@@ -1027,7 +1126,11 @@ class TestWebhookDeliveryService:
         mock_supabase = MagicMock()
 
         def ts(name):
-            return wq_table if name == "skill_webhook_queue" else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            return (
+                wq_table
+                if name == "skill_webhook_queue"
+                else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            )
 
         mock_supabase.table.side_effect = ts
         svc._supabase = mock_supabase
@@ -1048,10 +1151,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh_fail", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 0, "max_retries": 5,
-                "scheduled_at": None, "subscription_id": None, "status": "pending",
+                "webhook_id": "wh_fail",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 0,
+                "max_retries": 5,
+                "scheduled_at": None,
+                "subscription_id": None,
+                "status": "pending",
             }
         ]
 
@@ -1087,10 +1195,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh_dead", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 4, "max_retries": 5,
-                "scheduled_at": None, "subscription_id": None, "status": "failed",
+                "webhook_id": "wh_dead",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 4,
+                "max_retries": 5,
+                "scheduled_at": None,
+                "subscription_id": None,
+                "status": "failed",
             }
         ]
 
@@ -1128,10 +1241,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh_skip", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 0, "max_retries": 5,
-                "scheduled_at": future_ms, "subscription_id": None, "status": "pending",
+                "webhook_id": "wh_skip",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 0,
+                "max_retries": 5,
+                "scheduled_at": future_ms,
+                "subscription_id": None,
+                "status": "pending",
             }
         ]
         mock_supabase.table.return_value = wq_table
@@ -1152,10 +1270,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh_dead2", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 4, "max_retries": 5,
-                "scheduled_at": None, "subscription_id": "sub_dead2", "status": "failed",
+                "webhook_id": "wh_dead2",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 4,
+                "max_retries": 5,
+                "scheduled_at": None,
+                "subscription_id": "sub_dead2",
+                "status": "failed",
             }
         ]
 
@@ -1178,7 +1301,11 @@ class TestWebhookDeliveryService:
         mock_supabase = MagicMock()
 
         def ts(name):
-            return wq_table if name == "skill_webhook_queue" else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            return (
+                wq_table
+                if name == "skill_webhook_queue"
+                else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            )
 
         mock_supabase.table.side_effect = ts
         svc._supabase = mock_supabase
@@ -1195,10 +1322,15 @@ class TestWebhookDeliveryService:
         wq_table = MagicMock()
         wq_table.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value.data = [
             {
-                "webhook_id": "wh_sub_cnt", "url": "https://example.com/hook",
-                "payload": {}, "headers": {},
-                "retry_count": 0, "max_retries": 5,
-                "scheduled_at": None, "subscription_id": "sub_cnt", "status": "pending",
+                "webhook_id": "wh_sub_cnt",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "headers": {},
+                "retry_count": 0,
+                "max_retries": 5,
+                "scheduled_at": None,
+                "subscription_id": "sub_cnt",
+                "status": "pending",
             }
         ]
 
@@ -1222,7 +1354,11 @@ class TestWebhookDeliveryService:
         mock_supabase = MagicMock()
 
         def ts(name):
-            return wq_table if name == "skill_webhook_queue" else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            return (
+                wq_table
+                if name == "skill_webhook_queue"
+                else subs_table if name == "skill_event_subscriptions" else MagicMock()
+            )
 
         mock_supabase.table.side_effect = ts
         svc._supabase = mock_supabase
@@ -1376,10 +1512,13 @@ class TestSendEmail:
         mock_resp.is_success = True
         mock_resp.json.return_value = {"id": "email_123"}
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "RESEND_API_KEY": "re_abc123",
-            "RESEND_FROM_EMAIL": "test@test.com",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "RESEND_API_KEY": "re_abc123",
+                "RESEND_FROM_EMAIL": "test@test.com",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", return_value=mock_resp):
                 from shared.utils.notifications import send_email
 
@@ -1393,10 +1532,13 @@ class TestSendEmail:
         mock_resp.status_code = 400
         mock_resp.text = "Bad request"
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "RESEND_API_KEY": "re_abc",
-            "RESEND_FROM_EMAIL": "test@test.com",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "RESEND_API_KEY": "re_abc",
+                "RESEND_FROM_EMAIL": "test@test.com",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", return_value=mock_resp):
                 from shared.utils.notifications import send_email
 
@@ -1407,10 +1549,13 @@ class TestSendEmail:
     def test_timeout(self):
         from shared.utils.notifications import httpx
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "RESEND_API_KEY": "re_abc",
-            "RESEND_FROM_EMAIL": "test@test.com",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "RESEND_API_KEY": "re_abc",
+                "RESEND_FROM_EMAIL": "test@test.com",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", side_effect=httpx.TimeoutException("timeout")):
                 from shared.utils.notifications import send_email
 
@@ -1419,10 +1564,13 @@ class TestSendEmail:
                 assert "timed out" in result["error"]
 
     def test_generic_exception(self):
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "RESEND_API_KEY": "re_abc",
-            "RESEND_FROM_EMAIL": "test@test.com",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "RESEND_API_KEY": "re_abc",
+                "RESEND_FROM_EMAIL": "test@test.com",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", side_effect=ConnectionError("network fail")):
                 from shared.utils.notifications import send_email
 
@@ -1435,10 +1583,13 @@ class TestSendEmail:
         mock_resp.is_success = True
         mock_resp.json.return_value = {"id": "e1"}
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "RESEND_API_KEY": "re_abc",
-            "RESEND_FROM_EMAIL": "test@test.com",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "RESEND_API_KEY": "re_abc",
+                "RESEND_FROM_EMAIL": "test@test.com",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", return_value=mock_resp) as mock_post:
                 from shared.utils.notifications import send_email
 
@@ -1533,11 +1684,14 @@ class TestSendSms:
         mock_resp.is_success = True
         mock_resp.json.return_value = {"sid": "SM123"}
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "TWILIO_ACCOUNT_SID": "ACxxx",
-            "TWILIO_AUTH_TOKEN": "token123",
-            "TWILIO_FROM_NUMBER": "+1555",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "TWILIO_ACCOUNT_SID": "ACxxx",
+                "TWILIO_AUTH_TOKEN": "token123",
+                "TWILIO_FROM_NUMBER": "+1555",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", return_value=mock_resp):
                 from shared.utils.notifications import send_sms
 
@@ -1551,10 +1705,13 @@ class TestSendSms:
         mock_resp.status_code = 401
         mock_resp.text = "Unauthorized"
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "TWILIO_ACCOUNT_SID": "ACxxx",
-            "TWILIO_AUTH_TOKEN": "token123",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "TWILIO_ACCOUNT_SID": "ACxxx",
+                "TWILIO_AUTH_TOKEN": "token123",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", return_value=mock_resp):
                 from shared.utils.notifications import send_sms
 
@@ -1565,10 +1722,13 @@ class TestSendSms:
     def test_timeout(self):
         from shared.utils.notifications import httpx
 
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "TWILIO_ACCOUNT_SID": "ACxxx",
-            "TWILIO_AUTH_TOKEN": "token123",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "TWILIO_ACCOUNT_SID": "ACxxx",
+                "TWILIO_AUTH_TOKEN": "token123",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", side_effect=httpx.TimeoutException("timeout")):
                 from shared.utils.notifications import send_sms
 
@@ -1577,10 +1737,13 @@ class TestSendSms:
                 assert "timed out" in result["error"]
 
     def test_exception(self):
-        with patch("shared.utils.notifications.os.getenv", side_effect=lambda k, d=None: {
-            "TWILIO_ACCOUNT_SID": "ACxxx",
-            "TWILIO_AUTH_TOKEN": "token123",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.notifications.os.getenv",
+            side_effect=lambda k, d=None: {
+                "TWILIO_ACCOUNT_SID": "ACxxx",
+                "TWILIO_AUTH_TOKEN": "token123",
+            }.get(k, d),
+        ):
             with patch("shared.utils.notifications.httpx.post", side_effect=RuntimeError("fail")):
                 from shared.utils.notifications import send_sms
 
@@ -1763,12 +1926,16 @@ class TestNeo4jSyncService:
             assert svc._enabled is False
 
     async def test_initialize_import_fails(self, svc):
-        with patch("shared.utils.neo4j_sync.os.getenv", side_effect=lambda k, d=None: {
-            "NEO4J_URI": "bolt://localhost:7687",
-            "NEO4J_USER": "neo4j",
-            "NEO4J_PASSWORD": "secret",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.neo4j_sync.os.getenv",
+            side_effect=lambda k, d=None: {
+                "NEO4J_URI": "bolt://localhost:7687",
+                "NEO4J_USER": "neo4j",
+                "NEO4J_PASSWORD": "secret",
+            }.get(k, d),
+        ):
             import sys as _sys
+
             orig = _sys.modules.pop("neo4j", None)
             _sys.modules["neo4j"] = None
             try:
@@ -1790,14 +1957,18 @@ class TestNeo4jSyncService:
         mock_gdb.driver.return_value = mock_driver
 
         import sys as _sys
+
         _sys.modules["neo4j"] = MagicMock()
         _sys.modules["neo4j"].GraphDatabase = mock_gdb
 
-        with patch("shared.utils.neo4j_sync.os.getenv", side_effect=lambda k, d=None: {
-            "NEO4J_URI": "bolt://localhost:7687",
-            "NEO4J_USER": "neo4j",
-            "NEO4J_PASSWORD": "secret",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.neo4j_sync.os.getenv",
+            side_effect=lambda k, d=None: {
+                "NEO4J_URI": "bolt://localhost:7687",
+                "NEO4J_USER": "neo4j",
+                "NEO4J_PASSWORD": "secret",
+            }.get(k, d),
+        ):
             await svc.initialize()
             assert svc._enabled is True
 
@@ -1806,14 +1977,18 @@ class TestNeo4jSyncService:
         mock_gdb.driver.side_effect = Exception("connection refused")
 
         import sys as _sys
+
         _sys.modules["neo4j"] = MagicMock()
         _sys.modules["neo4j"].GraphDatabase = mock_gdb
 
-        with patch("shared.utils.neo4j_sync.os.getenv", side_effect=lambda k, d=None: {
-            "NEO4J_URI": "bolt://localhost:7687",
-            "NEO4J_USER": "neo4j",
-            "NEO4J_PASSWORD": "secret",
-        }.get(k, d)):
+        with patch(
+            "shared.utils.neo4j_sync.os.getenv",
+            side_effect=lambda k, d=None: {
+                "NEO4J_URI": "bolt://localhost:7687",
+                "NEO4J_USER": "neo4j",
+                "NEO4J_PASSWORD": "secret",
+            }.get(k, d),
+        ):
             await svc.initialize()
             assert svc._enabled is False
 
@@ -1875,33 +2050,52 @@ class TestNeo4jSyncService:
 
     async def test_sync_skill_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_skill_node({
-            "skill_id": "s1", "name": "Python", "slug": "python",
-            "category_id": "c1", "description": "Lang", "level_min": 1,
-            "level_max": 5, "skill_health": 0.9, "is_deprecated": False,
-            "updated_at": 1000,
-        })
+        await enabled_svc.sync_skill_node(
+            {
+                "skill_id": "s1",
+                "name": "Python",
+                "slug": "python",
+                "category_id": "c1",
+                "description": "Lang",
+                "level_min": 1,
+                "level_max": 5,
+                "skill_health": 0.9,
+                "is_deprecated": False,
+                "updated_at": 1000,
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_category_node ──
 
     async def test_sync_category_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_category_node({
-            "category_id": "c1", "name": "Backend", "slug": "backend",
-            "description": "Backend skills", "parent_category_id": None,
-            "level": 1, "is_active": True, "sort_order": 0,
-        })
+        await enabled_svc.sync_category_node(
+            {
+                "category_id": "c1",
+                "name": "Backend",
+                "slug": "backend",
+                "description": "Backend skills",
+                "parent_category_id": None,
+                "level": 1,
+                "is_active": True,
+                "sort_order": 0,
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_user_node ──
 
     async def test_sync_user_node_with_email(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_user_node({
-            "id": "u1", "org_id": "org1", "email": "user@test.com",
-            "settings": {"theme": "dark"},
-        })
+        await enabled_svc.sync_user_node(
+            {
+                "id": "u1",
+                "org_id": "org1",
+                "email": "user@test.com",
+                "settings": {"theme": "dark"},
+            }
+        )
         mock_session.run.assert_called_once()
         params = mock_session.run.call_args[0][1]
         assert params["email_hash"] is not None
@@ -1909,9 +2103,13 @@ class TestNeo4jSyncService:
 
     async def test_sync_user_node_no_email(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_user_node({
-            "id": "u2", "org_id": "org2", "settings": {},
-        })
+        await enabled_svc.sync_user_node(
+            {
+                "id": "u2",
+                "org_id": "org2",
+                "settings": {},
+            }
+        )
         params = mock_session.run.call_args[0][1]
         assert params["email_hash"] is None
 
@@ -1919,46 +2117,78 @@ class TestNeo4jSyncService:
 
     async def test_sync_user_skill_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_user_skill_node({
-            "user_skill_id": "us1", "user_id": "u1", "skill_id": "s1",
-            "level": 3, "state": "active", "confidence_score": 0.8,
-            "evidence_score": 0.7, "level_change_90d": 0.5,
-            "is_emerging": False, "is_stale": False, "last_activity_at": 1000,
-        })
+        await enabled_svc.sync_user_skill_node(
+            {
+                "user_skill_id": "us1",
+                "user_id": "u1",
+                "skill_id": "s1",
+                "level": 3,
+                "state": "active",
+                "confidence_score": 0.8,
+                "evidence_score": 0.7,
+                "level_change_90d": 0.5,
+                "is_emerging": False,
+                "is_stale": False,
+                "last_activity_at": 1000,
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_evidence_node ──
 
     async def test_sync_evidence_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_evidence_node({
-            "evidence_id": "e1", "user_skill_id": "us1", "user_id": "u1",
-            "source_type": "quiz", "state": "verified", "title": "Quiz 90%",
-            "quality_score": 0.9, "trust_score": 0.8,
-            "weight": 1.0, "collected_at": 1000,
-        })
+        await enabled_svc.sync_evidence_node(
+            {
+                "evidence_id": "e1",
+                "user_skill_id": "us1",
+                "user_id": "u1",
+                "source_type": "quiz",
+                "state": "verified",
+                "title": "Quiz 90%",
+                "quality_score": 0.9,
+                "trust_score": 0.8,
+                "weight": 1.0,
+                "collected_at": 1000,
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_target_node ──
 
     async def test_sync_target_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_target_node({
-            "target_id": "t1", "user_skill_id": "us1", "user_id": "u1",
-            "target_level": 5, "current_level": 2, "priority": "high",
-            "status": "active", "gap_size": 3, "progress_pct": 40.0,
-        })
+        await enabled_svc.sync_target_node(
+            {
+                "target_id": "t1",
+                "user_skill_id": "us1",
+                "user_id": "u1",
+                "target_level": 5,
+                "current_level": 2,
+                "priority": "high",
+                "status": "active",
+                "gap_size": 3,
+                "progress_pct": 40.0,
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_assessment_node ──
 
     async def test_sync_assessment_node(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_assessment_node({
-            "assessment_id": "a1", "user_skill_id": "us1", "user_id": "u1",
-            "assessment_type": "quiz", "score": 85, "level_achieved": 3,
-            "confidence": 0.9, "status": "completed",
-        })
+        await enabled_svc.sync_assessment_node(
+            {
+                "assessment_id": "a1",
+                "user_skill_id": "us1",
+                "user_id": "u1",
+                "assessment_type": "quiz",
+                "score": 85,
+                "level_achieved": 3,
+                "confidence": 0.9,
+                "status": "completed",
+            }
+        )
         mock_session.run.assert_called_once()
 
     # ── sync_belongs_to ──
@@ -2005,19 +2235,31 @@ class TestNeo4jSyncService:
 
     async def test_sync_relationship_edge(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_relationship_edge({
-            "relationship_type": "prerequisite", "from_skill_id": "s1", "to_skill_id": "s2",
-            "weight": 0.8, "min_level_from": 1, "min_level_to": 2, "is_directed": True,
-        })
+        await enabled_svc.sync_relationship_edge(
+            {
+                "relationship_type": "prerequisite",
+                "from_skill_id": "s1",
+                "to_skill_id": "s2",
+                "weight": 0.8,
+                "min_level_from": 1,
+                "min_level_to": 2,
+                "is_directed": True,
+            }
+        )
         query = mock_session.run.call_args[0][0]
         assert "DEPENDS_ON" in query
 
     async def test_sync_relationship_edge_default_type(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.sync_relationship_edge({
-            "relationship_type": "unknown_type", "from_skill_id": "s1", "to_skill_id": "s2",
-            "weight": 1.0, "is_directed": True,
-        })
+        await enabled_svc.sync_relationship_edge(
+            {
+                "relationship_type": "unknown_type",
+                "from_skill_id": "s1",
+                "to_skill_id": "s2",
+                "weight": 1.0,
+                "is_directed": True,
+            }
+        )
         query = mock_session.run.call_args[0][0]
         assert "RELATED_TO" in query
 
@@ -2036,28 +2278,34 @@ class TestNeo4jSyncService:
 
     async def test_bulk_sync_skills(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.bulk_sync_skills([
-            {"skill_id": "s1", "category_id": "c1"},
-            {"skill_id": "s2", "category_id": "c2"},
-        ])
+        await enabled_svc.bulk_sync_skills(
+            [
+                {"skill_id": "s1", "category_id": "c1"},
+                {"skill_id": "s2", "category_id": "c2"},
+            ]
+        )
         assert mock_session.run.call_count == 4
 
     # ── bulk_sync_relationships ──
 
     async def test_bulk_sync_relationships(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.bulk_sync_relationships([
-            {"relationship_type": "prerequisite", "from_skill_id": "s1", "to_skill_id": "s2"},
-        ])
+        await enabled_svc.bulk_sync_relationships(
+            [
+                {"relationship_type": "prerequisite", "from_skill_id": "s1", "to_skill_id": "s2"},
+            ]
+        )
         assert mock_session.run.call_count == 1
 
     # ── bulk_sync_user_skills ──
 
     async def test_bulk_sync_user_skills(self, enabled_svc):
         mock_session = self._set_run(enabled_svc)
-        await enabled_svc.bulk_sync_user_skills([
-            {"user_skill_id": "us1", "user_id": "u1", "skill_id": "s1"},
-        ])
+        await enabled_svc.bulk_sync_user_skills(
+            [
+                {"user_skill_id": "us1", "user_id": "u1", "skill_id": "s1"},
+            ]
+        )
         assert mock_session.run.call_count == 2
 
     # ── full_rebuild ──
@@ -2090,7 +2338,9 @@ class TestNeo4jSyncService:
     # ── recommend_skills ──
 
     async def test_recommend_skills(self, enabled_svc):
-        records = [{"skill_id": "s3", "name": "React", "connection_strength": 5, "avg_weight": 0.9, "skill_health": 0.95}]
+        records = [
+            {"skill_id": "s3", "name": "React", "connection_strength": 5, "avg_weight": 0.9, "skill_health": 0.95}
+        ]
         self._set_run(enabled_svc, records)
         results = await enabled_svc.recommend_skills("u1", limit=10)
         assert len(results) == 1

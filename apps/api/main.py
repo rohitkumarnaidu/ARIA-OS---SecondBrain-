@@ -111,7 +111,6 @@ from app.api import (
     learning,
 )
 
-
 # ---------------------------------------------------------------------------
 # Application Lifespan (startup/shutdown)
 # ---------------------------------------------------------------------------
@@ -129,6 +128,7 @@ from app.api import (
 #   2. Stop event outbox and webhook delivery pollers
 #   3. Clear in-memory caches
 #   4. Stop Logtail background flush
+
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
@@ -300,6 +300,7 @@ app.add_middleware(CSRFMiddleware)
 # PATCH, DELETE), dispatches an audit event if the user is authenticated.
 # Catches unhandled exceptions and returns a structured 500 error.
 
+
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
@@ -367,6 +368,7 @@ async def request_id_middleware(request: Request, call_next):
 #   GET requests        → private, 60s, stale-while-revalidate=300
 #   Other               → no-store
 # Also sets security headers: X-Content-Type-Options, X-Frame-Options, XSS
+
 
 @app.middleware("http")
 async def cache_control_middleware(request: Request, call_next):
@@ -448,6 +450,7 @@ app.include_router(learning.router, prefix="/api/v1/learning", tags=["learning"]
 # structured 500 error with a request ID for tracing. The request_id_middleware
 # also has its own exception handler for middleware-level errors.
 
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
@@ -472,6 +475,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 # ---------------------------------------------------------------------------
 # System Endpoints
 # ---------------------------------------------------------------------------
+
 
 @app.get("/", tags=["system"])
 async def root():

@@ -73,6 +73,7 @@ AI_ENDPOINT_NAMES = {"chat"}
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def compute_percentiles(values, percentiles):
     """Compute arbitrary percentiles from a sorted list of values."""
     values = sorted(values)
@@ -133,6 +134,7 @@ def print_table(results):
 # Core Benchmark Logic
 # ---------------------------------------------------------------------------
 
+
 def benchmark_endpoint(client, name, method, path, json_body, iterations):
     """Benchmark a single endpoint and return stats."""
     latencies = []
@@ -158,7 +160,13 @@ def benchmark_endpoint(client, name, method, path, json_body, iterations):
             if response.status_code >= 500:
                 errors += 1
 
-        except (httpx.ConnectError, httpx.TimeoutException, httpx.RemoteProtocolError, httpx.ReadTimeout, httpx.WriteTimeout):
+        except (
+            httpx.ConnectError,
+            httpx.TimeoutException,
+            httpx.RemoteProtocolError,
+            httpx.ReadTimeout,
+            httpx.WriteTimeout,
+        ):
             errors += 1
             # Record a placeholder latency for error cases
             latencies.append(float("inf"))
@@ -261,10 +269,9 @@ def save_results(path, results, target_url):
 # Main
 # ---------------------------------------------------------------------------
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Second Brain OS — API Performance Benchmark Tool"
-    )
+    parser = argparse.ArgumentParser(description="Second Brain OS — API Performance Benchmark Tool")
     parser.add_argument(
         "--url",
         default=DEFAULT_URL,
@@ -315,7 +322,7 @@ def main():
     # Quick connectivity check before running benchmarks
     timeout = httpx.Timeout(connect=3.0, read=5.0, write=5.0, pool=3.0)
     try:
-        probe = httpx.get(f"{args.url}/health", timeout=timeout)
+        httpx.get(f"{args.url}/health", timeout=timeout)
     except httpx.ConnectError:
         print(f"  ERROR: Cannot connect to {args.url}")
         print("  Is the API server running?")
@@ -336,9 +343,7 @@ def main():
             for name, method, path, json_body in endpoints:
                 print(f"  Benchmarking: {method} {path} ...", end=" ")
                 try:
-                    result = benchmark_endpoint(
-                        client, name, method, path, json_body, args.iterations
-                    )
+                    result = benchmark_endpoint(client, name, method, path, json_body, args.iterations)
                     results.append(result)
                     print(f"done ({result['completed']}/{result['iterations']} ok, {result['errors']} errors)")
                     if not result["passed"]:
@@ -348,22 +353,24 @@ def main():
                         print(f"    ⚠ SLO violation: p95={p95}ms > SLO={slo}ms")
                 except Exception as e:
                     print(f"FAILED: {e}")
-                    results.append({
-                        "name": name,
-                        "method": method,
-                        "path": path,
-                        "iterations": args.iterations,
-                        "completed": 0,
-                        "errors": args.iterations,
-                        "p50_ms": None,
-                        "p75_ms": None,
-                        "p90_ms": None,
-                        "p95_ms": None,
-                        "p99_ms": None,
-                        "percentiles": {},
-                        "slo_ms": ENDPOINT_SLOS.get(name, {}).get("p95_ms"),
-                        "passed": False,
-                    })
+                    results.append(
+                        {
+                            "name": name,
+                            "method": method,
+                            "path": path,
+                            "iterations": args.iterations,
+                            "completed": 0,
+                            "errors": args.iterations,
+                            "p50_ms": None,
+                            "p75_ms": None,
+                            "p90_ms": None,
+                            "p95_ms": None,
+                            "p99_ms": None,
+                            "percentiles": {},
+                            "slo_ms": ENDPOINT_SLOS.get(name, {}).get("p95_ms"),
+                            "passed": False,
+                        }
+                    )
                     all_passed = False
 
     except httpx.ConnectError:

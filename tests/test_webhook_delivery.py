@@ -79,12 +79,14 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         service._http_client = mock_client
 
-        result = await service.deliver({
-            "webhook_id": "wh1",
-            "url": "https://example.com/hook",
-            "payload": {"event": "test"},
-            "headers": {"X-Custom": "val1"},
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh1",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {"X-Custom": "val1"},
+            }
+        )
         assert result.success is True
         assert result.status_code == 200
 
@@ -97,11 +99,13 @@ class TestWebhookDeliveryService:
         mock_client.post.return_value = mock_response
         service._http_client = mock_client
 
-        result = await service.deliver({
-            "webhook_id": "wh2",
-            "url": "https://example.com/hook",
-            "payload": {},
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh2",
+                "url": "https://example.com/hook",
+                "payload": {},
+            }
+        )
         assert result.success is False
         assert result.status_code == 500
 
@@ -111,11 +115,13 @@ class TestWebhookDeliveryService:
         mock_client.post.side_effect = Exception("Connection refused")
         service._http_client = mock_client
 
-        result = await service.deliver({
-            "webhook_id": "wh3",
-            "url": "https://example.com/hook",
-            "payload": {},
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh3",
+                "url": "https://example.com/hook",
+                "payload": {},
+            }
+        )
         assert result.success is False
         assert "Connection refused" in result.error
 
@@ -123,17 +129,21 @@ class TestWebhookDeliveryService:
     async def test_deliver_no_http_client(self, service):
         service._http_client = None
         with patch.object(service, "_get_http_client", AsyncMock(return_value=None)):
-            result = await service.deliver({
-                "webhook_id": "wh4",
-                "url": "https://example.com/hook",
-                "payload": {},
-            })
+            result = await service.deliver(
+                {
+                    "webhook_id": "wh4",
+                    "url": "https://example.com/hook",
+                    "payload": {},
+                }
+            )
             assert result.success is False
             assert "HTTP client unavailable" in result.error
 
     @pytest.mark.asyncio
     async def test_poll_once_no_data(self, service):
-        service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(data=[])
+        service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
+            data=[]
+        )
         delivered, failed = await service.poll_once()
         assert delivered == 0
         assert failed == 0
@@ -154,7 +164,16 @@ class TestWebhookDeliveryService:
         service._http_client = mock_client
 
         service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-            data=[{"webhook_id": "wh1", "url": "https://example.com/hook", "payload": {"event": "t"}, "retry_count": 0, "max_retries": 5, "scheduled_at": 0}]
+            data=[
+                {
+                    "webhook_id": "wh1",
+                    "url": "https://example.com/hook",
+                    "payload": {"event": "t"},
+                    "retry_count": 0,
+                    "max_retries": 5,
+                    "scheduled_at": 0,
+                }
+            ]
         )
         delivered, failed = await service.poll_once()
         assert delivered == 1
@@ -207,7 +226,10 @@ class TestWebhookDeliveryService:
             m.count = 5
             m.data = []
             return m
-        service._supabase.table.return_value.select.return_value.eq.return_value.execute.side_effect = select_side_effect
+
+        service._supabase.table.return_value.select.return_value.eq.return_value.execute.side_effect = (
+            select_side_effect
+        )
         stats = await service.get_queue_stats()
         assert stats["pending"] == 5
 
@@ -235,15 +257,19 @@ class TestWebhookDeliveryService:
         service._http_client = mock_client
 
         sub_data = [{"secret": "test-secret-key"}]
-        service._supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(data=sub_data)
+        service._supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(
+            data=sub_data
+        )
 
-        result = await service.deliver({
-            "webhook_id": "wh-sec",
-            "url": "https://example.com/hook",
-            "payload": {"event": "test"},
-            "headers": {"X-Custom": "val1"},
-            "subscription_id": "sub-1",
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh-sec",
+                "url": "https://example.com/hook",
+                "payload": {"event": "test"},
+                "headers": {"X-Custom": "val1"},
+                "subscription_id": "sub-1",
+            }
+        )
         assert result.success is True
         assert result.status_code == 200
         # Verify signature header was added (line 144)
@@ -261,12 +287,14 @@ class TestWebhookDeliveryService:
 
         service._supabase.table.return_value.select.side_effect = Exception("DB error")
 
-        result = await service.deliver({
-            "webhook_id": "wh-sec2",
-            "url": "https://example.com/hook",
-            "payload": {},
-            "subscription_id": "sub-err",
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh-sec2",
+                "url": "https://example.com/hook",
+                "payload": {},
+                "subscription_id": "sub-err",
+            }
+        )
         assert result.success is True  # Should still succeed, exception silently caught
 
     @pytest.mark.asyncio
@@ -279,14 +307,18 @@ class TestWebhookDeliveryService:
         service._http_client = mock_client
 
         sub_data = [{"secret": "mysecret"}]
-        service._supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(data=sub_data)
+        service._supabase.table.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(
+            data=sub_data
+        )
 
-        result = await service.deliver({
-            "webhook_id": "wh-sig",
-            "url": "https://example.com/hook",
-            "payload": {"msg": "hello"},
-            "subscription_id": "sub-sig",
-        })
+        result = await service.deliver(
+            {
+                "webhook_id": "wh-sig",
+                "url": "https://example.com/hook",
+                "payload": {"msg": "hello"},
+                "subscription_id": "sub-sig",
+            }
+        )
         assert result.success
         call_headers = mock_client.post.call_args[1]["headers"]
         assert "X-Signature-256" in call_headers
@@ -311,7 +343,16 @@ class TestWebhookDeliveryService:
 
         future_time = int(time.time() * 1000) + 3600000  # 1 hour in future
         service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-            data=[{"webhook_id": "wh-backoff", "url": "https://example.com/hook", "payload": {}, "retry_count": 0, "max_retries": 5, "scheduled_at": future_time}]
+            data=[
+                {
+                    "webhook_id": "wh-backoff",
+                    "url": "https://example.com/hook",
+                    "payload": {},
+                    "retry_count": 0,
+                    "max_retries": 5,
+                    "scheduled_at": future_time,
+                }
+            ]
         )
         delivered, failed = await service.poll_once()
         assert delivered == 0
@@ -329,11 +370,25 @@ class TestWebhookDeliveryService:
         def table_side_effect(tbl):
             base = MagicMock()
             if tbl == "skill_webhook_queue":
-                base.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-                    data=[{"webhook_id": "wh-sub1", "url": "https://example.com/hook", "payload": {}, "retry_count": 0, "max_retries": 5, "scheduled_at": 0, "subscription_id": "sub-1"}]
+                base.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = (
+                    MagicMock(
+                        data=[
+                            {
+                                "webhook_id": "wh-sub1",
+                                "url": "https://example.com/hook",
+                                "payload": {},
+                                "retry_count": 0,
+                                "max_retries": 5,
+                                "scheduled_at": 0,
+                                "subscription_id": "sub-1",
+                            }
+                        ]
+                    )
                 )
             elif tbl == "skill_event_subscriptions":
-                base.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[{"secret": "test-secret"}])
+                base.select.return_value.eq.return_value.execute.return_value = MagicMock(
+                    data=[{"secret": "test-secret"}]
+                )
                 base.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
             return base
 
@@ -354,7 +409,16 @@ class TestWebhookDeliveryService:
         service._http_client = mock_client
 
         service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-            data=[{"webhook_id": "wh-fail1", "url": "https://example.com/hook", "payload": {}, "retry_count": 0, "max_retries": 5, "scheduled_at": 0}]
+            data=[
+                {
+                    "webhook_id": "wh-fail1",
+                    "url": "https://example.com/hook",
+                    "payload": {},
+                    "retry_count": 0,
+                    "max_retries": 5,
+                    "scheduled_at": 0,
+                }
+            ]
         )
 
         delivered, failed = await service.poll_once()
@@ -372,7 +436,16 @@ class TestWebhookDeliveryService:
         service._http_client = mock_client
 
         service._supabase.table.return_value.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-            data=[{"webhook_id": "wh-dead", "url": "https://example.com/hook", "payload": {}, "retry_count": 5, "max_retries": 5, "scheduled_at": 0}]
+            data=[
+                {
+                    "webhook_id": "wh-dead",
+                    "url": "https://example.com/hook",
+                    "payload": {},
+                    "retry_count": 5,
+                    "max_retries": 5,
+                    "scheduled_at": 0,
+                }
+            ]
         )
 
         delivered, failed = await service.poll_once()
@@ -392,8 +465,20 @@ class TestWebhookDeliveryService:
         def table_side_effect(tbl):
             base = MagicMock()
             if tbl == "skill_webhook_queue":
-                base.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = MagicMock(
-                    data=[{"webhook_id": "wh-dead2", "url": "https://example.com/hook", "payload": {}, "retry_count": 5, "max_retries": 5, "scheduled_at": 0, "subscription_id": "sub-2"}]
+                base.select.return_value.in_.return_value.limit.return_value.order.return_value.execute.return_value = (
+                    MagicMock(
+                        data=[
+                            {
+                                "webhook_id": "wh-dead2",
+                                "url": "https://example.com/hook",
+                                "payload": {},
+                                "retry_count": 5,
+                                "max_retries": 5,
+                                "scheduled_at": 0,
+                                "subscription_id": "sub-2",
+                            }
+                        ]
+                    )
                 )
             elif tbl == "skill_event_subscriptions":
                 base.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
@@ -409,7 +494,6 @@ class TestWebhookDeliveryService:
     async def test_poll_loop_debug_logging(self, service):
         """Cover lines 313-315: poll loop debug logging when delivered/failed > 0."""
         service._running = True
-        real_poll_once = service.poll_once
 
         call_count = 0
 

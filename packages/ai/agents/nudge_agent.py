@@ -13,7 +13,15 @@ async def get_escalation_level(user_id: str, nudge_type: str) -> int:
     try:
         supabase = get_supabase_client()
         cutoff = (datetime.now() - timedelta(days=14)).isoformat()
-        resp = supabase.from_("notifications").select("created_at").eq("user_id", user_id).eq("type", f"nudge_{nudge_type}").gte("created_at", cutoff).order("created_at", ascending=False).execute()
+        resp = (
+            supabase.from_("notifications")
+            .select("created_at")
+            .eq("user_id", user_id)
+            .eq("type", f"nudge_{nudge_type}")
+            .gte("created_at", cutoff)
+            .order("created_at", ascending=False)
+            .execute()
+        )
         recent = resp.data or []
         if len(recent) >= 5:
             return 3
@@ -31,7 +39,12 @@ async def combine_course_habit_digest(user_id: str) -> dict:
     try:
         supabase = get_supabase_client()
         courses_resp = supabase.from_("courses").select("title, progress, status").eq("user_id", user_id).execute()
-        habits_resp = supabase.from_("habits").select("name, current_streak, missed_days, is_active").eq("user_id", user_id).execute()
+        habits_resp = (
+            supabase.from_("habits")
+            .select("name, current_streak, missed_days, is_active")
+            .eq("user_id", user_id)
+            .execute()
+        )
         courses = courses_resp.data or []
         habits = habits_resp.data or []
 
@@ -47,7 +60,9 @@ async def combine_course_habit_digest(user_id: str) -> dict:
             "active_habits": len(active_habits),
             "at_risk_habits": len(at_risk_habits),
             "at_risk_habit_names": [h.get("name", "Untitled") for h in at_risk_habits[:5]],
-            "average_streak": int(sum(h.get("current_streak", 0) for h in active_habits) / len(active_habits)) if active_habits else 0,
+            "average_streak": (
+                int(sum(h.get("current_streak", 0) for h in active_habits) / len(active_habits)) if active_habits else 0
+            ),
         }
     except Exception as e:
         logger.error("combine_course_habit_digest failed", user_id=user_id, error=str(e))
@@ -63,6 +78,7 @@ async def check_notification_preferences(user_id: str, nudge_type: str) -> bool:
         prefs = resp.data[0].get("notification_preferences", {})
         if isinstance(prefs, str):
             import json
+
             try:
                 prefs = json.loads(prefs)
             except (json.JSONDecodeError, TypeError):
@@ -79,7 +95,9 @@ async def check_notification_preferences(user_id: str, nudge_type: str) -> bool:
 async def generate_positive_reinforcement(user_id: str) -> str:
     try:
         supabase = get_supabase_client()
-        habits_resp = supabase.from_("habits").select("name, current_streak, best_streak").eq("user_id", user_id).execute()
+        habits_resp = (
+            supabase.from_("habits").select("name, current_streak, best_streak").eq("user_id", user_id).execute()
+        )
         habits = habits_resp.data or []
         courses_resp = supabase.from_("courses").select("title, progress").eq("user_id", user_id).execute()
         courses = courses_resp.data or []

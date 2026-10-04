@@ -202,10 +202,17 @@ class TestPromptEntry:
         result = entry.render(name="Alice")
         assert result == "Hello {name}, your balance is {balance}"
 
-    def test_parse_no_frontmatter(self):
+    def test_parse_no_frontmatter(self, tmp_path):
         from ai.prompt_loader import PromptLoader
 
-        loader = PromptLoader(prompts_dir=Path("."))
+        # Must point at an empty tmp dir, NOT the CWD. PromptLoader.__init__
+        # eagerly walks prompts_dir and parses every file it finds, so
+        # Path(".") made this test depend on the process working directory:
+        # run from the repo root it scanned all ~380 markdown docs and blew up
+        # on the first `---`-delimited block that is not valid YAML
+        # ("found unhashable key" at `{{ card_data }}`). The assertion below
+        # only concerns _parse_frontmatter, so the fixture dir is irrelevant.
+        loader = PromptLoader(prompts_dir=tmp_path)
         content = "# Just a body\nNo frontmatter here."
         frontmatter, body = loader._parse_frontmatter(content)
         assert frontmatter == {}

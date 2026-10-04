@@ -75,13 +75,26 @@ async def analyze_sleep_debt(user_id: str, days: int = 14) -> dict:
     try:
         supabase = get_supabase_client()
         cutoff = (datetime.now() - timedelta(days=days)).isoformat()[:10]
-        resp = supabase.from_("sleep_logs").select("date, duration_hours, sleep_debt_hours, quality").eq("user_id", user_id).gte("date", cutoff).order("date", ascending=True).execute()
+        resp = (
+            supabase.from_("sleep_logs")
+            .select("date, duration_hours, sleep_debt_hours, quality")
+            .eq("user_id", user_id)
+            .gte("date", cutoff)
+            .order("date", ascending=True)
+            .execute()
+        )
         logs = resp.data or []
         if not logs:
-            return {"total_debt_hours": 0, "avg_debt_hours": 0, "trend": "stable", "logs_count": 0, "days_analyzed": days}
+            return {
+                "total_debt_hours": 0,
+                "avg_debt_hours": 0,
+                "trend": "stable",
+                "logs_count": 0,
+                "days_analyzed": days,
+            }
 
-        total_debt = sum(l.get("sleep_debt_hours", 0) or 0 for l in logs)
-        debts = [l.get("sleep_debt_hours", 0) or 0 for l in logs]
+        total_debt = sum(log.get("sleep_debt_hours", 0) or 0 for log in logs)
+        debts = [log.get("sleep_debt_hours", 0) or 0 for log in logs]
         avg_debt = total_debt / len(debts)
 
         if len(debts) >= 3:
@@ -100,7 +113,7 @@ async def analyze_sleep_debt(user_id: str, days: int = 14) -> dict:
             "total_debt_hours": round(total_debt, 1),
             "avg_debt_hours": round(avg_debt, 1),
             "trend": trend,
-            "daily_debts": {l.get("date", "unknown"): l.get("sleep_debt_hours", 0) for l in logs},
+            "daily_debts": {log.get("date", "unknown"): log.get("sleep_debt_hours", 0) for log in logs},
             "logs_count": len(logs),
             "days_analyzed": days,
         }
@@ -112,7 +125,10 @@ async def analyze_sleep_debt(user_id: str, days: int = 14) -> dict:
 async def adjust_tasks_for_energy(user_id: str, tasks: List[dict]) -> List[dict]:
     try:
         debt = await analyze_sleep_debt(user_id, 7)
-        profile = await assign_sleep_profile(user_id)
+        # Result intentionally discarded: energy scaling is driven purely by
+        # total_debt. The call is retained so this function keeps failing to the
+        # same fallback path when sleep data cannot be read.
+        await assign_sleep_profile(user_id)
         total_debt = debt.get("total_debt_hours", 0)
         adjusted = list(tasks)
 
@@ -124,10 +140,12 @@ async def adjust_tasks_for_energy(user_id: str, tasks: List[dict]) -> List[dict]
         elif total_debt > 3:
             energy_multiplier = 0.85
 
-        adjusted.sort(key=lambda t: (
-            -(t.get("priority_score", 0) or 0) * energy_multiplier,
-            t.get("due_date", ""),
-        ))
+        adjusted.sort(
+            key=lambda t: (
+                -(t.get("priority_score", 0) or 0) * energy_multiplier,
+                t.get("due_date", ""),
+            )
+        )
 
         for task in adjusted:
             if energy_multiplier < 0.8:
@@ -147,15 +165,15 @@ async def generate_wind_down_routine(user_id: str) -> str:
         profile = await assign_sleep_profile(user_id)
         routines = {
             "EarlyBird": "Your wind-down starts at 8:30 PM. Dim lights, avoid screens, read a book, "
-                        "drink herbal tea, and journal for 5 minutes. Lights out by 9:30 PM.",
+            "drink herbal tea, and journal for 5 minutes. Lights out by 9:30 PM.",
             "NightOwl": "Your natural peak is late. Start winding down at 11 PM: put away screens, "
-                       "do light stretching, listen to calm music. Aim for lights out by midnight.",
+            "do light stretching, listen to calm music. Aim for lights out by midnight.",
             "PowerNapper": "You thrive on short sleeps but quality matters. Wind down at 10 PM: "
-                          "15 min meditation, cool room temperature, no caffeine after 6 PM.",
+            "15 min meditation, cool room temperature, no caffeine after 6 PM.",
             "Erratic": "Your schedule varies. Establish a consistent wind-down: set a fixed bedtime "
-                      "alarm, 30 min before: no screens, warm shower, calming tea. Consistency is key.",
+            "alarm, 30 min before: no screens, warm shower, calming tea. Consistency is key.",
             "Balanced": "Maintain your routine: 30 min before bed, dim lights, put away phone, "
-                       "read something light, deep breathing for 2 minutes. Aim for 7-8 hours.",
+            "read something light, deep breathing for 2 minutes. Aim for 7-8 hours.",
         }
         return routines.get(profile, routines["Balanced"])
     except Exception as e:
@@ -166,7 +184,14 @@ async def generate_wind_down_routine(user_id: str) -> str:
 async def generate_morning_recovery(user_id: str) -> str:
     try:
         supabase = get_supabase_client()
-        latest_resp = supabase.from_("sleep_logs").select("*").eq("user_id", user_id).order("date", ascending=False).limit(1).execute()
+        latest_resp = (
+            supabase.from_("sleep_logs")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("date", ascending=False)
+            .limit(1)
+            .execute()
+        )
         latest = latest_resp.data[0] if latest_resp.data else None
         if not latest:
             return "Start your day with a glass of water and some light stretching."

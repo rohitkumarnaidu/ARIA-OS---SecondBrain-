@@ -3,8 +3,9 @@
 # Common development commands for the monorepo
 # =============================================================================
 
-.PHONY: help dev-api dev-web dev-scheduler lint test validate-prompts \
-        docker-up docker-down docker-build clean setup install \
+.PHONY: help dev-api dev-web dev-scheduler lint test test-api test-scoping \
+        test-prompts test-coverage test-fast test-e2e validate-prompts \
+        docker-up docker-down docker-build clean setup install venv \
         deploy-api deploy-web deploy-scheduler deploy-all deploy-rollback
 
 help: ## Show this help
@@ -48,14 +49,15 @@ turbo: ## Run all Turbo checks (build + lint + type-check)
 # ── Linting & Formatting ─────────────────────────────────────────────────────
 
 lint: ## Run all linters (Python + TypeScript)
-	cd apps/api && ruff check . --fix
+	ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
 	cd apps/web && npm run lint
 	python scripts/validate_prompts.py
 
-lint-python: ## Run Python linter only
-	cd apps/api && ruff check . --fix
-	ruff check packages/ --fix
-	ruff check services/ --fix
+lint-python: ## Run Python linter only (auto-fixing)
+	ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/ --fix
+
+lint-python-check: ## Run Python linter only (report only, no --fix)
+	ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
 
 lint-ts: ## Run TypeScript linter only
 	cd apps/web && npm run lint
@@ -63,10 +65,26 @@ lint-ts: ## Run TypeScript linter only
 format: ## Format all Python files with Black
 	black apps/api/ packages/ services/ tests/ scripts/
 
+format-check: ## Verify Black formatting (line length 120, per pyproject.toml)
+	black --check apps/api/ packages/ services/ tests/ scripts/
+
 type-check: ## Run TypeScript type checker
 	cd apps/web && npm run type-check
 
 # ── Testing ──────────────────────────────────────────────────────────────────
+# NOTE ON THE ENVIRONMENT
+# -----------------------
+# The pinned set requires CPython <= 3.12. pydantic==2.5.3 -> pydantic-core
+# 2.14.x, whose newest release ships wheels for cp37..cp312 only, so on 3.13+
+# pip must build pydantic-core from Rust source. Run `make venv` to create a
+# 3.12 interpreter automatically.
+#
+# NOTE ON COLLECTION
+# ------------------
+# These targets do NOT pass --continue-on-collection-errors. A collection error
+# aborts the session before any test runs, which silently produces a garbage
+# coverage number (measured: 28% "total coverage" from a run where 0 tests
+# actually executed). Fix collection errors instead of hiding them.
 
 test: ## Run all Python tests
 	python -m pytest tests/ -v --tb=short
@@ -74,11 +92,23 @@ test: ## Run all Python tests
 test-api: ## Run API endpoint tests
 	python -m pytest tests/ -k "api" -v --tb=short
 
+test-scoping: ## Run the tenant-isolation / query-scoping contract tests
+	python -m pytest tests/test_query_scoping.py -v --tb=short
+
 test-prompts: ## Run prompt-related tests
 	python -m pytest tests/test_prompt_loader.py tests/test_agent_prompts.py -v --tb=short
 
-test-coverage: ## Run tests with coverage report
-	python -m pytest tests/ --cov=packages --cov=apps/api --cov-report=term-missing --cov-report=html
+# Keep the four --cov targets in lockstep with pytest.ini addopts. This target
+# previously listed only `packages` and `apps/api`, so `make test-coverage`
+# reported a different, higher percentage than `make test` -- and silently
+# ignored the 85% gate entirely.
+COV_ARGS = --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts
+
+test-coverage: ## Run tests with coverage report (same targets + gate as pytest.ini)
+	python -m pytest tests/ $(COV_ARGS) --cov-report=term-missing --cov-report=html --cov-fail-under=85
+
+test-fast: ## Run tests without coverage (quick inner loop)
+	python -m pytest tests/ -q --no-cov
 
 test-e2e: ## Run Playwright E2E tests
 	cd apps/web && npx playwright test
@@ -198,10 +228,27 @@ verify-all: ## Verify all services post-deployment
 
 setup: install validate-prompts ## Full project setup (install deps + validate)
 
-install: ## Install all dependencies
-	cd apps/api && pip install -r requirements.txt
-	cd services/scheduler && pip install -r requirements.txt
+# ⚠ Requires CPython <= 3.12 (see the note under Testing above).
+#
+# This target used to run:
+#     cd apps/api          && pip install -r requirements.txt
+#     cd services/scheduler && pip install -r requirements.txt
+# which CANNOT resolve -- the two service manifests pin python-dotenv to 1.2.2
+# and 1.0.0 respectively, so pip aborts with ResolutionImpossible. The root
+# requirements.txt exists precisely to provide the resolvable union of both.
+install: ## Install all Python dependencies from requirements.txt + requirements-dev.txt
+	@python -c "import sys; v=sys.version_info; \
+	sys.exit('ERROR: this project requires CPython <= 3.12, found %d.%d. pydantic 2.5.3 -> pydantic-core 2.14.x has no cp313/cp314 wheels. Run `make venv` instead.' % v[:2]) if v[:2] > (3, 12) else None"
+	python -m pip install -r requirements.txt -r requirements-dev.txt
+	python -m pip check
 	cd apps/web && npm install
+
+# Creates .venv on a supported interpreter (3.12 preferred, then 3.11).
+venv: ## Create .venv on CPython 3.12/3.11, then run install inside it
+	@command -v uv >/dev/null 2>&1 && \
+		(uv venv --python 3.12 --seed .venv || uv venv --python 3.11 --seed .venv) || \
+		(python -m venv .venv 2>/dev/null || py -3.12 -m venv .venv)
+	@echo "Created .venv. Activate it, then run: make install"
 	pip install -r requirements.txt 2>/dev/null || true
 	pip install black ruff pytest pytest-cov pytest-asyncio pytest-mock pytest-httpx
 

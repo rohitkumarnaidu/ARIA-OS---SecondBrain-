@@ -37,15 +37,15 @@ export const IncomeCard = memo(function IncomeCard({ entry, onEdit, onDelete }: 
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h3
-                className="font-medium text-text-primary truncate group-hover:text-accent-primary transition-colors cursor-pointer"
-                onClick={() => onEdit?.(entry)}
-                onKeyDown={(e) => { if (e.key === 'Enter') onEdit?.(entry) }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Edit income entry from ${entry.source_type}`}
-              >
-                {entry.source_type}
+              <h3 className="min-w-0 font-medium text-text-primary group-hover:text-accent-primary transition-colors">
+                <button
+                  type="button"
+                  onClick={() => onEdit?.(entry)}
+                  aria-label={`Edit income entry from ${entry.source_type}`}
+                  className="block w-full min-w-0 truncate text-left cursor-pointer"
+                >
+                  {entry.source_type}
+                </button>
               </h3>
               {entry.effective_hourly_rate && (
                 <span className="flex items-center gap-1 text-xs text-accent-success">

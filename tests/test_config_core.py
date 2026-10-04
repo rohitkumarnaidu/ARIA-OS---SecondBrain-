@@ -391,10 +391,18 @@ class TestSettings:
         assert s.circuit_breaker_threshold == 5
         assert s.rate_limit_max == 100
 
-    def test_settings_supabase_empty_by_default(self):
+    def test_settings_supabase_empty_by_default(self, monkeypatch):
         from config.core.config import Settings
 
-        s = Settings()
+        # `_env_file=None` makes pydantic-settings ignore the repo-root .env,
+        # and the two env vars are cleared so a SUPABASE_URL in the process
+        # environment cannot leak in either. Without this the test asserted
+        # against ambient state: any developer or CI runner with a .env present
+        # got 'https://test.supabase.co' instead of ''. The declared defaults
+        # really are "" (packages/config/core/config.py:35-36).
+        monkeypatch.delenv("SUPABASE_URL", raising=False)
+        monkeypatch.delenv("SUPABASE_KEY", raising=False)
+        s = Settings(_env_file=None)
         assert s.supabase_url == ""
         assert s.supabase_key == ""
 

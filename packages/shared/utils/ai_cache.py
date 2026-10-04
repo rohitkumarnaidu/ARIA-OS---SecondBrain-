@@ -91,13 +91,15 @@ class AICache:
         key = self._make_key(system_prompt, user_prompt, model)
         entry = {"time": time.time(), "response": response, "tokens": estimated_tokens}
         self._exact_cache[key] = entry
-        self._semantic_cache.append({
-            "time": time.time(),
-            "system_prompt": system_prompt[:500],
-            "user_prompt": user_prompt[:500],
-            "model": model,
-            "response": response,
-        })
+        self._semantic_cache.append(
+            {
+                "time": time.time(),
+                "system_prompt": system_prompt[:500],
+                "user_prompt": user_prompt[:500],
+                "model": model,
+                "response": response,
+            }
+        )
         self._token_savings += estimated_tokens
 
     @property
@@ -129,9 +131,7 @@ class AICache:
         if user_prompt_prefix:
             prefix_lower = user_prompt_prefix.lower()
             self._semantic_cache = [
-                e
-                for e in self._semantic_cache
-                if not e["user_prompt"].lower().startswith(prefix_lower)
+                e for e in self._semantic_cache if not e["user_prompt"].lower().startswith(prefix_lower)
             ]
             self._exact_cache.clear()
         else:

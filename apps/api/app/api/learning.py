@@ -53,12 +53,7 @@ async def get_learning_insights(
             .eq("user_id", user_id)
             .execute()
         )
-        courses_resp = (
-            supabase.from_("courses")
-            .select("title, status, progress_pct")
-            .eq("user_id", user_id)
-            .execute()
-        )
+        courses_resp = supabase.from_("courses").select("title, status, progress_pct").eq("user_id", user_id).execute()
         habits_resp = (
             supabase.from_("habits")
             .select("title, is_active, current_streak, consistency_percentage")
@@ -86,7 +81,9 @@ async def get_learning_insights(
 
     total_tasks = len(tasks)
     completed_tasks = len([t for t in tasks if t.get("status") == "completed"])
-    recent_completed = len([t for t in tasks if t.get("status") == "completed" and t.get("completed_at", "") >= week_ago])
+    recent_completed = len(
+        [t for t in tasks if t.get("status") == "completed" and t.get("completed_at", "") >= week_ago]
+    )
     pending_tasks = len([t for t in tasks if t.get("status") in ("pending", "in_progress")])
 
     by_hour: Dict[int, int] = {}
@@ -113,7 +110,9 @@ async def get_learning_insights(
         "total_tasks": total_tasks,
         "completed_tasks": completed_tasks,
         "pending_tasks": pending_tasks,
-        "recent_completion_rate": round(recent_completed / max(len([t for t in tasks if t.get("created_at", "") >= week_ago]), 1) * 100, 1),
+        "recent_completion_rate": round(
+            recent_completed / max(len([t for t in tasks if t.get("created_at", "") >= week_ago]), 1) * 100, 1
+        ),
         "overall_completion_rate": round(completed_tasks / max(total_tasks, 1) * 100, 1),
         "tasks_by_priority": {
             p: len([t for t in tasks if t.get("priority") == p])

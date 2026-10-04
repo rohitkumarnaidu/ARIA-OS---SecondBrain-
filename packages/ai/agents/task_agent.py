@@ -17,19 +17,21 @@ def detect_schedule_conflicts(tasks: List[dict]) -> List[dict]:
         start_a, end_a = _parse_time_range(a)
         if not start_a or not end_a:
             continue
-        for b in tasks[i + 1:]:
+        for b in tasks[i + 1 :]:
             start_b, end_b = _parse_time_range(b)
             if not start_b or not end_b:
                 continue
             if start_a < end_b and start_b < end_a:
-                conflicts.append({
-                    "task_a_id": a.get("id"),
-                    "task_a_title": a.get("title"),
-                    "task_b_id": b.get("id"),
-                    "task_b_title": b.get("title"),
-                    "overlap_start": max(start_a, start_b),
-                    "overlap_end": min(end_a, end_b),
-                })
+                conflicts.append(
+                    {
+                        "task_a_id": a.get("id"),
+                        "task_a_title": a.get("title"),
+                        "task_b_id": b.get("id"),
+                        "task_b_title": b.get("title"),
+                        "overlap_start": max(start_a, start_b),
+                        "overlap_end": min(end_a, end_b),
+                    }
+                )
     return conflicts
 
 

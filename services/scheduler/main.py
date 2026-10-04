@@ -38,8 +38,10 @@ scheduler = AsyncIOScheduler()
 
 # ── Alerting wrapper ──────────────────────────────────────────────────────────
 
+
 def _wrap_cron(job_name: str, func):
     """Wrap a cron job with failure tracking and alerting."""
+
     async def wrapper(*args, **kwargs):
         start = time.time()
         try:
@@ -64,10 +66,12 @@ def _wrap_cron(job_name: str, func):
                 },
             )
             return None
+
     return wrapper
 
 
 # ── Scheduler event listener (catches missed/unhandled-error jobs) ────────────
+
 
 async def _scheduler_listener(event):
     job = scheduler.get_job(event.job_id)
@@ -97,19 +101,49 @@ async def _scheduler_listener(event):
 JOB_DEFINITIONS = [
     (run_daily_briefing, CronTrigger(hour=7, minute=0), "daily_briefing", "Daily Briefing at 7 AM"),
     (run_radar, CronTrigger(hour=6, minute=0), "opportunity_radar", "Opportunity Radar at 6 AM"),
-    (run_weekly_review, CronTrigger(day_of_week="sun", hour=20, minute=0), "weekly_review", "Weekly Review on Sunday 8 PM"),
+    (
+        run_weekly_review,
+        CronTrigger(day_of_week="sun", hour=20, minute=0),
+        "weekly_review",
+        "Weekly Review on Sunday 8 PM",
+    ),
     (run_habit_checker, CronTrigger(hour=20, minute=0), "habit_checker", "Habit Checker at 8 PM"),
     (run_missed_task_checker, CronTrigger(hour=0, minute=0), "missed_task_checker", "Missed Task Checker at Midnight"),
     (run_sleep_reminder, CronTrigger(hour=22, minute=30), "sleep_reminder", "Sleep Reminder at 10:30 PM"),
     (run_course_nudges, CronTrigger(hour=18, minute=0), "course_nudge", "Course Progress Nudge at 6 PM"),
-    (run_skill_intelligence_refresh, CronTrigger(hour=5, minute=0), "skill_intelligence_refresh", "Skill Intelligence Refresh at 5 AM"),
-    (run_skill_evidence_expiry, CronTrigger(hour=3, minute=0), "skill_evidence_expiry", "Skill Evidence Expiry Check at 3 AM"),
-    (run_skill_analytics_snapshot, CronTrigger(hour=23, minute=30), "skill_analytics_snapshot", "Skill Analytics Daily Snapshot at 11:30 PM"),
+    (
+        run_skill_intelligence_refresh,
+        CronTrigger(hour=5, minute=0),
+        "skill_intelligence_refresh",
+        "Skill Intelligence Refresh at 5 AM",
+    ),
+    (
+        run_skill_evidence_expiry,
+        CronTrigger(hour=3, minute=0),
+        "skill_evidence_expiry",
+        "Skill Evidence Expiry Check at 3 AM",
+    ),
+    (
+        run_skill_analytics_snapshot,
+        CronTrigger(hour=23, minute=30),
+        "skill_analytics_snapshot",
+        "Skill Analytics Daily Snapshot at 11:30 PM",
+    ),
     (run_skill_mv_refresh, CronTrigger(hour=4, minute=0), "skill_mv_refresh", "Skill MV Refresh at 4 AM"),
-    (run_skill_retention_cleanup, CronTrigger(hour=2, minute=30), "skill_retention_cleanup", "Skill Retention Cleanup at 2:30 AM"),
+    (
+        run_skill_retention_cleanup,
+        CronTrigger(hour=2, minute=30),
+        "skill_retention_cleanup",
+        "Skill Retention Cleanup at 2:30 AM",
+    ),
     (run_deadline_alert, CronTrigger(hour="*", minute=0), "deadline_alert", "Deadline Alert every hour"),
     (run_health_check, CronTrigger(minute="*/5"), "health_check", "Health Check every 5 minutes"),
-    (run_memory_consolidation, CronTrigger(day_of_week="sun", hour=2, minute=0), "memory_consolidation", "Weekly Deep Memory Consolidation on Sunday 2 AM"),
+    (
+        run_memory_consolidation,
+        CronTrigger(day_of_week="sun", hour=2, minute=0),
+        "memory_consolidation",
+        "Weekly Deep Memory Consolidation on Sunday 2 AM",
+    ),
 ]
 
 
@@ -132,6 +166,7 @@ def setup_cron_jobs():
 
 # ── Health status file ────────────────────────────────────────────────────────
 
+
 def write_initial_health():
     """Write a healthy initial health status before first cron run."""
     initial = {
@@ -149,6 +184,7 @@ def write_initial_health():
 
 
 # ── HTTP Health server ────────────────────────────────────────────────────────
+
 
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -185,6 +221,7 @@ def start_health_server():
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
+
 
 async def main():
     write_initial_health()

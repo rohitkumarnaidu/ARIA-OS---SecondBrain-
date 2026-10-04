@@ -10,7 +10,13 @@ async def detect_productivity_peaks(user_id: str, days: int = 30) -> dict:
     try:
         supabase = get_supabase_client()
         cutoff = (datetime.now() - timedelta(days=days)).isoformat()
-        resp = supabase.from_("time_entries").select("date, duration_minutes, category, start_time").eq("user_id", user_id).gte("date", cutoff[:10]).execute()
+        resp = (
+            supabase.from_("time_entries")
+            .select("date, duration_minutes, category, start_time")
+            .eq("user_id", user_id)
+            .gte("date", cutoff[:10])
+            .execute()
+        )
         entries = resp.data or []
         if not entries:
             return {"has_data": False, "message": "No time entries found in the selected period."}
@@ -62,7 +68,14 @@ async def analyze_trends(user_id: str, metric: str, days: int = 30) -> dict:
         cutoff = (datetime.now() - timedelta(days=days)).isoformat()
 
         if metric == "tasks_completed":
-            resp = supabase.from_("tasks").select("completed_at").eq("user_id", user_id).eq("status", "completed").gte("completed_at", cutoff).execute()
+            resp = (
+                supabase.from_("tasks")
+                .select("completed_at")
+                .eq("user_id", user_id)
+                .eq("status", "completed")
+                .gte("completed_at", cutoff)
+                .execute()
+            )
             items = resp.data or []
             daily = {}
             for item in items:
@@ -71,7 +84,14 @@ async def analyze_trends(user_id: str, metric: str, days: int = 30) -> dict:
             return {"metric": metric, "daily_counts": daily, "total": len(items), "days": days}
 
         elif metric == "courses_progress":
-            resp = supabase.from_("learning_progress").select("date, data").eq("user_id", user_id).gte("date", cutoff[:10]).order("date", ascending=True).execute()
+            resp = (
+                supabase.from_("learning_progress")
+                .select("date, data")
+                .eq("user_id", user_id)
+                .gte("date", cutoff[:10])
+                .order("date", ascending=True)
+                .execute()
+            )
             entries = resp.data or []
             daily = {}
             for e in entries:
@@ -79,6 +99,7 @@ async def analyze_trends(user_id: str, metric: str, days: int = 30) -> dict:
                 if isinstance(d, str):
                     try:
                         import json
+
                         d = json.loads(d)
                     except (json.JSONDecodeError, TypeError):
                         d = {}
@@ -89,10 +110,22 @@ async def analyze_trends(user_id: str, metric: str, days: int = 30) -> dict:
         elif metric == "habits_streak":
             resp = supabase.from_("habits").select("name, current_streak").eq("user_id", user_id).execute()
             habits = resp.data or []
-            return {"metric": metric, "habits": {h.get("name", "unknown"): h.get("current_streak", 0) for h in habits}, "total_habits": len(habits), "days": days}
+            return {
+                "metric": metric,
+                "habits": {h.get("name", "unknown"): h.get("current_streak", 0) for h in habits},
+                "total_habits": len(habits),
+                "days": days,
+            }
 
         elif metric == "sleep_score":
-            resp = supabase.from_("sleep_logs").select("date, quality").eq("user_id", user_id).gte("date", cutoff[:10]).order("date", ascending=True).execute()
+            resp = (
+                supabase.from_("sleep_logs")
+                .select("date, quality")
+                .eq("user_id", user_id)
+                .gte("date", cutoff[:10])
+                .order("date", ascending=True)
+                .execute()
+            )
             logs = resp.data or []
             daily = {}
             for log in logs:
@@ -101,7 +134,13 @@ async def analyze_trends(user_id: str, metric: str, days: int = 30) -> dict:
             return {"metric": metric, "daily_scores": daily, "average": round(avg, 1), "total": len(logs), "days": days}
 
         elif metric == "focus_hours":
-            resp = supabase.from_("time_entries").select("date, duration_minutes, category").eq("user_id", user_id).gte("date", cutoff[:10]).execute()
+            resp = (
+                supabase.from_("time_entries")
+                .select("date, duration_minutes, category")
+                .eq("user_id", user_id)
+                .gte("date", cutoff[:10])
+                .execute()
+            )
             entries = resp.data or []
             daily = {}
             for e in entries:
@@ -124,7 +163,13 @@ async def detect_anomalies(user_id: str) -> List[dict]:
         anomalies = []
 
         cutoff_30 = (datetime.now() - timedelta(days=30)).isoformat()
-        tasks_resp = supabase.from_("tasks").select("completed_at, created_at").eq("user_id", user_id).gte("created_at", cutoff_30).execute()
+        tasks_resp = (
+            supabase.from_("tasks")
+            .select("completed_at, created_at")
+            .eq("user_id", user_id)
+            .gte("created_at", cutoff_30)
+            .execute()
+        )
         tasks = tasks_resp.data or []
 
         daily_completion: Dict[str, int] = {}
@@ -136,26 +181,64 @@ async def detect_anomalies(user_id: str) -> List[dict]:
             values = list(daily_completion.values())
             mean = sum(values) / len(values)
             variance = sum((v - mean) ** 2 for v in values) / len(values)
-            std_dev = variance ** 0.5 if variance > 0 else 1
+            std_dev = variance**0.5 if variance > 0 else 1
             for day, count in daily_completion.items():
                 if count == 0 and mean > 1:
-                    anomalies.append({"type": "procrastination_day", "date": day, "tasks_expected": round(mean, 1), "tasks_done": 0, "severity": "high" if mean > 3 else "medium"})
+                    anomalies.append(
+                        {
+                            "type": "procrastination_day",
+                            "date": day,
+                            "tasks_expected": round(mean, 1),
+                            "tasks_done": 0,
+                            "severity": "high" if mean > 3 else "medium",
+                        }
+                    )
                 elif count > mean + 2 * std_dev:
-                    anomalies.append({"type": "breakthrough_productivity", "date": day, "tasks_done": count, "tasks_avg": round(mean, 1), "severity": "positive"})
+                    anomalies.append(
+                        {
+                            "type": "breakthrough_productivity",
+                            "date": day,
+                            "tasks_done": count,
+                            "tasks_avg": round(mean, 1),
+                            "severity": "positive",
+                        }
+                    )
 
-        sleep_resp = supabase.from_("sleep_logs").select("date, quality, duration_hours").eq("user_id", user_id).gte("date", cutoff_30[:10]).execute()
+        sleep_resp = (
+            supabase.from_("sleep_logs")
+            .select("date, quality, duration_hours")
+            .eq("user_id", user_id)
+            .gte("date", cutoff_30[:10])
+            .execute()
+        )
         sleeps = sleep_resp.data or []
         if sleeps:
             qualities = [s.get("quality", 70) for s in sleeps]
             q_mean = sum(qualities) / len(qualities)
             q_var = sum((q - q_mean) ** 2 for q in qualities) / len(qualities)
-            q_std = q_var ** 0.5 if q_var > 0 else 1
+            q_std = q_var**0.5 if q_var > 0 else 1
             for s in sleeps:
                 q = s.get("quality", 70)
                 if q < q_mean - 2 * q_std:
-                    anomalies.append({"type": "poor_sleep", "date": s.get("date"), "quality": q, "avg_quality": round(q_mean, 1), "severity": "high"})
+                    anomalies.append(
+                        {
+                            "type": "poor_sleep",
+                            "date": s.get("date"),
+                            "quality": q,
+                            "avg_quality": round(q_mean, 1),
+                            "severity": "high",
+                        }
+                    )
                 elif q > q_mean + 2 * q_std:
-                    anomalies.append({"type": "great_sleep", "date": s.get("date"), "quality": q, "avg_quality": round(q_mean, 1), "severity": "positive"})
+                    anomalies.append(
+                        {
+                            "type": "great_sleep",
+                            "date": s.get("date"),
+                            "quality": q,
+                            "avg_quality": round(q_mean, 1),
+                            "severity": "positive",
+                        }
+                    )
 
         return anomalies
     except Exception as e:
@@ -167,9 +250,21 @@ async def suggest_spaced_repetition(user_id: str, course_id: Optional[str] = Non
     try:
         supabase = get_supabase_client()
         if course_id:
-            courses_resp = supabase.from_("courses").select("id, title, progress, last_reviewed").eq("id", course_id).eq("user_id", user_id).execute()
+            courses_resp = (
+                supabase.from_("courses")
+                .select("id, title, progress, last_reviewed")
+                .eq("id", course_id)
+                .eq("user_id", user_id)
+                .execute()
+            )
         else:
-            courses_resp = supabase.from_("courses").select("id, title, progress, last_reviewed").eq("user_id", user_id).eq("status", "in_progress").execute()
+            courses_resp = (
+                supabase.from_("courses")
+                .select("id, title, progress, last_reviewed")
+                .eq("user_id", user_id)
+                .eq("status", "in_progress")
+                .execute()
+            )
         courses = courses_resp.data or []
         now = datetime.now()
         schedule = []
@@ -193,15 +288,17 @@ async def suggest_spaced_repetition(user_id: str, course_id: Optional[str] = Non
             else:
                 interval_days = 14 if days_since > 14 else 0
             if interval_days > 0:
-                schedule.append({
-                    "course_id": course.get("id"),
-                    "course_title": course.get("title"),
-                    "progress_pct": progress,
-                    "days_since_review": days_since,
-                    "suggested_review_date": (now + timedelta(days=1)).isoformat()[:10],
-                    "interval_days": interval_days,
-                    "reason": f"Review needed: {days_since}d since last review, {progress}% complete",
-                })
+                schedule.append(
+                    {
+                        "course_id": course.get("id"),
+                        "course_title": course.get("title"),
+                        "progress_pct": progress,
+                        "days_since_review": days_since,
+                        "suggested_review_date": (now + timedelta(days=1)).isoformat()[:10],
+                        "interval_days": interval_days,
+                        "reason": f"Review needed: {days_since}d since last review, {progress}% complete",
+                    }
+                )
         return schedule
     except Exception as e:
         logger.error("suggest_spaced_repetition failed", user_id=user_id, error=str(e))

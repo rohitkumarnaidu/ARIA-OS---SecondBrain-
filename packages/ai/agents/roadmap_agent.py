@@ -40,24 +40,28 @@ def validate_prerequisites(roadmap: dict) -> List[dict]:
         for pr in pre_reqs:
             pr_lower = pr.lower() if isinstance(pr, str) else ""
             if pr_lower and pr_lower not in title_map:
-                issues.append({
-                    "node": m.get("title", m.get("name", "unknown")),
-                    "missing_prerequisite": pr,
-                    "issue": f"Prerequisite '{pr}' not found in roadmap",
-                    "severity": "error",
-                })
+                issues.append(
+                    {
+                        "node": m.get("title", m.get("name", "unknown")),
+                        "missing_prerequisite": pr,
+                        "issue": f"Prerequisite '{pr}' not found in roadmap",
+                        "severity": "error",
+                    }
+                )
     for i, m in enumerate(milestones):
         pre_reqs = m.get("prerequisites", [])
         for pr in pre_reqs:
             pr_lower = pr.lower() if isinstance(pr, str) else ""
             for j, other in enumerate(milestones):
                 if other.get("title", "").lower() == pr_lower and j >= i:
-                    issues.append({
-                        "node": m.get("title", "unknown"),
-                        "prerequisite": pr,
-                        "issue": f"Prerequisite '{pr}' comes after or at same position as this node",
-                        "severity": "warning",
-                    })
+                    issues.append(
+                        {
+                            "node": m.get("title", "unknown"),
+                            "prerequisite": pr,
+                            "issue": f"Prerequisite '{pr}' comes after or at same position as this node",
+                            "severity": "warning",
+                        }
+                    )
     return issues
 
 
@@ -97,7 +101,6 @@ def detect_circular_dependencies(roadmap: dict) -> List[List[str]]:
 def enrich_with_external_data(roadmap: dict) -> dict:
     enriched = dict(roadmap)
     skills = roadmap.get("skills", [])
-    milestones = roadmap.get("milestones", roadmap.get("nodes", []))
 
     trend_data = {}
     for skill in skills:

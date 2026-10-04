@@ -1909,11 +1909,23 @@ class TestSkillAgent:
 
     @pytest.mark.asyncio
     async def test_assess_user_skill_success(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"recommended_level": 3, "confidence_adjustment": 0.1, "gap_analysis": [], "next_milestones": []}
-        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}])
-        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[{"source_type": "github", "title": "open source PR"}])
+        mock_llm_json.return_value = {
+            "recommended_level": 3,
+            "confidence_adjustment": 0.1,
+            "gap_analysis": [],
+            "next_milestones": [],
+        }
+        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(
+            data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}]
+        )
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}]
+        )
+        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(
+            data=[{"source_type": "github", "title": "open source PR"}]
+        )
         from ai.agents.skill_agent import assess_user_skill
+
         result = await assess_user_skill("us1", "user-1")
         assert result["skill_name"] == "Python"
 
@@ -1921,61 +1933,108 @@ class TestSkillAgent:
     async def test_assess_user_skill_not_found(self, mock_supabase):
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[])
         from ai.agents.skill_agent import assess_user_skill
+
         result = await assess_user_skill("fake", "user-1")
         assert result.get("fallback") is True
 
     @pytest.mark.asyncio
     async def test_assess_user_skill_fallback(self, mock_supabase, mock_llm_json, mock_get_agent_none):
-        mock_llm_json.return_value = {"recommended_level": 2, "confidence_adjustment": 0.0, "gap_analysis": [], "next_milestones": []}
-        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}])
-        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[{"source_type": "github", "title": "PR"}])
+        mock_llm_json.return_value = {
+            "recommended_level": 2,
+            "confidence_adjustment": 0.0,
+            "gap_analysis": [],
+            "next_milestones": [],
+        }
+        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(
+            data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}]
+        )
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}]
+        )
+        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(
+            data=[{"source_type": "github", "title": "PR"}]
+        )
         from ai.agents.skill_agent import assess_user_skill
+
         result = await assess_user_skill("us1", "user-1")
         assert "current_level" in result
 
     @pytest.mark.asyncio
     async def test_assess_user_skill_llm_fallback(self, mock_supabase, mock_get_agent):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}])
+
+        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(
+            data=[{"user_skill_id": "us1", "skill_id": "s1", "level": 2, "state": "active", "confidence_score": 0.6}]
+        )
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "description": "Programming", "level_min": 1, "level_max": 5}]
+        )
         mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[])
         from ai.agents.skill_agent import assess_user_skill
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await assess_user_skill("us1", "user-1")
         assert result.get("gap_analysis") is not None
 
     def test_algorithmic_fallback_assessment_confidence_boost(self):
         from ai.agents.skill_agent import algorithmic_fallback_assessment
-        result = algorithmic_fallback_assessment({"level": 2, "confidence_score": 0.5}, [{"id": 1}, {"id": 2}, {"id": 3}])
+
+        result = algorithmic_fallback_assessment(
+            {"level": 2, "confidence_score": 0.5}, [{"id": 1}, {"id": 2}, {"id": 3}]
+        )
         assert result["confidence_adjustment"] > 0
 
     @pytest.mark.asyncio
     async def test_recommend_skills_success(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"recommendations": [{"skill_id": "s2", "name": "ML", "reason": "demand", "priority": 1}], "focus_area": "AI", "estimated_time": "6 months"}
-        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[{"skills": ["Python"], "interests": ["ML"], "career_goal": "ML Engineer"}])
-        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "level": 3, "state": "active"}])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"skill_id": "s2", "name": "ML", "category_id": "c1", "skill_health": 0.8}, {"skill_id": "s3", "name": "Rust", "category_id": "c1", "skill_health": 0.7}])
+        mock_llm_json.return_value = {
+            "recommendations": [{"skill_id": "s2", "name": "ML", "reason": "demand", "priority": 1}],
+            "focus_area": "AI",
+            "estimated_time": "6 months",
+        }
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"skills": ["Python"], "interests": ["ML"], "career_goal": "ML Engineer"}]
+        )
+        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "level": 3, "state": "active"}]
+        )
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[
+                {"skill_id": "s2", "name": "ML", "category_id": "c1", "skill_health": 0.8},
+                {"skill_id": "s3", "name": "Rust", "category_id": "c1", "skill_health": 0.7},
+            ]
+        )
         from ai.agents.skill_agent import recommend_skills
+
         result = await recommend_skills("user-1")
         assert result["candidate_count"] == 2
 
     @pytest.mark.asyncio
     async def test_recommend_skills_fallback(self, mock_supabase, mock_get_agent_none):
-        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[{"skills": [], "interests": [], "career_goal": ""}])
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"skills": [], "interests": [], "career_goal": ""}]
+        )
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "name": "Python", "category_id": "c1", "skill_health": 0.8}])
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "name": "Python", "category_id": "c1", "skill_health": 0.8}]
+        )
         from ai.agents.skill_agent import recommend_skills
+
         result = await recommend_skills("user-1")
         assert "recommendations" in result
 
     @pytest.mark.asyncio
     async def test_recommend_skills_llm_fallback(self, mock_supabase, mock_get_agent):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[{"skills": [], "interests": [], "career_goal": ""}])
+
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"skills": [], "interests": [], "career_goal": ""}]
+        )
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[])
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "name": "Python", "category_id": "c1", "skill_health": 0.8}])
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "name": "Python", "category_id": "c1", "skill_health": 0.8}]
+        )
         from ai.agents.skill_agent import recommend_skills
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await recommend_skills("user-1")
         assert len(result["recommendations"]) > 0
@@ -1983,16 +2042,34 @@ class TestSkillAgent:
     @pytest.mark.asyncio
     async def test_refresh_skill_intelligence_success(self, mock_supabase, mock_llm_json, mock_get_agent):
         mock_llm_json.return_value = {"health_score": 0.8, "trends": ["growing"], "recommendations": ["learn"]}
-        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "demand_score": 0.8, "growth_score": 0.7, "salary_median": 120000, "competition_score": 0.5, "future_relevance": 0.9, "data_freshness": "current", "skill_health": 0.8}])
+        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "skill_id": "s1",
+                    "demand_score": 0.8,
+                    "growth_score": 0.7,
+                    "salary_median": 120000,
+                    "competition_score": 0.5,
+                    "future_relevance": 0.9,
+                    "data_freshness": "current",
+                    "skill_health": 0.8,
+                }
+            ]
+        )
         from ai.agents.skill_agent import refresh_skill_intelligence
+
         result = await refresh_skill_intelligence("s1")
         assert result["health_score"] == 0.8
 
     @pytest.mark.asyncio
     async def test_refresh_skill_intelligence_fallback(self, mock_supabase, mock_get_agent_none):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "skill_health": 0.7, "data_freshness": "current"}])
+
+        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "skill_health": 0.7, "data_freshness": "current"}]
+        )
         from ai.agents.skill_agent import refresh_skill_intelligence
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await refresh_skill_intelligence("s1")
         assert result["health_score"] == 0.7
@@ -2000,27 +2077,55 @@ class TestSkillAgent:
     @pytest.mark.asyncio
     async def test_generate_skill_roadmap_fallback(self, mock_supabase, mock_llm_json, mock_get_agent_none):
         mock_llm_json.return_value = {"phases": [], "total_estimated_hours": 0, "difficulty": "beginner"}
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_max": 5}])
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "description": "Programming", "level_max": 5}]
+        )
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"level": 1, "state": "active"}])
         from ai.agents.skill_agent import generate_skill_roadmap
+
         result = await generate_skill_roadmap("user-1", "s1")
         assert "phases" in result
 
     @pytest.mark.asyncio
     async def test_generate_skill_roadmap_llm_fallback(self, mock_supabase, mock_get_agent):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "description": "Programming", "level_max": 5}])
+
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "description": "Programming", "level_max": 5}]
+        )
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"level": 1, "state": "active"}])
         from ai.agents.skill_agent import generate_skill_roadmap
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await generate_skill_roadmap("user-1", "s1")
         assert len(result["phases"]) > 0
 
     @pytest.mark.asyncio
     async def test_verify_evidence_success(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"verification_decision": "verified", "confidence_score": 0.9, "trust_score": 0.8, "quality_score": 0.7, "reasoning": "Good"}
-        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[{"evidence_id": "e1", "title": "GitHub PR", "source_type": "github", "url": "https://github.com/user/repo/pull/1", "description": "A PR", "state": "submitted", "signed_hash": "abc123", "quality_score": 0.6, "trust_score": 0.7}])
+        mock_llm_json.return_value = {
+            "verification_decision": "verified",
+            "confidence_score": 0.9,
+            "trust_score": 0.8,
+            "quality_score": 0.7,
+            "reasoning": "Good",
+        }
+        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "evidence_id": "e1",
+                    "title": "GitHub PR",
+                    "source_type": "github",
+                    "url": "https://github.com/user/repo/pull/1",
+                    "description": "A PR",
+                    "state": "submitted",
+                    "signed_hash": "abc123",
+                    "quality_score": 0.6,
+                    "trust_score": 0.7,
+                }
+            ]
+        )
         from ai.agents.skill_agent import verify_evidence
+
         result = await verify_evidence("e1", "user-1")
         assert result["verification_decision"] == "verified"
 
@@ -2028,70 +2133,129 @@ class TestSkillAgent:
     async def test_verify_evidence_not_found(self, mock_supabase):
         mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[])
         from ai.agents.skill_agent import verify_evidence
+
         result = await verify_evidence("fake", "user-1")
         assert result.get("fallback") is True
 
     @pytest.mark.asyncio
     async def test_verify_evidence_fallback(self, mock_supabase, mock_get_agent_none):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(data=[{"evidence_id": "e1", "title": "Cert", "source_type": "certification", "url": "", "description": "Cert", "state": "submitted", "signed_hash": "", "quality_score": 0.5, "trust_score": 0.5}])
+
+        mock_supabase._builders["user_skill_evidence"].execute.return_value = MagicMock(
+            data=[
+                {
+                    "evidence_id": "e1",
+                    "title": "Cert",
+                    "source_type": "certification",
+                    "url": "",
+                    "description": "Cert",
+                    "state": "submitted",
+                    "signed_hash": "",
+                    "quality_score": 0.5,
+                    "trust_score": 0.5,
+                }
+            ]
+        )
         from ai.agents.skill_agent import verify_evidence
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await verify_evidence("e1", "user-1")
         assert result["verification_decision"] == "verified_auto"
 
     @pytest.mark.asyncio
     async def test_analyze_career_readiness_success(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"readiness_score": 75, "strengths": ["Python"], "gaps": ["ML"], "recommended_career_paths": ["ML Engineer"], "action_items": ["Learn ML"]}
-        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[{"skills": ["Python"], "career_goal": "ML Engineer", "interests": ["AI"]}])
-        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "level": 3, "state": "active"}])
+        mock_llm_json.return_value = {
+            "readiness_score": 75,
+            "strengths": ["Python"],
+            "gaps": ["ML"],
+            "recommended_career_paths": ["ML Engineer"],
+            "action_items": ["Learn ML"],
+        }
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"skills": ["Python"], "career_goal": "ML Engineer", "interests": ["AI"]}]
+        )
+        mock_supabase._builders["user_skills"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "level": 3, "state": "active"}]
+        )
         from ai.agents.skill_agent import analyze_career_readiness
+
         result = await analyze_career_readiness("user-1")
         assert result["readiness_score"] == 75
 
     @pytest.mark.asyncio
     async def test_analyze_career_readiness_fallback(self, mock_supabase, mock_get_agent_none):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["users"].execute.return_value = MagicMock(data=[{"skills": [], "career_goal": "", "interests": []}])
+
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"skills": [], "career_goal": "", "interests": []}]
+        )
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[])
         from ai.agents.skill_agent import analyze_career_readiness
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await analyze_career_readiness("user-1")
         assert "readiness_score" in result
 
     @pytest.mark.asyncio
     async def test_analyze_market_trends_with_skill_id(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"market_overview": {}, "top_demand_skills": [], "growth_opportunities": [], "salary_insights": [], "recommendations": []}
-        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "demand_score": 0.8, "growth_score": 0.6, "skill_health": 0.7}])
+        mock_llm_json.return_value = {
+            "market_overview": {},
+            "top_demand_skills": [],
+            "growth_opportunities": [],
+            "salary_insights": [],
+            "recommendations": [],
+        }
+        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "demand_score": 0.8, "growth_score": 0.6, "skill_health": 0.7}]
+        )
         from ai.agents.skill_agent import analyze_market_trends
+
         result = await analyze_market_trends(skill_id="s1")
         assert result["skill_count"] == 1
 
     @pytest.mark.asyncio
     async def test_analyze_market_trends_no_skill_id(self, mock_supabase, mock_llm_json, mock_get_agent):
-        mock_llm_json.return_value = {"market_overview": {}, "top_demand_skills": [], "growth_opportunities": [], "salary_insights": [], "recommendations": []}
-        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "demand_score": 0.8, "growth_score": 0.6, "skill_health": 0.7}])
+        mock_llm_json.return_value = {
+            "market_overview": {},
+            "top_demand_skills": [],
+            "growth_opportunities": [],
+            "salary_insights": [],
+            "recommendations": [],
+        }
+        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "demand_score": 0.8, "growth_score": 0.6, "skill_health": 0.7}]
+        )
         from ai.agents.skill_agent import analyze_market_trends
+
         result = await analyze_market_trends()
         assert result["skill_count"] == 1
 
     @pytest.mark.asyncio
     async def test_analyze_market_trends_fallback(self, mock_supabase, mock_get_agent_none):
         from ai.client import LLMProviderUnavailableError
-        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "demand_score": 0.9, "growth_score": 0.7, "skill_health": 0.8}])
+
+        mock_supabase._builders["skill_market_data"].execute.return_value = MagicMock(
+            data=[{"skill_id": "s1", "demand_score": 0.9, "growth_score": 0.7, "skill_health": 0.8}]
+        )
         from ai.agents.skill_agent import analyze_market_trends
+
         with patch("ai.agents.skill_agent.llm.generate_json", side_effect=LLMProviderUnavailableError("down")):
             result = await analyze_market_trends()
         assert len(result["top_demand_skills"]) == 1
 
     @pytest.mark.asyncio
     async def test_explore_skill_graph(self, mock_supabase):
-        mock_supabase._builders["skills"].execute.return_value = MagicMock(data=[{"name": "Python", "category_id": "c1"}])
-        mock_supabase._builders["skill_relationships"].execute.return_value = MagicMock(data=[
-            {"from_skill_id": "s1", "to_skill_id": "s2", "relationship_type": "prerequisite", "weight": 0.8},
-            {"from_skill_id": "s1", "to_skill_id": "s3", "relationship_type": "related_to", "weight": 0.5},
-        ])
+        mock_supabase._builders["skills"].execute.return_value = MagicMock(
+            data=[{"name": "Python", "category_id": "c1"}]
+        )
+        mock_supabase._builders["skill_relationships"].execute.return_value = MagicMock(
+            data=[
+                {"from_skill_id": "s1", "to_skill_id": "s2", "relationship_type": "prerequisite", "weight": 0.8},
+                {"from_skill_id": "s1", "to_skill_id": "s3", "relationship_type": "related_to", "weight": 0.5},
+            ]
+        )
         from ai.agents.skill_agent import explore_skill_graph
+
         result = await explore_skill_graph("s1")
         assert result["skill_name"] == "Python"
         assert result["prerequisites"] == 1
@@ -2100,9 +2264,14 @@ class TestSkillAgent:
     @pytest.mark.asyncio
     async def test_match_skill_opportunities(self, mock_supabase):
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "level": 3}])
-        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(data=[{"id": "o1", "title": "ML Intern"}])
-        mock_supabase._builders["skill_opportunities"].execute.return_value = MagicMock(data=[{"opportunity_id": "o1", "skill_id": "s1", "min_level": 2}])
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(
+            data=[{"id": "o1", "title": "ML Intern"}]
+        )
+        mock_supabase._builders["skill_opportunities"].execute.return_value = MagicMock(
+            data=[{"opportunity_id": "o1", "skill_id": "s1", "min_level": 2}]
+        )
         from ai.agents.skill_agent import match_skill_opportunities
+
         result = await match_skill_opportunities("user-1")
         assert len(result["matches"]) == 1
         assert result["matches"][0]["match_pct"] == 100.0
@@ -2110,9 +2279,14 @@ class TestSkillAgent:
     @pytest.mark.asyncio
     async def test_match_skill_opportunities_no_match(self, mock_supabase):
         mock_supabase._builders["user_skills"].execute.return_value = MagicMock(data=[{"skill_id": "s1", "level": 1}])
-        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(data=[{"id": "o1", "title": "ML Intern"}])
-        mock_supabase._builders["skill_opportunities"].execute.return_value = MagicMock(data=[{"opportunity_id": "o1", "skill_id": "s2", "min_level": 2}])
+        mock_supabase._builders["opportunities"].execute.return_value = MagicMock(
+            data=[{"id": "o1", "title": "ML Intern"}]
+        )
+        mock_supabase._builders["skill_opportunities"].execute.return_value = MagicMock(
+            data=[{"opportunity_id": "o1", "skill_id": "s2", "min_level": 2}]
+        )
         from ai.agents.skill_agent import match_skill_opportunities
+
         result = await match_skill_opportunities("user-1")
         assert result["matches"][0]["match_pct"] == 0.0
 

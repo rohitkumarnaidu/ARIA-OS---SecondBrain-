@@ -120,24 +120,29 @@ class TestToolDefinition:
         td = ToolDefinition(
             name="test",
             description="test",
-            parameters={"type": "object", "properties": {
-                "name": {"type": "string"},
-                "age": {"type": "integer"},
-                "score": {"type": "number"},
-                "active": {"type": "boolean"},
-                "tags": {"type": "array"},
-                "meta": {"type": "object"},
-            }},
+            parameters={
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "age": {"type": "integer"},
+                    "score": {"type": "number"},
+                    "active": {"type": "boolean"},
+                    "tags": {"type": "array"},
+                    "meta": {"type": "object"},
+                },
+            },
             handler="test.handler",
         )
-        errors = td.validate_parameters({
-            "name": "Alice",
-            "age": 30,
-            "score": 95.5,
-            "active": True,
-            "tags": ["a", "b"],
-            "meta": {"key": "val"},
-        })
+        errors = td.validate_parameters(
+            {
+                "name": "Alice",
+                "age": 30,
+                "score": 95.5,
+                "active": True,
+                "tags": ["a", "b"],
+                "meta": {"key": "val"},
+            }
+        )
         assert errors == []
 
     def test_validate_parameters_no_schema(self):
@@ -171,17 +176,13 @@ class TestToolDefinition:
 
 class TestToolDefinitionSchema:
     def test_tool_definition_schema_valid(self):
-        schema = ToolDefinitionSchema(
-            name="test", description="test", handler="test.handler"
-        )
+        schema = ToolDefinitionSchema(name="test", description="test", handler="test.handler")
         assert schema.name == "test"
         assert schema.timeout == 30
         assert schema.audit is True
 
     def test_tool_definition_schema_defaults(self):
-        schema = ToolDefinitionSchema(
-            name="test", description="test", handler="test.handler"
-        )
+        schema = ToolDefinitionSchema(name="test", description="test", handler="test.handler")
         assert schema.parameters == {}
         assert schema.required_permissions == []
         assert schema.timeout == 30
@@ -200,16 +201,12 @@ class TestToolCallSchemas:
         assert req.request_id is None
 
     def test_tool_call_response(self):
-        resp = ToolCallResponse(
-            success=True, data={"result": "ok"}, tool_name="test", request_id="rid1"
-        )
+        resp = ToolCallResponse(success=True, data={"result": "ok"}, tool_name="test", request_id="rid1")
         assert resp.success is True
         assert resp.data == {"result": "ok"}
 
     def test_tool_call_response_error(self):
-        resp = ToolCallResponse(
-            success=False, error="fail", tool_name="test", request_id="rid1"
-        )
+        resp = ToolCallResponse(success=False, error="fail", tool_name="test", request_id="rid1")
         assert resp.success is False
         assert resp.error == "fail"
 
@@ -246,23 +243,15 @@ class TestToolRegistry:
 
     def test_list_all(self, registry, sample_tool):
         registry.register(sample_tool)
-        t2 = ToolDefinition(
-            name="tool2", description="Second tool", handler="test.handler"
-        )
+        t2 = ToolDefinition(name="tool2", description="Second tool", handler="test.handler")
         registry.register(t2)
         tools = registry.list()
         assert len(tools) == 2
 
     def test_list_by_category(self, registry):
-        t1 = ToolDefinition(
-            name="t1", description="a", handler="test.handler", required_permissions=["user"]
-        )
-        t2 = ToolDefinition(
-            name="t2", description="b", handler="test.handler", required_permissions=["admin"]
-        )
-        t3 = ToolDefinition(
-            name="t3", description="c", handler="test.handler", required_permissions=["user"]
-        )
+        t1 = ToolDefinition(name="t1", description="a", handler="test.handler", required_permissions=["user"])
+        t2 = ToolDefinition(name="t2", description="b", handler="test.handler", required_permissions=["admin"])
+        t3 = ToolDefinition(name="t3", description="c", handler="test.handler", required_permissions=["user"])
         registry.register(t1)
         registry.register(t2)
         registry.register(t3)
@@ -272,30 +261,26 @@ class TestToolRegistry:
         assert len(admin_tools) == 1
 
     def test_search_by_name(self, registry):
-        registry.register(ToolDefinition(
-            name="generate_briefing", description="Daily briefing", handler="test.handler"
-        ))
-        registry.register(ToolDefinition(
-            name="check_missed_tasks", description="Find overdue", handler="test.handler"
-        ))
+        registry.register(
+            ToolDefinition(name="generate_briefing", description="Daily briefing", handler="test.handler")
+        )
+        registry.register(ToolDefinition(name="check_missed_tasks", description="Find overdue", handler="test.handler"))
         results = registry.search("briefing")
         assert len(results) == 1
         assert results[0].name == "generate_briefing"
 
     def test_search_by_description(self, registry):
-        registry.register(ToolDefinition(
-            name="tb", description="tool for briefing generation", handler="test.handler"
-        ))
+        registry.register(ToolDefinition(name="tb", description="tool for briefing generation", handler="test.handler"))
         results = registry.search("briefing")
         assert len(results) == 1
 
     def test_get_categories(self, registry):
-        registry.register(ToolDefinition(
-            name="a", description="a", handler="test.handler", required_permissions=["user", "admin"]
-        ))
-        registry.register(ToolDefinition(
-            name="b", description="b", handler="test.handler", required_permissions=["system"]
-        ))
+        registry.register(
+            ToolDefinition(name="a", description="a", handler="test.handler", required_permissions=["user", "admin"])
+        )
+        registry.register(
+            ToolDefinition(name="b", description="b", handler="test.handler", required_permissions=["system"])
+        )
         cats = registry.get_categories()
         assert "user" in cats
         assert "admin" in cats
@@ -328,9 +313,7 @@ class TestToolRegistry:
 
 class TestToolExecutionContext:
     def test_initialization(self):
-        ctx = ToolExecutionContext(
-            tool_name="test", parameters={"key": "val"}, user_id="user1", timeout=10
-        )
+        ctx = ToolExecutionContext(tool_name="test", parameters={"key": "val"}, user_id="user1", timeout=10)
         assert ctx.tool_name == "test"
         assert ctx.parameters == {"key": "val"}
         assert ctx.user_id == "user1"
@@ -338,15 +321,11 @@ class TestToolExecutionContext:
         assert ctx.request_id is not None
 
     def test_check_timeout_not_expired(self):
-        ctx = ToolExecutionContext(
-            tool_name="test", parameters={}, user_id="user1", timeout=30
-        )
+        ctx = ToolExecutionContext(tool_name="test", parameters={}, user_id="user1", timeout=30)
         ctx.check_timeout()
 
     def test_check_timeout_expired(self):
-        ctx = ToolExecutionContext(
-            tool_name="test", parameters={}, user_id="user1", timeout=0.01
-        )
+        ctx = ToolExecutionContext(tool_name="test", parameters={}, user_id="user1", timeout=0.01)
         time.sleep(0.02)
         with pytest.raises(TimeoutError, match="exceeded timeout"):
             ctx.check_timeout()
@@ -428,9 +407,7 @@ class TestToolResult:
 
 class TestToolExecutor:
     def test_execute_success(self, executor):
-        result = asyncio.run(executor.execute(
-            "test_tool", {"user_id": "u1"}, "u1"
-        ))
+        result = asyncio.run(executor.execute("test_tool", {"user_id": "u1"}, "u1"))
         assert result.success is True
         assert result.tool_name == "test_tool"
         assert result.duration_ms >= 0
@@ -443,9 +420,7 @@ class TestToolExecutor:
         assert "not found" in (result.error or "")
 
     def test_execute_validation_error(self, executor):
-        result = asyncio.run(executor.execute(
-            "test_tool", {}, "u1"
-        ))
+        result = asyncio.run(executor.execute("test_tool", {}, "u1"))
         assert result.success is False
         assert "Parameter validation failed" in (result.error or "")
 
@@ -496,9 +471,7 @@ class TestToolExecutor:
 
     @pytest.mark.asyncio
     async def test_execute_with_retry_success(self, executor):
-        result = await executor.execute_with_retry(
-            "test_tool", {"user_id": "u1"}, "u1", max_retries=1
-        )
+        result = await executor.execute_with_retry("test_tool", {"user_id": "u1"}, "u1", max_retries=1)
         assert result.success is True
 
     @pytest.mark.asyncio
@@ -510,9 +483,7 @@ class TestToolExecutor:
 
     @pytest.mark.asyncio
     async def test_execute_tool_call_success(self, executor):
-        result = await executor.execute_tool_call(
-            "test_tool", {"user_id": "u1"}, "u1"
-        )
+        result = await executor.execute_tool_call("test_tool", {"user_id": "u1"}, "u1")
         assert isinstance(result, dict)
 
     @pytest.mark.asyncio
@@ -537,6 +508,7 @@ class TestToolExecutorWithMock:
         registry.register(td)
 
         import tests.test_tool_calling as this_mod
+
         this_mod.slow_handler = slow_handler
 
         ex = ToolExecutor(registry=registry)
@@ -598,17 +570,21 @@ class TestToolCallingAgent:
 
     def test_parse_tool_calls_from_openai(self, agent):
         response = {
-            "choices": [{
-                "message": {
-                    "tool_calls": [{
-                        "id": "call_1",
-                        "function": {
-                            "name": "test_tool",
-                            "arguments": json.dumps({"user_id": "u1"}),
-                        },
-                    }],
-                },
-            }],
+            "choices": [
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "id": "call_1",
+                                "function": {
+                                    "name": "test_tool",
+                                    "arguments": json.dumps({"user_id": "u1"}),
+                                },
+                            }
+                        ],
+                    },
+                }
+            ],
         }
         calls = agent.parse_tool_calls_from_openai(response)
         assert len(calls) == 1
@@ -758,29 +734,21 @@ class TestEdgeCases:
         assert errors == []
 
     def test_execute_with_additional_params(self, executor):
-        result = asyncio.run(executor.execute(
-            "test_tool", {"user_id": "u1", "extra": "ignored"}, "u1"
-        ))
+        result = asyncio.run(executor.execute("test_tool", {"user_id": "u1", "extra": "ignored"}, "u1"))
         assert result.success is True
 
     def test_tool_result_llm_format_with_none_data(self):
-        tr = ToolResult(
-            success=True, data=None, duration_ms=0, tool_name="t", request_id="r"
-        )
+        tr = ToolResult(success=True, data=None, duration_ms=0, tool_name="t", request_id="r")
         formatted = tr.to_llm_format()
         assert "completed successfully" in formatted
 
     def test_tool_result_llm_format_none_error(self):
-        tr = ToolResult(
-            success=True, data={"ok": True}, duration_ms=10, tool_name="t", request_id="r"
-        )
+        tr = ToolResult(success=True, data={"ok": True}, duration_ms=10, tool_name="t", request_id="r")
         fmt = tr.to_llm_format()
         assert "ok" in fmt
 
     def test_tool_execution_log_schema(self):
-        log = ToolExecutionLog(
-            tool_name="t", user_id="u", request_id="r"
-        )
+        log = ToolExecutionLog(tool_name="t", user_id="u", request_id="r")
         assert log.tool_name == "t"
         assert log.duration_ms == 0
         assert log.success is False
@@ -897,12 +865,15 @@ class TestIntegration:
         discover_agent_tools(reg)
 
         ex = ToolExecutor(registry=reg)
-        results = await ex.execute_batch([
-            {"tool_name": "prune_expired_memories", "parameters": {"user_id": "test"}},
-            {"tool_name": "check_missed_tasks", "parameters": {"user_id": "test"}},
-            {"tool_name": "suggest_bedtime", "parameters": {"user_id": "test"}},
-            {"tool_name": "auto_reschedule_overdue", "parameters": {"user_id": "test"}},
-        ], "test")
+        results = await ex.execute_batch(
+            [
+                {"tool_name": "prune_expired_memories", "parameters": {"user_id": "test"}},
+                {"tool_name": "check_missed_tasks", "parameters": {"user_id": "test"}},
+                {"tool_name": "suggest_bedtime", "parameters": {"user_id": "test"}},
+                {"tool_name": "auto_reschedule_overdue", "parameters": {"user_id": "test"}},
+            ],
+            "test",
+        )
         for r in results:
             assert r.success is True, f"Tool {r.tool_name} failed: {r.error}"
 
@@ -913,28 +884,33 @@ class TestIntegration:
 class TestLLMClientToolFormatting:
     def test_format_tools_empty(self):
         from ai.client import llm as client
+
         result = client.format_tools([])
         assert result == ""
 
     def test_format_tools_with_tools(self):
         from ai.client import llm as client
-        tools = [{
-            "name": "test_tool",
-            "description": "A test",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "user_id": {"type": "string", "description": "User ID"},
+
+        tools = [
+            {
+                "name": "test_tool",
+                "description": "A test",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "user_id": {"type": "string", "description": "User ID"},
+                    },
+                    "required": ["user_id"],
                 },
-                "required": ["user_id"],
-            },
-        }]
+            }
+        ]
         result = client.format_tools(tools)
         assert "test_tool" in result
         assert "User ID" in result
 
     def test_format_tools_for_openai(self):
         from ai.client import llm as client
+
         tools = [{"name": "test", "description": "desc", "parameters": {"type": "object"}}]
         formatted = client.format_tools_for_openai(tools)
         assert formatted[0]["type"] == "function"
@@ -942,6 +918,7 @@ class TestLLMClientToolFormatting:
 
     def test_format_tools_for_claude(self):
         from ai.client import llm as client
+
         tools = [{"name": "test", "description": "desc"}]
         formatted = client.format_tools_for_claude(tools)
         assert formatted[0]["name"] == "test"
@@ -949,18 +926,23 @@ class TestLLMClientToolFormatting:
 
     def test_parse_openai_tool_calls(self):
         from ai.client import llm as client
+
         response = {
-            "choices": [{
-                "message": {
-                    "tool_calls": [{
-                        "id": "call_1",
-                        "function": {
-                            "name": "my_tool",
-                            "arguments": '{"key": "val"}',
-                        },
-                    }],
-                },
-            }],
+            "choices": [
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "id": "call_1",
+                                "function": {
+                                    "name": "my_tool",
+                                    "arguments": '{"key": "val"}',
+                                },
+                            }
+                        ],
+                    },
+                }
+            ],
         }
         calls = client._parse_openai_tool_calls(response)
         assert len(calls) == 1
@@ -968,6 +950,7 @@ class TestLLMClientToolFormatting:
 
     def test_parse_claude_tool_calls(self):
         from ai.client import llm as client
+
         response = {
             "content": [
                 {"type": "tool_use", "name": "claude_tool", "input": {"x": 1}, "id": "tu_1"},
@@ -979,39 +962,50 @@ class TestLLMClientToolFormatting:
 
     def test_parse_openai_tool_calls_invalid_json(self):
         from ai.client import llm as client
+
         response = {
-            "choices": [{
-                "message": {
-                    "tool_calls": [{
-                        "id": "call_1",
-                        "function": {
-                            "name": "my_tool",
-                            "arguments": "not valid json",
-                        },
-                    }],
-                },
-            }],
+            "choices": [
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "id": "call_1",
+                                "function": {
+                                    "name": "my_tool",
+                                    "arguments": "not valid json",
+                                },
+                            }
+                        ],
+                    },
+                }
+            ],
         }
         calls = client._parse_openai_tool_calls(response)
         assert calls[0]["parameters"] == {}
 
     def test_parse_tool_calls_from_response_openai(self):
         from ai.client import llm as client
+
         response = {
-            "choices": [{
-                "message": {
-                    "tool_calls": [{
-                        "id": "c1",
-                        "function": {"name": "t1", "arguments": '{}'},
-                    }],
-                },
-            }],
+            "choices": [
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "id": "c1",
+                                "function": {"name": "t1", "arguments": "{}"},
+                            }
+                        ],
+                    },
+                }
+            ],
         }
         calls = client.parse_tool_calls_from_response(response, provider="openai")
         assert len(calls) == 1
 
     def test_parse_tool_calls_from_response_claude(self):
         from ai.client import llm as client
+
         response = {
             "content": [
                 {"type": "tool_use", "name": "ct1", "input": {}, "id": "tu1"},
@@ -1022,6 +1016,7 @@ class TestLLMClientToolFormatting:
 
     def test_parse_tool_calls_from_response_generic(self):
         from ai.client import llm as client
+
         response = {
             "response": '{"tool_calls": [{"tool_name": "gt1", "parameters": {"a": 1}}]}',
         }
@@ -1031,5 +1026,6 @@ class TestLLMClientToolFormatting:
 
     def test_parse_generic_tool_calls_no_match(self):
         from ai.client import llm as client
+
         calls = client._parse_generic_tool_calls({"response": "just text"})
         assert calls == []

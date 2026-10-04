@@ -20,10 +20,10 @@
     "jsx-a11y/label-has-associated-control": "warn"
   },
   "ignorePatterns": [
-    "**/*.stories.tsx",
-    "components/Button.tsx",
-    "components/Input.tsx",
-    "components/Card.tsx",
-    "components/Modal.tsx"
+    "node_modules/",
+    ".next/",
+    "out/",
+    "coverage/",
+    "storybook-static/"
   ]
 }

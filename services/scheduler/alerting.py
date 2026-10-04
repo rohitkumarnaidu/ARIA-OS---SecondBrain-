@@ -97,7 +97,11 @@ class Alerting:
             client = await self._get_client()
             severity = payload.get("severity", "INFO")
             color = "danger" if severity == "CRITICAL" else ("warning" if severity == "WARNING" else "good")
-            fields = [{"title": k, "value": str(v), "short": True} for k, v in payload.items() if k not in ("severity", "message", "timestamp", "source")]
+            fields = [
+                {"title": k, "value": str(v), "short": True}
+                for k, v in payload.items()
+                if k not in ("severity", "message", "timestamp", "source")
+            ]
             webhook_payload = {
                 "text": f"[{severity}] {payload.get('message', '')}",
                 "channel": self._slack_channel,

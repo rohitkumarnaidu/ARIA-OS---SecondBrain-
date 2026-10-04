@@ -2,17 +2,66 @@ import re
 import json
 from typing import Optional
 
-
 _PROFANITY_SET: set[str] = {
-    "fuck", "shit", "ass", "bitch", "dick", "cock", "cunt", "bastard",
-    "damn", "piss", "slut", "whore", "douche", "motherfucker", "asshole",
-    "bullshit", "crap", "dickhead", "prick", "twat", "wanker", "bollocks",
-    "arse", "bloody", "bugger", "cocksucker", "dipshit", "faggot", "nigger",
-    "retard", "spic", "kike", "chink", "gook", "wetback", "raghead",
-    "cameljockey", "sandnigger", "beaner", "dago", "honky", "cracker",
-    "redneck", "tranny", "heeb", "shylock", "gringo", "coon", "sambo",
-    "jigaboo", "skank", "bimbo", "milf", "porn", "porno",
-    "bestiality", "snuff", "childporn", "childrenporn",
+    "fuck",
+    "shit",
+    "ass",
+    "bitch",
+    "dick",
+    "cock",
+    "cunt",
+    "bastard",
+    "damn",
+    "piss",
+    "slut",
+    "whore",
+    "douche",
+    "motherfucker",
+    "asshole",
+    "bullshit",
+    "crap",
+    "dickhead",
+    "prick",
+    "twat",
+    "wanker",
+    "bollocks",
+    "arse",
+    "bloody",
+    "bugger",
+    "cocksucker",
+    "dipshit",
+    "faggot",
+    "nigger",
+    "retard",
+    "spic",
+    "kike",
+    "chink",
+    "gook",
+    "wetback",
+    "raghead",
+    "cameljockey",
+    "sandnigger",
+    "beaner",
+    "dago",
+    "honky",
+    "cracker",
+    "redneck",
+    "tranny",
+    "heeb",
+    "shylock",
+    "gringo",
+    "coon",
+    "sambo",
+    "jigaboo",
+    "skank",
+    "bimbo",
+    "milf",
+    "porn",
+    "porno",
+    "bestiality",
+    "snuff",
+    "childporn",
+    "childrenporn",
 }
 
 _PROFANITY_LONG: list[str] = [w for w in _PROFANITY_SET if len(w) >= 4]
@@ -27,15 +76,36 @@ if _PROFANITY_SHORT:
 _PROFANITY_COMPILED: re.Pattern = re.compile(_PROFANITY_PATTERN, re.IGNORECASE)
 
 _PROMPT_INJECTION_PATTERNS: list[tuple[str, str]] = [
-    ("ignore_prior", r"ignore\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands|messages|context)"),
-    ("disregard_prior", r"disregard\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands|messages)"),
-    ("forget_prior", r"forget\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands)"),
-    ("roleplay_new", r"(you\s+are\s+(now|no\s+longer)\s+(a|an|the)\s+|\bact\s+as\s+(if\s+)?(you\s+are\s+)?|pretend\s+(to\s+be|that\s+you\s+are)|from\s+now\s+on\s+,\s*(you\s+are\s+)?)"),
+    (
+        "ignore_prior",
+        r"ignore\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands|messages|context)",
+    ),
+    (
+        "disregard_prior",
+        r"disregard\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands|messages)",
+    ),
+    (
+        "forget_prior",
+        r"forget\s+(all\s+)?(previous|prior|above|earlier\s+)?\s*(instructions|directions|prompts|commands)",
+    ),
+    (
+        "roleplay_new",
+        r"(you\s+are\s+(now|no\s+longer)\s+(a|an|the)\s+|\bact\s+as\s+(if\s+)?(you\s+are\s+)?|pretend\s+(to\s+be|that\s+you\s+are)|from\s+now\s+on\s+,\s*(you\s+are\s+)?)",
+    ),
     ("override_system", r"override\s+(mode|protocol|system|configuration|settings)"),
-    ("jailbreak_dan", r"\bdan\b|\bdo\s+anything\s+now\b|no\s+(restrictions|limitations|boundaries|rules|filter|guardrails)"),
+    (
+        "jailbreak_dan",
+        r"\bdan\b|\bdo\s+anything\s+now\b|no\s+(restrictions|limitations|boundaries|rules|filter|guardrails)",
+    ),
     ("bypass_restrictions", r"(you\s+(must|will|have\s+to)\s+(ignore|bypass|circumvent|by-pass))"),
-    ("uncensored_response", r"respond\s+(with|using)\s+(no\s+)?(restrictions|limitations|filtering|censorship|guardrails)"),
-    ("extract_system_prompt", r"(\bwhat\s+(is\s+)?your\s+(system\s+)?prompt\b|reveal\s+(your\s+)?(system\s+)?prompt|output\s+(your\s+)?(system\s+)?(prompt|instruction)|print\s+(your\s+)?(system\s+)?prompt|display\s+(the\s+)?(system\s+)?prompt)"),
+    (
+        "uncensored_response",
+        r"respond\s+(with|using)\s+(no\s+)?(restrictions|limitations|filtering|censorship|guardrails)",
+    ),
+    (
+        "extract_system_prompt",
+        r"(\bwhat\s+(is\s+)?your\s+(system\s+)?prompt\b|reveal\s+(your\s+)?(system\s+)?prompt|output\s+(your\s+)?(system\s+)?(prompt|instruction)|print\s+(your\s+)?(system\s+)?prompt|display\s+(the\s+)?(system\s+)?prompt)",
+    ),
     ("repeat_attack", r"repeat\s+(after\s+me|the\s+(words|text|sentence|prompt)\s+above|the\s+initial\s+prompt)"),
     ("delimiter_attack", r"-{3,}\s*(start|end|begin|finish|instruction|system)\s*-{3,}"),
     ("ignore_above", r"ignore\s+the\s+above"),
@@ -60,41 +130,100 @@ _HTML_ONEVENT: re.Pattern = re.compile(r"\bon\w+\s*=\s*['\"][^'\"]*['\"]", re.IG
 _JS_PROTOCOL: re.Pattern = re.compile(r"javascript\s*:", re.IGNORECASE)
 
 _HALLUCINATION_MARKERS: list[str] = [
-    "i think", "i believe", "i'm not sure", "maybe", "perhaps",
-    "it might be", "it could be", "as far as i know", "to the best of my knowledge",
-    "i'm not certain", "i don't know", "i'm not aware",
-    "according to my knowledge", "in my understanding",
-    "it is possible that", "it seems that", "likely", "probably", "possibly",
-    "i cannot confirm", "i have no information", "i dont have",
-    "i'm not entirely sure", "it appears that",
+    "i think",
+    "i believe",
+    "i'm not sure",
+    "maybe",
+    "perhaps",
+    "it might be",
+    "it could be",
+    "as far as i know",
+    "to the best of my knowledge",
+    "i'm not certain",
+    "i don't know",
+    "i'm not aware",
+    "according to my knowledge",
+    "in my understanding",
+    "it is possible that",
+    "it seems that",
+    "likely",
+    "probably",
+    "possibly",
+    "i cannot confirm",
+    "i have no information",
+    "i dont have",
+    "i'm not entirely sure",
+    "it appears that",
 ]
 
 _REFUSAL_PATTERNS: list[str] = [
-    "i cannot", "i can't", "i'm not able to", "i am not able to",
-    "i'm sorry", "i am sorry", "sorry, but", "i apologize",
-    "as an ai", "as a language model", "i'm an ai",
-    "i cannot assist", "i cannot provide", "i cannot help",
-    "i'm not permitted", "i am not permitted", "it's not appropriate",
-    "against my guidelines", "against guidelines",
-    "i cannot fulfill", "i cannot complete", "i cannot answer",
+    "i cannot",
+    "i can't",
+    "i'm not able to",
+    "i am not able to",
+    "i'm sorry",
+    "i am sorry",
+    "sorry, but",
+    "i apologize",
+    "as an ai",
+    "as a language model",
+    "i'm an ai",
+    "i cannot assist",
+    "i cannot provide",
+    "i cannot help",
+    "i'm not permitted",
+    "i am not permitted",
+    "it's not appropriate",
+    "against my guidelines",
+    "against guidelines",
+    "i cannot fulfill",
+    "i cannot complete",
+    "i cannot answer",
 ]
 
 _WEASEL_WORDS: list[str] = [
-    "arguably", "basically", "essentially", "practically",
-    "virtually", "quite", "rather", "somewhat",
-    "supposedly", "allegedly", "reportedly",
-    "in general", "in most cases", "typically",
-    "usually", "often", "sometimes", "occasionally",
-    "largely", "mostly", "broadly",
+    "arguably",
+    "basically",
+    "essentially",
+    "practically",
+    "virtually",
+    "quite",
+    "rather",
+    "somewhat",
+    "supposedly",
+    "allegedly",
+    "reportedly",
+    "in general",
+    "in most cases",
+    "typically",
+    "usually",
+    "often",
+    "sometimes",
+    "occasionally",
+    "largely",
+    "mostly",
+    "broadly",
 ]
 
 _CONTENT_VIOLATION_TOPICS: list[str] = [
-    "how to make a bomb", "how to build a weapon", "explosive device",
-    "manufacturing drugs", "synthesize narcotics", "methamphetamine recipe",
-    "self-harm methods", "suicide methods", "how to commit suicide",
-    "illegal activity", "illegal acts", "bypass security",
-    "hack into", "unauthorized access", "steal credentials",
-    "credit card fraud", "identity theft", "phishing template",
+    "how to make a bomb",
+    "how to build a weapon",
+    "explosive device",
+    "manufacturing drugs",
+    "synthesize narcotics",
+    "methamphetamine recipe",
+    "self-harm methods",
+    "suicide methods",
+    "how to commit suicide",
+    "illegal activity",
+    "illegal acts",
+    "bypass security",
+    "hack into",
+    "unauthorized access",
+    "steal credentials",
+    "credit card fraud",
+    "identity theft",
+    "phishing template",
 ]
 
 _SENSITIVITY_LEVELS: dict[str, float] = {
@@ -223,7 +352,7 @@ class Guardrails:
         result = re.sub(r"\s+", " ", result).strip()
 
         if len(result) > self.max_input_length:
-            result = result[:self.max_input_length]
+            result = result[: self.max_input_length]
 
         return result
 
@@ -252,7 +381,7 @@ class Guardrails:
         result = result.strip()
 
         if len(result) > self.max_output_length:
-            result = result[:self.max_output_length]
+            result = result[: self.max_output_length]
 
         return result
 
@@ -286,9 +415,7 @@ class Guardrails:
                 if result["risk_score"] > max_risk:
                     max_risk = result["risk_score"]
 
-        context_text = " ".join(
-            m.get("content", "") for m in messages[-3:] if isinstance(m.get("content"), str)
-        )
+        context_text = " ".join(m.get("content", "") for m in messages[-3:] if isinstance(m.get("content"), str))
         escalation_issues: list[str] = []
         if re.search(
             r"(ignore|forget|disregard)\s+(all|the|previous|everything)",

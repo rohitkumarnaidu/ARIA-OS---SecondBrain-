@@ -1302,10 +1302,12 @@ class TestChatEndpoints:
 
     def test_chat_streaming(self, client, mock_supabase):
         self._setup_chat_mocks(mock_supabase)
+
         async def _mock_stream(*args, **kwargs):
             yield "Hello"
             yield " from"
             yield " ARIA"
+
         with patch("app.api.chat.llm.generate_stream", return_value=_mock_stream()):
             resp = client.post("/api/v1/chat/?stream=true", json={"message": "Hello"}, headers=AUTH_HEADER)
             assert resp.status_code == 200
@@ -1324,10 +1326,12 @@ class TestChatEndpoints:
 
     def test_chat_streaming_store_interaction_fails(self, client, mock_supabase):
         self._setup_chat_mocks(mock_supabase)
+
         async def _mock_stream(*args, **kwargs):
             yield "Hello"
             yield " from"
             yield " ARIA"
+
         with patch("app.api.chat.llm.generate_stream", return_value=_mock_stream()):
             with patch("app.api.chat.store_interaction", side_effect=Exception("Memory error")):
                 resp = client.post("/api/v1/chat/?stream=true", json={"message": "Hello"}, headers=AUTH_HEADER)
@@ -1597,7 +1601,9 @@ class TestNotificationEndpoints:
         assert body[0]["severity"] == "info"
 
     def test_list_nudges_db_error(self, client, mock_supabase):
-        mock_supabase.from_.return_value.select.return_value.eq.return_value.in_.return_value.order.return_value.range.side_effect = Exception("DB error")
+        mock_supabase.from_.return_value.select.return_value.eq.return_value.in_.return_value.order.return_value.range.side_effect = Exception(
+            "DB error"
+        )
         resp = client.get("/api/v1/notifications/nudges", headers=AUTH_HEADER)
         assert resp.status_code == 200
         assert resp.json() == []
@@ -1634,7 +1640,9 @@ class TestNotificationEndpoints:
         assert resp.json() == []
 
     def test_list_notifications_db_error(self, client, mock_supabase):
-        mock_supabase.from_.return_value.select.return_value.eq.return_value.order.return_value.range.side_effect = Exception("DB error")
+        mock_supabase.from_.return_value.select.return_value.eq.return_value.order.return_value.range.side_effect = (
+            Exception("DB error")
+        )
         resp = client.get("/api/v1/notifications/", headers=AUTH_HEADER)
         assert resp.status_code == 200
         assert resp.json() == []
@@ -1659,12 +1667,23 @@ class TestNotificationEndpoints:
     def test_generate_proactive_nudges(self, client, mock_supabase):
         def side_effect(table):
             builders = {
-                "tasks": MockQueryBuilder(return_data=[{"id": "t1", "title": "Overdue task", "status": "pending", "priority": "high", "due_date": "2025-01-01T00:00:00"}]),
+                "tasks": MockQueryBuilder(
+                    return_data=[
+                        {
+                            "id": "t1",
+                            "title": "Overdue task",
+                            "status": "pending",
+                            "priority": "high",
+                            "due_date": "2025-01-01T00:00:00",
+                        }
+                    ]
+                ),
                 "habits": MockQueryBuilder(return_data=[]),
                 "sleep_logs": MockQueryBuilder(return_data=[]),
                 "notifications": MockQueryBuilder(return_data=[]),
             }
             return builders.get(table, MockQueryBuilder(return_data=[]))
+
         mock_supabase.from_.side_effect = side_effect
         resp = client.post("/api/v1/notifications/generate", headers=AUTH_HEADER)
         assert resp.status_code == 200

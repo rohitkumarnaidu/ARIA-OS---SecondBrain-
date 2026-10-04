@@ -27,10 +27,7 @@ async def run_deadline_alert():
         logger.info("Deadline alert: no opportunities closing within 48h")
         return 0
 
-    opportunities = [
-        o for o in opportunities
-        if o.get("deadline") and datetime.fromisoformat(o["deadline"]) > now
-    ]
+    opportunities = [o for o in opportunities if o.get("deadline") and datetime.fromisoformat(o["deadline"]) > now]
 
     if not opportunities:
         logger.info("Deadline alert: no upcoming deadlines within 48h")
@@ -47,10 +44,7 @@ async def run_deadline_alert():
                 .execute()
             )
 
-            already_alerted = any(
-                opp["id"] in (n.get("action_url") or "")
-                for n in existing.data or []
-            )
+            already_alerted = any(opp["id"] in (n.get("action_url") or "") for n in existing.data or [])
             if already_alerted:
                 continue
 

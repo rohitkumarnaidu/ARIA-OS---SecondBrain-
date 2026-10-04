@@ -1,0 +1,121 @@
+# =============================================================================
+# Second Brain OS — CI / test aggregate runtime dependencies
+# =============================================================================
+# Install:
+#   pip install -r requirements.txt          # runtime deps for the test suite
+#   pip install -r requirements.txt -r requirements-dev.txt   # + lint/test tools
+#
+# ── Why this file exists ─────────────────────────────────────────────────────
+# `pip install -r apps/api/requirements.txt -r services/scheduler/requirements.txt`
+# CANNOT resolve. The two service files pin the same packages to different
+# versions and pip refuses the combination outright:
+#
+#     ERROR: Cannot install python-dotenv==1.0.0 and python-dotenv==1.2.2
+#            because these package versions have conflicting dependencies.
+#            ERROR: ResolutionImpossible
+#
+# Both services are exercised by the same pytest run (tests/conftest.py puts
+# apps/api/ AND services/scheduler/ on sys.path, so `import crons.*` requires
+# APScheduler), so CI needs the union of both dependency sets in one resolvable
+# environment. This file provides that union.
+#
+# apps/api/requirements.txt is treated as the base and is included verbatim.
+# Below are ONLY the packages services/scheduler/requirements.txt needs that the
+# API set does not already supply. Its pins for passlib, httpx, pyyaml,
+# pydantic, pydantic-settings, python-jose, supabase and python-dotenv are
+# intentionally NOT repeated — the API pins win.
+#
+# ⚠ MAINTENANCE: when services/scheduler/requirements.txt gains a new package,
+# add it here too. When it changes a version of a package listed above, decide
+# whether the API or scheduler pin should win and align BOTH service files.
+# Neither service file is edited by this aggregate on purpose — they are the
+# per-service runtime manifests baked into their Docker images.
+#
+# ── INTERPRETER CONSTRAINT (hard) ─────────────────────────────────────────────
+# This set requires CPython 3.12 or older (3.11 / 3.12 verified working).
+#
+#   pydantic==2.5.3 -> pydantic-core==2.14.x. The newest 2.14 release (2.14.6)
+#   ships wheels for cp37..cp312 ONLY. There is no cp313/cp314 wheel and no
+#   abi3/py3 fallback for pydantic-core, so on CPython 3.13+ pip must compile
+#   pydantic-core from Rust source. Do not "fix" that by unpinning pydantic —
+#   that is what produced the drift documented below.
+#
+# ── THE DRIFT THESE PINS NOW PREVENT ──────────────────────────────────────────
+# Symptom (reproduced 2026-10-04):
+#     TypeError: Router.__init__() got an unexpected keyword argument 'on_startup'
+#     at apps/api/app/api/auth.py:5  (a bare `APIRouter()`)
+#     ERROR tests/test_main_routes.py / tests/test_skills_api.py during collection
+#     Interrupted: 2 errors during collection
+#
+# Cause: fastapi.APIRouter.__init__ forwards on_startup / on_shutdown to
+# starlette.routing.Router.__init__ unconditionally. Those kwargs were removed
+# from starlette's Router in starlette 1.x. The interpreter had drifted to
+# fastapi 0.115.14 + starlette 1.6.0, which pip itself flags as unsatisfiable:
+#     fastapi 0.115.14 has requirement starlette<0.47.0,>=0.40.0,
+#     but you have starlette 1.6.0.
+# Note the raise happens inside fastapi's own constructor, NOT in this repo's
+# code -- *any* `APIRouter()` explodes. That is why two unrelated test modules
+# failed collection while the other 3613 collected fine.
+# =============================================================================
+
+# Per-service base (API). The scheduler's overlapping pins are deliberately
+# omitted; see the conflict note above.
+-r apps/api/requirements.txt
+
+# ── Web framework core — EXPLICIT PIN, do not remove ──────────────────────────
+# fastapi==0.109.0 declares `starlette>=0.35.0,<0.36.0`.
+#   CORRECTION: the commonly cited ">=0.35.2,<0.36.0" is wrong — starlette
+#   0.35.2 was NEVER published to PyPI. The 0.35 line contains only 0.35.0 and
+#   0.35.1, so 0.35.1 is the highest version legal under the fastapi 0.109.0
+#   pin, and it is what `pip install -r requirements.txt` resolves to.
+#   This pin MUST move in the same commit as the fastapi== line in
+#   apps/api/requirements.txt. Transitive pins are not pins: pip will happily
+#   install a starlette that fastapi's metadata excludes if some other package
+#   (sse-starlette, prometheus-fastapi-instrumentator, streamlit) asks for it.
+starlette==0.35.1
+
+# ── Error tracking — EXPLICIT PIN ─────────────────────────────────────────────
+# apps/api/main.py:61-64 does FOUR unconditional top-level imports:
+#     import sentry_sdk
+#     from sentry_sdk.integrations.fastapi  import FastApiIntegration
+#     from sentry_sdk.integrations.httpx    import HttpxIntegration
+#     from sentry_sdk.integrations.logging import LoggingIntegration
+# Only the *call* to sentry_sdk.init() at main.py:146 is guarded by
+# `if settings.sentry_dsn:`. The imports themselves are not guarded.
+#
+# Consequence before this pin existed: `import main` raised ModuleNotFoundError
+# in ANY environment built from the declared manifests, so the ASGI app could
+# not boot -- not just the tests. tests/test_main_routes.py could not even be
+# collected. A production deploy built from these manifests crash-loops.
+#
+# ⚠ apps/api/requirements.txt is STILL missing this entry and must gain it, or
+#   the Docker image will not build. See FINAL REPORT bug #2.
+sentry-sdk==2.19.2
+
+# ── Async HTTP for the web-search path — EXPLICIT PIN ─────────────────────────
+# packages/ai/brave_search.py:1 does a top-level `import aiohttp` and is imported
+# by packages/ai/agents/opportunity_agent.py:8. `aiohttp` appears in NO
+# requirements file, so in a clean environment ai.brave_search raises
+# ModuleNotFoundError, which:
+#   * failed 9 tests in tests/test_ai_modules.py (TestBraveSearch,
+#     TestFetchOpportunitiesFromWeb) with
+#     `AttributeError: module 'ai' has no attribute 'brave_search'`, and
+#   * tripped the `except ImportError` at opportunity_agent.py:9, which sets
+#     fetch_opportunities_from_web = None and then CALLS it unguarded at line 32
+#     -> `TypeError: 'NoneType' object is not callable` (6 more tests).
+#
+# ⚠ Installing this SILENCES the 6 opportunity_agent failures, but it does NOT
+#   fix the missing None-guard. That crash path stays live for any deployment
+#   where aiohttp is absent. See FINAL REPORT bug #4 -- do not treat a green
+#   test run here as evidence the guard exists.
+#
+# ⚠ brave_search.py is the ONLY module in the repo using aiohttp; everything
+#   else uses the already-pinned httpx==0.27.2. Worth consolidating.
+aiohttp==3.11.11
+
+# ── Scheduler-only runtime dependencies ──────────────────────────────────────
+# Sourced from services/scheduler/requirements.txt.
+apscheduler==3.11.2
+anthropic==0.18.0
+pytz==2024.1
+requests==2.34.2

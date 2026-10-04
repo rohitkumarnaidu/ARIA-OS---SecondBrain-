@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { TreeView, type TreeItem } from './TreeView'
-import { FileText, Folder, Image, Settings, Terminal } from 'lucide-react'
+import { FileText, Folder, Image as ImageIcon, Settings, Terminal } from 'lucide-react'
 
 const nestedItems: TreeItem[] = [
   {
@@ -35,8 +35,8 @@ const nestedItems: TreeItem[] = [
     label: 'public',
     icon: <Folder size={14} />,
     children: [
-      { id: 'logo', label: 'logo.svg', icon: <Image size={14} /> },
-      { id: 'favicon', label: 'favicon.ico', icon: <Image size={14} /> },
+      { id: 'logo', label: 'logo.svg', icon: <ImageIcon size={14} aria-hidden="true" /> },
+      { id: 'favicon', label: 'favicon.ico', icon: <ImageIcon size={14} aria-hidden="true" /> },
     ],
   },
   {

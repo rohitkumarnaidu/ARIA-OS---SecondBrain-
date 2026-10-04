@@ -11,7 +11,6 @@ from config.core.supabase import get_supabase_client
 from shared.utils.logger import logger
 from ai.embeddings import EmbeddingService, get_embedding_service
 
-
 DEFAULT_CHUNK_SIZE = 512
 DEFAULT_CHUNK_OVERLAP = 64
 DEFAULT_MIN_CHUNK_SIZE = 100
@@ -62,9 +61,7 @@ class ChunkingPipeline:
             return self._chunk_by_line(content)
         return self._chunk_recursive(content, cs, ov)
 
-    def _chunk_by_semantic_boundary(
-        self, content: str, chunk_size: int, overlap: int
-    ) -> List[Dict[str, Any]]:
+    def _chunk_by_semantic_boundary(self, content: str, chunk_size: int, overlap: int) -> List[Dict[str, Any]]:
         chunks: List[Dict[str, Any]] = []
         paragraphs = re.split(r"\n#{1,3}\s|\n\n+", content)
         current_chunk = ""
@@ -106,15 +103,9 @@ class ChunkingPipeline:
 
     def _chunk_by_line(self, content: str) -> List[Dict[str, Any]]:
         lines = content.strip().split("\n")
-        return [
-            self._make_chunk(line.strip(), i)
-            for i, line in enumerate(lines)
-            if line.strip()
-        ]
+        return [self._make_chunk(line.strip(), i) for i, line in enumerate(lines) if line.strip()]
 
-    def _chunk_recursive(
-        self, content: str, chunk_size: int, overlap: int
-    ) -> List[Dict[str, Any]]:
+    def _chunk_recursive(self, content: str, chunk_size: int, overlap: int) -> List[Dict[str, Any]]:
         chunks: List[Dict[str, Any]] = []
         separators = ["\n\n", "\n", ". ", " ", ""]
         for separator in separators:
@@ -591,11 +582,7 @@ class RAGPipeline:
 
     async def delete_document(self, source_id: str, user_id: str) -> bool:
         try:
-            self.supabase.table(self.table)\
-                .delete()\
-                .eq("source_id", source_id)\
-                .eq("user_id", user_id)\
-                .execute()
+            self.supabase.table(self.table).delete().eq("source_id", source_id).eq("user_id", user_id).execute()
             logger.info("Deleted document chunks", source_id=source_id, user_id=user_id)
             return True
         except Exception as e:
@@ -604,10 +591,7 @@ class RAGPipeline:
 
     async def delete_user_data(self, user_id: str) -> int:
         try:
-            result = self.supabase.table(self.table)\
-                .delete()\
-                .eq("user_id", user_id)\
-                .execute()
+            result = self.supabase.table(self.table).delete().eq("user_id", user_id).execute()
             count = len(result.data or [])
             logger.info("Deleted all user document chunks", user_id=user_id, count=count)
             return count

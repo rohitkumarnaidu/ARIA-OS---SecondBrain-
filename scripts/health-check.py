@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 import httpx
 from httpx import ConnectError, TimeoutException, HTTPStatusError
 
-
 MONITORS = [
     {
         "friendly_name": "ARIA OS - API Health",
@@ -181,8 +180,8 @@ def output_prometheus(results: list[dict]):
     for r in results:
         status_val = {"up": 1, "degraded": 0, "down": 0}.get(r["status"], 0)
         name = r["friendly_name"].lower().replace(" ", "_").replace("-", "_")
-        print('# HELP health_check_status ARIA OS endpoint health status (1=up, 0=down/degraded)')
-        print('# TYPE health_check_status gauge')
+        print("# HELP health_check_status ARIA OS endpoint health status (1=up, 0=down/degraded)")
+        print("# TYPE health_check_status gauge")
         print(f'health_check_status{{endpoint="{name}",url="{r["url"]}"}} {status_val} {ts}')
         print(f'health_check_duration_ms{{endpoint="{name}",url="{r["url"]}"}} {r["duration_ms"]} {ts}')
     print()
