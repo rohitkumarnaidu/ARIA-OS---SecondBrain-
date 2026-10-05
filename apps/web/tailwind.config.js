@@ -1,5 +1,21 @@
 const { fontFamily } = require('tailwindcss/defaultTheme')
 
+/**
+ * Token colors are plain CSS variables holding hex values, so Tailwind cannot
+ * apply its `/opacity` modifier to them (it needs an `<alpha-value>` slot).
+ * Without this, every `bg-accent-primary/10` style class compiles to nothing.
+ * color-mix() is already used throughout globals.css, so it is a safe base.
+ *
+ * @param {string} varName
+ * @returns {(opts: {opacityValue?: number}) => string}
+ */
+function tint(varName) {
+  return ({ opacityValue }) =>
+    opacityValue === undefined
+      ? `var(${varName})`
+      : `color-mix(in oklab, var(${varName}) ${opacityValue * 100}%, transparent)`
+}
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
@@ -24,7 +40,7 @@ module.exports = {
         background: {
           DEFAULT: 'var(--background)',
           dark: 'var(--background-dark)',
-          card: 'var(--background-card)',
+          card: tint('--background-card'),
           elevated: 'var(--background-elevated)',
           input: 'var(--background-input)',
         },
@@ -52,15 +68,15 @@ module.exports = {
         accent: {
           DEFAULT: 'var(--accent)',
           foreground: 'var(--accent-foreground)',
-          primary: 'var(--accent-primary)',
+          primary: tint('--accent-primary'),
           primaryHover: 'var(--accent-primary-hover)',
           secondary: 'var(--accent-secondary)',
           secondaryHover: 'var(--accent-secondary-hover)',
-          warning: 'var(--accent-warning)',
+          warning: tint('--accent-warning'),
           warningHover: 'var(--accent-warning-hover)',
-          error: 'var(--accent-error)',
+          error: tint('--accent-error'),
           errorHover: 'var(--accent-error-hover)',
-          info: 'var(--accent-info)',
+          info: tint('--accent-info'),
           success: 'var(--accent-success)',
           neon: 'var(--accent-neon)',
           cyber: 'var(--accent-cyber)',
@@ -70,7 +86,7 @@ module.exports = {
           foreground: 'var(--destructive-foreground)',
         },
         border: {
-          DEFAULT: 'var(--border)',
+          DEFAULT: tint('--border'),
           light: 'var(--border-light)',
           focus: 'var(--border-focus)',
           subtle: 'var(--border-subtle)',

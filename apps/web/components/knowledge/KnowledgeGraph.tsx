@@ -48,7 +48,7 @@ const COLORS: Record<string, string> = {
   idea: 'var(--accent-warning)',
 }
 
-export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: KnowledgeGraphProps) {
+export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: KnowledgeGraphProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const [tooltip, setTooltip] = useState<{ x: number; y: number; title: string } | null>(null)
@@ -97,18 +97,40 @@ export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: Knowl
       .attr('stroke-width', 1.5)
       .attr('stroke-opacity', 0.5)
 
+    const matchIds = new Set(
+      searchQuery
+        ? nodes
+            .filter(n => n.title.toLowerCase().includes(searchQuery.toLowerCase()))
+            .map(n => n.id)
+        : []
+    )
+
     const nodeSel = nodeGroup
       .selectAll<SVGGElement, SimNode>('g.node')
       .data(simNodes)
       .join('g')
-      .attr('class', 'node')
+      .attr('class', d => (matchIds.has(d.id) ? 'node node-search-highlight' : 'node'))
+      .attr('role', 'button')
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.type}: ${d.title}`)
       .style('cursor', 'pointer')
       .on('click', (_event, d) => { onNodeClick(d.id) })
+      .on('keydown', (event: KeyboardEvent, d) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          onNodeClick(d.id)
+        }
+      })
       .on('mouseenter', (event, d) => {
         const rect = container.getBoundingClientRect()
         setTooltip({ x: event.clientX - rect.left, y: event.clientY - rect.top - 10, title: d.title })
       })
       .on('mouseleave', () => { setTooltip(null) })
+      .on('focus', (_event, d) => {
+        const rect = container.getBoundingClientRect()
+        setTooltip({ x: (d.x ?? rect.width / 2), y: (d.y ?? rect.height / 2) - 10, title: d.title })
+      })
+      .on('blur', () => { setTooltip(null) })
 
     const drag = d3.drag<SVGGElement, SimNode>()
       .on('start', (event, d) => {
@@ -180,7 +202,7 @@ export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: Knowl
       .attr('dy', NODE_RADIUS + 16)
       .attr('fill', 'var(--text-secondary)')
       .attr('font-size', 10)
-      .attr('font-family', 'var(--font-dm-sans), DM Sans, sans-serif')
+      .attr('class', 'font-body')
       .style('pointer-events', 'none')
 
     const simulation = d3.forceSimulation<SimNode>(simNodes)
@@ -208,32 +230,26 @@ export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: Knowl
       ro.disconnect()
       simulationRef.current = null
     }
-  }, [nodes, edges, onNodeClick, handleResize])
-
-  const matchIds = searchQuery
-    ? new Set(
-        nodes
-          .filter(n => n.title.toLowerCase().includes(searchQuery.toLowerCase()))
-          .map(n => n.id)
-      )
-    : null
+  }, [nodes, edges, onNodeClick, handleResize, searchQuery])
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full min-h-[500px] relative rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--background-card)]"
+      className="w-full h-full min-h-[500px] relative rounded-xl overflow-hidden border border-border bg-background-card"
     >
       <svg
         ref={svgRef}
         className="w-full h-full"
+        role="group"
+        aria-label="Knowledge graph"
         style={{ cursor: 'grab' }}
       />
       {tooltip && (
         <div
           className={cn(
-            'absolute z-50 px-3 py-1.5 rounded-lg text-xs font-medium pointer-events-none',
-            'bg-[var(--background-elevated)] border border-[var(--border)]',
-            'text-[var(--text-primary)] shadow-lg backdrop-blur-[8px]',
+            'absolute z-modal px-3 py-1.5 rounded-lg text-xs font-medium pointer-events-none',
+            'bg-background-elevated border border-border',
+            'text-text-primary shadow-lg backdrop-blur-[8px]',
           )}
           style={{ left: tooltip.x, top: tooltip.y, transform: 'translate(-50%, -100%)' }}
         >
@@ -241,7 +257,7 @@ export function KnowledgeGraph({ nodes, edges, onNodeClick, searchQuery }: Knowl
         </div>
       )}
       {nodes.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center text-[var(--text-muted)] text-sm">
+        <div className="absolute inset-0 flex items-center justify-center text-text-muted text-sm">
           No nodes to display
         </div>
       )}

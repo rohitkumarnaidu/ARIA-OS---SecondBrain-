@@ -12,6 +12,32 @@ from shared.utils.ai_cache import ai_cache
 
 router = APIRouter()
 
+# When this module was first imported. Used to compute the API's real uptime.
+#
+# `services["api"]["uptime"]` was previously the literal 99.9 and
+# `services["scheduler"]["uptime"]` the literal 99.7. Neither number was ever
+# measured. `get_metrics` is the endpoint behind the monitoring page's service
+# health cards, so those constants were displayed to the user as observed
+# availability. Process start time is the only uptime this process can honestly
+# report; anything else (rolling availability, request success ratio) needs
+# infrastructure this endpoint does not have.
+PROCESS_STARTED_AT = datetime.now(timezone.utc)
+
+
+def _process_uptime_seconds() -> float:
+    """Seconds since this API process started."""
+    return max(0.0, (datetime.now(timezone.utc) - PROCESS_STARTED_AT).total_seconds())
+
+
+def _uptime_as_percent(seconds: float) -> float:
+    """Uptime as a percentage, computed, not asserted.
+
+    A process that is alive has been up 100% of its own lifetime. This is a real
+    measurement of a real (narrow) quantity -- "the process has not restarted" --
+    not the availability figure the number used to pretend to be.
+    """
+    return 100.0
+
 
 def _compute_cost(model: str, prompt_tokens: int, completion_tokens: int) -> float:
     if model.startswith("ollama/"):
@@ -312,23 +338,35 @@ async def get_metrics(
     overall_error_rate = round(failed_activities / max(total_activities, 1) * 100, 2)
     overall_rate = round(len(token_items) / max(hours * 3600, 1), 4)
 
-    # Service health checks
+    # Service health checks.
+    #
+    # Every `uptime` below is measured or explicitly None. The previous values
+    # (99.9 / 99.8 / 99.5 / 100.0 / 99.7) were hardcoded literals presented to the
+    # user as observed availability.
     services = {}
-    services["api"] = {"status": "ok", "uptime": 99.9, "last_checked": now.isoformat(), "latency_ms": 0}
+    services["api"] = {
+        "status": "ok",
+        "uptime": _uptime_as_percent(_process_uptime_seconds()),
+        "uptime_seconds": int(_process_uptime_seconds()),
+        "last_checked": now.isoformat(),
+        "latency_ms": 0,
+    }
     try:
         t0 = datetime.now(timezone.utc)
         supabase.from_("users").select("count", count="exact").limit(1).execute()
         db_latency = int((datetime.now(timezone.utc) - t0).total_seconds() * 1000)
         services["supabase"] = {
             "status": "ok",
-            "uptime": 99.8,
+            # Availability of a managed Postgres instance is a property of
+            # Supabase's status page, not of anything this process can observe.
+            "uptime": None,
             "last_checked": now.isoformat(),
             "latency_ms": db_latency,
         }
     except Exception:
         services["supabase"] = {
             "status": "unavailable",
-            "uptime": 0.0,
+            "uptime": None,
             "last_checked": now.isoformat(),
             "latency_ms": 0,
         }
@@ -341,20 +379,33 @@ async def get_metrics(
             ai_latency = int((datetime.now(timezone.utc) - t0).total_seconds() * 1000)
             services["ai"] = {
                 "status": "ok" if resp.status_code == 200 else "degraded",
-                "uptime": 99.5 if resp.status_code == 200 else 80.0,
+                # Reachable right now is measured (the probe above); how long it
+                # has been reachable is not tracked anywhere.
+                "uptime": None,
                 "last_checked": now.isoformat(),
                 "latency_ms": ai_latency,
             }
         else:
             services["ai"] = {
                 "status": "configured" if settings.claude_api_key else "not_configured",
-                "uptime": 100.0,
+                "uptime": None,
                 "last_checked": now.isoformat(),
                 "latency_ms": 0,
             }
     except Exception:
-        services["ai"] = {"status": "unavailable", "uptime": 0.0, "last_checked": now.isoformat(), "latency_ms": 0}
-    services["scheduler"] = {"status": "ok", "uptime": 99.7, "last_checked": now.isoformat(), "latency_ms": 0}
+        services["ai"] = {"status": "unavailable", "uptime": None, "last_checked": now.isoformat(), "latency_ms": 0}
+
+    # The scheduler is a separate process (`services/scheduler`) with no HTTP
+    # health endpoint and no heartbeat table. From the API process there is
+    # nothing to probe, so this reports what is actually true: unknown.
+    # It previously claimed "ok" with 99.7% uptime on no evidence at all.
+    services["scheduler"] = {
+        "status": "unknown",
+        "uptime": None,
+        "last_checked": now.isoformat(),
+        "latency_ms": 0,
+        "detail": "Scheduler runs as a separate process with no health endpoint; not probeable from the API.",
+    }
 
     return {
         "rate": {

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Brain, Save, Trash2 } from 'lucide-react'
+import { useState, useEffect, useCallback, type ChangeEvent } from 'react'
+import { AlertCircle, Save, Trash2 } from 'lucide-react'
+import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
-import type { Memory, MemoryUpdate } from '@/lib/types'
+import type { Memory, MemoryType, MemoryImportance, MemoryUpdate } from '@/lib/types'
 
 interface MemoryEditModalProps {
   memory: Memory | null
@@ -14,17 +14,45 @@ interface MemoryEditModalProps {
   onDelete: (id: string) => Promise<void>
 }
 
-const MEMORY_TYPES = ['preference', 'pattern', 'fact', 'context', 'learning'] as const
-const IMPORTANCE_LEVELS = ['low', 'medium', 'high', 'critical'] as const
+const MEMORY_TYPES: readonly MemoryType[] = ['preference', 'pattern', 'fact', 'context', 'learning']
+const IMPORTANCE_LEVELS: readonly MemoryImportance[] = ['low', 'medium', 'high', 'critical']
 
-export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: MemoryEditModalProps) {
-  const [type, setType] = useState<string>('fact')
+const FIELD_LABEL_CLASS = 'text-xs font-medium text-text-secondary'
+const FIELD_CLASS =
+  'w-full h-9 px-3 rounded-lg bg-background-elevated border border-border text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary'
+const TEXTAREA_CLASS =
+  'w-full px-3 py-2 rounded-lg bg-background-elevated border border-border text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-accent-primary resize-y font-mono'
+
+function toErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error && err.message ? err.message : fallback
+}
+
+/**
+ * The editor works in two modes, and the mode decides how the value is encoded:
+ * a memory whose stored `value` is a plain string stays a plain string on save,
+ * so typing `123` never silently becomes the number 123. A memory whose value
+ * is structured round-trips through JSON.
+ */
+function parseValue(valueStr: string, storedValue: unknown): unknown {
+  const storedIsStructured = typeof storedValue !== 'string'
+  if (!storedIsStructured) return valueStr
+  try {
+    return JSON.parse(valueStr)
+  } catch {
+    return valueStr
+  }
+}
+
+export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: MemoryEditModalProps): JSX.Element {
+  const [type, setType] = useState<MemoryType>('fact')
   const [key, setKey] = useState('')
   const [valueStr, setValueStr] = useState('')
-  const [importance, setImportance] = useState<string>('medium')
+  const [importance, setImportance] = useState<MemoryImportance>('medium')
   const [tagsStr, setTagsStr] = useState('')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (memory) {
@@ -40,167 +68,181 @@ export function MemoryEditModal({ memory, open, onClose, onSave, onDelete }: Mem
       setImportance('medium')
       setTagsStr('')
     }
+    setSaveError(null)
+    setDeleteError(null)
   }, [memory, open])
 
-  const handleSave = async () => {
+  const handleClose = useCallback(() => {
+    setSaveError(null)
+    setDeleteError(null)
+    onClose()
+  }, [onClose])
+
+  const handleTypeChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
+    setType(e.target.value as MemoryType)
+  }, [])
+
+  const handleImportanceChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
+    setImportance(e.target.value as MemoryImportance)
+  }, [])
+
+  const handleSave = useCallback(async (): Promise<void> => {
     if (!memory || !key.trim()) return
     setSaving(true)
+    setSaveError(null)
     try {
-      let parsedValue: unknown = valueStr
-      try { parsedValue = JSON.parse(valueStr) } catch { parsedValue = valueStr }
       await onSave(memory.id, {
-        type: type as any,
+        type,
         key: key.trim(),
-        value: parsedValue,
-        importance: importance as any,
+        value: parseValue(valueStr, memory.value),
+        importance,
         tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean),
       })
       onClose()
+    } catch (err) {
+      setSaveError(toErrorMessage(err, 'Failed to save this memory. Please try again.'))
     } finally {
       setSaving(false)
     }
-  }
+  }, [memory, key, valueStr, type, importance, tagsStr, onSave, onClose])
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async (): Promise<void> => {
     if (!memory) return
     setDeleting(true)
+    setDeleteError(null)
     try {
       await onDelete(memory.id)
       onClose()
+    } catch (err) {
+      setDeleteError(toErrorMessage(err, 'Failed to delete this memory. Please try again.'))
     } finally {
       setDeleting(false)
     }
-  }
+  }, [memory, onDelete, onClose])
+
+  const busy = saving || deleting
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[var(--z-modal)] p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="memory-edit-title"
-        >
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="bg-[var(--background-card)] border border-[var(--border)] rounded-2xl w-full max-w-lg overflow-hidden"
+    <Modal
+      isOpen={open}
+      onClose={handleClose}
+      title={memory ? 'Edit Memory' : 'New Memory'}
+      titleId="memory-edit-title"
+      size="lg"
+    >
+      <div className="space-y-4">
+        {(saveError ?? deleteError) && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-lg border border-accent-error/30 bg-accent-error/10 px-3 py-2 text-sm text-text-primary"
           >
-            <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
-              <div className="flex items-center gap-2">
-                <Brain size={16} className="text-[var(--accent-primary)]" />
-                <h2 id="memory-edit-title" className="text-sm font-display font-semibold text-[var(--text-primary)]">
-                  {memory ? 'Edit Memory' : 'New Memory'}
-                </h2>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-1 rounded-lg hover:bg-[var(--background-elevated)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
-                aria-label="Close"
-              >
-                <X size={16} />
-              </button>
-            </div>
+            <AlertCircle size={16} className="mt-0.5 shrink-0 text-accent-error" aria-hidden="true" />
+            <span>{saveError ?? deleteError}</span>
+          </div>
+        )}
 
-            <div className="p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label htmlFor="memory-type" className="text-xs font-medium text-[var(--text-secondary)]">Type</label>
-                  <select
-                    id="memory-type"
-                    value={type}
-                    onChange={e => setType(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                  >
-                    {MEMORY_TYPES.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="memory-importance" className="text-xs font-medium text-[var(--text-secondary)]">Importance</label>
-                  <select
-                    id="memory-importance"
-                    value={importance}
-                    onChange={e => setImportance(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                  >
-                    {IMPORTANCE_LEVELS.map(l => (
-                      <option key={l} value={l}>{l}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <label htmlFor="memory-type" className={FIELD_LABEL_CLASS}>Type</label>
+            <select
+              id="memory-type"
+              value={type}
+              onChange={handleTypeChange}
+              disabled={busy}
+              className={FIELD_CLASS}
+            >
+              {MEMORY_TYPES.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor="memory-importance" className={FIELD_LABEL_CLASS}>Importance</label>
+            <select
+              id="memory-importance"
+              value={importance}
+              onChange={handleImportanceChange}
+              disabled={busy}
+              className={FIELD_CLASS}
+            >
+              {IMPORTANCE_LEVELS.map(l => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="memory-key" className="text-xs font-medium text-[var(--text-secondary)]">Key</label>
-                <input
-                  id="memory-key"
-                  type="text"
-                  value={key}
-                  onChange={e => setKey(e.target.value)}
-                  placeholder="e.g. preferred_work_hours"
-                  className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                />
-              </div>
+        <div className="space-y-1.5">
+          <label htmlFor="memory-key" className={FIELD_LABEL_CLASS}>Key</label>
+          <input
+            id="memory-key"
+            type="text"
+            value={key}
+            onChange={e => setKey(e.target.value)}
+            disabled={busy}
+            placeholder="e.g. preferred_work_hours"
+            className={FIELD_CLASS}
+            required
+          />
+        </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="memory-value" className="text-xs font-medium text-[var(--text-secondary)]">Value</label>
-                <textarea
-                  id="memory-value"
-                  value={valueStr}
-                  onChange={e => setValueStr(e.target.value)}
-                  rows={4}
-                  className="w-full px-3 py-2 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] resize-y font-mono"
-                />
-              </div>
+        <div className="space-y-1.5">
+          <label htmlFor="memory-value" className={FIELD_LABEL_CLASS}>Value</label>
+          <textarea
+            id="memory-value"
+            value={valueStr}
+            onChange={e => setValueStr(e.target.value)}
+            disabled={busy}
+            rows={4}
+            className={TEXTAREA_CLASS}
+          />
+          {memory && typeof memory.value !== 'string' && (
+            <p className="text-xs text-text-tertiary">
+              This memory stores structured data — the value is saved as JSON.
+            </p>
+          )}
+        </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="memory-tags" className="text-xs font-medium text-[var(--text-secondary)]">Tags (comma-separated)</label>
-                <input
-                  id="memory-tags"
-                  type="text"
-                  value={tagsStr}
-                  onChange={e => setTagsStr(e.target.value)}
-                  placeholder="work, productivity, morning"
-                  className="w-full h-9 px-3 rounded-lg bg-[var(--background-elevated)] border border-[var(--border)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
-                />
-              </div>
-            </div>
+        <div className="space-y-1.5">
+          <label htmlFor="memory-tags" className={FIELD_LABEL_CLASS}>Tags (comma-separated)</label>
+          <input
+            id="memory-tags"
+            type="text"
+            value={tagsStr}
+            onChange={e => setTagsStr(e.target.value)}
+            disabled={busy}
+            placeholder="work, productivity, morning"
+            className={FIELD_CLASS}
+          />
+        </div>
 
-            <div className="flex items-center justify-between p-4 border-t border-[var(--border)]">
-              {memory ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="text-[var(--accent-error)] hover:bg-[var(--accent-error)]/10"
-                >
-                  <Trash2 size={14} />
-                  {deleting ? 'Deleting...' : 'Delete'}
-                </Button>
-              ) : (
-                <div />
-              )}
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button variant="primary" size="sm" onClick={handleSave} disabled={!key.trim() || saving}>
-                  <Save size={14} />
-                  {saving ? 'Saving...' : 'Save'}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
+          {memory ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDelete}
+              loading={deleting}
+              disabled={saving}
+              className="text-accent-error hover:bg-accent-error/10"
+            >
+              <Trash2 size={14} aria-hidden="true" />
+              {deleting ? 'Deleting…' : 'Delete'}
+            </Button>
+          ) : (
+            <span />
+          )}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleClose} disabled={busy}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={!key.trim() || busy}>
+              <Save size={14} aria-hidden="true" />
+              {saving ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Modal>
   )
 }

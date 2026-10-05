@@ -8,10 +8,20 @@ import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/components/ui/utils'
 
 interface ServiceHealth {
-  status: 'ok' | 'degraded' | 'unavailable' | 'not_configured'
-  uptime: number
+  status: 'ok' | 'degraded' | 'unavailable' | 'not_configured' | 'unknown'
+  /**
+   * Availability percentage, or null when it is not measured.
+   *
+   * The API used to return hardcoded 99.9 / 99.8 / 99.5 / 99.7 here, which the
+   * UI rendered as observed uptime. Anything genuinely unmeasurable (managed
+   * Supabase, a separately-deployed scheduler, a locally-reachable AI provider)
+   * now arrives as null and is displayed as "n/a" rather than invented.
+   */
+  uptime: number | null
+  uptime_seconds?: number
   last_checked: string
   latency_ms: number
+  detail?: string
 }
 
 interface ServiceHealthCardsProps {
@@ -31,6 +41,17 @@ const STATUS_CONFIG = {
   degraded: { badge: 'warning' as const, label: 'DEGRADED', border: 'border-l-accent-warning' },
   unavailable: { badge: 'error' as const, label: 'DOWN', border: 'border-l-accent-error' },
   not_configured: { badge: 'outline' as const, label: 'N/A', border: 'border-l-border-default' },
+  unknown: { badge: 'outline' as const, label: 'UNKNOWN', border: 'border-l-border-default' },
+}
+
+/** Seconds -> "3d 4h". Used for the API process's measured uptime. */
+function formatDuration(seconds: number): string {
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  const mins = Math.floor((seconds % 3600) / 60)
+  if (days > 0) return `${days}d ${hours}h`
+  if (hours > 0) return `${hours}h ${mins}m`
+  return `${mins}m`
 }
 
 function formatLastChecked(iso: string): string {
@@ -77,7 +98,16 @@ const HealthCard = memo(function HealthCard({
         <div className="grid grid-cols-3 gap-3 text-xs">
           <div>
             <p className="text-text-tertiary uppercase tracking-wider mb-0.5">Uptime</p>
-            <p className="text-text-primary font-mono font-medium">{health.uptime}%</p>
+            <p className="text-text-primary font-mono font-medium">
+              {health.uptime === null || health.uptime === undefined
+                ? health.uptime_seconds !== undefined
+                  ? formatDuration(health.uptime_seconds)
+                  : 'n/a'
+                : `${health.uptime}%`}
+            </p>
+            {health.detail && (
+              <p className="text-text-tertiary text-[10px] mt-0.5 leading-tight">{health.detail}</p>
+            )}
           </div>
           <div>
             <p className="text-text-tertiary uppercase tracking-wider mb-0.5">Latency</p>

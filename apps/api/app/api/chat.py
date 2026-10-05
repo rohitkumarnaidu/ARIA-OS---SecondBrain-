@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from fastapi import APIRouter, Depends, Request, HTTPException, Query
 from fastapi.responses import StreamingResponse
-from typing import List, Dict, Any, AsyncGenerator
+from typing import List, Dict, Any, AsyncGenerator, Tuple
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from database.schemas.chat import ChatRequest, ChatResponse, ChatMessageRecord, ChatTranscriptResponse
@@ -13,6 +13,14 @@ from ai.client import llm, LLMProviderUnavailableError
 from ai.guardrails import guardrails
 from ai.prompt_loader import prompts
 from ai.agents.memory_agent import store_interaction, get_memory_summary
+from ai.orchestrator_core import (
+    AGENT_DATA_CLOSE,
+    AGENT_DATA_OPEN,
+    execute as orchestrator_execute,
+    get_relevant_context,
+    plan as orchestrator_plan,
+    synthesize as orchestrator_synthesize,
+)
 
 router = APIRouter()
 
@@ -512,6 +520,7 @@ async def _stream_llm_response(
     courses: list,
     habits: list,
     conversation_id: str = DEFAULT_CONVERSATION_ID,
+    user_agent_context: str = "",
 ) -> AsyncGenerator[str, None]:
     """Stream LLM tokens as SSE events.
 
@@ -521,6 +530,11 @@ async def _stream_llm_response(
     stored user turn and no assistant reply, permanently, and the transcript
     rendered as a question with nothing under it. Persisting whatever text was
     produced before the disconnect is strictly better than losing it.
+
+    The SSE contract is unchanged: `data: {"token": ...}` per token and a
+    terminal `data: {"done": true, "full_response": ...}`. `user_agent_context`
+    is folded into the prompt before the first token, so the wire format is
+    identical to what it was before ARIA gained an orchestrator.
     """
     supabase = get_supabase_client()
     user_id = current_user.user.id
@@ -528,9 +542,18 @@ async def _stream_llm_response(
     used_fallback = False
     completed_normally = False
 
+    effective_prompt = user_prompt
+    if user_agent_context:
+        effective_prompt = (
+            f"{user_agent_context}\n\n"
+            "The findings above come from specialist agents that already ran for "
+            "this message. Use them; do not mention them.\n\n"
+            f"{user_prompt}"
+        )
+
     try:
         try:
-            async for token in llm.generate_stream(user_prompt, system=system, max_tokens=1024, temperature=0.7):
+            async for token in llm.generate_stream(effective_prompt, system=system, max_tokens=1024, temperature=0.7):
                 full_text_parts.append(token)
                 yield f"data: {json.dumps({'token': token})}\n\n"
             full_text = "".join(full_text_parts)
@@ -572,6 +595,57 @@ def _chunk_text(text: str, size: int = 5) -> list[str]:
     return [text[i : i + size] for i in range(0, len(text), size)]
 
 
+# Bound on the agent context block appended to the streamed prompt. Agent output
+# is fenced and truncated here for the same reason it is fenced: it is derived
+# from user data, and it competes with the system prompt for context window.
+MAX_AGENT_CONTEXT_CHARS = 3000
+
+
+async def _run_orchestrator_agents(current_user, message: str) -> Tuple[str, List]:
+    """Classify, plan and execute the agents for this message.
+
+    Returns `(fenced_context_block, step_results)`. The block is "" when
+    orchestration produced nothing usable. Every failure mode -- classification,
+    import, database, LLM, timeout -- degrades to ("", []) so the chat turn
+    continues down the existing single-call path. This function must never raise.
+    """
+    try:
+        plan = await orchestrator_plan(message, current_user.user.id)
+        execution = await orchestrator_execute(plan, current_user.user.id)
+        completed = [r for r in execution.results if r.status == "completed" and r.output is not None]
+        if not completed:
+            logger.info(
+                "No agent produced output for this message",
+                plan_id=plan.plan_id,
+                intent=plan.intent,
+                statuses={r.agent_id: r.status for r in execution.results},
+            )
+            return "", execution.results
+
+        lines = []
+        for result in completed:
+            try:
+                import json
+
+                body = result.output if isinstance(result.output, str) else json.dumps(result.output, default=str)
+            except Exception:  # noqa: BLE001
+                body = str(result.output)
+            body = " ".join(body.split())
+            if not body:
+                continue
+            if len(body) > 600:
+                body = body[:600] + "..."
+            suffix = " (algorithmic fallback)" if result.used_fallback else ""
+            lines.append(f"- {result.name}{suffix}: {AGENT_DATA_OPEN} {body} {AGENT_DATA_CLOSE}")
+
+        if not lines:
+            return "", execution.results
+        return ("## Agent Findings\n" + "\n".join(lines))[:MAX_AGENT_CONTEXT_CHARS], execution.results
+    except Exception as e:
+        logger.warn("Orchestrator agent dispatch failed; continuing without agent context", error=str(e))
+        return "", []
+
+
 @router.post("/", summary="Send a chat message", status_code=201, response_model=ChatResponse)
 async def chat(
     request: Request,
@@ -606,6 +680,7 @@ async def chat(
                 courses,
                 habits,
                 conversation_id,
+                user_agent_context=(await _run_orchestrator_agents(current_user, message))[0],
             ),
             media_type="text/event-stream",
             headers={
@@ -615,18 +690,56 @@ async def chat(
             },
         )
 
-    # Non-streaming path (existing behavior)
+    # Non-streaming path.
     #
-    # _build_chat_context issues 7 queries, and it used to be called once inside
-    # the try and AGAIN inside the LLMProviderUnavailableError handler -- 14
-    # round-trips on every provider failure, plus a second memory lookup. The
-    # context is now built once above and reused for both the call and the
-    # fallback.
+    # ARIA now runs as an orchestrator: classify the message, dispatch the
+    # registry agents that match it, then synthesize one reply from their
+    # combined output. Previously this was a single `llm.generate()` call that
+    # could reach exactly one agent (memory) and had no dispatch at all.
+    #
+    # Each stage degrades independently, so every one of these can fail without
+    # costing the user a reply:
+    #   classification -> ""                 (agent context is simply absent)
+    #   agent dispatch -> ""                 (falls through to the plain LLM call)
+    #   synthesis       -> plain LLM call with the original prompt
+    #   LLM             -> _keyword_fallback
+    #
+    # `_keyword_fallback` remains the final net, beneath the orchestrator, exactly
+    # as it was the only net before.
+    agent_context, step_results = await _run_orchestrator_agents(current_user, message)
+    memory_context = ""
     try:
-        response_text = await llm.generate(user_prompt, system=system, max_tokens=1024, temperature=0.7)
+        memory_context = await get_relevant_context(current_user.user.id, message)
+    except Exception as e:
+        logger.warn("Memory retrieval unavailable for chat", error=str(e))
+
+    def _keyword_reply() -> str:
+        return _keyword_fallback(message, pending_tasks, active_goals, courses, habits)
+
+    try:
+        if agent_context:
+            response_text = await orchestrator_synthesize(
+                step_results,
+                message,
+                memory_context=memory_context,
+                base_context=agent_context,
+                fallback_text=_keyword_reply(),
+            )
+            if not response_text or not response_text.strip():
+                response_text = await llm.generate(user_prompt, system=system, max_tokens=1024, temperature=0.7)
+        else:
+            response_text = await llm.generate(user_prompt, system=system, max_tokens=1024, temperature=0.7)
     except LLMProviderUnavailableError:
         logger.warn("LLM unavailable, falling back to keyword routing for chat", user_id=current_user.user.id)
-        response_text = _keyword_fallback(message, pending_tasks, active_goals, courses, habits)
+        response_text = _keyword_reply()
+    except Exception as e:
+        # A synthesis bug must not become a 500. The original single-call path
+        # is still there as the recovery route.
+        logger.error("Orchestrated chat turn failed; retrying single-call path", error=str(e))
+        try:
+            response_text = await llm.generate(user_prompt, system=system, max_tokens=1024, temperature=0.7)
+        except LLMProviderUnavailableError:
+            response_text = _keyword_reply()
 
     _persist_message(supabase, current_user.user.id, "assistant", response_text, conversation_id)
 

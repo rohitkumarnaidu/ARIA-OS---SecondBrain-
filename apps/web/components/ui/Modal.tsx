@@ -13,21 +13,25 @@ interface ModalProps {
   title: string
   children: React.ReactNode
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  /** Unique id for the heading — required when more than one Modal can be mounted. */
+  titleId?: string
+  description?: string
 }
 
-export const Modal = memo(function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
+export const Modal = memo(function Modal({ isOpen, onClose, title, children, size = 'md', titleId = 'modal-title', description }: ModalProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (isOpen) {
-      previousFocusRef.current = document.activeElement as HTMLElement
-      const timer = setTimeout(() => {
-        const focusable = contentRef.current?.querySelectorAll(FOCUSABLE_SELECTOR)
-        if (focusable?.length) (focusable[0] as HTMLElement).focus()
-      }, 100)
-      return () => clearTimeout(timer)
-    } else {
+    if (!isOpen) return
+    previousFocusRef.current = document.activeElement as HTMLElement
+    const timer = setTimeout(() => {
+      const focusable = contentRef.current?.querySelectorAll(FOCUSABLE_SELECTOR)
+      if (focusable?.length) (focusable[0] as HTMLElement).focus()
+      else contentRef.current?.focus()
+    }, 100)
+    return () => {
+      clearTimeout(timer)
       previousFocusRef.current?.focus()
     }
   }, [isOpen])
@@ -61,10 +65,12 @@ export const Modal = memo(function Modal({ isOpen, onClose, title, children, siz
 
   const sizes = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl', full: 'max-w-[95vw] max-h-[95vh]' }
 
+  const descriptionId = description ? `${titleId}-description` : undefined
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId}>
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden="true"
@@ -75,15 +81,19 @@ export const Modal = memo(function Modal({ isOpen, onClose, title, children, siz
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            tabIndex={-1}
             className={clsx('relative w-full overflow-y-auto bg-background-card border border-border rounded-2xl shadow-2xl max-h-[85vh]', sizes[size])}
           >
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 id="modal-title" className="text-xl font-display font-semibold text-text-primary">{title}</h2>
-              <button onClick={onClose} className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background-elevated transition-colors" aria-label="Close dialog">
-                <X size={20} />
+            <div className="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-background-card z-10">
+              <h2 id={titleId} className="text-xl font-display font-semibold text-text-primary">{title}</h2>
+              <button type="button" onClick={onClose} className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-background-elevated transition-colors" aria-label="Close dialog">
+                <X size={20} aria-hidden="true" />
               </button>
             </div>
-            <div className="p-6">{children}</div>
+            <div className="p-6">
+              {description && <p id={descriptionId} className="mb-4 text-sm text-text-secondary">{description}</p>}
+              {children}
+            </div>
           </motion.div>
         </div>
       )}

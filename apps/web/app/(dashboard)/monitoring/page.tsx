@@ -32,10 +32,13 @@ interface AgentMetric {
 }
 
 interface ServiceHealth {
-  status: 'ok' | 'degraded' | 'unavailable' | 'not_configured'
-  uptime: number
+  status: 'ok' | 'degraded' | 'unavailable' | 'not_configured' | 'unknown'
+  /** null when not measured -- see ServiceHealthCards.tsx. */
+  uptime: number | null
+  uptime_seconds?: number
   last_checked: string
   latency_ms: number
+  detail?: string
 }
 
 interface MetricsResponse {

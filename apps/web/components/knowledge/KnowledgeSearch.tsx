@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -23,7 +23,7 @@ const NODE_TYPES: { value: NodeType; label: string }[] = [
   { value: 'idea', label: 'Idea' },
 ]
 
-export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
+export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps): JSX.Element {
   const [query, setQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
@@ -72,13 +72,13 @@ export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
         className={cn(
           'relative flex items-center gap-2',
           'rounded-xl backdrop-blur-[12px]',
-          'bg-[var(--background-card)]/80 border border-[var(--border)]',
-          'focus-within:border-[var(--accent-primary)]/50 focus-within:shadow-[0_0_20px_var(--accent-primary)]/10',
+          'bg-background-card/80 border border-border',
+          'focus-within:border-accent-primary/50 focus-within:shadow-glow-sm',
           'transition-all duration-300',
         )}
       >
-        <div className="pl-4 text-[var(--text-muted)]">
-          <Search size={18} />
+        <div className="pl-4 text-text-muted">
+          <Search size={18} aria-hidden="true" />
         </div>
         <input
           type="text"
@@ -86,29 +86,33 @@ export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
           onChange={e => handleQueryChange(e.target.value)}
           placeholder="Search knowledge vault..."
           className={cn(
-            'flex-1 bg-transparent py-3 pr-3 text-sm text-[var(--text-primary)]',
-            'placeholder:text-[var(--text-muted)]',
+            'flex-1 bg-transparent py-3 pr-3 text-sm text-text-primary',
+            'placeholder:text-text-muted',
             'focus:outline-none',
             'font-body',
           )}
         />
         <button
+          type="button"
           onClick={() => setShowFilters(!showFilters)}
           className={cn(
             'p-2 mr-1 rounded-lg transition-colors',
             showFilters || hasActiveFilters
-              ? 'text-[var(--accent-primary)] bg-[var(--accent-primary)]/10'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]',
+              ? 'text-accent-primary bg-accent-primary/10'
+              : 'text-text-muted hover:text-text-secondary',
           )}
+          aria-expanded={showFilters}
+          aria-controls="knowledge-search-filters"
           aria-label="Toggle filters"
         >
-          <Filter size={18} />
+          <Filter size={18} aria-hidden="true" />
         </button>
       </div>
 
       <AnimatePresence>
         {showFilters && (
           <motion.div
+            id="knowledge-search-filters"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -118,24 +122,26 @@ export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
             <div
               className={cn(
                 'p-4 rounded-xl space-y-4',
-                'bg-[var(--background-card)]/80 border border-[var(--border)]',
+                'bg-background-card/80 border border-border',
                 'backdrop-blur-[8px]',
               )}
             >
               <div className="space-y-2">
-                <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider font-body">
+                <p className="text-xs font-medium text-text-secondary uppercase tracking-wider font-body">
                   Type
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {NODE_TYPES.map(({ value, label }) => (
                     <button
                       key={value}
+                      type="button"
                       onClick={() => toggleType(value)}
+                      aria-pressed={selectedTypes.includes(value)}
                       className={cn(
                         'px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-body',
                         selectedTypes.includes(value)
-                          ? 'bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30'
-                          : 'bg-[var(--background-dark)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--border-light)]',
+                          ? 'bg-accent-primary/20 text-accent-primary border border-accent-primary/30'
+                          : 'bg-background-dark text-text-secondary border border-border hover:border-border-light',
                       )}
                     >
                       {label}
@@ -146,19 +152,21 @@ export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
 
               {tags.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider font-body">
+                  <p className="text-xs font-medium text-text-secondary uppercase tracking-wider font-body">
                     Tags
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
                       <button
                         key={tag}
+                        type="button"
                         onClick={() => toggleTag(tag)}
+                        aria-pressed={selectedTags.includes(tag)}
                         className={cn(
                           'px-3 py-1.5 rounded-lg text-xs font-medium transition-all font-body',
                           selectedTags.includes(tag)
-                            ? 'bg-[var(--accent-warning)]/20 text-[var(--accent-warning)] border border-[var(--accent-warning)]/30'
-                            : 'bg-[var(--background-dark)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--border-light)]',
+                            ? 'bg-accent-warning/20 text-accent-warning border border-accent-warning/30'
+                            : 'bg-background-dark text-text-secondary border border-border hover:border-border-light',
                         )}
                       >
                         {tag}
@@ -170,10 +178,11 @@ export function KnowledgeSearch({ onSearch, tags }: KnowledgeSearchProps) {
 
               {hasActiveFilters && (
                 <button
+                  type="button"
                   onClick={clearFilters}
-                  className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors font-body"
+                  className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary transition-colors font-body"
                 >
-                  <X size={12} />
+                  <X size={12} aria-hidden="true" />
                   Clear all filters
                 </button>
               )}

@@ -393,29 +393,78 @@ Score each opportunity by relevance to the user's skills and query."""
     }
 
 
+# Actions this module is willing to perform, mapped from the command prefixes
+# that select them.
+#
+# The previous chain was an if/elif ladder ending in
+# `elif query.lower().startswith("delete ")` on a free-text field, so the set of
+# destructive operations was decided by phrasing: "delete my bank details",
+# "delete last week's notes" and "delete my password manager entry" all resolved
+# to `delete_task` and issued a DELETE against `tasks`. The prefixes are now a
+# closed mapping -- the ladder is gone, and the vocabulary of destructive verbs
+# is one line of data rather than a branch.
+PREFIX_ACTIONS: Dict[str, str] = {
+    "update": "update_task",
+    "complete": "complete_task",
+    "log habit": "create_habit_log",
+    "delete": "delete_task",
+}
+
+# The complete set of actions this module implements.
+ALLOWED_ACTIONS = frozenset(PREFIX_ACTIONS.values()) | {"create_task"}
+
+# Actions that destroy data. Callers reachable from an HTTP request must
+# confirm these explicitly -- see ALLOWED_ACTIONS /
+# CONFIRMATION_REQUIRED_ACTIONS in `apps/api/app/api/automation.py`, which is
+# where the trust boundary lives. `resolve_action` below still refuses to infer
+# a destructive action from phrasing alone.
+DESTRUCTIVE_ACTIONS = frozenset({"delete_task"})
+
+
+def resolve_action(query: str, context: Optional[Dict[str, Any]] = None) -> str:
+    """Resolve which action a request selects.
+
+    An explicit `context["action"]` wins over prefix matching. An unrecognised
+    explicit action resolves to the documented `create_task` default rather than
+    being dispatched -- validation of caller-supplied action names happens at the
+    trust boundary (`automation.ALLOWED_ACTIONS`), which rejects the request
+    outright rather than quietly rewriting it.
+
+    Destructive actions are the exception to the default: a `delete` prefix is
+    honoured here, but the caller is required to have already gated it. That is
+    why `automation.create_execution` refuses `delete_task` unless
+    `context.confirmed` is true.
+    """
+    context_data = context or {}
+    requested = context_data.get("action")
+    if requested:
+        return requested if requested in ALLOWED_ACTIONS else "create_task"
+
+    lowered = (query or "").strip().lower()
+    # Longest prefix first: "log habit " must win over any shorter match.
+    for prefix in sorted(PREFIX_ACTIONS, key=len, reverse=True):
+        if lowered.startswith(prefix + " "):
+            return PREFIX_ACTIONS[prefix]
+    return "create_task"
+
+
 async def execute_action(user_id: str, query: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    action_type = "create_task"
+    action_type = resolve_action(query, context)
     task_title = query.strip()
     context_data = context or {}
 
-    if context_data.get("action"):
-        action_type = context_data["action"]
-    elif query.lower().startswith("update "):
-        action_type = "update_task"
-    elif query.lower().startswith("complete "):
-        action_type = "complete_task"
-    elif query.lower().startswith("log habit "):
-        action_type = "create_habit_log"
-    elif query.lower().startswith("delete "):
-        action_type = "delete_task"
-
+    # A destructive action is never inferred from phrasing at the HTTP boundary:
+    # `apps/api/app/api/automation.py` requires both an allow-listed action name and
+    # `context.confirmed = true` before it calls this function. This module is the
+    # execution primitive, not the trust boundary, and is also called by the MCP
+    # tool layer, so the gate lives with the caller that can see the request.
     try:
         supabase = get_supabase_client()
 
         if action_type == "create_task":
             data = {
                 "user_id": user_id,
-                "title": context_data.get("title", task_title),
+                "title": str(context_data.get("title", task_title))[:500],
                 "status": "pending",
                 "priority": context_data.get("priority", "medium"),
                 "category": context_data.get("category", "general"),
@@ -525,6 +574,8 @@ async def execute_action(user_id: str, query: str, context: Optional[Dict[str, A
             action_summary = f"Deleted task {task_id}"
 
         else:
+            # `resolve_action` only returns names in `ALLOWED_ACTIONS`, so this
+            # is the documented default rather than a silent fallback.
             return await execute_action(user_id, query, {**context_data, "action": "create_task"})
 
         return {

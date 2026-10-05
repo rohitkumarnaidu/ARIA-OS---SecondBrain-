@@ -1,29 +1,24 @@
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from config.core.supabase import get_supabase_client
 from config.core.auth import get_current_user
 from shared.utils.logger import logger
+from shared.utils.text_entities import (  # noqa: F401 -- DAY_NAMES is re-exported
+    DAY_NAMES,
+    extract_date,
+    extract_minutes,
+    extract_priority,
+)
 from database.schemas.nlp import NLPParseRequest, NLPParseResponse
 
 router = APIRouter()
 
-DAY_NAMES = {
-    "sunday": 0,
-    "monday": 1,
-    "tuesday": 2,
-    "wednesday": 3,
-    "thursday": 4,
-    "friday": 5,
-    "saturday": 6,
-    "sun": 0,
-    "mon": 1,
-    "tue": 2,
-    "wed": 3,
-    "thu": 4,
-    "fri": 5,
-    "sat": 6,
-}
+# `extract_date` / `extract_priority` / `extract_minutes` now live in
+# `shared.utils.text_entities` because ARIA's intent classifier
+# (`ai/intent.py`) needs the exact same extractors and `packages/*` cannot
+# import `app.api.*`. Re-exported here so the public names of this module --
+# and every existing caller and test -- are unchanged.
 
 ROUTE_ALIASES = {
     "dashboard": "/dashboard",
@@ -51,57 +46,6 @@ ROUTE_ALIASES = {
     "briefing": "/dashboard/briefing",
     "academics": "/dashboard/academics",
 }
-
-
-def extract_date(text: str) -> str | None:
-    now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
-    lower = text.lower()
-
-    if "today" in lower:
-        return today
-    if "tomorrow" in lower:
-        return (now + timedelta(days=1)).strftime("%Y-%m-%d")
-
-    for name, idx in DAY_NAMES.items():
-        if name in lower:
-            target = now + timedelta(days=(idx - now.weekday() + 7) % 7)
-            return target.strftime("%Y-%m-%d")
-
-    match = re.search(r"(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?", text)
-    if match:
-        m, d, y = match.groups()
-        year = y if y else str(now.year)
-        if len(year) == 2:
-            year = f"20{year}"
-        return f"{year}-{m.zfill(2)}-{d.zfill(2)}"
-
-    rel = re.search(r"in\s+(\d+)\s+(day|days|week|weeks)", lower)
-    if rel:
-        num = int(rel.group(1))
-        unit = rel.group(2).lower()
-        target = now + timedelta(days=num * 7) if unit.startswith("week") else now + timedelta(days=num)
-        return target.strftime("%Y-%m-%d")
-
-    return None
-
-
-def extract_priority(text: str) -> str | None:
-    lower = text.lower()
-    if re.search(r"\b(urgent|critical|asap|high priority|important)\b", lower):
-        return "high"
-    if re.search(r"\b(low priority|whenever|someday|optional)\b", lower):
-        return "low"
-    return None
-
-
-def extract_minutes(text: str) -> int | None:
-    match = re.search(r"(\d+)\s*(mins|min|minute|minutes|hour|hours|hr|hrs)\b", text.lower())
-    if not match:
-        return None
-    num = int(match.group(1))
-    unit = match.group(2).lower()
-    return num * 60 if unit.startswith("hour") or unit.startswith("hr") else num
 
 
 def resolve_route(nav: str) -> str | None:

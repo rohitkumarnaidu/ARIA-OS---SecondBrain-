@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { Plus } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ResourceGrid, ResourceFilters, CollectionGroup } from '@/components/resources'
-import { DailyNudge, TrendingTopics, ActiveCollections } from '@/components/knowledge'
+import { Card, CardContent } from '@/components/ui/Card'
+import { EmptyState } from '@/components/ui/EmptyState'
 import type { Resource, Collection } from '@/types/resource'
 import { createLogger } from '@/lib/utils/logger'
 
@@ -22,7 +23,7 @@ const coverColors = [
   'rgba(245, 158, 11, 0.08)',
 ]
 
-export default function ResourcesPage() {
+export default function ResourcesPage(): React.JSX.Element {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const { items: storeItems, fetch: storeFetch, create: storeCreate, update: storeUpdate, remove: storeRemove, loading: storeLoading, error: storeError } = useResourceStore()
@@ -100,29 +101,17 @@ export default function ResourcesPage() {
       lastEdited: new Date().toISOString().split('T')[0],
     }))
   }, [tagCounts])
-
-  const derivedTopics = useMemo(() => {
-    const entries = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1])
-    return entries.slice(0, 8).map(([tag, count]) => ({
-      tag,
-      count,
-      growth: Math.floor(Math.random() * 50) - 10,
-    }))
-  }, [tagCounts])
-
-  const activeCollections = useMemo(() => {
-    return resources.slice(0, 5).map((r, i) => ({
-      id: r.id,
-      name: r.title.length > 30 ? r.title.slice(0, 30) + '...' : r.title,
-      itemCount: r.tags.length,
-      lastEdited: r.createdAt || new Date().toISOString(),
-    }))
-  }, [resources])
-
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
     resources.forEach((r) => r.tags.forEach((t) => tagSet.add(t)))
     return Array.from(tagSet).sort()
+  }, [resources])
+
+  // Real data only: the three most recently created resources, by stored created_at.
+  const recentResources = useMemo(() => {
+    return [...resources]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 3)
   }, [resources])
 
   const filteredResources = useMemo(() => {
@@ -174,12 +163,44 @@ export default function ResourcesPage() {
       </motion.div>
 
       {storeError && (
-        <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mb-6">
+        <div className="bg-accent-error/10 border border-accent-error/30 text-text-primary px-4 py-3 rounded-lg mb-6" role="alert">
           {storeError}
         </div>
       )}
 
-      <DailyNudge />
+      {resources.length === 0 ? (
+        <div className="card text-center">
+          <EmptyState
+            icon={<Plus size={40} aria-hidden="true" />}
+            title="Your library is empty"
+            description="Save an article, book, tool or paper and it will show up here with its tags and notes."
+            action={{ label: 'Add your first resource', onClick: () => setShowAddModal(true) }}
+          />
+        </div>
+      ) : (
+        <Card>
+          <CardContent>
+            <h2 className="text-sm font-semibold text-text-primary mb-3">Recently added</h2>
+            <ul className="space-y-2">
+              {recentResources.map((r) => (
+                <li key={r.id} className="flex items-baseline justify-between gap-4">
+                  <a
+                    href={r.url ?? '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-text-secondary hover:text-text-primary transition-colors truncate"
+                  >
+                    {r.title}
+                  </a>
+                  <time dateTime={r.createdAt} className="shrink-0 text-xs text-text-tertiary font-mono">
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </time>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-4 gap-4">
         {[
@@ -225,9 +246,6 @@ export default function ResourcesPage() {
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />
-
-      {derivedTopics.length > 0 && <TrendingTopics topics={derivedTopics} />}
-      {activeCollections.length > 0 && <ActiveCollections collections={activeCollections} />}
 
       {/* Add Resource Modal */}
       {showAddModal && (
