@@ -1041,6 +1041,88 @@ class TestOpportunityAgent:
         result = await opportunity_agent.run_opportunity_radar("user-1")
         assert len(result) == 3
 
+    # ── graceful degradation when the optional web source is missing ──────────
+
+    @pytest.mark.asyncio
+    async def test_radar_survives_missing_web_source(self, mock_supabase, mock_get_agent, mock_llm_json):
+        """The ImportError branch must not kill the run.
+
+        ai.brave_search imports aiohttp at module scope, so the module-level
+        try/except leaves fetch_opportunities_from_web = None exactly when
+        aiohttp is missing. Calling that sentinel unguarded raised
+        TypeError: 'NoneType' object is not callable and took down the whole
+        radar run.
+        """
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"id": "user-1", "skills": ["Python"], "interests": ["ML"]}]
+        )
+        mock_llm_json.return_value = [
+            {
+                "title": "AI Intern",
+                "category": "internships",
+                "url": "https://example.com",
+                "deadline": "2026-08-01",
+                "description": "ML internship",
+                "skills_needed": ["Python"],
+                "match_score": 90,
+            }
+        ]
+
+        with patch.object(opportunity_agent, "fetch_opportunities_from_web", None):
+            result = await opportunity_agent.run_opportunity_radar("user-1")
+
+        assert len(result) == 1
+        assert result[0]["title"] == "AI Intern"
+        assert result[0]["user_id"] == "user-1"
+
+    @pytest.mark.asyncio
+    async def test_radar_degrades_to_default_scan_when_web_and_llm_unavailable(
+        self, mock_supabase, mock_get_agent, mock_llm_json
+    ):
+        """No web source AND no LLM -> curated default scan still returns data."""
+        from ai.client import LLMProviderUnavailableError
+
+        mock_supabase._builders["users"].execute.return_value = MagicMock(
+            data=[{"id": "user-1", "skills": ["Python"], "interests": []}]
+        )
+        mock_llm_json.side_effect = LLMProviderUnavailableError("API down")
+
+        with patch.object(opportunity_agent, "fetch_opportunities_from_web", None):
+            result = await opportunity_agent.run_opportunity_radar("user-1")
+
+        assert len(result) == 3
+        assert result[0]["title"] == "Google Summer of Code 2026"
+
+    @pytest.mark.asyncio
+    async def test_fetch_web_opportunities_returns_empty_when_none(self):
+        assert await opportunity_agent.fetch_web_opportunities(["Python"], ["ML"]) == []
+
+    @pytest.mark.asyncio
+    async def test_fetch_web_opportunities_returns_empty_when_source_raises(self):
+        async def _boom(*a, **kw):
+            raise RuntimeError("brave api 503")
+
+        with patch.object(opportunity_agent, "fetch_opportunities_from_web", _boom):
+            assert await opportunity_agent.fetch_web_opportunities([], []) == []
+
+    @pytest.mark.asyncio
+    async def test_fetch_web_opportunities_passes_through_results(self):
+        hits = [{"title": "A", "category": "hackathons", "description": "d"}]
+
+        async def _ok(*a, **kw):
+            return hits
+
+        with patch.object(opportunity_agent, "fetch_opportunities_from_web", _ok):
+            assert await opportunity_agent.fetch_web_opportunities([], []) == hits
+
+    def test_format_web_context_tolerates_missing_keys(self):
+        """Third-party search results are not trusted to carry every key."""
+        ctx = opportunity_agent._format_web_context([{"title": "Only a title"}, {"category": "internships"}, {}])
+        assert "Only a title" in ctx
+        assert "uncategorized" in ctx
+        assert opportunity_agent._format_web_context([]) == "No web results found."
+        assert opportunity_agent._format_web_context(None) == "No web results found."
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 5. opportunity_matching_agent — match_opportunities

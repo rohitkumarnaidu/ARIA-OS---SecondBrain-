@@ -266,7 +266,7 @@ class LLMClient:
                     async for token in gen:
                         if signal and signal.is_set():
                             return
-                        safe_token = guardrails.sanitize_output(token)
+                        safe_token = guardrails.sanitize_output_streaming(token)
                         if on_token:
                             maybe = on_token(safe_token)
                             if asyncio.iscoroutine(maybe):

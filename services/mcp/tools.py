@@ -44,7 +44,7 @@ class MCPToolRegistry:
 
     def discover(self):
         """Discover all tools from ARIA OS ToolRegistry and cache MCP Tool objects."""
-        aria_tools = self.aria_registry.list()
+        aria_tools = self.aria_registry.list_all()
         self._tool_cache = []
         for tool_def in aria_tools:
             mcp_tool = self._convert_to_mcp_tool(tool_def)

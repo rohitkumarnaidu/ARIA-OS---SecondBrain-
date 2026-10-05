@@ -43,6 +43,52 @@ with patch("supabase.create_client") as mock_create_client:
 # ─── Fixtures ────────────────────────────────────────────────────────────────
 
 
+@pytest.fixture(autouse=True)
+def _stub_supabase_client():
+    """Serve every ``get_supabase_client()`` call a MagicMock for this module.
+
+    ``ToolRegistry`` handlers are resolved lazily by dotted path
+    (``_resolve_handler`` at tool_calling.py:189), so the agent modules that
+    actually talk to the database -- ``ai.agents.task_agent``,
+    ``ai.agents.memory_agent``, ... -- are imported at *call* time, long after
+    module import. Each of them calls ``get_supabase_client()`` inside the
+    function body, and that helper memoises into the module global
+    ``config.core.supabase._supabase_client``.
+
+    The old setup wrapped only the ``import ai.tool_calling`` statement in
+    ``with patch("supabase.create_client")``. That patch was therefore long gone
+    by the time any handler ran, so the tools hit the real Supabase endpoint
+    with a fake key and failed with "Invalid API key". They only appeared to
+    pass in a full run because an unrelated test file had earlier cached a
+    MagicMock in ``_supabase_client`` -- i.e. these tests were passing by
+    accident, on leaked state.
+
+    Assigning the module global directly is both simpler and correct: it is the
+    single choke point every agent module goes through, and conftest restores it
+    after each test so nothing leaks back out.
+    """
+    from config.core import supabase as supabase_module
+
+    previous = getattr(supabase_module, "_supabase_client", None)
+    mock_client = MagicMock()
+    mock_client.table.return_value.select.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.from_.return_value.select.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.from_.return_value.select.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.from_.return_value.select.return_value.order.return_value.limit.return_value.execute.return_value = (
+        MagicMock(data=[])
+    )
+    mock_client.from_.return_value.insert.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.from_.return_value.update.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.from_.return_value.delete.return_value.eq.return_value.execute.return_value = MagicMock(data=[])
+    mock_client.rpc.return_value.execute.return_value = MagicMock(data=[])
+
+    supabase_module._supabase_client = mock_client
+    try:
+        yield mock_client
+    finally:
+        supabase_module._supabase_client = previous
+
+
 @pytest.fixture
 def registry():
     r = ToolRegistry()
@@ -245,7 +291,7 @@ class TestToolRegistry:
         registry.register(sample_tool)
         t2 = ToolDefinition(name="tool2", description="Second tool", handler="test.handler")
         registry.register(t2)
-        tools = registry.list()
+        tools = registry.list_all()
         assert len(tools) == 2
 
     def test_list_by_category(self, registry):
@@ -255,9 +301,9 @@ class TestToolRegistry:
         registry.register(t1)
         registry.register(t2)
         registry.register(t3)
-        user_tools = registry.list(category="user")
+        user_tools = registry.list_all(category="user")
         assert len(user_tools) == 2
-        admin_tools = registry.list(category="admin")
+        admin_tools = registry.list_all(category="admin")
         assert len(admin_tools) == 1
 
     def test_search_by_name(self, registry):
@@ -679,7 +725,7 @@ class TestAutoDiscovery:
         reg = ToolRegistry()
         reg.clear()
         discover_agent_tools(reg)
-        for tool in reg.list():
+        for tool in reg.list_all():
             assert tool.handler, f"Tool {tool.name} has no handler"
             assert "." in tool.handler, f"Tool {tool.name} handler not dotted"
 
@@ -687,21 +733,21 @@ class TestAutoDiscovery:
         reg = ToolRegistry()
         reg.clear()
         discover_agent_tools(reg)
-        for tool in reg.list():
+        for tool in reg.list_all():
             assert tool.description, f"Tool {tool.name} has no description"
 
     def test_tool_names_are_snake_case(self):
         reg = ToolRegistry()
         reg.clear()
         discover_agent_tools(reg)
-        for tool in reg.list():
+        for tool in reg.list_all():
             assert "_" in tool.name or tool.name.islower(), f"Tool {tool.name} not snake_case"
 
     def test_discovery_no_tools_with_none_handler(self):
         reg = ToolRegistry()
         reg.clear()
         discover_agent_tools(reg)
-        for tool in reg.list():
+        for tool in reg.list_all():
             assert tool.handler is not None
 
 

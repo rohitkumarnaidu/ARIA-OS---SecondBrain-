@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback, Fragment } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, Fragment } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -119,13 +119,16 @@ function storeMsgToLocal(msg: import('@/lib/types').ChatMessage): ChatMessage {
 }
 
 function storeConvToLocal(conv: import('@/lib/types').Conversation): Conversation {
-  const msgs = (conv.messages ?? []).map(storeMsgToLocal)
+  // `conv.messages` is never populated by GET /api/v1/chat (that route returns
+  // summaries with no `messages` key), so mapping it produced `[]` for every
+  // conversation. The transcript lives in `store.messages` and is read
+  // separately below.
   return {
     id: conv.id,
     title: conv.title,
-    lastMessage: msgs.length > 0 ? msgs[msgs.length - 1].content : '',
+    lastMessage: conv.lastMessage ?? '',
     timestamp: conv.updated_at,
-    messages: msgs,
+    messages: [],
   }
 }
 
@@ -191,10 +194,28 @@ export default function ChatPage() {
   const activeId = store.activeConversationId
   const activeConversation = conversations.find((c) => c.id === activeId) ?? null
 
+  /* ── Transcript ─────────────────────────────────── */
+  // `store.messages` is the populated array; `activeConversation.messages` was
+  // always empty because the list endpoint returns no `messages` key. Rendering
+  // from the store is what makes the transcript appear at all.
+  const transcript = useMemo(() => store.messages.map(storeMsgToLocal), [store.messages])
+
+  // Load the persisted transcript whenever the active conversation changes.
+  // Runs for brand-new conversations too; the endpoint 404s and the store keeps
+  // the optimistic local messages, so this is a no-op in practice there.
+  useEffect(() => {
+    if (!activeId) return
+    void store.loadMessages(activeId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId])
+
   /* ── Auto-scroll ────────────────────────────────── */
+  // Must track streamingContent, not just loading: tokens arrive without changing
+  // the message count, so without this the view stayed pinned while the bubble
+  // grew past the fold.
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [activeConversation?.messages.length, store.loading])
+  }, [transcript.length, store.streamingContent, store.loading])
 
   /* ── Ghost hint idle timer ──────────────────────── */
   useEffect(() => {
@@ -212,27 +233,44 @@ export default function ChatPage() {
     }
   }, [input, sending, activeConversation, ghostState])
 
+  const [failedMessage, setFailedMessage] = useState<string | null>(null)
+
   const handleSend = useCallback(async () => {
     const text = input.trim()
     if (!text || sending) return
     logger.info('Sending message', { text: text.substring(0, 80), conversationId: activeConversation?.id })
     setInput('')
     setSendError(null)
+    setFailedMessage(null)
     setSending(true)
 
     try {
-      await store.send(text, activeConversation?.id, true)
+      await store.send(text, activeConversation?.id ?? undefined, true)
       const currentStore = useChatStore.getState()
       if (currentStore.error) {
         setSendError(currentStore.error)
+        // Keep the text so the banner's Retry button can resend it verbatim.
+        setFailedMessage(text)
       }
     } catch (err) {
       logger.error('Chat API send failed', { error: err instanceof Error ? err.message : String(err) })
       setSendError(err instanceof Error ? err.message : 'Failed to send message')
+      setFailedMessage(text)
     } finally {
       setSending(false)
     }
   }, [input, sending, activeConversation, store])
+
+  const handleRetry = useCallback(() => {
+    if (!failedMessage) {
+      setSendError(null)
+      return
+    }
+    setInput(failedMessage)
+    setSendError(null)
+    setFailedMessage(null)
+    inputRef.current?.focus()
+  }, [failedMessage])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -251,8 +289,13 @@ export default function ChatPage() {
 
   const handleNewThread = useCallback(() => {
     logger.info('Creating new thread')
-    store.setActiveConversation(null)
+    // Mint a real conversation id instead of nulling the selection. Setting it to
+    // null left activeConversation null, which is what gated the entire chat UI
+    // (and the streaming bubble) behind the welcome screen.
+    store.startConversation()
     setInput('')
+    setSendError(null)
+    setFailedMessage(null)
     setExpandedThoughts(new Set())
   }, [store])
 
@@ -308,6 +351,57 @@ export default function ChatPage() {
           c.lastMessage.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : conversations
+
+  /* ── Streaming bubble (shared by both layouts) ───── */
+  // Rendered once here and referenced from the transcript view AND the welcome
+  // view, so a stream is visible even before a conversation is selected. Plain
+  // text via a React child -- never dangerouslySetInnerHTML -- so LLM output
+  // cannot inject markup into the DOM.
+  const streamingBubble = (
+    <AnimatePresence>
+      {store.streaming && (
+        <motion.div
+          key="streaming-bubble"
+          initial={{ opacity: 0, y: 16, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+          className="flex justify-start mb-3"
+        >
+          <div className="max-w-[75%] rounded-2xl px-4 py-2.5 bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-primary)] rounded-bl-md">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
+                <Bot size={10} />
+                ARIA
+              </span>
+            </div>
+            <div className="text-sm leading-relaxed whitespace-pre-wrap" aria-live="polite">
+              {store.streamingContent || (
+                <span className="text-[var(--text-tertiary)]">thinking...</span>
+              )}
+              <motion.span
+                aria-hidden="true"
+                className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
+                style={{ backgroundColor: 'var(--accent-primary)' }}
+                animate={{ opacity: [1, 0.15, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <button
+                onClick={() => store.cancelStreaming()}
+                aria-label="Stop generating"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-[var(--accent-danger)]/10 text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-danger)]"
+              >
+                <Square size={10} />
+                Stop generating
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
 
   /* ── Render ─────────────────────────────────────── */
 
@@ -417,13 +511,35 @@ export default function ChatPage() {
       {/* ====== Center Panel: Chat ====== */}
       <div className="flex-1 flex flex-col min-w-0 bg-[var(--background)]">
         {sendError && (
-          <div className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mx-4 mt-4 flex items-center justify-between">
+          <div
+            role="alert"
+            className="bg-accent-danger/10 border border-accent-danger/30 text-text-primary px-4 py-3 rounded-lg mx-4 mt-4 flex items-center justify-between gap-3"
+          >
             <span className="text-sm">{sendError}</span>
-            <button onClick={() => setSendError(null)} className="text-text-secondary hover:text-text-primary shrink-0 ml-3">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-            </button>
+            <span className="flex items-center gap-2 shrink-0">
+              {failedMessage && (
+                <Button onClick={handleRetry} variant="secondary" className="text-xs px-2 py-1">
+                  Retry
+                </Button>
+              )}
+              <button
+                onClick={() => {
+                  setSendError(null)
+                  setFailedMessage(null)
+                }}
+                aria-label="Dismiss error"
+                className="text-text-secondary hover:text-text-primary"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </span>
           </div>
         )}
+
+        {/* Streaming must be reachable with no conversation selected yet: a brand
+            new thread has a real id but zero persisted messages, and the welcome
+            screen previously hid the bubble entirely. */}
+        {streamingBubble}
 
         {!activeConversation ? (
           /* ── Welcome State ── */
@@ -501,8 +617,8 @@ export default function ChatPage() {
                   initial="hidden"
                   animate="visible"
                 >
-                  {activeConversation.messages.map((msg, idx) => {
-                    const separator = shouldShowDateSeparator(activeConversation.messages, idx)
+                  {transcript.map((msg, idx) => {
+                    const separator = shouldShowDateSeparator(transcript, idx)
                     return (
                       <Fragment key={msg.id}>
                         {separator && (
@@ -584,51 +700,7 @@ export default function ChatPage() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Streaming message bubble */}
-              <AnimatePresence>
-                {store.streaming && (
-                  <motion.div
-                    key="streaming-bubble"
-                    initial={{ opacity: 0, y: 16, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ type: 'spring', stiffness: 350, damping: 26 }}
-                    className="flex justify-start mb-3"
-                  >
-                    <div className="max-w-[75%] rounded-2xl px-4 py-2.5 bg-[var(--surface-secondary)] border border-[var(--border)] text-[var(--text-primary)] rounded-bl-md">
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
-                          <Bot size={10} />
-                          ARIA
-                        </span>
-                      </div>
-                      <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {store.streamingContent || (
-                          <span className="text-[var(--text-tertiariy)]">thinking...</span>
-                        )}
-                        <motion.span
-                          aria-hidden="true"
-                          className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
-                          style={{ backgroundColor: 'var(--accent-primary)' }}
-                          animate={{ opacity: [1, 0.15, 1] }}
-                          transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
-                        />
-                      </div>
-                      {/* Stop generating button */}
-                      <div className="mt-2 flex items-center gap-2">
-                        <button
-                          onClick={() => store.cancelStreaming()}
-                          aria-label="Stop generating"
-                          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-[var(--accent-danger)]/10 text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-danger)]"
-                        >
-                          <Square size={10} />
-                          Stop generating
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {streamingBubble}
 
               {sending && !store.streaming && (
                 <div className="flex justify-start mb-3">
@@ -773,13 +845,17 @@ export default function ChatPage() {
             </h4>
             <div className="space-y-2">
               {(() => {
+                // Counted from the real memory rows. The previous version fell back
+                // to `Math.round(totalMemories * 0.15)` / `* 0.1` whenever a count
+                // was 0, inventing plausible-looking numbers for a user who had
+                // genuinely learned no preferences or patterns.
                 const totalMemories = memoryStore.items.length
                 const preferences = memoryStore.items.filter(m => m.type === 'preference').length
                 const patterns = memoryStore.items.filter(m => m.type === 'pattern' || m.type === 'learning').length
                 return [
                   { label: 'Total memories', value: String(totalMemories), icon: <Brain size={14} /> },
-                  { label: 'Preferences learned', value: String(preferences || Math.round(totalMemories * 0.15)), icon: <Lightbulb size={14} /> },
-                  { label: 'Patterns detected', value: String(patterns || Math.round(totalMemories * 0.1)), icon: <TrendingUp size={14} /> },
+                  { label: 'Preferences learned', value: String(preferences), icon: <Lightbulb size={14} /> },
+                  { label: 'Patterns detected', value: String(patterns), icon: <TrendingUp size={14} /> },
                 ].map((stat) => (
                   <div
                     key={stat.label}

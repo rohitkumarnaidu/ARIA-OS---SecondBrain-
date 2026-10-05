@@ -1,28 +1,5 @@
 """ToolCalling System — ToolDefinition, ToolRegistry, ToolExecutor, ToolCallingAgent."""
 
-# PEP 563. Required for this module to be importable at all on CPython <= 3.13.
-# `ToolRegistry.list` (line 81) binds the name `list` in the class body, which
-# shadows the builtin for every LATER annotation in that class body. So
-#     def search(self, query: str) -> list[ToolDefinition]   # line 86
-#     def get_categories(self) -> list[str]                 # line 94
-# evaluate `list` to the *method* and raise
-#     TypeError: 'function' object is not subscriptable
-# at import time. It only appeared to work on CPython 3.14, where PEP 649 makes
-# annotations lazy by default; this project's pins force CPython <= 3.12
-# (pydantic-core 2.14.x has no cp313/cp314 wheels), so every supported
-# interpreter crashed on `import ai.tool_calling`.
-#
-# This is the minimal import-only fix. It changes no runtime behaviour: it only
-# defers when annotations are evaluated. Nothing in the repo reads
-# `__annotations__` or calls `typing.get_type_hints`, and pydantic v2 resolves
-# the stringified field annotations of ToolDefinition / ToolResult itself.
-#
-# The PROPER fix is to rename `ToolRegistry.list` (it is called at
-# tool_calling.py:441,451,473,478 and services/mcp/tools.py:47), which WOULD
-# change the public API and is therefore deliberately left alone. See FINAL
-# REPORT bug #1.
-from __future__ import annotations
-
 import asyncio
 import json
 import time
@@ -101,7 +78,16 @@ class ToolRegistry:
     def get(self, name: str) -> Optional[ToolDefinition]:
         return self._tools.get(name)
 
-    def list(self, category: Optional[str] = None) -> list[ToolDefinition]:
+    def list_all(self, category: Optional[str] = None) -> list[ToolDefinition]:
+        """Return every registered tool, optionally filtered by required permission.
+
+        Named `list_all`, not `list`: a method called `list` binds the name
+        `list` in this class body, which shadows the builtin for every LATER
+        annotation below (`-> list[ToolDefinition]`, `cats: set[str]`, ...) and
+        raises `TypeError: 'function' object is not subscriptable` at import
+        time on CPython <= 3.13, where annotations evaluate eagerly. It only
+        appeared to work on CPython 3.14+ (PEP 649 lazy annotations).
+        """
         if category is None:
             return list(self._tools.values())
         return [t for t in self._tools.values() if category in t.required_permissions]
@@ -455,7 +441,7 @@ class ToolCallingAgent:
 
     def get_tool_schemas(self) -> list[dict[str, Any]]:
         schemas: list[dict[str, Any]] = []
-        for tool in self.registry.list():
+        for tool in self.registry.list_all():
             schema = {
                 "name": tool.name,
                 "description": tool.description,
@@ -465,7 +451,7 @@ class ToolCallingAgent:
         return schemas
 
     def format_tools_for_llm(self) -> str:
-        tools = self.registry.list()
+        tools = self.registry.list_all()
         if not tools:
             return "No tools available."
         lines: list[str] = ["## Available Tools", ""]
@@ -487,12 +473,12 @@ class ToolCallingAgent:
                     "parameters": tool.parameters,
                 },
             }
-            for tool in self.registry.list()
+            for tool in self.registry.list_all()
         ]
 
     def format_for_claude(self) -> list[dict[str, Any]]:
         tools: list[dict[str, Any]] = []
-        for tool in self.registry.list():
+        for tool in self.registry.list_all():
             entry: dict[str, Any] = {
                 "name": tool.name,
                 "description": tool.description,

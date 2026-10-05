@@ -357,7 +357,13 @@ class Guardrails:
         return result
 
     def sanitize_output(self, text: str) -> str:
-        """Clean LLM output by removing excessive formatting and hallucinated citations."""
+        """Clean LLM output by removing excessive formatting and hallucinated citations.
+
+        For WHOLE responses only. Do not call this per streamed token: it strips
+        leading/trailing whitespace, which is exactly where token boundaries
+        fall, so "Hello " + "world" would collapse to "Helloworld". Use
+        `sanitize_output_streaming` inside a stream loop.
+        """
         if not text:
             return ""
 
@@ -382,6 +388,50 @@ class Guardrails:
 
         if len(result) > self.max_output_length:
             result = result[: self.max_output_length]
+
+        return result
+
+    def sanitize_output_streaming(self, chunk: str) -> str:
+        """Sanitize ONE streamed token without corrupting the token stream.
+
+        `sanitize_output` is written for a complete response and is destructive
+        when applied per token:
+
+          * `.strip()` deletes the inter-token whitespace, so "Hello " + "world"
+            renders as "Helloworld" and a whitespace-only token becomes "".
+          * `\\n{3,}` and ` {2,}` collapsing looks at intra-chunk whitespace
+            only, so it both misses real runs and cannot be applied consistently
+            across chunk edges.
+          * The `max_output_length` cap truncates each token independently, so
+            the cap is effectively disabled (a token is never near the limit).
+
+        This variant therefore keeps every rule that is meaningful within a
+        single chunk and drops every rule whose correctness depends on seeing
+        the whole response:
+
+        kept  - excessive heading/bold marker runs, `[Source: ...]` /
+                `(Source: ...)` hallucinated-citation removal, CRLF -> LF.
+        kept  - the leading/trailing whitespace of the chunk, verbatim.
+        kept  - a lone trailing `\\r` is left alone (converting it to `\\n` would
+                turn a split `\\r` + `\\n` pair into a spurious blank line).
+        dropped- whitespace-run collapsing and the length cap (see above).
+
+        Callers that need the collapsing rules should apply `sanitize_output` to
+        the reassembled response once the stream completes.
+        """
+        if not chunk:
+            return ""
+
+        result = chunk
+
+        result = re.sub(r"#{4,}", "###", result)
+
+        result = re.sub(r"\*\*\*\*+", "***", result)
+
+        result = re.sub(r"\[Source:\s*[^\]]+\]", "", result)
+        result = re.sub(r"\(Source:\s*[^)]+\)", "", result)
+
+        result = result.replace("\r\n", "\n")
 
         return result
 

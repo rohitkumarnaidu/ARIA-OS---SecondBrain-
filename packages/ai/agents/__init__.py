@@ -1,6 +1,7 @@
 from . import (
     task_agent,
     memory_agent,
+    knowledge_agent,
     learning_agent,
     opportunity_agent,
     briefing_agent,
@@ -16,6 +17,7 @@ from ai.context_engine import ContextEngine, NEEDS_MAP
 __all__ = [
     "task_agent",
     "memory_agent",
+    "knowledge_agent",
     "learning_agent",
     "opportunity_agent",
     "briefing_agent",

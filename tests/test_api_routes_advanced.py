@@ -3560,7 +3560,19 @@ class TestBuildContext:
         ]
         result = build_context([], [], [], [], [], [], messages, {})
         assert "Conversation History" in result
-        assert "user: Hello" in result
+        # Conversation content is user-controlled and is interpolated straight
+        # into the LLM prompt, so `build_context` wraps every turn in
+        # [UNTRUSTED_USER_DATA] delimiters. Assert the delimiter contract rather
+        # than the bare "user: Hello" substring: that substring can only appear
+        # INSIDE a delimiter pair, so this is strictly stronger than before.
+        assert (
+            "[UNTRUSTED_USER_DATA] user [/UNTRUSTED_USER_DATA]: "
+            "[UNTRUSTED_USER_DATA] Hello [/UNTRUSTED_USER_DATA]" in result
+        ), f"conversation turns are not delimiter-wrapped:\n{result}"
+        assert (
+            "[UNTRUSTED_USER_DATA] assistant [/UNTRUSTED_USER_DATA]: "
+            "[UNTRUSTED_USER_DATA] Hi there! [/UNTRUSTED_USER_DATA]" in result
+        ), f"conversation turns are not delimiter-wrapped:\n{result}"
 
     def test_memory_summary_included(self):
         from app.api.chat import build_context

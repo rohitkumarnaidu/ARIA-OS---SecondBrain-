@@ -421,11 +421,52 @@ export interface ChatMessage {
   created_at: Timestamp
 }
 
+/**
+ * A conversation row as returned by GET /api/v1/chat (summary shape).
+ * `lastMessage`/`timestamp`/`messageCount` are camelCase because the router
+ * builds these dicts by hand rather than through a Pydantic model.
+ */
+export interface ConversationSummary {
+  id: string
+  title: string
+  lastMessage: string
+  timestamp: string
+  messageCount: number
+}
+
+/** A persisted chat_messages row as returned by GET /api/v1/chat/{conversation_id}. */
+export interface ConversationMessageRecord {
+  id: UUID
+  user_id: UUID
+  conversation_id: string | null
+  role: MessageRole
+  content: string
+  action_taken?: string | null
+  metadata?: Record<string, unknown> | null
+  created_at: Timestamp
+}
+
+export interface ConversationTranscript {
+  conversation_id: string
+  messages: ConversationMessageRecord[]
+  total: number
+  limit: number
+  offset: number
+}
+
 export interface Conversation {
   id: UUID
   user_id: UUID
   title: string
   agent_id?: string
+  /**
+   * Preview of the most recent turn, kept live client-side so the sidebar does
+   * not need a refetch after every send.
+   */
+  lastMessage: string
+  messageCount: number
+  /** Denormalised copy of `updated_at`, used for sidebar sort order. */
+  timestamp: string
   messages?: ChatMessage[]
   created_at: Timestamp
   updated_at: Timestamp

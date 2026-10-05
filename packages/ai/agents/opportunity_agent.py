@@ -8,6 +8,9 @@ from ai.prompt_loader import prompts
 try:
     from ai.brave_search import fetch_opportunities_from_web
 except ImportError:
+    # `ai.brave_search` needs `aiohttp`, which is an OPTIONAL dependency. This
+    # except exists precisely to survive its absence, so the sentinel must never
+    # be called unguarded -- see fetch_web_opportunities below.
     fetch_opportunities_from_web = None
 from shared.utils.logger import logger
 import httpx
@@ -22,6 +25,48 @@ CATEGORIES = {
 }
 
 
+async def fetch_web_opportunities(user_skills: List[str], user_interests: List[str]) -> List[Dict[str, Any]]:
+    """Discover opportunities from the web, degrading to an empty list.
+
+    Web discovery is an OPTIONAL source. `ai.brave_search` imports `aiohttp` at
+    module scope, so when that package is absent the module-level try/except in
+    this file leaves `fetch_opportunities_from_web` as None -- exactly the case
+    the guard exists for. Calling it anyway raises
+    `TypeError: 'NoneType' object is not callable` and kills the whole radar run.
+
+    Per the project's graceful-degradation rule the radar must keep going on the
+    non-web sources (user skills, the LLM, and the curated default scan), so an
+    unavailable or failing web source returns [] and is logged, never raised.
+    """
+    if fetch_opportunities_from_web is None:
+        logger.warn(
+            "Web opportunity source unavailable (ai.brave_search import failed, "
+            "aiohttp likely missing) - continuing without web results"
+        )
+        return []
+
+    try:
+        results = await fetch_opportunities_from_web(user_skills, user_interests)
+    except Exception as e:
+        logger.warn("Web opportunity fetch failed - continuing without web results", error=str(e))
+        return []
+
+    return results or []
+
+
+def _format_web_context(web_opps: List[Dict[str, Any]]) -> str:
+    """Render web hits for the prompt. Third-party shapes are not trusted."""
+    if not web_opps:
+        return "No web results found."
+    lines = []
+    for o in web_opps[:5]:
+        title = o.get("title") or "Untitled"
+        category = o.get("category") or "uncategorized"
+        description = (o.get("description") or "")[:100]
+        lines.append(f"- {title} ({category}) - {description}")
+    return "\n".join(lines)
+
+
 async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
     supabase = get_supabase_client()
     user_resp = supabase.from_("users").select("skills, interests").eq("id", user_id).execute()
@@ -30,12 +75,8 @@ async def run_opportunity_radar(user_id: str) -> List[Dict[str, Any]]:
     user_interests = user_data.get("interests", [])
 
     opp_prompt = prompts.get_agent("opportunity_radar_agent")
-    web_opps = await fetch_opportunities_from_web(user_skills, user_interests)
-    web_context = (
-        "\n".join(f"- {o['title']} ({o['category']}) - {o['description'][:100]}" for o in web_opps[:5])
-        if web_opps
-        else "No web results found."
-    )
+    web_opps = await fetch_web_opportunities(user_skills, user_interests)
+    web_context = _format_web_context(web_opps)
 
     if opp_prompt:
         system_prompt = opp_prompt.system_prompt

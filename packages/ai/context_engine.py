@@ -23,8 +23,21 @@ class ContextSectionConfig:
     limit: int = 10
     fallback: str = ""
     truncation_strategy: str = "drop_lowest"
+    # 0 means "unspecified": fall back to ContextEngine.default_cache_ttl.
+    # Never read as "do not cache" — a literal 0 here silently disabled caching
+    # for the highest-priority sections.
     ttl_seconds: int = 0
     agent_allowlist: Optional[List[str]] = None
+
+
+# Cache TTL for sections that read LIVE user data (tasks, goals, courses,
+# projects). A user can edit a task at any moment, so this must be short: 30s
+# is enough to collapse the burst of repeated section fetches that a single
+# assemble_context call plus follow-up agent turns generate, while bounding
+# staleness to well under a minute. These sections are also the most requested
+# (tasks_pending alone is allow-listed by five agents), so without a cache every
+# agent turn paid for a fresh round trip.
+DEFAULT_SECTION_CACHE_TTL_SECONDS = 30
 
 
 AGENT_SECTION_CONFIGS: Dict[str, List[str]] = {
@@ -98,7 +111,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=25,
         fields="id,title,priority,due_date,status,goal_id",
         fallback="No pending tasks.",
-        ttl_seconds=0,
     ),
     "tasks_overdue": ContextSectionConfig(
         name="tasks_overdue",
@@ -110,7 +122,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=10,
         fields="id,title,priority,due_date",
         fallback="No overdue tasks.",
-        ttl_seconds=0,
     ),
     "tasks_today": ContextSectionConfig(
         name="tasks_today",
@@ -122,7 +133,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=15,
         fields="id,title,priority,status",
         fallback="No tasks due today.",
-        ttl_seconds=0,
     ),
     "habits_today": ContextSectionConfig(
         name="habits_today",
@@ -146,7 +156,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=10,
         fields="id,title,progress_pct,deadline",
         fallback="No active courses.",
-        ttl_seconds=0,
     ),
     "goals_active": ContextSectionConfig(
         name="goals_active",
@@ -158,7 +167,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=10,
         fields="id,title,progress_pct,target_date,intensity,category",
         fallback="No active goals.",
-        ttl_seconds=0,
     ),
     "sleep_recent": ContextSectionConfig(
         name="sleep_recent",
@@ -207,7 +215,6 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
         limit=10,
         fields="id,name,phase,blockers",
         fallback="No active projects.",
-        ttl_seconds=0,
     ),
     "time_today": ContextSectionConfig(
         name="time_today",
@@ -249,11 +256,44 @@ NEEDS_METADATA: Dict[str, ContextSectionConfig] = {
 }
 
 
+# Row-label columns, per section, in priority order.
+#
+# A row's label is the first non-empty value found by walking its section's
+# candidates and then GENERIC_LABEL_FIELDS. Sections whose column select
+# contains none of title/name/context_key MUST be listed here, otherwise every
+# row falls through to the literal word "entry" and the agent is handed zero
+# information. sleep_recent, income_recent and time_today select only
+# date/score/duration_hours/quality, date/amount/source/hourly_rate and
+# category/duration_minutes/description respectively — none of which the
+# generic chain looked at.
+SECTION_LABEL_FIELDS: Dict[str, List[str]] = {
+    "sleep_recent": ["date", "quality", "duration_hours"],
+    "income_recent": ["source", "date", "amount"],
+    "time_today": ["description", "category", "duration_minutes"],
+}
+
+# Tried after a section's own candidates. `id` comes last so that a row with
+# nothing but a primary key is still identifiable.
+GENERIC_LABEL_FIELDS: List[str] = ["title", "name", "context_key", "id"]
+
+
+def build_label(item: Dict[str, Any], need: str) -> str:
+    """Human-readable label for one context row, or "entry" if nothing is usable."""
+    for key in SECTION_LABEL_FIELDS.get(need, []) + GENERIC_LABEL_FIELDS:
+        value = item.get(key)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text:
+            return text
+    return "entry"
+
+
 class ContextEngine:
     def __init__(
         self,
         supabase_client=None,
-        default_cache_ttl: int = 30,
+        default_cache_ttl: int = DEFAULT_SECTION_CACHE_TTL_SECONDS,
         max_budget_tokens: int = 7800,
         hard_cap_tokens: int = 8192,
         assembly_timeout_ms: int = 200,
@@ -385,17 +425,33 @@ class ContextEngine:
 
         return result
 
+    def _resolve_ttl(self, config: Optional[ContextSectionConfig]) -> int:
+        """Effective cache TTL in seconds for one section; 0 disables caching.
+
+        A section's own `ttl_seconds` wins when it is positive. `0` means
+        "unspecified", so the engine-wide `default_cache_ttl` applies — this is
+        what gives the high-priority user-data sections (tasks, goals, courses,
+        projects) a real, short TTL instead of no caching at all, and lets a
+        deployment retune freshness from one place.
+        """
+        if config is None:
+            return 0
+        if config.ttl_seconds > 0:
+            return config.ttl_seconds
+        return max(0, self._cache_ttl)
+
     async def _fetch_with_cache(self, user_id: str, need: str) -> List[Dict[str, Any]]:
         config = NEEDS_METADATA.get(need)
-        if config and config.ttl_seconds > 0:
+        ttl = self._resolve_ttl(config)
+        if ttl > 0:
             now = time.time()
             cached = self._cache.get(need)
-            if cached and now - cached["time"] < config.ttl_seconds:
+            if cached and now - cached["time"] < ttl:
                 logger.debug("Context cache hit", need=need)
                 return cached["data"]
 
         data = await self._fetch(user_id, need)
-        if config and config.ttl_seconds > 0:
+        if ttl > 0:
             self._cache[need] = {"data": data, "time": time.time()}
         return data
 
@@ -450,7 +506,7 @@ class ContextEngine:
         lines = [f"=== {header} ==="]
 
         for item in data[:5]:
-            label = item.get("title") or item.get("name") or item.get("context_key") or "entry"
+            label = build_label(item, need)
             status = item.get("status") or item.get("category") or ""
             priority = item.get("priority") or ""
             details = f" [{status}]" if status else ""
