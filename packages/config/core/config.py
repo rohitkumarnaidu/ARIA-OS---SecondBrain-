@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     # JWT Authentication
     jwt_secret: str = "your-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
-    access_token_expire_minutes: int = 60 * 24 * 7
+    access_token_expire_minutes: int = 60 * 24
 
     # AI / LLM Configuration
     use_local_ai: bool = True
@@ -52,6 +52,11 @@ class Settings(BaseSettings):
 
     def validate_jwt_secret(self):
         if self.jwt_secret in ("your-secret-key-change-in-production", "local-dev-jwt-secret-not-for-production", ""):
+            if self.environment.lower() == "production":
+                raise ValueError(
+                    "FATAL: JWT_SECRET is set to an insecure default value in production. "
+                    "Configure a strong secret in environment variables."
+                )
             import warnings
 
             warnings.warn(
