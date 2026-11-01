@@ -8,7 +8,7 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 httpx==0.28.1
 python-dotenv==1.2.2
-supabase==2.5.2
+supabase==2.31.0
 pyyaml==6.0.1
 # Optional error reporting. Imported defensively in main.py, so the API still
 # boots if this is absent; FastApi/Httpx/Logging integrations ship in the base
