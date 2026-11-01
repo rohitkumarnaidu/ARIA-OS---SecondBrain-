@@ -24,9 +24,13 @@ describe('@/lib/services barrel exports', () => {
     'notificationService',
     'academicService',
     'youtubeService',
+    'nudgeService',
+    'skillService',
+    'featureFlagService',
+    'learningService',
   ]
 
-  it('exports all 22 expected services', async () => {
+  it('exports all expected services', async () => {
     const mod = await import('@/lib/services')
     for (const name of expectedExports) {
       expect(mod).toHaveProperty(name)

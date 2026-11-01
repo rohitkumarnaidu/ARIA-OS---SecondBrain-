@@ -165,6 +165,17 @@ export default function OfflinePage() {
           </motion.div>
         )}
 
+        <motion.div variants={itemVariants} className="w-full space-y-2 text-left rounded-lg border border-border bg-background-elevated/40 p-3">
+          <p className="text-xs font-medium uppercase tracking-wider text-text-tertiary">
+            Offline Capabilities
+          </p>
+          <ul className="space-y-1 text-xs text-text-secondary">
+            <li>• Cached tasks and notes</li>
+            <li>• Previously loaded data</li>
+            <li>• Edit cached items</li>
+          </ul>
+        </motion.div>
+
         <motion.div variants={itemVariants} className="w-full space-y-3">
           <p className="text-xs font-medium uppercase tracking-wider text-text-tertiary">
             Available offline

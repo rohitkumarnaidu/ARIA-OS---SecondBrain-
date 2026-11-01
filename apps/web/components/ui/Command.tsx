@@ -136,6 +136,10 @@ const Command = memo(forwardRef<HTMLDivElement, CommandProps>(
           aria-label="Command palette"
           tabIndex={-1}
           data-slot="command"
+          className={cn(
+            'relative z-50 w-full max-w-lg rounded-xl border border-border bg-background shadow-2xl overflow-hidden',
+            className,
+          )}
           {...props}
         >
           <div className="flex items-center gap-2 border-b border-border px-4">

@@ -190,7 +190,7 @@ export default function ChatPage() {
     if (goalStore.items.length === 0) goalStore.fetch()
   }, [])
 
-  const conversations = store.conversations.map(storeConvToLocal)
+  const conversations = (store.conversations || []).map(storeConvToLocal)
   const activeId = store.activeConversationId
   const activeConversation = conversations.find((c) => c.id === activeId) ?? null
 
@@ -198,7 +198,10 @@ export default function ChatPage() {
   // `store.messages` is the populated array; `activeConversation.messages` was
   // always empty because the list endpoint returns no `messages` key. Rendering
   // from the store is what makes the transcript appear at all.
-  const transcript = useMemo(() => store.messages.map(storeMsgToLocal), [store.messages])
+  const transcript = useMemo(
+    () => (store.messages || []).map(storeMsgToLocal),
+    [store.messages],
+  )
 
   // Load the persisted transcript whenever the active conversation changes.
   // Runs for brand-new conversations too; the endpoint 404s and the store keeps

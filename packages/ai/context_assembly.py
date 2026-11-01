@@ -83,5 +83,6 @@ class ContextAssembly:
     def flatten(self, ctx: AssembledContext) -> str:
         parts = [f"## {name.upper()}\n{content}" for name, content in ctx.sections.items()]
         if ctx.truncated:
-            parts.append(f"\n## TRUNCATED\n- {'\\n- '.join(ctx.truncated)}")
+            truncated_str = "\n- ".join(ctx.truncated)
+            parts.append(f"\n## TRUNCATED\n- {truncated_str}")
         return "\n\n".join(parts)

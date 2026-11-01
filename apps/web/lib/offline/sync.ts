@@ -1,4 +1,6 @@
 import { offlineDb, type StoreName, type StoredRecord } from './db'
+import { offlineQueue } from './queue'
+import { offlineStorage } from './storage'
 import { api } from '@/lib/api'
 import type {
   Task, Habit, HabitLog, Course, Goal, Idea, IncomeEntry,
@@ -117,7 +119,55 @@ const CRUD_MAP: Record<StoreName, {
   sync_queue: null,
 }
 
+type SyncHandler = (operation: { type: string; table: string; data: unknown }) => Promise<void>
+const registeredHandlers = new Map<string, SyncHandler>()
+
 export const syncManager = {
+  registerHandler(table: string, handler: SyncHandler) {
+    registeredHandlers.set(table, handler)
+  },
+
+  unregisterHandler(table: string) {
+    registeredHandlers.delete(table)
+  },
+
+  async sync(): Promise<{ success: number; failed: number }> {
+    let success = 0
+    let failed = 0
+    const ops = await offlineQueue.getAll()
+    const sorted = [...ops].sort((a, b) => a.timestamp - b.timestamp)
+
+    for (const op of sorted) {
+      const handler = registeredHandlers.get(op.table)
+      if (!handler) {
+        if (op.id !== undefined) await offlineQueue.remove(op.id)
+        failed++
+        continue
+      }
+
+      try {
+        await handler(op)
+        if (op.id !== undefined) await offlineQueue.remove(op.id)
+        success++
+      } catch {
+        if (op.id !== undefined) {
+          if ((op.retryCount ?? 0) >= 3) {
+            await offlineQueue.remove(op.id)
+          } else {
+            await offlineQueue.incrementRetry(op.id)
+          }
+        }
+        failed++
+      }
+    }
+
+    return { success, failed }
+  },
+
+  async getPendingCount(): Promise<number> {
+    return offlineQueue.getCount()
+  },
+
   async queueMutation(
     table: StoreName,
     operation: 'create' | 'update' | 'delete',
@@ -222,5 +272,7 @@ export const syncManager = {
 
   async clearAll(): Promise<void> {
     await offlineDb.clearAllData()
+    await offlineQueue.clear().catch(() => {})
+    await offlineStorage.clear().catch(() => {})
   },
 }
