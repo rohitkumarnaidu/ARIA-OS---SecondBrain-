@@ -39,10 +39,10 @@ describe('OfflinePage', () => {
     expect(screen.getByText('Try Again')).toBeInTheDocument()
   })
 
-  it('displays last sync time from localStorage', () => {
+  it('displays last sync time from localStorage', async () => {
     const syncTime = '2026-07-09T10:30:00'
     localStorage.setItem('aria-last-sync', syncTime)
     render(<OfflinePage />)
-    expect(screen.getByText(/Last synced/)).toBeInTheDocument()
+    expect(await screen.findByText(/Last synced/)).toBeInTheDocument()
   })
 })

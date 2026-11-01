@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { skillService } from '@/lib/services/skills'
+import { api } from '@/lib/api'
 
 vi.mock('@/lib/api', () => ({
   api: {
@@ -9,8 +10,6 @@ vi.mock('@/lib/api', () => ({
     delete: vi.fn(),
   }
 }))
-
-const { api } = require('@/lib/api')
 
 describe('skillService', () => {
   beforeEach(() => { vi.clearAllMocks() })
