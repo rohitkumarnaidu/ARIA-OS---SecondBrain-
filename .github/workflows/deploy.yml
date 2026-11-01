@@ -80,6 +80,9 @@ jobs:
 
   backend-services:
     name: Deploy Backend Services
+    if: env.RAILWAY_TOKEN != ''
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: ${{ inputs.environment || 'production' }}
@@ -125,7 +128,7 @@ jobs:
 
   health-check:
     name: Health Check
-    needs: [frontend, backend-services]
+    needs: [frontend]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
