@@ -2,6 +2,9 @@
   "name": "second-brain-os",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "sideEffects": false,
   "overrides": {
     "cookie": "^0.7.0",
@@ -21,7 +24,7 @@
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run --reporter=junit --reporter=verbose --coverage",
     "test:changed": "vitest run --changed",
-    "test:ui": "vitest run --reporter=verbose __tests__/components/ __tests__/exports/",
+    "test:ui": "vitest run --reporter=verbose __tests__/components/ __tests__/exports/ ",
     "test:integration": "vitest run --reporter=verbose __tests__/integration/",
     "test:e2e": "npx playwright test",
     "analyze": "ANALYZE=true next build",
