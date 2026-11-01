@@ -50,14 +50,16 @@ jobs:
         run: npm run build
         working-directory: apps/web
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder' }}
           NEXT_PUBLIC_PWA_ENABLED: 'true'
           NEXT_TELEMETRY_DISABLED: '1'
 
       - name: Deploy to Vercel (production)
-        if: github.ref == 'refs/heads/main' && inputs.rollback != true
+        if: github.ref == 'refs/heads/main' && inputs.rollback != true && env.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -66,8 +68,10 @@ jobs:
           working-directory: apps/web
 
       - name: Deploy to Vercel (preview)
-        if: github.ref != 'refs/heads/main' || inputs.environment == 'preview'
+        if: (github.ref != 'refs/heads/main' || inputs.environment == 'preview') && env.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -110,14 +114,12 @@ jobs:
           DOCKER_BUILDKIT: 1
 
       - name: Deploy ${{ matrix.service.name }} to Railway
-        uses: docker://ghcr.io/betalgo/railway-action:v4
+        if: env.RAILWAY_TOKEN != ''
+        run: |
+          npm install -g @railway/cli
+          railway up --service ${{ secrets[matrix.service.service_id] }} --dockerfile ${{ matrix.service.dockerfile }} --target production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        with:
-          args: >
-            up
-            --service ${{ secrets[matrix.service.service_id] }}
-            --dockerfile ${{ matrix.service.dockerfile }}
             --target production
             --build-env BUILDKIT_PROGRESS=plain
 
