@@ -39,7 +39,6 @@ RUN python -m compileall apps/api/ packages/
 FROM python:3.10-slim AS production
 WORKDIR /app
 
-COPY --from=labels /dev/null /dev/null
 
 RUN addgroup --system --gid 1001 fastapi && \
     adduser --system --uid 1001 fastapi
