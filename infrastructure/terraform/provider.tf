@@ -14,6 +14,10 @@ terraform {
       source  = "vercel/vercel"
       version = "~> 1.0"
     }
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 3.0"
+    }
   }
 }
 
@@ -23,4 +27,9 @@ provider "supabase" {
 
 provider "vercel" {
   api_token = var.vercel_api_token
+}
+
+provider "grafana" {
+  url  = var.grafana_url
+  auth = var.grafana_auth
 }

@@ -38,3 +38,16 @@ variable "environment" {
   type        = string
   default     = "production"
 }
+
+variable "grafana_url" {
+  description = "Grafana instance URL"
+  type        = string
+  default     = "http://localhost:3000"
+}
+
+variable "grafana_auth" {
+  description = "Grafana API key or auth token"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

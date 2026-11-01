@@ -6,13 +6,12 @@ const config: StorybookConfig = {
     '../stories/**/*.mdx',
   ],
   addons: [
-    '@chromatic-com/storybook',
     '@storybook/addon-vitest',
     '@storybook/addon-a11y',
     '@storybook/addon-docs',
     '@storybook/addon-mcp',
   ],
   framework: '@storybook/nextjs-vite',
-  staticDirs: ['..\\public'],
+  staticDirs: ['../public'],
 }
 export default config
