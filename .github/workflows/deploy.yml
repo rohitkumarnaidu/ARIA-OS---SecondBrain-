@@ -56,10 +56,8 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
 
       - name: Deploy to Vercel (production)
-        if: github.ref == 'refs/heads/main' && inputs.rollback != true && env.VERCEL_TOKEN != ''
+        if: github.ref == 'refs/heads/main' && inputs.rollback != true && secrets.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -68,10 +66,8 @@ jobs:
           working-directory: apps/web
 
       - name: Deploy to Vercel (preview)
-        if: (github.ref != 'refs/heads/main' || inputs.environment == 'preview') && env.VERCEL_TOKEN != ''
+        if: (github.ref != 'refs/heads/main' || inputs.environment == 'preview') && secrets.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -80,9 +76,6 @@ jobs:
 
   backend-services:
     name: Deploy Backend Services
-    if: env.RAILWAY_TOKEN != ''
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: ${{ inputs.environment || 'production' }}
@@ -92,11 +85,9 @@ jobs:
           - name: api
             context: .
             dockerfile: apps/api/Dockerfile
-            service_id: RAILWAY_SERVICE_ID
           - name: scheduler
             context: .
             dockerfile: services/scheduler/Dockerfile
-            service_id: RAILWAY_SCHEDULER_SERVICE_ID
     steps:
       - uses: actions/checkout@v4
 
@@ -117,14 +108,18 @@ jobs:
           DOCKER_BUILDKIT: 1
 
       - name: Deploy ${{ matrix.service.name }} to Railway
-        if: env.RAILWAY_TOKEN != ''
+        if: secrets.RAILWAY_TOKEN != ''
         run: |
           npm install -g @railway/cli
-          railway up --service ${{ secrets[matrix.service.service_id] }} --dockerfile ${{ matrix.service.dockerfile }} --target production
+          if [ "${{ matrix.service.name }}" = "api" ]; then
+            railway up --service "$RAILWAY_SERVICE_ID" --dockerfile apps/api/Dockerfile
+          else
+            railway up --service "$RAILWAY_SCHEDULER_SERVICE_ID" --dockerfile services/scheduler/Dockerfile
+          fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-            --target production
-            --build-env BUILDKIT_PROGRESS=plain
+          RAILWAY_SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+          RAILWAY_SCHEDULER_SERVICE_ID: ${{ secrets.RAILWAY_SCHEDULER_SERVICE_ID }}
 
   health-check:
     name: Health Check
