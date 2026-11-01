@@ -28,6 +28,9 @@ jobs:
         working-directory: apps/web
       - run: npm run build
         working-directory: apps/web
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder' }}
       - name: Check design token drift
         run: node scripts/check-token-drift.mjs
         working-directory: apps/web
@@ -47,4 +50,239 @@ jobs:
           path: apps/web/coverage/
           retention-days: 7
       - name: Install Playwright browsers
-        if: github.event_name == 'pull_request'\n        run: npx playwright install --with-deps chromium\n        working-directory: apps/web\n      - name: Run Playwright E2E tests\n        if: github.event_name == 'pull_request'\n        run: npx playwright test --reporter=html\n        working-directory: apps/web\n        continue-on-error: true\n      - name: Run a11y checks\n        if: github.event_name == 'pull_request'\n        run: npx playwright test --config=playwright.config.ts --grep=\"@a11y\"\n        working-directory: apps/web\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: playwright-report\n          path: apps/web/playwright-report/\n          retention-days: 7\n\n  backend:\n    name: Backend\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.10'\n          cache: 'pip'\n      - run: pip install -r apps/api/requirements.txt -r services/scheduler/requirements.txt ruff black pytest pytest-cov pytest-asyncio pytest-mock httpx\n      - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/\n      - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/\n      - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=85 -x\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: coverage-report\n          path: htmlcov/\n          retention-days: 7\n\n  pentest:\n    name: Penetration Tests\n    needs: [frontend, backend]\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    continue-on-error: true\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.10'\n      - run: pip install -r apps/api/requirements.txt\n      - run: bash scripts/owasp-check.sh\n      - run: bash scripts/sql-injection-audit.sh\n      - run: python scripts/attack-scenarios.py\n      - uses: actions/upload-artifact@v4\n        if: always()\n        continue-on-error: true\n        with:\n          name: pentest-reports\n          path: |\n            owasp-report*\n            sql-audit-report*\n            attack-scenarios-report*\n            reports/\n          retention-days: 30\n\n  prompts:\n    name: Prompts\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.10'\n      - run: pip install pyyaml pytest\n      - run: python scripts/validate_prompts.py\n      - run: python -m pytest tests/test_prompt_loader.py tests/test_agent_prompts.py tests/test_validate_script.py -v\n\n  link-check:\n    name: Link Check\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@v4\n      - name: Check Markdown Links\n        run: pwsh ./scripts/check-links.ps1\n        shell: pwsh\n      - name: Validate Doc IDs\n        run: python scripts/validate-doc-ids.py\n\n  docker:\n    name: Docker\n    needs: [frontend, backend, prompts]\n    runs-on: ubuntu-latest\n    timeout-minutes: 20\n    steps:\n      - uses: actions/checkout@v4\n      - uses: docker/setup-buildx-action@v3\n      - name: Cache Docker layers\n        uses: actions/cache@v4\n        with:\n          path: /tmp/.buildx-cache\n          key: ${{ runner.os }}-buildx-${{ github.sha }}\n          restore-keys: |\n            ${{ runner.os }}-buildx-\n      - run: docker compose build\n        env:\n          BUILDKIT_PROGRESS: plain\n          DOCKER_BUILDKIT: 1\n      - run: docker compose run --rm api python -c \"import requests; r=requests.get('http://api:8000/health'); assert r.status_code == 200\"\n\n  lighthouse:\n    name: Lighthouse CI\n    needs: [frontend]\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json\n      - run: npm ci\n        working-directory: apps/web\n      - name: Build production bundle\n        run: npm run build\n        working-directory: apps/web\n      - name: Run Lighthouse CI\n        run: npx @lhci/cli@0.14.x autorun\n        working-directory: apps/web\n        env:\n          LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n\n  security:\n    name: Security\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.10'\n      - run: npm audit --audit-level=high\n        working-directory: apps/web\n        continue-on-error: true\n      - name: Install safety\n        run: pip install safety\n      - name: Safety check - API\n        run: safety check -r apps/api/requirements.txt --full-report\n        continue-on-error: true\n      - name: Safety check - Scheduler\n        run: safety check -r services/scheduler/requirements.txt --full-report\n        continue-on-error: true\n      - name: Install pip-audit\n        run: pip install pip-audit\n      - name: pip-audit - API\n        run: pip-audit -r apps/api/requirements.txt\n        continue-on-error: true\n      - name: pip-audit - Scheduler\n        run: pip-audit -r services/scheduler/requirements.txt\n        continue-on-error: true\n      - uses: aquasecurity/trivy-action@master\n        with:\n          scan-type: 'fs'\n          scan-ref: '.'\n          format: 'sarif'\n          output: 'trivy-results.sarif'\n          severity: 'CRITICAL,HIGH'\n      - uses: github/codeql-action/upload-sarif@v3\n        with:\n          sarif_file: 'trivy-results.sarif'\n      - if: github.ref == 'refs/heads/main'\n        uses: ossf/scorecard-action@v2\n        with:\n          results_file: results.sarif\n          results_format: sarif\n          publish_results: true\n\n  load-test:\n    name: Load Tests (k6)\n    needs: [frontend, backend]\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@v4\n      - name: Install k6\n        run: sudo apt-get update && sudo apt-get install -y k6\n      - name: Run k6 auth tests\n        run: k6 run tests/performance/load-test-auth.js --summary-export=k6-auth-summary.json -e API_URL=http://localhost:8000\n        continue-on-error: true\n      - name: Run k6 CRUD tests\n        run: k6 run tests/performance/load-test-crud.js --summary-export=k6-crud-summary.json -e API_URL=http://localhost:8000\n        continue-on-error: true\n      - name: Run k6 AI tests\n        run: k6 run tests/performance/load-test-ai.js --summary-export=k6-ai-summary.json -e API_URL=http://localhost:8000\n        continue-on-error: true\n      - name: Run k6 spike tests\n        run: k6 run tests/performance/load-test-spike.js --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000\n        continue-on-error: true\n      - uses: actions/upload-artifact@v4\n        if: always()\n        with:\n          name: k6-reports\n          path: k6-*-summary.json\n          retention-days: 7\n\n  terraform-plan:\n    name: Terraform Plan\n    runs-on: ubuntu-latest\n    timeout-minutes: 10\n    steps:\n      - uses: actions/checkout@v4\n      - uses: hashicorp/setup-terraform@v3\n        with:\n          terraform_version: 1.5.0\n      - run: terraform init\n        working-directory: infrastructure/terraform\n      - run: terraform validate\n        working-directory: infrastructure/terraform\n      - run: terraform plan -input=false\n        working-directory: infrastructure/terraform\n        continue-on-error: true\n      - uses: aquasecurity/tfsec-action@v1\n        continue-on-error: true\n        with:\n          working_directory: infrastructure/terraform\n          format: sarif\n
+        if: github.event_name == 'pull_request'
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - name: Run Playwright E2E tests
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --reporter=html
+        working-directory: apps/web
+        continue-on-error: true
+      - name: Run a11y checks
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --config=playwright.config.ts --grep="@a11y"
+        working-directory: apps/web
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - run: pip install -r apps/api/requirements.txt -r services/scheduler/requirements.txt ruff black pytest pytest-cov pytest-asyncio pytest-mock httpx
+      - run: ruff check apps/api/ packages/ services/scheduler/ scripts/ tests/
+      - run: black --check apps/api/ packages/ services/scheduler/ tests/ scripts/
+      - run: python -m pytest tests/ --cov=packages --cov=apps/api --cov=services/scheduler --cov=scripts --cov-report=xml --cov-report=term --cov-report=html --cov-fail-under=85 -x
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: htmlcov/
+          retention-days: 7
+
+  pentest:
+    name: Penetration Tests
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install -r apps/api/requirements.txt
+      - run: bash scripts/owasp-check.sh
+      - run: bash scripts/sql-injection-audit.sh
+      - run: python scripts/attack-scenarios.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: pentest-reports
+          path: |
+            owasp-report*
+            sql-audit-report*
+            attack-scenarios-report*
+            reports/
+          retention-days: 30
+
+  prompts:
+    name: Prompts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install pyyaml pytest
+      - run: python scripts/validate_prompts.py
+      - run: python -m pytest tests/test_prompt_loader.py tests/test_agent_prompts.py tests/test_validate_script.py -v
+
+  link-check:
+    name: Link Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Markdown Links
+        run: pwsh ./scripts/check-links.ps1
+        shell: pwsh
+      - name: Validate Doc IDs
+        run: python scripts/validate-doc-ids.py
+
+  docker:
+    name: Docker
+    needs: [frontend, backend, prompts]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - run: docker compose build
+        env:
+          BUILDKIT_PROGRESS: plain
+          DOCKER_BUILDKIT: 1
+      - run: docker compose run --rm api python -c "import requests; r=requests.get('http://api:8000/health'); assert r.status_code == 200"
+
+  lighthouse:
+    name: Lighthouse CI
+    needs: [frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+        working-directory: apps/web
+      - name: Build production bundle
+        run: npm run build
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.placeholder' }}
+      - name: Run Lighthouse CI
+        run: npx @lhci/cli@0.14.x autorun
+        working-directory: apps/web
+        env:
+          LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  security:
+    name: Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: npm audit --audit-level=high
+        working-directory: apps/web
+        continue-on-error: true
+      - name: Install safety
+        run: pip install safety
+      - name: Safety check - API
+        run: safety check -r apps/api/requirements.txt --full-report
+        continue-on-error: true
+      - name: Safety check - Scheduler
+        run: safety check -r services/scheduler/requirements.txt --full-report
+        continue-on-error: true
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: pip-audit - API
+        run: pip-audit -r apps/api/requirements.txt
+        continue-on-error: true
+      - name: pip-audit - Scheduler
+        run: pip-audit -r services/scheduler/requirements.txt
+        continue-on-error: true
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+      - if: github.ref == 'refs/heads/main'
+        uses: ossf/scorecard-action@v2
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+  load-test:
+    name: Load Tests (k6)
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install k6
+        run: sudo apt-get update && sudo apt-get install -y k6
+      - name: Run k6 auth tests
+        run: k6 run tests/performance/load-test-auth.js --summary-export=k6-auth-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 CRUD tests
+        run: k6 run tests/performance/load-test-crud.js --summary-export=k6-crud-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 AI tests
+        run: k6 run tests/performance/load-test-ai.js --summary-export=k6-ai-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - name: Run k6 spike tests
+        run: k6 run tests/performance/load-test-spike.js --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-reports
+          path: k6-*-summary.json
+          retention-days: 7
+
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+      - run: terraform init
+        working-directory: infrastructure/terraform
+      - run: terraform validate
+        working-directory: infrastructure/terraform
+      - run: terraform plan -input=false
+        working-directory: infrastructure/terraform
+        continue-on-error: true
+      - uses: aquasecurity/tfsec-action@v1
+        continue-on-error: true
+        with:
+          working_directory: infrastructure/terraform
+          format: sarif
