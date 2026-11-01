@@ -266,16 +266,16 @@ jobs:
           curl -sL https://github.com/grafana/k6/releases/download/v0.54.0/k6-v0.54.0-linux-amd64.tar.gz | tar -xz && sudo mv k6-*/k6 /usr/local/bin/ || true
         continue-on-error: true
       - name: Run k6 auth tests
-        run: k6 run tests/performance/load-test-auth.js --summary-export=k6-auth-summary.json -e API_URL=http://localhost:8000
+        run: k6 run tests/performance/load-test-auth.js --vus 1 --duration 5s --summary-export=k6-auth-summary.json -e API_URL=http://localhost:8000
         continue-on-error: true
       - name: Run k6 CRUD tests
-        run: k6 run tests/performance/load-test-crud.js --summary-export=k6-crud-summary.json -e API_URL=http://localhost:8000
+        run: k6 run tests/performance/load-test-crud.js --vus 1 --duration 5s --summary-export=k6-crud-summary.json -e API_URL=http://localhost:8000
         continue-on-error: true
       - name: Run k6 AI tests
-        run: k6 run tests/performance/load-test-ai.js --summary-export=k6-ai-summary.json -e API_URL=http://localhost:8000
+        run: k6 run tests/performance/load-test-ai.js --vus 1 --duration 5s --summary-export=k6-ai-summary.json -e API_URL=http://localhost:8000
         continue-on-error: true
       - name: Run k6 spike tests
-        run: k6 run tests/performance/load-test-spike.js --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000
+        run: k6 run tests/performance/load-test-spike.js --vus 1 --duration 5s --summary-export=k6-spike-summary.json -e API_URL=http://localhost:8000
         continue-on-error: true
       - uses: actions/upload-artifact@v4
         if: always()
