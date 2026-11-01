@@ -32,8 +32,7 @@ jobs:
     name: Deploy Frontend
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment:
-      name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+    environment: production
     steps:
       - uses: actions/checkout@v4
 
@@ -57,7 +56,7 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
 
       - name: Deploy to Vercel (production)
-        if: github.ref == 'refs/heads/main' && github.event.inputs.rollback != 'true' && secrets.VERCEL_TOKEN != ''
+        if: github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -67,7 +66,7 @@ jobs:
           working-directory: apps/web
 
       - name: Deploy to Vercel (preview)
-        if: github.event.inputs.environment == 'preview' && secrets.VERCEL_TOKEN != ''
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'preview' && secrets.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -79,8 +78,7 @@ jobs:
     name: Deploy Backend Services
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    environment:
-      name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'production' }}
+    environment: production
     strategy:
       matrix:
         service:
@@ -162,8 +160,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.rollback == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment:
-      name: ${{ github.event.inputs.environment || 'production' }}
+    environment: production
     steps:
       - uses: actions/checkout@v4
 
@@ -196,6 +193,6 @@ jobs:
               issue_number: context.issue.number || context.payload.pull_request?.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🔄 Rollback Initiated\n\n**Environment:** ${{ github.event.inputs.environment || 'production' }}\n**Run:** ${runUrl}\n**Triggered by:** ${context.actor}\n\nRollback has been triggered. Verify service status after rollback completes.`
+              body: `## 🔄 Rollback Initiated\n\n**Environment:** production\n**Run:** ${runUrl}\n**Triggered by:** ${context.actor}\n\nRollback has been triggered. Verify service status after rollback completes.`
             });
         continue-on-error: true

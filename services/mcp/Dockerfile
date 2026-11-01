@@ -38,7 +38,6 @@ RUN python -m compileall services/mcp/ packages/
 FROM python:3.10-slim AS production
 WORKDIR /app
 
-COPY --from=labels /dev/null /dev/null
 
 RUN addgroup --system --gid 1001 mcp && \
     adduser --system --uid 1001 mcp

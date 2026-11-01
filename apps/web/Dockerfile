@@ -43,7 +43,6 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
-COPY --from=labels /dev/null /dev/null
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
