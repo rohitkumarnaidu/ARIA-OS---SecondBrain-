@@ -22,7 +22,6 @@ resource "supabase_project" "main" {
   organization_id   = var.supabase_organization_id
   database_password = var.supabase_db_password
   region            = "us-east-1"
-  plan              = "free"
 }
 
 # Apply database migrations after project is created
